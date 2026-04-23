@@ -1,0 +1,338 @@
+2026-04-15 Payment Gateway Architecture and Recipient Store Integration
+
+Creation Time: 2026/04/15 11:26
+
+
+📅About Meeting
+
+• Date & Time: 2026-04-15 11:26–12:11 (approx.)
+• Location: No relevant content mentioned
+• Attendee: Uday, Omar (mentioned), CP (product), Sudha, Jagan, front-end team (TSP UI/MFE), back-end team (TSP Web), recipient store team (Unipax), QA/Entitlements team (implied)
+
+📒Meeting Outline
+
+Payment Gateway Architecture and Routing
+
+• End-to-end UI to backend flow
+  Participants aligned on the navigation flow: User logs into Common Services (CS) portal, selects a feature (Payments, Templates, Imports, Consolidated Grid, Recipients, Payment Details). Each feature is a micro-frontend (MFE) registered with CS. CS resolves the route-to-app mapping and loads the selected MFE. All calls should traverse the Payment Gateway.
+
+• Gateway behavior for TSP Web vs Recipient Management
+  • For TSP Web routes: current gateway passthrough with no filters/security checks (no IDA, no Sentry). Rationale: TSP Web already performs its own checks on VM-hosted services. Once TSP migrates to GKE and adopts common security, gateway filtering will be enabled and this exception removed.
+  • For Recipient Management routes: gateway enforces Sentry user validation and ADFS token validation, then forwards to Recipient Management API and returns the response to the caller.
+
+• Scope and future onboarding
+  Gateway is designed to front multiple backend services (current: TSP Web, Recipient Management). Other systems can be onboarded easily. All MFEs (Payments, Grid, Import, Templates) must route via the Payment Gateway for uniform architecture.
+
+Recipient Store Integration (Unipax module)
+
+• Purpose and ownership
+  Recipient Store is a new external module/service (from Unipax) to provide recipient lists and details for the new UI design. Owned by our team (primarily Sudha) for integration; service operated by Unipax team (Omar).
+
+• Current integration approach
+  • Backend (TSP Web) exposes internal endpoints:
+    • GET /search-recipients: paginated, filterable, sortable list
+    • GET /recipients/{id}: recipient detail by ID
+  • Internally, these call a Recipient Management RestClient, which invokes Recipient Store’s external APIs. Retry logic and ID/auth header propagation are implemented.
+  • No create/update operations are in scope now; fetch-only.
+
+• Routing placement
+  Presently, calls from TSP Web to Recipient Store do not go through our Payment Gateway (treated as internal app-to-app). Recipient Store is currently behind Unipax’s own gateway. Proposal is to standardize via our gateway when they allow routing; otherwise, use service-mesh-style internal gateway in future GKE architecture.
+
+• Data/source clarification
+  Existing DSP does not maintain a dedicated beneficiary/recipient master in our workspace; current flows persist payment data (accounts, bank/country/branch tables). Recipient Store remains the source for recipient information.
+
+• Open issues discovered
+  • Authentication/authorization: Received 401/403 when calling Recipient Store. Swagger provided lacks auth header schemes; bearer token behavior unclear. Likely needs app-to-app cert/JWT plus user entitlement checks.
+  • Entitlements model mismatch: Recipient Store may use Unipax’s “simplified entitlements” model, different from current DSP. Need clarity on required permissions/claims and onboarding path.
+  • User onboarding: Our TSP test users are not present/entitled in Recipient Store; empty recipients should return 200 with empty list, not 403.
+
+Common Services (CS) and User Preferences
+
+• Read vs update
+  • Current: MFEs read user preferences from CS (e.g., theme, layout, ordering).
+  • New product ask: Allow updating CS user preferences from the TSP UI (uplift MFE). CS already has database and APIs (and even UI) for preferences; our role would be to call their update API.
+
+• Concerns and proposed stance
+  • Preferences cover multiple apps (Uplift, ITC, GSH, etc.). Updating through one MFE risks scope creep or inadvertently touching others’ data.
+  • Principle proposed: CS should own both storage and update UI/API; users update via CS portal. If product insists, constrain our updates strictly to uplift-specific keys, without reading or writing unrelated app preferences.
+  • Decision deferred; document both approaches and seek product approval.
+
+Deployment and Platform
+
+• Current state
+  • Dev GKE: Payment Gateway deployed.
+  • TSP UI (React MFEs): on GKE.
+  • TSP Web: remains on VMs; gateway routes directly to provided hostnames.
+
+• Target state
+  Unify under one gateway once TSP Web moves to GKE; adopt service mesh for internal service-to-service calls.
+
+Documentation and Diagrams
+
+• Needs
+  • Produce an architecture document and diagrams (sequence/flow/UML) covering:
+    • Unified payment architecture across MFEs (Payments, Grid, Import, Templates)
+    • Gateway routing and exceptions
+    • Recipient Store integration flow and auth
+    • CS preferences read/update flows
+    • Current vs target (post-migration) security posture
+
+• Templates
+  Use the shared template; update visuals accordingly. Remove obsolete references (e.g., Angular) and insert Gateway in all UI-to-backend flows.
+
+Recipient Management PR Walkthrough (Dev Work)
+
+• Modules touched
+  TSP Web, Service, Config, Data. Added RecipientManagementController (search and get-by-id), RestClient, retry/auth handling. Supports pagination, filters, sorting. No write operations.
+
+• Validation headers
+  Injected HTTP user context per Omar’s guidance (TS_RECIPIENT_* user header). Pending confirmation of exact header/claims required.
+
+Coordination and Next Steps
+
+• Cross-team sync
+  • Schedule call with Omar’s team to clarify Swagger, auth, entitlements, onboarding and the expected HTTP headers.
+  • Engage QA/Entitlements to provision at least one test user with required Recipient Store permissions.
+  • Align with CP on CS preferences update responsibility and governance.
+
+📋Overview
+
+• Gateway will front all MFEs; TSP Web currently passthrough without filters, to be tightened post-migration.
+• Recipient Store integration is fetch-only via TSP Web calling external APIs; auth and entitlements must be clarified and test users onboarded.
+• Calls to Recipient Store currently bypass our Payment Gateway; standardization via our gateway is preferred when feasible.
+• CS preferences are read today; product requests update from TSP UI. Team prefers CS-owned updates; if not, we will update uplift-only keys.
+• Dev deployments: Gateway and UI on GKE; TSP Web on VMs; routing verified.
+• Comprehensive architecture document and diagrams are needed urgently to unblock work on CS and Recipient Store.
+• Errors 401/403 indicate missing tokens/entitlements; Swagger must include security schemes; 403 for empty recipients should be corrected to empty list.
+
+🎯Todo List
+
+• Sudha:
+  • [ ] Own Recipient Store integration plan and document data flow, headers, and retry strategy, 2026-04-16
+
+• Omar (Recipient Store team):
+  • [ ] Provide complete Swagger/OpenAPI with auth schemes, required headers/claims, and error semantics, 2026-04-16
+  • [ ] Confirm entitlements model (Unipax simplified vs current DSP) and list required permissions for recipient read, 2026-04-16
+
+• Back-end team (TSP Web):
+  • [ ] Finalize RecipientManagementController and RestClient with confirmed auth/headers; handle empty list (not 403) scenarios defensively, 2026-04-18
+  • [ ] Add feature flags/config to switch Recipient Store routing via Payment Gateway when available, 2026-04-19
+
+• QA/Entitlements team:
+  • [ ] Onboard at least one dev/test user into Recipient Store with necessary read entitlements, 2026-04-17
+
+• Gateway team:
+  • [ ] Document current passthrough exception for TSP Web and the future state enabling SSO/Sentry/IDA checks post-migration, 2026-04-16
+  • [ ] Define standard routing and security policy for onboarding external services (including Recipient Store) to the Payment Gateway, 2026-04-19
+
+• Front-end team (Uplift MFE):
+  • [ ] Validate end-to-end navigation via CS to Payment MFE and back through Gateway; list all routes and their gateway targets, 2026-04-17
+
+• Architecture/Docs owner:
+  • [ ] Create unified architecture diagrams (sequence/flow) for Payments, Grid, Import, Templates via Payment Gateway; include current vs target security posture, 2026-04-16
+  • [ ] Remove obsolete references (Angular), add Gateway in all UI->Backend flows; align with shared template, 2026-04-16
+
+• CP (Product) with Backend Lead:
+  • [ ] Decide on CS user preferences update approach (CS-portal only vs. uplift-limited updates via API); document governance and key-scoping, 2026-04-18
+
+• Coordination:
+  • [ ] Schedule and conduct call with Omar’s team to resolve Swagger/auth/entitlements and 403 semantics; circulate minutes and outcomes, 2026-04-16
+
+Transcription
+
+00:00:04 - 00:01:01 Unknown Speaker:
+
+Download it and Zoom is there. Oh my God. But why it went outside of it, that box? That is gateway. Oh, that is gateway. So, this is the flow. So, this is your browser or user. He will come to see his access portal. Now, there are different routes. Either he can come to payment, template, imports, consolidated grid, recipients also or payment details. Whichever screen he wants, he can go. So all of this, let's say he goes through payment, so he comes to Gateway, then okay, now gateway. Our season payments, right? Yes, but uh, all are under TSP only, but we are working in payments functionality only. Okay, okay, create payment, so now it will come to Gateway. Now Gateway has to call this payment in MFE. So, this all the micro frontends are running parallel.
+
+00:01:01 - 00:01:56 Unknown Speaker:
+
+So, each of the routes that you see in top, right? Like login, after login, there might be links to individual left navigation, you can go to a particular app. Yeah. So, each app will call this route, its own route which is registered with common services. Common services know for which link, which app it has to call. Okay. So, that guy will call this and that will load to MFE. Now this payment MFE will go back to call TSP web because everything has to go through TSP web. So before calling TSP web route it will again go to this gateway, payment gateway entry point. Now for TSP web we don't have currently any filter. One second, one second, sorry. So gateway TSP, it will TSP web call only it will make. But it has to go through gateway.
+
+00:01:56 - 00:02:34 Unknown Speaker:
+
+So now it will again come to gateway, then gateway will exit it and call it the TSP web. So now there are two things you see, right? Recipient management and TSP web. So only for TSP web route, currently we are excluding any kind of filtration or any kind of security check. So we are not doing any IDA check, any sentry check. We are just giving it a pass-through that go to TSP web. Get the response and send it back to Gateway. Then again, Gateway will send it back to MFE and MFE will load the screen. That is how the flow is. But if it is coming for recipient management because they will also move to our gateway.
+
+00:02:34 - 00:03:24 Unknown Speaker:
+
+Then there will be a sentry validation, which is your user validation, then there will be a token validation of ADFS, then it will call Recipient Management API, and then it will forward that response, whoever is calling recipient management. So, like this many backend services that can use our gateway. Currently, only two I have shown. One is TSP web, and one is recipient management API. But if some other system also wants to connect to this gateway, it can easily connect. But why is this micro front-end, it's again the UI only, right? ReactJS front-end only, right? So, even they are exposed through payment gateway only. No. Yes. Everything will go via gateway. See, for common services, UI is the first entry. And you are connecting to TSP web again through gateway, is it? Yes, yes, yes.
+
+00:03:24 - 00:04:17 Unknown Speaker:
+
+That is what the route is proposed. Okay. But he said like don't put any filtration logic currently. That is because TSP currently is handling. Handling it. Once they. This should also be happening here. Correct. But there is a copy that happens already here. Already here. Already here. Okay. So, we don't want to remove that or change that logic. So, that specifically for TS web, we should remove this. Okay. Once they also move their app to GKP or they migrate, then they will start using common across. We will not have this. We will remove this logic. Okay. So, this is the gateway currently. I have explained it here as well. Oh, nice. I think he has shared some template that we have. Yeah, in accordance to that template, we need to update this. Okay.
+
+00:04:17 - 00:05:08 Unknown Speaker:
+
+And I'll use this and I'll create that. This is the basic one. Same thing we need for the recipient. So, are we clear on payment gateway? About payment gateway, you're... Yeah, yeah, I'm good. Good, right? Now... You're wiping it, huh? No, I'm not wiping it. I'll keep asking that question, okay? Tell me. So... The other thing that we want to discuss is the recipient store that he has worked out, right? Yeah. So, from current UI, there is no call to the recipient store. Recipient store is basically a new module, new MRP or new service. Right now, there is no such services, right? In current DSP, it is not there. It is not there. How are they doing it then? That's a separate, what more service they have. But this is the proposed strategy.
+
+00:05:09 - 00:06:10 Unknown Speaker:
+
+This was used in Unipax. While doing the Unipax, they have created this, they have deployed this and it's live for client now. So, they want to use that instead of the existing one. Okay. This is a recipient store. Who is owning it? We only, but Umarstrom primarily work on it. We mean Sudha. Okay. So, recipient store, why we need to connect to recipient store? That is the question, right? Similar to what you asked, right? User preferences and admin. This is going to be one more external service. So, from ASP.Web backend, right? We have to call this guy to get recipients. To show it in a great way, we have a new proposed design. That's why we needed this API. All recipient and recipient details. And even this call is going internally only, not going through payment gateway.
+
+00:06:11 - 00:07:10 Unknown Speaker:
+
+Not going through gateway. But is it not? He said it will go through TSP web. That is why. If it is before TSP. No, currently it is not. If he allows, then it will come in gateway. What I have shown you in that only TSP web is currently applied in backend. There is no recipient store. Recipient store routing is already there. It's there but they have to allow. I mean Uday will allow or not that is the thing. I got it. So right now the recipient management we are connecting to. Mean the what? They exposed it, right, they have not exposed it through payment gateway right now. Not this gateway. They have used Unifex Gateway, Correct, but they have their own gateway. So if we are connecting to the IT, should be via gateway.
+
+00:07:10 - 00:08:01 Unknown Speaker:
+
+But he said, right, he wants it to go through to his payment. Are they going to expose this APS for others as well, not only Azarite? Yeah, yeah. Others. Others. Then it should be through gateway only. Gateway only, yeah. That's a proposed we should tell. Yeah. Let's see. But why we needed this, you got it right? Yeah, yeah. For your front-end, you need that. Yeah, front-end we need this. Yeah. Currently, front-end is not required because where are they taking the recipient from currently? Where are they taking it from? Recipient store only they are taking, yeah. Recipient, yeah, the external recipient store, no? They have a different DB, different connection. That's what I'm asking. It's an internal. Internal, yeah. Currently, they're using an internal recipe and DB, I think. It's not in our workspace.
+
+00:08:02 - 00:08:49 Unknown Speaker:
+
+It's not in THP main. Database table, is it? They have a different way of storing it. I don't know where they're storing it exactly. Okay. Why are we concerned about that one? We have to put that in the architecture. No, we are only connect. Recipient store is taking that why we have to. Yeah, we will only be. We only take recipient store as a.As an API for us. It's a system for us which which I will consume that's it. Now you. Just an API also not even system. What is not there in that store why you want to go to recipient store? You only said no you have to use recipient store. What we will tell. We will say Jagan said this. No, no, no we will not say that. That system is already live.
+
+00:08:49 - 00:09:29 Unknown Speaker:
+
+He is already asking that. He is asking why do we need this now? Can we do it later? Then let's not have it only. No, no, no. What is that? I am not getting that. He is telling what text are you needed in the store which is not in our store. That's all. You need to understand that. Okay. But we are managing our own recipient store, is it? No, where we are having? We are not. That's what I am asking. No, we are not having. No, no, no. We don't have. And how the currently recipient details we are getting? Where we are getting recipient details? Beneficiary details. Beneficiary details. Where we are getting? We are getting accounts. We have only the accounts. We don't have anywhere beneficiary details. We don't have itself.
+
+00:09:30 - 00:10:19 Unknown Speaker:
+
+Right now also no front end request. We add. You also saw in TSP. We just add all the account details and everything. And then that gets saved in the template. That's it, or in the payment where you saw it. I am telling recipient store is storing in some DB, I don't know which DB they are storing in the current ESP. How it works, I mean, with respect to recipients, we don't get anything. We get bank and country, right? Bank and country must be stored somewhere. Yeah, that is like common table, branch product table. Like that table is there, branch table is there, branch currency table is there. Okay, when I submit a payment, I will be sending receipt and details. Correct. Are we storing it or not?
+
+00:10:20 - 00:11:21 Unknown Speaker:
+
+We are storing that from account to account, many a account, many that not just That we are storing in the payment table. So this is pain. Terminology itself is new for the It's a new new terminology for us, right? Even though that's right. Respaint is a new term that we are using now. Name is different. Yeah. Function is different. Yeah, yeah, understood. Without respaint, we cannot do it. But respaint was not, never used, that word never used. Never used. This is a new term. It's a new term. Beneficiary is what currently used. It will be. Okay. So, in that case. The thing is, I will tell you why we are not going via gateway. We are calling through TSP web. We are not calling through gateway. This call is not directly through UI.
+
+00:11:21 - 00:12:12 Unknown Speaker:
+
+You are calling us. We are calling them. That is why this gateway is not required. It is going as an internal call then. So even internal calls also we need to have some gateway. But not that gateway. That is an external gateway. You will have internal gateway that is service mesh. That I was telling you right. In Kubernetes, that's how it happens. That anyway will be re-architected for GKE. Why don't we... No, we are not doing enough. Because they cannot expose... Back-end has no change. What if... So, for example, spin management, you said there is a gateway already, right? If they are exposing it... That is their own gateway, right? That is bad. That will be used by the common services. That is bad. Everyone should have one gateway. Correct. All TSP.
+
+00:12:13 - 00:13:07 Unknown Speaker:
+
+That is how it should be. That is how then everything has to be moved to GKP. Yeah, slowly we will migrate. Okay. So, that is the second. We will own this. Second gateway. Yeah, we will own this payment gateway design. We will get Kubernetes deployment design also completely. We have to. That is the next step. We are doing the now dev will be deployed. We are already doing. Dev GKP is already deployed. UI is also deployed. Which one? For TSP web. TSP Web he is deploying gateway I have already deployed. You are from back end, right, front end, right. TSP Web. Why are you deploying TSP Web? You are telling TSP Web is in virtual machine? You are from front end. You are not supposed to touch our back end. Sorry, my bad, my brain is not training.
+
+00:13:07 - 00:14:02 Unknown Speaker:
+
+So UAE is now it is DKP. UI is long back GKP. Unipax itself. The current DSP also. Current DSP. No, no. Unipax will leave it, man. That is a gone job. Current DSP. New DSP. The new DSP you are working is a GKP. Good, good. But we should also be doing it. They are not expecting us to do. That's what. Ours will be, what do you call, gateway. To gateway, I'm directly connecting to the servers. This TSP web servers. Their virtual machine servers, they have given us the host name. If we directly route, it is going. So, we don't need to put TSP web in GKP. Now, everything you have to put it in that document and then come back tomorrow, okay? There is one more thing. We discussed about two things, gateway, recipient store, now common services.
+
+00:14:02 - 00:15:04 Unknown Speaker:
+
+Why we need common services is another toggle. Similarly, what we had, right, initial preferences. User preferences. Same thing, this is already getting called, user preferences. But, there was one more ask, from the TSP web, sorry, TSP UI, new uplift UI, we should be able to update the user preferences. That is a new requirement. Repeat, please. You are reading the preferences from common sizes. Yeah, you log in, that is the same setup. Yeah, yeah. But if you want to update from TSP, you can update from Common Services, Common Services that already has that function. Endpoint is there, endpoint is there, UI is also there. Okay, but if you want to update the preference from DSP, then we need this User Preferences, Post services. Okay. So, there is a requirement for that in new proposed UI.
+
+00:15:04 - 00:16:02 Unknown Speaker:
+
+For that UI also you are coming up with? UI is nothing. But why you need that? This user preference is only for this common services front-end, right? Or is it with respect to within our uplifter? Then why we will read it? No, no, my question. We read it. We read it, okay. I wanted to understand what it has, user preferences. A lot of things. Common services related preferences might be there. Date. Yeah, so those might be common services related. No, no, that is user related. User related, no? Why common services related? No, no, no. User preferences with respect to common service content. User preferences with respect to user. See, you will log in in the browser, right? You are a user. So, your settings should be there, right? Yeah, my settings only.
+
+00:16:02 - 00:16:42 Unknown Speaker:
+
+But where I am setting those preferences? In common services front-end only, right? Not in common service preferences. That's like your login portal, right? Your portal. So, your account. So, all those preferences need to be saved. So, currently that is saved in this user preference area. Yeah. And that we are fetching. Yes. But if you are updating something, let us say you want dark theme instead of light theme. Right. So, then next time when you log in, it should all load in dark theme. So, that context need to be saved, right? Currently, there is no API to save those things. No. Right now, where are they maintaining that then? User preferences. They are maintaining it, right? Let them only manage it. Why we should do it now? That is the question we should ask.
+
+00:16:42 - 00:17:48 Unknown Speaker:
+
+But proposed because this front end is related to. But they told they don't know we should update. Okay, you update it, you keep it with you. So you have to maintain that if you are saying okay again, you will be updating again. You have to call them nonsense, man. And that that, too, it's not only for us, right? It's not only those preferences are not only for our endpoint. Like that will have many things many things One single thing is ours others are some different difference. So only things that are related to our Front-end micro front-end will store it in our system. I mean we'll be sending it through us what these guys are proposing, why can't we use the common services? ITC also I can say, right? Anything you can say. Everything is via common services.
+
+00:17:50 - 00:18:47 Unknown Speaker:
+
+Okay, but right now our focus is only uplift, right? So ITC is the GSHR. So these are the different front-end micro MFEs, okay? So the request is to update the user preferences for CS. CS for the user? Yeah, for user only. Who is saving it? Don't speak in your front-end terminology. We are back-end people. He is asking like who is saving it. Common Service is saving it. No, Common Service is saving it. My question actually what I am trying to say is the preferences are for this CS front-end, right? Not for uplift front-end. Uplift front-end also. Also. But mainly it is CS. So, when I log in to CS Common Services. My page should look like to me like this. Okay. I want first to be uplift next ITC. These are the preferences I wanted to make.
+
+00:18:48 - 00:19:38 Unknown Speaker:
+
+So all those are preferences or common services related preferences. Internally understand, okay, you are loading the uplifter. You wanted to load it as a black or some another theme or something. So that theme will come to you and you load it and give it to them, right? No. We are using preferences for lot of other things. You are loading those, you are creating according to the preferences and giving that micro-frontend to him. So, who is passing it to you? What are the user preferences? Common services. So, they should only be keeping it? Actually, they should be. So, even the API should be with them only. That is the proposal. It is with them. Database is there. Database is there, API is there, we won't buy them. We just have to call them. This is okay.
+
+00:19:39 - 00:20:25 Unknown Speaker:
+
+But why are they updating it to through us? Is my question. They can. Why are they know? Why are we? Why we need to update, because there is a requirement from product to update from us. And this these guys have any? Okay, you are saying there are APIS, right? User preferences? I mean, there are some currently. API user preferences are service overall functionality. And the service won't be common service, so either you can replicate that in TSB or you can reuse the common services. But what, why? Why are we doing that? We should ask all your that is the requirement from product if you are not able to do it. But this is not right is what I am saying. Why you think it's not right? No, you, they are owning, they are owning that.
+
+00:20:25 - 00:21:12 Unknown Speaker:
+
+API, let them only call now. Why we should call that, and you are only managing that? You are only coming to us. Uh, CS portal, let them call directly, you don't call them. You said it will come to us, if you want, we'll go and call that. API Update API see that is an existing functionality. You can update your preference in Common service. It is there, it is there. We'll let them continue to do it. That is the proposal that we gave for initially, but what product is wanting? We should do it? Along with TSP payment only. So what about ITC? ITC also will be supporting that function. That is the proposal, but we can discuss this again. This is not right actually. This we can tell, user can go and update in the common portal.
+
+00:21:12 - 00:22:11 Unknown Speaker:
+
+Common portal only, yeah. That is the solution I gave. But they don't want. But they didn't agree. They didn't agree. Who is discussing the product related with us? CP. No, This we will put it in the... diagram and the document, and then we'll discuss now anyway, this is open. It should be through them only, let them only manage it. You want any preferences to be updated, you do it yourself, you send the same details, what is you? When your user is coming, you get and send it to us. According to that, we'll create this one. Let's do that way, only that is only good. Otherwise, if you, if it is related to uplift alone, at least we could have done it, it is related to everything. For example, it is also there would be some preferences, right?
+
+00:22:11 - 00:22:56 Unknown Speaker:
+
+It is uplifted, it will not know this is uplift feature right in case if user preferences right now. It manages information related to uplift preferences, ITC preferences, GSH preferences. All those preferences as one object or one content, it will store it in the database. So, when user logs in, it will take that. If user is going to uplift, it will come up with these are the preferences, you build it and give it to me. ITC, you build it and give it to me. So, when you say update, he would be sending the complete information to you. He will not send only uplift. What is the information? No, I think there is a filter. They have a filter or something. Like if it is coming through uplift. That doesn't matter.
+
+00:22:56 - 00:23:47 Unknown Speaker:
+
+If he sends everything or what we need, only we will read, right? No, we are updating somebody else's data. ITC, see, it's an object. We will not write. We will create a new key for this one. For this new change. Okay. For uplift, my preferences are this. For ITC, Preferences 2. Similarly, GACH Preferences 3. Like this, the object would be here. Okay. So, you are sending this. You are asking me to update it. I will go and update it. Fine. If it is only related to uplift, I will go and update it. If it is related to ITC, why I should update it? But why are you updating ITC? We will only update which is... No. When they are sending us the preferences, to update... Not the old object.
+
+00:23:48 - 00:24:31 Unknown Speaker:
+
+Will update what you will need, what you only need, only that one, one thing, only only one, so you will have, uh, did you get a clarity that you are only updating, uplift? I mean, that is the requirement. We only have to update, we have to first actually see their API, how it is working, how their update API is working. Ultimately, you are not supposed to change other preferences right now. They should not be sharing that information with us, we should not be updating. Is yes. Even sharing also not required and should not be done. No. Okay. See What is they are asking fine? What they are asking is fine, but what ideally it should be I am trying to explain. Okay, we will raise this. That's what we have to discuss.
+
+00:24:32 - 00:25:16 Unknown Speaker:
+
+This is a new pattern, right? Okay. Now we have to put this in a document on the diagram and then we have to get it approved. Yeah. But we will reject this one. Let's see what he says about this one. Yeah. Yeah. I mean, we can come up with our own idea and then we'll tell him if he's convinced, okay, yeah, if he's not convinced, then we'll go back to this idea, right? That's fine. But there is three things now payment gateway, recipient store and these common services. These three things we have to discuss and finalize Payment Gateway, common service and recipient management. Yeah, so for right now, let's close the payment Gateway thing. Payment gateway is the first thing. And he is different. He is different. When you will complete my... No, no.
+
+00:25:16 - 00:26:10 Unknown Speaker:
+
+I will tell you. There is still a discussion going on. But why don't we put one architecture for everything? It will not be now. Because that is different. This is different. This is different. Our target is what? Create payment. Payment gateway will come today. And what service is going to come behind that? We will list. And one of that is recipient also in the bay in the scenes, right? We will put everything in one design. Why three different designs? And tomorrow another page comes, we will put one as a one leaf. Perfect. Okay. ADMK, two leaves. Let us work on this and consider other three as another MOV, that is it. Everything will work the similar way, but that we will talk about a different functionality. Architecture would be same. Sorry, repeat that. Grid import templates.
+
+00:26:11 - 00:27:03 Unknown Speaker:
+
+Okay. It's going to be another MFE which falls under the same architecture. Okay. Same way they were called. Okay. CSP. Are we going to pick this? No. Grid is already put on by the Punggis team. Import is what our team is working on. Templates is not even started. But we will not be. We might pick templates once we are done with grid. But we will not be discussing about those. Things in the architecture will be same. Whatever you are proposing that should also be supported is what they should mention. Okay, because even if it is little different, everyone should be falling under payment gateway. Correct that that diagram was mentioned. Yeah, like that, what she has already mentioned, that diagram also calls it goes via the payment gateway. Everything, so architecture is same.
+
+00:27:05 - 00:28:06 Unknown Speaker:
+
+Actually architecture documents he shared no images only man, no diagrams, only content is there. Uday has shared yesterday, no? But we need to come up with an architecture document, diagram, right? Diagram also, diagram is important. I have to tune my LLM now. But we have to do it as soon as possible because based on this he is blocked. He's crying little. He has to start on common services now. Now he's also getting blocked. No, his recipient will quickly discuss. Yeah, we'll discuss about that. Come, explain your problem. Nothing. 5.30. We'll finish it, wrap it up in 15 minutes. Then have tea. Yeah, we'll have tea and then come back. Should I take a picture of this or should I edit it? Look like taking a picture. No, no, no. I'll take a picture.
+
+00:28:06 - 00:29:16 Unknown Speaker:
+
+I'll send it in the group. So, whoever will be like, what is this happening without me? I should improve my handwriting. I can only see back and gateway. These things are clear. This is very good. It's okay, man. You are not competing any final exams, right? You don't have 10th class board exams or something. Okay. Jump. So, in TSP paper I have created like this is the response management. Can I explain through PR or explain through this architecture? First you tell what's your understanding. Then we'll go. We'll ask more questions. Explain how you feel. Okay. So, actually for RISPAN management, we made changes in four modules. One is TSP web, service, config, and data. So, in TSP... First of all, remove that Angular. Which Angular? Angular is not there. It's a React frontend. Where is Angular?
+
+00:29:17 - 00:30:18 Unknown Speaker:
+
+They will ask where is Angular? Okay, I'll remove that one. Okay, and then in between, put gateway. Currently there is no gateway from user interface. It will come, Okay, let's not create a new page. Single earthquakes is the best idea. Like, once he does it, you explain him, make him understand he will create that. What tool I should use, I don't know. Some UML diagram must be there. What is that? Lot of things are there. Sequence diagram. Flow diagram. UML. DRADA table. DRADA table. DRADA table is there. Okay. Here I created one controller. There is the recipient management controller. Here we are exposing it to the two APIs. One is for search recipient and one is for recipient ID. There is no recipient ID. So in such this place, we have the response with filters.
+
+00:30:18 - 00:31:07 Unknown Speaker:
+
+The pagination and everything will support here, and it will check. Why do we need that first one, like we need the pagination, sorting and everything? Yeah, no, no, that is okay. Search recipients and that is completely straightly displays that yeah, yeah, completely list of residents. Okay, okay, this is for the recipient ID. Okay, yeah. So it will call to the like. We created one field injection here we order by. So we'll call this recipient management rest client. So here we are calling this external API. This is the Get Recipient Summary request and this is the recipient ID. Here we are passing that, what are the request and response, everything we are passing there. And here we are validating that based on the ID authentication. We need to pass the HTTP user also, like that Omar gave the TS recipient something.
+
+00:31:08 - 00:31:55 Unknown Speaker:
+
+He gave that HTTP user. And we are handling the retry logic and all like what we have, the existing one. Based on this, we are adding. So this recipient management client is our internal client, right? No, like that is recipient management that is external, one that Omar one. No, no client client which you are calling that is internal. Yeah, so from there we call in this external management services, this is third party, that is the Omar's one, here, this is the external. So, this is the one, like this is the summary one, like it will call, this is the search recipient, right? So, it will call this one, this is the summary one, it will get the paginated recipient list and supporting the filtering and sorting and everything, and this recipient ID,
+
+00:31:56 - 00:32:47 Unknown Speaker:
+
+this one it will call this one, based on the recipient ID, so it will give the list of the recipients, here you can see, right? This is the internal APS that we created, search recipients and recipient ID. And these are external APS that we call. Okay. And we don't have any add operation or update operation. No, no. It's just a fetch one. Yeah, fetching one. Now, in this we have two problems. First one is we have to see how to onboard our TSP user in their environment. Currently, our users, our TSP user with which we log in in our day-to-day TSP application, those are not present in recipient store. So, there are no beneficiary or recipient added for that user. For our TSP user? Correct. Even production data you are saying? Yes.
+
+00:32:48 - 00:33:34 Unknown Speaker:
+
+Would I be able to connect it? You are saying some 403 error somewhere. Yeah, that is if that user doesn't have any recipients, we are getting 403. That should not be, no? Correct. No, if it is nothing is there, obviously we will get that one only, right? 403. No. No, not 403. 403. Yeah, no. It should be empty list. It should be empty list. Forbidden. Forbidden. So, we are getting forbidden. Yeah. So, then that you have to check. So, currently what we tried few dev users. With which we are able to get data in TSP. No, no. Here, Dev users means the login users they have for the user ID. They have some data right in their system in DSP, they have system in DSP, they have data see DSP and Recipient Store.
+
+00:33:34 - 00:34:24 Unknown Speaker:
+
+There is totally different. This is a new module, this users will not be onboarded there. First thing is so even the backend AP is also being created newly now. Those are actual APS. They are already there, right? We are trying to connect. We are an external system. They are an external system. Now, if you are connecting their API, they should accept your request. That is first thing. That is authentication. They will validate something. That validation will help to understand what validation they are doing. Yeah, it should be app-to-app authentication only. So, that is one endpoint, another point. See, two types of user-level authentication is not required in this case. We are trusting you. You get me the details. That's it. You should trust us. That one through certificates it will happen. User validation they don't have to do.
+
+00:34:24 - 00:35:59 Unknown Speaker:
+
+User is authenticated or not. That they don't have to do. So right now they have any such other rules? That's what we were telling him to set up a call. Have they not shared any this one swagger? They shared one swagger. I shared one. Swagger will not have documentation. No, it should say man what ADA tokens you are expecting. Everything should be there. That is expected. Swagger AML. Okay, open that one of the API we are calling. This is the summary one HTTP user user ID only or passing unrequested body. There is no other parameters. So they are not testing anything, they are testing in their swagger now they have not added the authentication token. No, no, yeah, yeah, I tested, I tested very good. But the header tokens, how can they miss it?
+
+00:36:00 - 00:36:57 Unknown Speaker:
+
+Generally, if you see our swagger open our swagger, I have added that configuration takeoff, swagger, or maybe header tokens usually go through. The application is running the Dev one is there first, first, first, second, second, go, go, go green. Here, you see I have added the authentication token, that one, this lock symbol, right side, this one. They have not added this configuration, this lock. Click on one of the API hours. Currently, I have disabled it, but click on this. Click on that lock symbol. No, no, this is okay even here. Also, where are you? Okay? You are saying it's a lock only? Okay, this is how? No, no, this is barrel token. This is how even they also validate. So, if you have to call now, you have to call through Bruno.
+
+00:36:57 - 00:37:40 Unknown Speaker:
+
+Otherwise, if you call through here, they will give you 401 always because they need a token. Ultimately, we have to figure out how to connect to them. That is first thing. Second thing, that also has to be done once we finalize the design. That is okay. I mean, that is how we connect. It's just a technical thing that we will connect with them and ask them what authentication is there. That is okay. Design-wise, you should see. You don't need any design related confirmation. You are ending up connecting to those APIS, check with them and ask them how I can connect with you. You need to have authentication user authentication. Tell me what you want, I'll share it with you. Let's connect that APIS with that. It will not work, is what we are telling from that time.
+
+00:37:40 - 00:38:30 Unknown Speaker:
+
+They need an entitlement also, otherwise, that's why we have a discussion entitlement of the user. Or how they are expecting, basically. So that's what I'm saying. So let's list down things, what they are expecting, what is not available with us. We'll see how we can get that. Whether through, uh, fret, uh, okay. When we are getting a request from CS Portal that, okay, um, common services itself, they should be giving us the user details to us, the user is authenticated there. Only they have all the entitlements with them. Or you share the JWT token with us. We'll go and find what entitlements that user is having that they are sharing. They are sharing the token. So that is not a problem. Then entitlements we have, right, entitlements we have. We don't know what recipient store needs?
+
+00:38:30 - 00:39:35 Unknown Speaker:
+
+Oh, that's what we'll. If we connect with them, we'll get to know, okay, what I'm trying to? We'll connect with them, we'll get that. But it doesn't need any design confirmation. Yeah, this is internal, we will do it. Okay, so now. So who given you that endpoint swagger ML for you? Omar. Shall we schedule today? But that's bad if they are giving it as an swagger they should give everything in the swagger itself. Then what is the use of swagger here? So what error are you getting 403 is it? If you use, yeah, if you use what, what? And all you are passing as an input. No token here, tokens, bearer token, also your part without better token. What's coming in? 401 unauthorized? Okay, 403 is forbidden, means the request is not proper. Right?
+
+00:39:35 - 00:40:42 Unknown Speaker:
+
+Request is. Yeah, maybe, I mean, the user is not proper. That is why they are. I need to see their code, I had their code before, okay. I had seen their code long back. But they should have put it in our DSP only, no? No, it's Unipax. Even there you are not able to see. You have Unipax, no? You have Unipax access, no? You lost access, is it? No, no. You will have, no? No, no. I am just asking you why you didn't check that time. You lost access or what? I didn't see. Go to the repositories. This is very slow. T is payments i'll just edit there and uh any back system uh it is there first of all this one only now i'll open that one service domain service no i think it is in code.
+
+00:40:51 - 00:42:18 Unknown Speaker:
+
+We should see the endpoint, not the core. Seriously, I'm not able to see properly. I'm able to see, but it is very... No, go to the API only, the endpoint only. This is their gateway, API gateway. Core, not core, import. This is UI. Open the recipient management here only. This one. Open that. Application is there, no? This one. That one. It should have. Yeah, this should have. Yeah. This will have controller, APIs. Yeah. Recipient. This is V1. You are using V1. Why do you have two? This is recipient group. What is group? I don't know. They have different. Maybe in the recipients also they have grouping option. Yeah. They have not started working on this. See, jumping directly. Why we should ask? Path variable, recipient ID is important. And then what else? Pre-authorized is there, no?
+
+00:42:19 - 00:43:25 Unknown Speaker:
+
+Has permission. User ID. Request contact user ID. That's what. This entitlement we need. So, that user has need to have that entitlement. Then we need to give our all the users this access. The testing users. Testing users. We have to ask them, no? QA team. No, no, no. QA team, we have to ask. They used to onboard, no? Do it for one user first. Yeah. And then you should... No, no, no. There is one more thing. Unipax was following a different entitlement. Correct, simplified entitlement. And you... We have to ask that. You pass the JWT token, you received it from the UI, is it? Same, you took a new pass, it see. Whatever model we are currently following has been changed, these guys are following a new model.
+
+00:43:25 - 00:44:21 Unknown Speaker:
+
+So for the current user, I don't think we can assign this new recipient. Why? Why? Because the new model will be different. Might occur that functionality you are talking about. Just ask them this also. So, when you say add this enrollment where they do it, it's not MyTechUp, right? It's not MyTechUp. Admin center where they get entitlements. So, that guy should support both old entitlements and new entitlements. When they change this? Unipax. So, that entitlement we should give it to this guy also. And he need to change the code. That will not work. Current entitlement is totally different. They created it using the Unipax new way they created it. Now they have to switch back to the old entitlement. In case if they want to support, maybe recipient store has to support both entitlements.
+
+00:44:23 - 00:44:58 Unknown Speaker:
+
+This decision we have to discuss. This is a big step it is. Let's have discussion with Omar. Least on these two points. This one. I will put the chart on the group chat. Yeah. You write it. Okay. You go home and write it or go to the show. Okay. Fine. Yeah, we are done. Just wrote down these two questions. How to onboard is the first thing and which entitlement patterns they are using. Simplified or... What I...
+

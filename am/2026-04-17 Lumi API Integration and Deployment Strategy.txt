@@ -1,0 +1,162 @@
+2026-04-17 Lumi API Integration and Deployment Strategy
+
+Creation Time: 2026/04/17 11:32
+
+
+📅About Meeting
+
+• Date & Time: 2026-04-17 11:32 (Duration: 952 seconds)
+• Location: No relevant content mentioned
+• Attendee: Sachin, Sindhuja, Kundan, Ather, Sameer, Prithvi, Nirmal, Ayappa, Rajendra, Manju, Raj
+
+📒Meeting Outline
+
+Lumi API integration and authentication flow
+
+• Kundan’s API readiness and integration priority
+  The highest priority is to integrate Kundan’s API within the current sprint so metadata and table names display directly in Lumi. This must be closed before the upcoming Monday demo.
+• Front-end connectivity status
+  Front end is not yet able to call the target API; current blocker is token retrieval and correct method usage.
+• Token generation approach and orchestration
+  Do not use the previous token-switching approach. Use the One Identity/MSP API via the orchestrator class to call the token method, then call the execute method for the Lumi API. Build as a local independent bundle first; a separate repo will be created after it works. Pass the token from the first bundle to the next via BPMN: step 1 generates token, step 2 calls API with token, step 3 returns consolidated response. Ather will trigger the BPMN from the front end.
+
+Deployment and environment readiness
+
+• Target environments and timelines
+  Code must be deployed to the “even” environment and run end-to-end before Monday. Parallel effort to align/move codebase to the main branch so it’s ready for the Monday deployment.
+• Access and repository setup
+  Required links will be shared and read access granted. Initial development to be local; new repo for the API bundle will be created post-successful local validation.
+
+Data sourcing and SQL logic
+
+• Source tables and query placement
+  Implementation should read latest data from the DQ repository table (test table acceptable for now). Reviewer could not find SQL in the repo; team clarified it exists in executor.py (around line 63).
+• Filtering logic and required columns
+  Do not use a “status”/“self-service status” column for selection. Logic should always fetch the latest record based on timestamp and date. A dedicated date column is required to reliably pick the latest record (yesterday’s record due to processing cadence). The date column is currently missing and must be added.
+
+Environment health and testing status
+
+• Even environment issues
+  Even environment shows DAGs/jobs in waiting state; CPU usage >90%. No known large file uploads or long-running queries. Needs immediate investigation with environment compute view.
+• Insurance analytics deployment validation
+  E3 shows Insurance Analytics in the dropdown; functional testing is blocked by absence of live data. Alerts/data will trigger downstream validation once available. From team side, deployment completed; awaiting data to confirm end-to-end.
+
+Resourcing, leaves, and coverage plan
+
+• Upcoming leaves and coverage
+  Sindhuja will be largely out this week (working until 27th ~4 p.m. then OOO with public holidays plus two PTO days). Sameer also on leave. Request made to avoid additional leaves this week other than pre-approved ones.
+• Team coverage and grooming
+  Nirmal to be groomed to handle “lazy” use cases and manage Thursday operations; Kundan to provide technical support in Sindhuja’s absence. Escalate to “seven” onsite if needed. Prithvi to redeploy and ensure flows run end-to-end. Weekly updates to include all worked use cases (some may be excluded from status mail but should be documented).
+
+📋Overview
+
+• Integrate Kundan’s API with proper token flow via orchestrator; highest priority to close before Monday.
+• Front-end currently blocked on token retrieval; BPMN flow will chain token generation and API execution; Ather will invoke from UI.
+• Deploy to even environment and ensure end-to-end runs; align codebase to main for Monday readiness.
+• Use DQ repository table as source; ensure SQL exists and fetches latest by date/timestamp; add a date column to support selection logic.
+• Investigate even environment waiting-state/CPU >90% issue and unblock DAGs.
+• Insurance Analytics visible in E3; await data/alerts to complete validation.
+• Leave plan: minimize additional leaves; Nirmal to be ramped for coverage; Kundan to handle technical escalations.
+
+🎯Todo List
+
+• Sachin:
+  • [ ] Share orchestrator/MSP One Identity token method references and grant read access to required repos/links, Today
+  • [ ] Create a separate repo for the API bundle after local validation succeeds, Before Monday
+  • [ ] Coordinate leave coverage; groom Nirmal for “lazy” use cases; align stakeholders (Rajendra, onsite “seven”), This week
+
+• Kundan:
+  • [ ] Finalize and expose Kundan’s API for Lumi metadata/table name retrieval, Immediate; blocking item for integration (Before Monday)
+  • [ ] Support token flow implementation and troubleshoot integration issues, Ongoing through Monday
+
+• Front-end (Ather):
+  • [ ] Invoke BPMN from UI once backend exposes the orchestration endpoint; wire response to Lumi display, By Monday demo
+
+• Backend developer (assignee for integration):
+  • [ ] Implement token retrieval via orchestrator (One Identity/MSP) and call execute method; build local independent bundle, Today
+  • [ ] Chain BPMN steps: token bundle -> API call bundle -> aggregate response, Today
+  • [ ] After local success, migrate to new repo and integrate with front end, Before Monday
+
+• Data/DB owner:
+  • [ ] Add a date column to the DQ repository table to support latest-record selection, ASAP (before next run)
+  • [ ] Ensure timestamp and date-based query picks yesterday’s record per processing cadence, After column addition
+
+• Prithvi:
+  • [ ] Deploy to even environment and ensure end-to-end flows run; verify SQL placement (executor.py) and data source tables, Today
+  • [ ] Provide weekly update including all use cases worked, End of week
+
+• Nirmal:
+  • [ ] Investigate even environment issue (DAGs waiting; CPU >90%): check running queries, queues, and compute; remediate and report, Today
+  • [ ] Get groomed on “lazy” use cases and be ready to manage Thursday operations, This week
+
+• Sameer:
+  • [ ] Support grooming Nirmal and handover details for lazy/use cases before leave, This week
+
+• QA/Validation:
+  • [ ] Validate E3 Insurance Analytics once data/alerts arrive; confirm end-to-end behavior, Upon data availability
+
+• All team members:
+  • [ ] Avoid additional leaves this week beyond pre-approved ones; be prepared to explain owned steps to stakeholders, This week
+
+Transcription
+
+00:00:12 - 00:01:06 Unknown Speaker:
+
+As you know, some of the features I have demoed it to them yesterday, the one that you have built it, okay, uh, just to, you know, convince them that we are still working on that part. So once Kundan's API is ready, uh, in this print, your priority should be to integrate that API. Okay, because they are seeking that metadata and the table name should get displayed through the Lumi itself. This is our highest priority right now and this should be closed in upcoming .  Just one thing, so from front end are you, you were able to connect to this particular API or get the data? No, no, he is not. That is the reason. Look for that. Also, I had a conversation with these guys, right? Why he should not be using it, because they are not using the hot glue, right?
+
+00:01:06 - 00:02:02 Unknown Speaker:
+
+As they're not using the hot glue. Uh, when Ather would be passing that token, it can get hacked. Okay, this is the thing I already looped in us, so he is aware with these changes and then everything. What is this method switching, then they token one? That is what I am trying to convey you, you really need, don't need to do these all stuff over here. You just need to call that, uh, okay, and call that execute method, which this guy was explaining to you that I got it right before calling that lobby API, right? I need to get the token right, so so call that token method now. Yeah, token method had some configuration, right? If you see, we have to... So, give me a second. It has been done at the N number of places.
+
+00:02:03 - 00:03:41 Unknown Speaker:
+
+Give me a second. How you can call it? MSP API, right? One identity. Obviously, here what you need to do, you have to call that orchestrator class. Okay, can you ping me this link? This thing might not be having access. Let me give you the access. First of all, the read access will be there. Okay, so this should be your independent bundle, okay? But instead of creating an independent bundle, first of all, you know, do it in your local. Once you're ready, right? I'll create a different repo for that API. Okay, so, once you're able to generate this token, which I was displaying it to you, okay, uh, right, pass that token to the next, uh, to that next bundle, okay, and then, um, with that token. That would call that.
+
+00:03:41 - 00:04:37 Unknown Speaker:
+
+So it would be via BPMN, your BPMN should be like, uh, one bundle class, I think you just need to create like this. This would giving a token passing to this one, and this would be creating a response and sending it back. Uh, in the final response, right? So what I need to do? Ather would be calling this PPM from the front end, and then you would be getting that response. In the end. What I was thinking is, uh, you know, we will make it conditional. Okay, for different? Yes, that would be done, but, of all, implement. This is when, uh, we would be in trouble if this implementation is not closed in upcoming Monday. So you need to close it today so that author can integrate it Monday before our option.
+
+00:04:37 - 00:05:32 Unknown Speaker:
+
+Okay, and parallelly, just make sure that we are moving that, uh, you know, code base to the main plan. So that that would be ready for the Monday department because that sign up is being provided by. You might have seen it. Yeah, I saw that. This needs to be deployed on a .  First, let me close this one. Then  I will move  to this token. Yeah,  OK. Sameer,  from your  side, I'm good. Prithvi, from your side, I'm also good. Prithvi, one just called. Now, as we already reviewed the code, I'd like to  modify  it once again time. Okay with that, till the time your, uh? Your task would be to get it deployed on the even environment, and the flows would run end to end.
+
+00:05:32 - 00:06:50 Unknown Speaker:
+
+And one thing that I have observed is that I did not see any equal query being written over there, any file anywhere. I did not see your implementation. Certainly, you should be reading the data from the DQ repository table, the latest data. Yeah, it is currently reading it on test table. The test is fine, even test is fine, but I did not see in that query while I was reviewing the code. No, no, no, it is actually we are reading it from that one only. It's working in even option. Well, well. Second task is the one, read input data. No, where did you place that SQL query? One second. Because we have gone through this all template everything, right? I did not find any SQL query being written. Yeah, can you open executor.py? Line number 63.
+
+00:06:59 - 00:07:52 Unknown Speaker:
+
+What is the condition? The condition, Sachin, I requested for addition of that column in the table. If you add it, then I'll put that condition also here. What is the column you're expecting over there? Status, like self-service status or query generation status, something. No, that is something we would not recommend. You just need to check if there is a new entry for today's date, then just go ahead and pick that up. No activity is required. Whenever your process is running, it would always fetch for the last date, and last date you can easily find it out from the timestamp column over there, right? Yeah. I hope... If I'm processing for today, I'll pick yesterday's record. No, no, no, no. Yes, it would be a brief time, yesterday's record only. Because today, suppose, till 12 a.m., right?
+
+00:07:52 - 00:08:45 Unknown Speaker:
+
+People would be registering their roles, right? Right, ma'am. So, we should not be running it today. So, Whenever... request terms, we would be doing it the next day. So yesterday is, uh, yeah, we need a date column, we need a date column. Okay, we need a date column. Date column is not there. So we'll add that. Okay, uh, Point noted. Uh, we'll add our date column over here. Because without that, you won't be able to pick the latest record. Okay, till that time, please make sure you are just deploying it to the event. And, uh, you know, run it end to end. And then maybe we will validate it on upcoming Monday. Oh, sure, okay, yeah, okay, super sweet and okay. I have one more, uh, you know, one request to you regarding your lead plan.
+
+00:08:45 - 00:10:04 Unknown Speaker:
+
+Okay, what? I have observed that I'll be only for this complete week, so 27th I'll be working till, uh, you know, maybe 4 p.m. And then I'll log up. I'll be traveling that day and I have public holidays for a couple of days, so I just took two more days leave. So I'll be completely out for this week, right? Samir is out for, uh, again, he's also out, okay? So is it possible if you can move your leave instead of Thursday to next Monday. Actually, my brother's marriage actually. Actually, I need to travel 29 only, but I'm managing actually. 29th. Okay. So then you'll be able to manage the complete team then? Yes. Managing means any issue related to raise the insurance? Just an overview call if you can, you know, you know, overview call.
+
+00:10:04 - 00:10:54 Unknown Speaker:
+
+Okay, let me do one thing. We are sitting on 17, right? Let me pull Nirmal to raise the bar so that he would be able to manage the raise day along. This is something I think, actually Sameer's request came quite late, okay? It was, I think, last week, Sameer, right? Right, so I thought of, you know, I was like, it would be me only who is on leave for this week, so the rest of the guys, they are already there, right? This is a new public holiday for all of us. And one day PTO for IFO was not a concern for me till the time, you know, you were there for Q-track and insurance, and then Samir could have handled that. Okay, Samir, let's do one thing. Let's groom Nirmal to the lazy one. Okay.
+
+00:10:56 - 00:11:42 Unknown Speaker:
+
+Please use this one because I think it might not be able to grab it, uh, quickly. Nirmal has worked few of the use cases for lazy, right? So if it's, uh, boom near one for that. And just one request to all of you no leaves in this week apart from first. Otherwise, it would be very difficult to justify to Rajendra. Because then he would come back to me mentioning that, uh, you know, uh, Url leave. And people are taking on leave on that, so please no leave. Apart from the one that we have already planned it out. Okay. I am taking leave almost after six to eight months. I think I took leave on November and then now we are standing on April. Okay. So, I am taking leave almost after six months.
+
+00:11:42 - 00:12:43 Unknown Speaker:
+
+So, please, you know, back me during this. I need everyone of you during this time so that at least when Rajendra reach out to you, at least you would be able to explain the... individual steps that you guys are doing. Okay. And in my absence, like, you know, Sindhuja, you would be, you know, anyhow, you would be taking those complete initiative, but for any technical issues, Kundan can take care and, you know, help solve their issues, the team are facing. And anyhow, during the onsite, we do have seven, so you would be taking care of that. In case, Even if it's Kundan is struggling, then we can reach out to seven during that time. Okay, uh, normal, uh, where you are with testing, uh, such in the human environment is down now, it's down since last two years.
+
+00:12:43 - 00:13:41 Unknown Speaker:
+
+No, no, yesterday I know it was not working today, also it is not working. No, all the Dabs are in waiting state. I thought it will run for one hour, then I checked the CPU digits more than 90 percent. Oh man, did we placed any file or is there any query which is still running over there? Uh, sorry, can you? Can you come again? Even environment, all the tags went to a waiting state, all that's on the waiting stage. Okay, I didn't look into that one, okay. Yeah, let me check, Sachin. We haven't uploaded any big file, actually, on the GCS module. Can you quickly bring up your screen? Can you show me the computer? From your side also, I'm good. Please move ahead and just share the weekly update for this week.
+
+00:13:41 - 00:14:45 Unknown Speaker:
+
+And as I mentioned, if you have worked on some other use cases, please mention that. We will not incorporate that in the status mail, but please, please start. Yeah, just wanted to know, because if there's anything, hopefully on workspace side, but if anything is striking, we'll quickly just look at it. Okay, it has been deployed yesterday only, right? So let's see if we get any alerts for insurance then that would get populated over there. Okay, I'll ask. He would be not able to validate until unless there is data. Uh, like that, no problem. So testing from our side is done. Basically in E3 we can just see, so I can see in the drop down we have the insurance analytics added, so in E3. Till here only we can just test it.
+
+00:14:45 - 00:15:36 Unknown Speaker:
+
+We can't test with actual data, so maybe once, as you mentioned, the data will be there, we'll just confirm. Okay, okay, okay, I'll not waste your time. So if you want, you can feel free to drop off Samir Even, you can feel free to drop off. Uh, and see, you can stay back. And then even you want. You can feel free to drop off with three. You can feel free to drop off Nirmal Ayappa and simply stay back. So this is even. Sorry, after your updates, could you probably call me back? I have something from Manju and Raj that I want to discuss with you. Okay. I'll ping you, Sindhuja. Sure, Sachin. I'll drop off for now. So just let me know once you're done, okay? Okay. Thank you. Thank you.
+

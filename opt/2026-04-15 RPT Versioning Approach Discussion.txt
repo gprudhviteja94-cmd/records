@@ -1,0 +1,201 @@
+2026-04-15 RPT Versioning Approach Discussion
+
+Creation Time: 2026/04/15 18:06
+
+
+📅About Meeting
+
+• Date & Time: 2026-04-15 18:06 (Duration: ~31 minutes 18 seconds)
+• Location: Online meeting
+• Attendee: Ravindra, Srinivas (Srini) [to be consulted], Rahul, Alok, Shiva, Paul, Rashmita, Ali, team members working on RPT/RPT versioning and automation
+
+📒Meeting Outline
+
+Versioning approach for RPT (UI/API configs and data model)
+
+• Current status and pending decision
+  The team has not started backend development for versioning; a design decision is pending between two approaches: keeping a single collection with full copies per release/version vs. maintaining deltas and comparing across collections/documents. Clarity is required before schema finalization and development proceed.
+
+• Proposed approach (single collection, full snapshot per release)
+  For each release, store a complete config snapshot in one MongoDB collection (e.g., RPT version history). Expected volume is low (≈20–30 versions/year; even at 100/year over 10 years ≈1,000 docs), making storage manageable. Benefits cited: simpler implementation, easier maintenance and tracking of added/removed features, straightforward UI show/hide control driven by config (no hardcoding).
+
+• Alternative approach (delta-based comparison)
+  Maintain changes only and compute differences by comparing old vs. new documents/collections. This would add comparison logic complexity and ongoing maintenance overhead. Performance impact is expected to be minor, but the team prefers to avoid complexity and potential long-term maintenance costs.
+
+• Scope of config controlled by versioning
+  Page-level and form-level UI behaviors (e.g., homepage columns, RPT tabs PDW visibility, field-level toggles like client name, BG definition, opportunity). The same collection can hold UI and API-related configs if needed to simplify consumption. No separate API-config collection is planned unless it clearly helps downstream teams.
+
+• Key stakeholder concerns and justification preparation
+  Anticipated questions (from Srini) include rationale for duplication when there are no schema/UI changes between versions, long-term data growth, and performance. Team’s justification: low data volume, simpler maintenance and auditing, predictable retrieval, and avoiding complex delta logic. Performance difference is not significant; the driver is maintainability and clarity.
+
+APIs, collections, and UI integration
+
+• Existing APIs and collections
+  The GET API to list versions (for dashboard/history) exists and is integrated with an RPT version history collection. Background collection name: RPT version history. The API to view which version was active at a given time is reported as done. Some endpoints were completed and a PR is being raised today.
+
+• UI integration status
+  Rahul has created the UI for version history and will integrate the API. Validation with real entries is pending before formally marking the story as completed.
+
+• Data model and schema finalization
+  Saving strategy (“how we are going to save”) and final schema structure will be decided after the design decision call. GET endpoints are largely ready; create/save endpoints depend on the agreed model. Dashboard will use the GET endpoint to fetch all versions (currently shows all versions, not filtered by a single RPT ID).
+
+Planning, ownership, and next steps
+
+• Decision meeting and alignment
+  Ravindra will schedule a call with Srini (and relevant stakeholders) tomorrow to review and finalize the approach (full copy vs. delta). Team members should be prepared with clear, quantitative/qualitative justification focusing on maintainability and operational simplicity rather than only ease of implementation.
+
+• Work in the current sprint
+  Proceed with tasks that are not blocked by the design choice (e.g., UI integration, readiness of GET endpoints), but hold implementation of the save/write logic and duplication strategy until confirmation.
+
+• Story assignment and updates
+  The user story for current/previous versions API is acknowledged as done with a PR incoming; validation with live data pending. Paul’s story on version history will be picked up today. Any additional stories for the chosen approach will be created post the decision call.
+
+QA automation and tooling
+
+• Automation status
+  Rashmita is working on JSON-to-Excel comparison to mirror QA TM’s current Excel-vs-RPT Excel checks, but replacing the source with JSON files. Potential need for an API to download required artifacts was raised; help to be coordinated if bandwidth is available.
+
+• Collaboration and support
+  Team will sync offline as needed to support automation tasks; Ali offered help. Ensure contributors on versioning are included in design discussions for shared context, even if not directly changing their work items.
+
+Branching, deployments, and housekeeping
+
+• Recent issue resolution
+  Yesterday’s deployment issue (wrong branch deployed) is resolved. The correct feature branch is now in drive; once merged to main after the sprint, consistency will be ensured.
+
+• Branching guidance
+  All feature branches should sync from the designated feature base; avoid deploying older branches. Team reminded to update related tasks accordingly.
+
+📋Overview
+
+• Team has not begun backend versioning development; a design decision is pending between full-snapshot-per-version vs. delta comparison.
+• Consensus leaning toward a single collection with full snapshots due to low data volume and easier maintenance/auditing; performance difference expected to be minimal.
+• RPT version history collection and related GET APIs are implemented; UI for version history exists and requires API integration; PR raised today.
+• Saving strategy and schema will be finalized after a decision call with Srini; until then, proceed with unblocked items and hold save/duplication work.
+• Automation effort ongoing: JSON-to-Excel comparison being built; may need an API for downloads; team to coordinate support.
+• Branching/deployment issue from yesterday resolved; reinforce correct branching practices and task updates.
+
+🎯Todo List
+
+• Ravindra:
+  • [ ] Schedule and host decision call with Srini to finalize versioning approach (full copy vs. delta), include Rahul, Alok, Shiva, Paul, Rashmita, and other relevant contributors; prepare justification on maintainability, data volume, and operational simplicity. Time: Tomorrow (same time). Deliverable: Decision and meeting notes.
+
+• Rahul:
+  • [ ] Integrate version history UI with existing GET API and validate with real entries. Time: This sprint. Deliverable: Working UI integration.
+
+• API Owner (creator of version history endpoints) / Assigned developer:
+  • [ ] Raise PR for completed APIs (versions listing, active version by time) and address review feedback. Time: Today. Deliverable: Merged PRs.
+
+• Paul:
+  • [ ] Pick up and progress the story related to version history today. Time: Today. Deliverable: Feature progress update/EOD status.
+
+• Backend team (Schema/Save flow):
+  • [ ] Post-decision, finalize MongoDB schema and implement save/write logic per chosen approach. Time: After decision call; target within current/next sprint. Deliverable: Schema doc + implemented endpoints.
+
+• Rashmita + Ali (support as needed):
+  • [ ] Continue JSON-to-Excel comparison automation; confirm if an API is needed to download artifacts and coordinate dev support. Time: This sprint. Deliverable: Working comparison tool and documented usage.
+
+• DevOps/All developers:
+  • [ ] Ensure all feature branches are synced from the correct base; avoid deploying outdated branches; update affected tasks. Time: Immediate and ongoing. Deliverable: Stable deployments and updated board.
+
+• Meeting organizer:
+  • [ ] Share decision call invite and circulate pre-read (current proposal, data volume estimates, pros/cons). Time: Before tomorrow’s call. Deliverable: Calendar invite + pre-read materials.
+
+Transcription
+
+00:00:15 - 00:01:14 Unknown Speaker:
+
+We are just thinking, I am just thinking like he is telling, Ravindra is telling like there will be duplicate. Okay. So mostly, like for every like, these version changes we won't do regularly, only for release times. Like we may add one collection there, okay, so if we assume like for every month, so for every month, only two records will insert yearly, it will be 24. Okay so like think about 30 think about 30 shiva maybe somewhat fixation things like maximum 30 records in a year if we consider 100 also like for 10 years it will be thousand. Right. Okay. So that will be like for RA output and rates per quantity, if we ran one time, it will be like some 50 to 20k records. If we consider those kind of data, like it will be less only.
+
+00:01:14 - 00:04:23 Unknown Speaker:
+
+I'm just thinking. So it will be easy for us also to track. Okay. So what feature we have added, what feature we have deleted, it will be easy for us by maintaining the code, by maintaining the changes. So yeah, that is just my thought. Okay, so team like, if you have any other suggestions, we can go, we can discuss with. Uh, like Ravinder, Shiny and Shika, if we can, maybe we can find like that. In that day, I already put this all things in front of him. Let's see, yeah. Sorry, since you are there, I have a question with respect to that versioning thing. I heard like you people have worked on already the back end schema for versioning. So may I know the status of it, like how much it is done now?
+
+00:04:26 - 00:05:22 Unknown Speaker:
+
+Yeah, that only. Like we discussed one process, okay. So Ravindra is telling another one, like he is suggesting another way. So for that one, like, we are still like thinking, so can we go with the first thing? What we discussed are like the other one, which Ravindra has suggested. So we don't have any clarity as of now, so we are just like thinking which way we can go. Once we got the clarity, maybe we can. We can tell you, okay, but you may know like this is not started yet. We are actually making a decision so that we can proceed ahead with the development. Yeah, actually, like, in which way, whatever the process, we need some of the APIS. Okay, like a creator for saving, for getting those results, so those things we need, but saving under like how we, how we are going to save.
+
+00:05:22 - 00:06:21 Unknown Speaker:
+
+That is the doubt now. So once we got the clarity, maybe we can work on the MonGodb website. Remaining things we are good for one, okay, even the schema part also would be decided later. Yeah, So, mine is get API only. So, once it is created, the dashboard, I have to give that endpoint so that they can fetch all the versions. That is, I think, already done. It is done, is it? Yeah. So, in that case, the schema is also created. Other schema. While we are saving it, we are going to show saving the forecast model by API. Oh, sorry, collection, so from that collection we are going to fetch that. So him and she did those changes, save under like fetching those details. Okay, yeah, please, yeah, see this.
+
+00:06:21 - 00:07:12 Unknown Speaker:
+
+I want to access versions to replace for RPT model so that I can see each version that was shared tested, please. And understand that which version was active at any point of time. I think this is also done. This API is also done? Yes. What is the background collection for this? That is like a version history. Version history, okay. Yeah, RPT version history, that is. Okay, that is also done. Raul has created the UI also, so he needs to integrate that API. So today only I have completed. I am just rising the PR. Oh, you created this, is it? You developed it? Yeah, actually, like, Uh, last time when we discussed, we shared some of the APIS. So in those things like, I got this thing, then stories assign on my name, actually, that is so okay, that's fine.
+
+00:07:12 - 00:08:07 Unknown Speaker:
+
+So can I tell that this is completed then and assign it to you? Um, let's discuss once we have entries available. Okay, because we are in the middle of this print, right? So I don't know. Can I get the context of what is the design decision that is pending? So, maybe I remember discussing last time, but I didn't get clear picture on what decision is pending. Okay, I am just sharing my screen. Yeah, please. Okay. So, what we are thinking is, so we have to create one collection. So, for example, for every release, this is the first release. Okay, in the first release, we have these details. In the page level, Config in the home page, what things you want to show, what things you want to hide? So we'll keep here.
+
+00:08:07 - 00:08:44 Unknown Speaker:
+
+Okay, same like that in RPT form, what things like if you want formulary, if you want weight loss, if you want weight. So based on the checks, like in the you will like UI like, they will show and hide. Okay. So for example, RPT tabs which are PDW you want to show for first release, which are PDW you want to show for second release. That is like these kind of things we have kept here. Maybe it will, uh, we have to add some more fields or we have to remove, but that is. This is not finalized, but we are thinking in this way. Okay, so in the second release, same like, Uh, in the details, we will add what and all the features we are going to do in the page.
+
+00:08:44 - 00:09:31 Unknown Speaker:
+
+Configs also same like if you want to add any new column in the like home page. Okay, if you want to remove anything like from our PD form based on the second release, based on the requirement. If both are same RPT ID, right, same RPT ID, different versions. Uh, not same RPT ID, like RPT ID will be like, unique, right? So once you created that one, like, it will be in that version only. So you can't do anything on that, just you can do. Duplicate that model at that time, like it will be like a new new idea. But the version is something, uh, for an existing one, you are adding some extra features, then it is versioning, right? Yeah, existing only see now in the version. In the first version, they want only client name for one.
+
+00:09:31 - 00:10:19 Unknown Speaker:
+
+Okay, so you can show only client name in the second version, they want client name. BG definition opportunity and actually these four fightings we are showing in the second version, okay, in the third version. If they want to remove BG definition this, so we can make this BG definition as false, that is third version. So these kind of these kind of like, hide and show logic. We will play from the UA like this collection level, okay, okay, so we are not hard coding in the UA level, so that's what we have suggested. Okay, like in the first release, so we can add this basic correction like that. Is there like, uh, some parent level connection in the next feature, in the next version? If you want to edit, so what are the things you are going to edit?
+
+00:10:19 - 00:11:03 Unknown Speaker:
+
+Those things only will go here, remaining things. We won't add everything here. Okay, in the next version of it, Okay, yeah. So remaining will not touch only we'll keep as it, but maybe the modified fields will come there. Yes, uh, so he's suggesting, like, just compare these two things, so what we are thinking? Instead of comparing like old two collections, just we will keep one collection only. It won't take much time and it won't occupy the proper like much data also. So just to get such thinking this. So if you have any suggestions on these things, how we can go? If you have any other options, or if you want to, if you want have any good solution, we you can suggest it for one. So based on that one, we can go. What do you?
+
+00:11:03 - 00:12:15 Unknown Speaker:
+
+We can, we can choose one best, best solution. Yeah, so in the history, so, uh, that the page that we are, that history table, is, versioning table is there, right? Yeah, this is the versioning table. Version history, front end. Yeah, this is version history. In the front end, we are displaying for a particular RPTID, what are all different versions present, right? No, that is not the particular RPTID. It will be like whole. All the versions, okay, okay. Yeah. Because UI, like, we don't have options, so that's why, like they kept. When we click on that, it will go to that one, that one, that's it, that question. Okay, I'll connect with you offline also once. Uh, once this car is done. Okay, thank you. Hey, hi, Ravinder. Wait for one. Sorry, I don't know.
+
+00:12:15 - 00:13:50 Unknown Speaker:
+
+Are we discussing anything? Yeah, like, uh, yeah, like, uh, I shared you the list of work items like we have shared right in the class. Yeah, okay. So, like in that one, like I got one user story, I completed it, so that same story was assigned. Okay, okay, um, which one? Let me share my screen? Let me share my screen, give me one minute, give me one minute. Which story you completed? So the power one, right? This one. Yes, I'm just pasting again here, okay, okay, so here, so here. Like the new API for the current and previous versions, okay to show in the like table. Okay, okay, that is already done. I thought like you was the only manga collection. That is both thesis done. Okay, okay, that's fine. So that's fine.
+
+00:13:50 - 00:14:45 Unknown Speaker:
+
+I'll get on that story for Paul. So we're good on the version history, correct? Yes, yes. Okay, okay. Paul, I'll get on that story today. Okay. So what is our other question? Did we discuss about the... the versioning implementation against Jiva? Did we have any conversation? Yeah, like today, I connected with Ravi, uh, like, uh, Rahul and Alok. So we are thinking, like, what we proposed first, right? We are thinking that will be the best solution. Because instead of like, comparing two collections like that will be like, a little bit, uh, logic to be how to implement heavy and this like, Uh, we are maintaining the only single correction right for one release. Okay, so instead of why, like, oh, why? We will get a lot much data so it will be easy for us for us also to track.
+
+00:14:45 - 00:15:28 Unknown Speaker:
+
+So just we're just thinking, yeah, like, uh, we need your suggestion or stream, is anyone? So, yeah, yeah, no, no, I'll, I'll. So if we are, we'll go down that we have justification to do that. Um, see what this is. This is like a brainstorming thing about what we did and we came up that. I'm good with it, I don't have any issues. Because end of the day, you guys need to provide the feedback that this is. This is tough, this is easy, right? Um, if we have, if we have clear justification that no, this is the best solution we can. I'll schedule a call with Sweeney, we can have that implementation call. And, uh, if I'm sure you, you know, right, you know him. He's going to ask, why do we need to duplicate first?
+
+00:15:28 - 00:16:25 Unknown Speaker:
+
+And, uh, we can, we can justify that. Okay, comparison logic is going to take time. And, I mean, implementation time is fine, but performance issue, it's going to have performance issue. Then we are good. As long as we convince the training, then we are good, actually. So we can take that approach. But be ready with the questions to answer, okay? Wow. So what you said so far, what I heard is that the logic to implement to compare, but that is going to impact the performance. Is that the correct statement? Performance, instead of comparing two collections, old one and new one, I think we are just thinking it will be easy for us. Easy for implementation? Easy for implementation as well as easy for implementation, easy for maintenance, both. Yeah, so easy for implementation is not the question, basically.
+
+00:16:26 - 00:17:12 Unknown Speaker:
+
+That's not we can put it because even if we take more time, we need to have a better solution, for sure. Right, easy implementation. Let's keep aside, we can take a five instead of five pointer story. We can complete this file if we go in that approach, but if we need 15 pointer for other approach, we'd prefer 15 points. That's fine, uh but, but we are not duplicating data. And, uh, you know, um, so. But what is the other one? The performance issue is the main concern. Correct the performance issue do we have? Any statistics that, okay, if we don't get, we save 2 seconds or 15 seconds or 10 seconds, I don't know. How do we show that? Well, it is not that much performance.
+
+00:17:13 - 00:18:09 Unknown Speaker:
+
+Just directly fetching data from one document and comparing collections and doing the logic from two different documents. It is not that much performance, but the logic we have to implement, And the like, the maintenance also, I mean, the Delta, Delta version. And uh, they're like, we are just adding what and all, they remove what and all we have added. Okay, in future, if you wanna, if you wanna like, validate these scenarios, it will be easy for us. Yeah, yeah, that's true. Maintenance is easy. That's what one of the reasons we are saying, but performance also not a not a, uh, significant difference, right? So. Performance is not a challenge. The thing is long-term maintenance will be very easy. What kind of maintenance? Maintenance means just config. It's just config.
+
+00:18:09 - 00:19:01 Unknown Speaker:
+
+It's a kind of config where we are placing it in MongoDB or a JSON file like this anyway. We are just placing it in MongoDB so that we can get it anywhere. But the question is how do we answer that? How do we answer that? Like if we don't have any changes in the UI API, only change in the schema. We still need to duplicate as it is, right? Is that not my understanding? Yes. 50 fails, every version you're copying it, even though there is no difference between those. Anyway, totally in a year, it will be 24 sprints, 24 releases. And you are also planning to remove previous versions. No, there is no question of renewing right now. But it is going to take time. We don't know what is the definite time to keep the virtual chat.
+
+00:19:03 - 00:19:57 Unknown Speaker:
+
+Anyway, we don't have much data. See, just comparing, if we have some 30 releases in a year, that will be 30 documents only. In 10 years, it will be 300. By maximum, if we increase the collection of documents also, it will be 500. So like it is not touchwood data, like if we compare our output and these data. So just we are thinking that, okay, yeah, no, no, we are good. I'm good. I'm asking questions because these questions will come and I'm going to be ready to answer. Yeah, that's the only thing I'm not against of it. Okay, let's keep it. Um, um, let's keep it, and I'll schedule call tomorrow, okay. Sure, sure. So we're copying, so the approach is that we're keeping, every version we're keeping collection of these details for UI, okay?
+
+00:19:57 - 00:20:54 Unknown Speaker:
+
+And API, I don't think we need to maintain API details, but this one place is enough for both, right? We don't need a separate collection to maintain for API, correct? One collection will hold all API, UI, as well as the data mix back and forth. No, we are not holding it, right? If they need any kind of configs which will make their work easy, then also we can hold it here. Okay, okay. Yeah, yeah. Makes sense. Cool. Okay, that makes sense. So let me think of if you need any other stories on that approach, but I can discuss, I can put that only after the discussion with Srini tomorrow. Okay. Let me schedule that. We can discuss there and let's get everybody on the same page. That's one thing.
+
+00:20:55 - 00:21:56 Unknown Speaker:
+
+And Rashmita, I'm sorry, I didn't get a chance to sync up yesterday. Where are we with automation? What is the state? What is the update, Rashmita? Yeah, I don't know. I'm working on that JSON to Excel comparison. Okay. To make changes to that. When we have, like, I'm trying to follow what the QATM is currently doing with the, having all the Excel from the app and comparing it with the RPT Excel. I'm doing the same, but with the JSON files. Okay. Yeah. Okay. So do we need any help? If someone has some bandwidth, do we need to build an API to download that? Do we need to sync up offline or either this one, because can we sync up if he has bandwidth here? Yeah, yeah, yeah, yeah, sure, I'll call you. We need a help there.
+
+00:21:56 - 00:23:07 Unknown Speaker:
+
+Um, do we have anything from your side? Um, I guess I have taken the part of force from where we are just saving the versions and everything, so that's true. Yeah, yeah, yeah, that will not change. But when you guys are discussing, please introduce as well because they're contributing on this version. Uh, at least to be on the context, it's not related to your work. So that we'll get the overall sure. Sure, thank you, thank you all. Uh, yesterday's issue resolved. Yeah, yeah, it resolved. Sorry, thank you, thank you. Thanks so much for your help. Yeah, it resolved. Actually. See, Sir, was that branch? And, uh, can we? Can we put it that fixing all the branches, please? It is. It is in drive means once we merge it to main on after this sprint over, so it will all exist.
+
+00:23:07 - 00:24:00 Unknown Speaker:
+
+Okay, so we need to ask our team. Feature branches, all with the budget, should sync up all features already. At least any time now, we'll cut any new feature project we'll have by default. Okay, okay, okay, some reason yesterday. Yeah, it looks like it's not. That's why it is there in a feature rate branch. Everyone is supposed to take classes from that only. Yesterday, I don't know who did that, but for some reason, he did not. He deployed the previous one, and it was failing. Good. Thank you. Thank you, Rahul. Even though it is Ali, I called you. Thank you. Thank you for helping. Thank you, Ali. Thank you, Rashmita, for the advice. Thank you, Ali. Please update the task. Yeah, Ravinder, let me start implementing. With, uh, what we proposed or like, can we hold once the confirmation till confirmation?
+
+00:24:00 - 00:31:05 Unknown Speaker:
+
+No, let's set up whatever we can complete, but hold on that specifically. Or multi, or one actually okay, or duplicate, or one, I mean, copy over everything, or only Delta that we can discuss tomorrow. Okay, sure, sure, yeah, I'll schedule tomorrow same time. Thank you. Be positive. Medicals are shortlisted. Medicals are shortlisted. Okay. Thank you. Thank you. It's not mandatory. Um um. Thank you very much. Thank you.  .  . . . Thank you. Thank you.
+

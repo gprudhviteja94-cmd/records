@@ -1,0 +1,338 @@
+2026-04-13 Application Versioning Strategy and Implementation Planning
+
+Creation Time: 2026/04/13 17:32
+
+
+📅About Meeting
+
+• Date & Time: 2026-04-13 17:32 (Duration ~58 minutes)
+• Location: Online call
+• Attendee: Ravinder, Rishabh, Rahul, Shiva (Siva), Alok, Ajay, Ashish, (Raghav mentioned), (Shairam mentioned)
+
+📒Meeting Outline
+
+Versioning scope, goals, and phases
+
+• Overall goal and context
+  The team is introducing application versioning. Meeting focused on clarifying requirements first; detailed implementation to follow. Versioning impacts UI configuration (show/hide, labels, mandatory rules), API behavior (validations/logic), and data model.
+
+• Phased rollout plan
+  Phase 1: 
+  • On homepage, fetch and display available versions; allow selection per model.
+  • During “Create Model,” capture selected version; no deep UI reconfiguration in this phase.
+  Phase 2:
+  • Apply version-driven UI adjustments across forms/sections (e.g., RPT form), including field visibility, label changes, and mandatory/optional rules.
+  • Align API validations and payloads with selected version.
+  • Support duplication/migration scenarios and history.
+
+• Clarification approach
+  Requirements first; engineering to sync internally and return with implications/options. Further sessions will be scheduled for implementation challenges.
+
+Data model for version rules: base vs delta
+
+• Current proposal vs concern
+  Current idea suggested storing a full copy of all fields per version in a collection for simplicity. Concern raised about duplication, scale (many versions), and maintenance when UI doesn’t change between versions.
+
+• Delta-based approach (preferred direction)
+  • Maintain a single immutable base configuration (v0/v1) containing all fields and defaults.
+  • For each subsequent version, store only deltas (add, remove, modify, label change, mandatory toggle).
+  • At runtime, resolve final config by applying version’s delta over base, then return a single consolidated JSON to the UI.
+  • Benefits: minimize duplication, easier audit of changes, lower storage, clearer intent.
+
+• Immutability and governance
+  • Base config must be locked once released to avoid drift.
+  • Version entries should be append-only; any correction requires a new version to protect history.
+  • Consider a shared collection for UI, API, and DB-facing rules, carefully modeled to separate concerns.
+
+UI behavior and model impacts
+
+• UI rendering strategy
+  • Ideal: backend returns final, version-resolved JSON; UI renders accordingly with minimal conditional logic.
+  • Fields can be shown/hidden; labels and validations updated per version. If no delta exists for a component (e.g., RPT form), fall back to base.
+
+• Handling removed/added fields
+  • Removed fields: must not appear in the rendered form and should be excluded from the UI model submitted.
+  • Added fields: appear with appropriate defaults and validations.
+  • TypeScript models and form schemas must align with version selection to avoid stale/obsolete properties.
+
+• Duplicate vs delta on the UI side
+  • Team aims to avoid heavy UI duplication and prefers server-side consolidation.
+  • UI maintains current behavior for Phase 1; Phase 2 adds version-aware rendering using backend-provided consolidated config.
+
+API version handling and validations
+
+• Version propagation
+  • Selected version to be passed in the request body (not URL or headers) for create/run actions.
+  • API uses version to decide validations and logic paths.
+
+• Validation rules by version
+  • Example: a field mandatory in v1 may be optional in v2; API must respect the versioned rule set.
+  • If UI mistakenly sends extra fields, API will ignore fields not allowed by the selected version.
+
+• Single endpoint, internal branching
+  • Prefer single logical endpoint with internal version-aware handling over proliferating v1/v2 URLs.
+  • Backward compatibility: existing runs on older versions remain valid; retention policy to govern when older versions can be deprecated.
+
+Security and vulnerability fixes status
+
+• Current vulnerabilities
+  • 4 total: 3 High, 1 Critical.
+  • All four fixes are implemented; a single PR contains all fixes. PR pending merge (assigned to Shairam).
+  • Team to monitor security vulnerability dashboard continuously and hotfix promptly.
+
+• Ownership and next steps
+  • Rahul implemented most fixes; Rishabh to address remaining items post-merge and maintain ongoing watch.
+
+Testing and coverage
+
+• Test workstream
+  • Rishabh set up initial test framework and started writing test cases to increase coverage.
+  • Coverage improvement is an active story (10 points), alongside vulnerability remediation (10 points).
+
+Open questions and future considerations
+
+• Migration and duplication scenarios
+  • Behavior when duplicating a model created in v1 and opening/editing under the same or a different version.
+  • Ability to switch versions mid-edit vs fixed at creation; what happens to fields that become obsolete.
+
+• Version history and retention
+  • Need a clear retention window for keeping old versions active based on existing runs.
+  • Potential policy: when all runs for a version are removed, promote a newer version as the new base.
+
+• Field identity and labeling
+  • Field identities must be stable across versions while allowing label changes; deltas to capture label rename vs new field addition.
+
+• Collections and structure
+  • Likely two constructs:
+    • BaseConfig (immutable after release)
+    • VersionDelta (per-version, additive/removal/modification ops)
+  • Ensure ops support: add, remove, modify(property set), rename(label), validation toggle.
+
+📋Overview
+
+• Phase 1 will surface version selection on homepage and capture version during Create Model without deep UI changes.
+• Team consensus leans toward a delta-based model over full duplication to reduce redundancy and simplify maintenance.
+• Backend should return a consolidated, version-resolved JSON to minimize UI conditionals and prevent stale fields.
+• API will accept version in the request body and apply version-appropriate validations; single endpoint with internal branching preferred.
+• Removed fields must not be included in the UI model submission; TypeScript models/schemas must adapt per version.
+• Security: 3 High + 1 Critical vulnerabilities fixed; combined PR pending merge; continuous monitoring enforced.
+• Testing framework initialized; test cases and coverage improvements in progress.
+• Open items: define retention policy, duplication/version-switch behavior, and finalize data structures for Base and Delta.
+
+🎯Todo List
+
+• Ravinder:
+  • [ ] Define and circulate version retention policy (criteria to deprecate old versions and promote new base), 2026-04-19
+
+• Rahul:
+  • [ ] Draft the data model for BaseConfig and VersionDelta (ops: add/remove/modify/rename/validation), 2026-04-18
+  • [ ] Design backend consolidation flow to produce final version-resolved JSON for UI, 2026-04-18
+
+• Alok & Shiva:
+  • [ ] Review backend delta approach and confirm feasibility/perf considerations; propose API contract (request/response), 2026-04-19
+  • [ ] Define how UI will exclude removed fields from the submission model and handle added fields’ defaults, 2026-04-20
+
+• Rishabh:
+  • [ ] Monitor security vulnerability dashboard daily and triage new findings, ongoing
+  • [ ] After PR merge, complete remaining vulnerability fixes and verify closure on dashboard, 2026-04-16
+  • [ ] Continue test case development to increase coverage; share current coverage report, 2026-04-19
+
+• Shairam:
+  • [ ] Review and merge the PR containing 3 High + 1 Critical vulnerability fixes, 2026-04-15
+
+• Ashish:
+  • [ ] Document UI behavior for duplicate model and version-switch scenarios, including history expectations, 2026-04-20
+
+• Ajay:
+  • [ ] Validate that API validation paths correctly branch by version for key forms (e.g., RPT form); identify any gaps, 2026-04-21
+
+• Team (All):
+  • [ ] Internal sync on versioning approach (base vs delta), finalize decision and raise risks/questions for the next session, 2026-04-17
+  • [ ] Prepare edge cases for Phase 2 (label changes, mandatory toggles, non-UI-only version bumps), 2026-04-19
+
+Transcription
+
+00:00:00 - 00:01:58 Unknown Speaker:
+
+Hey. Yes, you are. Thanks for joining. Hey, look. Hey, hi, Ravinder. Thank you. Okay. Okay. Instead of RJ, I think I invited you to this, but that's fine. You can stay on the call. Yeah, all the time. Sorry, I mean. I don't know. Just tell me that. I'm not sure if Ajay is going to be on. If not, you can come and get off. It's okay. Sure. Yeah, he's offline. Ajay is offline. Yeah, yeah. That's fine. That's fine. Because I did not enter. That's me. Okay. I scheduled this call to discuss about any clarifications, questions on the worsening implementation intent. I know we are having stories and we have some confusion on the implementation intent. I just hope I schedule this call. This is just to know the requirement.
+
+00:01:58 - 00:03:01 Unknown Speaker:
+
+Let's discuss implementation a little later and I can full see if we need or else I'll schedule another call. In any challenges on implementation. But let's discuss the requirement first. I'm not sure if anybody, like everybody's aware of end-to-end implementation of versioning in the application. So I can start with, I'm not sure, but Rishabh, let's start with you. Are you clear, Rishabh? Let me check the stories also. Do you have any story related to versioning? If not, this thing you may get an explain to, because that's a major feature we are planning to implement. But are you clear on the requirement? Hello. Hi, Ravinder. Yeah, yeah, yeah. So currently I'm working on the test cases and coverages, increasing the coverage. I've done the initial setup for the test cases and coverage.
+
+00:03:02 - 00:03:58 Unknown Speaker:
+
+And, uh, started working on writing the test cases. Second story is related to vulnerabilities fixes. Yeah, yeah, yeah. So for that one, I'm waiting for Raul to merge the code because most of them is done by Raul, and after that remaining one, I will be working on that. So these are the two stories which, uh, has two 10 pointer together. Yeah, yeah, yeah, yeah, I got it. Yeah, is that critical one? Did you already fix that critical one, Raghav? Yeah, I might have fixed today. I think we merged the code last Thursday. After that, we got this new one. Correct. It's four days ago we got it. Did we fix that? No. That I fixed. PR is pending. Shairam can merge that. Okay. What about the high ones? The two high ones? We have four vulnerabilities now.
+
+00:03:58 - 00:05:05 Unknown Speaker:
+
+All four of them. Four means three high, one critical or two critical? Three high, one critical. Okay, all four fixed, right? Yeah. Okay, okay. And all four are in the same PR? Yeah, all four are in the same. Okay, okay. Thanks, Richard. And please take care from today onwards. I'll show you the link. Anything comes in, please jump on and fix us. Yes, yes. We have the security vulnerability dashboard link. Yes, it was mentioned in my story. Sorry, is there, right? Yeah, that's what? Yeah, yeah, please keep watch. And, uh, if anything that we are unable to fix, let's jump on the call and let's pull the team and see. Okay, thank you. Yes, yes, thank you, thank you, thank you. Okay. Um, are we clear? We need a discussion? We are using that in two phases.
+
+00:05:05 - 00:05:54 Unknown Speaker:
+
+Okay, yeah, yeah, and how we are implementing is something we have discussed. And okay, yeah, I guess for me, it's pretty much cool. Thanks, I discussed them right about, uh, collection details, and, uh, uh. With respect to that API, you said we will have a discussion today, right? You'll see. Yeah, yeah, yeah, but we didn't discuss it, right? That's what I'm saying. No, no, this is the call. I said. Um, uh, but we need a discussion. You need some clarification, right? Yeah, let's keep, um, what? What? The class patients we need? Let's keep. Oh, for a bit. But I just want to make sure, can we continue? Or can? I mean, um, we can go for the requirement from, um, first step one, or we can discuss clarification.
+
+00:05:54 - 00:07:03 Unknown Speaker:
+
+That's the reason I'm asking, Um, let's, let's, uh, hold on that, okay, Shiva? Are we clear or do we have any questions? After you clarify that, we're going to discuss. Sure. And Ajay, we'll come back. We'll come back. Let's first high-level discuss what are we expecting, and then we can get more questions for sure, then we can discuss. Ajay, thanks for joining. I did not include you before. I'm sorry I missed you. That's a reason I called you. But if you're busy, we can record or we can sync up, Ajay. No, no, no. Actually, the previous time of meeting is when I was here. Okay, okay, okay, good, good, thanks. Go ahead. Yeah, okay. So first thing in the window, like, uh, we can go with like, create model, so when we click here, like in the create model, so we can see the like.
+
+00:07:03 - 00:07:54 Unknown Speaker:
+
+By default. When we are creating new model, by default, like, we will get the current version which we are going to use, okay, so based on these versions, these static fields, like this business segment drop down, formula drop down, so these drop downs. So based on which version we need to show, what things we need to show based on that one. Like, we have to show here, okay, and yeah, this is, this is comes only in create model, it will come only these things, okay, so these drop downs. If any field, we have to show our height, any options, we have to show our height based on that one, like we will show our height. So for that one, we created like, uh, we created a collection, so in that collection we will mention so can we show this like by using similar or not, like that we have created?
+
+00:07:54 - 00:08:58 Unknown Speaker:
+
+Okay, so if you see here, so what are we storing in this collection. It's only about showing and adding fields, or sometimes it will be mandatory and non-mandatory things will come. No, it will come. Mandatory, non-mandatory, it also will come. Also will come, no? Yeah, validation is something we need to add. Maybe version 1, 1 field is mandatory, but in version 2, you have to make it optional. Okay. Yeah. So here, like, here, version, so here are the details, like, basically. Because what is the version data, these things you will get here, okay? So this is Delta, right? So this is Delta. I mean, you mentioned version 3.0 is now you have the details. What are those details? Those are all the fields which related to version 3.0 or those are just the Delta between version 3.0 and base version?
+
+00:08:59 - 00:09:54 Unknown Speaker:
+
+This is like, yeah, individual feature updates, like here we will show what features we are going to update in this version. Okay, so you have these things like basic details update details version details like we mentioned in the details tab. Okay. I still didn't get the answer. I know version details but those details are I mean suppose you have 50 fields in version 1 right and you added another field in version 3. Okay, I got it. Can you go down Shiva? Go down. Yeah. Here we have RPT form. Object Okay, here we have only 10, 5, 7 fits, we'll have all the 30 fields or 40 fields, whatever we are with respect to field. We'll have three different things like show manually and any other options. That would be boolean values, or yes, no values.
+
+00:09:54 - 00:10:48 Unknown Speaker:
+
+That we can decide. Every every version will have all the fields, so that which which version will have a new field we can. My question is, why do we need to maintain all the, that's what I'm saying. So we'll do that. We thought in future sometimes if any field is gone deleted, then? No, either way. My point is, suppose you have 50 fields. Let me take an example. You have 50 fields in version one and you add an extra field in version three. My question is, yeah, so we are maintaining 51 fields collection in version three details. And the 50 fields version in version 1 detail. My point is, why do we need to duplicate those 50 fields into collections? Why can't we just maintain the delta, just whatever you added the new field in version 3, right?
+
+00:10:48 - 00:11:31 Unknown Speaker:
+
+That means what? So you added a field that we can maintain, that this delta, you added a new face in version 3. That's only just one field you're maintaining in version 3. Now, when users select version 3, You first come to this collection and you see whether version 3 has any deltas. Now you get this extra field. And what I'm thinking is load the base. Base means version 0 is the base. I mean version 1 or version 0, whatever the initial version is the base. That 50, if you combine this, then you will come to know, okay, 50, the base is 50. And then the new field, the action is added and the field name is this. And then just merge and load. Can we do that?
+
+00:11:47 - 00:12:59 Unknown Speaker:
+
+So, if the action is deleted, then you just hide that version 0 base failed from that, right? So, that's where I am. Is there any other reason? I just want to curious. No, there is no other reason. Just to make it quickly and... without any major changes, major comparisons. But for sure, this question comes in, why do we use duplicates? Like, 100 versions are there. We are going to fill all 100 collections, right? With all the fields. Is that really needed? Some banks may be enjoying those. If other special validations for each field... But collection, like, just my thought, is like, we don't have much data in this collection, right? Because, like, roughly, we have some 20 to 30 documents in feature. Also. Okay, so there is no limit for the version.
+
+00:12:59 - 00:13:40 Unknown Speaker:
+
+Every change in the application is going to be one version right there. It doesn't matter whether UI change it or not, or back and change it or not. This is another case where if you don't have a change in the UI, only just back and change. We're still going to maintain the duplicate, exact duplicate, right? Then, like, we can do one thing, okay, so basic details, version so here, like, what things we have added, what things we have deleted, those things, maybe we can mention. That's what Delta, that's what I'm saying, that is called Delta. So we are just going to maintain every version, base version, you are going to have everything right, the usual version, and then going forward like you don't need to maintain the base version, basic base.
+
+00:13:40 - 00:14:23 Unknown Speaker:
+
+Actually, wherever you are loading currently, you can load that only you need to get the data. Adjust the UI when based on the selection of the version. That's all like, you're in the back end side, what you get. It is okay. If you have Select Version 3 already, then base the UI had the built-up Base version, or you are sending it. Okay, this is the Delta for this version, and just load that, just adjust that in the UI and then load it. Either you are in the feed, or you report the feed, or you change it from mandatory option or option to mandatory. So, based on the version. If there is Delta exists, we need to adjust, if there is no, Delta exists. Then we just load the base version of it. You got it, right?
+
+00:14:24 - 00:15:10 Unknown Speaker:
+
+Yeah. If we can get it directly from the API without doing anything on the UI, it would be much better. I don't know. How do we get all this? Why do we need to get all this from the UI API? How are we doing currently without the version? Without the version, these are hard codes without any checks. Now each piece will have a check that if it exists on this version or not. Okay, so what you are saying is we can adjust in the back end, correct? Yes, completely and get a final JSON and we can compare the JSON and show the feature. Okay, very good. That's fine. I don't think that is a major thing in the API side too. Siva, Alok, what do you say? That is the API we will give.
+
+00:15:10 - 00:15:50 Unknown Speaker:
+
+Okay, so in this version, what things you have to show, for example, in homepage. If you want to show a client name, so we will give everything in one day, so you later that API response like UID will show and hide those things. Okay, yeah, that's why we keep all these things in home base. Do you need my name in RPT form? Do you need a foreign like that? Okay? So, for output tabs, for example, in the next version, if you don't want our output, you can make it as fast like that. So that's why we keep everything like this. Yeah, yeah, but the base version you can maintain, Siva. I'm not saying base version you maintain like this and send it to UI, but when the other version comes in, just maintain the delta and adjust this in JSON before sending to UI.
+
+00:15:51 - 00:16:39 Unknown Speaker:
+
+So, that will avoid the duplicate. And most of the time, there will not be any changes in the UI. So, in that case, we don't need these manipulations to maintain duplicate. But comparing, for example, This like we are creating collection like this, okay, RPT form, so in the next version, right? For example, this is currently version three, in the next, fourth version. If you don't have this RPT form, like there is no changes in the RPT form, so we won't mention this RPT form in the like. Next Delta version. Okay, so how can we get? Like, how can we get with the base version? So we have to like, compare. Like two data documents, you maintain the base version always as you are, that's fine. But since we.
+
+00:16:39 - 00:17:24 Unknown Speaker:
+
+What I thought is thank you, what I thought is, whatever the current implementation, let's keep it with the cloud code and everything. Whatever you mentioned. I'm sure again, changing these things very difficult in the UI again to make it and depends on this. Yes, what I was expecting is. Keep the current functionality as it is in UI. What UI is doing currently, you're not sending any version, you're not doing anything. Default, it is loading everything, right? So what I thought is, if there is a field added in RBT form tomorrow, in version 2, so when user selects that, you are going to send, okay, a new field added, formula 2, suppose, in RBT form. That's what you're going to send to the UI. And they will attest that, okay, version 2 has this delta.
+
+00:17:25 - 00:18:05 Unknown Speaker:
+
+I need to adjust. Just go to that form, go to that feed, go to that section, and just adjust that. Remaining all the same, loading same. It's going to load the same thing. So that you don't need to change this all things, right? That's what I'm... But Rahul is saying, it is easy from the back and side, and it will not take much time. So whatever. So in that case, now we are changing it a little bit. You can maintain the base version with all these fields, what we currently have it in this format. And then every version change it, just maintain the Delta when user selects the version. 3. Suppose what we need to do is first, when we select the version, go to the Delta table.
+
+00:18:05 - 00:18:57 Unknown Speaker:
+
+If a record exists, then we need to have a manipulation, if there is no record exists. With that version, then we are going to send back the base version, right? Base version and then Delta. Two different connections, basically, static always. There is no change in the base version once we release the production, right, the first today in the base one, that's it. I'm really confused. We can maintain another static also if you want them. Okay, you know, if we're doing it, let's move it everything because it will be more easier later. Yeah, but but I prefer because there should not be any change in the future on that Delta. I mean, I'm not starting this version, it is always starting looking. We should not allow anybody change that base version, otherwise it's going to mess up.
+
+00:18:57 - 00:19:53 Unknown Speaker:
+
+So my point is, if we know that it is only for UI and nothing change in that, why do we need to keep in the DB? I mean, collection you can put in static, there's JSON file in the UI also, right? Instead of getting, so what you're concerned with, the manipulation. Is that your question? Manipulation and frequent version change because it's a very old version and after third version and tenth version, the comparisons we need to add. There is no comparison with the third version or tenth version, right? You are always comparing with the latest, I mean. Always comparing with the base version. I don't know. I'm not sure why. So what will happen if base version has 10 fields, base 2, base 3 has 14 fields, and 10th version has 50 fields? Yeah.
+
+00:19:53 - 00:20:55 Unknown Speaker:
+
+Let me see. See, I am taking what you're saying. Yeah, sure. So let's take your 10 fields here, okay? And the API and the backend, let's keep this as version 1. Right, and now now you added 11.50 your time. You're calling V2, now you're under 15 fields and you're calling V3 Okay, okay, now now user selected V3, Okay, V3, so so so okay. So let me go to one more call. Okay, insert and let's get Delta, I'm telling Delta, okay, let's keep it, there is no Delta zero, okay. So, this has one addition field. I can say plus one or not, so I can put it or not. This has five, okay? And let's say that in this you have nine, okay? This has minus one, right? Okay? So, this is version four.
+
+00:20:55 - 00:22:21 Unknown Speaker:
+
+Now, you are maintaining only this one. Okay? This one. And you also know this base is zero. That's a static, okay? So, now, Now what you're saying is, um, what you're saying is, let's let's go. When user login, and, uh, we selected version one. If we selected version one, there is no question there's no default. You're loading 10 fields when you selected version three. Okay, you know, the difference between these three is five fields. You added. Those five fields include total, you show 15 fields, 15 fields right now. Now. In another user, he selected V4 right now, V4 version we. We removed all, we removed one field with comparison between these two. See we have removed. Because in front end the code will exist. Suppose the field name is ABC that field will exist.
+
+00:22:22 - 00:23:07 Unknown Speaker:
+
+We have already coded it. So to hide that. Yeah, we need to hide that based on the delta. We have to hide it, right? We have to hide it, right? Even currently also, if you have maintaining JSON with all JSON with nine fields, you have to hide it based on the deep details, right? Which all six? Highest fields is 15. So we have already 15 fields defined on UI. Correct. So these 15, we have to hide now six fields for v4. Correct. Obviously. So it will give us six fields then. Because it will compare the base version and base version will only see one difference is there. Now that's what I am saying. That is the reason I am saying you need to maintain the base. You cannot maintain this previous file.
+
+00:23:07 - 00:24:25 Unknown Speaker:
+
+I mean, you always want this. No, no. What I am saying is if you maintain the base always, then it is easy for you. If I select V3, you need to add those five fields. If I select V4, you need to remove one from the base. So what will happen to the code which we written for V3? That's a question that is really we need an implementation. How are we handling currently? We have no problems because we have each fields to configurations ready. But again that also you need to code in CSS, HTML. We need to have the placeholders, right? To hide and show. I'm telling you that I just added. What is the difference? It's the same information. You're getting it, right? How are we handling it?
+
+00:24:25 - 00:25:15 Unknown Speaker:
+
+What you're saying is, if you eat 15 things, I can be able to make it, but if you base the spices, I can't make it. No, it's not. I can't make it. No, no, that's what I'm hearing. I'm just asking, but I'm hearing that. I'm understanding that very well. What makes the difference for you two? I think Ashish, go ahead. Go ahead, Ashish. No, no, Ravindra, you can continue on this. I have one more question on this. But you can continue on this. I'll just take it up. Okay, okay. Let's clarify this. These are all the questions. Thank you. I'm not saying I have the right question. But how we answer the question. For sure, you guys know that we will get that question. Why are we doing it? And simple thing.
+
+00:25:16 - 00:27:07 Unknown Speaker:
+
+Suppose, This is again a base version. Let's take V5. The backend is changed here and you maintain here. And again sending M and V6. In that way, what our expectation is, various ways there are changes in the UI than comparing. And even if you maintain 50th version also, there may be a chance that there are no changes in the UI. That means what? If there are no changes until 50th versions, you're duplicating the same document 59. Correct? Correct. Yeah. What will you answer if they ask that question? We can continue tomorrow, but you guys can discuss and see if there is a better approach. And what are the complications if you get a delta okay um this is one question for me okay so that is one thing okay. This is for UI.
+
+00:27:07 - 00:27:59 Unknown Speaker:
+
+This is for UI. This is for UI. What about the API? API, we will just create one API. So in that API, we will call while we are creating this model. So what things we need to know, what things we need to hide. So that one, we will call. No, no, no. I'm not talking about that. The API for getting this is here. But what about API changes? What are the changes? UI changes? Maybe it will change and then back to the same. Right? How about the version in the API? Maybe like we have only three things coming out, okay? So when we are sending, like when we are saying the same run, the run is saying run. At that time, like we will say what's the current version, like it's going to run.
+
+00:27:59 - 00:29:16 Unknown Speaker:
+
+Okay, so we will send the information to. Okay, okay Yeah, this is for creation. Okay for creation. We are good in one of the version, okay? So, in that case, we need to change our .  It's in case if you're doing validation, then you validate the backend. So, suppose there is  a logic  in  our API where you're checking the validation, and now we  need to remove in version two. So that  means what  you're changing  the API version two. Like version one, you need to call that logic with one version, you need to skip that logic, so for that we need a change in the API too, each version. Okay, when I'm calling version one, you should call that validation logic, and when I'm calling version two of the API, you should skip that validation logic.
+
+00:29:16 - 00:30:02 Unknown Speaker:
+
+So my point is, how are we maintaining the persons in the API side? This is UI, UI is very clear, we can decide that at the Delta or the During, but we are clear. But what is the class of the API version? So here, like, for example, Oh, you are telling like this form that this bad is mandatory field validation, right? Yeah, in that case, like now how we are sending, like, we are just sending the values, okay, so then for every field, like, we need to send one more value. So based on that one, like we will add some fields in our API also. So if it is mandatory, so we will check that mandatory. If it is not mandatory, like that we will do that.
+
+00:30:02 - 00:31:17 Unknown Speaker:
+
+But is it, like for example, this R2D2 segment, this select partners, these are all mandatory, right? So without these things, like our pipeline will run out. No, no, no. This is an example, but we need to look at it. This is an example. Yeah, yeah. Just to go once. All the validations means basic validations have been taken care of. We don't have any validation. Validating is one of the example. So what we are telling is there is no logic in API, just the transfer of the data. That's what we are doing. Are we clear here? Yes, maybe that logic can change for each version. Okay, so we are just passing the data to data. What are the data we are getting from data? That's true, but tomorrow. Are you looking for something like a different URL with version 1, version 2?
+
+00:31:42 - 00:33:38 Unknown Speaker:
+
+Yeah that will happen very quickly maybe we'll try to handle it internally we need to maintain for ap is also like a collection or we can use. We are thinking of one collection for all three of us. UI, API and that database. Yeah, that is fine. But why do we need to maintain for API? What is your thinking? We know that what was... You are standing that in the request failure, basically. This is the work that we collected. That's what we are saying. You are saying that... My question was, how are we getting the version number in the header or in the URL? On the body. On the body. Okay. We are clear. Okay. So. It will come in all that. Exactly. Yeah, exactly. Yeah. Mandatory and no changes. Don't need to do anything.
+
+00:33:38 - 00:35:39 Unknown Speaker:
+
+But if any delta is there, which can have the version in the logic, then we need to consider that. Yeah. Okay. Okay. Good. And even if there is a by mistake, any extra fields, which is in collection, then they will also. Yeah, yeah, they will not be But only the model submission and this one, okay, This is clear, and the model submission actually can you go ahead? And um, um, okay, yeah, yeah, a few questions. Yeah, we can, we can clarify, I just want to. Before looking to the template, do we have any other questions on the create model on loading the page? Just for me, one thing, uh, what we are doing is the, uh, like, right now we have what has to be shown and what has to be written.
+
+00:35:39 - 00:36:33 Unknown Speaker:
+
+But don't change our game with the model that we are sending with us. Because since we are on the typescript based application, everything that we have is not a functional part, right? All the fields are something that is mandatory in the model, you know, whenever we there is a change in the model. Apparently it's not just showing the height of the feed that has to be there, but apparently the feed that has been removed should also not go into the model, right? Yeah, that's what me and Alok were discussing. Even if it goes, then the battery will not take it off. Because anyway, while creating a default, when creating a new model, by default, the value will be set in the live station. So, if it does not exist, then the value will set as none.
+
+00:36:34 - 00:37:22 Unknown Speaker:
+
+But then apparently that value still will be removed, has to still come into the model also, because as far as I understand, the model we get is the model we set. Correct, right? So, even on the version change, if there is a version change, then there is a removal of the field of the APF from that field will be removed. And then we'll send it as it is, whatever we get, we'll send it as it is. But then that will be something that will always be a stale one base as a stain one, right? Even if the fields are removed, we are like, let's say 10 or 20 fields are removed. We are still maintaining goals even when those have become obsolete. That's it. Correct. No, no. There is no obsolete because we might have the runs in those versions.
+
+00:37:23 - 00:38:10 Unknown Speaker:
+
+Until and unless we remove all the runs, we cannot. We are thinking to set up a deadline. Like this version, how many days we need to maintain, I mean how many months or how many years we need to maintain the RPGs. Once we remove those RPGs and all the RPGs removed from that specific version, then we are going to have the, like suppose, V0 has 10 runs and V1 has 15 runs, suppose, let's say it that way. And all the initial 10 runs got removed, then we make it V1 as the base version. But then, apparently, since at this particular moment, what we were doing in the U.S. We were just hiding it and we were not removing it from the model that we were sending on the same right.
+
+00:38:10 - 00:39:07 Unknown Speaker:
+
+So yeah, then again, like even an year, or after two years, or whenever this becomes alternative, change your base version from the previous to the current. Whatever is there then the heavy changes on the U.S. If it is not harming to keep it, we can keep cleaning up. It depends on the delta, right? We need to think about it. After 51 cents only, we come to two different divide changes. Then we can easily decide that, okay, where do we need the base version? Then let's remove the like you added one, because it's all. It's all comes into the way that we need to see how the time will go into the production, right? Exactly that is how like the version changes, how quick the version changes will come is something that it will depend on.
+
+00:39:07 - 00:39:57 Unknown Speaker:
+
+So right now, just, uh, getting of, like, not showing the feels on the UI in one part, but getting it removed from the model, uh, from the UI front. Also, where the expectation of a certain model and sending a center, certain model on CEO, or some bit of anything, uh, has also to be changed. Right in the local again. Every change we have to analyze and get a new story and then we need to consider all these things. For sure, it is a major change and minor things. We have to take it to support this different version, right? So my question is, my question is. What we are discussing is what is the best solution since we are starting from scratch now, and what is the best solution to to accommodate all those?
+
+00:39:57 - 00:40:47 Unknown Speaker:
+
+Whether it takes more time, less time, that we can decide later when it comes, that requirement comes in. But my point is we cannot say that okay. The way we implemented is not going to support this kind of scenario. We have to rewrite it. We should not hear that kind of thing. According to whatever we have right now, the best solution is what? Uh, where we keep on hiding and maintain just the list of whatever fields is there. If it would have been a base application, then apparently complete configuration of each field, which, uh, with respect to being and somewhere or the other UI. Also just reading on those lists and creating whatever the drop downs or the fees are there on the basis of the selection of the fields that comes about would have been a great help.
+
+00:40:47 - 00:42:26 Unknown Speaker:
+
+And that is with respect to this. I didn't get that. I didn't get that. But when they ask, why are we storing duplicate? So to just make it implementation simple now, we need to duplicate the data. It is simple, I think. They will ask. That's all we are doing. Yeah, we're all on the same name tag. And Ravindra, one more thing, just randomly come into my mind. The field names will, in version 2, 3, the field names will change in future. It can be. That's the thing. Everything can change. That's what it is. That's the reason this is a call. We need to learn from the author. So that's what I'm saying. That's all. It doesn't matter whether it is labeled field or not. For each field we have to maintain, right?
+
+00:42:26 - 00:44:40 Unknown Speaker:
+
+This field is version 3, this field is called as power, and version 4, this field is called as power. That is the reason I thought Delta is very important thing. Instead of, again, maintaining that, Delta is very important. Now, you can talk to them. We maintain the Delta. This label changes from here to there. That's it. That's the delta yes so when you are when you are you know that okay this is the base. Okay. Then we need to say, okay, we need to take a complex scenario. Okay, yes, so that I will need to make it. My question is, I know this, but what makes you like to maintain two different sets or maintain the delta between those two? What makes you easy? I want to hear that kind of scenario.
+
+00:44:40 - 00:47:37 Unknown Speaker:
+
+Okay, if you go with this, it comes back. If you go with this way, it comes back. So, dependently, you have to make it. Both ways, you have to make it. I did it. So what about the drop? We created a drop to version 1 and then there is a version change and you can come in and open the drop. What happens? Same version 1 again? Same version 1. What if you want to switch to version 1? You don't want to continue drop 1 because you want to switch to version 1. And they want to continue one decided that of the reason we have to go two ways now is it uh  .  . I'm sure that what they ask is, I want to know. Yeah, this was the . Okay, and what's the history? Right?
+
+00:48:18 - 00:54:59 Unknown Speaker:
+
+Yes. Yeah, yeah. Um and uh yeah so um  .  . . We can show the temperature. Now, with respect to this-. We should have . Yeah, we can wait for that. I'm sure we need to. Thank you. All you have to do is, you just need an event option to select the version. And get the version what you want. Those are the two things we already completed pretty much. They are not taking. For this question. We are working on only phase one . When you load the homepage, you need to get the versions and show each model one time. Okay, so that is the first release link only in the homepage. And while we are creating the model, we need to see what version we are selecting. But that's it. No, sir, again, that is not the end of the model.
+
+00:54:59 - 00:55:55 Unknown Speaker:
+
+It's when you duplicate it. Okay, when you are submitting the new model, we don't need to show anything. Okay, that is the only thing we are in. That's what I want to make it very clear that phase one is very useful for us. You don't need to think of this. They're all there discussing for phase two. Phase two and the details are still working by the end. But since we have a bandwidth and I don't want to end, duplicate the work. With phase one and phase two, that's everything we can do it in a single shot, where, um, phase one and phase two, we should not have any reverse when we are implementing phase two. That's the reason I want to make sure n to n, the requirement is clear, very clear, that what we need is correct.
+
+00:55:55 - 00:56:57 Unknown Speaker:
+
+Yeah, okay, okay. We will check one more time. You guys internally sync up please and we can .  Then we can go in story if you have any questions then we can do it. Are we clear on the templates again? Or do you have any more questions? . Okay. Thanks. Thank you all. No problem. Yeah, let's continue tomorrow also in case any other scenarios comes in. But thank you all for joining. Please think of every, and this is the place, this is the time for asking questions and getting clarification. Please do not implement in your own way and then we realize, okay, this is not correct. Don't do that, please. Take your time, take your own time and make sure we need to, we are going to implement the right solution. Okay, thank you all.
+
+00:56:59 - 00:58:14 Unknown Speaker:
+
+Thank you, thank you. This is working. I fixed it. The output should be the same as the feedback I gave. Yes, it should be. Yes, it will be written like this. But, for a few years, it will be taken like this. It will be taken like this for a few years. But, for a few years, it will be taken like this for a few years. Yes, it will be taken like this for a few years. Yes, it will be taken like this for a few years. Yes, it will be taken like this for a few years. is a verdict
+

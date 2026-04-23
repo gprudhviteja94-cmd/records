@@ -1,0 +1,239 @@
+2026-04-20 Delivery Updates and Data Quality Discussions
+
+Creation Time: 2026/04/20 18:05
+
+
+📅About Meeting
+
+• Date & Time: 2026-04-20 18:05 (Duration: ~24 minutes)
+• Location: No relevant content mentioned
+• Attendee: Anand, Sachin, Tim, Kundan, Sameer, Rachna/Rajna, Prithvi, Nirmal, Sindhuja, Ayyappa (IAPAS), Seven (7ven), Aman, Mara (mentioned), ACE Platform team (mentioned), Raj (review), Product partners (mentioned)
+
+📒Meeting Outline
+
+Delivery updates and environment deployments
+
+• Dynamic forms and BPMN modify-rule integration
+  • Forms for “dynamic” are completed and pending review; after comments, changes will be deployed. Work to start on integrating BPMN changes for modify-rule.
+• Insurance analytics deployment to E3
+  • Insurance analytics was deployed to E3 late Thursday; basic validation completed in lower env; E3 functional validation pending the required waiting window.
+• B40/B45 email integration on QTek UI
+  • Deployment to E3 completed; tested and working. Lomi API integration in progress; one issue under investigation.
+• ICM use case (U3 env)
+  • U3 deployment and testing completed; an issue identified in patterns for two ICMB tables. Fix and test targeted by today or tomorrow afternoon, then move to E38 post-GB by Sachin.
+• RPA use case and Quantum Launch
+  • 9 DK rules sent to Rajna for review. Quantum Launch tested in E1; SQL script issues fixed, redeployed, and end-to-end now working. Proceeding to BD Analytics from tomorrow. Production issue from tech-support channel identified; coordination with Sachin to move the fix. Launch results to be shared with Anand. Launch table load frequency to be treated as daily (not intraday).
+• SFTP to DQ repository ingestion
+  • File read from SFTP and save to DQ repository will remain in E2 (not to be deployed to E3). New assignment to “East” part to follow.
+• E1 deployment
+  • Code release completed; E1 deployment targeted for tonight. Required table changes done with Ayyappa’s help.
+
+Data pipeline, repository design, and automation
+
+• DQ repository columns and flow segregation
+  • Discussion on using existing load_date vs. adding a status column to identify latest records for automation. Anand clarified: writes should first land in an “artifacts” table, then flow to Contra artifacts or Prithvi’s framework; avoid writing directly to DQ repository. Follow-up needed to finalize end-to-end flow and identifiers.
+• Self-serve automation review
+  • Diagrams prepared; review with ACE Platform team at 7:30. Parallel track to avoid end-of-PI delays. Awaiting partner inputs (ARV); meeting setup pending.
+
+Data quality, analytics results, and validations
+
+• Prod results analysis: null/zero metrics
+  • Ongoing analysis shows many null/zero values (covariance/skewness) across parameters; concerns that results are not meaningful. Separate discussion planned to decide acceptance vs. deferral until richer data accumulates. Agreement that zero/null should generally not be considered valid.
+• Razy/RAC data ingestion
+  • Persistent ingestion issues; working with Lomi engineer who will check with Lomi ingestion team. Will try with latest metadata changes. Seven reports same RAC update; root cause to be identified.
+• Kibana dashboard ownership
+  • Mara (prior contact) has left; Sachin to find an alternate point of contact.
+
+Governance: RFC, testing rigor, and process discipline
+
+• E2 evidence and RFC requirements
+  • Mandatory to provide E2 run evidence (e.g., Lumi/Tag/ACE Control Center Process Instance ID) for E3 RFC approval. PRs will not be merged without E2 testing evidence and product partner sign-off. Only Ayyappa to execute E3 deployments for traceability.
+• Testing quality and syntax readiness
+  • Emphasis on eliminating syntax errors before E3. Validate on E2, run end-to-end even with reduced data (e.g., 10 records), and share instance IDs.
+• Rally/Jira test cases
+  • Team must attach concise test cases to Rally items (moving to Jira soon; last-quarter data will be audited). Include brief 2–3 line validations; avoid storing any PII locally.
+
+Scheduling, coordination, and follow-ups
+
+• Reviews and calls
+  • Sameer has a review with Raj post-call. Rachna to set up a call with Benefits Data team tomorrow to kick off rules building (tight sprint timeline).
+• Production issue closure
+  • Prioritize closing the identified production issue; small, potentially one-line change. Coordinate handoff to Seven if needed; target E2 test and E3 deploy by tomorrow, or same night if ready by 10 p.m.
+• Housekeeping
+  • Team members reminded to update tasks and log hours during the call.
+
+📋Overview
+
+• Dynamic forms complete; BPMN modify-rule integration to begin post-review and deployment.
+• Insurance analytics and B40/B45 email integration deployed to E3; functional checks positive; Lomi API issue under investigation.
+• ICM U3 issue on ICMB table patterns to be fixed and tested by tomorrow; then move to E38.
+• RPA 9 DK rules under review; Quantum Launch validated end-to-end; proceed to BD Analytics; share launch results; treat load frequency as daily.
+• SFTP to DQ repository work stays in E2; E1 deployment scheduled tonight with schema changes done.
+• Repository flow to use an artifacts table before DQ repository; assess need for status column vs. load_date; follow-up to design end-to-end automation identifier.
+• Data quality concerns: null/zero analytical metrics likely invalid; separate working session to decide acceptance vs. wait for more data.
+• RAC/Razy ingestion blocked; engage Lomi ingestion team; retry with latest metadata; root cause pending.
+• Kibana dashboard contact to be re-established after Mara’s exit.
+• Enforce E2 evidence for E3 RFCs, improve testing rigor, attach concise test cases in Rally/Jira, and avoid PII storage.
+• Production issue identified; aim for rapid fix and deployment with possible handoff to Seven.
+
+🎯Todo List
+
+• Anand:
+  • [ ] Align on artifacts-to-repository flow and identifier strategy (load_date vs. status), and segregation for Contra vs. automation; schedule follow-up, this week
+  • [ ] Sync separately on data analysis acceptance criteria for null/zero metrics, this week
+
+• Sachin:
+  • [ ] Coordinate production issue fix with owner; ensure E2 validation and E3 deployment, target by tomorrow
+  • [ ] Share E3 revised results after deployment completes, today
+  • [ ] Find alternate POC for Kibana dashboard post-Mara, this week
+  • [ ] Confirm E38 move for ICM after GB completion, tomorrow
+
+• Kundan:
+  • [ ] Complete review of dynamic forms; provide comments, ASAP
+  • [ ] Support Lomi API issue investigation as needed, ongoing
+
+• Sameer:
+  • [ ] Fix ICMB pattern issue for two tables; complete testing in U3, by tomorrow afternoon
+  • [ ] Move ICM to E38 after GB and share outcomes, tomorrow
+  • [ ] Update tasks and hours on the call, today
+
+• Rachna/Rajna:
+  • [ ] Review 9 DK RPA rules and provide feedback, ASAP
+  • [ ] Set up call with Benefits Data team to start rules building, tomorrow
+
+• Prithvi:
+  • [ ] Keep SFTP→DQ repository deployment to E2; proceed with “East” task as assigned, ongoing
+  • [ ] Coordinate on repository identifier usage for automation (with Anand), this week
+
+• Nirmal:
+  • [ ] Continue E1 deployment; complete tonight, today
+  • [ ] Provide inputs on table/column needs for automation as applicable, this week
+
+• Ayyappa:
+  • [ ] Execute E1/E3 deployments as the designated deployer once E2 evidence is provided, ongoing
+
+• Quantum Launch owner:
+  • [ ] Share launch results with Anand, today
+  • [ ] Proceed to BD Analytics, start tomorrow
+  • [ ] Update load frequency to “daily”, today
+
+• Sindhuja:
+  • [ ] Continue ACE Platform review prep; present diagrams at 7:30 and seek approval, today
+  • [ ] Coordinate Slack follow-ups for Insurance metadata/table renames with Aman (post-OOO), this week
+  • [ ] Work with Lomi engineer on Razy ingestion; try with latest metadata; escalate to ingestion team as needed, ongoing
+
+• Seven (7ven):
+  • [ ] Support on production issue if handed over; test on E2 and deploy to E3, by tomorrow if assigned
+
+• All Team Members:
+  • [ ] Update tasks and log hours, during the call/today
+  • [ ] Provide E2 run evidence (instance IDs) and product partner sign-off before E3 PR/RFC, from tomorrow onwards
+  • [ ] Attach brief test cases to Rally items (2–3 lines), this week
+  • [ ] Ensure no PII is stored locally, ongoing
+
+Transcription
+
+00:00:00 - 00:01:14 Unknown Speaker:
+
+The forms are also done for the dynamic. I'll raise up here, wait for the review comments. If there's any else, I'll deploy the changes to now, I'll start with the integration of the PPMN changes for the modify rule, so that's all. And also, like, on later Thursday, we have deployed the insurance analytics into E3. So, uh, today, uh, I was working on this B40 and B45, uh, uh. Email integration on the QTek UI side, okay, so that deployment is done on E3. So we we tested it also in everything working right, and I'm working on this Lomi API integration one. Okay, so I'm facing one issue, okay, and I'm investigating that particular issue. So that's the updates. Could you update your task to capture whatever you're trying to do? Yeah, I will do that.
+
+00:01:14 - 00:02:01 Unknown Speaker:
+
+Your hours are also not updated. Yes, yes, I know. I will do that. Yeah, please do it on the call. I'll circle back to you later. At the end. Manish messengers. Show me. Manish messengers. Sameer, before you pitch in, Anand, this was regarding the, you know, the one Kundan was mentioning, right? So the latest BPMN, latest code changes have been moved, but we really need to wait for that nine days, right, to test it out, that functionality. So in case that's... I'll ask, like, you know, you guys have those products one, right? At least let's wait for one of those, right? And then we can check whether it's working or not. Got it, got it. That makes sense, yeah. Yeah, right, so that would be validated, right, one one task.
+
+00:02:01 - 00:02:46 Unknown Speaker:
+
+We can just leave it, let's see whether we are getting that alert or not anyhow. Like, you know, whoever is the B4D, you can just communicate. And then, yeah, it will be going to Mourna itself, so that's fine. Yeah, so yeah, okay, okay, so so that is that part. We like for one day, we are validated in the lower environment, but as of, you know, on E3, we need to wait for that. So let's see if this nine days work, 16 days would also work. Okay, so let's spark one of the tasks from today's item Go ahead. SamiR Uh, hi Tim, uh hi Sachin. So uh. Currently, I'm working on ICM use case. So, uh, I haven't, like I have done the U3 even deployment and testing.
+
+00:02:46 - 00:03:35 Unknown Speaker:
+
+But like, I have identified an issue in, uh, one of the pattern for, uh, two tables in ICMB. So I'm trying to fix it Max today, by today, I'm gonna fix and test it. Or it's like it will take by tomorrow afternoon. Uh, I'm gonna complete this testing and I will move to E38 tomorrow once, uh, GB was done by session. Yeah, so anand on control. What I have observed, it's like, you know, I am asked to submit to do a data analysis with respect to the you know result that are running on the production. I guess still find, like, you know, lots of values are still coming as null. And that's the reason, like, you know, means for all. The parameter, right? Whether it's a covariant, type or skewness check or something, right?
+
+00:03:35 - 00:04:20 Unknown Speaker:
+
+So certain, right? The covariance is coming, for certain, skews is coming, right? So are we going to consider those also as a valid result? This is something, you know, I need to discuss with you, maybe separately on that. Yeah, sure, right, because, uh, like, you know. Uh, I'll leave it to you, like, you know. Whether those results are satisfactory or we still need to wait for a couple of months. Uh, when you know that basic data would be there and then we can validate that, check that one by one. I think because the use cases are data related, it might differ a little bit. Zero or null value should not. I mean, it does not make sense, ideally, exactly exactly. And you know, I have again, right? I have a review call with Raj, right?
+
+00:04:20 - 00:05:15 Unknown Speaker:
+
+Uh, just, uh, post this call, right? So anyhow, he is going to again ask for those new use cases, which we have marked as released, right? What is that different algorithm speaking, right? But I can see with respect to the data, right? If covariance is coming as null, right? It is directly jumping into that skewness part, so that really doesn't make sense because skewness is coming as zero. Yeah, okay, yeah, maybe, you know, we can top on that. Separately, uh, maybe I'll include some with the data analysis that we have done so far. Uh, please go ahead. Yeah, so from my side, that RPA use case, so the last Friday I have sent to the 9DK rules to the Rajna. So for the review on that one, and second thing will be, uh, for the launch Quantum launch use case.
+
+00:05:15 - 00:05:56 Unknown Speaker:
+
+So today I have done some, uh, testing in even environment. So while doing testing, I observed some of the issues in the SQL script ever so that one I fixed and redeployed and tested again. So it is working as expected for the end to end point of view. So maybe we are good with the launch use case. So I will proceed for the BD Analytics for the tomorrow onwards. Yeah, and apart from that one for the uh, production issue, uh, which Rajna has been said right in the tech support channel, uh, that one. I am looking into that part, uh, the issue is identified. Post this call, I will connect with the Sachin on this one and I will move those cities. And if, uh, what about the lounge result? Did? We ran and said to Anand.
+
+00:05:58 - 00:07:30 Unknown Speaker:
+
+Yeah, I will share this one. Yeah, please share that result. Yeah, sure. Okay, and let's try to close that production issues on our priority. Yeah, sure. Thank you. I think that's all about from me. Thank you. Prithvi? Nirmal not here. Oh, okay. Nirmal is there. I just seen, you know, Post... My bad. Let Nirmal to continue and then we can move. Yeah, okay, this is respect to, you know, reading the file from SFT and saving it to the DQ repository. So this is not going to get deployed to the E3, we have to keep it till E2 only. Okay, and then I'll assign you the other task to, you know, the East part. Thank you, you can go ahead. Please provide your updates working on the deployment for E1 environment.
+
+00:07:31 - 00:08:24 Unknown Speaker:
+
+I have a code release completed and then my target is to deploy tonight in the E1 environment. There are some table changes required. I took IAPAS help and I did. So I'll finish E1 deployment tonight. Okay. So on this one, Anind, I would like to understand in the DQ repository for the Quantro, we have added load date. Right. And we would need another status column so that, you know, whenever there is a new SQL or the new rules onboarded by the user. Right. Then the automation which Prithvi is building that can identify that column and pick up the latest record. Right. So I would like to understand that, you know, difference with that load date. And do we need another additional column for Prithvi's case?
+
+00:08:30 - 00:09:27 Unknown Speaker:
+
+Uh, if you remember in the DQ repository table, right for the quantum, right, we have that load date column, correct. Yeah, okay. Can we leverage the same for the automation which P3 is building? Or, uh, you know, that is something that would come by an intermediate table and then finally to the DQ repository table. Look what I might consider. Yeah, where is Prithvi exactly using that column? He need to use that column to generate a new SQL file, right? Suppose a new rule gets inserted by the user, you approve it, right? Yeah. Initially, it would land into that is DB DQ repository table. Correct. It is not that exact table, right? And then Nirmal's framework would pull the record as it is already being approved. Right, and it would insert to the DQ project table.
+
+00:09:27 - 00:10:16 Unknown Speaker:
+
+Yeah, now in the repository table, we need a identifier, right? So when, uh, if we use case would be running. You should know, right? These are the latest record, right? And that is something, yeah, I think, first of all, one just to, uh, point out one thing, right? Uh. It should not go directly to any way a DQ repository table, right? First, it should always go to some artifacts, kind of a table. Okay, yeah, so basically he wants to segregate contra as well as this one, right? Yeah, yeah, definitely, definitely. I mean, irrespective of whatever, uh, check, it is right. It should first go to an artifact stable, and then from there, it can either go to the contra artifact stable or it should, it can go to Prithvi's uh, framework.
+
+00:10:16 - 00:11:16 Unknown Speaker:
+
+Okay, uh, again, on this one, let me connect with you, uh, to complete the end to end flow for this. Thank you. It's me, Sindhuja, right? I think we've finished. So, started with this, you know, sorry, not this, escalation email deployment. There was some deployment issues, so I worked with Kundan to sort it out for the E3 deployment. That is number one. Second, on this insurance, I already communicated to Aman over the, you know, Slack. Like, There were some metadata that is being required to set up the pipeline and then some of the tables that they have created as POC, right? Those required are renaming. Okay, Home is out of office today, so I'll be getting an input for that once you will be back. Okay, uh, now for Razy, uh, there was a data ingestion, uh, which is still going on.
+
+00:11:16 - 00:12:12 Unknown Speaker:
+
+I tried it with, you know, couple of different ways, but it is still not working with the Lumi engineer, but she mentioned that she needs to check with the Lumi ingestion team. That is something not in scope. One of the things that I have observed, I'll try it out. That is the latest metadata changes. So maybe, you know, I can give a try with that and then see if it works or not. Anything else on my bucket? Self-serve automation. Okay, that is something pending. ARV, we are still. Meeting for the, you know, input from the partners to set up a call. So for that, maybe I need to reach out to them. Okay. And then there is a review meeting with the ACE SRE platform team for the self-serve automation. So I have already created those diagrams and all.
+
+00:12:12 - 00:13:04 Unknown Speaker:
+
+So maybe I'll walk through those diagrams to the ACE SRE team. It's not ACE SRE team. It's the ACE platform team, basically. So there is a meeting. At 7 30, so I'll get it reviewed, those complete automation and to enter with them to get the approval for the further deployment. So, Anand, this is something I started parallelly. So that, you know, we should not be wasting lots of time at the end of the process. Delivery as the targeted date is end of this PI. Yeah, yeah, okay, uh, seven, you can go, so seven. And so they have just started their days. Anything you guys want to, you know, pitch in? No, I have the same update as Sachin for RAC. Just struggling with that table in session. We need to figure out the route course.
+
+00:13:06 - 00:14:08 Unknown Speaker:
+
+And Rachana, could you please set up the call with benefits data team tomorrow so that, you know, at least we can start at least few of the, you know, rules building. Otherwise, you know, we would end up this, Sprint without any, you know, build. We are already on Monday, so left with five working days, but I'll set up a call tomorrow. Okay, thank you. Assuming, uh, us mentioning something, you can go ahead. I just wanted to check on like the E3 revised results. Yeah, the deployment is in progress. After this call, I'm gonna share you the final results in E3. That's it Sachin. That's an overall update Anand and Rachna. Anything else you want to talk? Sachin, one more thing again regarding the Kibana dashboard, if you have any more information.
+
+00:14:08 - 00:15:17 Unknown Speaker:
+
+Mara has left the organization with whom we were working. Let me see, Because for few days I was not getting a response, so I was not sure what was going on right. So now today, Kundan confirmed, as he is also sitting in the Bangalore office. Okay, he already left the organization. Let me chase if I can get a alternate point of contact for him. Anything else such in one question, actually go ahead. Yeah to Anand, Yeah, regarding the, uh, under launch this case, right? Uh, that one. Currently, it is showing a table load frequency as a intraday. Uh, that one we can consider as a daily one. Yeah, daily. Yeah, yeah, okay, thank you. Yes, I need all of you. Uh, anything else? Yeah, thanks. The rest of the folks, please stay back for a couple of minutes.
+
+00:15:23 - 00:16:51 Unknown Speaker:
+
+Anything from your side? Can you hear us? Yeah, I am audible, I know rational is this? I thought of, like, uh, okay, uh. So one, uh, you know, quick uh note. Uh, I am already said that over the channel, uh, you know, a few days back, right? Uh? I would like to reiterate that one. Uh, first of all, uh, you are not going to get a RFC. Let me share my screen, you know? So that that would give you an answer also. Let me know if it is visible. Can someone confirm me if you guys are able to view the screen? Anyone? Yes. So number one is that if I'm not sure if you have seen that one or not. But now, if you are going to create a RFC, this is something required.
+
+00:16:51 - 00:17:44 Unknown Speaker:
+
+Okay, if you're marking it as yes, we have to provide this evidence. It might be Lumi, it might be Tag Instance ID, it might be in the ACE Control Center Process Instance ID details. If we are not making this one, you're not going to get a RFC for E3 deployment. So whoever is doing it and don't move ahead with the, you know, first of all, I'm not going to merge the PR until unless these things have been tested on E2. Okay. So even this is for your note also, like, you know, in future, if you're managing in the, you know, your working hours, these are not going to merge. The PR are not going to merge until unless we. Receive these instances that is the A2 evidence that you have tested it on the A2.
+
+00:17:44 - 00:18:36 Unknown Speaker:
+
+And this is not for me, man. This is a mandatory parameter. Okay, whenever I am creating this RFC, it's a mandatory parameter. And until unless you provide this, these people are not going to approve it. Okay, so this is number one. Second is testing, testing is still, I find it out. Uh, we are not doing a good job on that one. When we are moving to E3, let's not point it out individually, but when we are moving to E3, please make sure there should not be any syntax error in your code. You did the proper testing and then be ready for E3. I think nowadays we thought of like, you know, whatever we are making, let's move it to E3, let's move it to E3. That is going to stop tomorrow onwards.
+
+00:18:37 - 00:19:26 Unknown Speaker:
+
+Please make sure you validated your process on E2 when we are creating a PR for E3, I should not be getting any error. Number one is that, and then this should be a smooth process. Because, you know, it's feel bit, uh, humiliated when I'm reaching out to the, you know, platform team chasing them to get the PR approved. And you know, we can't do it multiple times. Okay, so please make sure you're getting a sign off on E2 from the product partners, uh, before moving ahead on E3. And then you should have a proper evidences and see for your cases, right, your edge cases where we are struggling to validate on E2. Lower the limit, okay, with 10 records. Also, run the process end to end and then share that instance ID.
+
+00:19:26 - 00:20:13 Unknown Speaker:
+
+And then, uh, I would help you with the RFC. And that is the reason I have asked only Ayyappa to do E3 department. No one else is doing it. Just to keep a track, but we are moving to the E3. So please, and another thing is that we are not seeing any test cases being attached to the Rally. Sindhuja has already repeated it I think n number of times and that is something must have requirement because when our dashboard would go for a review, right? Now we are moving from Rally to Jira. Don't think that, you know, Rally is not going to get, uh, you know, monitored once we move to the Jira. That is not the case. They would fetch the details for last one quarter and we would end up with zero test case being marked in the rally.
+
+00:20:13 - 00:21:09 Unknown Speaker:
+
+I hope you guys understand the, you know, seriousness of this one. Also. Okay, no one is attaching the test case. Okay, not asking you to, you know, write the test case like a tester, okay. But at least give couple of column. Uh, couple of liner, right? What exactly you have tested, right? Like? When you are testing, right? At least you can mention that, uh, validated, uh. The result went to B40 or B45, that is couple of liner. You can add, right? And suppose you write your use case, at least, you can write that, uh, and as Excel see, it has been retrieved, right? Uh, Samir, for your control, right? Again, you can put some comment. Normally, you can add like, you know, I was able to fetch the file from SFT, read it and save it to the DQ repository.
+
+00:21:09 - 00:22:14 Unknown Speaker:
+
+Maybe two to three liners. I'm not asking you to write a para, right like that. No normal test user, they used to do it right the automation team, but at least write down couple of liners in those test cases, right? No one is reviewing it. But if you're not keeping it, we would be again in trouble. And please don't store any PII data in your system. That is again an important note. Please make sure we are not storing any PII record in the system. Okay. Nothing from my side. Anyone having any other questions? I have seen that production issues, know, analysis that you have said, you can go ahead and make that change. Yeah, sure, do you need anyone help? Is it like too much? Then you can park it to seven also or someone also, they have their days to complete it.
+
+00:22:14 - 00:23:00 Unknown Speaker:
+
+If you feel like, you know, uh, that is something someone can take care as I need to summon. He doesn't have much work today. Someone, right? You have only that. Right after this call, I will connect with ISO. Yeah, just park that task. He can take it and then he can test it on E2, and then maybe tomorrow you can deploy it to the E3 environment. Or else, if he can complete it by 10 p.m. Then just do a deployment post that. Yeah, actually, one small change only. Uh, that's why I just want to connect with you after this call. Yeah, so only one night change around. Then then go ahead and make it if it is a one-liner changes then to go ahead and make it change I can any going to get it reviewed in your PR right?
+
+00:23:00 - 00:24:00 Unknown Speaker:
+
+So go ahead and do that. Yeah, I will raise one more period Currently some Dax are running actually at the 630 I just have a call with Raj at 630. Let it get close and then I'll, uh, connect with you at seven, or as soon as the call gets over. So right now, the status is you are facing challenges in the UH. The problem is, you know, we have to create a repo and you know, uh, we have to put in the service bundle. Then only you know it will work. You will be able to test it. No, no, no, I, I will, you know, Okay, that's, that's fine, I can, I can do it. Okay, okay, thank you guys. Bye. Uh. Are we planning for the data analysis today? No, no, not today.
+
+00:24:00 - 00:24:09 Unknown Speaker:
+
+I will do it. Uh, maybe, uh, let him validate one round of validation, right? And then, yeah, I need to drop off my nerve. I I need to show that. Thank you.
+

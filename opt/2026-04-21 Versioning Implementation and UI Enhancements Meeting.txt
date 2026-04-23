@@ -1,0 +1,104 @@
+2026-04-21 Versioning Implementation and UI Enhancements Meeting
+
+Creation Time: 2026/04/21 19:01
+
+
+📅About Meeting
+
+• Date & Time: 2026-04-21 19:01 (Duration: 705 seconds)
+• Location: No relevant content mentioned
+• Attendee: Jagdish/Jagdeep, Ashish, Ravindra, Rajesh, Vinny (QA referenced), UI team referenced
+
+📒Meeting Outline
+
+Versioning implementation and demo status
+
+• API-driven version creation on new RPT/template
+  • New RPT/model creation now assigns a version automatically (current: 22.07 / V202.07 per database). Version value is sourced from API (Get Model by RPT ID and “current version” endpoint), no longer hardcoded in UI.
+• Duplication flow with version selection
+  • When duplicating an existing RPT, a version dropdown is displayed. For demo, two versions appear but only current version is active. Selected version is sent on autosave/save-as-template/run, to drive UI refresh aligned to version-specific field visibility.
+• Static fields by version via API integration
+  • Static fields are now returned per version from API. Future additions/removals of fields will be governed by selected version, enabling UI to reflect version-based schema changes.
+• Data source and consistency
+  • Demo moved from dummy/hardcoded to live database values. Newly created cases/models will carry version V202.07, consistent with the team’s Excel source of truth.
+
+Current limitations and plan
+
+• Partial completion of versioning stories
+  • Most versioning stories are in progress; full end-to-end version switching UX (including dynamic field add/remove and visibility refresh) not yet demoable due to having only one effective version.
+• Version history page and QA status
+  • QA and UI teams report no current issues on the version history page. Further comprehensive demo planned once the full “watch-to-end” flow is complete.
+• Next sprint target
+  • Remaining versioning stories expected to be completed and re-demoed next sprint.
+
+List view enhancements
+
+• Sortable columns for RPT list
+  • Users can now sort by: RPT Model Name, Run Date, RPT ID, Basic Definition, Specialty Definition. Sorting toggles ascending/descending (e.g., A–Z then Z–A), applied consistently across supported columns.
+
+📋Overview
+
+• API now serves current version data; UI no longer hardcodes version.
+• Duplication flow exposes a version dropdown; selected version is propagated on save actions.
+• Static fields are version-aware via API, enabling future UI schema adjustments per version.
+• Database-backed versioning (V202.07/22.07) is the single source of truth; new models store this version.
+• Full UI refresh behavior for multi-version scenarios is pending; only one active version limits demo scope.
+• Version history page shows no reported UI/QA issues at this stage.
+• List view sorting implemented across key columns for improved discoverability.
+• Remaining versioning stories planned to complete in the next sprint, followed by a comprehensive demo.
+
+🎯Todo List
+
+• Ashish & Ravindra:
+  • [ ] Complete end-to-end version switching flow (UI refresh on selected version with field add/remove/visibility), Next sprint
+  • [ ] Finalize API contracts for versioned static fields and ensure backward compatibility, Next sprint
+
+• UI Team:
+  • [ ] Implement and validate version dropdown UX in duplication flow for multiple versions, Next sprint
+  • [ ] Ensure autosave/save-as-template/run properly send selected version and trigger UI refresh, Next sprint
+
+• QA (Vinny):
+  • [ ] Create and execute test cases for versioned creation/duplication, including single vs. multiple versions, Next sprint
+  • [ ] Validate list sorting across all specified columns (asc/desc, stability, date formats), Current/Next sprint
+  • [ ] Regression on version history page and new database-driven version behavior, Next sprint
+
+• Jagdish/Jagdeep:
+  • [ ] Schedule full demo of the “watch-to-end” versioning flow upon story completion, Next sprint
+
+• Data/Release Owner:
+  • [ ] Confirm and communicate canonical version string format (22.07 vs V202.07) across API, UI, DB, and documentation, Before next demo
+
+Transcription
+
+00:00:32 - 00:02:14 Unknown Speaker:
+
+Uh from the business side no one has accepted this call uh so i will record this call uh future purpose. And also, so most of the stories are related to versioning, which we did not complete yet. I don't think we can demo that feature right now, but I'm not sure if any other things that we can demo. Let's go to the team. Yes, we have a demo. Okay. Sure. Sure. We are getting back online. Yeah, thank you. Yeah, hi, Ashish. Hi, Rajesh. Or to you, Ashish. Yeah, so I guess, Jagdish, this is with respect to versioning only, and Ravindra, this is with respect to where we are just sending the few values and everything. So can we showcase that at least? Yeah, yeah, yeah. So i'll showcase both where we are making the we are adding the version on creation of the new.
+
+00:02:18 - 00:03:09 Unknown Speaker:
+
+So let's try to create a new one. So on this, since it has been, it's not a duplicate one, it's a new one. We are not showcasing the drop down over here, but the version is something that is getting created. Here, if you see Get Model by RPT ID. So this is one of the call that gives us the details over here. So this version is coming, which we have set as 22.07 as the current version. This can also be confirmed with this. And there is another idea that we have created, which is which gives us the current version, which is 22.07. As well as the. Another change that we have done is by getting the static fields we are sending across the versions.
+
+00:03:09 - 00:04:08 Unknown Speaker:
+
+So tomorrow if there comes a version which has some certain static fields, which are removed or added on the basis of those versions. And the further approaches that we are trying, we are deciding, we are working on. It will give us those with the new version, so this is the integration within the API that has happened. This was with respect to when we are creating a new version, but when we are when we already have one version. Uh, sorry, we have to show. The drop down is basically on the duplication one, so when any of the version is getting duplicated, yeah, so I have created one version, which is this trial version 2.0. This has a version of 22.7. Okay, if I try to create something with that as a duplicate, run on this, this is where we'll be showing this version.
+
+00:04:08 - 00:04:55 Unknown Speaker:
+
+Uh, drop down over here. And there will be two versions right now, just for the demo purposes. And since we have just started with it, we have only, we'll be having only one version as of now. But a little tweak has been done just to make an understanding on how the things will come up. So the current version that we have right now is 22.07. And let's assume this is a folder version that was used while the app while this RPT was created. So this is how the drop down will show up. And on the basis of this current version, where whatever has been, whatever is getting selected on the basis of this. When the section is made either on an auto save or saving as a template or save as run, we'll be.
+
+00:04:55 - 00:05:49 Unknown Speaker:
+
+We are sending the version that has been selected and on the basis of that, there the UI will get, which is the next step that we will refresh the UI. So that the new fields, which are a part of the new version or the ones that are removed, either. With the visibility of the few sessions and few other things. The UI will refresh and it will reflect those changes. But since right now we just have one version, this will not be possible to showcase on this front. But this is how we are sending. So earlier version was 22.7. Right now we are sending the current version, which is version 22.7. So yeah. I guess this is pretty much the basic implementation that we have done on the how and how the things will work with respect to creation of a new template, new RPT or duplication of that.
+
+00:05:53 - 00:08:04 Unknown Speaker:
+
+Any questions over here? Vinny, do you have any questions? No questions, thank you. Okay, great. Yeah, then I'll just stop sharing and Jagdeep, back to you. Sorry, I'm switching between RPT and CLT. Okay, okay. Sorry, did I miss anything? No, no, no, I think it's done. Do you know anybody else? Uh no uh i checked with qa and uh remaining uh ui side also there is no race uh coming around the version history page. Is my screen locked? Yes. Yeah. So last time when we demoed this thing, this version was hardcoded on UI level. So now we are getting it from the API itself. These are the two versions which we are maintaining right now. This one is only because for our first purpose. But the actual version starts with this V2O2.
+
+00:08:06 - 00:09:19 Unknown Speaker:
+
+We don't have any rough data. It's dummy data now. It's the actual data that's coming from the database. Any cases will be created. Actually, any models will be created from now on. We have a version saved as V2O2.07. That's exactly the same version which we have in our Excel sheet. Great, that's all about this. So yeah, thank you. But, uh, winnie, um, these are. We are going to again demo and once everything is done, uh, but this is special work. We started working on it and, um, um, this is where we are. But, uh, the whole watch and end. We will demo once it is done. Yeah, he's looking good. Thank you. Yeah, pretty much most of the stories are related to the version and completed partially. I don't think we can show more than that.
+
+00:09:19 - 00:11:39 Unknown Speaker:
+
+But that's okay. Yeah. Can you show that? Yeah. Yeah, I can see. So from now onwards, user can sort on basis of RPT model name, run date, RPT ID, basic definition, speciality definition, all of these. So if I click here, you'll see it's sorted by starting with A to Z. If I again click back, it's like the way. Same goes for run date and RPT ID as well. Yeah. Thank you. Thank you. Thank you. Yeah. Thanks so much. So I think that's it. We have two stories related to the version. So in the next sprint, I think we'll be able to complete. Thank you very much. Thank you. Thank you.
+

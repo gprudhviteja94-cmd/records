@@ -1,0 +1,159 @@
+2026-04-14 End-to-end Payment Validation Automation and Knowledge Sharing Initiatives
+
+Creation Time: 2026/04/14 14:07
+
+
+📅About Meeting
+
+• Date & Time: 2026-04-14 14:07 (Duration: 19m 12s)
+• Location: No relevant content mentioned
+• Attendee: Ops/Opex team, Business stakeholders, Migration team, Sarah, Sandeep, Deepak’s team, Gautam, K. Ramaswamy, Sachidanand, broader engineering team
+
+📒Meeting Outline
+
+End-to-end Payment Validation Automation (SFTP → Workbasket → GSDB → Excel → S3 → Notification)
+
+• Process kickoff and stakeholder communication
+  The team will notify Ops, business stakeholders, and the migration team that the automated process has started. A standardized email, including the output Excel link, will be sent to all relevant groups.
+
+• Multi-file ingestion from SFTP
+  The system supports parallel processing of multiple files on the same day. It fetches all available files from SFTP Outbox (files then move to “send” folder), compiles the file list in a service bundle, downloads them, and parses required fields (account number, amount, payment date, check number).
+
+• Dynamic workbasket creation and data loading
+  For each input file, a dynamic (not static) workbasket is created. Parsed records are loaded into the workbasket after validating/connecting account numbers. The process then triggers a defined BPMN flow to handle all tasks.
+
+• Per-task subprocess and data enrichment
+  A subprocess executes for each task (e.g., 100 tasks → 100 subprocess calls). It retrieves card/account and payment details and calls GSDB: 
+  • Read Payment API to get last 13 months of payment history per account.
+  • Read Payment by Payment Identifier API to fetch detailed fields (check number, payment date, amount).
+
+• Validation against source Excel
+  The system matches transaction date, amount, and check number from the source Excel to GSDB data. Records are flagged Y if all fields match, N if mismatched.
+
+• Result collation and output generation
+  After all tasks complete, results for all accounts (e.g., ~110) are aggregated to create an Excel report. The Excel is uploaded to S3, and the shareable link is included in a notification email to business/client teams.
+
+• Business follow-up on mismatches
+  Business teams use the Excel to identify and investigate misplaced/missed payments per account and update accurate information as needed.
+
+• Reusable technical patterns highlighted
+  The use case demonstrates dynamic workbasket creation, SFTP file handling, BPMN-driven task processing, GSDB API integrations, Excel generation, S3 uploads, and standardized stakeholder notifications.
+
+Knowledge Sharing and Skill Development
+
+• Volunteer-led tech overviews (15–20 min)
+  Call for volunteers to present short overviews on commonly used topics: Hydra, UM Secret Management on Control Center, internal utilities (e.g., MOD development), and other daily-use components. Focus: what it is, where used, how it fits.
+
+• Utility demos and Q&A forum
+  Teams (e.g., Deepak’s) invited to showcase existing utilities or discuss plans/ideas for new ones. Use the forum to ask implementation questions and get feedback.
+
+• Presentation practice initiative
+  Encourage 5-minute impromptu talks on random topics to improve presentation skills, handling ad-hoc leadership asks, and reducing stage fear.
+
+• Learning plan recommendations
+  Reinforced micro-learning cadence: 15–20 minutes twice a week. Priority areas: Python (courses with sample code shared previously) and GCP certifications. Apply learning to build Python MODs/use cases.
+
+Administrative and Participation Notes
+
+• Participation check-ins
+  Noted individuals who started Python courses (e.g., K. Ramaswamy, Sachidanand). Reminder for others to begin with a light but consistent schedule.
+
+• Open floor
+  Invitation for concerns, topics, or questions; none raised within remaining time.
+
+📋Overview
+
+• Automated pipeline processes multiple SFTP files, enriches via GSDB APIs, validates against source Excel, and publishes an S3-hosted Excel with Y/N validation flags.
+• Dynamic workbasket creation per run with BPMN-driven per-task subprocess enables scalable processing.
+• Business teams will act on Excel outputs to resolve missed/misplaced payments.
+• The use case serves as a technical reference for dynamic workbaskets, SFTP ingestion, GSDB integrations, Excel generation, S3 uploads, and notification patterns.
+• Team to initiate short, volunteer-led tech overviews (Hydra, UM Secret Management, utilities) and use the forum for Q&A and utility sharing.
+• Presentation skill practice via 5-minute impromptu topics is encouraged.
+• Adopt a micro-learning plan: Python and GCP with 15–20 minutes twice weekly; apply learning in practical builds.
+
+🎯Todo List
+
+• Sarah / Ops Coordinator:
+  • [ ] Send process kickoff email to Ops, business stakeholders, and migration team with S3 Excel link for each run, ongoing per execution
+
+• Engineering (Platform/Automation Team):
+  • [ ] Maintain and document dynamic workbasket pattern and BPMN subprocess example for reuse, 2026-04-21
+  • [ ] Validate GSDB API response handling and edge cases (no history, partial matches, API failures), 2026-04-22
+  • [ ] Ensure SFTP Outbox-to-send folder transitions are logged and monitored, 2026-04-19
+
+• Business Operations:
+  • [ ] Review generated Excel to identify and resolve mismatched/missed payments; provide corrected data to migration team, within 2 business days of receiving each file
+
+• Volunteers (Knowledge Sharing):
+  • [ ] Confirm presenters and schedule 15–20 min sessions: Hydra overview, UM Secret Management in Control Center, internal utilities (MOD dev), 2026-04-19
+  • [ ] Prepare slides/demos covering what/where/how and reuse guidance for selected topics, session date minus 1 day
+
+• Learning & Development (All Interested Members):
+  • [ ] Start Python course track; commit 15–20 min twice weekly; share progress in channel end of each month, start by 2026-04-18
+  • [ ] Identify GCP certification path and initial modules; begin micro-learning cadence, 2026-04-25
+
+• Meeting Facilitator:
+  • [ ] Launch 5-minute impromptu presentation practice in upcoming sessions; track volunteer rotation, 2026-04-22
+
+Transcription
+
+00:00:00 - 00:00:41 Unknown Speaker:
+
+Mail to Ops like our process got started, so this is the one in Jaffa as well. So we are sending a mail like this to the all the business people and the uh, mainly people migration team, all this team. So we are sending a mail to them. Our process is started in this process, what we are doing, it, we are fetching, uh, all the file, we are fetching all the file from the SFTP from there. Uh, actually, this is in which we have, uh, a provider feature like we can process the multiple file at the same time, all at the same day as well. So in which what we are doing it? We are fetching all the file available in SFTP, as I showed you in the SFTP in Outbox.
+
+00:00:41 - 00:01:40 Unknown Speaker:
+
+As of now, there is no file is there in this one, it went to the send folder. So we are reading all the file from Outbox, fetching all the file from Outbox, and also putting the list of the file to the this particular service bundle. And here we are downloading all the files. From SFTP and pass it. And we pass all the required details. Once we pass all the required details, so what we are doing it because this file will contain the account number and all these things and maybe payment amount, payment date and check number all these details. Document we need to upload in the workbasket, so before uploading to the workbasket, we have whatever the account number we got from this file, we have to connect that account number and then we try to load to the workbasket.
+
+00:01:40 - 00:03:16 Unknown Speaker:
+
+Once we loaded all the data for that particular file to the workbasket, we will trigger the process workbasket, so process workbasket. We have defend BPMN. This is a process for basket here, what we are doing it, uh, for each, uh, whatever the data we uploaded to the work basket. And also we have one, as you guys already aware of that. Whatever the task we have uploaded to the work basket for each task, that our sub process for each task, this sub process will call for each task. So just take example, we have 100 tasks we have in work basket for each task, it will call this one. And here what we are doing, it. Here we are fetching the details like card number and and payment date and other details we have.
+
+00:03:55 - 00:04:46 Unknown Speaker:
+
+So we are fetching this detail here and mainly we are calling the GSDB. We are calling the READ Payment API, in which we are calling the GSDB server, where we will get for each account. We will get all the payment details of particular from last 13 months, we will get all the payment details. Once we got all the payment details here, for each payment, we are also calling. The second API is nothing but read payment by payment Identifier API, in which we are passing the payment ID and we are fetching the detail like check number, payment date, Amount. And once we fetch all these details, so our use case is like that, we need to validate whatever the data is available in this Excel sheet, this Excel sheet. Like, we have the absolute transaction date amount similar.
+
+00:04:46 - 00:05:42 Unknown Speaker:
+
+We need to match the same data with the GNDB system, so we are fetching all these details from the GNDB system. And after fetching all these details, we are validating the payment details with the uh, this Excel sheet. If the payment details are valid, if payment details are valid, and, uh, like, if payment details are valid. So we are putting like, we are evaluating the check number, amount and the process date match. If if they are valid, we are putting Y. If not valid is what we are putting n. So this is the thing one. Once we complete completed all the tasks, uh, for the work basket, once we complete all the tasks with the work basket, what we are doing is we are fetching the data from the work basket. And, uh, just taking up.
+
+00:05:42 - 00:07:04 Unknown Speaker:
+
+We have 110, uh, account numbers, are there again that 100 accounts. And after that, we are creating this Excel only, whatever I shown to you. So with the help of that data, we are creating this Excel. And once the Excel is created, uh, we'll upload to F3 and whatever the Excel we uploaded to the same link we have forwarded to the, uh, business people or maybe client, as in our case. So we have the mail as well here, so this is the mail we are sending to the, Uh. Different different teams are there with the. This is the link of Excel file where our Excel is, uh, put it in the exit folder, I'll open this as well for you. This is a process ran yesterday, same file I showed still flat file.
+
+00:07:04 - 00:09:24 Unknown Speaker:
+
+So that's why they migrated with the our automation in which we are passing the file and we are generating the Excel file accordingly and with the all the validation. So on top of that, they will check this file if any misplaced payment is there for particular account. So they will check with the business people and update the accurate information on missed payment. With this and with the help of this Excel. Yeah, that's all from my side. Any question on top of that? In our process, we are creating the dynamic workbasket each and every time. It's not a static workbasket. I think most of the use cases running in our automation, most of the workbasket are static only. So very few are there which is dynamic workbasket. So if anyone wants to defer dynamic workbasket, they can get the details from here.
+
+00:09:24 - 00:11:24 Unknown Speaker:
+
+It's how we are calling the dynamic workbasket as well. Yeah, thanks for that, SArah Okay. Many questions or anything that you want to ask and that you want to know how the flow is implemented, what is used and all those stuff. Keep it interactive. Directly use this use case. Maybe you will get the technical things like dynamic work basket, fetching the digits from the SFTP, loading the files. All these things and all technical things are there and we are creating. We are uploading the file to S3, so all the technical things you will get in this use case. So if you have any in future, also if you have any query or any doubts, maybe you can use these things. Same thing, right? Yeah, thanks for that. Yeah, that is the intention, actually.
+
+00:11:24 - 00:12:15 Unknown Speaker:
+
+So, even if you want to present business use cases that you have, uh, it's important to understand how the technical implementation is made. And then a few of the things like, or whatever, sort of highlighted. If in case, if you have to work on those things, then you would have a better understanding, you would have some reference points, what we have done and all those skills. Obviously, business use cases are specific to that particular thing. And then. The only thing is like, even for example, last time when Gautam explained on the Lumi migration or this particular business case around US MISPOS, these are all specific use cases. But I think what is essential for us to take away from these sessions is on the technical side, how the implementation is paid, what have we used, things like that.
+
+00:12:15 - 00:13:09 Unknown Speaker:
+
+So that will actually help us if we were to reuse certain features in the future. Okay, so anything? Uh, I know we have a little bit of time, so I just want to understand. I had highlighted a few points from my side. Uh, in the sense, uh, what topics that we can take? I am looking for volunteers, basically around certain things that we use on a daily basis. For example, an overview of Hydra, it can be, it can be an overview of the UM Secret management on Control Center, or a few of other topics. So I would certainly need you guys to help volunteer yourself and then present those, uh, which will certainly. I mean, it's just a 15 to 20 minute session and overview what it is, where do we use, where does it fit in and things like that.
+
+00:13:09 - 00:14:09 Unknown Speaker:
+
+So apart from that, any other topics also if you have and then you can come up and share, that will also be helpful. Another topic like, for example, on Uh, Deepak's team. I mean, they've already created of the utilities, for example, it'd be for the Mod development or things like that. So if any such utilities that you're interested in, this is already developed or which you have been able to create. Or if you have any doubts that I'm looking for to create such an utility, what can I do? Any? Any questions that you have addressing in this forum, you might get answers to that. So please feel free to let me know about anything that you would want to take or share. Or if you have any questions regarding, we still have another 10 minutes.
+
+00:14:09 - 00:15:25 Unknown Speaker:
+
+You can use this forum for the same. And if you don't have anything, right? So what Sandeep also pointed out in the chat as well. So we can also do something like just pick a random topic and then... Speak about it for five minutes, right? So it will improve your skills on presentation wise. Let's say tomorrow you're randomly being asked to present something to a director, present something to a VP or anything like that. It will actually make you understand how to prepare, how to present and not having that kind of a stage fear. Things like that. It will help you in many ways. Then you can do that as well. Okay, so a couple of things I just wanted to ask. So I did post last month around Python related courses.
+
+00:15:26 - 00:16:39 Unknown Speaker:
+
+So how many of you have started taking those? K. Ramaswamy, Sachidanand. Okay. If you have not started, I would suggest keep, I mean, don't keep dedicated days for that. Keep like 15-20 minutes twice a week. 15 minutes twice a week is like, I think it's more than sufficient. Especially the days when you are working from home. Um, you would have access to both the laptops, and then it would spare 15, 20 minutes, uh, or 20 minutes, uh. Alternate. I mean, two days a week. You could cover one topic each, right? Uh, one session and one topic. And then there is also sample code that is being shared. So gradually, over the period of time, you would be able to complete certain courses, so on the similar lines, uh.
+
+00:16:39 - 00:17:28 Unknown Speaker:
+
+Other certifications that you would be interested to do, especially around GCP, because GCP is like widely used here. So if you are interested in that, I would also say that have a look. I mean, last time also, I had some questions and then people said that yes, it is in the roadmap I want to do. But if you start, if you don't start right and then you will not be able to complete it. So keep a dedicated time 15 minutes, 20 minutes. A couple of days in a week and then start with the topic and over a period of time, you will realize that. Okay, yeah, so I was able to complete so in this, these chapters, these topics, and accordingly, you can plan for the certification and things like that.
+
+00:17:28 - 00:18:47 Unknown Speaker:
+
+It's not like something that you have to start and finish the same day. We all have a lot of work to complete as well, so 15 minutes twice or twice in a week, it's more than enough you can do that. Also, it will help you give you time also to recollect what you have studied. And then probably, if you're building any, let's say a Python mod, or building any use case using Python, then that will also give you a leverage to use what you have learned. Anything else from anyone? Anyone wants to share any concerns or anything that has been happening? Anything that you feel is an important topic that's a discussion? that doesn't know okay fine then thanks everyone for joining
+

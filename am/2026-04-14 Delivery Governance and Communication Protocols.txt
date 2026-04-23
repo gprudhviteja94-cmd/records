@@ -1,0 +1,268 @@
+2026-04-14 Delivery Governance and Communication Protocols
+
+Creation Time: 2026/04/14 19:00
+
+
+📅About Meeting
+
+• Date & Time: 2026-04-14 19:00 (Duration: 2409 seconds)
+• Location: No relevant content mentioned
+• Attendee: Sachin, Nancy, Raj (referenced), Rachna (referenced), Anand (referenced), Rajendra (referenced), Sindhuja, Ayyappa (aka IAPA), Kundan/Kundal, Prithvi, Athar, Seven/Sravan (Sravan), Nirmal (referenced), Product partners/business team (referenced)
+
+📒Meeting Outline
+
+Delivery governance and communication protocol
+
+• Team-to-business communication rules
+  Clear directive to avoid 1:1 communications with product partners (e.g., Rachna, Anand). Use the tech/dev Slack channel first for questions; escalate to Sachin and Sindhuja if unresolved; only then reach out to business via group email with proper stakeholders (Rajendra, Sindhuja) in copy. Minor queries can be on Slack channel; otherwise, prefer email for documentation.
+• Recent lapses and impact
+  Instances in the last 15–20 days where unreviewed outputs were sent to product partners led to incorrect E3 results (missed checks), rework, and timeline risk. Example: query modified and shared without validation by Ayyappa/Sachin.
+• Expectation reset
+  All external communication must include Sachin and/or Sindhuja. Do not commit delivery timelines to product partners before internal review approval. Use dev group for peer validation (e.g., Sravan, Ayyappa) before external sharing.
+
+Human task outcome handling in workflow (approval/rejection finalization)
+
+• Finalize vs cancel/suspend
+  Tasks must be finalized on approval or rejection; no cancel/suspend states for closure. Human task output must indicate approved or rejected.
+• User input on rejection
+  Rejections must capture a user-provided reason/comment. This input will be stored beyond generic notes (append as reject/comment with defined keying).
+• Standardized output flag
+  Introduce output variable key: approval_rejection_flag with values: approve or reject. Configure in BPMN/human task output. Kundan to set in BPMN; team to read from human task output variable. UI/data refresh nuance noted (refresh/duplicate tab to view task output refresh).
+
+PRs, merges, and environment movement
+
+• Current merge state
+  Nancy’s PR related to E2 response/intense issue merged; proceed to deploy; confirm if code can be moved to E3 today.
+• Review gates
+  All code/results must be reviewed internally (peer + Sachin) before sharing with product partners or moving environments.
+
+Data pipeline configuration updates
+
+• Source metadata changes
+  • BNC record count: yes
+  • File format: delimited
+  • Column delimiter: pipeline (|) character
+  • BNC for financing: no; Reason: Not applicable. File doesn't include any numerical financial data type
+  • BNC sequence X: enabled
+• BNC control configuration
+  Replicate headers: Data, File, Source, Extract, BNC Trailer, BNC Record Count as-is from provided metadata to BNC controller. Critical for mapping.
+• How to apply
+  Prefer editing in UI; if blocked, upload template as Edit (not Add). Use Delete for rows to remove, then Add new rows. Ensure BNC system = platform; micro-batching: No where specified. Source file configuration to be finalized tomorrow; proceed with above edits now.
+
+Threshold templates and framework refactoring
+
+• Codebase status
+  Refactoring reduced code from ~7–10k LOC to ~3–4k; build not finalized. Further review requested by Sachin; Seven/Sravan to review Prithvi’s implementation and comment in dev group.
+• Post-process SQL context
+  Keep post-processing that retains placeholders (feed_key, month_to_back_date, month_to_back_last_date) for DAG substitution. Template-wide change deferred to later to avoid broad template rewrites now.
+• Template volume and prioritization
+  Threshold has ~22–24 templates; some lack SQL and should be eliminated. Target is to deliver majority this PI.
+• Targets and timelines
+  • Immediate: close review comments; get Rajendra’s approval; move to environments.
+  • Sprint: all check types (excluding threshold) running E1/E2; threshold at least 20–40% this sprint; demo partial if needed.
+  • PI (ends ~2026-06-08): at least ~21/24 threshold templates live; remaining 3–4 can slip to next year if necessary. Aim to complete all before June if possible.
+• Resourcing
+  Potential to bring back Nirmal or others if bandwidth allows; for now, Prithvi focuses on closing check types and part of threshold.
+
+Ownership, roles, and follow-ups
+
+• Onsite leadership expectation
+  Athar to lead onsite interactions/use cases per Raj’s expectation.
+• Channel access
+  Add participants to the tech/dev channels as needed; Rajendra channel for communications with him. Insurance channel access may follow once comfortable/time-zone aligned.
+• Review workflow for queries/results
+  First validate with Sravan; then Ayyappa/Sachin; only then communicate outward. Do not let product partner pressure force premature sharing or timeline commitments.
+
+📋Overview
+
+• Team must route all business communications via tech channel/email with Sachin/Sindhuja in loop; no 1:1s except minor Slack clarifications.
+• Workflow tasks will be finalized on both approval and rejection; capture mandatory rejection reason; expose standardized approval_rejection_flag in human task output.
+• Nancy’s PR is merged; proceed with deployment and attempt E3 movement today.
+• Apply specified source metadata and BNC control changes; use template upload with Edit/Delete/Add correctly; source file configuration to be finalized tomorrow.
+• Maintain post-process SQL placeholder logic; broad template refactor deferred.
+• Threshold: eliminate items without SQL; deliver significant portion this sprint; complete majority by PI end; all other check types to run in E1/E2 this sprint.
+• Prithvi to close review comments, enable environment runs, and progress threshold; Sravan to review code; comments via dev group.
+• Athar to lead onsite use cases; ensure proper channel memberships.
+
+🎯Todo List
+
+• Nancy:
+  • [ ] Deploy merged PR addressing E2 response issue; confirm deployment status, Today
+  • [ ] Attempt moving related code to E3 and notify Sachin on completion, Today
+
+• Athar:
+  • [ ] Configure and emit approval_rejection_flag (approve/reject) in human task output; ensure UI captures rejection reason and persists appropriately, This week
+  • [ ] Coordinate with Kundan to update BPMN configuration for the new flag; verify end-to-end output refresh in UI, This week
+  • [ ] Lead onsite use-case discussions; keep Sachin/Sindhuja in loop on external comms, Ongoing
+
+• Kundan:
+  • [ ] Configure BPMN/human task to include approval_rejection_flag in output variables; share key/value details in dev group, This week
+
+• Data Pipeline Owner (assignee mentioned as “Sir/I” and Prithvi for edits):
+  • [ ] Update source metadata per directives (BNC record count yes; delimited; delimiter |; BNC for financing no with reason; sequence X enabled), Today/Tomorrow
+  • [ ] Replicate BNC control headers and mapping; ensure mapping readiness, Tomorrow
+  • [ ] If UI edit blocked, upload template with Edit/Delete/Add as instructed; verify BNC system=platform and micro-batching=no where applicable, Today/Tomorrow
+  • [ ] Finalize source file configuration once provided, Tomorrow
+
+• Prithvi:
+  • [ ] Close remaining code review comments; align with Sachin on three/four high-impact items; prepare for 1 PM review (post-DSU), Tomorrow
+  • [ ] Ensure all non-threshold check types run in E1/E2; demo readiness, This sprint
+  • [ ] Progress threshold templates: eliminate entries without SQL; target 20–40% completion this sprint; plan to reach ~21/24 by PI end, This sprint and by 2026-06-08
+  • [ ] Share build/links with Sravan for review; incorporate dev group feedback, Tomorrow
+
+• Sravan:
+  • [ ] Review Prithvi’s implementation (framework and checks); provide comments in dev group, Tomorrow
+
+• Team (all engineers):
+  • [ ] Use dev tech channel for queries; escalate to Sachin/Sindhuja before contacting product partners; avoid 1:1s; use email with stakeholders in copy for business clarifications, Immediate & Ongoing
+  • [ ] Do not commit external timelines without internal review approval; validate results with peers before sharing with product partners, Ongoing
+
+• Sachin:
+  • [ ] Add/confirm member access to tech/dev channels; ensure correct routing with Rajendra/business, Today
+  • [ ] Align with Rajendra for approval to move framework to environments post review closure, Upon review completion
+
+• Sindhuja:
+  • [ ] Monitor communications to ensure protocol compliance; join GCS or relevant calls as needed, Ongoing
+
+Transcription
+
+00:00:16 - 00:01:28 Unknown Speaker:
+
+Yeah, yeah. Nancy, is that the same code that we have reviewed in the afternoon? Should I just merge it, the one that you have raised just now? Yeah, so in that one changes for the response intense issue in E2 and the other is for... Yeah, yeah. Then I will check it, okay? Yeah, okay. Okay. Whether we need to, uh, what we need to do? When a person is cancelling the request, right, right, you still need to mark it as finalized. But, uh, you should update that API with a rejection node. Okay, okay, yeah. Note may affect reject. Based on that, what we will do well, saving the data to the database, okay, we will mark it as rejected. So we will not give an option to the user to add some comments on that, right?
+
+00:01:28 - 00:02:27 Unknown Speaker:
+
+No, no, no, no, no, uh we. Uh, let's have a discussion separately. This is, uh, you know, it's a different, but just is that I just confirm it with Raj just right now that we. We have to finalize it. Not no, no cancel, no suspend, because we are closing the task basically, so we either approval or rejection, it would be finalized. Only. It just that, you know, in the human output, right? Human task output. You need to give us an indication that ye record approved. As you mentioned, I'll be sending you that reject as a node. Yes, so in that case, what I was saying will not give an option to the user to add any input from the UI. Right, justification or anything. No, no, no, we need input, man, Why somebody is rejecting the request?
+
+00:02:27 - 00:03:55 Unknown Speaker:
+
+Somebody would ask, where will you save it? Where will you add it? Because, of course, it goes to notes only. No, no, no, uh, it's not only notes. We have those. Uh, okay, then you can append right, reject or comment. So we will define the first term on that basis. Product partners right like Rachna or anybody right, or the business folks also okay. Now, the observation is that we are reaching out to them with very, very minute. Or the minor issues which can be sorted out within the team, right? This has been discussed earlier also. But please take a note like, if we have, you know, certain queries. First of all, check with the you know the other folks right in the team. Whether they are able to sort it out or not, in case they are not able to sort it out.
+
+00:03:55 - 00:04:49 Unknown Speaker:
+
+You can always reach out to me, and second thing is that whenever you are reaching out to Rachna, Anand or the business folks, first of all, use that tech channel that we have created. I'm not going to hear any 101 conversation in future. Otherwise, I'll escalate to Raj because few things have been, you know, bypassed from me. Even Sindhuja is not aware. Okay, at least Sindhuja or myself, right? If we have been noted over there, then we could have taken our steps over there, right? Few of the very simple thing which could have been sorted out by own right. Those are reaching out to the product partners. And I hope you guys have heard the retro comment. Last year in the last PI, right, that was the comment, and we have improved in the previous PI, right.
+
+00:04:49 - 00:05:48 Unknown Speaker:
+
+I don't know why this suddenly this practice come along again, again, right? Till last PI, we were doing a good job because we have, you know, got that feedback from the product partner in the previous year. PI. Okay, and then again we started doing the same stuff and it's being surprised why we are doing a one-on-one conversation. News Look, everything is being captured and those are being, you know, monitor and being passed to the leadership. Okay, for any example, so when the E3 result that you have said, right, that is missing lots of check. I don't know why did you modify the query, even if you modified the query, right? Why didn't you validated within team, maybe with IFR. Without validation, why did you send the result directly to Rachna? Any specific reason for that?
+
+00:05:50 - 00:06:52 Unknown Speaker:
+
+Actually, it looks like we already discussed with the code the logic what I have received from the description. Unfortunately, I missed it with the filters which they have sent to me in a reference screen. That is the major problem. That's why I think it's like a... But did you... Okay, but did you validate that result with IAPA as you are working closely with IAPA? Yes. Then that is the problem, right? If you are sending the result to the product partner, right? It was not being reviewed by ARPA. It was not being reviewed by me. And the information floated to the product partner. Right? And today, in today's calls, he was mentioning, I am a bit surprised to view that lots of checks have been eliminated. It was not the same implementation which we have asked for.
+
+00:06:53 - 00:07:42 Unknown Speaker:
+
+Now, what it would impact, it would delay the timeline, right? Now, again, you have to rework on that, which could have been closed in the previous sprint. So just let not debate on this because I don't want to consume all of your times. But the pointer is that going forward, if you are having an interaction with any third person, please keep Sindhuja and me on the loop before reaching out to the partners. Even if you are doing an interaction over the Slack, first of all, this channel has been made for that only. This tech channel. If somebody is not aware. This is the tech channel, right? Yes. So, you liberate this tech channel if you have any questions related to the business. Even if it is a simple or minor.
+
+00:07:42 - 00:08:38 Unknown Speaker:
+
+First of all, if you have query, liberate this dev group, right? So that if you are not sure, right? Then maybe Ayyappa or Kundal, whoever is experienced, right? They can help you out over there. And if they are struggling, then I'll pitch in to help you out over there. And post our comment. If that is something not getting resolved, then we can reach out to the business partner. And that's ideally over our email, not even over the Slack, until unless it's a minor communication. Okay, okay, even this one if you see this B40 V45 details. This has been sent to Anand over an email, keeping Rajendra over the loop. Okay, I'll show you this one, and even Sindhuja is over there in that email, so please don't keep any look.
+
+00:08:38 - 00:09:25 Unknown Speaker:
+
+This has been, you know, we asked it right and over this one, Rajendra is there, and Sindhuja is also been there. So any business clarification, put it over the email for the documentation purpose number one. If it is a minor conversation, then you can go ahead and then utilize this channel. I don't have a issue. But please don't do a one-on-one conversation, even if you are connecting with the partners. Please set up a meeting no Slack direct conversation until it is a minor one. Yes, okay, okay, uh, that was the main thing I thought of a quick connect. So that we should stop this immediately, because again, there would be a review. Uh, once we reach out at the end of the, uh, you know, Pi. So Sindhuja? There are multiple instances. Okay, uh.
+
+00:09:25 - 00:10:18 Unknown Speaker:
+
+And that's that's why I thought of to have a discussion with the complete team. I have just taken in one example. Women don't take it like, you know, I'm pointing it out to you. But there were multiple instances I have observed within the last 15 to 20 days and that's the reason I have to set up this path. Sindhuji, you were saying something? No, I just wanted to say a note actually. Thank you. Needs Robin, Prithvi, who else? Athar, yeah, Athar, these three guys. And see, I have approved your PR, sorry, merged your PR, so you can continue and then deploy it. And if you are able to move that piece of code to the E3, do let me know, we can close it out today itself, the query that you are moving over there.
+
+00:10:19 - 00:11:59 Unknown Speaker:
+
+Yeah, yes, let me check such a, yes. Yes. Athar, you can go ahead. You know, mentioning over there. Yeah, one second. Let me share this. Basically, you can stay back. So, man, if you want, you can also stay back so that, you know, that would give you some idea. Sindhuja, if you want, you can join the GCS call. I think we are done. Sure, Sachin. Thank you. Yeah, thank you. Have to bits. Uh, I know you, you are already, uh, started, uh, putting your input over there. But the expectation from Raj is that you should be leading it from the on-site. So you need to, you know, start pitching in on all of the use cases. Okay, okay, yeah, yeah, so uh, this one, uh, this is the one I was asking. Right.
+
+00:12:00 - 00:15:25 Unknown Speaker:
+
+Can you just pick up this talk? And then that should work right suppose uh right just check and then see if it is working mark the variable type as string ok so do this if it is approved if it is rejected then it is rejected. It will not be in the header, right? No, but it will be in the output data, right? There are some tasks in the header in the output data. No, you have to refresh it. Open a duplicate tab. Open a duplicate tab and just copy this task ID. Search it over there can you click on task data output rising we need to search something or do i need to oh man. I'm just passing the task id. This is just the output. Maybe I need to check with your submit button.
+
+00:15:25 - 00:17:04 Unknown Speaker:
+
+Hey Correct Let me just eat a chat again. No, take it up chicken Because this would come and this would come. I can pick it up from notes but I don't want to do it from there. That would be a string comparison, right? See, this is finalized. If I'll add new, it means just there is no extra. Okay. This is for session only. Yeah, yeah, I got it. That's fine. Put it anything I approve. I got it. Click on action as. Click on that click on that click on that click on that click on that click on that click on that. No, no, no, one thing, one thing. This process definition name will go. No, it will go. No, it will go. Process definition name will go, BPMN's name. I will confirm with Kundal.
+
+00:17:05 - 00:18:53 Unknown Speaker:
+
+The value not required to confirm it just need to append it let me tell you what would be the key give me a second no no you will be like you will be checking right. Instead of this you can mark this flag as approve underscore approval underscore rejection underscore flag. Make it this key and then we will be reading it into that output variable of the human pass. Okay. So the flag names would be approval underscore rejection underscore flag. Okay. And I'll ask Kundan to just ping it over that dev group. I'll ask Kundan to configure it over that VPN. Okay. And value will be approve or reject. Right? Yes. Yes. We can close this now? Yes. Okay. Thanks, Athar. Sir, I'll share my stain. I did set it up, the pipeline for this one.
+
+00:18:54 - 00:20:03 Unknown Speaker:
+
+The one that he has asked, right? The new data name. Yes, that is set up. The source file configuration is not done. I have given you this access, okay? What I need from you is that you have to modify the attributes in your current pipeline. What is that? I will tell you, so look, few of the changes I will highlight, you, just compare it, that's what I will tell you. So, over here, if you come, notice their metadata in the source, if you come over here first one. This BNC record count should be yes, file format should be delimited, and the column delimitator should be this one pipeline. Okay, okay. BNC for financing should be no, and the reason would be not applicable. File doesn't include any numerical financial data type Okay, and BNC sequence X should be enabled.
+
+00:20:03 - 00:20:53 Unknown Speaker:
+
+These many checks are there and in this new file it would be there. I am expecting this should be there. That is number one. These are the changes. Just compare whatever it is there, right? You can just start editing and and then make the changes from here itself. Okay, that is number one. Second in the BNC control, right? Uh, just configure the same header. Data, File, Source, Extract, BNC Trailer, and BNC Record come as it is. Okay, because this is the file mapping. I have to put it over the SFT. Download the metadata of this and as it is, it will be a BNC controller and then these places this would be the change which we need to do and I don't think any other changes are required.
+
+00:20:56 - 00:22:15 Unknown Speaker:
+
+Yeah, those are the couple of changes that that's it and the source file configuration. I'll finalize it tomorrow. Okay, just make this change and then. Yeah, this is important because if this is missing right then then we won't be able to map it Okay, I'm trying making the change But the last time when I was trying to edit it directly on the UI it was not allowing me to save it Upload the template, You can still upload the template right, just compare the template right both of the template. But make sure you're not making it as add, make it as edit. Okay, got it, like, if you're uploading this state, right? Yes, yes, yes, not be marking these as the ad. BNC system should be platform, and then this should be no, and then the last one should be also not this one.
+
+00:22:15 - 00:23:27 Unknown Speaker:
+
+Micro batching. Okay, okay, this file you have to change, and then this file you have to change. So just mark it as Edit. If you feel these details are not there and previous code delete, select the Delete option over there instead of edit. Right? Suppose I want to remove this row then, in case, mark it as deleted. Okay. So previous two records will be deleted which is there in the pipeline and then mark the new one as add. I don't think you need any changes over these places. Only this source file metadata and DNC control but still cross check whatever is there just make that change and discussion that we were doing. Yes, we are good. We are good, right? Okay. Okay, Prithvi, you can go ahead and let's discuss your use case.
+
+00:23:28 - 00:24:39 Unknown Speaker:
+
+Sachin, can you add me to that tech group, tech business group, Slack channel? I think I have added you. You are not there? But, uh, these was the review comment which we received, and right? And then again, So, man, oh man, you're not there, right? Okay, I did so. You are already here. Uh, you are here in this dev group. I hope yes, that's right. Yeah, you are there. Where Rajendra is there, it's for any communication that you want to do with Rajendra. Okay, okay, okay. So that is the reason this channel is very, you know, little bit used up, but we just kept it like one. And then once you are comfortable, then maybe I'll try to pull you in this insurance. Also because these folks also works in the UK time zone.
+
+00:24:39 - 00:25:42 Unknown Speaker:
+
+Okay, I mean, yeah, maybe it's more over that pipeline setup and all those work is going on. Okay, okay, you have to three, go ahead, man, you can stay seven. Uh, someone, if you want, you can. Uh, you would be getting a requirement. Don't worry for that. First of all, use the rewards integrity, which is in your bucket. I will make the changes today and I will check with Ayyappa first. No, first of all, check with Sravan. Okay. Let Sravan to validate. Okay. If Sravan gives you a heads up, then you can check with Ayyappa or myself. Basically, you know, look, when we are sending... Actually, what happened is this like a... I got the Excel, right? In the Excel, I have the essence logic is there and I have the new description.
+
+00:25:42 - 00:26:36 Unknown Speaker:
+
+Have focused on the new description with using the reference SQL. And I missed, like, a what filter condition we have? Some filter condition is there inside? That is the. Those are the human reason we are asking for a review. Okay, right, those are the only reason because you built it, you tested it. You feel this works fine, right? When you do a PR review, right? Whether it's the venue, it's actually right. They call. UH, Friday, Rachna reached to me and because we shared, uh results on that day with the loop, you and everyone, so she reached out to me. And even if, even if look productive, might reach out to you. Don't get into the pressure, just tell them okay, just tell them that I'm still working on it. With respect.
+
+00:26:36 - 00:27:32 Unknown Speaker:
+
+I TimEline Don't commit a timeline from your side until unless you get it reviewed from me. Because if you commit a timeline, then I won't be able to play a part over there. If you suppose you committed like I'll be able to deliver it tomorrow, then I won't be able to defend you on that case. Okay, okay, okay, okay, yeah, thank you so much. Yeah, no, thank you. Uh, seven. Are you getting late for office? No, no, no, I have an office. Okay. Okay. Okay. Okay, Sachin. Thanks. Yeah. So first of all, can we go to the line number, the pointer number four of the three, that check mass duplicate method? Okay. Can you explain me the logic over there? Even if you don't want to change it, right? What exactly is going over that check duplicate method?
+
+00:27:32 - 00:28:39 Unknown Speaker:
+
+I'm not saying I'm not. Changing this one. I didn't say this one, Sachin. What was the comment for that check duplicate method? Yeah. Hello. Oh, sorry. Yeah. Sachin, I didn't speak anything related to that one. I'm doing that change. No, man. If you... let me tell you that, can you? Can you go back to your Slack message again? Like this is again, uh, you know, mismatch in the conversation? Can you go back to your Slack message? Yeah, yeah, so what you have made? I have fixed all the code review comment except three or four, three hours, three or four code review comments. I mean, three or four code review comments, not three and four. And then those three or four would require a lot of code changes. It's better to not make it right, so is what I am asking you, right?
+
+00:28:39 - 00:29:42 Unknown Speaker:
+
+It is better not to make. I would need to rework on all template, I need to understand what are those changes. Yeah, that's what I'm talking about. And can you send this report to Seven? So that he can go through this leper once? And if he has any review comment, then then he can let us know, sure. I'll give you the links, Revan. You can go through this code implementation that Prithvi has done. And in case you feel a few changes are required, please put it over the dev group. And then he can work tomorrow on that. This is still being finalized. This build is not completed. So even before moving to the environment, I already reviewed it. A few comments I already have given. We refactored it, you know. This was around 7,000 or 10,000 codes were there.
+
+00:29:42 - 00:30:42 Unknown Speaker:
+
+So right now it has been reduced to, I think, 3,000 to 4,000. But still go through this code, and if you feel some things can be improved, please put those comments. Can I get a bit of a background? Like, what is this code? So this is what we are doing. I'll give you a background on this. So this, you are aware, right? We are building this UI page, right? Where we would be onboarding the rules, right? I already explained it to you over the KT. The requirement that we use to get it from the Excel, right? This is something we are going to get it through this UI page. Remember? Okay, no worries. You can evacuate. I'll let you know once I'm able to log back. Okay, no worries.
+
+00:30:42 - 00:31:43 Unknown Speaker:
+
+Just let me know what are those three, four changes which you are mentioning. Yeah. I wanted to, okay, this one, Sachin, this post-process scale is there, right? So what are we having? Feed key and month date thing we are appending it, as with braces, so that it will be. The value would be substituted using the bag itself. Okay, so this thing, I can put this inside the template itself, I don't need this one if I do this one. It requires changes to all templates. But this is the what is this month to bag date? What is this month to bag last date? Have that? What exactly value? We are getting a feed key, I am aware, but what about this month to back and month to back? Large state? Is this this parameter that we are passing to the SQL?
+
+00:31:43 - 00:33:33 Unknown Speaker:
+
+Yeah, so let me show you that this is free. Search it now, just search it, go ahead and search it. Can you search it only on this current workspace? View option is there right when you click on View, Search option is there just below that search option is there search. Yes, has that keyword. So look, it is there in this one missing value, so it will actually replace it with double or this one, then that's fine, right? I never asked you to change that one. I don't think I would have asked you if there is a linkage, right? Yeah, I don't have problem with that piece of code. Yeah, this is there. Yeah, this we have, post process we do. If we find, I would just tell you, like, you know, whatever code you're writing, please understand it.
+
+00:33:33 - 00:34:25 Unknown Speaker:
+
+Yeah, why? Why it is there, what is the reference, why we are using it? What would happen if I replace this? What if, what would happen if I don't put these things right now like this? SQL resub, right? What exactly it is doing, right? So it is basically, uh, replacing your feed key one to back data. And this last is dynamically. When you are creating the template, yeah, the when this is basically I am creating the SQL, right when I am creating SQL. These values would be as is it will be presented, and what will be substituted by the, uh, the Dag? These values would be provided by the DAG itself. Okay, so I have to make sure that generated SQL should have it as is, but with some braces. So that's why this post versus SQL is added.
+
+00:34:25 - 00:35:24 Unknown Speaker:
+
+If I change this one, all missing values, stagnant, I would end up modifying this, moving this logic there. Okay, so that's why I said, let's, uh, we can can have this in the later, uh development. If it is, uh, I mean, this is not going to happen. I don't think I have raised a comment on this one, but if you have few other stuff, let's review it. Tomorrow, 1 p.m. post the DSU call, Okay, yeah, this is because right now I have calls with other folks, right? So I won't be able to stretch for today. And one more thing, I wanted to discuss this templates threshold. If you see there are lot, I don't know how I am going to complete this. Many. If you see, totally 22 to 24 are coming. Okay?
+
+00:35:24 - 00:36:22 Unknown Speaker:
+
+And in this one, one more thing I found there is no templates available means there is no SQLS for these, then if SQLS are not there, then eliminate those. One right? Yeah, okay, these are like one, two, three or four are there like that. But even then I would end up having, uh, this is the reason, right? I have asked you, I have given a call to you that day, right? And then you did not picked it up. That is the reason I was not thinking, it is this, this one complex? Okay, what is happening if you see in the background, right? It's six months for the product team. Okay, this is something started from month of Jan. Okay, now, if we are not even to deliver a product in six months, we are in trouble.
+
+00:36:22 - 00:37:17 Unknown Speaker:
+
+We are working. I want you to understand this is very complex, such in this is not one person can do it. I am not denying that. That is the reason I have included Ayapa in control. Control is also doing the same stuff which you are doing, correct? If I would have known these things at the very initial level, right, I could have asked for a, you know, more time from them. But let's deploy whatever things are ready, right? At least 90 of threshold, right, and maybe 10. I can ask them that we are still working, but not less to that. Man, yeah, let's, uh, okay. I will try to close whatever is possible in this print. I'll try to bring in Nirmal again or someone again. Uh, once I see the bandwidth, yeah, but right now everybody is occupied, right?
+
+00:37:17 - 00:37:59 Unknown Speaker:
+
+So once I see, like, Uh, if we? I have shared that build plan also, right, you have seen over there in that group, Yeah, yeah. So if we have bandwidth, I'll pull N. C. Or someone else to help you out. But right now, your focus should be close. All the check types in this print, along with few of the template from the threshold. And it should not be running in your local, it should be running in the environment. End to end. Yeah, yeah, it is running in that I uploaded and tested it. Okay, yeah, look, first of all, let's target to close this review comment so that the framework would be finalized and then we'll get our approval from Rajendra. To move it to the environment, that is number one, that is the number one goal.
+
+00:37:59 - 00:38:42 Unknown Speaker:
+
+Second goal would be to close all the check types apart from the threshold which should be running in the environment. And then suppose threshold is having 24 template, then I need at least 21 term template to go live in this PI, three or four template. We can plan it for the next year, that's fine, but not lesser than that. No 20 is also very difficult in this print itself. If you ask me, my request is, I am, I am not asking. Sprint man. The PI PI would end in the month of June, 8th of June. By June, I'll close everything. I am not worried about that one. But what I would suggest is Sachin let us concentrate on other check types threshold in this print I will try to close 30-40 percent ok.
+
+00:38:42 - 00:39:32 Unknown Speaker:
+
+That one only will go to production. Other threshold type you have already mentioned right those all are completed. Yeah all four are completed. Yeah. Only threshold check is actually complex. So that one also I will do it. I commit something again. If it is not done in there by the end of this printer, then there should not be any questions that why it was not completed. So that's right, I mean, giving an example. Also, if the number is like, 30, 40, right? Some force and 10 is done, let's demo it to the business. That's okay. And then we need to close everything by June, before June even. Okay, yeah, yeah, sure, let me close this comment today and tomorrow I'll try to close everything. Okay, yeah. And also working on the threshold, like at least 20%.
+
+00:39:32 - 00:39:53 Unknown Speaker:
+
+I will do it after that. My goal is to move this to E1 and E2 environments, so that in this print, I will target that now E1 E2 environment deployment. Okay, okay, so for those, at least for those four checks, it works. Yeah, okay, yeah, thank you.
+

@@ -1,0 +1,153 @@
+2026-04-13 Design Review Process and Payments Uplift Priorities
+
+Creation Time: 2026/04/13 17:56
+
+
+• Date & Time: 2026-04-13 17:56 (Duration: ~31 minutes)
+
+• Location: No relevant content mentioned
+
+• Attendee: Uday; Saurabh/Sorov (referenced); engineering leads; payments leads; Shabani; Rajiv (referenced). Others not clearly identified.
+
+📒Meeting Outline
+
+Design Review Process and Documentation Streamlining
+
+📅About Meeting
+
+• Purpose of design reviews The team emphasized instituting a lightweight but consistent SDLC/design-review process to avoid late-stage PR rework. A recent uplift effort revealed gaps because the initial design discussion did not occur, leading to substantial PR rewrite feedback.
+
+• Template expectations Current template (originally created by “Sorrow/Saurabh”) is considered too detailed and time-consuming. Desired elements include a concise elevator pitch (1–2 sentences), clear title, requirements, links, and a focus on high-level design decisions and edge cases without overburdening engineering leads.
+
+• Edge cases and scenario coverage Leverage the experience of smart engineering and payments leads to identify edge cases up front, ensuring designs work across scenarios before development starts.
+
+Payments Uplift Priorities and Cadence
+
+• Priority focus Payments uplift is the top priority for the year. The immediate objective is to deliver a better user experience, particularly around the payment grid/review screens.
+
+• Working cadence Daily 1-hour working sessions will be scheduled with only the necessary stakeholders to drive rapid alignment, capture inputs, and address design details iteratively while minimizing backend impact.
+
+• Scope clarification Many details (e.g., exact UX flows, backend implications) are not fully documented yet. The team will first capture high-level objectives and defer deep implementation specifics until alignment is reached.
+
+Recipient Management Integration Strategy
+
+• Mandatory dependency Recipient management lookup is mandatory for create payment. A call with the recipient management team will be arranged if required to clarify integration needs.
+
+• Design considerations Integration is not limited to APIs; the team must define caching strategies (local vs remote), decide whether to integrate via recipient environment APIs directly, and document data flow/latency expectations.
+
+• Template for HLD A High-Level Design (HLD) is required covering: API touchpoints, caching, component reuse across grids, handling of mock vs live data, and market variability.
+
+Market Rollout, Reuse, and Copilot Utilization
+
+• Market rollout assumptions Typical markets will have 70–80% “bluegrade/boilerplate” reuse and 20–30% net-new design. Once one market is implemented, subsequent markets should be faster via reuse.
+
+• Developer efficiency with Copilot Expectation to demonstrate maturity in leveraging GitHub Copilot (or similar) to reduce repetitive work and avoid 10–15 days of reimplementation per market for reusable parts.
+
+• Componentization approach Components should be built to work across grids. During development, mock data can be used for cross-grid components; integration will be done grid-wise with real APIs.
+
+UI/UX and Implementation Notes
+
+• Screens and complexity Anticipated 7–8 screens for create payment/review flows, with roughly 50/50 split between template/reuse and bespoke work, subject to validation.
+
+• Mock vs API For the shared grid component, use mock data for component development; ensure proper API integration per grid when wiring to production services.
+
+• Minimizing backend impact The team aims to reduce backend changes where possible by clarifying asks early and optimizing front-end experience.
+
+Status Updates and Ongoing Work
+
+• CDPR status High-level update requested for CDPR (context not fully provided).
+
+• Wire book and drawdown Plus “Manderson” changes for wire book and drawdown are completed.
+
+• Immediate UI changes Minor UI label changes scheduled for tomorrow.
+
+📋Overview
+
+• A lightweight, consistent design-review process will be adopted to prevent costly PR rework; start with a concise elevator pitch and HLD.
+
+• Payments uplift is the top priority; focus on improving user experience for payment grid and review screens with minimal backend impact.
+
+• Daily focused working sessions will be set to drive decisions and capture details iteratively with essential attendees only.
+
+• Recipient management lookup is mandatory; HLD must cover API integration and caching strategy (local/remote).
+
+• Markets will target 70–80% reuse; enforce componentization and leverage Copilot to accelerate subsequent market rollouts.
+
+• Build reusable grid components with mock data; integrate per grid with real APIs during implementation.
+
+• Approximately 7–8 screens expected; effort split roughly 50/50 between reuse and new work, pending confirmation.
+
+• CDPR update requested; wire book and drawdown changes completed; UI label changes due tomorrow.
+
+🎯Todo List
+
+• Uday (or Design Lead):
+
+  • [ ] Draft the lightweight design-review template (title, elevator pitch, requirements, links, HLD sections: APIs, caching, component reuse, edge cases), by 2026-04-15.
+  • [ ] Schedule daily 1-hour focused working sessions for payments uplift with only essential attendees, starting 2026-04-15.
+
+• Payments Uplift Owner (TBD):
+
+  • [ ] Produce High-Level Design for payment grid/review, including recipient management lookup and caching approach, by 2026-04-19.
+  • [ ] Identify and document 70–80% reusable components and patterns for market rollouts, by 2026-04-19.
+
+• Recipient Management POC (TBD):
+
+  • [ ] Confirm integration method (recipient environment API vs direct), data contracts, and latency/caching implications, by 2026-04-18.
+  • [ ] Attend a clarification call if required and provide API docs/SLAs, by 2026-04-17.
+
+• Frontend Lead (TBD):
+
+  • [ ] Define componentization plan for cross-grid usage with mock data strategy; outline per-grid API integration plan, by 2026-04-18.
+  • [ ] Prepare screen inventory (7–8 screens) with reuse vs new breakdown and UX notes, by 2026-04-17.
+
+• Backend Lead (TBD):
+
+  • [ ] Assess backend impact and propose ways to minimize changes; validate feasibility of caching strategy, by 2026-04-19.
+
+• Engineering Productivity/DevEx (TBD):
+
+  • [ ] Provide Copilot usage guidelines and examples to accelerate boilerplate across markets; track adoption, by 2026-04-22.
+
+• CDPR Owner (TBD):
+
+  • [ ] Share high-level status and next steps for CDPR in the next session, by 2026-04-15.
+
+• Wire/Drawdown Owner (TBD):
+
+  • [ ] Verify deployment/validation of wire book and drawdown “Manderson” changes; report outcomes, by 2026-04-16.
+
+• UI Owner (TBD):
+
+  • [ ] Apply scheduled label changes and confirm in tomorrow’s build, by 2026-04-14.
+
+Transcription
+
+00:00:06 - 00:03:40 Unknown Speaker:
+
+So look at this one, what are the things which are relevant, some of the stuff which can be cut down. So the page that I have provided you. Saturday, Saturday, Saturday. Yeah, can you guys hear me now? Can you hear me Uday now? Yeah, Uday can you hear me now? The whole purpose is any kind of project. Some basic SDLC process, right? So trying to come up with the overall process, but if you have anything right, I mean you cannot. One need to follow this kind of template, whether it says title, requirement, link. Blah, blah, blah. Look at some of this stuff. It was initially done by sorrow, but it has too many details. So, and the whole idea is not to punish any engineering lead if they are picking up any new work right wherein.
+
+00:03:41 - 00:05:01 Unknown Speaker:
+
+This documentation itself is taking forever time. So some of the stuff that I really like, I mean elevator pitch, it simply says one or two sentences. Look at it, okay? Sure. This is with respect to payment uplift, you want me to update it, right? No, no, no. This is... to present their design stock, wherein the wider audience is reviewing the overall design. Okay, okay, but you are giving this with respect to uplift that what started some development work? And during the PR review, I realized that, you know, this is not the right way to do it. And kind of, you know, providing the feedback on the PR that you need to rewrite everything. So why it happens? Because we did not have the initial design discussion.
+
+00:05:01 - 00:16:42 Unknown Speaker:
+
+Okay, yeah, okay, this this document, the initial set of document, if you see right, it was created long time back, is updated. I saw the overall gap in in my system. Well, if the design review is this not very, very effective in part and parcel, when I am asking someone then do the design review, etc. Is happening. I want to set it the general. We do have a lot of smart engineering leads and experienced payment leads. So why not to identify all the edge cases reviewing the design works in all the different scenarios upfront. If you look at... which I'm missing is you have to have. What we told them is we'll first concentrate and uplift is my biggest priority for this year. Okay, so I I can have the discussion on a everyday basis, and again, not with a very, very broader team.
+
+00:16:42 - 00:17:58 Unknown Speaker:
+
+And whoever is absolutely required on that call will bring in only those cases I can. I can book every day one hour session call. Uh, needs it for the payment grid, or you need it for free payment? I can have the discussion every day, so making sure any kind of input or we have those kind of stuff, some detailing is required. I am addressing all those stuff on the recurring basis. I want to minimize the overall impact on the backend. The whole goal is because we are not understanding the overall ask is too much. And, uh, you know, just displaying the payment rate or review screen. These are many, many. Which is not documented yet. Which is not documented. So, let's finish. What is my goal? Immediately put on a better user experience.
+
+00:17:58 - 00:21:13 Unknown Speaker:
+
+So, you might have seen it multiple times. Every point but recipient management lookup is mandatory. We don't have a choice. 15 day US, US dose, Market build that, how, how much of those development, etc. We can make it as part of the co-pilot integration. I mean, typically, you know, for every market, you would have 70 to 80 percent bloat rate, okay, and 20 to 30 percent will be. You know, some new design and something. I mean, if it is a blue grade and if you have already done for one market for the next market. I don't want a developer to spend again, you know, 10 days or 15 days in order to, we have to show the maturity in terms of how effectively we are using GoPilot. Back in here.
+
+00:23:24 - 00:26:55 Unknown Speaker:
+
+You set up a call with the recipient management if it is really required for create payment and then we will do if it is required. Then I need high level design. So from design perspective, it's just not the API integration. We'll also have to look, uh, what kind of caching, local caching, remote caching, etc. That will happen. And are you integrating with the recipient environment API, or you are directly. How about template? Roughly, yeah, I will say 50%, 50%. I'm saying 5G, you have seven to eight different screens. I know that, that's why I'm saying again, we have not deal with. It's a mock only for this particular grid, it's API integrated. Only because when we are making a component that is applicable across grid with mock data, but when we are integrating, we are integrating it grid wise.
+
+00:27:17 - 00:30:16 Unknown Speaker:
+
+How much? How much is it? How much is it? How much is it? This is the place where Shabani was buried. This is the place where Rajiv was buried. Implementation details. First, high level I want to capture everything. I will come back on the other stuff later. And if we get into the implementation, I mean the high level objective I will not be able to capture. Give me high level update on your CDPR. plus manderson changes for wire book and drawdown completed so when I say UI changes label change tomorrow.
+

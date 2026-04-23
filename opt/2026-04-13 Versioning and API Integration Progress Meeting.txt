@@ -1,0 +1,130 @@
+2026-04-13 Versioning and API Integration Progress Meeting
+
+Creation Time: 2026/04/13 18:46
+
+
+📅About Meeting
+
+• Date & Time: 2026-04-13 18:46 (Duration: 14m 28s)
+• Location: No relevant content mentioned
+• Attendee: Srikanth, Satyam, QA Team, Alok, Ashish, Himanshi, Rishabh, Pavan, Jardish, Ravinder (a.k.a. Raminder), Siva (not on call), Peter, Avini
+
+📒Meeting Outline
+
+Versioning and API Integration
+
+• Version implementation status
+  • Ashish reported ongoing version implementation on UI; awaiting a few API changes to proceed with integration. The “choose execution version” API changes from last sprint should be available but are not visible in the dev environment. He is coordinating with Himanshi to confirm deployment status and unblock integration.
+
+• API ownership and deployment visibility
+  • Clarified that some version-related API changes were completed last sprint and are under review, but deployment to dev is pending or not observable. Ashish to sync with Himanshi; offer for support extended by the team.
+
+• Version history collection and GET API
+  • Pavan to start on the versioning API after incorporating inputs from a prior call with Ravinder. Team agreed he can begin base setup without waiting for all investigations to conclude. Dependency on a backend “version history” collection schema: Siva owns collection stories. If not available, Pavan will create the collection and proceed with a GET endpoint, reviewing with Siva.
+
+QA, Validation, and Coordination
+
+• QA collaboration
+  • QA team engaging with Srikanth; coordination ongoing. Rishabh is working with QA for validation of “Reports of the Pink Summary” tab. He will add a QA task to track this under the relevant story.
+
+• Environment and validation
+  • Ashish is verifying why API changes are not visible in dev; this is currently a focus to enable UI–API integration and close the first story.
+
+Refactoring and Code Quality
+
+• Refactoring progress
+  • Significant progress reported on refactoring the existing final version of the “chorus matrix” (context indicates integrated UI/API adjustments). Rishabh has implemented fixes related to API usage.
+
+• Test coverage branch
+  • 80% unit test coverage coding is complete. Merge is pending per earlier guidance from Siva Reddy to use a new branch. The branch exists; code will remain there for now until reviewed/merged as appropriate.
+
+Planning, Estimation, and Story Management
+
+• Estimations and workload
+  • Alok acknowledged a slight overestimation but confirmed ability to manage within the sprint; no blockers.
+
+• Story status and progression
+  • Ashish’s second story to be moved to “In Progress” while the first completes post-API deployment. Team to create additional stories as needed; Srikanth to help open stories based on asks.
+
+Cross-Team Syncs and Scheduling
+
+• Investigations and follow-ups
+  • Ongoing investigation on versioning API approach with Ravinder’s inputs. Follow-up sync planned with Shiva, Alok, and others to align on base setup and schema.
+
+• Meetings and schedule changes
+  • One call canceled per Avini, but other sessions remain scheduled. Peter and Ravinder have a separate device-related session; updates to be shared with the team.
+
+📋Overview
+
+• Version UI work continues; API changes from last sprint are not visible in dev and are being verified with Himanshi.
+• Team aligned that Pavan can start the base versioning API work, focusing first on a GET endpoint and coordinating schema with Siva.
+• QA is actively engaged; validation for the Pink Summary tab is underway, and a dedicated QA task will be tracked.
+• Refactoring of the final version of the chorus matrix shows strong progress; integrated fixes tied to API usage are in.
+• 80% test coverage code is ready and resides in a separate branch, awaiting review/merge per prior guidance.
+• Alok reports no blockers despite a slight overestimation; workload is manageable within the sprint.
+• Additional meetings will continue for API investigations; one call canceled, but other syncs are in place.
+
+🎯Todo List
+
+• Ashish:
+  • [ ] Confirm deployment status of last-sprint API changes with Himanshi and restore visibility in dev; proceed with version API integration for the first story. Time: ASAP (before closing the first story)
+  • [ ] Move the second story to “In Progress” and continue parallel work as feasible. Time: Today
+
+• Pavan:
+  • [ ] Sync with Siva on the version history collection schema; if absent, create the collection and design the GET endpoint. Time: Start immediately; initial review within 2–3 days
+  • [ ] Implement base versioning API (GET first), incorporating inputs from Ravinder; schedule a review. Time: This week
+
+• Rishabh:
+  • [ ] Add a QA task for Pink Summary tab validation under the appropriate story and coordinate execution. Time: Today
+  • [ ] Continue refactoring and integrated fixes for chorus matrix, aligning with API usage. Time: Ongoing this sprint
+
+• Himanshi:
+  • [ ] Ensure the relevant API changes are deployed/visible in the dev environment or provide status/update to unblock Ashish. Time: ASAP
+
+• Siva:
+  • [ ] Confirm availability of the version history collection story/schema and review Pavan’s approach if a new collection is created. Time: ASAP
+  • [ ] Proceed with planned merge strategy for the 80% test coverage branch after review. Time: As scheduled this sprint
+
+• Srikanth:
+  • [ ] Create or facilitate creation of any additional stories required (per team requests). Time: As needed this sprint
+
+• Ravinder (Raminder) and Peter:
+  • [ ] Conduct device-related session and share outcomes/impacts with the team. Time: Today/Next scheduled call
+
+• Team (Shiva, Alok, Pavan, others):
+  • [ ] Hold a follow-up sync to align on base setup and schema for versioning work; adjust approach post-investigation. Time: Tomorrow (per plan)
+
+Transcription
+
+00:00:25 - 00:03:54 Unknown Speaker:
+
+Good morning and good evening. Thank you. In different calls today QA team are connecting with Srikanth okay let me connect with Satyam or you can create one story. So today we had the discussion on that and the discussion is still going on. And apparently, uh, we are just creating our configuration files, uh, to manage the Delta state. So, yeah, nothing, broker. Uh, till now, uh, we are still discussing more. Okay, okay, thanks. Changes and started with coding. No blockers, only with this. Thanks, Alok. It's a little bit overestimate, but you can manage, right? I can manage. Okay, thank you. Hi, Ashish. So for me, uh, saying the version implementation is ongoing. I'm just looking for a few UI changes, so I'm having a discussion with him as to how those changes can be provided.
+
+00:03:54 - 00:04:51 Unknown Speaker:
+
+So I can build the API integration. So, yeah, continuing on those part. The second one will be taken up after the first one has been completed, so I'm just looking for the version API integration. So once the changes are there in API, then I'll start integrating and try to close on the first one. Who is working on this API? Already it's done, right? In the last print. Sorry, which one? Choose execution version. No, this is something that is an ongoing change by Himanshi. So this is something that I guess she has raised up here and is in the... Like the review state for the first one, the API changes were already done in the previous print. But I don't see it in their environment as of now. So that is where I am having a communication with him.
+
+00:04:51 - 00:06:54 Unknown Speaker:
+
+Let me know also if you need any help. Okay, sure, yet deployed like it's not not able to see those changes on the dev environment, so I'm looking into that issue right now. Okay, okay, thanks so much. This second story, Uh, do you feel like, yeah, this is also in progress? I will move it to in progress state? Okay, you're already working story? I'm doing it right now, but yeah, I'm not going to do the story. And I'm also working with the QAT for the validation. Reports of the Pink Summary tab. Um, but no blockers on both ends. They were working on both UI and API stories. Uh, I could see that. Yeah, no issue with the story. I'll add the Uh QA task in one of these so it can be managed.
+
+00:07:19 - 00:09:08 Unknown Speaker:
+
+There is a lot of progress in refactoring existing final version of chorus matrix. Okay. Okay. Thanks. This task is a collaborative task or how it is? A UA and APHN is both you are working on, Rishabh? No, no. So, basically, this is an integrated one. I have written fixes. But here I could say both of you and API. Okay. So it is related to the API we are using. Hi Pavan. Hi Jardish. There is one API, versioning API we should be working. Before this, we had a call with Ravinder and he has given few inputs and still investigation is going on of that. Okay, so I have to work with other team members and come up with that API, so this requires some time, basically for me to start coding on it. Okay, so on.
+
+00:09:08 - 00:10:05 Unknown Speaker:
+
+Meanwhile, Uh, Raminder has suggested any, uh, additional task before committing this. Yeah, I'll give, I'll give you that, but you still can start working on the base, uh. But Shiva, Alok and tomorrow let's meet up with them again and start the base, the base setup. It can change little bit, but you can start it. You don't need to wait to start from scratch until we find that everything. We can tune it after it is good. Okay. At least if back-end collection schema is created, then we can start. Can I create it? Yeah, this one, the version history. Siva, did you have this version history by the collection story? Siva is not on call. Siva is not on call. He has that story. I'll check with him. Yeah, he has that. Let's check with him.
+
+00:10:05 - 00:11:01 Unknown Speaker:
+
+All the collection stories, he's handling it. You need to check with him. Okay. If you don't have it, go ahead and create it, but review with him. Yeah, yeah, collection, if it is there, I'll use it, otherwise I'll create it and then create an API. For get. And yeah, only get right. Yeah, only get. For this one. Yes, okay, I'll do that. Yeah, please, please sync up with him. Okay, let's get a review and make sure we have we are creating a proper way that and get it review. And one more thing, the 80% test coverage, coding is done, but we have not merged it because last time, last print, Shivareddy told me that we will create a new branch and we will merge there, he said.
+
+00:11:01 - 00:11:59 Unknown Speaker:
+
+So, we will create and then we will, I mean, branch is created, I will merge the code. Okay, no problem, this is only a test unit, that's fine. That urgent, but let's keep it in a branch. It's already in the branch, right? Yeah, branch it is there. Okay. Branch it is there. Yeah, let me talk to Siva. Let me talk to Siva. Okay, yeah. Yeah. Thank you. Thank you. Thank you. That's it from my end. So, if you want to create any story. I'll bring the story for you. I saw your message. Yeah, thanks so much, so that's it from me and Ravinder. Do you have any updates to the team? We've never we had a we had one hour call. If we're good, yeah, yeah, let us know. Any blockers or anything.
+
+00:11:59 - 00:14:04 Unknown Speaker:
+
+But I need to think of between me and Peter today on that device, and that's what he was coming again. We'll have that session, so I'll keep update to the team. Okay, got it. But Avini asked me to cancel today's call. Yeah, yeah, yeah, but we have other calls scheduled. Yeah, yeah, yeah. So, I'll see you. Okay, no issues. um um
+

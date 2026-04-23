@@ -1,0 +1,116 @@
+2026-04-21 API Authentication, Deployment Delays, and Airflow Configuration Management
+
+Creation Time: 2026/04/21 15:50
+
+
+📅About Meeting
+
+• Date & Time: 2026-04-21 15:50 (Duration ~10 minutes)
+• Location: No relevant content mentioned
+• Attendee: Sachin, Anand (mentioned), Samir (mentioned), Kunal, Epik; others not clearly identified
+
+📒Meeting Outline
+
+API authentication and usage flow
+
+• Handset/validation handshake and bearer token creation
+  The team confirmed the flow: perform the initial handset/validation between two calls; upon successful handshake the endpoint issues a bearer token to be used for subsequent API requests.
+• API endpoints and URL parameters
+  After token creation, use the URL parameter to call the “table list” API to get all table details; another API returns variable details. Guidance: switch the URL parameter as needed; do not pass unnecessary URL parameters.
+• Log check and deployment delay
+  Noted ongoing check of logs to investigate why the current deployment is taking longer than expected.
+
+Call coordination and communication
+
+• 4 p.m. call with Anand
+  Team questioned the need for the 4 p.m. call; confirmation received that the call was canceled/denied by Anand. Direction is to leverage the DSU call unless there’s something urgent.
+• DSU/ICM context
+  There are ICM items and potential DSU questions; avoid ad-hoc meetings unless necessary. Samir’s testing was mentioned but not confirmed.
+
+Airflow DAG/config management for lower environments
+
+• Scope of config changes (QTrak/QTrack config JSON)
+  The file in question is QTrak/QTrack config JSON (qtrak_config.json). The proposal is to avoid copying the entire large file (with ~9000+ lines and many DAG objects). Instead, keep 1–4 representative JSON objects and append only new keys or DQIDs needed for testing.
+• Avoid full-file copy and excessive DAG registration
+  Copying the full config into the environment would auto-register many DAGs in Airflow, potentially overloading the lower environment. Prior incident: CPU usage spiked, requiring termination of DAGs. Guidance: do not bombard the lower environment; keep only minimal required JSON objects.
+• File naming and deployment behavior
+  Keep the same filename (qtrak_config.json) to avoid additional code changes post-deployment. Using alternate names (e.g., *_test.json or .txt) is discouraged for deployment paths. Airflow detects changes and overlaps/reloads DAG definitions on redeploy; duplicating the same DAGs will overlap rather than register new ones, but large configs still create load.
+• Working approach for new application (Automation Service)
+  For the new Automation Service folder structure:
+  • You may copy qtrak_config.json locally but prune it to only a couple of JSON objects (1–4) relevant to your checks.
+  • Modify/add only the required DQIDs (e.g., existing DQID 9129; add DQID 12) without creating new DAGs.
+  • If multiple check types exist, include only those necessary JSONs to support the logic; otherwise, use one template JSON and adjust DQID/check-type parameters.
+• Table creation ownership
+  If a table is requested, it should be created by the requester via their code under the temp folder structure only; do not create use-case buckets or top-level use-case folders.
+
+📋Overview
+
+• API flow confirmed: handshake produces bearer token; use token to call table-list and variable-details APIs with proper URL params.
+• Deployment delays under investigation via log review.
+• The 4 p.m. call with Anand is canceled; use DSU for coordination unless urgent.
+• For Airflow, avoid deploying the full qtrak_config.json with all DAG objects in lower env; keep only minimal JSON entries to prevent resource overload.
+• Keep filename as qtrak_config.json to prevent extra code changes; Airflow will overlap existing DAGs on redeploy, but large configs still stress the system.
+• Add only necessary DQIDs and keys; do not create new DAGs for existing checks unless required.
+• Tables should be created by the requester in the temp folder structure; avoid creating use-case buckets/folders.
+
+🎯Todo List
+
+• Sachin:
+  • [ ] Confirm DSU agenda covers ICM items and any open questions previously intended for the Anand call, time: before next DSU
+  • [ ] Reiterate environment hygiene guidelines (minimal JSON objects, no full-file deployments) to the team, time: next working day
+
+• Kunal:
+  • [ ] Proceed with minimal qtrak_config.json in Automation Service folder (retain 1–4 JSON objects only), add required DQIDs (e.g., 12) without introducing new DAGs, time: before next deployment
+  • [ ] Validate that only selected DAG configurations load in lower environment post-deployment and monitor for CPU/memory stability, time: immediately after deployment
+
+• Epik:
+  • [ ] Align with Sachin on DSU participation and bring any urgent blockers there instead of separate calls, time: before next DSU
+
+• Owner: Deployment/DevOps (if different):
+  • [ ] Investigate prolonged deployment time and share log findings and remediation steps, time: ASAP; update by EOD
+
+• Samir:
+  • [ ] Confirm status and scope of ongoing testing related to the discussed configs/DQIDs, time: before next DSU
+
+Transcription
+
+00:00:00 - 00:01:17 Unknown Speaker:
+
+First URL, okay, and then once the validation. It's basically a handset between between two different calls, so once handsets is successful, then this endpoint. All these functions creates a bearer token and provide it to you, and using that you can call this URL param. That is one of the API table list, it would be giving you those all table details again, there is another API which would be giving you the variable details, right? You just need to change that URL parameter, don't pass those URL parameter. Okay, got it, okay, now check the logs. Why the deployment is taking longer? Okay, uh, meantime you are checking your logs. Let me see. Do we need that 4 p.m. call with Anand? Yes, Sachin. Actually, we have some ICM. Aren't we asking the DSU? I think it will take time.
+
+00:01:17 - 00:03:06 Unknown Speaker:
+
+I think so. That is the reason I hope we arranged. Because if it is a five-minute ride, let's not bother them also. Table if she asked to create it, she should be creating the table via her code in the temp folder structure only. Should not be creating the use case bucket or the use case folder. We need to discuss with Anand, they mentioned that you, I think something, Samir also doing some testing, right, I think. Still not confirmed, right? No, man, that would work, man. If they had written it, that would work. Yeah, sure. You're trying to modify this, right? I'm only using it. I'm not modifying it, I'm using it. I copy this file and then modify it. Okay, maybe trim it. Uh, keep one one configuration or two configuration with different check type.
+
+00:03:06 - 00:04:18 Unknown Speaker:
+
+Uh, or that will not help you to create the configuration mapping. Yeah, do you need to complete file? Yeah? If it is, uh, complete is that? Then my job is done. Actually. I hope skill files are there already, all the skills are there. No, man, you're basically trying to, basically, you're trying to append a new structure to that config. JSON Right, hold on. Let me just give you a brief overview. So look, this is the file basically you're looking for, right? Yeah, so this is. If you can keep three to four this object right and can just append your new key over there, then just add this, add this configuration with those three or four keys. Don't copy the complete file, that's what I am asking to you, What is the problem in copying complete file?
+
+00:04:18 - 00:05:10 Unknown Speaker:
+
+Because. Some monthly, daily. The problem is you are going to enroll all these DAG in the UN environment and then we have to manually stop all those DAG again. Okay. If that is the problem, what I can do, I'll create a test underscore JSON. Okay, same test underscore JSON. And I will change the file name to 3, use the Qtrak config, just keep one or two DAG JSON configuration there. And when you are modifying it, your DAGs would come just next to that one. Okay, I will not create a new DAG, right? I will only add it to the DQID. I will not create a new DAG for the existing ones. Where you are going to add the DQID? 9129 is there, right? 9129. Like that, I will add DQID 12.
+
+00:05:10 - 00:06:04 Unknown Speaker:
+
+Yeah, so if you are adding those DQID, right? So that is what I'm asking you. Use maybe one structure, like one structure when I'm saying one DAT from this one. Okay? Or maximum two or three. And then leverage that one and modify the DQID or whatever is required. If you have five check type, if it is based on certain logic, then use those five JSON. Otherwise, use one JSON and then use the same. Shall I copy that to my folder itself for now? Q Track JSon You can copy it, you can copy it, I will reference the same one. Yeah, yeah, okay, because you should not be creating these many tags in the even environment, even environment would go down if you are doing it. No, no, I will not. Uh, I will only create one file.
+
+00:06:04 - 00:07:05 Unknown Speaker:
+
+Understand, understand the process flow when you are deploying it. As soon as your deployment is done, these all tags gets registered. I don't want that on the even environment. Understand. Okay, sure, sure, okay, yeah. Any other queries? The file name should not be Dot Json, right? I can keep it. QTrak Config Underscore test, dot json or Dot txt is also fine for now. No, no, no, keep the same name again, I don't want another a set of, you know, code changes post. This deployment is going forward in the environment. Keep the same filing. Okay, but my my worry is if I copy that file to my folder structure that you track. JSon. Uh, will that, be, uh, used as a dag and will be loaded again? That should work, right? That should work.
+
+00:07:05 - 00:07:58 Unknown Speaker:
+
+What is the problem? No, no, you said if qtrak underscore config.json is there, then it will load everything by default. The Airflow automatically takes all those DAGs and load it, right? So what if I copy in my folder structure, even then it will do that? Yeah, it would do that. It would just overlap. If there is an existing DAG, right, it just overlaps that existing DAG with yours well. That is how it is working, right? When we are doing a redeployment, right? Hmm, it's not that. Every time we need to register whatever changes is there, Airflow detects that and then incorporate that changes. So then that is the how it is running right now, right? Yes, correct. Yeah, okay, I think I'm a little confused. I'll let me explain. Sachin Q Track Config underscore that QTrak underscore config.
+
+00:07:58 - 00:08:37 Unknown Speaker:
+
+JSon that is there now. I will not touch it, I'll keep it as it is okay. Now, in my folder structure, so I'm coming up with a new application, right? Automation service folder structure. I will copy the Qtrak config JSON by default. In my folder structure, it will be there. And I will use that file only for my use case, okay? He wanted to find what is the SQL related to a particular... I got it. If you want to do that, do that. But why you need that 30 file, right? Why you need 9000 of lines of code in the lower environment? That is my question to you. I don't need it, but I thought, if that is how the real scenario works, right, so you can, you can.
+
+00:08:37 - 00:09:39 Unknown Speaker:
+
+You can go ahead and then just keep couple of JSON objects from there and then remove rest of them. Okay, I don't want lower environment to get bombarded with the memory. We have seen that issue just last week. Okay, so please don't do that. That CPU uses was went low. Okay, and then we have to terminate a few of our DAG and then it started working. Okay? Okay. Yeah. Kunal, okay. Epik, do you have any other question? Yeah, yes, Sachin, but we need to join that call, right? Maybe we need to call- No, no, no, no. It has been canceled. Oh, it has been canceled. Okay. Yeah. He denied, aren't denied that call, right? That is where I'm asking, you guys, let's leverage the DSU call. Don't set up a call until unless you know something very urgent with them.
+
+00:09:39 - 00:10:01 Unknown Speaker:
+
+Yeah, they have their job to, you know, complete it, that's very good. Yeah, okay, uh okay. If nothing, you guys can feel better. One moment.
+

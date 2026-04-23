@@ -1,0 +1,221 @@
+2026-04-16 API Integration and Sprint Priorities Discussion
+
+Creation Time: 2026/04/16 18:00
+
+
+📅About Meeting
+
+• Date & Time: 2026-04-16 18:00 (Duration ~31 minutes)
+• Location: No relevant content mentioned
+• Attendee: Anand, Sachin, Nancy, Um, Kundan (on leave), Nirmal, Jason, Suman(t), Rachna, Looney/Lumi team representatives (referenced), CID/CI team, Platform/GitHub Actions team, Insurance Home team, Ujjwal/partner team (referenced). If anyone missed: No definitive full roster provided.
+
+📒Meeting Outline
+
+Delivery status and priorities
+
+• API integration scope and urgency
+  Discussion confirmed API integration is primarily needed for the UI. Team to prioritize completing remaining APIs per the existing build plan after closing data persistence to DB and table naming. Some clarifications from the Lumi/Looney team just arrived this week; work continues. No immediate escalation of urgency.
+
+• Sprint timeline focus for two use cases
+  Leadership perception raised due to prolonged cycle (>1 month). Decision: close the two target use cases within the current sprint; share blockers promptly and keep leadership informed. Validation runs to be shared for the “UA travel” use case after resolving a deployment error with the CI team.
+
+• Bulk suspend/cancel of large backlog of rule tasks
+  A partner has ~300–500+ rules needing mass disposition (false positives after model update). Current UI/Control Center does not support bulk updates; operations require manual actions per task or backend intervention. Team will confirm with partners and attempt backend bulk suspension/cancellation; bulk upload capability is planned but not yet available.
+
+Data processing, validation, and query fixes
+
+• Pay Now/Pay Later query performance and correctness
+  Nancy updated SQL with temporary dataset filters; still failing due to LOWER/UPPER/TRIM usage and case checks. Plan: remove such functions in SQL, fetch raw data, and perform filtering logic in Python selectively per table. Team will proceed with this approach and test.
+
+• ICMD use cases filter corrections
+  Incorrect/overlooked filter conditions were fixed; tests indicate passing in A3 without pipeline issues. Date filters must be dynamic (current month unless rule specifies different range), ensure event_date is not null, and remove junk values. Suman to cross-check against rule descriptions; Sachin to review at 7:30 p.m. call before A3 validation.
+
+• MGM rules update confirmation
+  MGM rules were updated in place (no new insertions). Confirmation sought to ensure prior versions are not lingering.
+
+Pipeline, SFTP/GCP, and automation
+
+• SFTP pipeline and GCP integration
+  H/SFTP pipeline created and shared by Sachin; code deployed to E1. Phase 1: read data, create file, place into SFTP. Phase 2: read file from SFTP and load into DQ repository table for approved rules. Nirmal is handling Phase 2. Additional automation needed to complete end-to-end movement and SQL generation.
+
+• Lumi SFTP ingestion incident
+  Files land on Lumi SFTP but MOD is not picking them up; no logs visible. Configuration appears correct on our side; access limitations hinder debugging. Incident raised; awaiting Lumi engineers for joint triage.
+
+• Additional pipeline parity
+  For a second pipeline, align implementation identical to the existing ADS/INFO pattern so Jason can send a test file immediately; avoid blocking on the Lumi incident.
+
+Productization, deployments, and environments
+
+• RPA use case progress
+  In production: DQ rules registered in DQ repository; product mapping table loaded. Three rules executed; fourth blocked by GitHub Actions/infrastructure; platform ticket raised and being followed up. Launch use case tested in E1; filter criteria column updated and artifacts table moved; minor issue observed and being fixed today. No current data blockers; once Rachna signs off on result tables, rules will be marked live.
+
+• Self-service app, code reviews, and templates
+  Code review completed with minor changes; PR approval pending post-push. Planning E1/UAT deployment for QTrax self-service app testing. Threshold check types framework under development: focusing on 6–7 templates initially out of ~20.
+
+• Dynamic form rendering for Rules UI
+  Dynamic JSON-driven form created for rules page with varying check statuses; enables easy future field additions via configuration. There are document inconsistencies for some checks; needs clarification before finalizing.
+
+Metadata, table onboarding, and naming
+
+• Insurance Home metadata and table onboarding
+  Metadata template shared; need to onboard table. Recommendation: remove “POC” from table names and use validated names. Once metadata is returned, pipeline can be wired and build proceeds; DP code creation has started.
+
+• Build plan and bulk upload timeline
+  Bulk upload feature for self-serve is not feasible by end of May due to resource constraints and integration time. Updated plan targets end of June (includes 2+ sprints for build/integration and 1 sprint for validation/go-live). Anand shared build plan; will be used in stakeholder discussions (e.g., with Rachna/Poonam).
+
+📋Overview
+
+• API integration will follow DB closure and clarified requirements; no immediate urgency beyond enabling UI.
+• Two highlighted use cases must close this sprint; share UA travel results after CI deployment fix.
+• Query filters causing instability will be moved to Python; SQL will avoid costly string functions; selective table-by-table application.
+• ICMD filters corrected; dynamic date filters and data quality constraints (non-null, junk removal) enforced; review at 7:30 p.m. prior to A3 validation.
+• SFTP-to-DQ repository automation split into two phases; Phase 2 in progress; Lumi SFTP ingestion blocked by external incident.
+• RPA production setup advancing; one rule blocked by GitHub Actions; platform ticket in progress; launch use case minor issues being resolved in E1.
+• Self-service app code review nearly complete; E1/UAT deployment next; threshold checks framework progressing on 6–7 templates.
+• Dynamic, JSON-driven rules form built; needs clarification on conflicting check definitions.
+• Bulk upload not available by end-May; revised target end-June; interim plan to bulk-suspend/cancel via backend where feasible.
+• Metadata/table onboarding proceeding; avoid “POC” in table names; pipelines to mirror proven patterns for faster validation.
+
+🎯Todo List
+
+• Sachin:
+  • [ ] Review ICMD raw data/results and confirm filters correctness; join 7:30 p.m. review call, Today
+  • [ ] Align second pipeline to match ADS/INFO pattern and request file from Jason once ready, Next 1–2 hours after readiness
+  • [ ] Continue triage and follow-up on Lumi SFTP MOD ingestion incident with Lumi engineers, Ongoing until resolved
+  • [ ] Validate MGM rules update status (in-place) and confirm no duplicate/legacy entries remain, This week
+
+• Nancy:
+  • [ ] Refactor Pay Now/Pay Later logic: remove LOWER/UPPER/TRIM from SQL; implement filtering in Python selectively per table, In sprint
+  • [ ] Share UA travel validation results after resolving CI deployment error with CI team, ASAP after fix
+
+• Um:
+  • [ ] Support/confirm approach for moving filters to Python; assist Nancy with selective implementation and testing, In sprint
+
+• Suman(t):
+  • [ ] Ensure date filters are dynamic per rule definition (default current month unless specified), and enforce event_date not null and junk removal; cross-check rule descriptions, Today-Tomorrow
+  • [ ] After Sachin’s OK, validate in A3 and share results, Next
+
+• Nirmal:
+  • [ ] Implement Phase 2: read file from SFTP and load into DQ repository table (approved rules flow), In progress; target ASAP
+
+• Jason:
+  • [ ] Provide test file for the newly aligned second pipeline once Sachin confirms readiness, Within hours of readiness
+  • [ ] Share recordings and final SQL/script files from the partner team when available, When received
+
+• Rachna:
+  • [ ] Review and provide sign-off on production result tables to mark rules live, After results shared
+
+• Platform/CID/CI team:
+  • [ ] Resolve deployment error affecting UA travel run and GitHub Actions infra issue blocking the 4th RPA rule, ASAP
+
+• Anand:
+  • [ ] Circulate/confirm the build plan highlighting end-June target for bulk upload; use in leadership/partner communication, This week
+  • [ ] Confirm backend feasibility and steps for bulk suspend/cancel of 300–500+ tasks; coordinate with partners on disposition, This week
+
+• Insurance Home team:
+  • [ ] Return finalized metadata without “POC” in table names to enable pipeline onboarding, This week
+
+• Self-service app owners (Code/PR):
+  • [ ] Push minor changes and get PR approved; deploy to E1/UAT for QTrax self-service testing, This week
+  • [ ] Progress threshold check types: deliver initial 6–7 templates within framework, In sprint
+
+• Rules UI (Dynamic form) owner:
+  • [ ] Resolve conflicting check definitions in documentation for dynamic form rendering; finalize JSON schema, This week
+
+• Lumi/Looney team:
+  • [ ] Pick up and collaborate on SFTP MOD ingestion incident; provide logs/access for joint debugging, ASAP
+
+• General:
+  • [ ] Remove “POC” from any remaining table names and adopt validated naming conventions, Ongoing
+  • [ ] Close the two priority use cases within this sprint; escalate blockers early, This sprint
+
+Transcription
+
+00:00:17 - 00:04:40 Unknown Speaker:
+
+That level of . Thank you. Thank you. Yeah, but then I could work creative. Thank you. This one update like you know some media is uh you know uh just give me. Poonam asked the same question to Rajendra. He was asking me the same. API integration. Any urgency on that, Anand? Because we thought of, you know, first of all, wrapping up the rest of the API, the build plan that I have said to you. Right. I am not really sure, to be honest, Sachin. Because ultimately it is needed only for the UI itself, right? By itself, build is not like if it's instant progress. So, I mean, yeah, because, you know, um, we thought of whatever data we are saving into our database, right to first to close that one, and then, you know, table name.
+
+00:04:40 - 00:05:48 Unknown Speaker:
+
+Still, we can, uh, output it and then pass it, right? That is the reason that hasn't been picked up, and few of the clarity we received this week only, uh, from the Looney team, so that, that. That one is still going on. Okay. Nancy, you can go ahead with the update. Hi, everyone. So the code changes were pushed to internet today. So I have started with the validations. And on the pay now, pay later, the SQL queries I had modified to include the filter condition in one temporary. Uh, data set. But that also didn't help, so Um suggested to, um, like, remove those functions lower Uppercase, Dream functionality, and wherever. We are checking the East nerve cases and instead filter it in the Python file. So I am working on those changes. Yeah, that's my.
+
+00:05:54 - 00:08:23 Unknown Speaker:
+
+Also, we are trying to remove those filters from the query itself, and once we get the raw data right, it's still. No, no, it's still not working. And see if you can, just seriously in a letter. So right, yeah, cases are also there. So this is taking longer. Particular uh, table. I am, uh, doing this selectively. Okay, okay, it's still not working. Yeah, if I need, uh. You can proceed with what suggestions such as given all right, doing that thing in the Python by themselves, and let's see if that works. Then we use that point. Sachin and Nancy. I think let's go to timeline. I think for these two use cases, I think this sprint, right? Let's stick to that. I think it's been more than a month or something, right? I think we've been working on this.
+
+00:08:23 - 00:09:31 Unknown Speaker:
+
+I mean, in the between, like, it was due to access issues and all. But I think when sharing the problems about the leadership, right? I think now it has started to look a little weird regarding these two use cases. So let's try our best to close. Yeah, sorry Sachin, sorry to interrupt. I was just saying for the UA travel use case, and she can share the results with me for validation that the run is done. Yes, I'll be sharing it. But there was some deployment error, so we are just checking with the CID team for that. Okay. Yes, please continue. Uh, if you can, go ahead, yeah. So I was working on the dynamic form rendering for the rules page with different check status, so I've created a dynamic form.
+
+00:09:31 - 00:10:46 Unknown Speaker:
+
+Where we'll just be able to configure the JSON object and then that would render the UI with different fields. So tomorrow if we have any additional fields or something that can be easily configurable. So while completing this, I had some doubt. So maybe we can discuss on that. I was going through the document for some of the checks. So there are two conflicting things. So I need to clarify on those. Let's see if that update is called. Yes. That's all from my side. Thank you. Kundan is on leave. Results like with unexpected like, not in the expected filter case, like, so I'm just fixing it and testing an event. So mostly by tomorrow evening. Uh, I I hope, like most of the ICMD use cases, filter conditions will be fixed and, yeah, testing themselves also be done.
+
+00:10:46 - 00:12:14 Unknown Speaker:
+
+Sure, thank you, yeah, So I was working on the HFTP file download part for the GCP. Sachin has already created the HFTP pipeline and shared it with me. I have deployed the code into the E1. That data to Lumi right here. So there would be couple of more. Automation would be required. Number one would be, uh, reading the data, right, uh, from the ASTV, creating a file and putting it into the SFTP. That is number one. Phase one H would be to read that data from SFT and save it into the computer project table. Where now the automation which we was working right? And then create the SQL file. So Nirmal is right now working on the phase two to read the file from SFT and post it into that EQ repository table.
+
+00:12:14 - 00:13:07 Unknown Speaker:
+
+Because those rules are already approved rules, right? So we are directly going to update that into that EQ repository. So he is working on that part, so just to give you the clarity in case, uh, you know, that that part is missing. Yeah, uh. Coming to the RPA use case points of view, production environment DQ rules in the register in the DQ repository. And apart from that, the product mapping table also I have loaded up. And I have started already validation. So there is three rules already executed. The fourth rule I'm getting some issue actually. So that one I'm currently deploying in production environment. So due to some infrastructure issue with the GitHub actions. So I have raised the chart box on that one. So I'm just following up the platform ticket on this part.
+
+00:13:07 - 00:14:17 Unknown Speaker:
+
+And apparently, I started with the launch use case. Today, I have tested the even environment. So before that one, I have updated the filter criteria column, as we discussed yesterday, right? So that one I have updated already, and I moved to the artifacts table already. So there is some minor issue observed, actually, while execution of the process that I will fix today. That is in progress. The issues that you were facing earlier in yeah yeah yes so currently i don't have any blockers on this one data point of view so i saw each and every uh runtime file so data getting loaded you know, once we test, right, on production when we don't have data, right, we just deploy and save the result to the result test table, right?
+
+00:14:17 - 00:15:29 Unknown Speaker:
+
+So, once, right, once Rexna provides a sign-off based on that result, then we'll mark it as live. Okay, correct. It's the initial date we started deploying it on yesterday only. Okay. Thank you. Thanks. Hey, hello, yeah, uh, me. Uh. The code review is, uh, completed. Uh. It requires the full request to be approved. There are a few minor changes to be done. I did that as well. I'll push that. And then I am planning for even YouTube deployment for testing of the QTrax self-service application. And I am also working on threshold check types. As I said, there are 20 less templates, I'm currently focusing six to seven templates in this framework. Okay, okay, uh, seven, okay, so uh. I was trying to review the code, which, uh, we had written for Cell, so uh.
+
+00:15:29 - 00:16:21 Unknown Speaker:
+
+So far, I don't have any feedback, comments. That looks good. Uh, apart from that for the injection, I think we are struggling with that issue. Uh, I think Sachin has already raised an incident. Uh, in Jason for getting the file adjusted, and, uh, for the new request from Rajna for the new computer cruise. Uh, sorry, I couldn't join the meeting, it was too early for me. It was not a problem. Uh, we are going to share you the recordings for that, uh, once that recording is available. And please also share the SQL files. I think there were some script files mentioned in that Excel sheet. I didn't find them. The other team is yet to share with us. They don't have the final version. So once they share it with me, I'll forward it to them.
+
+00:16:21 - 00:17:21 Unknown Speaker:
+
+Okay. Okay. Just one quick question. The other pipeline which you have created, is that the source file mapping and everything is done? The first pipeline to be successful? Uh, like those are the simple changes. Yeah, can you do one thing? Uh, just make it identical the way we have designed that, uh, ads info one, right? Once it is ready, uh, Jason can send the file for that pipeline. So let's not, you know, block it, uh, till the time you, you know, the Lumi team picks up that incident, right? It would take at least a couple of days. Once you are ready, in one hour or next couple of hours, just ask Jason to send the file for that we can validate that. Okay, okay, thanks, seven. Uh, someone. If you can go ahead.
+
+00:17:21 - 00:19:03 Unknown Speaker:
+
+I have tested the rewards integrity. All the updated SQL scripts now E3, like I have run E3 scripts the last day when we connected. So, uh, like you had missed out some filter conditions in the code, right? So incorporated tools now and other rules like still failing, or is it passing now? Now? It's passing in A3 yesterday without doing a pipeline. It's making successful. All the rules also is passed, but I need to recheck with Sachin. I have shared the raw data with Sachin. Once Sachin said, okay, everything is fine. So if nothing is to change, then I will validate in A3 directly and I want to share you. The date filter should be dynamic the filters that Suman had missed out those were like certain other segmentation filters right like certain which had to be filtered.
+
+00:19:03 - 00:20:13 Unknown Speaker:
+
+So those were messed up. On the date filters, those should be dynamical. Okay, those should be dynamical. So those should be like for the current month, right? Yes. So if... Can I use today's date? Like today's month? Yeah, use the current month. Sumant. Sumant, sorry, I'm interrupting. Can you... I don't remember the exact... which are in place. But, uh, they just cross check it with what the whole description says, right? That whether it's the last month or what, what date range. If they are considering, if there is any confusion, like, I can connect separately and clarify. But uh, if you have the handy that screen, uh, where is mentioned, right? The filter fighting that date column, right? So it will be easy for us. Yeah, okay, I'll share this one Snapchat one.
+
+00:20:13 - 00:21:40 Unknown Speaker:
+
+Oh, they're all they're asking, even date, uh, should not be null, yeah. And then there is one another filter condition, which is removing the junk value, so please make sure. So, once the code and everything, the results will be approved from Sachin. I will not study him directly. Validate in A3. Sure, sure. Sachin, I already shared in A3. Yeah, yeah, I received it. So, let's review it at 7.30 p.m. call. Also, regarding the MGM rules that we have updated, can you just confirm the MGM rules that has been updated? Right? The previous one has been discarded, or it's still being there that is already updated? The existing rule itself updated, right? We did not create a new new insertion, right? Yes, yes, yeah, yeah, so, uh, looking into those reasons, for which?
+
+00:21:40 - 00:22:31 Unknown Speaker:
+
+I already communicated to Jason that there is a issue that the file is getting landed to the Lumi SFT part, but somehow the mod is still not picking up the file. I have cross verified the required configuration, that looks okay to me. And once that incident being picked up by some Lumi engineers, then I need to connect with them to identify if there are certain, uh, issues from our side. Uh, because I don't see any logs over there in the table, right? So it would be very difficult for us to debug because we don't have a required access to view the, you know, their code base and all. Okay, so that is something going on. And, uh, insurance home. I have shared you, uh, one of the metadata template, uh.
+
+00:22:31 - 00:23:30 Unknown Speaker:
+
+So that is something we need to onboard the table. One suggestion to the table, right, like we were marking the table name as POC, so in case if we can remove that POC keyword from there and then if we have certain, you know, validate a table name, then we would be able to... Yeah, once you send back me that metadata, right, I'll... pipeline and then the build is in progress. I started creating the DP code. Yeah, apart from that, I was moreover working on the discovery on. And for this, uh, self-serve. And the bulk upload part, uh, the one that you have communicated, so on the bulk upload. I would like to tell you like, you know, you have communicated by end of May, right? Uh, that is seems to be a bit difficult.
+
+00:23:30 - 00:24:58 Unknown Speaker:
+
+The reason I have told, right? Like author is occupied till couple of sprint, right? And then once the pitch-ins and integrate the front-end part, right? And that would still need couple of sprint to close the implementation. And then we need at least one sprint for validation and making it live to the environment. Anand, if you're there. How long do you think that will go? I think I have shared you that build plan, right? Yeah. Let me also check. Like that, let me share my screen. I will share it over here itself. Yeah. End of June is what I have marked over here. Yes, yes, yes. Correct. Okay, that's fine. I think end of May, end of June, I think marked. I was just discussing this with Rachna also right now. So, see there. Is another partner?
+
+00:24:58 - 00:25:56 Unknown Speaker:
+
+So this is. Ujjual is one who has a few 30 something rules, right? The other person has almost 300 rules. Let's just say 300, 500 rules. What do we do right? So is there a way from back end? You can mark them and update them in bulk or no? Just suspended, suspended, that means then that is not going to reflect in your reporting on and correct, correct. Yeah, if we market as suspended or cancel, right, that is something not going to, uh, you know, close it, uh, now, that's for sure. Um, we have to finalize it, right? And then, if you want, just give us that validation. Whatever you would like to market as false positive. I'll do it manually, that is the only option, right? But manually for 600 rules you're mentioning one by one, or is?
+
+00:25:58 - 00:26:47 Unknown Speaker:
+
+We really don't have any alternate way because that bulk of our functionality we have to incorporate, right? It's not during the system, so one thing we can do it again. Like, you know, even if we lost the new process. I'm not sure even that would work or not with the previous instances, right, because there might be change in the PPM and all right. So that is also. I can't give you a confirmation with the latest version anyway, it is not going to work, even if I keep the current version right. Even that may not work. So that's something we need to. Close it from the back end itself, manually on. Okay, though, I just encourage such an if you can, just check once right via back end. If like, is there anything possible? Right? Like?
+
+00:26:47 - 00:28:25 Unknown Speaker:
+
+Is control center, right? Uh, look, if I add, so basically what we need to do? Go to this work. Okay, work basket task. Give me a second. Can somebody specify one work basket? Let me see if that is something feasible from here? Uh, which is the work basket where we have? Yeah, this question, so look, even here. Also, they did not provided any bulk update. Right? I have to go to these individual tasks. Yeah, yeah, because these are anyway false positives that have caused due to some model update, right? We'll suspend all of them possible. So so everything, uh, look, suspend, cancel, whatever you are doing, right? First of all, you have to deserve it. You had done it right? Like, like those all are manual, only those are never okay.
+
+00:28:25 - 00:30:29 Unknown Speaker:
+
+So I myself of this and this here. Give me a second. Like, ready, then suspend them, probably something like that. Uh-huh, correct. Uh, this is the accent we are performing. Yeah, yeah, we have that option, right? So we'll just confirm it with our partners. We'll just check, uh, and then we can suspend it from back into bulk funds. Okay, okay, and the timeline I already told you, right? This we won't be, and this is the mail, right? I'm just writing it and I'm looping you over here also. Okay, and in case you know, Purnas asked, Right, you have this one, right? So you can show them, right? These are the API which is built in. Yeah, sure, I think we will be discussing this in our call today. Also also meaning, right, okay, then, then, then, then I'll, okay, sure.
+
+00:30:29 - 00:31:01 Unknown Speaker:
+
+Thank you so much, bye-bye, thank you, thank you everyone. That's nice. Okay. Go ahead, Athar.
+

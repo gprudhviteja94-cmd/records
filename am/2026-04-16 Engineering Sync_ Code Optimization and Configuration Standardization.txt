@@ -1,0 +1,133 @@
+2026-04-16 Engineering Sync: Code Optimization and Configuration Standardization
+
+Creation Time: 2026/04/16 19:33
+
+
+📅About Meeting
+
+• Date & Time: 2026-04-16 19:33–19:43 (588 seconds)
+• Location: Zoom
+• Attendee: Sundan (lead), Samir (OOO), NC/Anci (developer), Seven, Raj (referenced, prior reviewer), Rachna (referenced), Suman, Suchan/Sachin (reviewer), team members listening
+
+📒Meeting Outline
+
+Weekly engineering sync setup and objectives
+
+• Meeting cadence and purpose
+  A new weekly touchpoint is established to ensure new development updates are proactively cascaded to the whole team, avoiding reliance on downstream code testing to discover changes. Each week will have a defined agenda, speakers, and coverage of innovations and recent changes.
+• Participation and review protocol
+  Team members are encouraged to present new ideas/changes. All content to be presented should be reviewed by the lead beforehand to ensure consistency and quality.
+• Initial session scope
+  This first session focused on one small, impactful code optimization and aligned on near-term configuration and environment standardization.
+
+Code optimization: central utility for configuration values
+
+• Problem: repeated code for IDs
+  The function to assemble input parameters (use case project ID, platform ID, dataset IDs, DW, etc.) has been duplicated across many locations, leading to inconsistency and maintenance overhead.
+• Solution: utility method with dictionary config
+  A utility method now accepts an added parameter: dictionary config. Values are read from environment configuration and injected into input parameters (inputParam.withConfig), removing repeated snippets like inputParam.set(key, ...). Callers can retrieve only the needed attributes while using the same method.
+• Adoption guidance
+  Going forward, avoid writing repeated ID/config code. Reuse the utility to fetch required attributes. This will standardize behavior and reduce errors across new use cases.
+
+Environment variables and configuration standardization
+
+• Klumi environment variables consolidation
+  Dynamic parameters will be fetched from environment variables. A cleanup is planned to model project variables as a single JSON object within the environment for direct property access, reducing custom JSON mapping overhead in code.
+• Task-level vs. global availability
+  Environment-derived values will be globally available. Best practice: set shared values into context data in the first task, then read from context in subsequent tasks. Per-task retrieval remains possible when needed.
+• Scope limits
+  Task-specific parameters in QTrack configuration still need to remain within that mapping; only globally repeatable parameters will be moved to environment-sourced configuration.
+
+Data storage and payload size considerations
+
+• Concern on case JSON size
+  Seven raised concerns about growing JSON size. While ECM (as a reduced cassette) could be an alternative to DB for certain payloads, limits must be confirmed with the ECM team (max JSON size).
+• Current decision and rationale
+  Maintain current database-based approach (previously reviewed and approved by Raj) until a clearly feasible alternative (e.g., Redis/ECM with confirmed limits) is validated. The new environment/config changes should already reduce JSON payload sizes.
+
+Workflow: sharing, demos, and reviews
+
+• Weekly knowledge sharing
+  This forum is for everyone (not just NC/lead) to share new developments. Ensure materials are reviewed by the lead before presenting.
+• Immediate demo and reviews
+  NC showcased the utility change and environment setup. Follow-up includes Suman’s code review and IPA/server checks. Suchan noted prior comments on an earlier version; review of Rachna/Suman’s new rules/requirements to proceed.
+
+📋Overview
+
+• A weekly engineering sync is instituted to proactively share changes and innovations.
+• A new utility method with a dictionary config eliminates repeated ID/config boilerplate; use it instead of setting keys manually.
+• Environment configuration will be consolidated (project variables as a JSON object), with a cleanup planned; prefer loading once into context.
+• Task-specific QTrack mappings remain; only repeatable globals move to env.
+• Keep current DB approach for now; evaluate ECM/Redis after confirming size limits with ECM team; recent changes should reduce JSON size.
+• All presentations require lead review before the weekly session; NC’s change demonstrated; next reviews involve Suman’s work and new rules from Rachna/Suman.
+
+🎯Todo List
+
+• Lead (Sundan):
+  • [ ] Define and circulate next week’s agenda, speakers, and topics, by EOW.
+  • [ ] Perform cleanup to model project variables as a single JSON object in environment config, by tomorrow.
+  • [ ] Align best-practice note: load env-derived values into context on first task and reuse downstream, by next sync.
+  • [ ] Consult ECM team to confirm JSON size limits and feasibility as an alternative store; report back with a recommendation, by next 1–2 weeks.
+
+• NC/Anci:
+  • [ ] Finalize and document the utility method usage (examples, required env keys, retrieval patterns), by next sync.
+  • [ ] Update references in codebase to replace repeated inputParam.set(...) with the new utility, phased rollout plan, by next sprint start.
+
+• Seven:
+  • [ ] Provide concrete cases where JSON size is problematic (samples/metrics) to inform ECM/Redis feasibility analysis, by early next week.
+
+• Suman:
+  • [ ] Share the latest implementation for review (addressing new rules), ensure readiness for code review session, by today.
+  • [ ] Coordinate with lead on any environment/config implications of the new rules, by tomorrow.
+
+• Suchan/Sachin:
+  • [ ] Complete code review of Suman’s latest changes (building on prior comments), and summarize findings, by tomorrow.
+
+• Raj:
+  • [ ] No immediate change requested; remain available for consultation if architecture adjustments are proposed post-ECM evaluation.
+
+• Rachna:
+  • [ ] Confirm and document the “new rules” requirements set shared with Suman, including edge cases/test scenarios, by tomorrow.
+
+Transcription
+
+00:00:25 - 00:01:15 Unknown Speaker:
+
+Zoom done. Zoom done. If I am sending you one RFC, could you please just step a little bit quickly? Yeah, sure, I pinged you individually. Okay, on the slide, just take that one, okay, uh, so you know, uh? Sundan is on lead, Samir is out and other, I'm not sure. So main motive of this call, right? The agenda is that, uh, whenever we are doing some, uh, you know, new development, right? Uh? And that information, something, you know, not getting cascaded to the rest of the folks until unless they test that code base. Okay, so this would be a weekly touch. And then, uh, you know, going forward we would be setting up the agenda, who would be speaking. And you know, what are the details that we are covering up? And this is the very initial session.
+
+00:01:15 - 00:02:00 Unknown Speaker:
+
+Uh, that's the reason, you know, I just thought of, just, uh, having a, you know, quick connect with all of you and then. Next week onwards, we will have those agenda and then we will discuss it. Like, you know, somebody comes up with some new innovative idea or, you know, have implemented some new changes and all. That's something we can communicate to the team so that they can, you know, add on to those changes going forward. So there is a very small change that I have asked NC to implement and see if you can just go ahead and then just showcase that project one, the one that I have asked you to do. Get those details. A utility that we just built it. And you said. With respect to the queries you are asking?
+
+00:02:01 - 00:02:57 Unknown Speaker:
+
+Not the query one. The earlier, the project ID, the service ID, right? We used to write those repeated code, if you remember. Okay. Yeah. One second. I'm sharing my screen. It's a very small change, but start up with right? Uh, so that, you know, we would not be doing that same kind of mistake when we would be implementing any new case. Like seven on. Uh, so, my right, you guys might be building up new use cases, so just, uh, you know, just uh, headset that how to deal with this configuration. Okay, so if you see this one, okay. This use case project ID, platform ID, use case data set ID, the data set ID, and then this DW Right? So earlier, you know, I have seen these. This is the information, right?
+
+00:02:57 - 00:04:00 Unknown Speaker:
+
+Basically the function that CS created. So this has been repeated in n number of places. Okay, look everywhere, if you figure it out, most of the places. We just repeated this part. And, uh, these use case ID, and all right. So even if you need these couple of value, right? You can just refer that method, get that input parameter, and from that input parameter, right? Just face that details from there. Okay, now again, this is something everybody is writing code on this one, but nobody has taken an attention to, you know, basically optimize this piece of code. Okay, so that is one change that ANSI did. So now instead of writing those repeated code, you can call that a utility method. Okay, so right now. This method, one extra parameter we have added is the dictionary config.
+
+00:04:07 - 00:05:02 Unknown Speaker:
+
+You can show the dictionary config and see to that environment variable, right? We are reading it from there. Just we are calling input param with the config. Yes. Without writing the use case project on use case data set, right? Yes, yes, yes. Here we are setting this in the config, environment config. We are adding these variables. So these dictionary objects, we are calling it here. Okay, so maybe you may need only this use case project ID and platform project ID, right? Still, you can call this method and then just get those two couple of attributes, at least these. Repetition is not required, right? Input param, dot, set, key, and all right. That is something I have observed that that has been written at n number of places. Okay, so just going forward, we just need to.
+
+00:05:02 - 00:05:58 Unknown Speaker:
+
+Uh, you know, remember that there is a already a method which is present so you can get those well, that is number one. Second, uh, and see if you can go to that environment variable? No, no, go to the Klumi environment variable. Okay, so the next plan is that some of the dynamic parameter, right? That we are going to, you know, fetch, right? So that is something we can know, start getting it from this environment. I'm going to do this cleanup activity, okay, maybe tomorrow, but this project variable, we are going to create it as an JSON object. Can you edit that and see? Okay? So whatever related project related activity would be there, right? You can directly read those property from here itself instead of, you know, that would reduce your uh, that JSon mapping.
+
+00:05:58 - 00:06:52 Unknown Speaker:
+
+Uh, can you go back to code base and see code base? The that no, that mapping can be Q track configuration, Q track configuration, so here also like whichever is, uh, you know, related to the task parameter, right? That is something we have to enroll it over here. There is no, you know, we. We can't, uh, reduce that piece of code, but rest of the thing which is being repeated and all right. We are going to fetch it from the environment variable itself. Okay, and that would be globally available. You can set it into the context data, or you can, if you want, you can retrieve it on individual task level. But ideal would be once you're receiving the very first task, set it into the context and then read it into the next task.
+
+00:06:52 - 00:07:51 Unknown Speaker:
+
+Basically, okay, any questions on this? Take it as a no. Okay, also, please, you know, keep in mind this, this is something we need to track up. And, uh, seven, the you know, the stuff that you have asked, right? Regarding the case and size, right? Uh, I, I agree. To that point, it is getting stretched a lot. No, so ideally, you know, instead of database, we could have set it up in the ECM. ECM is like a reduced cassette, okay. But the problem is I need to work with the ECM team to identify the size limit over there for that JSON object. So maybe I'll check with them and then I'll let you know. Okay. But database connectivity as of now, because this framework has been reviewed by Raj already last year.
+
+00:07:52 - 00:08:47 Unknown Speaker:
+
+So he was okay with this structure, right? So I'm not going to make any change over there until unless like, you know, Redis or something that is something feasible. And anyhow, some of the changes that, uh, we have shown just right now, right? That would reduce the JSON object size. Okay, okay, now. So so use this platform, right? It is not just for ANSI. Or, I am right, you know, letting you guys know something if you guys done something differently. Okay, uh? Let's use this platform on a weekly, weekly basis to share the uh, new development that we have built from our site. Okay, and just make sure that, you know, it is getting reviewed from my side before we are going for our presentation. Okay, uh, so when you can go ahead, uh and uh, share your result and see normal quickly.
+
+00:08:47 - 00:09:42 Unknown Speaker:
+
+Do you guys have any questions? No, I'm good, okay, so you guys, if you want, you guys can feel free to drop off with just that. Uh, Suman's code review, that I'm going to do it. And then I need IPA and server only. So if you, uh, if you're okay, you can stay. If you want to drop off, you can drop off, that's your choice. Okay, so when you go ahead, did you review that one? Oh, the one that, uh, Suman has sent? Uh, no, such an actually so, but I, uh, I saw the previous one, yeah, that I have commented actually, Yeah, yeah, that's something I have seen. But uh uh, first of all, can you show me the, uh? That requirement that has been shared by Rachna Suman? Yes, okay, so these are new rules, basically, right? yes.
+

@@ -1,0 +1,178 @@
+2026-04-21 Environment Governance and Deployment Strategy
+
+Creation Time: 2026/04/21 11:00
+
+
+📅About Meeting
+
+• Date & Time: 2026-04-21 11:00 (Duration: ~17 minutes)
+• Location: No relevant content mentioned
+• Attendee: Sachin, Ayyappa (Aiyappa), Raj, Rajendra, Rachna (Rachna/Rajna), Anand, Lumi team, Platform team, Business team, Engineer (JIRA assignee), ANSI, Suman, UA Travel Bank stakeholders
+
+📒Meeting Outline
+
+Environment governance, deployment scope, and approvals
+
+• E1 deployment today; defer E2
+  Go ahead with deployment using the existing schema “as-is” and complete E1 deployment today. Do not move to E2 now; E2 will follow post-review.
+• Access control and single point of contact
+  No one is allowed to test directly in environments without coordination. Ayyappa is the single point of contact (SPOC) for table creation, file uploads to GCP buckets, and related environment operations (including Dev). If anyone creates tables or uploads files without notice, raise a red flag, loop in Rajendra via Sachin first—do not reach out to Raj directly.
+• Potential E3 access revocation and required guardrails
+  Raj may revoke some E3 accesses. Seek “read-only/query-only” access for broader users via Lumi team: allow BigQuery read/monitoring and tag monitoring, but strictly restrict DDL/DML and any GCS bucket write/delete to only 1–2 custodians (Ayyappa + one onsite). Ensure auditability and clear ownership if issues occur.
+
+Evidence, RFC process, and audit readiness
+
+• Mandatory E2 evidence before E3 RFC
+  Any E3 deployment must have prior E2 validation evidence captured. Evidence (DAG runs, test URLs, screenshots/logs) must be provided at least two days in advance; otherwise, do not raise the RFC. Avoid “test data not available” justifications.
+• RFC approvals and timing
+  Capture validation in the RFC fields (e.g., “validated in E2”) with evidence. Sachin manages approvals; Raj signs, but Sachin controls the gate. For upcoming Thursday/Friday E3 deployments, only proceed if teams share E2 evidence today; otherwise, do not create/approve RFCs and inform Raj not to approve.
+
+Use cases sign-offs and stakeholder follow-ups
+
+• Sign-offs required today
+  Need sign-offs today for three use cases: RPA (RPF/RPA), UA Travel Bank, and UiDriven (ANSI). Results have been shared post-deployment; stakeholders must confirm or share observations today to avoid attribution of delays.
+• Chasing owners and comment incorporation
+  Proactively chase Rachna and respective owners. Ensure all three rule-sets/comments are incorporated for each use case (e.g., Suman for RPA, ANSI for UiDriven).
+
+Issue handling, collaboration, and communication
+
+• Create a group chat for the active JIRA issue
+  For the current JIRA ticket (engineer asked for query), immediately create a group chat including Sachin, Ayyappa, Rachna, Anand, the assigned engineer, and loop in the business team for visibility. Share the DAG link and the exact query used in E3 (ensure no PII is shared or passed as arguments; CM11 fetch is acceptable).
+• Escalation etiquette
+  Raise flags internally with Sachin first; avoid direct pings to Raj. Keep stakeholders informed to preempt questions.
+
+AFC Delta check and scheduling
+
+• AFC Delta request
+  Review Rachna’s AFC Delta email (sent on 15 April). Sachin will forward it again to ensure visibility. Provide findings after review.
+• Availability for follow-up
+  Sachin is busy until 2:00 pm (with a 1:00 pm call) and may reconnect at 3:30 pm if required.
+
+Certificate requirement and repo modification
+
+• Studio JKS certificate for API calls
+  A repo requires a studio JKS certificate due to intermediate calls in jars. Platform team has been asked to provide the certificate; ownership currently in Sachin’s name. A 1:00 pm call is set to address details.
+• Repo changes for tracing
+  Modify the provided repo per requirements, specifically around how Trace ID and Span ID are passed. Further clarification to come post-call.
+
+Deployment packaging strategy and bucket management
+
+• Packaging approach debate
+  Proposal: deploy only required files instead of redeploying all SQL files. Concern: partial replacements may harm traceability and correctness, especially with moves to new bucket locations.
+• Next steps on deployment method
+  Check with Lumi team on their standard practice. Seek a solution that maintains full traceability and avoids piecemeal SQL replacements. Consider using properties/configs if appropriate but avoid ad-hoc path-based partial overwrites.
+
+📋Overview
+
+• E1 deployment to be completed today using existing schema; E2/E3 deferred until review/evidence.
+• Ayyappa designated as SPOC for environment changes; uncontrolled table/file operations are prohibited and must be flagged.
+• Move to a model where most users have BigQuery read-only and tag monitoring; restrict write/delete to 1–2 custodians; coordinate with Lumi.
+• E3 deployments require E2 validation evidence two days in advance; otherwise, do not raise or approve RFCs.
+• Secure today’s sign-offs for RPA, UA Travel Bank, and UiDriven; chase owners and incorporate rule comments.
+• Create a cross-functional group chat for the active JIRA issue; share DAG link and sanitized query; avoid PII sharing.
+• Review AFC Delta email from 15 April and report back; Sachin to re-forward.
+• Obtain studio JKS certificate from Platform; modify repo to adjust Trace/Span ID passing after 1:00 pm call.
+• Reassess deployment packaging; avoid partial SQL file deployment without robust tracking; consult Lumi for best practice.
+
+🎯Todo List
+
+• Ayyappa:
+  • [ ] Complete E1 deployment today using current schema; do not proceed to E2, time: Today
+  • [ ] Act as SPOC; monitor and flag any unauthorized table creation or GCS bucket file operations across environments, time: Ongoing
+  • [ ] Create group chat (you, Sachin, Rachna, Anand, assigned engineer, business team); share DAG link and sanitized query (no PII), time: Immediate
+  • [ ] Chase sign-offs for RPA, UA Travel Bank, and UiDriven; ensure all rule/comments incorporated, time: Today
+  • [ ] Review Rachna’s AFC Delta email (15 April) and share assessment; confirm receipt of forwarded email, time: Today
+  • [ ] Coordinate with Lumi team to establish read-only BigQuery access and tag monitoring for broader users; restrict write/delete to designated custodians, time: This week
+  • [ ] Post a message requesting E2 evidence for any planned E3 deployments on Thu/Fri; do not raise RFCs without evidence, time: Today
+
+• Sachin:
+  • [ ] Forward AFC Delta email (15 April) to Ayyappa, time: Today
+  • [ ] Manage approvals; withhold RFC/E3 approvals lacking E2 evidence; align with Raj, time: Ongoing
+  • [ ] Join 1:00 pm call to clarify certificate/repo requirements and Trace/Span ID handling, time: 1:00 pm Today
+
+• Platform team:
+  • [ ] Provide studio JKS certificate for the repo/API integration; confirm ownership and delivery, time: Today
+
+• Lumi team:
+  • [ ] Advise and help implement access model: BigQuery read-only + tag monitoring for users; restrict DDL/DML and GCS write/delete to custodians, time: This week
+  • [ ] Share standard deployment packaging practice to ensure traceability and avoid partial SQL overwrites, time: This week
+
+• JIRA assigned engineer:
+  • [ ] Join group chat; review shared DAG link and provided query; proceed with troubleshooting, time: Immediate
+
+• Rachna / Anand / Business team:
+  • [ ] Provide today’s sign-offs or observations for RPA, UA Travel Bank, UiDriven use cases, time: Today
+
+• Raj:
+  • [ ] Align with Sachin on not approving RFCs lacking E2 evidence; review access revocation considerations for E3, time: As needed
+
+Transcription
+
+00:00:05 - 00:00:46 Unknown Speaker:
+
+That is an altogether separate part, right? There might be some slight modification would be required, right? And for that, I need time to set up a call, right? That we can finalize later also. When we have asked you for the deployment, let's not delay it, right? Again, we are sitting on Tuesday. No, no, we will close it next to an hour. It should not take much time. I'm just waiting for that. Fine, I'll use the date call we created. Yes. Go ahead and use the schema as it is, and please make sure you are deploying it and completing the, you know, uh, even deployment today. Don't go to E2 right now, just go for even. Once it would be reviewed, then we would be moving it to E2. Yeah, sure, you should not be moving it to just keep it on.
+
+00:00:46 - 00:01:33 Unknown Speaker:
+
+Even one more info I upon. No one is allowed to test the environment. Okay, uh, again, you know? Uh? I was having a review with Raj yesterday and, uh, he may revoke some of our accesses on the E3 environment. So please make sure you are raising a flag. Feel free to loop it, Rajendra, if somebody else is creating a table or, you know, even putting a file over there on those buckets. You are free to do that. Okay? Just, you know, let's not go to him directly. At least have that discussion with me. But feel free to flag, you know, red flag that if anybody is doing the table creation. The file upload on that GCP bucket without, you know, letting you knows that. Okay, not even in the Dev environment, nobody is allowed to do that.
+
+00:01:33 - 00:02:33 Unknown Speaker:
+
+You would be the single point of contact for that. Yeah, okay, and I did. We see the sign up for RPF, no such thing yesterday. I just asked him, but, uh, she didn't for your one RP1, and yeah, and see, did we receive the sign up for your UA Travel Bank? After yesterday's deployment, I had shared the result, so we are logging by after. Yeah, okay, correct, no, but you need I need these all three, uh, use case sign up today. Okay, because if we have committed, we have deployed and share the result before 21st. They should not come back to us mentioning, you know, it was a delay from your side. If we have said the result, it's their responsibility to provide us the sign-up or any observations, right?
+
+00:02:34 - 00:03:40 Unknown Speaker:
+
+So if they are coming in the evening, then we won't be able to fix it today itself. I'll be, you know, very clear with Anand today in the call. But please make sure both of you chasing Rachna, okay? And whoever is putting the comment, please make sure you're, you know, incorporating all those three rules over there. Like for Suman also, I have passed your RPA one and then ANSI your UiDriven one. Okay. Yes. And were you able to proceed ANSI or it's still being, you know. So that JIRA ticket one engineer had picked that one today and. He was asking to share the query, uh, I had shared the Uh dag link with him already in the ticket. No, let's, let's not do that. Create a group chat between you, me, uh, include Rajna and Anand over there, and that engineer do it right away.
+
+00:03:40 - 00:04:27 Unknown Speaker:
+
+Okay, so that even they would be, you know, aware, like, you know, if there is something issues going on. Okay, let's look in business team also so that they would not raise a questions on us. Okay, um, so, uh, we just need to mention that uh bag link only right in the group chat. No, no, you can save the query, also get the query. You might have ran it on the E3 environment, right? You might have those instances, get the query from there and share that over that table. Please make sure there should not be any PII, I don't think you have any PII column, right? PII in the sense passing the PII information. You might be fetching CM11, that is fine, but basically you are not passing it as an argument. No, no, it's not.
+
+00:04:28 - 00:06:22 Unknown Speaker:
+
+Right, just share the query also, no issue. Okay, but create a group chat immediately. Do you have anything else in your bucket? No, Sachin, only this. So if you remember, this was shared by Rachna once. One more AFC check was said by Rachna. This is Delta. Is that the Delta one she was mentioning? Yesterday, I think she sent an email. Yes, yes, yes. This is the one. It's the AFC Delta. Can you go through this one? You're already being copied over there. Okay. Yes, yes. Do you need this forward or? It was sent on 15 April. 15 April. Okay. Let me forward it to you so that, you know, you should not believe me. Okay. So just go through this one. I have called till 2 pm today. And then again, I have call at one with one of the folks.
+
+00:06:22 - 00:07:14 Unknown Speaker:
+
+So I'm quite busy till 2 p.m. Then I'll be taking maybe half an hour or one hour break for lunch. So in case required, we can connect at 3.30. Yeah, sure. That certification is being asked by that repo. The reason being, you know, in order to call that API, we need a site. Okay. But that is not the case for all the scenario. What would be my? Because you are using those, you know, jars and all right, lots of things over there. So there might be some intermediate call which is asking for that cert that is certificate is nothing but that a studio JKS certificate. Okay, I'm not sure if you have worked on that with that cert. Uh, I have asked the platform team to provide me the certificate. Okay, but I need a couple of things.
+
+00:07:14 - 00:08:51 Unknown Speaker:
+
+Right now. It's in our name. I have set up a call at 1 p.m. In this couple of words, I need a couple of implementation from you. One is that repo that I have given you. Modify it as per our requirement, right in that repo. It has been passing as the Trace ID SPAn ID. Okay, I'll talk to them later. Anyone having any other questions please let me know because I'll be super busy from 11 30. Okay, okay, and you know, uh, one thing, uh, can you, uh, tell me? Suppose Raj revokes the E3 access? That PRJ P1, right? Can you check with Lumi team? Can we give the read access to people? Like? You know, we should not be providing the database access number one in the bucket access. Okay, bucket access, and okay, database access.
+
+00:08:51 - 00:09:41 Unknown Speaker:
+
+Okay, anyway, uh, actually, database at insertion kind of thing. We can't dropping in the that is completely no problem problem, you know? Look, what is happening in that cornerstone? If you remember we used to create a RFC ticket, correct? Yes, we used to create a RFC ticket and then using that RFC ticket. It is getting documented. Right? Uh, whoever is doing right, uh, not. If they do environment, they are doing it. There was a support team. Right? Individual ID doesn't have access, but you do have access with the service ID, right? So you just need a RFC and you can execute tomorrow, you can delete the whole data structure over there, right? You just need a RFC, that's it, correct. Just one check that I have placed is that you won't be able to execute it because I have placed that.
+
+00:09:41 - 00:10:41 Unknown Speaker:
+
+You know, code review part, right? So, suppose I remove that branch protection somehow, then anybody can go and delete those table and the GCP bucket file over there. Okay, yeah. And then Raj was into my impression like I hope like, you know, I thought of like you already reviewed it. That's the reason I'm just approving everyone's request. Okay. My ask to you is that we need a, you know, sub-level access where people can run the query. Right in the big query number one, you use the table okay, monitor, the tag Okay. But they should not be able to make any database changes or the file upload to the GCP packet or the deletion. It would be restricted with one or two resources, maybe your yourself and maybe one from the on-site people.
+
+00:10:41 - 00:11:31 Unknown Speaker:
+
+No one else would be having that access. So that tomorrow if anything goes wrong, Raj will directly reach out to you. I have already communicated, it is Ayyappa who is maintaining it. I have given your name. Ayyappa is maintaining those parts, so he is taking a, you know, taking that track of that. Yeah, understood. So just take that part with Lumi, Lumi team, we can provide that then, That would be easy because we need... access to run our query, at least in the big query, right? I don't want to remove that access. Everyone would be reach out to you, run my query, run my query, do the validation, right? That would be very painful part for us. Okay, yeah, okay. Or the tag monitoring, right? It should not be with one person tag monitoring, and this is very education, right?
+
+00:11:31 - 00:12:19 Unknown Speaker:
+
+This should be there. Yeah, and so I think one more thing which I have observed is here. Uh, deploy configurations, right? Usually they are configuring, uh, list of some files, actually. So here what I'm thinking is usually normally in our Java side, we are not deploying anything. Everything that is in a jar file. But what I'm suspecting is we have no need to redeploy everything. Already it is there. Only whichever the required file, only that particular part only is enough to deploy it. Like this way. Yeah, yeah, I got it. Like when you're deploying, but if you remove it, Tomorrow, you... won't be able to track it. Whatever the deployment is being there in the pocket, this one will be each, uh, deployment, such an. Actually, this will be trackable.
+
+00:12:19 - 00:13:06 Unknown Speaker:
+
+Okay, then if it is trackable, then go ahead and do that, come up with that solution and let me know. But why we are passing the SQL file from here? Man? No, here, actually, instead of redeploying all SQL files, right? I suggested to the team like, only specific file, only. No man, no, no, this is blender, no such it will be. Uh, everything it will be replacing will happen, right? So that's the reason, right? This file is right. What will happen is we are trying to move into the new bucket location. Okay, but you know, the problem would be, I know. Like you are not trying to deploy the SQL folder, you are just providing the path and these are the new file, which is getting a place to that SQL folder. Right?
+
+00:13:06 - 00:14:19 Unknown Speaker:
+
+Yes, yes, oh, ideally, we should not be doing it, man. We need to come up with a different solution, not this one. But this is still not the right way of the deployment, this is still not the right way you can improvise news. Uh, property, maybe some people like, so other teams, how they are managing. I will cross check, one second check with the Lumi team, now they are doing it right, so let's check with them once. Yeah, okay, and can you go to that RFC? Can you go to that RFC? So here, right, this is asking you, right? Whether it's validated in A2? I need the evidences to be captured over here. Otherwise, I'm not going to approve these RFC. Yeah. So then in that case, Sachin, actually, whoever planning to deploy E3, right, they should come up with two days prior only.
+
+00:14:20 - 00:15:09 Unknown Speaker:
+
+Exactly. Two days prior, whatever they are planning to deploy, it should not be on demand. If ANSI is asking that I'll be going live on Thursday, they should provide you evidence of those DAG on Monday itself. Yeah. At least for the E2 run. Otherwise, we are not going to deploy it because let's not bypass everything. Tomorrow, these are game going to get audited. You would be on trouble and I'll be on travel. Yeah, yeah, sure, right. As soon as I see this, uh, you know, change, right? I have communicated to the team yesterday only, right? Yes. Going forward, if we don't have A2 evidences, we are not going to help them with the RFC. Sure, Sachin. Then in that case, I need the description and the test URL.
+
+00:15:09 - 00:15:59 Unknown Speaker:
+
+Then once I receive the mail from the team member, then I will raise the RFC accordingly. Yes, yes, yes. Please make sure that you're not going to create a RFC because these are getting approved from Raj, right? He doesn't know everything. I'll be managing it. So if I'm skipping that part, you know, everything gets captured in the audit. Yeah, so currently I'm just mentioning like that way due to test data is not available. No, no, no, no, no, no, no, no. Whoever is planning for our deployment, they need to give you an advance couple of days notice. Sure. With the evidences. Otherwise, don't create the RFC. Yeah. Okay. Probably, yeah. So for timing, I'm skipping this one, Sachin. Yes. Or should I wait for the team member? This RFC is getting created for what?
+
+00:16:00 - 00:16:41 Unknown Speaker:
+
+This RFC I'm creating for the upcoming Thursday. Thursday and Friday planning to create Actually, uh, Thursday and Friday don't do it okay? Whoever need it, whoever need it, they need to give you our evidence today and then you can create it. Yeah, just post a message in the group whoever is planning for a E3 deployment on upcoming Thursday. Uh, please help us with your E2 testing, uh evidences. Then then you can create this RFC. Otherwise, I am not going to approve it and even I'll ask Raj not to approve it. Yeah, yeah, so got it. Yeah, okay, okay, thank you guys.
+

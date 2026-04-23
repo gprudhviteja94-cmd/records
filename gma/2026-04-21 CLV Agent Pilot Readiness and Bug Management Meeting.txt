@@ -1,0 +1,285 @@
+2026-04-21 CLV Agent Pilot Readiness and Bug Management Meeting
+
+Creation Time: 2026/04/21 11:31
+
+
+📅About Meeting
+
+• Date & Time: 2026-04-21 11:31 (Duration: ~76 minutes)
+• Location: No relevant content mentioned
+• Attendee: Vamsi, Ravi, Anish, Ramesh, Prithvi, Kiran (for sharing), Pallavi (LLM subscription contact), Mahesh, Hosani, Pusha, Manual Team/SME Team, Gmail Engineering Team
+
+📒Meeting Outline
+
+CLV Agent Pilot and Readiness
+
+• Critical pilot and production path
+  The CLV agent is being handed over to the Gmail Engineering team for pilot. Post successful pilot and LGTM, it will be pushed to production. All open bugs must be closed or explicitly documented with precise, actionable one-liners (no generic statements). End-of-day today: provide complete bug status with concluded statements per owner.
+
+• Pilot data scope and cadence
+  Limit analysis to current week only (Mon–current day), then proceed daily to avoid backlog. For yesterday’s data: aim to complete for all platforms, with priority on Web. Monday data has higher CL volume due to weekend accumulation.
+
+• Version status and improvements
+  In v4.1.1.3, false “Need to be verified” recommendations reduced from ~21 to ~12–13 after logic updates (Prithvi’s implementation). Agent still produces additional recommendations; updated percentage to be computed and shared.
+
+Bug Management, Verification, and Reporting
+
+• Ownership and closure expectations
+  Each owner (Anish, Ramesh, Prithvi, etc.) must verify and close bugs under their name. If a bug still breaks, document and send to Delta; if it’s assigned to you as “needs verification,” verify and close. These bugs will be showcased to Google leadership.
+
+• Precision in bug notes
+  All bugs need specific issue details and current work status; generic descriptors are not acceptable.
+
+• Data sheet hygiene and traceability
+  TRV/test management sheet updated with new columns/rows and corrected dates. Daily cross-check before logging off to prevent misses. Manual team and agent extractions must be reconciled with clear reasons for mismatches.
+
+CL Fetching, Filtering, and Categorization Logic
+
+• Handling bot CLs and non-Gmail product areas
+  Implement categorization at fetch time:
+  • Section A: CLs created by users (Gmail scope)
+  • Section B: Bot-generated CLs
+  Mark non-Gmail product area CLs (Chat/Meet/Media) as “Not Applicable” with an explanatory note: “Deliberately NA; current scope is Gmail. Can be enabled in future.”
+
+• Filter placement and reconciliation with manual counts
+  Apply filters during fetch to separate Gmail vs others and user vs bot. Numbers may differ from manual team if they include Chat/Meet; provide categorized counts and rationale. Short term: present “Gmail” and “Rest (Chat/Meet/etc.)” sections to keep parity explanation transparent.
+
+• Future extensibility
+  Plan to keep one agent that later expands to Chat/Voice; for now, mark out-of-scope CLs as NA with notes.
+
+SME Coordination and Logic Validation
+
+• SME logic checkpoints
+  Anish to reconfirm logic implementation with SME team and validate missing/additional CLs. If additional recommendations remain, quantify and document.
+
+• Manual vs agent alignment
+  Verify that missing CLs are due to bot or non-Gmail categories; where agent misses valid Gmail CLs, adjust logic. Two CLs currently not extracted—documented as known NA.
+
+UAT, Live Device Testing, and Test Management
+
+• UAT/live device testing plan
+  SMEs to spend ~2 hours daily on UAT/live device scenarios (five core scenarios). Coordinate via Hosani (POC). Pusha (supports CL runs) can assist but SMEs must own validation.
+
+• Scenario fixes and retest
+  Five failing scenarios were fixed (on 17th and previous evening). Ensure TRV sheet reflects the updates; confirm evening slowdowns were operational, not logic defects.
+
+• Quick-run requirement
+  Run 28 CLs across all three platforms and share results promptly.
+
+Demo Video and Stakeholder Communication
+
+• New demo recording requirements
+  Prithvi to record a 10–12 minute (max 15) demo video covering:
+  • Architecture and agent step-by-step workflow
+  • Measurable savings (time and effort) with stats from TRV
+  • Next steps: extension to G-Chat and Voice, and storage (CSV) approach
+  Target: first cut by 2–3 PM today for review; final by 6–7 PM.
+
+• Content support
+  Ravi to share key points/stats to include; Prithvi to integrate and produce updated recording. If reusing prior video, ensure added sections for savings and next steps.
+
+LLM Premium Subscription
+
+• Justification and request process
+  Prepare a formal email to request premium LLM subscription:
+  • Current limitations
+  • Why premium is needed
+  • Expected impact (speed, quality, logic handling)
+  Send via Anish/Ravi to Pallavi with data-backed justification.
+
+📋Overview
+
+• CLV agent is moving to Gmail Engineering pilot; finalize bug states with precise notes by EOD today.
+• Limit analysis to current week and then daily; prioritize Web, complete all platforms where feasible.
+• Logic updates reduced false “Need to verify” flags; current over-recommendation to be quantified and shared as percentage.
+• Implement fetch-time categorization: User vs Bot CLs; Gmail vs Non-Gmail (Chat/Meet) with NA notes; keep one agent, extensible later.
+• UAT/live device testing owned by SMEs with daily 2-hour effort; five prior scenario failures are fixed—retest and update TRV sheet.
+• Record a refreshed demo video today including architecture, quantified savings, next steps, and CSV storage details.
+• Submit a data-backed request for LLM premium subscription to Pallavi.
+• Data hygiene: maintain TRV/test sheets daily; reconcile manual vs agent CL counts with categorized reporting.
+
+🎯Todo List
+
+• Vamsi:
+  • [ ] Review and approve pilot data packaging approach and sharing plan with Gmail Engineering, today
+
+• Ravi:
+  • [ ] Provide key points and savings statistics (from TRV) for demo video content, before 1:30 PM today
+  • [ ] Coordinate UAT with Hosani; ensure Pusha supports CL runs, ongoing daily
+  • [ ] Align sharing approach to Kiran/Engineering (call out two non-extractable CLs and rationale), today
+
+• Anish:
+  • [ ] Provide full bug status with concluded statements; verify and close items under your name, by EOD today
+  • [ ] Reconfirm logic implementation with SME team; report on any missing/additional CLs and checkpoints, by EOD today
+  • [ ] Prepare “Pilot v4.0” current-week data package; start daily analysis cadence from Monday’s data, start today
+  • [ ] Draft and send email (or via Ravi) to Pallavi requesting LLM premium subscription with limitations, rationale, and expected impact, today
+
+• Ramesh:
+  • [ ] Verify implemented changes in v4.1.1.3; compute and share percentage of additional recommendations vs total, today
+  • [ ] Implement fetch-time categorization (User vs Bot; Gmail vs Others) and ensure reporting shows two sections, today/tomorrow
+  • [ ] Retest the five previously failing scenarios; update TRV sheet and flag any residual issues, today
+  • [ ] Correct rule: when bug is verified, mark CL as “Manual verification is required” (per noted issue), and fix sheet logic, today
+
+• Prithvi:
+  • [ ] Share update on logic changes impact; assist with percentage computation of extra recommendations, today
+  • [ ] Record updated demo video (architecture, step flow, savings, next steps, CSV storage); first cut by 2–3 PM, final by 6–7 PM today
+
+• Mahesh / Hosani / Pusha:
+  • [ ] Support live device/UAT runs for five scenarios; report daily findings in TRV sheet, starting today
+
+• Kiran:
+  • [ ] Await packaged weekly data and notes (including two NA CLs); provide guidance for engineering trial handoff, as needed
+
+• Pallavi:
+  • [ ] Review premium LLM subscription request and advise next steps, upon receipt
+
+• All Owners (Anish, Ramesh, Prithvi, Ravi):
+  • [ ] Submit EOD today: consolidated bug list with precise, concluded statements, current status, and next action
+  • [ ] Maintain daily TRV/test sheet accuracy; perform end-of-day cross-checks, ongoing
+
+Transcription
+
+00:00:31 - 00:01:39 Unknown Speaker:
+
+Anish, you are in the system right? So did we finish the activity? But we implemented the changes by the SME team. And if we go back to them, you have identified the check pointers. Yes, yes. What happened after that? Yeah, I think after that, Ramesh has verified the changes have been implemented or not. In v4.1.1.3, we got better output comfortably v3. Like the agent which was suggesting earlier which need to be NA, it got dipped down. Like earlier, if it was expecting to be 21, which was showing as need to be verified, now it dipped down to 13 to 12. After Prithvi using the logic which we have shared with him. That's fine. Good to know. Thanks for that. I think my question is different, Anish. So there's an accident upon you to go back to the logic implementation.
+
+00:01:42 - 00:03:19 Unknown Speaker:
+
+I'll give you the updates on that today. I think for you, there is a critical update on CLV. Now you understand the severity of this. So this agent is now will be hand over to Gmail engineering team for their pilot. Post which we'll get an LGTM for push this agent to production. Period. I mean, that's the one liner. So when we are going to give this to engineering team for piloting? That's right. So whenever it is ready, that is where I'm asking for all these bug updates. Complete details by the end of the day today. We have to, we have to, we have to close that. And whatever the book is on your name, you be Ramnish name, be it Anish name or be put this name. Yeah, I need the I need a concluded statement in the book.
+
+00:03:19 - 00:04:13 Unknown Speaker:
+
+If if something is breaking still, yes, keep a note and I send it back to the Delta. And if it is on your name and that needs to be verified, please verify and close the book. Yes, Okay, let us don't have it, don't have anything on your bucket because these bugs will be showcased to the Google leadership. Even for yourself as well, if there is any bug, a one-liner like generic shipment will not help going forward. You have to be very specific about what is the issue and what you are working on. Sure, sure. And Vamsi, what about this LLM premium subscription? What can we do with that? That's what I'm saying. See, you don't assume things. You are thinking that you are going for premium. Whom did you reach out? Did you send a mail?
+
+00:04:15 - 00:05:14 Unknown Speaker:
+
+Actually, when we discussed in the chat, I spoke to Pallavi told me that we will do it after the demo or something. She told. Can you send a mail? Yeah, now I will send out a mail. Can you or Ravi send a mail asking? For the premium description and the reason for why you are going for that? Because I need some justification or data pointer to go to right? To convert this into premium. You come up with the limitation. Okay. What is the limitation you have and why you need this? What is the limitation? Why you are recommending for a premium subscription and then how that would help us providing the results are fast in the results, whatever it is. Logic. Okay. That's it guys. I mean, understand the severity and priority of this conclusion.
+
+00:05:16 - 00:06:31 Unknown Speaker:
+
+And how do we want to handle it? So it will be a number deviation, right? That you mentioned. So do we really need to follow that? Explicitly, or how are you trying to handle it? The box feels so we can add if we need CL created with those bot users, we can ignore it. In the list that is fetched. So what do you mean by the where you operate these filters? During the fetch itself? The fetch, we get the CL in the code, we put that filter. Ah, okay, not at the not the extraction. But the code will not match with what, uh, amnesia Ranish is expecting, so the total goal will not match here. So we need to verify whatever the seals that are missing were related to the plot or not.
+
+00:06:31 - 00:07:23 Unknown Speaker:
+
+Now, Manual Team, What Manual Team is doing? Are they fetching those details as well? Yeah, but they don't do anything with respect to those. So why don't we customize the response? When you say, let's say, if it's a bog CL, why don't you say not applicable and write a comment or some text in the next to CL, saying that it's a bog? Change. No, come on, something, something. Or maybe I can do, in the fetching list itself, two sections I'll put. One section is for the actual sales created by users, and another section for bot sales. Yeah. That's what she, you guys. That will be easy. Even if there will not be any campaign saying that the sales has not been fetched, and we also come to know that these are the...
+
+00:07:25 - 00:08:29 Unknown Speaker:
+
+These kind of questions should come from you, Anish. This is my expectation. Ramesh, you can also think in these lines. You guys are SMEs. Own these things, buddies, please. We'll discuss now on these things what are the gaps that we have. Okay. Yeah, that's all I need. Ravi, anything? Yes, I have to talk to Prithvi about the demo. One more thing, Bansi and Ravi, I would need help how the filters need to be applied. Basically, it's a requirement, basically. I mean, usually we don't need it. If you ask us, we will do it. But in this case, with respect to chart... Why do you need to filter? You just said you categorize the output. No, no, sorry. That's a different issue. I'm saying, I mean, yeah, for the whatever we discussed that, I will do, leave it.
+
+00:08:29 - 00:09:36 Unknown Speaker:
+
+I'm talking about another issue that is chart related thing. Okay, when we discussed with Annie, she is saying, Uh, when we say it fetches chart, Gmail, uh, and all three will fetch it, okay, but right now, chart and um. Gmail for iOS is already being fetched. I mean, some information. So the right now, the filters that is given is also getting the CLs related to chat as well. So I'll explain you. So what's happening is for Android and iOS web, we will get the Gmail related CLs. But coming to the iOS part, when we fix the CLs, It is switching option, it is reaching, uh, Gmail chat and me related CS. Okay, so currently, what we are doing is we are just evaluating the Gmail sales itself and the remaining chart related or media related skills.
+
+00:09:36 - 00:10:34 Unknown Speaker:
+
+We are just saying that NBA, as they are related to the chart of image, where we are not fetching no. On the first part, my first point, why are we fetching them? So, the features that applied, the script that has been written, by default, there is no difference. That is the reason they are fetching it from the beginning. Now, we need to categorize those things. I can help you. We can categorize those things. Why are we discussing these things? Why there is no bug on this? Why there is no discussion on this? So, what happens is, Manually, also when they fish, they are fetching these, all these seals manually. If you are doing it, okay, let them do it. We are here to provide a sophisticated solution, not what manual team is doing.
+
+00:10:49 - 00:11:44 Unknown Speaker:
+
+When we give the filters, it is fetching the complete CS, which is related to the uh, see, I understand the existing process. We have to fix that in some way in the code, No. The actual scenario is this one. The manual team which they extract the CLs, we are comparing with the agent extraction. So, example, if manual team is extracting around 50 CLs, our agent should be in a position of extracting the same. If by any chance if we do that filters now, so the mismatch would be happening. Then again, what the team would be saying is manual team is getting 50, but agent could not extract all 50. One thing Ravi, let me explain them and then we can come back. See Ramesh, you know you are half-bite here, right? Right?
+
+00:11:45 - 00:12:44 Unknown Speaker:
+
+We are here to provide a soft-scale solution. If manual team is fetching 50 including meat and hub, they are wrong. We need to match their number. Yeah, that I agree. I agree, Vamsi. But how they are segregating, how do we come to know whether this is related to the char-targeted, those we got when we analyzed those things. So, for that reason, in the last exhibition what we have done, we have implemented saying that if there is anything about like dynamite or if the path is related to sub-path, so likewise we have defined those conditions and based on that… Let's do one thing, let's do one thing. Do do meet and help him to meet, and what all Meet and Meet Chat, Gmail, Meet Chat, Gmail. Okay, so Meet and Chat also have a serialification.
+
+00:12:44 - 00:13:46 Unknown Speaker:
+
+Yes, they also have that, they also have channel. Okay, let us let us, uh, for now, see, uh. If you can categorize, like how you want to categorize the box versus the manual sales, if you can categorize them as Gmail and rest. Others do it. We can tell them that this is part of the anyways. The same solution can be applied now for them. Yeah, yeah, if you can categorize yes, two, two sections, do it. Yeah, anyway, for meat. We are not implementing, so anyway, we'll be doing for Gmail and Chat. For the other filters. I want the proper requirements. Okay, if I give this, you get me this. So if we can list down that, then that would be good. See one thing, let us say, let me, okay, let me explain this.
+
+00:13:46 - 00:14:54 Unknown Speaker:
+
+Okay, you got 50 CL sort of 50, 100, 10 CL surface meet chart. Yeah, what is that analysis that say that agent is doing there? Are we saying not applicable? Or you providing analysis, reasoning analysis? Yeah, yeah, and we are currently, yeah, currently saying it does not applicable. Fine, leave it. But we need to implement for those things as well for chat related. We will add a notary. You can add a note. So, this is deliberately marked as not applicable because we are not working on the product area. Later, if you want, we can do it. Yes, we can do that. So, Ravi, quick question. What is the plan? Let us say later, if you are implementing this thing for voice and chat, Are we going to combine the business logic in one agent or we'll be doing another agent for them?
+
+00:14:54 - 00:15:57 Unknown Speaker:
+
+I think one agent only. One agent only. For now, we'll keep them as an NA. And later, once we are extending this solution to chart and voice, he can include those sales as part of the analysis. Verification, that's exactly. That's what I was talking about. Did I answer your question? Yeah, that's what I'm saying. Okay. Yeah. Point to be noted, Ravi. And here, one more point, Vamsi. So, for chart related, we have two things for the self-selective applications. One is hub and one is hack. Both they will be doing, actually. Sir, you know things better now as per my idea. You can suggest, yeah, we can provide those all details, I already I think I provided those details, how to extract and where they are getting all those things. Okay, yeah, do you need anything else on these?
+
+00:15:57 - 00:16:57 Unknown Speaker:
+
+Uh, getting there? I I want you guys to take action on all the books in next 30 minutes. Point number two I need the analysis to be done. And, uh. Go back and check with the SME team on the logic, Anish. Yeah. And then if any CLs missing, additional CL recommendations are okay. Okay means okay. But are we still doing additional recommendations? Ramanuj, are we still, the agent is still doing additional recommendations? Yeah, it's still doing some. What percentage, any idea? Earlier it was 24 now it is doing almost uh 12 to 13. Uh, okay, uh. Out of 15 percent, one, five, fifty percent. Yeah, don't, is saying, but how many? It has been recommending extra percentage? One, three, no, can you? Can you convert this into a percentage percentage?
+
+00:16:57 - 00:17:55 Unknown Speaker:
+
+Yeah, I will give you those information, I'll just connect with you on that. Okay, that's fine guys. Okay. So, I mean, CL missing, any CLs missing? No, no, no. Two CLs were not able to extract. Those are in there. Fine, fine. I mean, this is what we need to call out to Kiran, Ravi when we share the things. So, how can we share this to engineering team for their trial? Yeah, I don't know. Like, archives deployment, uh, that is not possible, right? No, until we get the LGTM and push the code to project folder, we can't do a deployment. Right now, this is in your local system, right? So engineering team is again, uh, it's a different team, like, UH, Watches or some other company. No, no, they are Gmail, sir, Gmail Engineering Team, Gmail.
+
+00:17:55 - 00:19:02 Unknown Speaker:
+
+Okay, from see. They can patch it in their workspace and they can run, that is one option. Or I can think about creating a bundle also and ask them to. But uh, let's let's let them come back on how to do this. Okay, for now, uh, see, um, how long it is taking now to do this analysis, uh, rumination on this. In the sense, the difference is in execution. So, yeah, it is taking almost one to two days. Per day? No, when you say one to two days, for the entire 9 to 20? For two weeks of data. No, let's not do that. So, maybe starting from today, let's start doing it for this week. For this week? Let us say if we need to do this for yesterday's data, how long it will take?
+
+00:19:02 - 00:20:07 Unknown Speaker:
+
+Yesterday's data, only one day data, one day data. We can do it for all platforms, all the platforms. I think Ravi, he is very particular about web, right? Yes, he is interested in that, so all platforms. How long it will take? Except Monday rest, all we can do it in one day. Okay, Monday. What happens is we'll get extra sales, which is on Saturdays and Sundays, so Monday the volume of sales will be high. So basically, the plan is to share them. The current week's data. Okay, okay, um, so dining? I think it will be taking, if two persons, four to five hours, if it's day one. I think, yeah, once we get the extraction data. So, let's do one thing. Anish, prepare that pilot 4.0, version 4.0. This is the data that we have.
+
+00:20:08 - 00:21:14 Unknown Speaker:
+
+Stop analysis for the pilot week. Just analyze the data for this week. Okay. Let's not complicate. Maybe at any time they can come back and ask us for data. Instead of they coming and we start working on whole week's data, let's do on a daily basis. Okay, so shall we start from today? Yeah. Yesterday. Yeah. Yesterday. The 4.0, right? Yeah. We'll stop everything for that and just start doing for Monday. This Monday. Just have one week data, we'll share that with them. Right? Yeah. 20 to 24. I don't want to overload you guys, as you know, I know. So it will be doing it, we'll be doing it on daily basis, on the minute. Yeah, just dedicate just your ass and workers basis this and just close this. What about this? The live device should we start?
+
+00:21:14 - 00:22:50 Unknown Speaker:
+
+Ah, we have to, sir, but anish, Uh, can you start the live device also with this? Live device testing ?  Yeah, UAT. No, let's leverage those guys . Who  is that guy? Do we have anybody else ? Oh,  I'll just  check with the .Maybe he can see the deployment and he can see the test data more accurately. Pusha from the same team who was helping Mahesh for the CL runnings and all. So I think we can run and see. I want SMEs. Yeah, you guys have to do this. You can spend two hours on a daily basis. That is sufficient for there are no scenarios. They have only five scenarios. Yes, exactly. I'll just connect with them. So Mahesh is on the way to with Hosani. Hosani will be your point of contact. Yeah, Hosani will be the point of contact.
+
+00:22:52 - 00:23:45 Unknown Speaker:
+
+Okay, I'll just check with him. So TRV, Ramesh, Ramesh you're doing, right? Yeah. So I found some five test scenarios failing, but their associated bugs are fixed on 17th and... yesterday evening. Yeah, those five scenarios, those are actually fixed yesterday. What happened is there was some technical issue with the agent, so by the time they were running, the same thing has been bought in. Follow his discussion also that in the evening it's getting slowed down. What he did was he forgot to update in the sheet in TRV sheet, but in the bulk he did it. So today morning I connected with him and we have updated the sheet. He can forget, sir. Today morning, we luckily missed the call with leadership Mohit and Russell. No, from today, what I'll do is I'll cross-check the sheet before logging off.
+
+00:23:45 - 00:24:49 Unknown Speaker:
+
+That's what I'll do with the update. Sure. This week, my point is SMB testing. So, that's it. Let us do a proper test management. Sure. And we have, as you suggested, we have changed the dates also as the... Yeah, I have modified the sheet. I have modified the sheet if you can see. I have additional columns and rows. Yeah, sure. For you, for all of you. Yeah. This is actually any time being in the group, for anything that you have a question. This is going somewhere. Sure. We all have to be on top of one. Sure. So quickly, you'll run 28 CL and you'll share with us, right? Yeah, sure. All three platforms. Sure. Thank you. Okay. Thanks, Steve. Thank you. Thank you. Thank you. So Prithvi and Ramesh, can you stay back? Yeah.
+
+00:24:49 - 00:26:33 Unknown Speaker:
+
+Bye, guys. Bye. Thank you. Bye. So, Ramesh. Yeah. So, V4. Scenarios right? So now, do we need any changes on the earth? No, Manish. If we change the logic, then we are all good. Maximum of inputs... Not maximum. If there is one change or two changes, we need to identify those things. That's what. Can you close the screen? Yeah. Varshaan, did you create a new one? I am updating the same one. It is fixed, right? There is a VCL here and an extra template here. So, now here, we have the same 60 to 60, right? Coming to the Android, right? Android, right. Okay. So, we filled all the data in this sheet, right? Yes, this type is done. So, is there anything we can highlight in this? Unable to process two CLs. He gave the process, right?
+
+00:26:35 - 00:31:58 Unknown Speaker:
+
+Manually process. Okay, got it. As per the agent, eight CLs need to be evaluated. How many QA needed and QA not needed here? If there are six, there are 14, right? Eight extra. Uh so i hate in the guest house name uh. V4, right? Yeah. Android. Android. Total CLs, right? Total CLs. You mean you're not getting Android. It's here. Come to 9th. Yeah. 9th. Now, what we get here... What are these two CLs? Why are they... There are two orange ones here. Yeah. QA not needed. But that is what we need, right? And that's it. You can send to Shivagami to verify the box. All inboxes tab is selected. Primary inbox is loading after switching account. Very well, you should. So . The QA is not needed. I already mean it. Maybe he'll let me know.
+
+00:32:08 - 00:34:45 Unknown Speaker:
+
+That's all. So Prudhvi, there are two CLs here. Look at this. I told you that you have already verified that I am skipping these two. Did you see this? No sir, I didn't see it. No, no, no manual verification required. Okay. Okay. Hello? So, when it is under verified, our seal verification is required. Okay. So, we have to implement this. I told you once that this is a biscuit cheese, right? I forgot, sir. Ramesh, please write this point. So when the CLs are verified, when the bug is verified, we are marking the CL as no manual verification required. But we... We are marking the CL as no verification required. No manual verification required. No manual verification is required. But we are... It should be. It should be. Marked as. Marked as. Manual verification is required.
+
+00:34:51 - 00:38:11 Unknown Speaker:
+
+Is required. Yeah. Okay. Is required. So, So these two are here, right? Yes. Similarly, come to the 10th. This is the formula. Okay. Let's go to Australia. Ctrl C, Ctrl F. Is it the same? Is the data correct? Is the data correct? The data is correct. This new one has been updated to JN. Let's go to JN. This one is 27. Manual verification required. Manual verification is required. But there is no data there. There is only one. But what data did you enter? Where do you see these numbers? This one? Yes, script generated. Script generated. Okay. Copy it once and go there. Take a number and go to that sheet. The number is the data. Where did the data come from? I think the first one is the data. Okay, sir. We have to update this, sir.
+
+00:38:28 - 00:44:30 Unknown Speaker:
+
+First of all, see where it is. Control F, control. It will come here. Now go here. Why did it do that? 11th. Android 11th. Is it 11th? 11th. This is C and A side. Control F. 12th actually. 11th. 11th is 12th? Most critical feature is... It's already been, the same. Comma space. So, this is one. Okay. Next. Next. Next. Android. Android. Android. Android. So, next. Go to CL. 11th. There are two, right? Malashita Gallon. In the description, he really says that great things for the school, but if... Including the map modification. So this is correct action. Um. Okay. Control C, Control V. Control V. Control V. Control F, Control V. There is no test for the component. Related to the non-functional one. CL add a new test for the STA scenario. Okay. That's all.
+
+00:45:07 - 00:48:55 Unknown Speaker:
+
+The other state of the QA node says confirmed laser component that composite is not related to QA head. Compose v2 csc not ready for qa test. Existing functionalities, whether it has been affected or not, we will verify. Okay? Sir, you gave the description from that, the data inputs that you gave. Sir, I don't understand the business. You are not saying it 100 times. The data inputs that you gave, how did you tweak it and apply it? Okay, it is not like that. Okay, now listen. Now, how did you skip it? How did you do it? Um then hey hey started recording the video cutting video yeah but last one was there right no that will not work you talked about you know what all things we have to mention in this.
+
+00:49:11 - 00:52:11 Unknown Speaker:
+
+Yeah, but they didn't discuss what should be there, but what I have done previously, same thing only they're expecting. I don't see anything different. It's not same thing. I'll tell you. Entire working, step by step. Savings. Okay, how much saving we are doing. And what about that CSV storage? Yeah, are we saving it anywhere? One second Ruby, I'm getting a call. One second, sir. We want to publish it. I have some emergency, sorry. Don't call me. You work on the fix, okay? Sorry? You start recording the video. By when do you need that, Ravi? I need it before 2 p.m. No, Ravi. I mean, a lot of things. Video recording is not easy. Mine should be peaceful, right? I mean, it's very difficult. Drop everything else. Drop everything else.
+
+00:52:11 - 00:53:10 Unknown Speaker:
+
+Um okay see last time video recording it took almost one and a half hour for me to come up with the final one so again if you are recording i'm okay with it but. Like two hours before, if you tell me to do it, tomorrow I can do it, Ravi. Please. We talked about it yesterday only. Maybe you missed it. No, no, I'm there. I listened to that. I thought you will share the recorded ones only, not the new recordings. I was not expecting that. Then you are not listening to the call. I would say. No, I was saying it in the bathroom. Everybody is on the same page. Everybody knows we have to record the video. Only you are saying. That means you don't listen to balls. No, no. I have that recording also.
+
+00:53:10 - 00:54:04 Unknown Speaker:
+
+They didn't say to record the video again. They told share the recordings. But even if the recording is required, okay, I'm okay with it. But from the morning I'm working on different, different things. Vamsi is asking me to update the details. Drop everything else. I can ping you in the group, also drop everything else and record the video. Do you want me to ping in the group? Tell me, Okay, would you mind in? Please pasting the things that I missed in the last video? And what are you expecting in this? Just, I mean, few points more last video? You have it with you, what else is needed? You just put that in the chart. I will add those and I'll create a new recording. That's what I'm saying. How much time you need?
+
+00:54:04 - 00:54:59 Unknown Speaker:
+
+No, if you share the details, how much time you need. One day, two day, two hour, five minutes. No. But see, it's basically your emergency. If you tell me before 2 p.m. I'll work on that. Okay, if you tell me tomorrow morning we have time, I'll do that. We have to send it today, okay? Okay, I'll tell you the break. If you send me before 2 p.m., we can review it and re-record it or whatever is needed, we can fix it, okay? Then we might be able to send it by 6 p.m. or 7 p.m. That's why I'm saying you to record it before 2 p.m. Even if you are doing it by 3 p.m., that is also fine. Okay? Okay. Fine. See if you can use the old one itself.
+
+00:54:59 - 00:56:19 Unknown Speaker:
+
+I don't see any difference from there to now. Have you talked about the next steps? Have you talked about the what are the savings? No. Then? But I need those statistics also. If you can share that, I'll add it in the video. Which statistics? You are saying what is the savings, right? I need your stats. Saving you have in your TDV, no? Okay. But maybe like one, two line statement, okay, add these key points, that would help me. I am giving you key points only, Prithvi. You first relax and then listen to me. Architecture and you have to explain the agent, each step, all of them. Then you have to talk about saving, how much time we are saving by implementing this, and then we have to talk about the next steps.
+
+00:56:19 - 00:59:31 Unknown Speaker:
+
+Next steps means what is the future we are planning with this, like G-Chat and all. We can later on implement this on the G-chat platform and voice. We have to tell these things. Understood? Understood, right? It will not take you more than one hour. You try to give it me, give it to me before three. Okay. And how many hours of meetings video it should be? Max 10 to 12 minutes. It should not exceed more than 15. Okay. Brother! Brother! He is alive. He will not die. He will not die. He will not die. Sir, it's not a pump. It's a prudence. Get out of the bed. Get out of the bed. Why are you crying? It's a prudence. Hello. Hello. I don't care if it takes 10 minutes or 20 minutes.
+
+00:59:35 - 01:03:55 Unknown Speaker:
+
+Now I will eat a canteen for lunch. I will tell them that I don't have a canteen. I will call them. You do it and tell them. I will call them and tell them that they have given the lunch box as a return. It is a problem for them. I will give it to them and ask them to pay for it. On your server. Hello? This is an indicator of a lot of productivity, not a lot. What happened? Why did you call me again? They didn't tell me to do it. Who told you? They didn't tell me to do it. They didn't tell me to do it. They didn't tell me to do it. Thank you. How do we update? No, I don't want to hit him. What are you doing here?
+
+01:03:58 - 01:15:31 Unknown Speaker:
+
+Thank you for watching this video. What are you doing? What are you doing?  .  . . . Um. I don't know. I don't know what to say. The district. Yes, this story is a report. Yes. Thank you. Yes. Yes, I liked it when I took it with me. I used to wear it in school.
+

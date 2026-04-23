@@ -1,0 +1,363 @@
+2026-04-15 CodeForce and DMA Data Engineering Bot Development Discussion
+
+Creation Time: 2026/04/15 15:03
+
+
+📅About Meeting
+
+• Date & Time: 2026-04-15 15:03–15:48 (approx. 45 min)
+
+• Location: No relevant content mentioned
+
+• Attendee: Praveen, Rahul, Ahmed, Manohar, Shahbaz, Abhijit, Bharat, Kalyan’s team, DMA IDW team, broader OWCA engineering audience
+
+📒Meeting Outline
+
+CodeForce: Standardized AI Engineering Agent for Frontend (Phase 1) and Full-Stack (Planned)
+
+• Problem with prompt-driven agents and rationale Current AI/copilot tools rely heavily on ad-hoc prompts, leading to inconsistent outputs and frequent prompt rewrites. CodeForce aims to remove prompt dependency by standardizing inputs via user story/feature IDs and enforcing a structured SDLC.
+
+• End-to-end capability scope CodeForce adds integration, security, accessibility, marketing support, greenfield/brownfield handling, automated unit testing/coverage, and build. It produces production-ready documentation, performs architecture review, design, coding, security checks, accessibility conformance, testing, and build handoff.
+
+• Input model: Rally-backed automation Instead of a free-form prompt, users provide a Rally user story/feature ID. CodeForce fetches description, acceptance criteria, attachments, and creates a PRD (product requirements document) and development plan before generating code.
+
+• Security and compliance posture The agent is trained to avoid downloading artifacts outside the approved environment (“opt-in” perimeter). It ensures security compliance, reuses existing architecture/components for brownfield apps, and avoids installing new external libraries unless creating a greenfield app.
+
+• Accessibility and UI library strategy Enforces accessibility for new screens and supports multiple UI libraries/themes (e.g., Skyline, Material UI, Harmony) based on user requirements and org standards.
+
+• Brownfield vs. Greenfield handling
+
+  • Brownfield: inspects existing architecture/components/libraries, selects approved dependencies, writes code to fit the stack.
+
+  • Greenfield: bootstraps full application setup from scratch, including project scaffolding.
+
+• Testing and build reliability loop Auto-generates unit tests for new functionality, runs all existing tests, fixes failures, builds artifacts, and hands off only after a successful build.
+
+• Current flow and future roadmap
+
+  • Current: requirements intake → analysis → architecture → UI generation → validation → security → accessibility → test execution.
+
+  • Roadmap: add backend .NET agent (in testing), evolve into a full-stack agent completing frontend, backend, and integration from a single user story; future “bot” mode to auto-claim Rally stories assigned to “CodeForce,” implement, and raise PRs.
+
+• Performance benchmarks Internal pilots (OWCA, Automatics): end-to-end CRUD screen (incl. tests, security, analysis, review) reduced from ~7 hours with generic AI tools to ~3 hours with CodeForce (~50% effort reduction). Sample timelines shared for 1/5/10 screens.
+
+• Access and distribution Delivered via organization-level GitHub integration (OWCA). Appears in VS Code’s Agents dropdown for entitled users. Version updates auto-propagate. No additional licenses. Phase 1 covers UI agent + Rally integration; next adds .NET backend; later a Rally bot.
+
+• Live demo highlights (Rahul)
+
+  • VS Code workflow: select CodeForce agent, enter user story ID, agent installs necessary tooling (e.g., Playwright for Rally SSO), prompts for using current repo as UI workspace and backend path (frontend-only in Phase 1), initiates SSO via browser, fetches Rally details.
+
+  • PRD Builder sub-agent compiles an MD-based PRD with business context, scope, description, attachments.
+
+  • Agent proceeds stepwise; asks clarifications if build issues arise; generates code, unit tests, and a final report summarizing screen location, chosen UI library (e.g., Skyline), theming, test artifacts.
+
+  • Output demo: generated React screen adhering to Skyline styling/branding, with mock data when backend is declined; edit and extend via the same agent prompt thereafter.
+
+• Security/SSO Q&A (Manohar)
+
+  • Authentication occurs through web SSO in the user’s browser. No hardcoded credentials; redirects to MSID login where applicable. Only upon successful verification does it fetch Rally artifacts.
+
+  • Rally data retrieval uses a Python script post-SSO to generate an API key scoped to the user/team and fetch details into VS Code.
+
+• Adoption and standardization discussion (Shahbaz and response) Recognition for innovation; emphasis on scaling, positioning, and standardization to avoid duplicative efforts. Move from curiosity phase to maturity: consolidate practices, enterprise-grade frameworks, and reuse across teams. Consider aligning with Tiger Team initiative for platform-level leverage and broader recognition.
+
+• Guidance on user story quality (Abhijit’s query) More detailed user stories yield higher accuracy. Comprehensive business functionality, clear acceptance criteria, and attachments improve the PRD and downstream code generation. The agent surfaces the generated MD document for review prior to development.
+
+DMA Data Engineering Bot (DEB): AI-Augmented ETL SDLC for IDW
+
+• Context and goals Data engineering faces rising complexity: multiple sources, tighter timelines, higher quality bars, and context switching. DEB augments (not replaces) the existing architecture/standards to automate heavy-lift steps for batch ingestion first, expanding to other patterns.
+
+• Current (manual) DE SDLC baseline Convert business user story into a mapping spec (target schema, NKs, columns, transformation rules), handcraft unit tests, configure the DXF accelerator (table-level configs for sources, transforms, SCD/keys/encryption), orchestrate pipelines, run loads, execute tests, open PRs, and promote through environments—largely manual.
+
+• Target AI-enabled flow with human-in-the-loop
+
+  • Inputs: Business user story transformed into an AI-ready user story (ARUS) with required sections; completeness validated by a “user story validator” (yellow = pending module).
+
+  • DEB planner generates an execution plan from ARUS, including code/config creation, job/pipeline setup, execution, and unit testing steps.
+
+  • Build agent creates:
+
+    • JSON configuration for DXF accelerator (source/target/transforms/keys/partitions/perf).
+
+    • Databricks jobs/workflows with cluster, tasks, dependencies.
+
+    • Validation notebooks and unit tests from the mapping spec.
+
+  • Execution staged initially in a separate AI environment for confidence, then mirrored to dev by moving code and re-running validations.
+
+  • Developers review at gates (plan approval, code/config sanity, execution approval, merge oversight). Future agents will add validation/deployment automation.
+
+• Architecture components
+
+  • Developer UI to interact with DEB.
+
+  • Modular agents: planner and build (current), validation and deployment (planned).
+
+  • LLM: Claude Sonnet via Claude SDK.
+
+  • Knowledge base (RAG) built with Microsoft HV: HPE Core Researcher converts the framework/accelerator codebase into structured English MD modules (dimensions, facts, stages, inputs), enabling effective chunking and retrieval.
+
+  • Databricks integration via MCP and Databricks skills for job, config, and notebook operations.
+
+• Demo highlights (Bharat)
+
+  • ARUS hosted in Git issues (Rally planned later), including acceptance criteria and mapping spec.
+
+  • Planning phase outputs a JSON config preview and enumerates next steps (create/upload JSON, update unit-test workflow, create validation notebook/tests, execute tests).
+
+  • Build/execution:
+
+    • JSON config generated with source/target and transformation rules.
+
+    • Unit-test job added/updated in Databricks with compute and task configuration.
+
+    • Pipeline executes to load target tables (bronze → gold per medallion).
+
+    • Validation notebook auto-generated from mapping spec covers nulls, PKs, transformations; tests executed with results summarized and links provided.
+
+  • Efficiency assumption: conservative 50% time reduction initially; to be revisited post-adoption.
+
+• Rollout plan Pilot with two scrum teams in DMA, expand to others. Currently local; to be deployed via UIS and AIR processes. Longer-term automation to cover remaining gray-box steps.
+
+• Q&A on knowledge base creation HPE Core Researcher agent ingests code and emits MD-formatted English documentation of modules, stages, and inputs; this serves as the RAG knowledge base for DEB. This approach outperforms direct code chunking for retrieval and reasoning. Alternatives (e.g., other code-to-doc approaches) exist, but HV Researcher yielded strong results.
+
+Additional Items
+
+• Session closure Third use case deferred due to time; questions to be routed via chat for follow-up. Acknowledgment of teams’ efforts and commitment to iterative standardization.
+
+📋Overview
+
+• CodeForce removes prompt variability by driving from Rally stories, enforcing architecture/design-first, and automating tests/build with security and accessibility baked in.
+
+• Phase 1 focuses on UI; backend .NET agent is in testing; full-stack and Rally “bot” modes are on the roadmap.
+
+• Demo validated VS Code integration, PRD generation, UI code creation with Skyline theming, mock data fallback, and final reporting.
+
+• Security/SSO uses user-driven web login with MSID; Rally data fetched post-verification; no credential hardcoding.
+
+• Organization push is to scale, standardize, and align with enterprise frameworks (e.g., Tiger Team) to avoid duplicate efforts and increase adoption.
+
+• Detailed user stories materially improve output quality; the agent provides an MD PRD for pre-dev validation.
+
+• DEB automates mapping-to-config, job creation, execution, and test validation using Databricks MCP and a RAG knowledge base derived from HPE Core Researcher outputs.
+
+• DEB pilot indicates a conservative 50% efficiency gain; phased rollout planned with governance via UIS/AIR.
+
+🎯Todo List
+
+• Praveen / Rahul:
+
+  • [ ] Publish CodeForce Phase 1 access guide (VS Code setup, Rally permissions, supported UI libraries) to OWCA wiki, 2026-04-22
+  • [ ] Share PRD template and “final report” sample with teams for reference, 2026-04-22
+  • [ ] Document user story quality checklist (required fields, acceptance criteria examples, attachment guidance), 2026-04-24
+  • [ ] Validate backend .NET agent test results and define acceptance criteria for Phase 2 rollout, 2026-05-03
+  • [ ] Draft proposal for Rally “bot” mode (auto-claim + PR flow), security review included, 2026-05-10
+
+• Security/Platform Team (with Praveen/Rahul):
+
+  • [ ] Formalize SSO flow documentation and MSID constraints; confirm no credential persistence; add threat model summary, 2026-04-29
+
+• Shahbaz / Rx-level Enablement:
+
+  • [ ] Propose a standardization and adoption plan (cataloging agents, reuse guidelines, governance via Tiger Team), 2026-05-06
+  • [ ] Identify 2–3 pilot groups for scaled CodeForce usage and define success KPIs, 2026-04-30
+
+• Abhijit / Bharat / DMA IDW:
+
+  • [ ] Publish ARUS (AI-ready user story) schema and examples for data engineering, 2026-04-22
+  • [ ] Integrate “user story validator” module (yellow box) or agree on interim manual checklist, 2026-05-01
+  • [ ] Package DEB for pilot in two scrum teams; define pilot scope, metrics, and rollback plan, 2026-04-26
+  • [ ] Prepare RAG KB creation SOP using HPE Core Researcher (inputs, chunking, refresh cadence), 2026-04-24
+  • [ ] Plan UIS/AIR deployment path and security review for DEB agent, 2026-05-08
+
+• Communications:
+
+  • [ ] Post meeting recording, slides, and demo links; open thread for Q&A, 2026-04-16
+  • [ ] Schedule follow-up session to cover deferred third use case, 2026-04-18
+
+Transcription
+
+00:00:18 - 00:01:40 Unknown Speaker:
+
+Thank you so much. Okay. Okay. Why not any other tools? Any other agent tools? Okay. So if you want to develop any of the functionalities by any co-pilot agents or any AI tools, we heavily depending on the prompts. How prompt we are giving, the output will depend on the prompts. Which achieve the same kind of functionalities from the different developers. It may be because every person used to give different prompts to achieve the outputs. So there may be an inconsistency and it requires the rewriting of the prompts to achieve the proper outputs. To overcome the problem, we come up with a solution called CodeForce. So CodeForce also supports additional capabilities. Integration, security, accessibility, marketing support and Greenfield and profit projects and automated unit testing and coverage and build.
+
+00:01:40 - 00:02:57 Unknown Speaker:
+
+So these are additional capabilities that Web4Jet is going to provide to the developers and it will accelerate the engineering team to develop anything. So if you want to develop anything, no need to give any prompt. If you give a user story number or feature number, it will go and get all the details from your rally, like a description, acceptance criteria, or any attachments. It will get all these details, and it will prepare production-ready documentation. And once it is prepared, and it will go through... Okay. Anybody, please can someone go on mute? Yeah, you can go ahead. Oh, sorry. Okay. So we can prepare the production-ready documentation and it will go to the architecture. If it is an existing application and it will go to, then it will start the design.
+
+00:02:57 - 00:03:50 Unknown Speaker:
+
+It will not directly jump and go to the code. Regular agents, too, so it will follow step by step, then it will. Also the agent will make sure that it should be a security compliance. It will not download anything from outside of the opt-in. That is how our agent has been trained. And if you make sure any new screen Health is going to create, it will make sure accessibility in place. And it will also support multiple. As I said, It is not only permitted to any skyline or any material UI. It will also support Harmony, all these things, based on the user requirement. And it will also support existing application as well as the new application. If you are working on the existing application, it will go to the existing architecture, existing components, libraries, and it will choose accordingly.
+
+00:03:50 - 00:04:41 Unknown Speaker:
+
+It will not install any other external libraries. If it is a new application, it will... scratch, it will create everything. Even application setup also will do this by code force. And it will make sure all, whatever the new functionalities you are going to add, it will write the unit test cases for you and also it will make sure each of the existing unit test cases should pass. If any failures, it will fix for you. At the end, it will build and it will hand over it to the user once the build is successful. These kinds of functionalities is going to give back CodeForce. Next slide. So this is the current situation of the CodeForce flow. So whatever I discussed so far, it will go to the very first step.
+
+00:04:41 - 00:05:34 Unknown Speaker:
+
+It will get the requirements and it will analyze the requirements and architecture, then start the generation of the UI generating skills, validation and security and accessibility, then run the test cases. This is the current flow of the code force. Then, this is the interesting thing. What is the future scope of the code force and architecture? We are not only permitted to the UI agent. We are also starting working on the backend .NET agent. So it is in the testing phase. Once it is done, we are going to give this code force as a full stack engineer. So if you give a user story, if the user story has frontend and back-end, it is going to complete everything, front-end, back-end, and integration also. So that is how it is going to work, our workforce.
+
+00:05:34 - 00:06:35 Unknown Speaker:
+
+And in the future also, we are planning to roll this as a port. So as of what we are doing, we are going to give a user story number of feature, right? So in future, if you are going to assign any of the user stories in the rally boat to this port force, It will go and read the rally and it will grab the user storage with the name of CodeForce. It will work on it and it will generate the PR. So this is still under the exploring, but the end vision of the CodeForce is this one. Okay. And productivity. So we tested in multiple systems actually in OWCA and Automatics also. Few of our applications, so we tried with the agent and for developing one credit operation screen end to end if in by using any AI Agent tool.
+
+00:06:35 - 00:07:34 Unknown Speaker:
+
+If it is taking seven hours, our full force agent is taking three hours, and it is reducing almost 50 percent of the effort. The whole functionality, I'm talking unit testing, security requirement analysis, review in everything includes. So one of, uh. Just I'm giving the one screen, five screen, and 10 screens timeline I'm providing here. Next. So everyone think like how we are going to access this CodeForce. So at this moment, we are going to give as an organization level to GitHub. We have added this agent in the OWCA in the GitHub. So if you have access to the organic OWCA, it is automatically comes into your Visual Studio Code agents drop-down. So no need to do any other things. So whenever we are pushing the new versions, it will automatically comes into your Visual Studio Code agent.
+
+00:07:34 - 00:08:28 Unknown Speaker:
+
+So there is no additional license. Anything is not required. And in the phase one, we are planning, in the phase one, we completed UI agent and rally integration. In the next phase, as I discussed end-to-end with .NET. And in future, we are going out as a bot. With that, I'm handing over to Rahul for a quick demo. Thank you. Thank you, Praveen. I'll just share my screen. Please let me know once you can see it. We see it. Thanks, Ahmed. So, hey, guys. So, generally, I just wanted to show you how... the whole flow is happening right now using this Codeforge, in particular with React and .NET. So right now in this phase one, like the release one, we were doing the rally integration and UI specifically.
+
+00:08:29 - 00:09:18 Unknown Speaker:
+
+And if you see here, you just need to select the Codeforge agent in particularly in your VS Code prompt over here. And you just need to provide the user story number, whatever you want to get the information from. And once you get the information, it starts. Trying to get the rally open with the playwright dependency. And once it's installed, it automatically says that, like, do you want to use the current repository or workspace as your UI main? And it asks for a backend path. So both are different repositories, right? So it gets the backend repository path as well. And it asks, do you want backend or only the frontend validation? So as I mentioned, it's only frontend and no backend right now. It just says yes and then it starts to work. Right now.
+
+00:09:18 - 00:10:11 Unknown Speaker:
+
+Now it starts fetching the SSO and it says like can I go forward and open the browser and go ahead and just do it and it opens the browser where you log in with your user, I mean email ID password and yeah it automatically comes here, fetches the rally details, everything in detail and then all the details you see here in the right left side. It creates a requirement folder over here, particularly. And we have one sub-agent called as PRD Builder. PRD is nothing but a product requirement document. So what it specifically does is it gets all the information from Rally end-to-end, like username, title, where did it come from, business context, scope, what is the description of it. And if there are any attachments, it comes into the document folder directly over here.
+
+00:10:11 - 00:11:03 Unknown Speaker:
+
+And yeah, automatically it just generates this whole MD file for the agent to start working. And when I say yes to it, it starts the whole process of working one by one. And it asks if any questions needed. If there is any issue while billing with your current application before it even starts, it generates over here. So this is the whole process it did for me. It generated everything in 19 minutes as this is a new application when I was running it. With nothing in particular. And everything is generated at the end, it just gives me the test cases, the generated flow. And and one more thing, yeah, it also generates the final report, so let's say this is the final report, it says. As per code verse, this is the screen created, it has every information like, where is the screen?
+
+00:11:03 - 00:11:55 Unknown Speaker:
+
+Get it? What UI Library particularly used right now? Here it used. Skylight, the similar way. Everything in detail are used over here where our test case is returned. Yeah, theming and everything. So this is the whole flow. And the output, when it comes to the output, this is the output it generated. So we have different standards. One is the styling standard, and the other one is the optimum standard, like the colors, theming, branding, the logo, everything. And right now, It generated this whole screen with just a rally document. So I get the strategy mapping rally document. It used the Skyline whole thing over here. And it generated mock data as well. I said no to the backend, right? So it generated a mock data to show how the table looks. And yeah, you'll have the edit button, everything.
+
+00:11:55 - 00:12:44 Unknown Speaker:
+
+It's just like it took hardly 20, 25 minutes to write the whole thing out. The next part, you'll just verify it how the whole code is in. Whether it's to your liking and just make some changes, whatever you need in particular. And also, this is not just to clear the screen. If you want to edit something going forward or fix something in your code for existing screens as well, just use the same prompt and do it, and it uses the model like the prod or codex, and then it generates everything going forward. Nothing less than a normal copilot. It does more jobs than whatever you need for your screen. So, yeah, this is what our particular post-project is going to do. And, yeah, going forward, we'll have many new things coming and, like, new additional features to it.
+
+00:12:44 - 00:14:00 Unknown Speaker:
+
+And, yeah, that's our thing. Thank you, guys. Any questions or anything you guys want to ask? Okay, I see. Praveen, go forward. You have your hand raised. Okay, we'll give it to Manohar. Manohar? Hey, so I have one question. So we have communication with external systems like Rally and you guys are using SSO authentication, right? So is there any gateway between your CodeForge and Rally? To authenticate, because, like, as a user, right, like, we don't, we don't, uh, let's say any any SSO anonymous links we don't click on, right? So there should be some authorized gateway for the users to click on that, so is there is there any any gateway like that? So actually what happened? Uh, so it will open the web login, so it will ask your credentials, okay?
+
+00:14:00 - 00:14:51 Unknown Speaker:
+
+So once you enter the your uh, email address and password, then only it will redirect. It will use the SS work and it will get your user story information. We have not hardcoded anything and any such like that in our code post. We are asking web logging by opening the rally in the web browser. And to add to that man over, click. Uh, we tried this in the external laptops as well, that's the contractor's laptops, right for them. It doesn't directly log in through the credentials, it redirects to the MSID Log in the main UIG for page, and there it asks for your MSID login. And once it's verified, then only it fetches the details, or else it won't even go forward. Just gonna stop it, okay, uh, so so one more thing like, uh, so how the rally details are getting fetched like once login?
+
+00:14:51 - 00:15:50 Unknown Speaker:
+
+Yeah, so we have, um, generally, what? We wrote a Python script specifically to get the details in detail for everything, like whatever I'm trying to mention. It generates an API key with also the details of your scrum team and everything. And then it fetches the details from that team over there, and it gives all data added to the VS code over here directly. Okay, so, so with authentication, with your, uh, fetching the AKT, and with that you are getting the scrum details. Yes, exactly. Okay, thanks. We'll take one more question and rest, you know, we'll take it on chat. So Shahbaz, yeah, go for it. You're being biased on me. Two questions. Yeah, yeah, yeah. This is not a question for Praveen and Raul, but this is applause for you guys for coming up with something nice.
+
+00:15:50 - 00:16:32 Unknown Speaker:
+
+Every week I see a lot of innovation like this happening across the board. The only question I had for our sense is how do we scale this up? How are we getting it to our audience? How do we make this more purposeful? Because I mean, every week for probably between one map or another map, there are new models, new agents, new solutions coming up. So it's like a place where we're full of same applications, same functionalities, and same features, different builders coming through. I'm just curious to understand how are we positioning this? How are we leveraging it, marketing it, and kind of making it productive and effective for people to know? And then leverage it and take it further more. So that it's not just a bubble that's coming up, but it's an idea that is getting to a larger scale of implementation and leverage service.
+
+00:16:32 - 00:17:36 Unknown Speaker:
+
+So that's my only question maybe for us. I appreciate the creativity and innovation here. While a new technology is in place and we are at the cusp of all these AT&T solutions coming to life every other day, it's like new things coming up. So it's very important for us to be curious about it, try our hands on it, and come up with all these innovative solutions, which we are seeing. Way too many of these happening, which is absolutely fine for us because, you know, we have all this, we call this a curiosity phase where everybody has to learn and get going with that, right? So we're doing great at that. Now, as we mature through the process, we also have to be mindful about how people can come together and share these practices and not spin their own wheels, but have some kind of standardization enterprise-grade solutions that can be leveraged across, and that's where...
+
+00:17:37 - 00:18:13 Unknown Speaker:
+
+I think even at the Rx level, we are kind of focusing on to understand how do we kind of standardize this. Because for somebody who has not ventured into this, they probably would do this all over again. We definitely don't want to do that. But again, this is the phase of learning. We are very happy that people are curious about it and starting to learn things. But I think the next phase of it is going to be the maturity phase where we want to standardize things. We want people to adopt, even to reuse like minds coming together. Getting these practices and building a framework which can be applied across enterprise, right? So that's the phase that we probably need to get into.
+
+00:18:14 - 00:19:01 Unknown Speaker:
+
+Yeah, and maybe in a way, we kind of extrapolate this to our Tiger Team story in the broader context of what the Tiger Team is doing today and give them a broader scale of platform kind of leverage. I just want to ensure that what you guys are building in is just not a small bubble that is coming up today and then bursting off tomorrow and nobody is damaging it. I want to see some of these grow into bigger spaces and get broadly enriched. So I want to ensure that your hard work is recognized, I want to ensure that your ideas are being leveraged also. So that's it. Thanks so much for the opportunity for me. With that, we move to second presentation for today. Uh, abhijeet Yeah, I'll be starting. Let me quickly share my screen.
+
+00:19:08 - 00:20:05 Unknown Speaker:
+
+We will pull your hand down, which is not going to be your judge, so we'll pull it off. Okay. Yeah, actually, I was just asking one thing. Like, it is picking things from the user story, so what we need to take care in the user story description or acceptance criteria, do we need to more things put on the user story? That was the question. Thank you. Yeah, maybe I can answer you. Maybe presentation start, right? I can connect with you on this. Because how much details you are giving, right? So you will get that much accuracy. So in detail, business functionality and whatever you want to write in the user story. So it will help our agent to work on it. Even though if you can give a hideable also, it will scatter and it will create a document for you guys.
+
+00:20:11 - 00:21:23 Unknown Speaker:
+
+It is clear the document and it will show you actually before doing the development. In the MD file? Yes, correct. Okay. Thank you, Abhijit. Okay, let me take over. Hello, everyone. Myself, Abhijit. I'm from DMA IDW team. So we'll be discussing about the data engineering part, DMA data engineering part. So before going there, Today, data engineering teams are dealing with increasing complexity, multiple data sources, diluted timelines, growing quality expectation and constant context switching, right? So, DMA Data Engineering Bot, or DEB, what we call this, is our approach to augmenting data engineering workflow using AI. Without changing the core architecture of the standards that we have in our application. So currently in IDW, we basically support different kinds of data engineering, which involves screen data ingestion, batch data ingestion, like involving extracting the data from various sources,
+
+00:21:23 - 00:22:29 Unknown Speaker:
+
+relational sources, various documents, various ingesting, extracting various file formats, and then transforming them and then loading them into a data warehouse. And also, Handling various stream canonical creations. Various data products creation, which can be used by various teams to do various business to extract various business insights. And then followed by the data extracts framework. Right? So these are the various data engineering work that we do in our applications. So as part of our PUC or the prototype that we have created, we have taken the data engineering on the batch determination as part of first iteration, and then slowly, we are going to adopt the other type of data engineering into the same framework. So, before going into how we have integrated the data engineering port using AI within our existing architecture.
+
+00:22:29 - 00:23:32 Unknown Speaker:
+
+Let's first understand how we currently use our existing SDLC, but our existing standard data engineering works in the current one. So, as of today, when we get a user story which will be coming from the business users, we understand the requirements. We understand what is the ask from the business users. And then we convert that story user story into a requirement document. And then, as we work with the ETL project site, we need to come up with a mapping document. So the mapping document, which basically looks like this, which talks about what is the target table, what is our target table name, what is our NK details, what is the column, what is the transformation rules, what is the role of each transformation rules, what is the... target table, target column, right? All those things.
+
+00:23:32 - 00:24:31 Unknown Speaker:
+
+So this, we need to basically convert the user story into this mapping document, which is basically our source of truth. And once we create that mapping document, using the mapping document, we also create the unit test case generation to verify whether the data is getting loaded as expected in the target. And then once we do that, What we do is we have code accelerator framework or an ETL accelerator framework called DXF Framework, which is having a pre-defined set of ETL stages. Which can be configured at the table level. So all we need to do is we need to pass various table specific configurations, like what is the source, what is the target? What are my transformation rules? And what are the configuration for? Let's say generating the Sorbit keys, encrypting the data, all those things.
+
+00:24:31 - 00:25:28 Unknown Speaker:
+
+So we basically create the configurations for our ETL pipeline, which is already an ETL executable code. And we create external table configurations on top of it. And then we create or basically orchestrate those ETL configurations into various data pipelines. And then as part of our batch loads, we execute those data pipelines. That takes care of extracting the data from source, applying the transformation logic, and then getting loaded into the tablet. So this complete box that you see here is just being completely done manually by the engineers, data engineers. And then once we see that our execution pipelines are completed successfully, and then we initiate the unit test case execution, which is again a manual step.
+
+00:25:28 - 00:26:22 Unknown Speaker:
+
+We need to write all the test cases manually, and then only when we see that all the test cases are passed, again, which is a manual step, we create a PR to dev, we merge it with the help of the leads, they review the code, they merge it, and then that gets deployed to production. And then once everything is done, it's like it goes to production, and then finally reproduction will be. This is how the current SDLC workflow works. And then I'll pass it on to Bharat, who will be explaining about how we have used AI in our use case to solve the various manual problems that we had, or to basically automate various scenarios in our case. Yeah. Thanks, Avijit. Pass it on to you, Bharat. Thanks, Avijit. Good afternoon, everyone.
+
+00:26:23 - 00:27:20 Unknown Speaker:
+
+This is Bharat here from Kalyan's team in DMA. So, like Vijit explained about the current structure that we have, now in the new AI ADNC era, right, so majority of the heavy lifting work would be done by our data engineering bot, the DEP, that we are calling it. So, all those green boxes that you see is what is being done by the DEP. Architecture, right? So what we are saying is in this we get the. Typically, the user story we get from the business does not contain much of the details. So it only has kind of details around source, target and some of the details that we get from the business. User that we get in the Rapid now, what we are saying is we will have a user story transformer.
+
+00:27:21 - 00:28:19 Unknown Speaker:
+
+So, which will convert this business user story into a AI-ready user story. So, this is the important input that our data engineering bot needs, right? So, I think someone asked previously how that AI-ready user story should look like. So, for our data engineering use case, we have come up with a structure on whatever details should be added in this user story. So that the bot can pick it up and perform its task. So, once that is done, we will also validate the user story to check the completeness of the AI-ready user story. Only then we can give it to the bot. So, majority of the heavy lifting, like I said, is being done by the data engineering bot, but there is still a role for the developer to actually, he is in the human in the loop, and he will evaluate in certain stages.
+
+00:28:20 - 00:29:03 Unknown Speaker:
+
+That we have put here, right, so the user story validator will validate it. For this we would be reusing, there is a separate team who are already building this validation, so we will be reusing it. You are seeing it in yellow because that is something we have to still come up with at this point. We do not have this. So, like I said, the green ones are the ones which are being done by our dev now. First step, what it does is it, reads the user story, which has all the details, including the mapping spec that Abhijit showed, and other details of where to create the pipeline, what configurations to be created. It has the details in the user story.
+
+00:29:04 - 00:30:05 Unknown Speaker:
+
+Next, once this planning phase, in this planning phase, Dev will build all the execution steps right from how the code should be created, Until the unit test is the execution as well, which I will be showing in the demo. So once the planning phase is done, next, if you see this box here. We are saying initially, at this point we will go with a separate environment because we want to get the confidence. We will pilot this with couple of streams and then we will see that if everything is looking good. We will actually directly go to the dev workspace, but at this point, we will have a separate environment called AI environment. So in this, what will? The second step is once the plan is generated, so the data engineering board will actually start creating the code configuration.
+
+00:30:05 - 00:31:00 Unknown Speaker:
+
+So, like Abhisit was explaining, we have an accelerator already created that we use it use currently. So that accelerator has steps for how to load a dimension table, how to load a fact table, how to use partitions, how to improve the performance. So all those pieces are present in the accelerator framework. But we need to configure it for each of the tables that we are actually loading and also enhancing, right? So that code is what is there in this. UH, input configuration. It will have source details, it will have target details, it will have all the transformation details on how to, uh inputs. To load that table, so along with that, we also need to create the job or the pipeline to execute this table load. Basically.
+
+00:31:00 - 00:31:49 Unknown Speaker:
+
+So, plugging these two together, along with the framework code that we already have as an accelerator, will actually complete the end-to-end step of loading a table. Right? So it will first create this configuration. It will also create the job where it will add all the details of task, cluster and other dependencies or libraries. And the entire details that is needed to create the job. Right? And then it will execute the pipeline as well, and then it will execute the unit test case. Right. So this will be done once the planning phase is done and the user will actually review it and approve it. And then he just says execute the next steps. Then only it will go to these steps.
+
+00:31:49 - 00:32:43 Unknown Speaker:
+
+Now, before actually executing these as well, we are saying that developer will just see what is the code configuration it has created, what is the job it has created. And then only it says go ahead and execute. It will go ahead and execute these pipelines that is created. So once the unit test execution is done and everything looks good, then the developer is again coming in the loop and he verifies everything and then he says it goes to the dev branch. He'll merge it to the dev branch. Here again, we are passing on the code only, whatever is created already here. Everything is passed here and we are just executing that workflow and also the unit test. Just to be sure that we are in this environment, everything is looking good here as well.
+
+00:32:43 - 00:33:41 Unknown Speaker:
+
+So we are not repeating the steps, we are just moving the code and executing and verifying things here as well. So .  There's four more minutes for your team. Yeah. So once this looks good, we go to the by reviewing it, merging it abroad, and then pushing it into production where the post deployment validation happens. So at the latest stages, we are also seeing how we can actually, wherever we see the gray boxes, we can also automate it through the bot. At this point, you know, MVP, these are the things which are getting executed by the bot. So this is on the other side. Architecture, I think I'll just quickly cover it. So we have an user interface for the developer where we can actually interact with the agent, our data engineering bot, and we have modularized the bot as well.
+
+00:33:41 - 00:34:34 Unknown Speaker:
+
+Currently we have planner and build agent, we'll also be, which is doing everything currently, we'll also be adding validation and deployment agent as well. So the brain behind this is cloud Sonnet LLM, and we are using Cloud for SDK here. So our code, actually that is the existing code, so that is actually passed, that is the knowledge base that this agent needs for it to understand how the code is and then build all those configurations that I was explaining. So that is passed on to, we are actually creating a knowledge base using HV, which is a Microsoft offering. We have not passed the code directly, but instead we have pushed the... English version of the code with all the modules and then push it to the framework, right? And this is what the agent will be using.
+
+00:34:34 - 00:35:42 Unknown Speaker:
+
+And the main thing is for executing things on Databricks, we have Databricks MCP and Databricks skills for each of these execution or tasks that are there to be performed on Databricks, right? So all the skills are provided by Databricks AITEP kit agent actually uses MCP to execute all this. So let me quickly jump to the demo. In the interest of time, we have already executed this and showing the same. So this is how the user story that I was saying looks like. This is the ARAD user story, which is built out of the user story, we can see all these sections that are present. Currently, it is present in gate issues. So we have added all these details here, including the acceptance criteria. So that is the same user story which gets pulled here.
+
+00:35:43 - 00:36:28 Unknown Speaker:
+
+Ultimately, we will be using Rally, but at this point, we are using gate issues. So this is the same user story that you see here. All those sections are present here. Now, this user story is to actually load a bronze layer table and use bronze layer tables as source and put it into our target gold layer, which is our medallion architecture that we follow, right? So, all I'm saying is go through the requirement and plan for the changes and display the JSON configuration, which I'm setting it as in the JSON form, and also display the next steps. So there are agent interactions. It does so here. This is still in the plan mode. So, like I was explaining, it tells like, what all it will do?
+
+00:36:28 - 00:37:18 Unknown Speaker:
+
+So it shows the source and the target and the JSON file where it will create, so this is the actual JSON file that will be created. This is still in the local, it is giving it to the user to show how it will be, and then these are the next steps. So it is showing all the steps one by one, so what it will perform. It will create the JSON, upload it there in the Databricks workspace. Then it will also read some of the existing workflows where this job needs to be added. So it will add that job in this unit test workflow, and then it will create the validation notebook with all these test cases, and then finally execute the unit test workflow. And also the validation. So these are the steps in the plan.
+
+00:37:18 - 00:38:11 Unknown Speaker:
+
+Now, if everything looks good, all we are saying is to proceed with the next steps. Now, it will actually perform the, uh, all those steps that were mentioned there. So, uh, this is, uh, the job. Let me show the assets created. So it will give links to that unit test job that I was mentioning. So if we go here, uh, first, it will be creating JSON configuration that I was mentioning. It has all the details of source target. What are the rules, transformation rules, everything is present here. Then it will actually add that to a unit test task, this is how the task look like. So these are the configuration that a developer used to do earlier, but the data engineering bot has done all this, it has all the cluster compute configuration.
+
+00:38:12 - 00:39:17 Unknown Speaker:
+
+This is our data bridge environment, basically. And then it actually executed that load from there to the code. So this is the execution of it. So it completed. Then the next thing it does is it actually executes the validation, data validation load once this is done. So next step is to execute. It created those test cases based on this requirement. So as you can see this is the user story and it has all the test cases covered here for checking nulls and all other standard checks that we have. Also including the primary key checks and the transformation checks. So finally it provides the result and showing the status of all those test cases. So this is what is covered by the. Just to add Bharat, all these test cases were generated using the mapping spec which was fed to the system.
+
+00:39:17 - 00:40:32 Unknown Speaker:
+
+So it covers the column level check and the transformation. Yes. So it provides links to all of these assets that it created. So this completes the cycle until the unit test case. That we mentioned in this flow. So based on this efficiency that we are calling out is at this point we are being conservative and we are saying that it will be 50%, but once the team start using, once the team start adopting this, we will revise that efficiency. We are hoping it should actually increase the efficiency. So this is the roadmap. Initially, we will be piloting with two scrum teams, then we'll be expanding it to other scrum teams across DMA. And we'll be actually developing, currently it is locally built, but we'll be deploying it using UIS going through the AIR. Any questions, doubts?
+
+00:40:45 - 00:41:55 Unknown Speaker:
+
+You mentioned you convert HPE core code into English and fit into your RAID system. So what's the use of that? So knowledge base is something we need to create for the agent to understand the existing code base, right? Instead of passing the entire code, because chunking and using the rag after chunking directly with the code doesn't work better. Instead, we actually created a knowledge base using the HPE core, which converted that code into English, but it has all the modules present there. It's a .Mp file with all the modules present, and that can be easily chunked. For example, like I was saying, dimension. Loading a dimension, loading a fact. So we'll have separate modules mentioned there. What are the input parameters that it takes? All those details are present. I can just show the passing code is not ideal.
+
+00:41:56 - 00:42:59 Unknown Speaker:
+
+Instead, this is how the framework code is actually converted like this. So it has all the details of the modules, all the details of the flow. So it has all the stages. So everything is captured here. This is provided to the agent as a knowledge base, which it uses while it builds those configurations and jobs that I was explaining earlier. But the HPE core is different, right? So HPE core... what's the what's the use of the HV core, which I need to know, right? So to create this itself? So we have a researcher agent in HV, right? So so using that researcher, we fed the code to the HV Core Researcher agent and the output of that code. We asked it to build this knowledge base in Dot MD files, so that researcher agent read the code and came up with this knowledge base in .
+
+00:42:59 - 00:43:52 Unknown Speaker:
+
+Mp format, in this English format. So, using this, yeah. Okay, so we're saying that you're using HPE Core to convert your code base into this English-speaking, right? Correct. So, any brownfield project, right, if you want to understand the existing code base, there are multiple options. One of the options is HPE Core Researcher Agent. So we could do it through cloud code or others as well. But we have seen that researcher is giving good results, so we went ahead with this. So this knowledge base is what the agent is using to build or create those configurations. So it has to understand our code. Only then it could come up with those configurations, right? So that is what we are feeding it. So if you see in this architectural diagram, this is what we are seeing.
+
+00:43:53 - 00:44:42 Unknown Speaker:
+
+Support is given to its people, then the knowledge base is built. This is where the knowledge base is stored as a rack, and the agent uses this knowledge base. Okay, thank you. Thank you, Bharat and team. With that, I think we will close today's session. In the interest of time, we will postpone the third one. Sorry. We will not be going at the third use case that we have for today. We will present it in upcoming sessions. If you have any further questions on today's demo, please post your questions in the chat. Teams will be able to answer that. Thank you so much for your time today. We'll meet again.
+

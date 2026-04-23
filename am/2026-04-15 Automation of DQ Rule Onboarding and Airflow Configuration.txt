@@ -1,0 +1,509 @@
+2026-04-15 Automation of DQ Rule Onboarding and Airflow Configuration
+
+Creation Time: 2026/04/15 18:30
+
+
+📅About Meeting
+
+• Date & Time: 2026-04-15 18:30–20:00 (approx. 5368 seconds)
+• Location: Online (screen-share on Airflow, GCS buckets, repo)
+• Attendee: Sachin, Prithvi, Sravan (aka “Seven”), Ayyappa (mentioned), Nirmal (mentioned), Anand team (business), Rachna (mentioned)
+
+📒Meeting Outline
+
+Automation for DQ Rule Onboarding
+
+• Current manual process and pain points
+  The business submits DQ rule requests (table, column, check type, description, schedule). Devs manually draft SQL based on similar existing rules, then update Airflow DAG mapping and QTrak config JSON; rules execute only when present in DAG. There are ~1500–1600 rules across 300–400 tables, grouped under five check types (duplicate, missing value, stagnant, threshold, valid value). Threshold is largest (~900–1000). Manual process is slow and error-prone; a single JSON change blocks parallel PRs.
+
+• Self-service automation scope (Task 2)
+  On new entries in DQ_repository, the job generates SQL from templates and updates the appropriate DAG (daily/weekly/monthly) by appending to existing table-level SQL files; then raises a PR for merge to prod after testing (E1→E2→E3). A “status” column (pending/in-progress/implemented) in DQ_repository is requested to drive idempotent processing.
+
+• Template strategy and deviations
+  Many rules share identical descriptions; these are clustered into templates. Four of five check types templated; threshold partially covered (22 templates planned; ~10% ready). If a new request doesn’t fit any template, it gets routed to a developer for custom SQL; future new patterns become new templates.
+
+Airflow, Config and Code Review
+
+• Airflow execution and configuration
+  Each rule must exist in a DAG file to run. DAGs and SQLs currently reside in GCS under Composer; plan is to move SQLs out of Composer storage to a project use-case bucket. QTrak config JSON maps rules/DAGs/schedules. Airflow lists DAGs by scanning Python files with airflow decorators from GCS; run metadata is stored in Airflow’s backend DB.
+
+• Code structure and review highlights
+  Entry: sql_generation_dag.py with taskflow pattern; an executor orchestrates steps: load config, read input rows from BigQuery, generate SQL from templates, save results, update legacy SQL, generate reports, update output folder.
+  • Naming fix: “initialize_bigquery” actually loads configuration, not a DB connection. Action: rename to “initialize_config” to avoid confusion.
+  • Ordering/efficiency: Don’t initialize BigQuery client before validations; minimize early resource use. Consider a finally block/task to clean up context on failures.
+  • Env configs: deploy-config file missing; testing had been manual uploads. Action: standardize deployment via Ayyappa; no manual Composer uploads.
+  • Parallel processing: Consolidated into single DAG taskflow to pass context without XCom per Nirmal’s guidance.
+
+• Repository and PR hygiene
+  Keep feature branches; PR to develop only after review sign-off. Avoid PRs to main. Local-testing folder exists but excluded from review per Sachin; focus on deployable Airflow code.
+
+Data Source, Storage and Scheduling
+
+• DQ request intake
+  Front-end to replace email intake; will write to DQ_repository (BigQuery). Automation polls for status=pending requests. Filter criteria column must be incorporated alongside description/check type.
+
+• SQL and schedule mapping
+  A single SQL file can contain multiple queries for a table; new rules append to existing file based on schedule (daily/weekly/monthly cron). Jobs should extend existing artifacts, not proliferate files.
+
+• Storage location policy
+  SQLs should not live in Composer storage; move to use-case GCS bucket. Only executables should sit in Composer.
+
+Alternatives and Architecture Improvements
+
+• DB-backed configuration vs JSON
+  Sravan proposed storing DQ configs in BigQuery tables to avoid large monolithic JSON and PR conflicts; enable concurrent updates and reduce blast radius. Options discussed:
+  • Direct Airflow read from DB: not feasible without altering company-wide Composer behavior.
+  • Compromise: maintain authoritative configs in BigQuery; CI/CD job periodically materializes a master JSON into GCS for Airflow to consume. This allows parallel edits, auditability, and reduced merge contention.
+  Sachin cautioned about increased runtime DB connections and latency; current JSON is deployed at E3 and cached by environment. Further design review pending.
+
+• Containerized frameworks
+  Sravan described prior pattern: Airflow DAGs trigger lightweight container images (DQ/ETL) that encapsulate connections, execute, emit results, then exit—keeping runtime lean.
+
+• Agentic/LLM-based SQL generation
+  Prithvi presented a POC concept: few-shot, template-free SQL generation and validation using internal LLMs/agents with feedback loops and environment validation. Constraints: strict LLM access; metadata sensitivity; running queries against prod/test may expose sensitive data. Not greenlit; could be reconsidered with strong use cases and internal LLM allowances.
+
+Governance, Security, and Platform Constraints
+
+• Open-source restrictions
+  MX prohibits external open-source dependencies and outbound network access; internal curated libraries only.
+
+• Security and cost
+  Limit BigQuery connections and unnecessary resource initialization; avoid Composer storage misuse; formalize cleanup on failure paths. LLM usage constrained due to data sensitivity; internal offerings may arrive later.
+
+Next Steps for Review and Deployment
+
+• Code review by Sravan
+  Focus on deployable Airflow components, template coverage, filter criteria support, resource initialization order, cleanup, and naming.
+
+• Environment and ownership
+  Deployment to be handled by Ayyappa; remove manual uploads; ensure deploy-config readiness. Branching: feature→develop after approval.
+
+• Process robustness
+  Add status column to DQ_repository; job to drive idempotent processing on pending items. Implement failure cleanup task/finally. Continue moving SQLs to use-case bucket.
+
+📋Overview
+
+• The team is automating DQ rule onboarding: generate SQL from templates and update DAGs end-to-end from DQ_repository entries.
+• Template coverage is in place for four check types; threshold partially covered; deviations route to developer review.
+• Airflow DAG uses taskflow; config loading naming to be corrected; resource initialization to be deferred; add cleanup logic.
+• SQL storage is being migrated from Composer to a use-case bucket; only executables remain in Composer.
+• Sravan proposed DB-backed configs with CI/CD-generated master JSON to reduce JSON merge contention; requires design evaluation.
+• LLM/agentic solution is compelling but blocked by security/access constraints; may be revisited with internal LLMs and strong controls.
+• Deployment governance: feature branches only; PR to develop post-review; deployments by Ayyappa; no manual uploads.
+
+🎯Todo List
+
+• Sachin:
+  • [ ] Approve code access for Sravan; share repo details and review guidelines, 2026-04-16
+  • [ ] Align with Ayyappa on deployment ownership and cleanup of Composer/storage junk, 2026-04-18
+
+• Prithvi:
+  • [ ] Rename initialize_bigquery to initialize_config (or initialize_bq_config) and adjust comments to reflect no DB connection at this step, 2026-04-17
+  • [ ] Add finally block or dedicated cleanup task to release context/config and temporary artifacts on any task failure, 2026-04-19
+  • [ ] Incorporate “filter criteria” handling alongside description and check type in SQL generation, 2026-04-22
+  • [ ] Create/commit deploy-config for environment-based runs; remove reliance on manual uploads, 2026-04-18
+  • [ ] Migrate SQL artifacts from Composer storage to use-case GCS bucket; update paths accordingly, 2026-04-24
+  • [ ] Implement status column logic in pipeline once available (pending/in-progress/implemented) to ensure idempotent processing, 2026-04-26
+
+• Sachin + DB Admin/Owner:
+  • [ ] Add “status” column to DQ_repository (pending/in-progress/implemented) and backfill as needed, 2026-04-19
+
+• Sravan:
+  • [ ] Perform focused code review on deployable DAG components; validate template coverage, resource init order, error handling, and filter criteria design; share review comments, 2026-04-19
+  • [ ] Draft a short design note comparing current JSON-only approach vs. BigQuery-backed config with CI/CD JSON materialization; include pros/cons, performance, and concurrency considerations, 2026-04-23
+
+• Team (Prithvi, Sachin, Sravan):
+  • [ ] Decide on interim architecture for config management (keep JSON vs. DB-backed + CI/CD JSON sync) after reviewing Sravan’s proposal, 2026-04-26
+  • [ ] Define PR policy: feature→develop only after approvals; prohibit PRs to main; document in repo CONTRIBUTING, 2026-04-18
+
+• Ayyappa:
+  • [ ] Establish standardized deployment pipeline for the DQ automation DAG; ensure Composer only contains executables; validate end-to-end in E1/E2 before E3, 2026-04-24
+
+• Anand Business Team:
+  • [ ] Validate rule descriptions for template compatibility; correct discrepancies before submission via front-end; ongoing
+
+• Optional/Future:
+  • [ ] Evaluate feasibility of internal LLM usage with strict guardrails and metadata controls; prepare use cases and security assessment, No relevant content mentioned
+
+Transcription
+
+00:00:01 - 00:01:12 Unknown Speaker:
+
+You asked for that code database access. I'm not sure I can provide you that. But maybe Sachin can help you on that. Maybe this code walkthrough code that is actually I will give and maybe you can review that and confirm me back if any changes need to be done. Sure, sir. Yeah. So, that's it. So, you are currently focusing on this only automation. Yes. Yeah. So, okay. You have no idea on this project, right? What I'm working currently? Not really. Okay. Okay. Let me give you a walkthrough by the time such a means. Okay. So, currently we have. Q track rules. Okay. So I don't know your experience. Sorry. Basically, even for me, this is a new thing. I never worked this type of. For me, I feel this is like a data science kind of a project.
+
+00:01:13 - 00:02:04 Unknown Speaker:
+
+So here the client has not client. Okay. The business team has some rules on the tables and a specific column and a specific data. So for each table, there are like 300, 400 tables are there. And for each table, they have some rule on one of the column they are interested in. For example, address is there. They are looking for who are the users don't have address line 3. They want some report from that. Okay, then it will become a rule in this one. Okay. Similarly, I mean some first name is there, last name is not there. You want such report where there is no last name. Wanted to see how many users are there like that. So, this type of. Rules they configured it in a tables in a like entries.
+
+00:02:04 - 00:03:10 Unknown Speaker:
+
+Here you can see this total list is around. The 1600 rules are there for all our QTrap self-service, so 1500 to 1600 rules are there. One second such, you might be pinging one second. So all these 1600 rules are under different types of check types. Okay, there is a threshold check, okay, missing value check, and then null value check. So different, like five, six types of checks are there, all they are categorized. All these 1500 rules are categorized under different check types, so maybe I can show you that list. Duplicate check okay, missing value check, stagnant check, threshold check, valid value check Okay. So these are the five different checks that are categorized under. And threshold is very big, one it has around 900 to 1000, whereas others are covering around 400 to 500 check types.
+
+00:03:10 - 00:04:02 Unknown Speaker:
+
+Okay, so how the request comes is right now. When business wants to add a new rule on one of the table, on a column, a new rule, for example, duplicate check, under duplicate check. They wanted to add a new rule, okay, for a particular table. So then they'll come to us and they ask us to do this, they'll give the description of that rule, uh, particular new rule that is coming, it must be one of, the description should be one of the existing one only. Usually it will be one of them. So if I show you, yeah, so this one, so, for example, here missing value check count of records, this is another okay, so like this if you see, there are lot of rules with same description.
+
+00:04:02 - 00:05:02 Unknown Speaker:
+
+And similarly, customers with null values greater than or equal to not greater than one percent. So this is one of the descriptions, so this will have a respective query, the query for this and this one ideally should be similar. Maybe the column names, table names will change. Okay, okay, okay. So for example, you take this all this, if you observe the description, it is almost same, same. Okay, so maybe this not in might be different, but otherwise is not all this should be same. So we'll categorize it under as one template, and we when any new request comes similar to this, then we will make that we'll find that template of it. And for, uh, based on the inputs. So, what table, what column, see here table name, variable name and what value they wanted to add it, what check type they wanted to add it, what is the description.
+
+00:05:03 - 00:05:49 Unknown Speaker:
+
+So, using this we find the respective template and we will, so template is not there now, sorry. I will come to the what we are working. Right now, when there is a request like this, we will go and create a query. Since we have some queries already similar with similar descriptions, we will copy that query. And we will modify that according to the request and add it in the rule. How we add that into the rule I will explain it secondary. So far we receive a request, we will create a query and how we will make it as an executable job. That is a secondary part. First we will create a query. Once the query is there. So if you are clear till there then I will jump on to the next job.
+
+00:05:49 - 00:06:55 Unknown Speaker:
+
+How we will make it as an. Executable job. So this query once the query is created, okay, so we have, uh, monitoring tool. I don't know whether you got a KT on this one, but um, usually. So these are all the queries, SQL queries based on daily, monthly. Okay, they have categorized all multiple SQLs they created it, okay, how they are mapped, you can see that in the config. Json, so that is inside config folder. Qtrak Json. Okay, this is the dark side, so I hope you got KT on the dag thing. So the airflow jobs all are so you can see. Uh, multiple tags. Okay, there are like 300, 400 attacks are there. Each tag executes multiple rules, rules. As I said 1500 rules are there. One of the rule must be mapped to one of the DAG.
+
+00:06:57 - 00:07:52 Unknown Speaker:
+
+How they are mapped together is based on when are we running, what type of report it is, what time we want it to execute it. Multiple things are there using which they will decide where it should go. So we usually go. By the table, okay? That table has a monthly DAG, daily DAG. Based on that, we'll find the respective DAG. And if it is a new one is a monthly DAG, then we'll go and put it in monthly DAG. If it is a daily one, we'll go and put it in daily DAG. So once I add it as an entry here, then it is also a part of the particular DAGs. When it is executed, even that rule also gets executed. All these rules. So there are 11 rules.
+
+00:07:53 - 00:08:39 Unknown Speaker:
+
+Okay, as I showed in Excel sheet, this is in a database actually. I downloaded it from the BigQuery. So all these rules, it should be configured inside DAG, then only they will be executed. If it is in database, it will not be executed. If it is configured in the DAG file, then it will get executed. Okay. Okay, so this is the current task. So when a request comes for a new rule, we'll go and create an SQL, okay, and then we'll go and map it to a DAG. That is the end-to-end task we are doing currently manually, okay, so now we are automating it using self-service job. Okay. So getting the request is one task, one particular task. This entry is there in this table, right?
+
+00:08:39 - 00:09:23 Unknown Speaker:
+
+This is a request for us when it comes here, then we will go and create query and the DAT file update both we will do. Okay, okay. The So task, I mean, uh, there are two. Uh, what I can call is two different tasks. Task. One is getting the request, new request from the business they have. They have come up with the front end, from front end, they will provide that task. Input that I want a rule for this, for this table, this column, this row. On a daily basis. It should get executed. This is the input from the business. They are currently giving it through mail, now we are automating to get it through a front end, so that is ifr somebody is working on it.
+
+00:09:23 - 00:10:19 Unknown Speaker:
+
+Okay, after, Uh, so please stop me if I'm, uh, I mean, maybe I'm confusing you a lot of things. No, no, go ahead, I'll ask, I'll ask my questions. So task two is. Once the entry is there in this table, we will see if there is a new request, we will generate SQL and then the DAG update and making it as a job, this is a task 2. This task 2 automation, when there is an entry here, getting that, creating SQL, adding it in the DAG, complete end-to-end automation in task 2 we are doing. Okay, a question here. Yeah. How do you ensure that. The requested role that the business team is asking is not already implemented. Do you have certain checks on that? Right now, there is no column. That's a good point.
+
+00:10:19 - 00:11:09 Unknown Speaker:
+
+Right now, there is no column. I asked Sachin if we can create a column with status. For example, if there is a column with status as implemented, pending to be processed, in progress, this type of status, if you can manage it by having a column called status. Then it's easy to easy for job to find what is pending, what is in progress, what is completed, and skip other ones. Right now there is no column. Okay, so this table doesn't have this is this table. Is DQ underscore repository table. Okay, okay, so uh, DQ underscore repository. Right now that column is not there. I requested such an issue lattice. Once that is done, then any new request comes, it will go under pending status. Then our job, my job, that what I am working currently.
+
+00:11:09 - 00:12:03 Unknown Speaker:
+
+We pick all the requests with pending status and create a SQL query and also update it. In the DQ. This one Q Track Config JSon, and it will create a folder with all the data. But how we merge that with the original file? Because I added DQID here, this is my local copy now. I have to merge this with the actual DAG that is there already in the production. So that is a pull request or we do it manually after testing. This is a process. Once they trust this application, they will automate it. Right now, I am developing this. Right now, I am developing this. And once this is done, this code review is complete. Then E1 deployment and E2 deployment. If testing is completed, then we will push it to E3.
+
+00:12:04 - 00:13:04 Unknown Speaker:
+
+So currently, if you see the templates for what and all I completed. So far, if you see DAGs, you have templates folder here. All these out of 5, 4 are completed. Threshold is actually very big one. It has 22 templates. I told right 900 rules are under that one only. 4 are completed. I discussed with Sachin yesterday. We go ahead and deploy it for at least four. Threshold, a part of it, 10 percent of the rules. And once everything is working fine, then we can jump on to the other checks, check types, also other rules inside threshold check. Okay, so basically, you are currently just automating the sequence generation? Yeah, yeah, okay, so duplicate check has only one template, yeah, What if the template deviates? Like let's say currently the missing value check is only on one field.
+
+00:13:04 - 00:14:00 Unknown Speaker:
+
+Let's say going forward, the business users, they ask for, you know, multiple fields. Let's say business key is a combination of multiple fields, three or four fields. Yeah. They want to ensure that that combination does not have any null value. So if such new requirement comes, it's a new template. It's an interpreter. Okay, okay. We are only supporting the similar ones, and business can also make mistakes with respect to descriptions. That's why we will give it to our business. Uh, we have, uh, what is his name? Gangadharan? What is it, Anand? So Anand team? They have to understand that and see if there is a discrepancy and they have to correct the description and submit it. If it is not matching, it will fail, obviously. If it is matching with the existing templates, it will generate the query and update the DAG file.
+
+00:14:04 - 00:15:05 Unknown Speaker:
+
+And if you see the new SQL, one point I missed it. The new SQL that is being created, it's not actually only one rule, one SQL. One SQL will have multiple queries. Okay. So as I said, the DAG is there, right? All these roles will come under one SQL itself. How do you figure that out, right? I can understand that manually we can group it together, but in the automation again, same thing. So if you see this is running zero or sixth day of one, so it's it's running weekly once. I mean, I don't know exactly what is zero object. This is a cron job, right? So, right? So this would tell whether it's a monthly one, daily one, weekly one, according to the new request.
+
+00:15:05 - 00:16:03 Unknown Speaker:
+
+If it is a monthly one, we go and add it in the monthly that is there for that table. See for this table. These are all the rules and the SQL is this one credit risk profile SQL, so we'll see whether this dad is monthly one, weekly one. And according to that, that SQL will choose it and append to that new rule, will not create a new SQL, will append to the existing one. Excel. Okay, so your automation already creates a local copy, like a create a feature branch, right? And then it will update the file. Yeah, like the existing file, depending on what the schedule is. Yeah, and then it will, uh, create a PR as well, like going forward automatically. Yes, so I'll run it locally once I'll show you how I'm doing this.
+
+00:16:03 - 00:17:12 Unknown Speaker:
+
+Okay, some issues are there. Okay. Okay. Now I put a hold also. So I'm actually in between development. Okay. Yeah. So yeah, if you run that, it should actually do it. So actually Sachin is expecting you to review this. Okay. This code I have done. So is this like a framework that you have created or? No framework. Normal script. Python. Yeah. So, if you see this is the DAG one, DAG job it is. So, what I did is for anyone to test a template, they have to run it locally and test everything and then only they can push it to a DAG because it has to go multiple rotations. That's why I have given them multiple options. So, run local would help you to run it locally and test it.
+
+00:17:13 - 00:18:10 Unknown Speaker:
+
+If everything is working fine, then you can check it from the DAG. So, two different. So, if you see in SQL Gen, Run local Is there SQL that is there? Okay, so if I wanted to run it in that, what? What was the difference running locally? For example? I am testing something, I am coming up with a new template, I wanted to test it. I wanted to pass some data, um, pass some CSV file to as an input and generate n. Um. So we see local ones now missing value check. This is how it will be, I can pass it as an CSV. Whereas in that, it is reading it from a bigquery I don't have. I cannot access it from local Bigquery because we are not permitted to access BigQuery from local environment, local data.
+
+00:18:10 - 00:19:00 Unknown Speaker:
+
+So why is it accessing from Bigquery? Like, okay? The user will be inputting it to a UI, and that UI result will be stored in the queries. No, no, right now, the DQ repository CSV, I showed you right, this is from BigQuery only, so the rule is present here. When I'm running the job, I need to read what are the new rules, right? So I cannot access locally the Bigquery, so I have to move to. I mean, when I run it locally, I need to provide some other way. I cannot tell. Go and get it from BigQuery. So that's why I'm coming with one more script that takes input from a CSV and executes SQL that will actually get it from a big query. Only for testing. Okay, and that's why this many folders has come.
+
+00:19:00 - 00:20:03 Unknown Speaker:
+
+Common is common between local and that dag is tag related files, local is local related files. The executor is the one like orchestrator it calls other methods inside that flow templates is templates common between uh, Dag and local, it is common for both. Test is test case. Okay, this is not required. What does that? Local folder? Sorry, uh, local folder is that? I said, right? So to execute it locally, uh, I.I have put few modifications and I create it as a separate script, but ideally that would be used. So DaG is our Dag related methods are. Files are there. So, only these would be used in the DAG. Only for testing, I have created a local folder and methods. If you can reshare, I am not able to. Oh, sorry, sorry. Oh, sorry. Okay.
+
+00:20:03 - 00:20:54 Unknown Speaker:
+
+Hi, Sachin. I didn't see that. Okay. Can you see now? Yeah. This local folder. Let's not make it complicated. Again, it is going to take time. You really don't need to explain the local stuff. Just go for the files that is going to be deployed to the environment with the airflow one. For him to go through code review, he might think what is local, right? That's why I'm giving heads up. That's something we can have told him in the very first beginning, right? Let's not review the local folder. Okay, and here we are planning to segregate it into a different features to run all together, right? Okay, uh, okay, uh, so so the gist over here is that, uh, you, you have seen that, uh, data animal tool. Where we are receiving multiple alerts, right?
+
+00:20:54 - 00:21:47 Unknown Speaker:
+
+So for all those alerts, we have multiple sequels file, right. For each rule, there would be a sequel file, or 10 rules might be having sequence in a single file, right? So. If you observe, I don't know how much you have seen those codes, but most of us, most of the queries remain same, right? That format remains same, the way they are doing aggregation and all, right? So what is happening, you know, the requirement is now, you know, that self-serve which we are building where we would be taking the request from the user itself to register a new room, right? Suppose for the easy table, we already have 10 rules, right? We would like to onboard our 11th rule. So now this is something a business team who used to create those SQL query and provided to us, right?
+
+00:21:47 - 00:22:40 Unknown Speaker:
+
+So that part something we are trying to automate. Okay, based on the description and the check type, okay, and the filter criteria, those are the three time column in the table right now. That filter criteria implementation is missing in this implementation, which I have asked pre-3 to consider that filter criteria, along with the description and the check types. So what would happen when 11th rule would be onboarded as soon as the 11th rule onboarded? This automation job would, first of all, identify for that Raze table whether our template exists or not. When I mentioned template, template means suppose Raze is having, you know, 10 rules, and out of those 10 rules, we came to a finalization. That, you know. Five sequels fit into a single template, and five sequel fit into a another single template, right?
+
+00:22:40 - 00:23:24 Unknown Speaker:
+
+So there would be two template, basically a format of SQL, basically the way you want to, you know, create those rules. So the new rule which would be onboarded, it would check whether it gets fit to those two template or not. If it fits to those template, it would generate the SQL, append it to the one of the template. As a sixth query, Okay, then, uh, save that file to the GCP, and then, uh, that would be 10. Okay. But suppose it doesn't fit into the template, then, in that case, uh, we'll. We'll pass it on as a developer for a review, and then developer would create a sequel for that. In case of, you know, any complex query and all, okay, uh, so that is the more our idea over here.
+
+00:23:24 - 00:24:14 Unknown Speaker:
+
+Okay, so we have different check types. Can you open that folder, Prithvi? Yeah. Like different check types. So we have duplicate check, we have missing value check, stagnant check, threshold check, and valid value check, okay? So for duplicate check, we have one template. Can you open that one, Prithvi? Yeah. Open that one. So if you see this one, right, there might be for duplicate check, we might be having, you know, Multiple, right? But the format remains same for all the queries. Okay, so as the format remains same. You know, we can optimize this query. If you find like, you know, we can optimize this query, then we can do it. But right now, this is the existing query, based on which we have figured it out. That.
+
+00:24:14 - 00:24:57 Unknown Speaker:
+
+For duplicate check, there is a single format of SQL query, so whenever the new rules get onboarded for duplicate check. That would get added to this file using this template, this is not to this file. Suppose for Raze table, there might be SQL file, right? So it would happen to that Raze file. Got it right? This is a template, not a SQL. Okay? Using this template, we would be generating the SQL and that would be added to that Raze SQL file. Okay, uh. Similarly for missing value, stagnant and threshold and valid value. Okay, so this is all over, you know, uh, the thing that we are building an automation for this, okay? So now, if you go to this uh, configuration file, can you open some of the configuration files?
+
+00:24:57 - 00:25:47 Unknown Speaker:
+
+So that I'll help him to, you know, bypass those? Review config, JSon and all, Uh, yeah, open this config, one config, any, any one of them, so this is, uh, open, anyone. So this is basically, you know, the basic project, basic configuration. Really don't need to check this part, okay. This is a predefined one and then we won't be able to alter this one. This is number one. You really don't need to review the config one. Can you go to the next configuration? There would be an environment configuration also, right? Not this one. We might be having one more configuration, right? So this one, right? Yeah, that is actually not updated. Yeah, okay, maybe. Open that one. Yeah. So this is platform related. Yeah, deploy. Oh, man. This is actually, from my project, I have not created the deploy config.
+
+00:25:48 - 00:26:39 Unknown Speaker:
+
+Uh, wow, how you are going to then run it? Oh yeah, right now it is not done. Such a I'll do that, I just have to create a file like this, I'll create that. You used to mention, like, you know you have tested it on the environment and how it being tested on the environment. No, I was actually uploading it manually, but you told me it's not right. But yeah, I'll do that from next time. Please, you know, going forward I have told everybody, right? It's Ayyappa who will be doing that activity. No one else is permitted to do that activity. If your guys are not understanding it, then next time onwards I'll loop in Rajendra over there. Because the environment, there are lots of junk files, junk tables, everything has been created, right?
+
+00:26:39 - 00:27:41 Unknown Speaker:
+
+And I just asked Ayyappa to clean it up. Okay. So, let's go to the next step. Now, These are some of the configurations uh, seven these configuration template, you really don't need to bother about it. The executions start from this SQL Generation Tag Dot PY file. Can you go to that file? Yeah, okay, so over here, uh, the dag has been registered. Can you go up, go up, go up? So here? No, no, no, hold on, oh man. The dag. Registration by the line number 59. So this is the tag registration, right where he has registered this task, register his tag. And if you come to the extreme bottom, come to the extreme bottom. So where are your task, man? All these are tasks, so execution of the task would be this way, this is task flow, build the task flow.
+
+00:27:42 - 00:28:48 Unknown Speaker:
+
+So, it was not like this, right? Yeah, it was not like this, but later Nirmal has suggested this way. This is also as per monitoring tool. It was not like monitoring tool, man. Can you go below? Yeah. What is this initialized BigQuery read input? These are the task calls. Why even we are. Initializing the BigQuery at the very first step. No, that's what the config we initially had named as config. It's config, but why do I need to initialize my BigQuery if my validation fails at the very first step? No, no, this is where we... No, why we need a connection object at the very first step of my process. There is no validation, Sachin. We are actually creating, making a state, preparing environment. Okay, so here BigQuery environment. That was my question to you.
+
+00:28:48 - 00:29:39 Unknown Speaker:
+
+Why do I need a BigQuery client at the very beginning of my process execution? Yeah, so the main job is to load the config and get the configuration details. Suppose, go back to that methods where you have defined it. Can you go back to that place? Yeah. Now, Suppose... not here, go back to the previous instance where those methods have been called up. No, okay, yeah, this one. Yeah, now suppose, uh, in your, uh, you know. Generate these, generate SQL or this, first of all, in that read input data, right? Okay, suppose this read input data gives you some error, right? And that even doesn't need a SQL query client, right? I'm unnecessary creating a big query connection over there, right? No, no, such in the steps are.
+
+00:29:40 - 00:30:38 Unknown Speaker:
+
+First, we'll connect to the BigQuery and then connection object we are passing it to read input data. It will read the data. No, that's what I'm trying to convey you. I really don't need a BigQuery connection object at the very first execution of my process. I would need it in the runtime or when I'm going to make any SQL call, right? During that time, I can initialize the BigQuery. So... pulling the DQ config right from the Yeah, exactly exactly, then look, there are. If you go to this read input data, right? He is making a lot of validation with respect to, you know? No, no. We are connecting to the database, so initializing the bigquery. Okay, here we are only loading bigquery, we are not creating objects. Sorry, actually, here we are loading the config file and bigquery related parameters.
+
+00:30:38 - 00:31:42 Unknown Speaker:
+
+I'm creating it, so if you see this BQ client, okay, and configuration information, I'm setting it. What is the BQ Query Config? That should not be your first step. I'm not creating a connection here, Sachin create getting the configuration, not even connection. I really don't need to bombard my environment with these configuration until unless I need to execute a SQL query. No, no, no. Sachin, sorry. Sachin, how are we going to pull that config from the DQ config table? We are going to pull it. Can you go to that BigQuery implementation method? Yeah, initialize BigQuery. Yeah, this one. Yeah, so this is the method that we can call to get that client object, Sravan. So we'll pass the configuration information to this. Uh, we first create, initialize the big query here, and then we will read the data.
+
+00:31:42 - 00:32:36 Unknown Speaker:
+
+Yes, that was my ask to you. I really don't need to, you know, uh, you know, go through those objects right at the very beginning of my process execution. There might be a scenario your tag might fail at the very initial level, right? Now, Sachin, let me explain this. Maybe I am confusing you. Initialized BigQuery. If you see, I am making a state here and then preparing the environment. So, BigQuery client is there, right? So, we need information about that particular E1, E2, E3. I will create that configuration information. Same configuration information, I am passing it to read input data. Here, I am only reading the configuration information. I am not connecting to the database. Here is where I'm connecting to the database and reading the data, and that input rows are then passed to this one.
+
+00:32:36 - 00:33:26 Unknown Speaker:
+
+Yeah, I got it. But my my ask to you is that even with before this, right, you are verifying the path, right? I don't know how many code changes you have made post previous review calls, but this was not the code we have. Yeah, yeah, you told me to remove that. These validations when it is there already, why do you need to validate it, right? Uh, you were doing some parallel processing and all right. Uh, so those part I don't see over here right now. And, uh, the problem over here is that if you come back with new new solution every day, right? It would be very difficult to finalize this, uh, process that you are building with. Way, no such in the code, review comments what Normal has told Why? Why do you need multiple tasks?
+
+00:33:26 - 00:34:10 Unknown Speaker:
+
+You create them under one thing so that you can pass the context to each task, and it's easy to. Uh, instead of using XCom, you can use the context only to pass the data. That's why I have come up with this one. Yeah, that was something I have asked you, right? Look, uh, first of all, you are doing a load config, right? Suppose there is a error in the load config, right? Yeah, your connection object would be created, and I'm not sure whether you are. No, no, I'm not creating connection here, here, only I'm creating a connection. So this would be called post that only, right? Yeah, that's what. So, initializing the query only configuration, it is reading, reading the input data. This is when it makes a car create a connection and connect to the DB and get the data.
+
+00:34:10 - 00:35:23 Unknown Speaker:
+
+I got it, so that's what I'm telling you. Even before loading the config, right, you might create this big query client. No, no, I'm not doing it. See this. See only configuration information. I'm reading it from the content. Uh, hold on, let me take the update. Uh, you have committed this code. Uh, yeah, this is already there. Okay, yeah, you can. You can see, that's actually about here. Let me let me pull it. Problem is in this way, your code is never going to get finalized. Okay, this is the one right automation service. Yeah, yeah, so look, uh okay, I think I have pulled it earlier. This is having the same thing. Okay, this one last time we reviewed the same thing, you were doing a parallel processing, we were doing it. Now.
+
+00:35:23 - 00:36:17 Unknown Speaker:
+
+It is inside one definition only, so that we can pass the context between the tasks. So look, this sequel and this calls this one, right? Yeah, this this method, right where you are loading the config correct? Yeah, so now in this load config, right? Suppose this is the method that you are calling these load config. There are lots of things that you are doing through the environment, right? Yeah, now my question is, what if something goes wrong? Some, some error comes over here, Okay, then? But you have loaded those properties, right? Which is not required. Are we cleaning those, uh, you know, properties? While the process is getting executed, wherever there is a error, is there a method to clean up those property? I mean, just a combination.
+
+00:36:17 - 00:37:14 Unknown Speaker:
+
+We read it when, if it is the job itself is closed, it will go for a nullification, right? It will not create anything in the memory. Also, that's just that that's something you're leaving to the garbage collection, right? So so, so that's something we should have handled it programmatically, right? Instead of relying on the garbage collector. Understand when this is a cloud environment, right? So even, uh, memory consumption, even a SQL execution, right, those are charging you. These are not free, of course, cost first of all. So please don't, you know, engage the environment with respect to, you know, any junk data, right? Our car? Maybe one thing I can do, I'll come up with one more task. Whether any of the task is failing, it will come to that.
+
+00:37:15 - 00:38:11 Unknown Speaker:
+
+And it will clean up everything, whether it is created or not created. It will clean up all the context and config. Create a finally block then, okay? Finally block or it's a finally task. Finally task means? Yeah. But what would happen, suppose, if there is an error in this method itself? How you are making sure that that... It's not loading a lot of information. It's a config file. I don't see big... memory being used. Config file that I actually I showed you that config file. Look, you can open that config folder. It's a four five lines of, uh, left side config folder, can you open? Look, these are the files, right? You never know tomorrow how many. Uh, these are variables. Variables. Yeah, okay, these are variables only. No file reader. So that is again loading.
+
+00:38:11 - 00:39:10 Unknown Speaker:
+
+Yeah, here is where I'm reading the loading deployment config. Is this? The naming is incorrect? Uh, which one? Initialize bigquery? Actually? Okay, the name? Okay, maybe I can say initialize the config. The initialize config. I can do. Yeah. That's what given me the wrong impression, right? Yeah, that's what actually I was saying. I'm not actually creating anything. We're not able to convince that part with V. We are still arguing on the BigQuery connection object. No, no, no, Sachin. I agree with that. Name is wrong. I'll change it. Initialize config I'll do. I'll change it. Okay. Then it is fine, right? We were doing an incorrect argument over there. If it's not initializing your BigQuery, right? Then that complete context was incorrect. Yeah, yeah. It's actually initializing BigQuery configuration, I would have said.
+
+00:39:10 - 00:40:05 Unknown Speaker:
+
+Or just initialize config, I would have said. Yeah, config you can consent. Initializing BigQuery configuration. Yeah, yeah. So, look, you have written the code, right? You are getting confused what exactly is happening over here. When I'm asking for the database connection, you mentioned, I clearly agree that no, it's not creating a connection object, but you could have told like it is not even making that BigQuery call, all the BigQuery related stuff. Yeah, I was actually telling, but yeah, it's not making connection at all. Only config, yeah, that's why. I'll change that name to BigQuery config. So, Sravan, what I'll ask you, just go through these files, right? What is the repo with V? I'll share. First of all, he don't have access to the code itself, Sachin. No, no, I'm giving that access.
+
+00:40:05 - 00:41:15 Unknown Speaker:
+
+That's the reason I came to this one, right? Okay, okay. Let me also commit the code. Uh, yeah, tell me, yeah, yeah, I mean, I'm, uh, actually, I was in call with Prithvi. Uh, just give me a second, I'm approving it. And one of the uh, communication that you have made, right? Uh, uh, did? We communicated that to Rachna, actually? So that's why I just try to take it before. No, so, if so, if there was no failure, just let her know, okay, uh. There was no failure and that's the reason you did not receive a consolidated mail and we will not be able to stop the individual mail until unless we verify the consolidated mail at least once. Yeah, sure. I will post the date of the chat. Okay. Okay. Yeah. Thank you.
+
+00:41:18 - 00:42:11 Unknown Speaker:
+
+So this one is your one, right? Rule automation service. Let's see. Oh, yes, yes, Sachin. Yeah. So, when right. But the pull request, shall I change it to the develop branch, Sachin? No. No, no, no, no. Don't go to develop branch until unless we are done with the feature branch debut. Okay. Yeah, right. No, no, no. What I'm saying, right now, the pull request is created for main branch. You said that we should not create it for main branch. No, no. You should not be creating to the main branch. Yeah. So, now, shall I change it or I'll keep it right now like that? The pull request right now, keep it in feature branch only. Okay, the one that we are talking about this is fine feature only. It will be after until it is approved.
+
+00:42:11 - 00:42:57 Unknown Speaker:
+
+Question is, shall I push it? I mean, shall I create a pull request for the development or main branch, which one I need to create? Right now? It is once we. Once we finalize the code review, then you can create a a request for the development. Okay, fine, right now it is the main branch is going to give you a corporate version, right? So wait for that. Yeah, okay, so seven, uh what? Uh uh. The ask is, go through the code and if you figure it out, some, you know, review comment is required. Just do let us know. Okay, uh, actually, I'm running, uh, you know, with multiple tasks. So I did not get a chance today to review this code today. So just give us your input and then, uh, post that we will finalize and close it.
+
+00:42:57 - 00:43:54 Unknown Speaker:
+
+I have reviewed it most of the things and uh, you know, uh, few pointer he has already implemented, right? So in case you feel there are certain improvement required, just do let us know. Uh, sure, sure, but uh, add a few questions. I don't know if this is the right time. First of all, data quality. Okay, so do we have any other data quality setups in MX, or like, how did we come to this data quality setup? This was a data quality setup? In the sense, the alerts that we are getting, like that Q track thing, the whole design. How did we come across this? Like, why didn't we explore the open source data quality frameworks that are available in market? No, man, MX doesn't allow you to use any open source tools, right?
+
+00:43:54 - 00:44:47 Unknown Speaker:
+
+It's a financial organization, they build their tools, basically, those are like libraries, let's say no open source is not allowed. So even if you go for a Java checkout, right? The Java libraries, they do have their internal Java libraries. They don't allow you to, you know, outsource anything from the open source network, even if they leveraging some of the open source tool. But they are maintaining their libraries at their own. You won't be able to connect to the outside network. Okay, okay. This is for the security purpose with respect to the financial organization. Uh, you know, they don't give you the permission to use any open source tools. You can check it on the internet also, right? Suppose I just I'll show you a demo real time. Even if I try to open suppose cron expression.
+
+00:44:48 - 00:45:54 Unknown Speaker:
+
+Okay. I would like to create a cron expression. Okay. I hope you are aware with this cron expression, right? So suppose cron guru, right? Let's see. It's working. Let me see. The sites have been blocked, right? No. So these are working. No, I mean site. And this and that. But those are like simple libraries that stand same for libraries also. Uh, so even in the Java project, right? If I have open it, uh, task management, so if you see this one, right, uh, these all are these map and these dependency, right? This comes from Exp. Com, we don't even get those Java libraries outside from MX. Those are completely being blocked. This all comes from the American Express Central Library. They won't allow you to go outside the network. Okay. Okay.
+
+00:45:55 - 00:46:49 Unknown Speaker:
+
+So, Prithvi, you were discussing earlier, you told me that there are more than 1500 TPU checks, right? Yeah. And we have so many sequels written for it. All those sequels are stored on that same server, the Airflow server, the Cloud Composer, correct? Yeah. It should not be saved in the Cloud Composer. We are planning to move it to the project use case bucket. That should not be saved in the server also, not in the Cloud Composer. It was incorrectly placed over there and that's where I started working with the API and team to move it from the Composer to the project use case bucket. That is the incorrect case which has been placed over there. We should not be placing anything on that composure stories. It should be only executable files should be placed over there.
+
+00:46:52 - 00:47:57 Unknown Speaker:
+
+Okay. Okay. Have we ever thought about, you know, creating a rather like a database, like a DQ config, whatever we have. Create a simple Postgres database or something like that to store all the DQ configs. So Lumi doesn't allow you to create a PostgreSQL. It's a cloud-based platform. So you have to use the GCP. Okay. Okay. Not Postgres. Okay. Let's say a GCP table. Okay. A BigQuery table. Like storing all the SQL configs in a table instead. We can do that. Look, even Samir was there, right, you know, Samir Manan. Those solution over, you know, storing those, the data and all and again. Like whatever changes we are planning, right, we first of all need to identify, right what is the optimization we are going to get? If we store the database configuration in the database, we can store it.
+
+00:47:57 - 00:48:54 Unknown Speaker:
+
+We do have use case bucket right where we can create the table and then we can store it. But first of all, we need to see what objective we are trying to achieve from that. Okay. I'll probably create some flowchart and then I'll show it to you. What I was thinking was, you know, create a simple framework, you know, wherever you pass a task, like let's say this is like a simple Python framework. Uh, whatever diagrams in the backend it, it gets the task name from XCom or whatever, right? It gets the task name based on the task name. Create a connection with the query table, create all those parameters from that table itself. Whatever sequence you want to execute, whatever I mean, sorry, or any other parameters that you want to pass, get everything from there, execute it and store the result.
+
+00:48:57 - 00:49:44 Unknown Speaker:
+
+Actually, instead of Config JSon, you track Config jSon. You wanted to maintain it in a table that is, that is a.You are going to create a connection object. And you know, you are performing a database operation which you can all which you are already doing through a simple Python file, right? We really don't need a means on an initial thought process, whichever you have discussed, right? So if we really, which can be done through this configuration file, right? Why do I need a database connection only? I mean, just this part, we, I'm, you know, pointing it out, but if there are certain other elements which can be incorporated, then we can, you know, take a look into that part. Yeah, because this is just one configuration file that everybody is touching, right, that you drag config JSon.
+
+00:49:44 - 00:50:33 Unknown Speaker:
+
+Everybody's keep keep touching the table, everybody keeps appending to that same file. And from what I've learned in the past couple of weeks, let's say if two or three people are working on the same deployment. They have to wait for one another to, you know, finish before. Like, two or three PRs cannot go together. So why do we want to store everything, like every details, in that config file instead? Why can't we store it in a database? Just imagine if your size is going to increase, right? The JSON object right again, you are calling the object right with the connection object and then pulling it. And again, you have to parse it the same thing that we were doing, right, so the JSON object grows bigger, right?
+
+00:50:33 - 00:51:27 Unknown Speaker:
+
+It would be very difficult to, uh, you know, right now, once we do a deployment, right this, this file is ready, made available to you, you really don't need to, you know, worry. It would be available in your runtime once you take a redeployment. But database right? When the tag is running, it will create a connection object, pull it, parse it, and then run it right. That would increase your execution time. I mean, it won't be that substantial, like creating a connection, like a big query connection, and just executing a query, it is not that substantial. And that's what we are doing anyways, when we are trying to store results and stuff. We are anyway storing those results. Just storing the result, right? But if you have seen, right, the JSON object is already big, right?
+
+00:51:27 - 00:52:14 Unknown Speaker:
+
+So that much of you have to store it over the database, right? So again, to pull it, parse it, right? Provide it to individual. Instead of JSON objects, it will be simple. It will be different rows, right? It won't be just one row. So every tag is okay, what such in what? His recommendation is that this is there, right? I got it, I got it, that json object that you have seen, that Q track, my config json, right? So, uh, he is asking to put it, is that one one row in the database table? Yes, yeah, yes, exactly, yeah. Right now, what is happening when we are deploying this into that, you know, environment, right? This is ready made available to all the tag okay, but for individual tag, right? Suppose?
+
+00:52:14 - 00:53:13 Unknown Speaker:
+
+Right now my 200 tags are running, right? I have to create 200 connection object, right? Each tag would go to a database inquiry, pull the record, pass it right and then process, which is not in the case right now. We really did. We are avoiding those 200 database connection. See, you are anyways doing your connection, whether it's at the start or whether it's at the end. I'm just throwing out, I just okay, because you're anyway storing it back to database. No, no, we are storing it back. I agree, right? But at least what would happen? If you're, uh, you know, uh, initial level, uh, your uh. Processing would fail, right? At least suppose we have this start process insert table right instead, uh, you know, and then this failed result, so at the start process itself, your uh, this gets, uh, uh, you know, error time out, right?
+
+00:53:13 - 00:54:00 Unknown Speaker:
+
+Then at least you would not be making a database connection, uh, until unless you reach to the next, that is the DQ inside table. But if we start pulling the details from the database, you need to create a database from very beginning of your process. Yes, okay, yeah, I mean, it's still. Maybe we can, you know, discuss this more. Once you, you know, come up with a full-fledged idea, right? And then then we can discuss and then can talk about it. Yeah, the only reason I'm coming to this is because I have never seen this big. JSON files like thousand lines or ten thousand lines of code in a JSON file. And reading it every time and updating it every time, not every time. No, not everywhere. And that was the wrong impression that you have.
+
+00:54:00 - 00:55:44 Unknown Speaker:
+
+It is getting deployed only during the E3 deployment. Once it is deployed, it is available for each tag. I mean, that's what like, with every new entry, every new DQ rule that you are setting up, you are updating the same JSON file. Yes, correct, so that is, that is still easier compared to the database operation, I would say, because database again, you know, you need to maintain somebody need to maintain that tables and all right. So I gotta still say that is, uh, still, an optimized way of saving the database connection. We can discuss on that maybe more, maybe later. I have to drop up, I do have another call. Just go through the code which Prithvi has written and then we can discuss it later. Thank you. Thank you. Hey, hi, Sean. Hey, Padme.
+
+00:55:44 - 00:56:38 Unknown Speaker:
+
+Yeah, actually, that's a good idea. I would recommend making a progress, actually. Even I didn't get that idea. But I don't know how that will be accepted. You need to go to multiple people. But coming up with a table, with an entries, that's a possible one. It's not a big thing. Exactly. I mean, see, because maintaining long files, okay, this is just one file. What if this file gets corrupted by mistake by anybody in production, okay? And you said multiple approvals pending, others are waiting for this to merge. That will also be reduced, right? Because it's one entry, one DAC ID, one change. So others are not impacted by that. That's actually a published selling point. A table is never locked, right? Your JSON file gets locked because you can't do multiple edits at the same time.
+
+00:56:38 - 00:57:40 Unknown Speaker:
+
+You're right. But a table, everybody can work on their individual entries. And if anybody makes a mistake in their entry, it's fine. Others are not impacted. Yeah, yeah. If I make one mistake in that JSON file, all the tags will start fading. Yeah, yeah. Right? And one more thing that... One question, maybe this thing I thought of asking Sachin itself, but he was busy, he is leaving. So this Airflow, it is listing all the DAGs, right? What is the source for listing all these DAGs now? It must be Qt, JSON and also... There's usually a back-end database which Airflow connects to. No, it's not a database. It's actually a file system. It is connecting to GCS, Google Cloud Storage. Okay. So from there, it looks for any Python files with the Airflow imports and try to load them as a DAG here.
+
+00:57:43 - 00:58:31 Unknown Speaker:
+
+But what about this, let's say this last runtime or when was the DAG executed or was it failed or success? Yeah, exactly. This is that you see, right? This will be managed inside Airflow itself, we are not managing that, only see, yeah, so that Airflow manages it like it stores it. Back end in a database. Okay, okay, because all the statuses you won't see the those stored in adjacent lines of Python files, right? This all is stored in a backend database. Let's say if you are clicking on any of the runs, like 10 days, let's say 10 days ago or 15 days ago. Yeah, how does Airflow retrieve that, uh information? It must be storing it in a database table. This one runs. Yes, it stores. This is okay.
+
+00:58:31 - 00:59:39 Unknown Speaker:
+
+So my question is, okay, let me show you right now how I deploy that. Okay, where is that? Yeah, so what, what right now? For example, in my case itself, if I wanted to put my code as a dad inside Airflow, okay, I'll go and put it inside a GCS bucket folder. I'll show you the folder path. Okay, really, yeah. So inside. DAx, Uh, Lumi is a team use case out of Cube track automation services, so you can see all these are Dax only. So, this is my DAG. Under this, this particular file is there. Using this, it will go on as a job inside Airflow. So, it is actually reading it from a GCS bucket and finding what jobs are present in your project.
+
+00:59:40 - 01:00:34 Unknown Speaker:
+
+But now, to change this Airflow to connect to a database and display it as a job in front end. So we need to modify the airflow to connect to database instead of a file bath, so you can do that in that Python file itself. Right? No, no, so all your Python files. No, no, the Airflow is looking at your Python, so let me show you the Python file everything. So this is my dad. Okay, so here I say airflow decorator, airflow, if I say, and I define it as an airflow job here. Then this complete job, this complete thing is considered as a DAG. This is a DAG file. This is a job. Now from here it connects to other methods, other calls. That is an internal calls. It doesn't care about those.
+
+01:00:35 - 01:01:38 Unknown Speaker:
+
+Since this is considered as a DAG, then it will come and display it in the airflow. So now for example, I will go and upload here. I delete this, I'll go and upload this tag once again. Then. That job also will be displayed in the list of jobs here. So let me show my job, what I deployed it in Airflow, so this one. So after I have uploaded it in that GCS bucket, this has come as a job for me, this is my job. Okay, so it got executed yesterday and the graph for that is. These are all the tasks Initialize BigQuery, read data, generate SQL, save results, and then update Legacy SQL, Generate reports, updating output folder. So these are all the tasks. So it shows what is executed, what is failed, everything okay, and logs for each job.
+
+01:01:38 - 01:02:24 Unknown Speaker:
+
+So first of all, this is coming in the airflow as a job, I showed you before this, right? As a job. Is using the Python file that is there in the GCS bucket. It's not reading it from a big query table. So first, if you can make changes to Airflow, instead of reading it from a file path, read it from a database folder database table. Then you can. You can achieve what you are saying, so this airflow. We are not managing it, it's an internal tool, or they have customized it for our use case, that I don't know. We have to investigate on that. So if we can do that, then what we are saying is possible and it is the best way to do it. Also.
+
+01:02:24 - 01:03:24 Unknown Speaker:
+
+Otherwise, we have one more option you make you create database table itself, what you said, everything is there in the table. At one point of time. Run a job, it will create an. JSON file with all the information present in the table. Okay. And that file can be used by the DAB, this Airflow. Yeah. So whenever we run a CICD, let's say whenever we deploy, it automatically creates a JSON file in the packet. Yeah. Directly on that use case packet and then Airflow can read from it. Yeah. If we can create that pipeline, reading it from a table, create the JSON and that JSON would be consumed by this Airflow. So if it is connecting to the BigQuery, then it's very good actually. Excellent. No problem at all.
+
+01:03:24 - 01:04:08 Unknown Speaker:
+
+Only problem I see is now you go and ask them to make changes to connect to the DB, definitely they'll say, we cannot do it because it's not, we are managing it. This particular airflow being used by multiple teams in the company. Okay, so it's not only for us. So monthly, people are using to run their jobs, usually cron jobs, so they are using Airflow like a BPM tool. There, they customized it for internal usage. So they will have their own JSON files, like the one we have, the QTrak JSON Config. Yeah, they'll have their own config files. Yeah, everyone will have their own config file. They will have their own Python files. It can be anything, right, it doesn't have to be Qtrak, JSon alone, it can be even the Python file also.
+
+01:04:08 - 01:05:06 Unknown Speaker:
+
+That will also come as a dad here, right? Okay, okay, so think, I mean, in that direction, the CSV pipeline direction, then that is sellable product having. We have done it in my previous project. So what we used to do was whenever we want to create any new tag, okay, we'll just create one. Simple JSon bumping for that. Okay, we are not gonna touch the master Json. Uh, there's a Master json file that stores all the tag conflicts, right? Yeah, so that is not accessible to any of the users. What the user will do is user will update, uh, create a simple JSon file. Yes, and they will upload it to a bucket, okay? And during that CIC deployment? So what happens is there's a sync process that's running like on a cron schedule, every 10 minutes or every 15 minutes.
+
+01:05:06 - 01:05:52 Unknown Speaker:
+
+Oh, okay. So whatever new Jasons are placed in that config, what it will do is that CI CD processor, that automated process. It will check whether that tag ID is already present in the Master JSoN. If it does, it will update those JSON parameters. Yeah, or if it is not present, it will just add it like the JSON config, it will add to the Master JSON. Oh yeah, yeah, I got your point. That's actually nice way, so that the main JSon nobody is, uh, touching it. It says it's available for only CICD Pipeline. That's the best way to do it. Everyone is waiting for someone to fix yours, then I'll switch mine. That is actually not right. We should avoid that one. Correct?
+
+01:05:52 - 01:06:46 Unknown Speaker:
+
+So this this covers the tag site like the JSON or the tag creation site right now, tag connected to a database, and whatever, let's say if we want to execute a DQ job or let's say we want to execute an ETL job or whatever, like Airflow can do everything, right? So for those, we had created separate frameworks and those frameworks were stored as images, container images on cloud. So based on that tag ID, okay, tag ID, we can pass a parameter, let's say this is a DQ job, it will pull up that DQ image, The DQ image has all those connections, like whatever you have called, right? Initial BigQuery connection or all those connection objects. It is like a low cost or whatever you call, low memory usage containers. It will just call that container.
+
+01:06:46 - 01:07:45 Unknown Speaker:
+
+It will execute that particular code. It will kill all the connections and exit. So this becomes like a very lightweight container. Yeah, you're right. Yes, yes, yeah. But instead of JSON itself, BigQuery, maybe you can come up with a CACD pipeline, reading it from the tables because I don't know in your previous project you might have very few rules, DAGs. I don't know. If we have like 200, 300 DAGs, it's better to keep them in a table and manage that. From the table, you compose a job that will read a complete configuration. Create a JSon that JSon would be used by the airflow to create all the tags. This CRCD pipeline, this pipeline would be good actually. Because instead, everyone creating their own JSOn's config JSon's and their own that jSon's.
+
+01:07:45 - 01:08:39 Unknown Speaker:
+
+Instead of that, let them go and put it in the database table itself. We can do that as well. We have done that as one framework. What we used to do was we have to put all the necessary conflicts, like let's say how many tasks you want to create, create those many entries in a table. And let's say you want to create cross dependency, let's say one task will execute three and that three will execute the next last task, final task. So you have to keep that dependency in a table. Okay, in a field like this will be the next task. Okay, just not the next task. And based on that, that framework will automatically read every entry and create a JSON and upload it directly to that bucket. Yeah, yeah, it is simple, only it's not that difficult.
+
+01:08:39 - 01:09:31 Unknown Speaker:
+
+Yeah, I think this, uh, yeah, I need to understand the limitations here first and then design that solution. Yeah, and we are not actually making 200 connections to display that here, one JSON, it will load it and all the 200 DAX will come. Okay, we are not actually connecting to the DB, we don't need that. Yeah, I need to understand why the connections are so happy, because usually the database connections like simple JDBC or DBC, or whatever connection. Those are not very heavy and those are lightweight. No, I don't know why, see, I joined like three months before. The way these guys are saying, you cannot use the BigQuery connections like anything, it's costly. Obviously, when we are connecting to it, after usage, when the job is closed, all the connections will go away.
+
+01:09:31 - 01:10:23 Unknown Speaker:
+
+I'm reading BigQuery only once and getting all the entries and I'm running it in a loop and I'm closing it. I'm not keeping the connection open also after reading the data. I seriously don't know what limitations these guys have. They are trying to project in such a way that you cannot have multiple connections to the database. It's very costly. We are paying for that. I don't know why that is being postponed. It's not actually connections. I'll try to understand that more. I'll try to speak to folks here at Onshore as well. I'll check with something else as well. Is there a restriction there? Yeah, we can come up with a plan. Yeah, yeah, that is good, actually. I mean, if that plan comes in, yeah, please go through the code.
+
+01:10:23 - 01:11:20 Unknown Speaker:
+
+Okay, uh, I don't know whether I made it complex, uh, but this is, uh. You can start with HQL generation, that Dot Py, okay, you can go through all the code. I'm not a Python developer, I'm a Java developer, but this task was given, so using okay, yeah, I have developed this. I actually proposed one more thing as well for this. Okay. So, my proposal was, I mean, I have experience in agent DKI. I worked in agent DKI. Okay. So, right now, they don't have, they are not providing connection to any LLM for us, any models. Okay. So, they are saying compromise restrictions are there. If you want access, there is a use case approval need to be done. Lot of things they are saying. So what my proposal was, you have almost 300-400 tables.
+
+01:11:20 - 01:12:18 Unknown Speaker:
+
+You are creating rules out of it. Based on the input request, you are creating a query out of it. So based on the existing, so for example, whatever I am doing, instead of doing it in a Python way, finding the similar SQL, creating a template out of it, generating a SQL, no templates. I have 10 DQ IDs existing with similar descriptions. Using that, you generate a new query in a similar structure. Agent can create that. Okay, it is a few shot mechanism we say. You provide something to as an input and it gives you an output out of it. So, we cannot get access to LLM and we cannot, There are some restricted tables in insurance, you cannot give those table names to LLMs, so that restrictions, they said.
+
+01:12:18 - 01:13:09 Unknown Speaker:
+
+So, I, I mean, I even created a POC out of it and I didn't have access to LM, right? So what I did? I created a custom agent here, using some custom agents, so what it does? It connects to that LLM, the internal LLMS that they're exposing through GitHub, co-pilot, these LMS, one of the LMS. What you say to connect to it, it generates the report, I mean, it generates output out of it. Similar only what we do in Agent K World, same thing only, but it is not in an uh uh, like we. It doesn't use any GPUS, it's a local setup, all local setup, right, right. That is also a big problem. If they give access to some LM, no, we can even deploy it, uh, as an Asiatica world, also, we can deploy that.
+
+01:13:09 - 01:14:01 Unknown Speaker:
+
+So this way, even if a new template comes in, it can generate a query out of it. Yeah, that is true, but the thing is, what happens is this. Did you analyze how many tokens it consumes to run this? No, it is less. Only see, for example, if I give 10 chart maximum what two thousand, three thousand tokens it will use? Okay, right? For each dqid, the query is maximum what? Uh, 500 to 600? Okay, even if it is four thousand, five thousand tokens. It's not a big thing for a LLM, and if I'm running it locally, it is working fine, if I'm using my local LLM. It doesn't have any restrictions, and it is working fine. Even in an ASMD a platform. If they are giving access to us, definitely it will be more than what is being what we can use it locally.
+
+01:14:01 - 01:14:54 Unknown Speaker:
+
+The count is more only. So we can easily create there. So once this is done, my next control is there. Control also we can automate it. But the restrictions came that you cannot use LLMs. We have some secure tables. That thing has come. That's okay. Secure table, I don't know how much. I can press it because this is all metadata information, you are not exposing the actual table exactly. I asked for same thing, I told. It is not an actual data, it is a metadata. They said. No, no metadata. Also, we cannot explore, and this is some restrictions that has come, so we stopped that. My plan was okay. I'll even show you the architecture that I did that time to deploy to run it in even E2 environment. And provide the output also for them to.
+
+01:14:54 - 01:16:27 Unknown Speaker:
+
+See it and confirm it. I'm coming up with something else. Also, one more thing. I'll show you next time. But some agentic coding app planning. I'll show you next time. I wanted to show you the track documents. Probably I'll learn more from you how to set up those agents and how to run them. Yeah, yeah, you can, but there are restrictions, this Amex has a lot of restrictions. I am not see the way I'm coding, you know, my premium subscription also done 100 percent now I don't have any. I cannot use this till May 1st, so that much I'm I'm doing research. Okay, I wanted to show you this. Okay, let me show you this one. Maybe, yeah, this is my architecture that time. So NL into again.
+
+01:16:27 - 01:17:27 Unknown Speaker:
+
+I generated it using agent only, but I created the ID and then I asked to generate this. This is not my own creation, but it has this image as created by agent itself. So integration interpretation agent the user gives an input, it interprets it. Query generates OkAy, and it will access the schema and then generate Execute query and then validates. The agent will verify if it is properly generated. If not, it will go in a loop feedback loop. Okay, and then for validation of the SQL, it will use environments development testing. Production environments executes one of the two environments. If it is generating the output properly, then it will switch to production. Okay, so NL interpretation agent, I created this, so these agents, everything I developed, but after that you cannot use LLMs, so there are.
+
+01:17:27 - 01:18:22 Unknown Speaker:
+
+I mean, did you? Did you present this to Raj? No, Sachin said. No. If you can deploy it to some environment only, we can present it. Otherwise, we cannot present. It's not possible to deploy it because I don't have access to agentic world. If they give agentic access only, we can create a POC and deploy it. What I did, I create custom agent. And then from that custom agent only, I was able to execute it. That custom agent internally connects to the LLMs that are there in GitHub Copilot. So this is all local. If I go to some deployment environment, I don't have access to LLMs there. So if they give charge EPT, open AI keys that they provide, then we can do it there also. For companies, it all becomes cost versus output kind of scenario.
+
+01:18:23 - 01:19:10 Unknown Speaker:
+
+What's the cost that you're spending, and whether do you really need to run an agent care? Like those? These are probably all TQ checks, right? Are those like super critical, those super mandatory? Do we really need agent models to fit into it? Those are all the questions that companies are looking for, right? Uh, 40, 50 percent, not with the 80, 90 percent of the work that we are doing manually will be reduced. So, understanding that natural language and creating it as a query, okay, so all these things, we are automating it. End of the day, it will go in a loop. If you see that, uh, what I was actually proposing, it will go in a loop and see feedback loop. Okay?
+
+01:19:10 - 01:20:20 Unknown Speaker:
+
+If something is not generated, it will try to regenerate that query and execute it and see if that output is proper as per the expectation or not. And because that's where your agent is all actually accessing the production data, right? Right? Yeah, into that validation agent part, you're actually running that sequence against your production environment, which has PI data, user sensitive data. And it is, um, so, query execution as justification? Yeah, sorry, unless there's a very solid business justification. I mean, all those agents are internal to habits, right? So they have their own security standards that they have set. Yeah, but again, the exposing PI is always there, it always comes with, you know, a solid business justification. Yeah, I agree with that point, executing it in an environment, getting the output and reading that, and understanding and regenerating, yeah, we are using some sensitive information that is not right.
+
+01:20:21 - 01:21:14 Unknown Speaker:
+
+The first part is okay, I think, and interpretation and generating details, but I don't see, I don't know, like, even my experience is very limited, but I see that's okay. And we can tune that LLM to make sure it is generating the queries with respect to big query and what format you are looking. Everything can be done nicely, we can do, and the same thing can be applied to contra also quant also lot of manual tasker. If this is successful, contour also we can do, and we are actually mainly working on contour. This one, the Q track and then insurance, it is also again it comes under the table zone again. Same most of the data science, I mean, uh, data science related things only will do.
+
+01:21:14 - 01:22:12 Unknown Speaker:
+
+Yeah, probably connect more with you in the upcoming days, understand what you are doing currently. Yeah, I am. So if you. What you can help me is if you can get access to LLM, then we can make wonders, a lot of other things also in other projects. Also, I have one more thing add us. I don't know if you have time to see, but uh, I'll show, I'll give you a explanation next time. So okay, this is add us. Okay. So I mean, as an add-ons, you can see it automatically driving. I mean, that naming convention. I do it, so what it does is you provide your use case. Okay, whether it is an enhancement or whether it is an existing code for a particular project, you are doing an enhancement, or it is a new development.
+
+01:22:12 - 01:23:00 Unknown Speaker:
+
+Okay, or it's a config changes, or you are working on a deployment configuration, so it comes up with multiple options to you. Okay. So if it is an enhancement to the existing one, it will come up with multiple agents. Okay, if it is existing project, what agents you can have if it is a new, uh, project altogether? For example, this Q track automation itself, I am coding newly, it will come up with agents. One is to code it, another is to verify that, another is to write test cases based on your use case. It will come up with coding agents, okay, and it will create the code complete code in a while coding mode, it will run it in a loop, and it generates code. You don't have, so you.
+
+01:23:00 - 01:23:52 Unknown Speaker:
+
+So, once it creates the agent, now, you will have orchestrator that connect to multiple agents. So you should simply say, I wanted to create a template for missing value check, then it will run to it will. Orchestrator will call multiple agents. It will, because each agent has its own, so Testing Agent will do only testing. Query generation, Template Generation one will only generate templates, so it is more experienced and only in generating templates. And its motto would be generation of the template itself. Whereas testing one would only be testing it, it will not interfere anything, so it creates templates. It'll ask testing agent to test it, if it is not done, then it'll ask Template to again verify it and redo it. So it will run it in a wipe coding manner, it will run it for in five, six hours and it will do your job.
+
+01:23:57 - 01:24:53 Unknown Speaker:
+
+So this one I wanted to implement, but here no access, nothing. We don't have access to any LLM. After I use, you can see no one is losing the premium tokens, but I'm the one who is losing early. April 15th only I closed all. And my friends still have 15%, 16% they are using, but I am using 100% of it. But that's the thing, like we are working for a financial institution. Financial institution with destructive data, sensitive data. So there will always be questions when you are running agents. I mean, nobody will get direct access to it, so a production environment or in a common environment, you'll have your own access. I mean, even getting this much access is very rare. Yeah, I would say, very good. Yeah, my friend is working in JPMC, they are.
+
+01:24:53 - 01:25:40 Unknown Speaker:
+
+JPC is actually the big bang Compatomics, right in U.S. There are no restrictions with respect to GitHub co-pilot. Premium requests also, they are paying and giving more. See, GitHub co-pilot, everyone trusted. There is no question about that. Everyone trusted it. All companies are using it. Going for premium subscriptions, you are giving access and you are saying only this much you can use. You are not paying extra for people to use it more. See, very less people would reach 100% usage. Why don't they pay extra and give access? More premium requests they can provide to them right where they can see. Okay, this guy reached 100, let me give him more by paying extra. It's not much, 10 per month, it's not a very big amount. Also by the company. I'm reducing one resource, right?
+
+01:25:40 - 01:26:38 Unknown Speaker:
+
+I mean, it's not about the amount, it's, it's mostly about data security. It's no, no, this is trusted, right? Even when it's tested. So I'll tell you my previous experience, I was looking for an internal command I can't like. They had given Pro pilot and cursor access, but we can't really connect to any database, any internal database using assets. Okay, that was very instructive, even when it's not sensitive data, even when it's like limited data or anything, no database connections are allowed. See, I agree with that point. Only thing is you are anyway giving access to LLM to me. Okay. I am connecting to it. I am passing everything. But you are saying you can only use this much. So anyway, you cannot stop even if it is escalating or you are exposing some personal data to this LLM.
+
+01:26:38 - 01:27:26 Unknown Speaker:
+
+You cannot avoid that. Okay. Only problem I see is you should increase those premium requests for everyone who is reaching that 100%. That is not done. You are not giving LLM matches, actually. Many companies coming up with new LLMS for their own company so and that will be exposed internally within the company. Now only Amex is coming up with something GPT charge, GPT, they are coming up with, okay, that is only customized, but it's not customized. It is on public only, but only Amex can access that LLM charge GPT, so for Amex, they deployed it only within. It will be within a maximum, it will not be exposed outside. So that much they are doing it, I think it will take some time for them to come out of that mindset itself.
+
+01:27:26 - 01:28:20 Unknown Speaker:
+
+Okay, we're not exposing much, they should come out of it. It takes time. Yeah, let's see how. All on this, you know, if you can help me? Now, try to see if we can get an LLM access, but before we ask for it, we should come up with some use cases also. True, true. Exactly. Yeah. And for that, I need to understand the system more. I need to understand both the pain points. Right. And only then we can, you know, suggest something. Yeah. Only four or five only. I don't see a very big list here. QPRAC, RISI, CONTRO. Those three are mainly you would be hearing. Yeah. I would like to understand the pain points of the current system first. The current systems are working fine as we tried. But what are the pain points from this query generation?
+
+01:28:20 - 01:29:20 Unknown Speaker:
+
+Only this query generation and Q Track Config JSON Update? These are the main challenges that we have currently. That is what we see. For me, for other people. One sprint easily distinct to create one rule, one sprint for one person. Once this is automated using this Python thing itself, that job will be reduced automatically. I mean, even if it is an, is it not agent decay? With this? What I just created using Python coding now, that itself will save a lot of time. Thank you. Thanks for sharing this. And can I put in more? Yeah. Sure. Sure. Sure. Yeah. I will do. Okay. Yeah. Yeah.
+

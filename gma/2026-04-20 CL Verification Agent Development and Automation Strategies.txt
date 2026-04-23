@@ -1,0 +1,226 @@
+2026-04-20 CL Verification Agent Development and Automation Strategies
+
+Creation Time: 2026/04/20 20:55
+
+
+📅About Meeting
+
+• Date & Time: 2026-04-20 20:55–21:31 (Duration: 2192 seconds)
+• Location: No relevant content mentioned
+• Attendee: Vamsi, Pallavi, Prithvi, Kiran, Michael (not joined), Pauline, Arctic & Western Tech leadership (names not specified), SMA team representatives (names not specified)
+
+📒Meeting Outline
+
+CL Verification Agent: Problem Context and Goals
+
+• Current SMA verification workflow and pain points
+  Today, seal/CL verification is manual (via SMS/notes), requiring SMEs to pull data from multiple tools (Critic, Buganizer/Organizer, Test Tracker, Rapid) and read keynotes/CL code changes. They review past defects and experience to decide if integration testing is required and what to test. This process is time-consuming and error-prone.
+
+• Objective of the CL Verification Agent
+  Automate consolidation, reasoning, and test recommendation to determine whether manual verification/testing is needed for a given CL; reduce SME effort and latency while improving consistency.
+
+• Scope and scalability considerations
+  Initial focus on Gmail Web with intent to scale to Chat, Voice, and Spaces (Workspace). Agent to integrate later into a broader Test Execution Orchestrator; CL verification will function as a sub-agent.
+
+Architecture and Data Flow
+
+• Agent and sub-agent design
+  A root CL agent orchestrates sub-agents to fetch data, reason over it, and produce a verdict with rationale. Fetch stages use tool APIs; reasoning stages use LLM-based analysis.
+
+• Systems integrated and retrieval details
+  APIs used to gather data from Critic, Buganizer/Organizer, Rapid, and Test Tracker. CL-level details and interconnected CLs are examined; historical runs and outcomes are stored in RAD for semantic search and learning.
+
+• Reasoning, recommendations, and outputs
+  The agent:
+  • Consolidates CL changes, related CLs/bugs, and test assets.
+  • Performs LLM reasoning to assess impact and derive a verdict (e.g., “manual verification required” or “no manual verification required”).
+  • Retrieves similar historical CLs via semantic search in RAD, along with prior QA notes/outcomes.
+  • Recommends prioritized tests from Test Tracker mapped to the CL description and context.
+
+Privacy, Compliance, and Data Retention
+
+• Outcome of privacy/compliance consultation
+  Storing bug descriptions in RAD is not permitted. Pivot made to store CL details/descriptions and test run history instead. Team to confirm this approach is aligned with AI policy/compliance teams in writing.
+
+• Traceability considerations
+  While bug IDs help traceability, storage is constrained; current approach emphasizes CL-to-test correlation. Team will verify policy alignment and document allowed fields.
+
+• User-facing experience
+  Final UX will be a plain chat-style interface; current UI is for testing/demo only. Token/time metrics are captured internally for performance monitoring.
+
+Demo Highlights and Performance
+
+• Demo setup and execution
+  • Ability to filter a CL range (e.g., last two quarters), fetch CLs, and run analysis individually or in batch.
+  • Run status shown (Pending/Completed); exportable CSV report for multi-CL runs.
+
+• Sample outcomes and rationale
+  • Example 1: “No manual verification required” for cleanup/logging/parameter naming changes; detailed tool-level reasoning provided.
+  • Example 2: “Manual verification required” for front-end look/UX changes; recommended tests listed with references.
+
+• Performance metrics
+  Typical run time ~33–120 seconds; some cases up to ~4 minutes. Time is non-blocking for users. Tokens/time recorded per stage.
+
+Learning Loop, Persistence, and Gaps
+
+• Human-in-the-loop feedback
+  Users can Accept/Correct the agent’s verdict and recommendations; feedback stored in RAD to improve future reasoning for similar CLs.
+
+• Session/memory behavior
+  Currently, if a CL run is not “accepted/committed,” it may reappear as pending on refresh; final deployment will persist run state and acceptance to avoid rework.
+
+• UAT/accuracy status
+  Ongoing UAT over 4–5 weeks across 100+ daily CLs to compare agent output with human decisions. Reported accuracy is improving; discrepancies stem from human exclusions vs. agent inclusions. Further tuning in progress.
+
+Roadmap, Production Readiness, and Next Steps
+
+• Integration plan
+  • Short term: Keep CL Verification as a standalone tool; prepare integration into the Test Execution Orchestrator by end of June.
+  • Medium term: Start with Gmail Web; after a successful trial, expand to other platforms (Voice, Chat, Spaces).
+
+• Production readiness needs
+  Add dashboarding, acceptance/commit persistence, logging/monitoring, and policy-confirmed data retention. Define Phase 2 deliverables and timelines.
+
+• Stakeholder requests
+  • Produce a short narrated demo video (10–15 minutes): before/after time comparison, clear commentary, end-to-end flow; use G Suite/Editors tooling.
+  • Share video with Kiran for circulation to engineering leadership and to gather feedback.
+  • Plan a one-week trial on Gmail Web once feedback is incorporated; collect enough data to validate efficacy, then scale.
+
+📋Overview
+
+• Manual CL verification is slow, fragmented across tools, and prone to error; automation target identified.
+• CL Verification Agent consolidates data via APIs and uses LLM reasoning to issue a verdict with detailed rationale and recommended tests.
+• Compliance disallows storing bug descriptions; pivoted to storing CL details and test history in RAD; policy confirmation to be documented.
+• Demo shows clear verdicts, tool-level reasoning, similar historical CLs, and mapped test cases; exports and performance metrics included.
+• Runs typically finish within 0.5–4 minutes and are non-blocking; human-in-the-loop feedback is captured to improve accuracy.
+• Current gaps: persistence of run/accept states, dashboarding, production-grade logging/monitoring, and formal compliance confirmation.
+• UAT across daily CLs is ongoing; accuracy improving; differences vs. human triage under analysis.
+• Next: create a concise narrated demo video, gather leadership feedback, conduct a one-week Gmail Web trial, then integrate into the Test Execution Orchestrator by end of June and plan Phase 2 for production readiness.
+
+🎯Todo List
+
+• Pallavi / Prithvi:
+  • [ ] Produce a 10–15 minute narrated demo video showing current workflow vs. agent workflow, time savings, and end-to-end flow; share with Kiran. Time: ASAP (this week)
+
+• Kiran:
+  • [ ] Review and circulate the demo video to engineering leadership; collect feedback and proposed adjustments. Time: Within 2–3 days of receiving video
+  • [ ] Confirm with AI policy/compliance teams that storing CL details and test run history in RAD is fully approved; document decision. Time: This week
+
+• Prithvi (Engineering):
+  • [ ] Implement persistence so completed/accepted CL runs do not reappear as pending; support accept/commit flow. Time: Phase 2 plan with ETA
+  • [ ] Add logging/metrics and basic dashboard (e.g., #CLs processed, agent vs. human decisions, acceptance rate, time saved). Time: Phase 2 plan with ETA
+
+• Team (QA/SMEs):
+  • [ ] Continue UAT comparing agent verdicts vs. human decisions across ~100+ daily CLs; quantify accuracy and reasons for mismatches. Time: Ongoing; weekly summary
+
+• Vamsi / Orchestrator Team:
+  • [ ] Prepare integration path for Test Execution Orchestrator; target integrated demo by end of June. Deliverable: orchestrated flow with CL Verification as sub-agent. Time: By June end
+
+• Product Leads (Gmail Web):
+  • [ ] Plan and execute a one-week trial on Gmail Web post-feedback; define success metrics (accuracy, acceptance rate, time saved). Time: After video review; target next sprint
+
+• All:
+  • [ ] Define Phase 2 “production readiness” checklist (dashboarding, logging, monitoring/alerts, policy docs, UX polish) with milestones and owners. Time: Within 1 week after trial kickoff
+
+Transcription
+
+00:00:11 - 00:03:00 Unknown Speaker:
+
+I told him that I will come in 6 hours. He said that I will come in 6 hours. I told him that I will come in 6 hours. He said that I will come in 6 hours. He said that I will come in 6 hours. But there's no real deal. Hey, hi. How are you? How are you? I'm good. Yours is first? Yeah, looks like. All the best for today. Thank you. I'm a little scared. At least the second, third, then it would have been nice. But fine, I'll manage it. I can't believe I'm getting such a good call. I can't believe I'm getting such a good call. I can't believe I'm getting such a good call. Today, seal verification is done manually by SMS.
+
+00:03:00 - 00:04:10 Unknown Speaker:
+
+They need to pull information from multiple tools like Rapid Critic, Organizer, and they have to read those keynotes and understand the code changes. That was done as part of the CL. Look at the past defects and their experience, decide whether the integration testing is required or not and what to test. So these are the key problems that currently SMA teams are facing, and also the process is time consuming. You should be ready to share the screen. Uh, once we start talking, okay, sure, sure, we'll say we will start, then I mean, first intro or whatever, and then we'll start. So okay. No, no introduction, there is no document for the introduction, right? No, no, you open that PPT plus the other things, that's all okay. Shall I share right away or shall I wait for them?
+
+00:04:12 - 00:06:55 Unknown Speaker:
+
+No, no, don't stay. Like they don't. Okay. So I'll introduce him and then I'll go to Pauline and she will take care. That's what I'm scriptifying now. Sure, Mamsi. Thank you. Don't do too much. Demo has too much time. They gave us 10 minutes for each. So, in 10 minutes, we will do as much as we can. We will see how it goes. We will see how it goes. I don't know. I don't know. I gave it to you in the box. I gave it to you in the box. I gave it to you in the box. I gave it to you in the box. It's been 3 o'clock in the morning. And the morning. Yeah. So, yeah, to start with, thank you so much for all the support. Give me one second.
+
+00:06:56 - 00:08:04 Unknown Speaker:
+
+Give me one second. Can somebody record this, please? Yes, I will. I wanted to do that. Yes, Michael is not joining the call. So, yeah. Thank you so much for having us here. I truly appreciate all your feedback and inputs for all the TTDNSS. Without delay, I want to, yeah, I will be starting recording this session. And with that, I would like to introduce my team. I'll be here real quick. Distinguished Arctic and West Western technology leadership. And then I have my other associate here. And then I have Oparna, who is the POC and lead for S-Tech Post-Variant Agent. We have two agents, like Vamsi mentioned. We'll start with CL verification agent. As you are aware, there are a lot of CLs which gets validated by the team, right? They're doing it manually right now.
+
+00:08:05 - 00:08:51 Unknown Speaker:
+
+Though the team has a macro and they use it to figure out how many CLs have come, what needs to be tested. The team spends a lot of manual effort right now. So we picked up that area and we have developed the agent, the overall agent. Prithvi If you can bring up the architecture, I'm not sure, even if you had got the chance to look at the technical design document and the architecture. Yeah, just a quick intro to you on the CL verification. Since you're aware what we are doing is we are taking information from Buganizer, Critic and Traffic. We consolidate all the information for the CL, we look into the CL plus all the interconnected CLS, and in the bug, we look at the bugs plus the details of CLS next level as well.
+
+00:08:51 - 00:09:45 Unknown Speaker:
+
+So we find out what has changed, Our main goal here is to find out in the CL, whatever has changed. What is the impact it will have on the rest? So that we do the problem. Since we are in the agent architecture, we have created sub-agents. Root agent is our CL. Now, the CL in turn calls the first sub-agents, finds the information from all this. These informations, what we fetch is API calls. We have got access to the APIs, and here it is more of API to fetch from Critic, Organizer, and Rocket. Then when we do the reasoning, we go to the LLM to actually reason and tell us, come back and share what are the similar CLs. Or similar CL, similar bug, similar check-ins which have happened earlier so that it gives us the consolidated information before we plan our test cases.
+
+00:09:45 - 00:10:34 Unknown Speaker:
+
+We also go to test tracker to find on the senior whatever are the details available in the test tracker, what are the corresponding tests which are available, which are priority zero to this thing which needs to be done, right? We do all this consolidation reasoning, then get to the agent which does the decision and showcase what are the tests which needs to be run. We also have ensure that there is historical data in RAD, which is nothing but the CLs, earlier CLs, what have all been tested, what are the tests which has run. Now, we'll show you the demo. We have developed the demo. Before we go to the demo, question, I don't know who can answer this question, but what was the outcome of talking to the privacy team about retention of data?
+
+00:10:35 - 00:11:55 Unknown Speaker:
+
+Yes, they did come back. When we planned the rank, our data details were very concentrated on bug. But the team came back and talked to us about the compliance issues. Bug details, specifically specific description details cannot be stored in rank. So what we did is we switched. Now instead of bug details, we are using the CL details, CL details and description and the earlier run history of the tests which have been run for those. And the other information, we can put it in that. That is what we are putting it in the history so that it becomes easier because the correlation of the CL to the S is what we are looking at. Very clear that it went back to the AI policy team, right? The compliance team. That we will check because while we send across as an update.
+
+00:12:38 - 00:14:05 Unknown Speaker:
+
+This is not what the user will see at the end. It should be a plain chat interface for the user. This is for our testing and demo purpose. At the top, we can, since we have to scale this agent, not just for Gmail, but also for chat, voice, and space, which is part of the workspace, the user can input which application it is, what is the platform. Now, The seniors can be pulled on various. What we have done is we have six months of data or something, what we have taken. Two quarters of data of all the CLs which were the team right now maintains in Excel Macro. That is what is moving towards. Okay, now, yeah, you can fetch, yeah, I this one I actually fetched already there.
+
+00:14:05 - 00:14:59 Unknown Speaker:
+
+It takes two or three minutes for sometimes to get the entire thing. So he has already done that. The CL comes and go, the CLs, whatever from the selection range has come. You can run individually or like batch wise, whatever you want to run on. So once we hit the run is when the LLM processing happens with all the information. What you can see at the top, we also wanted to capture the tokens and the time it takes to respond at each stage. So performance is something within the range of CL verification. I'll also take you back to one point. The average based on history, what we saw from the team, some part goes in analysis, some part goes into testing, that's how, that's how we display the sale verification. So here the agent has run.
+
+00:14:59 - 00:15:46 Unknown Speaker:
+
+I'll hand it over to Prithvi now so that you can sure thank you Palavi. Yeah, this is, uh. I ran it and kept it ready for demo because it takes a bit of time, so 33 seconds it takes for this year. So here, uh. The verdict given by agent is no manual verification required. So it has given a clear reasoning on what basis it is saying this particular CL doesn't need a testing. It's primarily focusing on logging cleanup and then parameter naming inconsistency. So it's a cleanup activity that they are doing as part of the CL. So that's why it has recommended saying it doesn't need any testing. So when they execute a run command for a particular particular CL.
+
+00:15:46 - 00:16:39 Unknown Speaker:
+
+It provides the time and then the verdict with complete reasoning and detailed analysis at each tool level like Codiff, Bognizer level, critic level it provides and then it also fetches the similar historical CLs matching with this input CL. It does the relative semantic search on the RAC database and fetches the info. Sorry. Yeah, go ahead. So, a semantic search it does on the RAD database and finds any matching CLs and what was the QA and output given at that point of time. Kiran, this is the place where we switched and told, right? We wanted to use the bug details. Now, since we are not able to, we are using the CL to test another. So, we ensure that the coverage is taken first. Kiran, you are on mute.
+
+00:17:04 - 00:18:30 Unknown Speaker:
+
+Yeah, otherwise we will not have traceability if I don't store the bug ID number. These are all the sales that you have identified in your filter, right? Yep. So you filter from this range to this range. All of them showed up. Yep. Right. And then did you run everything or did you run only one? Only one. I can even choose to select all and I can run it, but it takes a lot of time because a lot of sales are there, right? So run process. You can see the status column pending means it has not run. Completed means it has run. Three seconds right yes yes yes okay that's 33 seconds can you actually go a CL which needs verification, we have seen long time. Two minutes, in some cases, the majority of the cases, two minutes.
+
+00:18:31 - 00:19:18 Unknown Speaker:
+
+Once or something, it has gone to four minutes, but it's within that time. I think that is still helpful, four minutes to go ahead. And again, that four minutes is not wasted, right? Basically, something is happening in the background and you're doing something else. Yes. So, even if it takes four or six minutes, it's not something that is actively engaging a person in doing that. Whereas when you do manually, you're engaging a person and then you're also it's prone to human error also. If you use that in the overall as a say the moment the CL comes and this runs right here, no one is waiting. It's the processing or the machine time what we are throwing because the user would come see the details. You will see later once it finishes run.
+
+00:19:21 - 00:20:49 Unknown Speaker:
+
+We can just read through what all has happened. See the other results. This one you can see it is running at the top, right, so this one actually manual verification required. Uh, say, another sale, which took 58 seconds. And it's basically some, uh, look, changes that's happening in the front end, so this requires manual verification to be done. So that's what the reasoning is saying, and the reasoning at each two level it has. And the matching. Similar historical CL details with QA notes at that point of time, and the associated bug details and the reasoning with respect to the bug. And these are all the recommended test cases from the Test Tracker tool based on the CL description. It fetches the matching test cases that need to be, which needs to be wrapped here.
+
+00:20:49 - 00:22:45 Unknown Speaker:
+
+That's from the test track. And then user will have an option to accept that output given by... This is the standard human-in-the-loop feedback mechanism, Kiran, for the agent to learn in the long run. So this, once they accept it, that would again get stored inside RAC. That user has accepted what verdict was given and what is that, Whether it is accepted or it was... corrected by the SME, if it is corrected, then it will get. It will get stored inside rack. And that information would be used in doing reasoning next to CL, another CL with matching the CL description. Okay, okay, yeah, I think the first run is still going on. Yeah, that's okay, that's fine, this is. Open and close it. Mute that. Open and mute that. Go to downloads. It should be.
+
+00:22:45 - 00:24:50 Unknown Speaker:
+
+We usually upload it to Google Drive because it's running in remote desktop, right? Oh, I see. That's why it's not let us open. It should open and test the data, right? It's not open. It is associated with I think Microsoft Office, right? Go open with the folder. Go to the folder. Yeah. Just try to open it. What is on the screen? All the information is passed on. So this is the reasoning of information. Similar historical CL information. We provide it as a CSV so that report can be generated for multiple CLs in one shot. That's it. That's it, I think that's the end of it. If CL is no verification. This is a larger thing what we will use, Kiran, in the overall test execution, right? We will have the test execution as our main orchestrator and CL verification is a sub-agent there.
+
+00:24:50 - 00:26:13 Unknown Speaker:
+
+So the orchestrator will call. Right now, it's a standalone, you can see, but in the overall envision, the way we do is the entire test execution with all other agents will happen via the test execution orchestrator. That will be ready by June end, right? Whatever is finished, we are showing the demo. We will also show the integrated one. So one question, if you go back to your execution, go back to your tool. Yeah. Okay. So here, go up. This one is executed. The first one is executed. Yeah. So 50 seconds. Okay. Manual verification required. Ask you this question if you go up now and you choose your initial filter right that is your filter the cl range yes if you don't do anything if you click on fetch cl id okay happening is, oh, I see, okay, so because you did not accept that CL, it is still showing as pending here.
+
+00:26:13 - 00:27:07 Unknown Speaker:
+
+For us, we are not storing that in the session or the memory, right, that the CL is already done. If you are looking at that, right, the second time I come, it is already done. We haven't done that. That is something which in the deployment, if it is needed, we do, because for us, every time you come, Not always say it is already done, right, understood, understood. What I'm saying is, let's say, if you're, you're only so the range that you've given. See before this. We took the first one, which is partition attachment, and we ran. I understand, we ran it, we did not accept it, we did not commit. Let's see, all right, yeah, so actually, in the store, once you are done, the user gets the test cases, the user finishes the test execution.
+
+00:27:07 - 00:29:00 Unknown Speaker:
+
+Because here, it just recommended the test. But the manual user right now runs the test and updates. The commit, right, it is not there, so the tests have come. The human will run and then he'll commit. Once it is committed, it will not commit. Yeah, that's what I'm. There is a dashboard that I can say, hey, you know, we executed or we manually verified this many CLs and we accepted machine, we accepted the AI agent suggestions of this many CLs, right? Dashboard will eventually come, but I'm just, I was just thinking. May not be the CL agent because the driving factor is the execution agent, right? The execution agent will have lots, but it will not be CL agent. It will have everything. Okay, so this is good. This is good.
+
+00:29:00 - 00:30:03 Unknown Speaker:
+
+What is the, so this is a prototype, right? What's the next step on this? See, what we have done is we have taken this and we have done a UAP for last four or five weeks with all the daily CLs, 100 plus CLs comes daily. We are trying to match whether the CL number matches, whether the CL details to CL details, what is verified with the human, what they are doing matches. This we have done. Percentage is our accuracy right now. Yes because the human team excludes some of the things while the agent is giving so we are looking into that right that's the first. Now, the next step for us is this is in the actual individual project. We want to get the LGTM done so that it moves to the regular agent and on a daily basis uses that, right.
+
+00:30:03 - 00:32:32 Unknown Speaker:
+
+That's one second. We also want to ensure that chat, voice and platform as next applications are also starting to use this. So we have to enable because each of them has a specific component, specific details from Rapid, which we'll have to configure for those, right? We want to do that on board with them. Recorded video of this right every step of the way with commentary. And if you are using G Suite, or if you are using Editors, you can create a video on this right. So you can create a video with commentary and everything in the background, very, very efficient, please use that, and if you create a video, I can share it with the engineering team, I can take their feedback.
+
+00:32:32 - 00:34:47 Unknown Speaker:
+
+And then we can start this with, you know, probably one week of trial and enough data to say that this works, then we get this rolling on to the other products. We start with Gmail web. Yeah, Gmail web. Decide on that. We'll start with one platform. We'll do some protos for them. Let them look at it. Let them LGTM as well besides Dev Infra and QAT. And then once that is done, we'll expand it to all the other platforms and once that is successful and we run for a month or whatever, we can take it to chat, we can take it to the other products. Make sense? Yeah, that sounds. I think we had a video, but it is not. Voiceover, I guess. To do manual this is how much time it takes with this new agent.
+
+00:34:47 - 00:35:36 Unknown Speaker:
+
+And, you know, conclude with that. That's the video I would like, and the video should not be 30 minutes long. Please make it as small and as quickly as possible. We are living in the world of reels right now, so you know, people's patience and attention span is very small, so try to keep it small. Uh, let's say 10 15 minutes stops, and then please send that video to me, okay, and then I'll take it to all the state. This photo, what are you going to do? Are you going to publish this? How do you publish this? Is this a prime time? Is this production ready? It's a question, right? Today you're doing this, but is it production ready? Maybe not. Maybe you need a dashboard that will support it, right? Maybe some logging.
+
+00:35:37 - 00:36:15 Unknown Speaker:
+
+So all of those things need to be considered and then said, hey, this is phase two and put a timeline for it also. Offline on chat if you like, but please send me the video, okay? Yeah. Thanks. Thanks. All right. Thanks, guys. Thank you. Good morning, Prathvi. Thank you, Prathvi. Thanks, Prathvi. I didn't hear anything, Prathvi. Yeah, you did. Good. Let me stop the recording. Let us switch over and talk tomorrow.
+

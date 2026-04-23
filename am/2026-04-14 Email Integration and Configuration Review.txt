@@ -1,0 +1,192 @@
+2026-04-14 Email Integration and Configuration Review
+
+Creation Time: 2026/04/14 15:31
+
+
+📅About Meeting
+
+• Date & Time: 2026-04-14 15:31 (Duration: ~16 minutes)
+• Location: Online call
+• Attendee: Anand, Kundan (Kundan/Kundan), Sachin, Raj (to be consulted), Anuja (confirmed on call), Sameer (mentioned), Insurance Analytics stakeholders (context), Backend/UI team members
+
+📒Meeting Outline
+
+Email Notification Integration and Configuration
+
+• Testing with business group configuration (JSON/ECM)
+  The team validated email routing using a JSON/ECM configuration keyed by Business Group Email ID. Properties include Work Basket, SSO Group (legacy/not required), B40, and B45 email mappings. For testing, a record was created matching the Business Group Email ID; B40 set to Anand’s email; B45 set to an alternative contact due to pending E3 onboarding for Insurance Analytics. SSO Group will not be required in the input going forward.
+
+• Source of configuration (ECM) and bypass concerns
+  Configuration must be read from ECM; earlier issues indicated configuration not loading correctly. Clarified that nothing is bypassed—matching occurs on the first property (business group email). Need to recheck why ECM configuration was “not working.”
+
+• PR updates for email subject/body
+  A new PR is being raised to add a missing subject line and to fix a body content typo (“Pls” extra “T”). Post-fix, a round of UI/flow testing is requested before sharing with the product owner.
+
+Scheduling, Timers, and Delayed Email Triggers
+
+• Day vs minute-based timer issue
+  A task was created to trigger notification after “1 day,” but day-based configuration is not working. Minute-based timers are confirmed working (e.g., 5 or 15 minutes).
+
+• Interim configuration and testing plan
+  Use PT1440M (1,440 minutes) format for a 1-day equivalent. Team to test with PT1440M now; if it works, adopt this pattern. A build will be triggered so that notifications are received by 5 p.m. tomorrow; if successful, multiply the property by 7 for a weekly notification scenario.
+
+• Ownership and follow-through
+  Kundan to close email integration today, pending Anand’s final sign-off and deployment to API environment. After minutes-based confirmation, finalize timer logic.
+
+UI Flow, Rules, and Approvals
+
+• End-to-end UI flow validation
+  Validate the UI flow: add rule → create rule → reserve → approve. Prior deployments revealed edge cases; another demo is requested post today’s call to capture any observations before handing to the product owner.
+
+• Approved page status
+  Approved page is complete and posted to human portal; rejection path is pending. Further UI enhancements can be included in the same PR if minor.
+
+• Add Rules dynamic changes
+  Work started on dynamic rule additions; continue iterating based on demo feedback.
+
+Lumi API Secrets and Security Approach
+
+• Secret handling risk in UI
+  Storing client/app secrets in UI exposes them via Network tab, creating a security breach per internal guidance and Raj’s feedback.
+
+• Backend-mediated approach
+  Preferred design: backend reads secrets (ECM/vault), generates token/calls Lumi internal API, and exposes safe endpoints to UI. A 10-minute connect with Raj is to be scheduled to finalize the approach and confirm consistency with new API changes and ECM property migration.
+
+• Coordination with related teams
+  Connect with the teammate who implemented a similar pattern to confirm best practices and new API specifics; ensure ECM properties align with backend token generation.
+
+BPMN, KPA/KPI Integration, and Cancel API
+
+• BPMN and KPA/KPI integration
+  BPMN finalization is needed; Kundan to share KPA/KPI integration details so the team can continue after current mail integration tasks.
+
+• Cancel API call
+  Assistance requested to implement Cancel API to support interruption flows; align with BPMN finalization.
+
+Demos, Reviews, and Deployments
+
+• Demo cadence
+  Conduct a short demo after today’s main demo call to validate the UI flow and capture observations.
+
+• Code review and branch management
+  A PR to develop has been raised; once the subject/body fixes and UI validations pass, proceed with merging and deployment. Confirm whether code review items have been addressed.
+
+Call Quality/Noise
+
+• Audio issues
+  Noted echo/noise and repeated phrases at end of call; ensure clear audio for next demo.
+
+📋Overview
+
+• Email routing via ECM-driven JSON configuration is validated; SSO Group is no longer required in input; B40/B45 mappings used for recipients.
+• ECM configuration loading needs verification; current testing uses hardcoded/known-good records.
+• Missing email subject and a body typo are fixed in a new PR; additional UI polish can be included.
+• Day-based timers are unreliable; switch to minute-based ISO-8601 durations (e.g., PT1440M) for 1-day delays; proceed with testing toward a 5 p.m. notification.
+• UI flow (rule create → reserve → approve) requires one more demo validation before sharing with the product owner; rejection path pending.
+• Secrets must not be handled in the UI; proceed with backend-mediated token generation and Lumi API calls; schedule a short security review with Raj.
+• BPMN finalization and KPA/KPI integration to continue post email integration; Cancel API support to be added.
+• Kundan to close email integration today, pending final deployment and timer verification.
+
+🎯Todo List
+
+• Kundan:
+  • [ ] Finalize and close email integration; deploy to API environment after Anand’s go-ahead, Today
+  • [ ] Configure and test timer with PT1440M; trigger build to receive notification by 5 p.m. tomorrow; report results, Today → Tomorrow 5 p.m.
+  • [ ] Share KPA/KPI integration details with team, This week
+  • [ ] Participate in post-demo UI flow testing and address findings, Today/Tomorrow
+
+• Anand:
+  • [ ] Validate ECM configuration loading issue and confirm correct keys/mappings (Business Group Email ID, B40/B45), Today
+  • [ ] Provide sign-off to deploy email integration to API environment, Today
+  • [ ] Review and approve PR with subject/body fixes and any minor UI enhancements, Today
+
+• Sachin:
+  • [ ] Conduct end-to-end UI flow test (add/create rule → reserve → approve); join short demo and capture observations; confirm readiness for product owner, Today
+  • [ ] Implement/verify Add Rules dynamic changes based on demo feedback, This week
+
+• Backend Team:
+  • [ ] Implement backend-mediated Lumi API integration: read secrets from ECM/vault, generate token, call internal API; expose safe endpoint to UI, This week
+  • [ ] Confirm alignment with new API and ECM property migrations; coordinate with referenced teammate, This week
+
+• Raj:
+  • [ ] 10-minute security review on Lumi secret handling approach; confirm no secrets/tokens exposed via UI/Network, As scheduled (within 1–2 days)
+
+• Anuja:
+  • [ ] Schedule and facilitate the 10-minute security connect with Raj and the teammate with prior implementation, Today/Tomorrow
+
+• UI/Full-stack (assigned owner to confirm):
+  • [ ] Fix email subject line and remove stray “T” before “Pls” in body content; raise/merge PR, Today
+  • [ ] Complete rejection path on Approved page, This week
+  • [ ] Implement Cancel API hook aligned with BPMN, This week
+
+• BPMN Owner:
+  • [ ] Finalize BPMN, including interrupt/Cancel path, and coordinate with API integration timelines, This week
+
+• All:
+  • [ ] Attend short demo after today’s main demo; log any edge cases before product owner review, Today
+
+• Open Item (Owner to assign):
+  • [ ] Re-test “day” duration format versus minute-based ISO-8601; document the working standard and update configuration guidance, This week
+
+Notes:
+• If tomorrow’s 5 p.m. notification test passes with PT1440M, update config to support weekly delay by multiplying value by 7 (PT10080M) and document. 
+• Ensure Insurance Analytics onboarding to E3 is tracked; temporarily continue using fallback email assignments for B40/B45 until onboarding completes.
+
+Transcription
+
+00:00:04 - 00:00:59 Unknown Speaker:
+
+I'm not like directly reading such in, so, you know, from the CSV. We are getting the business group email business to people, we are reading the SSO group work basket. And B40 or what you're telling me? So the file I am uploading for testing purpose, that one record I already created for testing. Okay, I provided a business group email with the email ID. And B40 I think it's your name, and B45 it's other name. Is there? Okay, okay, okay. So once that will be done, you two guys will receive the email, even I will receive the CC. But I'm I'm again asking you this one, the PR that you have created, let me know once you are able to see my screen. So here in this JSOn object, right? This is another announcement.
+
+00:00:59 - 00:01:54 Unknown Speaker:
+
+We need to read this from the, uh, you know, ECM, Okay. Configuration was not working. We have to check that part. Okay, That's where we found it. So this this configuration right where you have provided B40 and all right. How it is bypassing these, then? It's not bypassing such an if you will see, right? The first property is your business group email ID See the first one. That is the key. I can highlight it alert at the rate aexp. Com if you can see one one zero line number, whatever it is highlighting. Yeah, so this is your business group email ID, so if the matching business group is coming, you have this. These many properties. Work basket SSO Group B40 and B45.
+
+00:01:54 - 00:02:50 Unknown Speaker:
+
+Okay, so for testing purpose, what we are doing is if you see at the bottom right, you will find I upper name is there as the business group. Here one, one, one, not here, not here, there. One in the JSON one day. Okay, see the last one. Okay, okay, this is related to this work basket. SSO Group is this one. B40 is your email ID, B45 is after innovative. So once I am testing, so I am creating a record where Business group by email ID is this one only. Okay, okay, okay, so these are all details. Details will be picked, like for this one, uh, for this work basket. Insurance analytics, right? We don't, uh, uh, we don't have detail for B40 and B45 because this is still not being onboarded to E3.
+
+00:02:50 - 00:03:53 Unknown Speaker:
+
+That's the reason, uh, he hasn't said these details right now. I kicked, Uh, Anand name okay. Because otherwise, our implementation will fail. And secondly, you really don't need to pass the SSO group. Uh, this is something not required anymore, but this is not required in this input. JSON Right, this is. This remains same for all, this is something not required. Take care, I'll just close this testing today. Because, uh, tomorrow onwards. You need to focus on the self-serve one. Because, uh, that is something, uh, we we need to start implementing and close it. Okay, this was just you know validated and once I am provided sign up and then we will move it to the production environment Again the point is for testing. I have to update the timer.
+
+00:03:54 - 00:05:07 Unknown Speaker:
+
+Okay, and did we created a Task yesterday so that we would be receiving a mail today. Yeah, we created a task. Okay, set over there one day, one day. I think that is not working. Okay, I check the process that is that particular. Multiply 60 minute with 24 hours. Whatever value you are getting, set that value minute, yeah, minute is working fine. So that that I think we can keep the minutes right, because five minutes, 15 minutes, we already tested it. Let's keep it in the minute one day, unless and until we find a proper solution, whether the day is working. That is something I have asked you yesterday. Only that I triggered it's a thing, so okay, and that is not working. So I change it again to five minutes.
+
+00:05:11 - 00:06:16 Unknown Speaker:
+
+Test that one, so it's a one, four, four, zero minutes, so give it Pt one, four, four, zero, um, that big. After this testing, we'll do that, make that, uh change. I ping you this is PT. Test it out because this is something, uh, now would be asking me for this update, so test it out will work. Such in, Okay, that's what I'm asking you from yesterday. Only you told yesterday, you mentioned you have to use D, right? D I? I told you, right, that we have to test it out. Yeah, that is not working. Okay, then then go ahead and then this just change this with this one, this one will work for sure that that's the updates that you know. Okay, okay, there's one more PR. I am just raising it.
+
+00:06:16 - 00:07:22 Unknown Speaker:
+
+That subject line I didn't set it. Okay, yes, it got missed. Okay, there is no subject line is there, so I'm, I just added it. Uh, so subject line. And then and then there is a error. Uh, just before. Pls, right? T has been added over there in the body content, so even remove that one, right? And then just the testing that you have asked, right? Can you guys just do the testing and this? Let me know in case you need my, you know, input over there? I have done a lot of testing so just want to be sure like before going to the product or not, we do a testing. So maybe Kundal, you can just trigger and check. And apart from that, if you need any UI enhancement or something, is which we can add and let me know.
+
+00:07:22 - 00:08:14 Unknown Speaker:
+
+I i mplement in the same PR and if it's working fine, I'll raise up here to develop. I've already raised it. So if there's no issue, what do you want me to test? Exactly? Basically the flow in UI flow, so basically you can just add the rules, create a rule, and then reserve and approve it. You are not able to do that. That's what the point is mentioning. I have already done it, but before going to the product owner. Since last two deployments, we saw there were some couple of interesting scenarios were left right from the UI. I have already done the testing if you want, uh, maybe searching if you want, but I can proceed with your develop uh, department development branch. Words. Okay, and give it to us.
+
+00:08:14 - 00:09:03 Unknown Speaker:
+
+Let's have a demo, let's have a demo, or maybe one round of demo. Post today's you know, demo call helping you, let's have a have a demo. And then, in case I have any observation, I'll let you know. Yeah, sure, one thing. And apart from that, the Lumi API, which we were planning to get the secrets into it. So I was just connecting with one of the teammates in the company and he had also the same implementation. So he mentioned like, Uh, will not be able to keep the secrets in the UI, okay, so that would be exposed in the network tab and for the same use. Case discussed with Raj, and Raj clearly mentioned like this will be a security bridge, and in their case, also they are using an internal API for exposing those data.
+
+00:09:03 - 00:10:06 Unknown Speaker:
+
+So okay, so you want this to be bigger from the back end, and then you would be reading the response, right? I, I, I will calling the USC, maybe anyone, I'll be calling that. And then internally, you will be. So that the idea and secrets are not exposed in the network time No, but why would you go by a network if you can't? You make a call? I can do, do that, build from the backend, not on very. But can't you read the property from ECM? That's what the same thing I can read the property from ECM, but I have to. ECM. So recently they have transferred all this to the new API which has been created. So if you'll discuss what I want to know. Can you connect me with that same person? Sure.
+
+00:10:07 - 00:10:59 Unknown Speaker:
+
+Let's end the challenge before taking a call on that. Because even backend is doing the same stuff, right? Even backend is reading the vault properties from ECM and then calling that API, right? So even that would be passing the token, so if you will, pass from the UI. If I'll get the let's say, I'll get the secret ID and everything from the ECM conflict, I'm getting the app and the secret ID from the ECM. And I'm generating a token in the UI, right? That token has to pass to the Lumi call and when you see the Networks tab, or in the So Inspect mode. Whoever has, yeah, I, I got it, so whoever has that, uh. And then had a discussion with Raj, Uh, just let's have a connect for 10 minutes with him.
+
+00:10:59 - 00:11:54 Unknown Speaker:
+
+Security challenges he was mentioning, and then I'll take a call on that. Sure, I'll schedule, I'll check with him and schedule a call of that. Okay, okay, okay. So also one thing as discussed yesterday, you can help me with the cancel AP call, which we have to do that so that you can interpret. And, uh, maybe couldn't if you can share me. The PPM and KPA integration that has to be done. The other details, Yeah, yeah, correct, correct, yeah. Since the proof page has been done, I'll continue on that part. Okay, so rest of the part has been done. Yes for the approved page, apart from reject, everything has been done and that has been in the postal. Human also. Okay, okay. Now let's start with the add rules dynamic changes. I've started with that.
+
+00:11:55 - 00:12:46 Unknown Speaker:
+
+Yeah, then continue on that because BPMN, that is something finalization you have to do, right? And then once Kundan move from this current existing aspects in mail, right? Then he can start building those API. Sure. Yeah. So Kundan, close this email integration today itself, okay? Just one part that would be left is that once Anand give a heads up, we just need to deploy to the API environment. Test it with that number of minutes that I have pinged you and trigger a build right now. So that tomorrow 5 p.m. By 5 p.m. We would be getting that notification. If that works, we just need to multiply that property value with 7 and then that's it. That would close your implementation, so okay, uh, let's see, uh, did you implemented the code review.
+
+00:13:17 - 00:15:36 Unknown Speaker:
+
+I can hear you but it's bit you know having an echo in the background. Uh, Samir... What is your name? My name is Anuja. What is your name? My name is Anuja. What is your name? My name is Anuja. Call Navisari. Call Navisari. Call Navisari. Call Navisari. Call Navisari.
+

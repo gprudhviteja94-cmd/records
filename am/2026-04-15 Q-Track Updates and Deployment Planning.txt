@@ -1,0 +1,219 @@
+2026-04-15 Q-Track Updates and Deployment Planning
+
+Creation Time: 2026/04/15 18:00
+
+
+📅About Meeting
+
+• Date & Time: 2026-04-15 18:00–18:24 (UTC) | Duration: 24m 12s
+• Location: No relevant content mentioned
+• Attendee: Arthur, Sravan, Kundan, Platform Team, Appa (Aiyappa), Sindhuja, Rachna, Sachin, Anand, Rajendra, Satish, Saurabh, Bhagwan, Jason, ANSI (coordination), Suman, Team DLs
+
+📒Meeting Outline
+
+Q-Track, Alerts, and Escalation Workflow
+
+• Cancellation approval UI and dynamic forms (Arthur)
+  Began the approval page for Cancellation API; progressing dynamic form logic to show fields by case type. Seven UI changes identified this sprint. A validation-related task under “Insurance analytics requirement” is blocked due to pending PR merge; needs reason added and PR chase with Saurabh/Bhagwan.
+
+• Timer, email escalation, and assignee logic (Sachin + Sindhuja + Anand)
+  Current escalation emails go to the distribution list; assignee-specific emails (Band 40) will be added next release after API details from Satish/Rajendra. For this release, DL-only is expected even if a task is reserved. Deployment targeted for Monday (RFC to be raised). Timer validated at 1 day in lower env; will extend to 9–16 days post-verify. Existing open alerts will not be affected; only new alerts use the new flow. Sanity check requested to ensure old instances don’t trigger new emails; consider BPMN v3 while retaining v2 in HA YAML if needed. Email subjects/recipients adjusted in test; B40 to appear in CC and DL in To.
+
+• Consolidated failure emails for ICMV (ICMV/ICMB)
+  Team expects consolidated failure reports enabled in production; observed individual failure emails still appearing previously. Need to verify if consolidated emails are active and, if so, remove legacy per-flow notifications. No recent failures seen; cross-check still required.
+
+Data Pipelines, Fixes, and Environments
+
+• SADS place and G-Track fixes (Kundan)
+  Resolved a timer-side issue with Platform Team via redeploy. Working on ICMV use case across multiple tables (CSV Model Score CM11, Credit Score Profile, Deploy Scoring Pipeline CM11). Implementing automated data corrections and inserts to art_fetch table. CSV Model CM11 fix implemented and testing in E1; remaining two tables next.
+
+• SFTP file handling and GCS fallback (Guidance)
+  When downloading from SFTP, persist the file first (SFTP outbox auto-moves on read). If in-memory handling isn’t feasible, persist to GCS; otherwise process at runtime. Clean up copied placeholder tasks; create purpose-built tasks to avoid omissions.
+
+• Q-Track self-service threshold templates (Sindhuja)
+  Final code review pending; focusing on threshold configurations. ~20+ templates due to solution breadth; templates creation started last sprint and continuing this sprint. Target E1/E2 deployments this sprint; four checks completed last sprint.
+
+• Rewards Integrity build and testing (Team member assisting “woman”)
+  Build changes completed; scripts require testing in E1/E3 and results to be shared with Rachna. Add related tasks in tracking.
+
+RPA, Quantro, and New Use Cases
+
+• RPA use case (Appa)
+  Moving to E3 deployment and conducting full E3 testing; in progress.
+
+• Quantro launch analysis (Appa + Anand)
+  Analysis started; open questions to be clarified with Anand at end of call.
+
+• Multiple use-case deletion and bulk upload (Sachin)
+  Discovery ~70% complete. Decision: provide file-upload module in Q-Track UI. Requires Arthur’s effort; integration feasible post two sprints due to his current load. Design ongoing to ensure bulk upload also closes existing human tasks; target design readiness upcoming sprint.
+
+• Resource coordination for Rewards Integrity and new “Benefits” use case (Rachna)
+  Handover call set for tomorrow; requirements to be shared. Loop in ANSI to coordinate with Suman. Separate kickoff to be set for the new Benefits use case with Sravan and Rachna.
+
+Deployments, RFCs, and Admin
+
+• Deployment planning and RFC (Sachin + Anand)
+  Awaiting stakeholder confirmations by EOD via scheduled calls. Plan RFC for Monday deployment; Friday RFC not feasible. Confirm that old alerts won’t retrigger emails; test in E2 with masked/non-real recipients.
+
+• Misc. metadata/SFTP/ARB documentation (Sachin)
+  Mapped SFTP profile for Raze; completed ADS info metadata setup; finalized JSON file for testing; progressing ARB documentation with Jason.
+
+📋Overview
+
+• Cancellation approval UI and dynamic form changes progressing; one validation-related task blocked pending PR approval with Saurabh/Bhagwan.
+• Timer/escalation emails: DL-only for current release; assignee-specific emails planned next release post-API. Monday deployment targeted; extend timer after validation.
+• Existing alerts remain on old BPMN; perform sanity check; consider parallel BPMN versions (v2 and v3) in HA YAML.
+• ICMV consolidated failure email feature believed enabled; verify and retire individual notifications if confirmed.
+• SADS timer issue fixed; ICMV table fixes ongoing with E1 testing; continue remaining tables next.
+• Enforce SFTP file persistence before processing; use GCS if runtime storage not viable.
+• Q-Track self-service thresholds: ~20+ templates; aiming E1/E2 deployment this sprint; four checks done.
+• Rewards Integrity: builds ready; E1/E3 testing and results to Rachna pending; ensure tasks are logged.
+• RPA use case moving to E3 testing; Quantro launch analysis underway with queries for Anand.
+• Bulk upload for multi-use-case deletion to be in UI; Arthur to integrate post two sprints; design to auto-close existing human tasks.
+• Deployment RFC planned for Monday pending stakeholder confirmations today; test emails safely in E2.
+• SFTP profile (Raze), ADS metadata, and ARB documentation progressing.
+
+🎯Todo List
+
+• Arthur:
+  • [ ] Add reason to the blocked “Insurance analytics requirement” task; ensure accurate blocking details, Today
+  • [ ] Coordinate PR merge support with Bhagwan (onsite) and Saurabh (NY), This week
+  • [ ] Prepare for future integration of file-upload module in Q-Track UI (post two sprints), Next 2–3 sprints
+
+• Sravan:
+  • [ ] Chase PR approvals with Saurabh/Bhagwan during working hours; share status with Sachin/Sindhuja, Today–This week
+
+• Kundan:
+  • [ ] Complete testing of CSV Model CM11 fixes in E1 and proceed to remaining two ICMV tables, This week
+  • [ ] Persist SFTP files before processing; use GCS fallback if needed; update runbooks, This week
+  • [ ] Delete copied placeholder tasks and create accurate task list for current user story, Today
+
+• Appa (Aiyappa):
+  • [ ] Complete E3 testing for RPA use case and report results, This week
+  • [ ] Quantro launch: consolidate questions and align with Anand; share decisions post-discussion, Today/Tomorrow
+
+• Sindhuja:
+  • [ ] Final code review for Q-Track self-service thresholds; continue creating ~20+ templates, This sprint
+  • [ ] Plan and execute E1/E2 deployments for thresholds; confirm four-checks alignment, This sprint
+
+• Rewards Integrity Owner (please confirm owner name):
+  • [ ] Test build and scripts in E1 and E3; share results with Rachna, This week
+  • [ ] Log corresponding tasks in tracking system, Today
+
+• Sachin:
+  • [ ] Raise RFC for Monday deployment after stakeholder confirmations, By Friday EOD
+  • [ ] Sanity check: ensure existing alerts don’t trigger new emails; consider BPMN v3 while retaining v2 in HA YAML; validate in E2 with masked recipients, This week
+  • [ ] Validate timer at 1 day then extend to 9–16 days post verification, Post-deploy
+  • [ ] Confirm consolidated failure email behavior; if active, remove legacy per-flow notifications for ICMV/ICMB, This week
+  • [ ] Proceed with SFTP profile (Raze) testing, ADS metadata verification, and ARB documentation with Jason, This week
+
+• Anand:
+  • [ ] Confirm stakeholder approvals EOD today; greenlight Monday deployment, Today
+  • [ ] Provide/enable API path for assignee email resolution with Rajendra/Satish (for next release), Next sprint
+  • [ ] Address Quantro launch queries with Appa; align on scope/assumptions, Today/Tomorrow
+
+• Rajendra / Satish:
+  • [ ] Supply API details to resolve ADS-assignee to email (Band 40) for next phase, Next sprint
+
+• Rachna:
+  • [ ] Share Rewards Integrity requirements; schedule handover call; track test results from owner, Tomorrow
+  • [ ] Coordinate new “Benefits” use case kickoff with Sravan; invite ANSI for resourcing, This week
+
+• ANSI:
+  • [ ] Coordinate resource handover (Suman) for Rewards Integrity; schedule Benefits use case session with Sravan and Rachna, This week
+
+• Suman:
+  • [ ] Prepare to onboard to Rewards Integrity tasks post handover, This week
+
+• Platform Team:
+  • [ ] Monitor stability post timer redeploy for SADS; support if further issues arise, Ongoing
+
+• All:
+  • [ ] Use test-safe recipient mappings in E2 while validating email flows, Ongoing
+
+Transcription
+
+00:00:05 - 00:03:20 Unknown Speaker:
+
+Get out of the car and talk to me! Now, if you see what I have done, I will ask you if you have time. I have logged in. Hi, Sachin. Hi, Sachin. Hi, Sachin. Hi, Sachin. Hi, Sachin. Good evening. Good morning. Yeah, let's begin with our DSO, Arthur. So I was working on the approval page for the cancellation API. So I started on that. Apart from that, I was also working on the dynamic form changes, where we have to show different fields based on the case type. So there's seven UI changes which I have. These are the two changes we spent today. Have you blocked your validation story? No, it's not the story. If you expand it, there's one task which I marked as block. Which one that are there? Oh, that is for the Oh, insurance analytics requirement.
+
+00:03:20 - 00:04:41 Unknown Speaker:
+
+Uh, if you add the reason to it, I don't see any reason being added. Okay, there should be added. Okay, not sure. Yes, I'll add those because, and okay, I'll add those, and it's basically because of the PR much. So, Sravan, can you do one thing? I'll help you with the details. Anyhow, Sindhuja is going to follow up, but Saurabh and Bhagwan works during your working hours. Can you chase them to get that PR approved? Helping you with respect to all the details over there. Saurabh sits in New York, so you might not find Saurabh over there in the office, but at least I think you would be able to find Bhagwan. I'll give the both of the point of contact to you okay okay yeah okay thanks. Morning, I was working on this SADS place.
+
+00:04:41 - 00:05:52 Unknown Speaker:
+
+So there was some, we can say, issue with the deployment. Not deployment with the timer site. So I connected with the platform team and then we redeployed the things. It's working fine. And after that, I started working on the G-Tracks. So that's that. Currently, I'm working on the ICV use case UH, where we have multiple tables under this use case, like, UH, CSP, Model Score CM11, Credit Score Profile and Deploy Scoring Pipeline CM11. So for these filter conditions, like I'm adding this code fixes where you automate the data corrections and insert the data to the Art fetch table. So currently I'm working on CSV model CM11. I'm fixing it and test fixed it, and I'm testing in E1. So once done, I will pick the remaining two tables in the ICMV use case.
+
+00:06:19 - 00:07:13 Unknown Speaker:
+
+Download the file itself, because once you download the file from SFT, and if there is a connection error, right the data. If you're saving it into a dictionary object, get the file UH system, and then, uh, get it as a.You know? If you want to save it as a dictionary object, then go ahead and do that. But prior to that, get the file itself. Okay, okay, because in SFP, once you read the file, it moves from your outbox folder. Yeah, okay, so just, uh. Even if it is required to save it into that GCP, go ahead and save it. If you are not able to, you know, store it into the in-memory storage, like, you know, reading the file on the runtime. So if you are not able to do it in during that runtime, then save it into the GCS.
+
+00:07:13 - 00:08:24 Unknown Speaker:
+
+But if you are able to do it in the GCS, sorry, without the help of GCS, then go ahead and do it through the runtime. Vice versa. Whichever is feasible, just let me know. Delete those tasks, those are the tasks which was being, uh, added over here, just here to the copy that we did for the user story. Delete those tasks and create your own task over there. So that you won't forget it. Thanks. Hi, Appa. So for the regarding the RPA use case, so that one I'm currently moving to the E3 deployment activity. So I'm trying to do the complete testing E3. So that part I'm currently in progress. And apparently for the Quantro launch, I just started the analysis. So we have few questions, maybe end of the call, we will ask to Anand on this part.
+
+00:08:24 - 00:10:20 Unknown Speaker:
+
+That's all about from my end. Thank you, Ayapa. Hi, Sindhuja. This one, the E1, E2 deployment for Q-Track self-service one, I'm planning for that in the spring. After code review, final code review done, and then I'm finally working on threshold. I found nearly like 20 plus templates because it's a very big one. Uh, so I have to. I mean, started creating templates already in the last print, and I'm working on other templates also, so this print. I target to deploy it for even you to deploy environments with the four checks, that is completely done in the last print. Thank you. Thank you. Thank you. I think that is almost done. Just need to add the profile and submit it. Apart from that, I was helping out a woman with this. Actually, I'm working on rewards integrity.
+
+00:10:21 - 00:11:24 Unknown Speaker:
+
+I have a few changes in the build. Actually done that one, but the script is built. I need to test in E1 and E3, I need to share the results with Rachina. Yeah, so probably since you've started working on that, right? Like try to add the task, okay? Okay. Sachin? Okay, so I started the day with the insurance one when I had a connect with whom with respect to a few queries and that has been sorted out. And I started working on the build part of that along with the metadata registries. Then there was a timer issue which Kundan was facing, right? So one of the issue has been sorted out with respect to the one which we are targeting. And then, uh, for the day when any other result we are expecting that to be, you know, triggered tomorrow, uh, so we'll wait for that on that one.
+
+00:11:24 - 00:12:17 Unknown Speaker:
+
+ANAND I have a primary questions like, you know, when the task is getting assigned right now? It is being assigned to your IDs ID. Okay, so what? I? I tried testing this one. Uh, give me a second, I'll just share my screen. Sindhuja We tried, you know, sending an email like this, but that is something it's not going to work. Okay, suppose that till the time the task is not assigned to anybody anyhow, we are sending the email to the respective stakeholder. Right, the distribution list. But suppose it is being assigned to Anand, right? Then the assignment would be on Anand's ads ID, right? So, you know, with that ads ID. If even if I add at the rate exp. Com it would give us, that's not correct, right?
+
+00:12:17 - 00:13:10 Unknown Speaker:
+
+So actually, I am working along with Rajendra to get these API details. Even Raj asked for the you know, connect with Satis on that one. So this should be going live in the next page when we are targeting to, you know, looping the absolute B40 for the assignee. Okay. So this discovery is still in progress, but for this page, just to, you know, call it out, like, you know, we would be sending on the distribution list, even if the task is being assigned to a certain person. Because we won't be able to, you know, fetch the... I have one question over here. So when we discussed last time, When the alert... gets generated for the first time, we're not sending an email, right? Because that is anyway coming through Q track.
+
+00:13:10 - 00:14:06 Unknown Speaker:
+
+No, no, no, the escalation mail on and the escalation mail you're seeing is going to the entire DL. Yes, right now it would go to the entire DL. Because we don't have a API which can fetch the you know person email ID. Yeah, but that is fine, right? Because see if there is a task that is reserved it, right? So anyway, you will have to send it to somebody. So it should be band 40 plus the DL itself. Right? Yes, yes, that is what happening. What I am asking, suppose the task has been okay? Anand has reserved this task, but take an accent, even the seven days passed, right? So I think Anand should be escalated with B40, right, right? So that part, that phage would go in the next release, when we would be getting these API details from Satish.
+
+00:14:06 - 00:14:54 Unknown Speaker:
+
+Basically, that's what I'm trying to tell you. Sure, I think that should be fine. See, I think that's just an additional information, right? So you're saying, anyway, who's responsible for this kind of thing? Tomorrow, let's just say we can have DL plus the assignee as well. So, exactly so just to, you know, call out so that there should not be any uh, you know, uh, communication gap. Why didn't we do that part? So that was that. So this is something we are still testing and, uh, we haven't planned for A3 deployment because we are still awaiting for your. You know, right, right? So today by, I think today evening, I'll confirm it because we have kept all calls today, uh, whoever has not, uh, I mean, confirmed yet, right?
+
+00:14:54 - 00:15:38 Unknown Speaker:
+
+We have noticed that with them, so we had like two calls in them afternoon to more calls we have in the evening as well. So we should wrap it up by today for sure. Then can we plan for the Monday? Because I won't be able to raise the RFC for upcoming? When, sorry, uh, Friday, then we are, yeah, that should be fine, that should be fine. Okay, okay, then I'll raise the RFC for Monday. And till that time, this timer, which we have, you know, uh, made it for one day. If it works, we'll just need to increase it to nine days or, you know, 16 days. Yeah, yeah, okay, these are the part. And then, uh, those, uh, you know, those ad hoc tasks that I was doing not there in the, you know, rally right now, under my name, Uh.
+
+00:15:38 - 00:16:37 Unknown Speaker:
+
+I was mapping the SFT profile for Raze. One of the metadata setup has been completed for ads info. The file that has been, you know, finalized with JSON, so that is something we are going to test it out and then the ARB documentation, right, which I was working along with JSON. So these are the part that I did today. So one more question. Sorry, I just have one question more, right? So once this goes live, which is on Monday, would it also apply to the existing open alerts? No, no, no. Anything new, right? No, anything new that would be applied to that. That is good also, yeah. Otherwise, there are a lot of open alerts. Yeah, yeah, I got it. And one more thing. Escalation and one more thing on the discovery of the multiple use case deletion.
+
+00:16:37 - 00:17:20 Unknown Speaker:
+
+Okay, so that is almost 70 finalized. We have finalized that you are going to get that file upload module in the UTRAC UI portal itself. But again, for that I need Arthur effort. And he is completely blocked for next couple of spin, so he would be able to integrate that post to sprint. Only. The way. We have saved you the build plan that is number one, and then the, you know, ease part designing. I'm still working on it, I'll try to close it, uh, because while the bulk upload is there, I need to make sure the existing task, the human task, which is being there in the east, right, that should also get closed. So I'm working on the design part, so that should be also ready in upcoming sprint.
+
+00:17:20 - 00:18:09 Unknown Speaker:
+
+Uh, that is one update, so he's aligned with those changes. Okay, okay, uh, now I'm just like, double checking on that part, right? Just just do a double check at your end as well. Like, uh, the existing alerts. It does not trigger any emails, right? That was not, look, uh, the I got it, like in the BPMN. I think the flow gets triggered and then it has to encounter the new BPMN, right? But I think the existing alerts would not fetch that VPM. And probably, yeah, because they are running on the, uh, older instances, right? Yeah, but still, I'm just saying, just just to confirm it once, like, if you just want to do a sanity check, right? Okay, that is a good pointer. Otherwise, what we need to do?
+
+00:18:09 - 00:19:19 Unknown Speaker:
+
+We need to upgrade the VPM in version two, three from two, and, uh, in the H.A YML even don't remove the version two, which is there this timer, this timer with the SSA? Yeah, we need to upgrade the BPMN version to three so that the existing alert, which is already being there in the second version, right, that would remain as it is okay. And, uh, with that, what would happen? You have to keep both the BPMN in your A stored YML Version 2 and Version 3. Okay, I'll, I'll check that one on and then, yeah, just test it. I mean, whatever configuration is mentioning, right? Yeah, because it already. You'll have a lot of alerts, open alerts and then create a human and see if you're getting a lot. So I'll I'll confirm you on that.
+
+00:19:19 - 00:20:16 Unknown Speaker:
+
+But also, if you're testing in E2, don't use those actual emails, right? We are not doing I'll share my screen, we are not doing so we. We made some different folks, like, you know, IFA being the B40 or B45, right? So even this this getting triggered, right? So yeah, this is B40 email number one, right? So that has been removed, this is the subject mail has been updated and then are waiting for B45. So that would suit to a third. So this, this. I have asked him to reverse it. No, no, I asked him to reverse it. Your, uh, B40 would appear in CC and the distribution list appeared over here. So in the next mail, you know, you will see that after that. We I already reviewed that, and I already said that, uh.
+
+00:20:16 - 00:21:10 Unknown Speaker:
+
+Communication to Kundan today, Anand. Okay. Okay. Now, Aipa, you can go ahead with that launch query that we discussed in the evening. Rest of the folks, I think I need Jason, if anyone else, I mean, just one question before you start, Rachna, do we have the requirement for rewards integrity or for other use case so that we can start leveraging Suman and Sravan? Can I ask a question? I have set up one call tomorrow. So that one I can hand over. I have the requirements. So that I'll send to you at some time. And on the call tomorrow, we can discuss if there are any doubts in the code or anything. Okay. Then can you do one thing, loop in ANSI so that C would coordinate with Suman to pass on the information.
+
+00:21:11 - 00:22:04 Unknown Speaker:
+
+And then the new... use case which is coming up, right? Set up a call with me and Sravan and then we can go through that requirement. The benefits one, right? Yeah, I'll do that. Sachin, just one more thing. Earlier we were doing this thing on ICMV use case, right? That we were planning to collate all the failure mails and send a combined one for that. Like what happened with that? I think that was in progress but the mails are still going individually. Okay, oh so, uh, are we getting a consolidated mail? Also? I didn't see. So can you? Can you start stopping those individual emails? Yeah, I didn't see any consolidated button. Can you just share it once ever? Like if you see it handy? So yeah, I just want to see your family.
+
+00:22:04 - 00:23:06 Unknown Speaker:
+
+Did we receive the recently Apple? Recently? I didn't receive any. Well, it's a past communication. I saw that one. Uh, because only failure only we are getting. The consolidated one is that not enabled yet? Like the consolidated one is not enabled yet? No, that has been enabled, right? As per the communication. Can you confirm? Yes, Yeah, yeah, so that was we enabled in production, actually? Uh, but we are waiting for the consolidated email. Like, uh, failure and trade all the, uh, that report. I'm just waiting for that one. Any failed scenarios will happen. That's what I was wondering, because there are certain like individual emails coming up, so let me check them. Yeah, you could just check and confirm to me later. So, uh, even, uh, I don't see the ICMB getting failed.
+
+00:23:06 - 00:24:04 Unknown Speaker:
+
+From yesterday, I don't get any email. Yeah, like, not that recent, but I think this task was completed long ago, right? That's what I was wondering. It's been quite some time and in April we have received many, many failures for this close case. Okay, okay. So if I just cross check that one. And then, uh, if we are getting the constated one, then we just need to remove that email notification from ICMB wherever we have added that one. Yeah, Okay, and in case you feel you don't have bandwidth, park it to NC. Yeah. Okay, yeah, thank you. So I need, Jason is there, right? Yeah, Jason, Anand, and Aipa, and Samin, you guys can stay back. If nothing, feel free to drop off. Aipa, you can go ahead. Yeah, sure. I think just give me one second, I'll be back. Yeah, yeah.
+

@@ -1,0 +1,235 @@
+2026-04-21 GitHub Actions Migration and Deployment Updates
+
+Creation Time: 2026/04/21 18:01
+
+
+📅About Meeting
+
+• Date & Time: 2026-04-21 18:01 (Duration: ~24 min)
+• Location: No relevant content mentioned
+• Attendee: Sachin, Anand, Poonam, Athar, Nirmal, Ayyappa, Prithvi, Rachana (via update), Kundan (mentioned), Home/Houm (platform contact), Amman/Aman (platform contact), Sindhuja, Suman; others implied but not named
+
+📒Meeting Outline
+
+Deployment & CI/CD Migration
+
+• Backend/UI deployments migrating to GitHub Actions
+  • Platform team has moved deployments from Jenkins to GitHub Actions; backend was already on Actions, UI now also mandated on Actions post 15 April deadline. Jenkins no longer usable for E1/E2/E3 deployments.
+• Branch integrations and PR merges
+  • Ongoing integration of platform-raised PRs across dev/testing branches; local verification across brands to stabilize future deployments.
+• QTrak/TQIM pipelines
+  • Confirmation that data monitoring (QTrak/TQIM) deployments also use GitHub Actions. Addressing incomplete QTrak JSON content via a workaround before E1 testing.
+
+Feature/Use-Case Progress
+
+• Field key validation and Pay Now, Pay Later issue
+  • Due to missing field key in E2, testing performed in E3 using dummy keys; pattern validated. Hierarchy-raised issue has a suggested approach; further sync planned today to finalize requirements (incl. big data radio operator usage).
+• BPMN modify rule & reject flow
+  • BPMN integration for modify rule completed; requires exact BPMN name configuration. Reject flow tested end-to-end locally; queued for deployment.
+• ASC use case build
+  • Build initiated per Sachin’s request; ongoing.
+• Lumi API integration
+  • Issue resolved; deployed on E1 with 200 response from Lumi. Athar to integrate; target to see table population before Thursday call.
+• Contra CMD use case (data validation)
+  • 975 records under test; 17 records show data ambiguities across similar forms. Plan to review with Alan at 08:00; completion of E2 testing expected after clarifications.
+• Automation job & SFTP setup
+  • Automation job deployed to E1; SFTP folder added. E2 testing in progress; plan to promote to E2 today.
+• DQ repository/test table support
+  • Support provided for missing value check data movement into DQ repository test table.
+
+Governance, RFC, and Testing Evidence
+
+• RFC requirements and evidence policy
+  • For any E3 deployment, E2 evidence is mandatory to obtain RFC approval. Team must attach test cases/evidence (process instance IDs, tags/BTML run details). Past RFCs were accepted for Monday, but future RFCs will be blocked without E2 evidence.
+
+Thresholds, Data Inputs, and Rule Adjustments
+
+• Partner-driven threshold updates
+  • Request received to update thresholds for five rules due to excessive failures; involves expected value changes. One rule needs clarity on using current vs. last month data (missing full 25 cycles). Follow-up via email post-call.
+• Production data issue (PACE product partner DAG ID)
+  • Issue reproduced and fixed in E1; moving to E2.
+• Lower/upper value nulls in Contra launch
+  • Troubleshot in E1; nulls causing absent data in lower environment. To discuss with Anand at 08:30 whether to move changes to E3.
+
+Dependencies, Risks, and Coordination
+
+• Metadata dependency risk
+  • Awaiting metadata from “Home/Houm” EOD; potential build delay if not received by today/tomorrow. Concern raised with Amman and Home.
+• ACE Self-Serve review
+  • Initial review from ACE platform team is okay to start build; second review planned.
+• APC/Benefits data and story planning
+  • APC Phase 2 expectations clarified: one DQ ID for FC1. Benefits data inputs received; need to create and assign story (~5 points) for implementation (14–20 degrees of data). Assignment to be handled by Sachin; Sindhuja to defer to Sachin.
+
+Upcoming Releases and Scheduling
+
+• Go-lives targeted for today
+  • Rewards Integrity and AFC – Travel Bank to go live. Ensure field key handling in final deployment (dynamic value as needed). Share job execution runbook/schedule.
+• RPA thresholds
+  • New threshold checks received from Aman; edits pending before go-live.
+
+Technical Deep-Dive (Query/Partition Logic)
+
+• QTrak condition and row_number usage
+  • Discussion on query using run_date minus 3 months, model_id filter, and partitioning with row_number() = 1. Current implementation may not align (no row_number logic in extraction to layer class). Requires code review to reconcile partitioning/“latest” logic with CM11 score value/population/run_date fields.
+
+📋Overview
+
+• E3 deployments must have E2 evidence with test cases; future RFCs will be blocked without it.
+• GitHub Actions is now the sole deployment mechanism for backend and UI; Jenkins decommissioned for E1/E2/E3.
+• Lumi API working on E1; integration by Athar expected to show table population before Thursday.
+• BPMN modify rule integrated; reject flow validated locally and ready for deployment.
+• Threshold updates for five rules requested; one rule needs period clarification (current vs last month).
+• Contra CMD testing progressing; 17 records need clarification; meeting set with Alan at 08:00.
+• QTrak JSON incompleteness addressed via workaround; aim to complete E1 deployment today.
+• Production DAG ID issue fixed in E1; promoting to E2.
+• Metadata dependency could delay build if not received by EOD; stakeholders notified.
+• Rewards Integrity and AFC Travel Bank targeted to go live today; ensure field key handling and scheduling details.
+• RPA thresholds update pending edits before release.
+• Query logic with row_number partitioning needs code review to align with current extraction approach.
+
+🎯Todo List
+
+• Sachin:
+  • [ ] Create/assign story for Benefits data implementation (~5 points), today
+  • [ ] Coordinate ACE Self-Serve second-round review scheduling, this week
+  • [ ] Assign AFC items (e.g., ANSI, Suman) per received inputs, today
+  • [ ] Monitor metadata delivery from Home; escalate if not received by EOD, today
+
+• Anand:
+  • [ ] Review and approve today’s go-lives (Rewards Integrity, AFC – Travel Bank) and confirm field key handling and job schedules, today
+  • [ ] Join 08:30 discussion on Contra launch null lower/upper values and E3 move decision, today
+
+• Athar:
+  • [ ] Integrate Lumi API from E1 and validate table population before Thursday call, by Thursday
+
+• Poonam:
+  • [ ] Validate Lumi API outputs post-integration and confirm table population status, by Thursday
+
+• Team (All Developers deploying to E3):
+  • [ ] Attach E2 testing evidence (test cases, process instance IDs, tag/BTML run details) to all future RFCs, ongoing/mandatory before any E3 deployment
+
+• Engineer working on Pay Now, Pay Later (owner not explicitly named; likely initial speaker):
+  • [ ] Connect with hierarchy/requirements owner today regarding big data radio operator usage; finalize approach, today
+  • [ ] Proceed with implementation after clarification and update team, this week
+
+• BPMN owner (modify/reject flow; speaker indicated work complete):
+  • [ ] Configure exact BPMN name and deploy modify rule; deploy reject flow to target env, today
+  • [ ] Validate post-deployment across brands, this week
+
+• Nirmal:
+  • [ ] Complete E2 testing of automation job and promote to E2, today
+
+• Ayyappa:
+  • [ ] Support Prudhvi on missing value check data to DQ repository test table, ongoing
+  • [ ] Promote PACE product partner DAG ID fix to E2, today
+  • [ ] Review partner email on threshold updates and month selection; sync post-call, today
+  • [ ] Join 08:30 decision meeting on Contra launch E3 move, today
+
+• Prithvi:
+  • [ ] Resolve table/column creation issues; apply workaround for incomplete QTrak JSON; complete E1 deployment with all changes, today
+
+• Contra CMD owner (Shamit):
+  • [ ] Review 17 ambiguous records with Alan at 08:00; complete E2 testing post-clarification, today
+  • [ ] Share findings and readiness to proceed after meeting, today
+
+• Alan:
+  • [ ] Join 10–15 min review with Shamit at 08:00 to resolve data ambiguities, today
+
+• Rachana:
+  • [ ] Validate with new partner thresholds (five rules) and confirm month-period assumption; revert with confirmation, today
+
+• Platform/DevOps liaison:
+  • [ ] Merge platform PRs related to GitHub Actions; verify deployments across environments/brands, this week
+
+• RPA owner:
+  • [ ] Apply new threshold edits from Aman and prepare for release, this week
+
+• Query/Partition logic reviewer (QTrak/CM11):
+  • [ ] Review row_number()/partition logic vs current extraction to ensure “latest” selection aligns with CM11 fields; propose fix if needed, this week
+
+Transcription
+
+00:00:15 - 00:02:19 Unknown Speaker:
+
+Hey, hi, everyone. Can you please start with your updates? As we don't have the field key in E2, I tested it in E3. So I'm inserting some dummy field keys from E2 and validating that. So that pattern worked out. And on the pay now, pay later, we had raised the hierarchy for the issue. So they have suggested an approach. So on further discussing on that, we will be connecting with them today on that. And also, there was a use case as part of the ASC, which has to be implemented. So, that part, Sachin had asked to look into that, so I had started with the build for that. Yeah, those were the things I was working towards in the job. Have RFC for today, if you are done with the like P2 evidence we do have, we do have RFC and I hope we do have action.
+
+00:02:19 - 00:03:31 Unknown Speaker:
+
+Yeah, yeah, yes, we have. Okay, so such an actually, uh. We had committed to our partners for like, uh, yeah, just add the test cases. Okay, uh. Just before you proceed to other, uh, just one update on and then the change, you are already there in that group, right? Uh. So they have asked to use some, uh, you know, big data radio operator, so it was going through the code. But I still need some clarity and that's the reason I asked and said, you should call me. That person, uh, has, uh, what exactly he is seeking for? And then post that. Already, that pain of the letter issue would be resolved once, you know. We understand the requirement from this. So I worked on the integration of the BPMN for the modify rule.
+
+00:03:32 - 00:04:27 Unknown Speaker:
+
+We just need to configure the exact BPMN name so that part is done. But from that, the platform team has moved the deployment from Jenkins to Actions. Initially, we were using Jenkins. So I'm working on that. PRs that there is, so I am merging those and then testing locally with the different brands so that our deployment goes well for the future. So these were the updates, also for the reject one. We have tested it from end to end in local and I will be deploying the changes so it's working as expected. That's all from my side. Just one more question So actions? Do you mean GitHub actions? Yes, okay, and is this a change only? Like, is this related to self-serve, front-end or the DQM all the portals?
+
+00:04:27 - 00:05:27 Unknown Speaker:
+
+So currently, I'm not sure this GitHub action is being used from last one and a half years. No, no, so what's happening? Initially, we used to deploy our UI using Jenkins. Yeah, I got it, but in recent days, the UI deployment will also be going through the Jenkins build. What was happening, the front end build might have been using the same Jenkins build. But this GitHub access was being implemented almost one and a half year back. So it might be you started using it recently or whatever the organizational standard but for the backend deployment those are going through the GitHub access. Exactly. That's what I'm mentioning. For the UI, we were using Jenkins builds. Backend used to get deployed through actions only, but recently they have moved all the deployment to actions only.
+
+00:05:28 - 00:06:29 Unknown Speaker:
+
+So now we'll not be able to use Jenkins to deploy our changes to E1, E2, and E1. This was recently done, and the deadline was 15th April. So from 15th April, there will be more deployment going through Jenkins. So we have to do it only using actions. There were a couple of flow and changes were requested from the team, from the platform team. They raised a couple of pairs. So I'm integrating those in our different branches, basically on the developer and testing it. Awesome. Great, thank you. And Sachin, is the Qtrak code as well moving from E1 to E3 to Github Action? Uh, track, uh, which one? The data monitoring tool. Yeah, right, uh, that is going by that, uh. Github access only, right? And for the department that we are performing, yes, yes, yeah, correct.
+
+00:06:29 - 00:07:34 Unknown Speaker:
+
+Even the backend build on in, right, that we are doing for TQim, right, that is even through the GitHub. It might be the recent change for the, you know, UI. They might have not, uh, configured it, then they started it from this year. Okay, thank you, thanks, and then you can wait. So I was working on this Lumi API integration, so I was facing some issue that, you know, fixed it. And then I deployed on E1 and able to get the response from the Lumi site. And so this was regarding that Lumi API, which Poonam was asking, right? So there were challenges from that, but it was being sorted out just before this call. We received that 200 response. So this is available on E1 now. Athar can integrate it.
+
+00:07:34 - 00:08:27 Unknown Speaker:
+
+And then, you know, maybe before that Thursday call, we should be able to see that at least the table getting populated through that Lumi. We need to see, like, how fast that would integrate that. Uh, and meanwhile, I will request you this SL escalation one, right, uh, and the validation and launch. If you can just just accept these both of the shows, because these are already like, Yeah, I'll do that, yeah, uh, we can move ahead. I know, uh, about, uh, you know. His update was very short. We were struggling from yesterday. So and then has put lots of effort to, you know, close it out so it might seize this one liner. But there are challenges, so we were on a continuous call to sort it out from yesterday, so that has been done.
+
+00:08:27 - 00:09:16 Unknown Speaker:
+
+Wherever there's a E3 deployment, right? I'm requesting the team to add test cases, um, because if this goes into audit, the entire team will be know it's not about audit. I have given a clear, you know, clear direction. Even we are not going to support them with the RFC, because in order to create the RFC now, we need our E2 evidence to get that RFC approved. If we don't have that evidence, the test cases and all we, I'm not sure if we need to document it, but at least that evidence, right? If somebody running through the tag or somebody is running through the BTML, right, those process instance live instance ID details should be required. Even to create a RFC, so without that, any of E3 deployment is not possible in future.
+
+00:09:16 - 00:10:31 Unknown Speaker:
+
+No, these were previous instances for which, you know, we have created the RFC last week for yesterday's deployment, that's for Monday deployment. And that's why it went away, right? But, uh, when I have tried to create the RFC for Thursday, I required that, uh, E2 evidences. So that is the reason I already communicated this to Team yesterday and I have already posted that over the channel. Also. Actually, going forward, you would be seeing those test cases living across. I hope team, please take it seriously and now start doing it for these two cases. We can. We can accept this RM because we have validated in the lower environment, but in future we need to attach those evidences. So currently I'm working on contra CMD use case and actually there are total 975 records, like out of 975 records.
+
+00:10:31 - 00:11:51 Unknown Speaker:
+
+I have actually have few few doubts, like with respect to the data on 17 records, which is in two different similar forms, so I just want to check those. So once these 17 got also get tested. I think we are good to move to, like after completion of V2 testing. Thank you, Shamit. Just a question to Alan. So, Alan, if you can give me some time, like 10 to 15 minutes, after this call, we can sort this so that I can work on that the rest of the day. Yeah, sure, Shamit, we can do that. Thanks. Till what time are you locked in? I will be there until 9.30. Okay, okay. Then can we connect at 8 probably? Okay, sure. I will schedule a call at 8. Sure, sure. Yeah, Nirmal, please go ahead.
+
+00:11:52 - 00:12:54 Unknown Speaker:
+
+Yeah, so I was working on building this automation job and. I had deployed into the E1 environment and added the folder for the same folder in SFTP. I am testing now in E2. Once the testing will be completed, I will move the code to E2 today. Thank you, Nirmal. Hi, Appa. Rachana is updated. Like, maybe, uh, she was doing some validations, so maybe she will give the, uh, maybe that after the validation. Is it a mail with you? So we got some additional inputs from our partner. Uh, just check your mail after the call. So basically, they are requesting a threshold update because many of the rules are failing, right? So for five of the rules, we need to do a threshold update. It's simply like a value change in your expected value, so that should be like a short thing to do other than that.
+
+00:12:54 - 00:13:43 Unknown Speaker:
+
+On one of the rules, he was asking if we have taken the current month data into account or the last month. Because there were not, like all 25 cycles in the actual value. So that also, like, once you check the mail, after that, we can discuss on that. Yeah, sure, I will go to that. Yeah, we will connect after this call for this. Yeah, yeah, and uh. So, coming to the for the launch use case for the Contra 1, this one today I have just troubleshooted in the even environment for the lower upper and lower values are getting null value. So, due to that data is not available in the lower environment. So, maybe we will come with Anand and A30Con, we will discuss we can move these changes to the E3 or not, maybe we can discuss on that part.
+
+00:13:44 - 00:14:50 Unknown Speaker:
+
+Yeah, and apart from that one, I'm just supporting to Prudhvi for the missing value check data moving to the DQ repository test table. That one, and separately, I'm just working on the production issue for the PACE product partner, DAG ID, as we discussed yesterday. So that one, I have fixed some changes. Today, I have reprojected that issue in the E1 environment, and I fixed that one. So now everything is working fine. So now I'm promoting to the E2 environment. Yeah, that's all about from my solution. Thank you, Ayyappa. Prithvi. Hi, Sandeshya. I worked on that deployment to even environment. There are some challenges with respect to the table and column creation. And then the Qtrap JSON file is not having complete content due to some restrictions. So I had to do some testing before I actually, uh, give it for testing in.
+
+00:14:50 - 00:15:53 Unknown Speaker:
+
+Even so, I'm working on that, such as given me some inputs how we can actually, uh, do the uh. I mean, that QTrak jSON file is not completed, right? He has given me a workaround, so I'm working on that now. So I'm, yeah, I'm hoping to close it by today. Even deployment with all the changes. Prithvi, Sachin? First of all, I was looking into that issue which Kundan was working, right? So that was something we are working on today. Then I was having a discussion with Nirmal, with ANSI for their core reviews. Insurance, I had a connect with home. There is, you know, it might be a blocker for us because, you know, we are waiting for some metadata details. Home confirmed that we would be receiving it by, you know, EOD.
+
+00:15:53 - 00:16:43 Unknown Speaker:
+
+But if there is something not, uh, you know, provided by today or tomorrow, right, then the bill would get delayed for that. So I already raised that concern with Amman and Home on that they haven't joined the call. I think, uh, that is one part which I was working on. And then there is a easy use case onboarding. Okay, this is one which I had a word with the Lumi team and I am waiting for a call with the rest of the folks. Yesterday I was having a review call for the self-serve from the ACE platform team. So initially they have said okay, but to start with build and then they would do a second round of review for that self-serve which we are building right now. Those are the major update.
+
+00:16:47 - 00:18:29 Unknown Speaker:
+
+Yeah, that is the data ingestion issue that is still pending. We are still working with the platform. They have closed the incident today but industry wanted because the conclusion that they have provided is not acceptable right now. Is only three? No, No, I think that is right. How's that DQ ID, basically? Rajna That that was the expectation right for the FC1, correct? Sorry Sachin, can you come again? Uh, APC phase two, it was just one, that one DQ ID for just one. Yes, yes, I heard five, uh, five. What were you mentioning? No, no. So when is having five story pointer over this APC? But, uh. So already being taken care by ANSI. And Rachna, we did not receive the input for benefits data, right? So even... Yeah, we have such an... It just came.
+
+00:18:30 - 00:19:18 Unknown Speaker:
+
+I'm not sure if you are in the mail. You are in the mail, so we have received that. Okay. Then, you know, assign this AFC when we need to just... For example, AFC went to ANSI, and then for Suman, we have to create a story call with five-story pointer for that benefits data. Because that benefits data is having, I think, uh, 14 to 20, uh degrees, right? So someone can work on those 14 and then seven can work on six. So that is something, uh, I'll, I'll do that. Uh, Sindhuja, leave it to me. Yeah, and again, uh, just one request like this rewards integrity. Also have been signed up, right? So please accept this story. That is number one and the AFC UF Travel Bank, which ANSI was meant.
+
+00:19:18 - 00:20:30 Unknown Speaker:
+
+Um, we need to add the field key in the final, in the final deployment. Feed key is not there. Yeah, I think, uh, it's there such in the production, that feed key it is there. So man, so just twist it if required. Yeah, yeah, yes, just he need to dynamically that value only. That's a lot of medical engineering. Yeah, correct, correct, okay. And also shared the uh for the job execution rules. Uh, when to schedule those things. Sure, sure, so such in rewards, and it is live now. Yeah, it would be like today, uh, and everything would be like, okay, reward, integrity would go, AFC, your travel bank would go. Okay, that was only UI travel. Yeah, these two would go live, Anand. Okay, and what about RPA? RPA, we received the new threshold check, right?
+
+00:20:30 - 00:22:32 Unknown Speaker:
+
+We have some edits to go in that, Anand. Okay, sure. Yeah, I saw Aman's mail as well. I think those changes are... Yeah, great. Thank you. I think we have... Anyone having any other questions? No, nothing from my side. Okay, should we continue on this call? Um, let me share my screen. If I have been sure one is copied, someone is not copied. Okay, this one, right? Yes, correct. Okay, okay, I need to forward it. Otherwise you won't get that, so just go through this one so that you guys can coordinate. So, these are the 17 or 18 records which I have mentioned. So, this one I can fix it manually because this run date is some issue. So, if you come to this pipeline CM11 table, like if you see here.
+
+00:22:33 - 00:23:26 Unknown Speaker:
+
+So, this is also like, but let me show you the two track condition first. So, if you go to Q-trax, so this is the one. So, Here, what they are trying to do is like the run date is 3 months back and the model ID should be this one. And where whatever is like, they are actually doing some subquery based on that they are actually partitioning. So, here they have given something like this, where row number equal to 1, because like we are not doing any row number or like anything right here, like we are just whatever the education table we want like all that and this like those values and this is will go to the layer class for this table right. So this row number equal to one should be, you know, it should not be expected, right?
+
+00:23:26 - 00:23:54 Unknown Speaker:
+
+Um, yeah, I mean, this has to be looked into the code once again. So can you go back to the code ones? Yeah, so if you see here, oh, this is the right. Yeah, yeah, just go to the right ones. Yeah. CM11 score value, row number, population, run date. Okay, and then the latest data is like partitioning on CM11.
+
