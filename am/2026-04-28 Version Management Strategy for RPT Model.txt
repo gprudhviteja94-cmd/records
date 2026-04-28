@@ -1,0 +1,154 @@
+2026-04-28 Version Management Strategy for RPT Model
+
+Creation Time: 2026/04/28 18:04
+
+
+📅About Meeting
+
+• Date & Time: 2026-04-28 18:04 (Duration: ~25 minutes)
+• Location: No relevant content mentioned
+• Attendee: Ravinder, Ashish, Mishra (to be informed), others not explicitly named
+
+📒Meeting Outline
+
+Version handling for RPT model (API, UI, and data model)
+
+• API strategy (single vs multiple calls)
+  • Team discussed avoiding a separate API just to fetch the current version. Proposal: the primary RPT load/details API should return both values in one response: the selected/version-at-creation and the current system version.
+  • Agreement to combine backend logic so the load/details API includes: version (selected/active) and base/original version, plus currentVersion for the platform.
+
+• Version definitions and fields
+  • Standardized field semantics:
+    • version (a.k.a. selected version): the active version user is working on and that gets updated on autosave when user switches.
+    • baseVersion (a.k.a. original version): the version from which the RPT was duplicated/created; immutable and never changes.
+    • currentVersion: the latest available platform/model version; used as an option in the dropdown.
+  • Naming to be finalized (baseVersion vs originalVersion), but behavior is confirmed.
+
+• Dropdown behavior and options
+  • On initial load: show two options only—baseVersion and currentVersion.
+  • Default selection is version from the RPT model (initially equals baseVersion on first load after duplication).
+  • After switching to currentVersion and autosave, UI refreshes with updated model and version equals currentVersion.
+  • If version equals currentVersion post-switch, dropdown still shows two options: baseVersion and currentVersion (so user can revert to base). No historical “last used” or intermediate versions are kept.
+
+• Autosave and UI refresh
+  • When user selects currentVersion, trigger autosave; backend returns updated model JSON reflecting the new version schema (including any new fields).
+  • Front-end re-renders the UI on the same page using the returned model; selected version persists as version; baseVersion remains unchanged.
+
+• Data persistence and JSON model
+  • Autosave response must return the full updated model JSON specific to the RPT (not just a diff or reliance on generic version configuration).
+  • Store and honor both version and baseVersion in every response/save cycle. baseVersion is read-only; version is writable based on user selection.
+  • Ensure newly introduced fields from higher versions are included in the model JSON even if not immediately filled by the user.
+
+• Scope and constraints
+  • Only two dropdown options are ever presented: baseVersion and currentVersion.
+  • No support for stepping through intermediate versions (e.g., V3, V5) or maintaining “last used” version state.
+  • Switching back and forth is allowed only while the RPT is in Draft state.
+
+Edge cases and defaults
+
+• Newly duplicated RPT with no edits
+  • version defaults to baseVersion (the duplication source).
+  • Dropdown still shows baseVersion and currentVersion; no autosave occurs until the user switches.
+
+• Unavailable dropdown in certain environments
+  • Noted that deployed/stage UI discrepancies currently hide the dropdown; once environments align, dropdown will reflect baseVersion and currentVersion properly.
+
+• Post-switch equality scenario
+  • Even when version equals currentVersion after autosave, retain dropdown with both baseVersion and currentVersion so user can revert to base while in Draft.
+
+📋Overview
+
+• Adopt a single RPT load/details API that returns version (selected), baseVersion (immutable), and currentVersion.
+• Maintain baseVersion permanently as the original duplication version; never mutate it.
+• Treat version as the active/selected version; update it on autosave when user switches in the dropdown.
+• Dropdown always shows exactly two options: baseVersion and currentVersion; no intermediate or “last used” tracking.
+• On version change, autosave must return a fully updated RPT model JSON reflecting the selected version’s schema; front-end re-renders accordingly.
+• Switching between baseVersion and currentVersion is allowed only in Draft state.
+• Default selection on first load after duplication is baseVersion; no selection memory beyond version field is needed.
+
+🎯Todo List
+
+• Ravinder:
+  • [ ] Update front-end to render dropdown with exactly two options (baseVersion, currentVersion) and default-select version on load; trigger autosave and full UI refresh on change, immediate
+  • [ ] Ensure front-end persists and displays version and baseVersion from API, and never mutates baseVersion client-side, immediate
+
+• Ashish:
+  • [ ] Extend RPT load/details API to return version, baseVersion (immutable), and currentVersion in a single response; remove dependency on separate current version API, by EOW
+  • [ ] On autosave/update, return the full, merged RPT model JSON for the selected version (including any new fields), by EOW
+
+• Mishra:
+  • [ ] Confirm and finalize field naming conventions in contract (version = selected, baseVersion = original, currentVersion = latest) and update API spec/docs, by next working day
+
+• Backend Team:
+  • [ ] Ensure baseVersion is set at duplication time and never updated thereafter; version initializes to baseVersion, by EOW
+  • [ ] Enforce Draft-only switching logic; validate and reject version switches when not in Draft, by EOW
+
+• QA:
+  • [ ] Test flows: initial duplication, switch to currentVersion with autosave and UI refresh, revert to baseVersion, equality case where version == currentVersion, and environment parity for dropdown visibility, starting next sprint
+
+Transcription
+
+00:00:36 - 00:01:32 Unknown Speaker:
+
+So what we are doing is right now. RAVINDER We are on the model, we have two things that are coming. So there is this API since my local will take a little bit amount of time. What we are doing is sending the version over here as this. And then we are also trying to call another API which is giving us the current version, so there is this another API which give us the current version. And on the basis of this, we create a drop down which will be shown since, like the UI is different. Deployed one, the stage one is, so we are not able to see the drop down. But the two top down values will be the current version and the version being used. Okay, yeah, so sorry to cut to the day, sorry to cut here.
+
+00:01:32 - 00:02:15 Unknown Speaker:
+
+So so we have a separate area just to give the current version. Yeah, can't we include in the same API? What is the current version? Why do we need to make another network? The current version is not the one that will be associated to the RPT, right? The RPT might be like, for example, let's consider that the RPT was created at a version of 20. So here the version that will be defined will be the version at which it was created, right? So right now we see both of them as same, but like on the latest page when we have more versions coming in. It will be something different, right? So let's consider that this was 20 and the current version was 22.07 coming from that area.
+
+00:02:15 - 00:03:01 Unknown Speaker:
+
+On the basis of that, we show a drop down where we show the values as the one that we get from this. Let's consider this as an example of 20 for now, and the current one as 22.07. Okay, now, whenever a user comes, uh, we, uh. The by default value that will be selected for him will be the 20 version, which is the one that we get on the RPT model behind. Okay, and then we have an option where you can open the drop down, Uh, we can go and select the current version. Okay, when he selects the correct version. What we have to do is since there will, there might be some model changes, some new new fields added or not. We have to spin up the UI again on the same page and basically refresh it.
+
+00:03:01 - 00:03:53 Unknown Speaker:
+
+And uh, where? Uh? Apparently we will get the response now, with the new version changed over here as 22.07. Okay, now, since we were drawing the drop down on the basis of this and the current version, now both of the versions are same. Right? So now the drop down will have only one value, which will be 22.07. Which is the version used as well as the current version, right? So so we just wanted to check, do we actually then require that drop down to be enabled? Because there is a like, a correct ones are, uh, like. Analogy that we have is that if a user goes and he's on the pub, he's using some old version, let's say 20. And then he went and made a change to 22.07 the UI refresh, the version changed for him.
+
+00:03:53 - 00:04:42 Unknown Speaker:
+
+At 22.07 the new fields got added. Does he has an option to go back to the older version. So we need to, yeah, we need to .  So it's not like once you select it, it won't go back. But then if that has to happen, then we have to, for example, let's say the previous version was 20, then there was another version that was released as 21, and then the new version right now is 22.27. Right, so. Which is the version and he he never switched to 21 he directly switched to 22. So do we need to maintain the last version that he was on, or the last version that is available? No, no. So when he comes to this page, right? He can have only two options. There is no what is the last version.
+
+00:04:42 - 00:05:26 Unknown Speaker:
+
+There is no last version, only two options. One is what is the current version, what is this version this is duplicated from? That's all right. So once he, once we are at the initial, we show that. But whenever he went and changed. On the drop down as 22.27, which is the current version, there will be an autosave that will happen, right? So now on the autosave, the version will be changed for him as 22.47. And then only we can go and show him the new fields, the old fields that are not there to get him. So this model will now hold the value as 22.47 so how do we get the older version that he needs? That's what I'm saying. So, so we need to maintain on the same API, we need to maintain two things here.
+
+00:05:26 - 00:06:18 Unknown Speaker:
+
+Once you load, like while loading itself, right while loading this page, right when you're landing into this page. And somehow, that API should give both the original version and current version, so two, two, we need to combine and we need to get it. We don't need a separate update, that's the reason I was asking, Do we really need a separate API to just get the current version? Okay, When you are loading this API, this draft, we should have two options. We can combine in the back here that we can get both the current and the current version. So that API will give you two options so that you can show in the drop-down. So once you auto-save, you always save those two things along with the model, the original version and the current version.
+
+00:06:21 - 00:07:00 Unknown Speaker:
+
+Right, but then how to understand which was the last that he of like which is the one that original version of the connect first. Yeah, what he chosen I mean I think we need to make them with the plan. So can we tell Mishra that this is possible while copying instead of like whatever we have we keep it that way. We just add one field, which is the base version, which will be the replica that gets, uh, while duplicating the value of like. Let's say it started with 20, so the base version will be 20, the version will be 20. And whatever we change, we always keep on changing on this version. We don't change anything on the base version, so we always have the version which it started with.
+
+00:07:06 - 00:08:01 Unknown Speaker:
+
+This is for, not just for templates, for any of the operating model that we create. How do I get two versions? Like for example, I came from 20 version over here and now the user came in. When he started with it, it was 20 version. Now it is 22.27, that is which. But in the drop-down, I also want to show the base version that he started with as an option for him to go back. So like now what is like for the duplicate version how we are doing like now duplicate version we are getting the original version what he created we are getting in the details page right. We are getting in details page in this one. Yeah details API. Okay. Yeah we are getting in details API right.
+
+00:08:02 - 00:09:02 Unknown Speaker:
+
+So same thing like when you're auto saving, so we send that same version. Okay, not here. Can you click on that? So here like, we are right if you go to that response, yeah, so here like. We are giving the version okay so and say, and for more data, we are giving as current version, right? Okay, so, same day. Like, uh, template also. So when we are creating for this RPT model only, like now, he switched from uh, previous version, let's say 22, from 20, he moved to 22.27. You, uh, we did an auto save. Now whatever the RPT for the ID will give me the response, will we give me the response? Version as the new that he was selected? Right? So now, how do I get the old one that is there.
+
+00:09:02 - 00:09:47 Unknown Speaker:
+
+Old one from which I changed. I changed it from 20 to 22, right? So, how do I get that which was the older version 20 which I have to show you in the program that can go back and forth? How do I get that? When it is in auto save, right? So, in that case, we need to add one more field, Ashish. Base machine. Yeah, base machine. Base version and that base version is never something we will change. Whatever the drop down values we keep on changing, we will only change this value. The version field will keep on changing the values over there. The base version will act as another drop down value base version and the current and whatever this value will pass on to the other version.
+
+00:09:47 - 00:10:43 Unknown Speaker:
+
+Yeah, but so suppose once you have selected the base, like first time when you are landing. It is the base version in V1, suppose, and the current version is V2, right? That office is duplicated from V1, right? And now, now, you can select the V2, right? And that is auto-save, okay? And auto-save means with the new fields, everything you added, suppose you added two extra fields into. And now the model is updated with those new fields, okay? And the selected version, I think you may need to have one black or selected version or something, this model. And then we are saving it. So when you're from the start again, you need to load that selected version. Right. So the selected version that you're referring to is this version that we are there.
+
+00:10:44 - 00:11:32 Unknown Speaker:
+
+The one that you are saying the value that we see, we'll keep one more as the base version. We'll keep that as base version and never change it. So there is no field that will change that value at all. So that is how we understand the code. Right, and it's more clear. No, no, no, what I'm saying is we can call it the original version. Maybe, I don't know. Yeah. Yeah. Within the drop-down, we show that version, use the current version, right? So for example, if we have chosen something as current version, that becomes the version. So the another version, which is v1, will become the version of a limit. Not current version, but version, base version, or whatever name we can check. But we also have to, right? Correct, correct. Yeah, yeah. You're right.
+
+00:11:33 - 00:12:22 Unknown Speaker:
+
+But I just want to make sure we need to save that extra fields also in the model. When we selected v2, even though you don't select those fields, but we need to store that. Jason, we need to put Jason in the right place. Partially selected, right? The draft, we don't depend on, again, what is the JSON configuration of that version. We don't need to depend on the autosave. It should be specific to this RPT. Yeah, yeah, definitely. I feel that it will be the same. Once we do an autosave, we will be sending the version, and whatever response we get back after the autosave. So they have to send us the new model, right? So we'll update everything with the new model and then if the new model has the new values and everything, that has to be there, but the version and the base version will be the constraint part.
+
+00:12:24 - 00:13:31 Unknown Speaker:
+
+Correct. Version and version is the selected version. That's what you're talking about. So the version and the original version will be the something that will also be the constraint that will come in every version. Correct. Yeah, that's right. Correct. That's right. And if he has not opened the model, just duplicated, then in that scenario, what are we doing? We just duplicated it. And we did not, what is the selected version there? Nothing. Okay. Selected version will be by default the same when we duplicate it directly. When it comes into the RPT model and specifically goes and opens the drop-down and changes something, then only the selected version is valuable. Got it. Got it. Understood. Yeah. Yeah. Yeah. Any other questions? Yeah. No. I guess this was the only thing that we wanted to check.
+
+00:13:32 - 00:14:18 Unknown Speaker:
+
+Now, they should switch back and forth as long as it is in draft. We are providing all the options. As it is, but we are sure that we like. For example, if we started with V1 and right now the current version is V8 and we switch from V1 to V2, V3, V4, V5, V6. We don't. We are not considering anything, it's just V1, which is the original base, and the V8, which is the current one, right? Even if we want to V8 to V5, V7, we are not considering that. No, no, we don't, we don't know what. That is only two options. Any other questions?
+
