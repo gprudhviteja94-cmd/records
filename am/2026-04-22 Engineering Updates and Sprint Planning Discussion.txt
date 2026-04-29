@@ -1,0 +1,406 @@
+2026-04-22 Engineering Updates and Sprint Planning Discussion
+
+Creation Time: 2026/04/22 18:05
+
+
+📅About Meeting
+
+• Date & Time: 2026-04-22 18:05 (Duration: ~62 minutes)
+• Location: No relevant content mentioned
+• Attendee: Sindhuja, Sachin, Anand, Rachna/Rajna (mentioned), Kundan, Athar, Prithvi, Ayyappa, Shravan, Shamir (Shabbir?), Suman (absent), Nirmal, Jason, Lumi/Lomi support team (external), Product/Plume team (mentioned)
+
+📒Meeting Outline
+
+Engineering space, ODL jobs, and data movement
+
+• Clarifying scope beyond ingestion
+  Team clarified that ODL jobs include data transformations and table creation, not only ingestion. Three tables were recently created via an ODL job. ARB documentation already notes this, but stakeholders may be assuming ingestion-only.
+• SFTP requirement and positioning
+  For certain use cases, data must be fetched/transformed and sent back via SFTP. To secure engineering space (Composer/Airflow), position the requirement as SFTP data needed for downstream/marketing activity; avoid suggesting direct downstream access to internal tables to prevent space request denial.
+• Next steps with stakeholders
+  Update responses to stakeholders accordingly; pull Suman into discussions; prep for tough justification questions on engineering space.
+
+Platform, RFC, and environment constraints
+
+• Composer/BigQuery/DataProc approach
+  For large datasets (~6.5M+ records), Lumi team suggested running BigQuery via a DataProc-created cluster optimized for large data. Team will do a small POC to validate before pushing back.
+• RFC gating and lower environment validation
+  RFCs to deploy to E3 require prior validation in E2. An RFC raised to test in E3 due to no E2 data was rejected. Thumb rule: run at least one process instance in E2 (even with minimal data), record instance ID, then raise RFC.
+• Blockers and mitigations
+  Lack of E2 data is a recurring blocker. Team to reuse an existing E2 instance where possible, or run without data to satisfy process. Avoid bypassing approvers; adhere to validation-first workflow.
+
+Sprint status, risks, and story point adjustments
+
+• Overall sprint health
+  PM asked for risks. At least one benefits-related ticket will carry over; others aim to close, but environment and data issues pose risks.
+• Story point reallocations
+  Benefits data: split discovery/build across Shravan and Suman; tentative 2 SP each pending DSU confirmation; keep at 2 until analysis confirms build start. Some reclassifications for discovery vs. build were discussed.
+• Capacity and deadlines
+  Only four working days remain in sprint (noting May 1 holiday next sprint). Push to close threshold checks and self-serve backend items; integration testing with UI planned from Sprint 3.
+
+Use case updates and technical progress
+
+• ICMB control use case
+  975 records under test; 17 complex-pattern records put on hold after sync with Anand. Remaining ~958 proceed; aim to close this week. Additional note: 44 records lacking timestamp require further review with QTrack rules before escalating.
+• RPA and Launch/E3 readiness
+  RPA revised version tested in E3 earlier; post-validation to deploy to prod after partner edits. Launch use case moving toward E3; repository-level deployment planned for testing, then Ether deployment.
+• BD Analytics vs. Benefits data
+  Clarified confusion: current focus is Benefits Data (video analytics label mix-up to be corrected). Data gaps exist for BD Analytics; Benefits Data continues.
+• DQ framework and fixes
+  Found and fixed single-quote filter bug; added validations and improvements; production DQ rules failures triggered emails and are being addressed.
+• Lumi API integrations (UI/backend)
+  • Backend: Second Lumi API (schema by table) coded, deployed, tested; details to be shared with UI dev for end-to-end completion. More backend APIs reprioritized due to Lumi integration needs.
+  • UI: Context API implemented to fetch and share heavy datasets once at load; table list integrated; variable API integration next.
+• Large data execution issue
+  Queries from Composer to BigQuery time out on production-scale data; evaluating DataProc-backed BigQuery execution per Lumi guidance; consider reducing records only if business agrees (to be checked with Tanisa).
+
+Self-serve/QTrack and build plan alignment
+
+• Self-serve backend (Kundan)
+  Current sprint: three APIs targeted (Use case distribution list, Table name list, and one more) for build completion by Monday; UAT next sprint; no E3 this sprint. Integration for these to follow by UI next sprint.
+• Self-serve UI (Athar)
+  Will integrate Kundan’s APIs next sprint; capacity planned accordingly. Adoption of practice to pair build+validation per API discussed; for now, due to many additional tasks (IDs 4–11), keep granular tracking.
+• Work Basket onboarding (Business Health)
+  New work baskets to be onboarded as production support:
+  • Athar: 2 SP
+  • Kundan: 1–2 SP (reduced to 1 if minimal JSON config updates)
+  Expecting three baskets total; names to be added when received.
+
+Grooming and assignments for upcoming sprint
+
+• Bulk update/delete and automation
+  • Nirmal: Bulk delete discovery from 28 Apr; backend self-serve automation AS build (service bundles) split across sprints (3 SP initial, then 5 SP).
+  • Prithvi: Threshold check type remaining; must close next sprint (E1 movement), after prior check types and refinements. Track cumulative SP and ensure closure; environment deploy issues being resolved now.
+• Benefits data build
+  Shravan to build and validate a subset (six rules) next sprint; complexity and newness noted; provisional 5 SP; revisit after DSU and walkthrough.
+• Coordination and walkthroughs
+  Code walkthrough for benefits second part pending; team to begin code reading now and raise doubts; meeting with Rachna to clarify; Apurva set a separate session for pending code walkthrough.
+
+Attendance, communication, and follow-ups
+
+• Attendance
+  Suman absent (dental procedure); needs to be included on benefits-related threads and added to upcoming calls.
+• Communication hygiene
+  Promptly flag blockers in channel; avoid waiting for others to set calls; keep product looped on dependencies.
+• Next meeting
+  Extend tomorrow’s DSU/grooming to one hour; follow-up bridge between Sindhuja and Anand on migration after this call.
+
+📋Overview
+
+• ODL jobs include transformation and table creation; ensure stakeholder clarity and ARB is referenced.
+• Position SFTP return feeds as required use cases to secure engineering space; avoid offering direct table leverage by downstream teams.
+• RFCs to E3 require prior E2 validation; rejected RFCs stem from missing lower-environment runs. Reuse existing instances or run minimal instances.
+• Large dataset execution to be tested with DataProc-backed BigQuery cluster; POC before challenging approach; consider scope reduction only with business approval.
+• ICMB control use case to close this week excluding 17 complex records; additional timestamp-less records require rule review before escalation.
+• RPA revised checks await result sharing; Launch nearing E3 after repo-level deploy/testing.
+• Lumi API integrations progressing: backend schema API done; UI integrated table list; variable list next.
+• Self-serve: three backend APIs to complete build this sprint; remaining tasks (IDs 4–11) next sprint; UI integration to follow.
+• Work basket onboarding handled as production support with small SP allocations.
+• Threshold check type must close next sprint; deployment script issues being resolved today; notify on completion.
+• Benefits data build planned next sprint; walkthrough pending; provisional SP set; revisit after DSU.
+• Suman to be included in benefits threads and future calls; extended DSU/grooming scheduled for tomorrow.
+
+🎯Todo List
+
+• Sindhuja:
+  • [ ] Update stakeholder response to position SFTP data need and clarify transformation scope; loop in Suman, ASAP
+  • [ ] Extend tomorrow’s DSU/grooming to 60 minutes, by EOD today
+  • [ ] Track benefits story point adjustments after tomorrow’s DSU, tomorrow
+
+• Sachin:
+  • [ ] Join stakeholder thread to justify engineering space; prepare for queries, ASAP
+  • [ ] Review/rework RFC approach with team; enforce E2 validation rule, today
+  • [ ] Close ARB documentation discovery for RISI use case (Q-Track self-serve) and bulk update discovery, by EOD today/tomorrow
+  • [ ] Share build plan and ensure Athar/Kundan align to task IDs 4–11 for next sprint, this week
+
+• Ayyappa:
+  • [ ] Share revised RPA results with Rachna after E3 validation; coordinate RFC with E2 instance where possible, target Friday (subject to RFC approval)
+  • [ ] Finish Launch use case E3 readiness: repo-level deploy, testing, then Ether deployment, this sprint
+  • [ ] Clarify benefits data vs. BD analytics labeling; proceed with benefits data tasks, today
+
+• Rachna/Rajna:
+  • [ ] Validate RPA revised results within 10–15 minutes of receipt and confirm closure, upon receipt (ETA Friday)
+  • [ ] Provide/confirm guidance on large-record handling (benefits), ASAP
+
+• Kundan:
+  • [ ] Complete build for three backend APIs (Use case distribution list, Table name list, and one additional per plan), by Monday
+  • [ ] Share API details promptly with Athar for integration, as each is ready
+  • [ ] Update JSON config for work basket onboarding (production support), next sprint (2 → reduced to 1 SP as needed)
+
+• Athar:
+  • [ ] Integrate Lumi/table APIs already delivered; add variable API integration next, this sprint/next sprint as per readiness
+  • [ ] Prepare to integrate backend APIs (task IDs 4–11) next sprint, plan 5 SP build + 1 SP validation
+  • [ ] Onboard new work baskets (DB/config entries), 2 SP, next sprint
+
+• Prithvi:
+  • [ ] Resolve deployment script issues; deploy dev branch; notify before log-off, today
+  • [ ] Complete threshold check type and move to E1 next sprint; avoid further spillover, next sprint
+
+• Shravan:
+  • [ ] Sync with Rachna today for benefits data walkthrough; start build of six rules, today/next sprint
+  • [ ] Proceed with ignition job test once Jason fixes field mismatch in RACI-LUMI table, next sprint
+
+• Shamir:
+  • [ ] Proceed with ICMB testing for ~958 records; exclude 17 complex ones; close this week, this week
+  • [ ] Review QTrack rules for 44 timestamp-less records; then align with Anand, before escalation, this week
+
+• Nirmal:
+  • [ ] Start bulk delete discovery (from 28 Apr), next sprint
+  • [ ] Begin backend self-serve automation (ACE workspace) phase 1 (service bundles), 3 SP; phase 2 5 SP thereafter, next sprint and following
+
+• Jason:
+  • [ ] Fix extra fields in RACI-LUMI table; confirm to Shravan for ingestion testing, ASAP
+  • [ ] Review and certify lazy table delay fix, then move to certification, ASAP
+
+• Team (general):
+  • [ ] For RFCs: validate in E2 (at least one instance), capture instance ID, then raise to E3, ongoing
+  • [ ] Raise blockers immediately in channel; do not wait for others to schedule calls, ongoing
+
+• Anand:
+  • [ ] Join follow-up bridge with Sindhuja on migration; advise on paused records and next-sprint quantum picks, today/tomorrow
+
+• Suman:
+  • [ ] Rejoin benefits data analysis; take 2 SP discovery/analysis tasks; coordinate with Shravan, tomorrow (DSU)
+
+Transcription
+
+00:00:00 - 00:00:57 Unknown Speaker:
+
+By SFTP, right? And those would be only possible if we get that engineering space, because ODL job for ODL job, we need to create the data transformation flow that is number one. Second, you know, just let them, just don't let them know that, you know. It would be consumed by the downstream team. And they need to create a use case based on our table, right? Because if you use those tables for your purpose, right, then in that case, basically, we need to create a job which would be fetching the data and then sending you back via SFT. Okay, so you want me to explain the ODLs and then how we... Not to explain the ODL, I can already brief it over that same group, okay? But in case, you know... As it is a bit late for me, right?
+
+00:00:57 - 00:01:47 Unknown Speaker:
+
+I logged off yesterday by the time he responded, right? Right. It was 11 PM IHT hours for me. So, you know, when that conversation was going on, right, they assumed that we just need the data ingestion jobs, which is not correct. Got it. Apart from the data ingestion, we are doing the data transformation also, applying certain logic and creating those tables, right? A few of the tables that we have created recently, right? Yes. The ODL job, right? There are three different tables which has been created through that ODL job. Correct? Yes. We are transforming the data. We are just not injecting the data. Do we need to... I guess my concern was having to update the ARB document to indicate that. No, that is already there. I don't know. There might be confusion.
+
+00:01:47 - 00:02:29 Unknown Speaker:
+
+They might be assuming that we are just ingesting the data, which is not the case. We are transforming the data also. Right here, the use case which Suman was building, right, those DT flow, those are transform your data, right? So for that we need to number one and second. One of the use case where IAPA was working, where he was sending back that file to you via SFT, right? So even for that, we need that composer and airflow to create a job. And you know, uh, just just let them know you need those data via SFT, why you need it. That is something you need to explain it to them, but don't tell them that. You know other use testing come back, and you know, uh? Leverage your tables directly, right?
+
+00:02:29 - 00:03:19 Unknown Speaker:
+
+And in that case, they would not going to give you that engineering space. Okay, that request? Just let them know I need those data via SFT because I I'm doing certain activity over that, maybe marketing or something. Okay, I will update my response to them. Yeah, yeah, I I hope I I give you that clarity, right? That's helpful. I.I was just concerned that by opening that up, it would be, um, like, they may push back more, but I'm okay with that. Oh, look, it is not going to get easy to, you know, get the space right. We have to justify it, and that is where, you know, that tricky question would come to us. Uh, and we need to be prepared on that. Let me do one thing I'll pull in someone also there, right?
+
+00:03:19 - 00:04:41 Unknown Speaker:
+
+So that someone can help you out over there. During that. And seven, I'll set up maybe five to ten minutes time. Um, and maybe, you know, you can help with, uh, help Jason, in case, uh, that plume team is reaching out to you, thank you. Um, okay, uh, you can go ahead. First five minutes or so for the updates and then we'll move on to growing and see. Can please start with your updates is almost completed. Just one. So once that is done, I will start the E1 and E2 validation for that. And also, I was working on the pay now, pay later. Some changes are required for running the SQL queries in the Dataproc cluster rather than using it in the composer file as suggested by the Lomi team.
+
+00:04:42 - 00:05:39 Unknown Speaker:
+
+So I made a few changes, but I'm facing some type errors, so I'm trying to resolve it. Yeah. This is the one that's mode, right? Can you add task? Yes. This one NCI just created today, so just add a task for this one. You can go ahead. Yeah, I was just asking if you were able to connect with the Lumi supporting yesterday you had reached out, right? With the Jira ticket. We are Rajna and they have suggested see a few different direction and that require all together a different implementation. Uh, so on to that one. Uh, I was just going to explain that only, uh. So now APC Build is having only one DQ level, right? So today I only asked and see to close that build quickly. That would not take much time.
+
+00:05:39 - 00:06:32 Unknown Speaker:
+
+And then then she can focus that pain because it is already being delayed, right? Uh? And if it is still, you know, that technically still going on, then, uh, even we would not end up closing this AFC phase two. So maybe like, is this issue, uh, specific to production use cases? Because yes, yes, because that is having more than 65 lakhs of record, okay, and and that is the reason it is getting time down, okay? And now they have suggested to create a cluster, which is like a virtual environment, and I'm still not convinced with the approach that he has suggested. But before arguing with him, I need to at least do a sample POC and then I can check with him if it doesn't work in that cluster. On again.
+
+00:06:32 - 00:07:24 Unknown Speaker:
+
+Okay, if it's like taking much effort, then let me just check it back with and see if, uh, if, like, uh. They'll be okay with having like lesser number of records, right? If we don't send like all the records in the file, right? That is what I asked Anisa, why we are pulling the record from 2023 or 2024, right? But, uh, when she has, uh, you know, given back that, that's what they told me as well. But, I mean, is just dragging on. I am just wondering like it's occupying a lot of bandwidth, also right for the team. Yes, yes. The problem is that, you know, we won't be able to do any changes with respect to the environment that we have received. Okay, and the data size is very big.
+
+00:07:24 - 00:08:34 Unknown Speaker:
+
+Okay, you can check with Tanisa in a meanwhile, okay, and then we'll update you once we get some result by, you know, the alternate approach which Lumitine has suggested. Sure, sure. Basically, right now what is happening, we are running the query directly through the composer in the BigQuery. Yeah. Even with the new approach, the query is going to run by BigQuery only, but BigQuery, the cluster would create that environment for BigQuery. And they are mentioning the, they have designed that cluster, the data prop in such a way, which would be useful for handling, you know, large size of data. Got it. Same with this one. Yeah, yeah, yeah, maybe by tomorrow or Friday we'll give you update on this. Uh, sure, sure, thank you. So I started with the integration of the Doomi API backend API, which one then created to list on the tables.
+
+00:08:34 - 00:09:23 Unknown Speaker:
+
+And with respect to that, I've also created a context in the UI, basically to fetch the APIS. The API is a V and it has a lot of data. So instead of calling every time, I have used the context API to call once when the application is loaded. And that will be used for other components, basically in the search bar as well as in the add rules. So I've created that. We were testing it. Kundan is making some more changes in that, or PPMN. So once that is also done, I will just test the end to end and then push these changes to him. And also we'll start with the integration of the variable AP, which the variable list once the changes are done. That's all from my side.
+
+00:09:23 - 00:10:51 Unknown Speaker:
+
+It's the Lumi API, and if you're there in the uh, so the table part is done, uh, we just need to integrate the variable one. Thank you. So, uh, today I was working on this second Lumi API integration, uh, that is pulling the schema detail based on the table name. So I updated the code. Uh, code changes are done and deployed on. UH, even I tested that one also, it's working fine. I will share the entire detail with other so that he can integrate with the AI, so end to end that flow will be complete. So, Sindhuja, currently I am working on ICMB use case, control use case for 975 records. So, in this 975 records, we are having an issue like with 17 records and I actually had a connect with Anand yesterday and today as well and as like after discussing with Anand,
+
+00:10:51 - 00:11:55 Unknown Speaker:
+
+we thought to hold that 17 records like for now, as of now. The rest of the records, which are apart from the 17 records, I am going to continue on testing for those lines 900 change records with that. Yeah, once done, I will, uh, I will have recorded with searching. Uh, is there a particular reason you put those records on mode? And since we have only four days, will you be able to complete the use case? Yes, uh, yeah, yes. Since the 17 records which we actually hold, those are having a different pattern and having some complex conditions. So after the discussion in Arun, we thought to have 17 records as of now, and we need to process the rest. So whatever the records, apart from 17 records, we have already tested individually.
+
+00:11:57 - 00:13:12 Unknown Speaker:
+
+Now I need to test with the previous existing parts, which with other use cases. So once it was done, yeah, we are going to close that in this week itself. Thank you. Yeah, I.We aligned with Ananda as well on this. Sir. Yes, so basically, what want to solve for, right? I think those that particular, uh, I mean, set of BQ rules does not really qualify. We will not get a really good benefit out of, like, converting or migrating those, uh, specific checks. So that's why it's it's not all good priority right now. Got it honest, thank you. I was doing the validation part. I found one bug there. Basically, some of the filter criteria are the single codes, which is breaking the queries. So, I fixed that part. And also, Sachin has suggested some improvement to the current framework.
+
+00:13:12 - 00:14:33 Unknown Speaker:
+
+So, I'm doing that part. I'm putting the validation to it. Uh, so I have updated in that one, so I had to define the production and I will share the results. And apparently I just started the launch use case for E3 readiness. So today I have done some changes. So maybe we have to plan to deploy even with the repository level and do the testing so that I will proceed for the Ether deployment. After that one. And apart from that one, uh, we have facing some production issues, that one went to the UH production. So today I have received the email, so what are? The DQ rules are failing, it's went to the email communication, so that is a DQ check partner. So same question to you, Ayyappa. When is RPA check going into E3?
+
+00:14:33 - 00:15:30 Unknown Speaker:
+
+Is it planned today? No, not today. So that RFC... He has already tested it in E3. After that, we have gotten some additional edits from the partners. So this is like a revised version that he's running. And after I validate it, then he can deploy it in production. Okay. And what about your BD analytics story, Ayyappa? Like we have only four days left and I don't think you've even started it, right? This one today I have started the analysis. Maybe post this call. No, end of this call I will have one question to Anand. I will ask them the BD analytics part. Because some query changes, it is showing the filter criteria. So just need a sub-confirmation on that one. So parallel I started this one also. So just keep in mind we have four days and close these stories accordingly.
+
+00:15:31 - 00:16:35 Unknown Speaker:
+
+Sure. Rithvi? Hello, Simu. The pull request is approved. We'll close the call and I'm trying to run the deployment script. The development branch I'm not able to deploy. I have to check with Sachin and Ayyappa. After this call, I'll connect with them and I'll close that today. Even I should be completing it today. I know it's being delayed. But the reason is that there are some environment issues that I was not expecting, so I have to fix one after the other. Now, all are working, just the deployment script should be executed, otherwise script is running fine in that environment. Prithvi, do close this by the end of the day and notify before you log off, okay? Yeah, sure, sir. Sachin? I was working on that one of the lazy table delaying issue.
+
+00:16:35 - 00:17:42 Unknown Speaker:
+
+So that has been fixed now and is working into it. I already notified Jason on that. Once he reviewed, we can move it to the certification stage. That is number one. Secondly, I was... working on this ARB documentation for this RISI use case where I was having the connoisseurs in the Lumi team. The discovery for this automation job, I'll close it by EOD today. The port one, Q-Track self-serving. And apart from that, the discovery for the bulk update. So that also I'll try to close it by tomorrow. And apart from this, a few code reviews and the support that team required. Yeah, noted, Sachin. Thank you. Shravan? Okay, so for the benefits, so the RACI-LUBI tables, I think I'd highlighted one issue to Jason for one of the tables. There were more fields than expected.
+
+00:17:43 - 00:18:37 Unknown Speaker:
+
+So he's going to work on fixing it and then we'll try testing the ignition job. Apart from that, for the new Q Track benefits data. Uh, I went over this equal scripts and, uh, the documents which Rajna had shared. Uh, I'm just waiting for a review call with Rajna so that I can clarify my notes and then start working on you. Set up the call. That's why I don't know if the business partners are going to accept that. I was not aware you were waiting for a call, but we can connect after this call if that's fine for you. Okay, sure. Yeah, I saw something that Apurva was going to set up that meeting, so. Oh, that is for the pending work, pending code work through Shravan. That I have already set up for tomorrow.
+
+00:18:37 - 00:19:41 Unknown Speaker:
+
+But if you have any doubts regarding the code or anything else on the use case, then we can connect after this call. Sure, sure. I'll reach out to him. Yeah, sure. Thank you. Just don't sit on it, guys. You are already added in the channel, right? Just message there if you are waiting for something from the product, okay? Suman? Is Suman on the call? No, I can see that he... did not join even yesterday. Suman, any idea? He had a dental appointment today for an RCP. I think that's why he missed it. So, he should have intimated. Just let him know, right? At least give a heads up with that. Okay, sure. And please include Suman also to that because he would be also, you know, working on that same use case, right? Okay, yeah.
+
+00:19:42 - 00:20:48 Unknown Speaker:
+
+Sure. Are all of you on track to close your stories this sprint without any flow overs? If you foresee any risk, you can just mention it now so that we can get you the required help. I don't think I'll be able to close my ticket on the benefits later. That would carry over, that's for sure. For this one, uh, we can reduce the story pointer because it's just a discovery. We did not start at the build also. Um, so I see for benefits data, we have totally allocated 10 story points, right? Yes, yes, so discovery is going to happen in this print, is it? Yeah, so can I say that's like a two pointer or one? Uh, two pointer is required, minimum two is required.
+
+00:20:48 - 00:21:43 Unknown Speaker:
+
+And can I delete the story under Suman then, which is a five pointer, he can add a task under Shrubbin. No, no, no, no, no, so Suman. Also, you need to provide him at least two story pointer because he need to do that analysis of his part. There are 20, uh, you know, DQ ID checks are there, right? So seven would be working on six and then Suman would be working on 14, right? Uh, so even he would need those, uh, two to three story pointer for that. But there's only like four days left, right, Sachin? So two each, right? Yeah, yeah, yeah. Okay. Yeah, I've made those changes. And Anand and Rachna, just a heads up, right? We still not received the complete requirement. So basically when we are starting the build, it should get considered from the next print.
+
+00:21:44 - 00:22:31 Unknown Speaker:
+
+Is it for benefits data? Mentioned Yes, yes, yes, yes, such a like. It's segmented in two parts, right? In our last call, we already covered one part fully, the second part is what? Like a code, code walkthrough is pending, the requirements are complete, it's just like a walkthrough that is pending. So like code, at least the team can start going through the code, right? And then once we connect for the walkthrough, then, if there are any doubts, it will be even much easier to discuss it. Agreed, and that is the reason I'm just taking the discovery part, right? And then they can start the build, maybe from tomorrow, right? If everything has been cleared out, right? Right now, I see a risk to even, you know, start with the build for a few of the use cases.
+
+00:22:32 - 00:23:23 Unknown Speaker:
+
+Like, you know, the complete walkthrough is not being done, right? So in case people have, you know, any query, right? Then start to delete. The build, basically, yeah, so, uh, that is fine. It's like a risk point of view, I understand, but otherwise the team can, uh, like, pick it up is what I am suggesting. If there are any doubts, they can, like, reach out to me and I'll try to help out with that. Okay, uh, so expectation is build also. Uh, Sindhuja. Then let's increase the two, three instead of at least we can start it right for whatever it is, yeah, So make it discovery and build only, but increase the story point to three in that case. So probably, Sachin, I still would want to keep it at two.
+
+00:23:24 - 00:24:15 Unknown Speaker:
+
+Let them start with the build, and then if the actual work is getting done, I'll increase it. Because we don't really know how the analysis and discovery is going to go and write. So probably tomorrow's DSU, once Shabbir and Suman gets back with their analysis, Um, accordingly, we can increase it. Okay, because as it is, there's like three days left. So even if they do start the build, I think. Two story pointers. What the amount of work that they'll be done like? Friday and Monday 16 hours only. Okay, we are left with four days. Uh, for them, it is four days, right? Complete, and if you consider today's date, it is five days. Their day. Just started today right now means, I mean to say, it just started right now, right?
+
+00:24:15 - 00:25:46 Unknown Speaker:
+
+So there are five complete days, 40 hours of task. Today's madness day, right? Three, four days, not five. Oh yeah, four days, my bad. Okay, yeah. Um, I would still suggest we'll wait for tomorrow's DSU. Keep track of your stories. Uh, do highlight if you have any issues today, or at least given in tomorrow's DLC. I think the rest of the folks are good. Um, and then, and for Ansi, Uh, that has been live on E3. So could you please accept that for the grooming call for the next sprint. So, I think I see some of the stories already. Do you want to review these or just open up from initiative-wise? You can go initiative-wise. Like, you know, Athar's and Kundal's story would be carried over. Both of their stories. Because they are still working on that one.
+
+00:25:46 - 00:26:59 Unknown Speaker:
+
+If you can open the build plan also, right? You can just compare it whether we are on track or not. Yeah, let me just open up the object. Dqim. We have a new work basket enrollment request, right? So for that, our side, yeah, even we need a story for our side. Let me see. Yeah, even I need a story for Kundan, also for the back-end change. Okay, so before we create these new, those new stories, right? I think we had, like, data filtering and bulk update that would be closed. Can you open the build plan? One of the email that I have sent it to you, copying means I have sent it to RN, copying you over there. So if it is no plan, then I can ask Nirmal to start working on it.
+
+00:26:59 - 00:28:26 Unknown Speaker:
+
+Just hold on, let me see if I can slack you directly. Give me a second. I just pinged you over the Slack, resharing my screen. Yeah, if you can just open that Excel sheet, yeah, the Excel is visible now, right? Yeah, can you go to this? Uh? Yeah, here is the bulk delete, right? Discovery 28th April. We are starting from 28th April, right? Yeah, then you can assign one story to Nirmal. Okay, the bulk update one, right? So discovery is, you will be picking up discovery. Okay, you are working on discovery in the sprint. Yes, discovery would be done in the sprint. So can I update the build story to Nirmal in the next sprint? Yes, yes. And he would be working on couple of stories, not only this one, okay?
+
+00:28:27 - 00:29:39 Unknown Speaker:
+
+Apart from this, on that backend automation job, right? Which is there in the self-serve. So he need to close the AS build for that also. So this one you can give... three story pointer. This would be a just a initial start of this, you know, user story build, and maybe the next part, the five story pointer for that. Completing that back end automation, can you go back to that build plan again? What is he doing as part of this build and such in, like, since you said, it will be done in two parts. So he need to create some service bundle for this couple of spin. So that is something I already mentioned in that build plan, just go to that build plan once. Uh yeah, uh no self. Go to the self-serve one.
+
+00:29:39 - 00:31:02 Unknown Speaker:
+
+Uh, can you go up? No, no, go below, go below. Uh yeah, here, right, so here also. Right, so even this one, he need to pick it up. Nirmal, the task ID is correct. Nirmal, this one. Right, 28th April, not two. Yeah, it is a typo error. So Nirmal, the expectation over here is that you would be picking up the record from the HDB and sending it. The second, this is phase one, right? Phase two, you are already done. So this part would be done in the ACE workspace. So this would be five-story pointer. This need time because he is pretty new to the ACE. You need to go back to that other one, which is that other feature. The one that they're currently working on, right? QTrack self-serve automation. Yes, yes, yes.
+
+00:31:02 - 00:32:31 Unknown Speaker:
+
+Just hold on, got it. Let me just create it. This one, right? Yes, yes. It would be vice versa. Now we need to read the data and send the file to SAP. Understood. Just give me a minute. So, Nirmal, are you clear what you're supposed to do next print? No, I mean, at least I meant, did he get the basic idea? Okay. So this is going to be a five point. Yes. And did we check his capacity? First of all, if he's working for eight days or not. We have one holiday on 1st of May for everybody, right? Yes. Okay, so for Nirmal, I've added an 8 pointer. And then you can reuse the same for Prithvi, right? He would be continuing working on the other threshold type, right?
+
+00:32:31 - 00:33:24 Unknown Speaker:
+
+So give him that 8 pointers for him and let's close it out for Prithvi. That is same it has been mentioned in this one, also in the sprint check, right? Um, I think you've been working on it, like for the past two sprints, if I'm not wrong. Will it be closed in the next sprint? It has to, it has to. There is no, uh, further, uh timeline for that. Because from Sprint 3, we have to perform the integration testing with the front-end and UIT, it has to get closed in the upcoming sprint by. So I just want to understand is since he is just doing deployment and some checks here, is it like a eight story pointer here? Or should I even want this to the next sprint? No, no, he is working.
+
+00:33:24 - 00:34:15 Unknown Speaker:
+
+So look, there are multiple check type, right? So he has already done all the check type. It does the threshold check type, which is, uh, so this will take, I understand, suction. I am talking only about this print, so multiple checkpoint, uh check types were over previous print, right, this print, except for the deployment, what other check type? Is he working on? Threshold? Only? Threshold, threshold. So have you reviewed that? So is it a story pointer that he is working on this print? Yes, yes, he's working for that. Coming from is threshold check alone is like, if he's worked like eight this sprint and like previously, five and three. Even if I consider right, it's been like 16 storing points and we are giving him another eight in the next sprint.
+
+00:34:15 - 00:35:08 Unknown Speaker:
+
+So you understand where I'm coming from, I got it. But, uh, there are certain, you know, that refinement was being done on the code that he has built, right, so those took time for those refinement. And those are, you know, based on different check type also. So we did not specify the check type over here in the build, but he made those changes. So we can give him that because threshold is having almost 1,200 rules, right? So that is a, you know, big part of implementation. But expectation is that it should not get moved to the next bit. It should get closed in the next bit only. Okay. So for now, I've moved it. I'm gonna specify here that this is like for threshold, uh, check time. Yes, yes.
+
+00:35:08 - 00:36:17 Unknown Speaker:
+
+Which means that he has to complete a movement to E1 environment. Okay, forward, okay, not even delete. And for Ayyappa and Sameer also, you can pick it up from that build plan where they have communicated for that control. Yes, so for that, I want a commitment from Ayyappa that Benfit's data is going to be over now, like in this print, along with the RPA and whatever one more use case he has. He was having only RPA, right? Lounge, he was working and yeah, benefits data. Something we need to confirm. Lounge I, I'm, I'm sure that he was working on that benefits data. I did not hear back from him on that. Yes, yeah, launch is we we can close close in this print only, and uh, maybe big data that, uh, analytics also.
+
+00:36:17 - 00:37:08 Unknown Speaker:
+
+So that part already I started since we have time, maybe I can cover that part, okay. Yeah, RPA1, maybe that will be, if any changes required, that will be ADAC only, right? So that we can manage it, if going forward required anything else. Okay. Can we aim, I know like it's with Rachna, so can we just aim to close it in this sprint? Sindhuja, I have not received the revised results from IAPA yet. Once he shares it, I will close it within like 10-15 minutes. That should not take time. Okay, uh, when is the ETA? When are you sharing the results with? Rajna? Uh, maybe I will share too on Friday. Actually. Because since we don't have RFC, so I need to deploy those things, so that is currently blocked for me.
+
+00:37:08 - 00:38:01 Unknown Speaker:
+
+No, no, so, um, just let me understand, I'm not talking about E3 deployment. I think before that, you have to share the results and she has to validate it, right? That is a dependency. That is dependency, Sindhuja. So the results are currently, we don't have the lower environment. Data is not there. So that's why we are testing in the E3 environment. So E3 environment, this depends upon the RFC, actually. So actually, today, unfortunately, one RFC is not approved. So that's why it is blocked for me. And one more RFC, I raised it coming Friday. So maybe Friday, I will reply those changes, and I will share the results immediately. Okay, Sachin, just help me understand why. Why do we have like, a lead time for RFC? Like, it's like, one day after the other, is it?
+
+00:38:01 - 00:38:48 Unknown Speaker:
+
+No? The way the RFC has been raised, right? I have communicated this to team couple of days back right now. In future, you are not going to get a RFC until unless you have a validation done in the E2 environment. No one is going to approve it. And the RFC that, uh. IFR has raised, right? Those have been rejected because the reason that he has specified, right? That there is no data in the E2 environment and smoke to E3. No one is going to get, you know, approve your RFC. I think I have clearly specified this. So, Sachin, how are we dealing with these cases? Like when there is no data in E2, then what to do? We need to run the process at least without data also. Oh, okay. At least one instance should be there, right?
+
+00:38:48 - 00:40:03 Unknown Speaker:
+
+This is something I have communicated to team. Let me check. I think maybe three to four days back only. Without that, your RFC is going to be straight away rejected by the approver. We won't be able to create a RFC. If you don't have a validation in the lower environment, you're not going to get that approval to deploy your code in the E3 environment. And then I would say it's a miss from your side, right? Like, why didn't we specify that into instances? At least you can given that instance of ANSI use case, right? And with that, we could have, you know, got those RFC approved. Now, Do we have a valid process for Friday or we do don't have anything? No such thing. But we can use that existing one actually have deployed, right, so maybe that we can use that to test URL.
+
+00:40:03 - 00:40:54 Unknown Speaker:
+
+Yeah, then then go ahead and provide that one, and then, uh, create the RFC for Friday. Yeah, but exceptional scenario searching if there is no data from Big data team is accepting the RFC. No, no, I don't think so. There are changes right now. Yeah, actually, I have done actually one RFC, they approved, actually, so that's why I thought of they will approve what I would suggest. You like, you know, let's not, uh, you know, try to do a round of boxing with the approver. The reason, if you, if we are trying to, you know, just bypass their, uh, boundary, right? Uh, it would come back to us, for sure. So let's have. If big data team is approved the RFC, is it fine to approve from our internally, right? We can manage it, right?
+
+00:40:55 - 00:41:55 Unknown Speaker:
+
+Just in case. Let's discuss that post this call. Let's not spend lots of time on RFC. But the thumb rule is that validate your process in E2 and then move to E3. Record that process instance ID. Otherwise, we are not going to get deployed anything in the E3. Also, can it not be raised for tomorrow, Ayyappa? Because I don't want Friday. What time is it? We won't be able to do it. We need at least 48 hours. 48 hours. So you raised the Friday RFC now, is it? No, no, no. I raised it just due to emergency now. Normal RFC. I just mentioned like currently the test data is not available in the E2. So that's why I'm testing in E3. That is the subject I have mentioned and raised, that RFC, but that has been rejected, it was rejected, rejected.
+
+00:41:55 - 00:42:57 Unknown Speaker:
+
+Okay, yes, yes, then since there is no RFC available for, Uh, yeah on Friday, no, uh, we can. This is where I'm coming from. Yesterday in the DSU, I heard that there was this requirement, you knew it had to be validated, right? Why was it raised today? No, no, yesterday we already went through those changes. We went through and in the SEO I heard that we had to add this threshold value, right? No, no, no, yesterday only I saw the mail actually from Rajanaman. So then today I started the implementation. Okay, we will connect after this offline, okay, for this. Sachin, just have a look on this RFC then. We will connect after this. Yeah. Okay. So moving on to Pondro, right? So I apply in that case since you will be finishing launch in BD Analytics at any cost, right?
+
+00:42:58 - 00:44:13 Unknown Speaker:
+
+The spread. Yeah. Yes. Okay. And Shamir, you're also finishing your... One correction here, Sindhuja. So BD Analytics, there is no data. So that's why we have... Penifit's data. He was working on... Penifit's data, yeah. Penifit's data, line number nine, Sindhuja. Okay, my bad. Sorry. I thought I saw. Yeah, okay, sorry, my bad. Yeah. I think I got confused between the both. No. But Lauren says video analytics, right? We might have picked up the wrong user story, then rename it, and then rename the video benefits data to video analytics. You will also be completing right Shamir your use case in this print. ICMB Yes, uh, apart from that 17 records. Uh, so you need like, a one story pointer for those seven. Okay, that is like getting excluded, right? Like we are not picking it up again in the next print.
+
+00:44:13 - 00:45:09 Unknown Speaker:
+
+No, oh, that we are not sure. Yeah, okay, fine, we, uh, revisit that pick up, what next? So such a now like, Uh, after this, I see like 44 records which are not having that timestamp column. And we parked actually. So that should be, even if we pick that. I think we need to have a discussion with Ananda. I think we need to check, uh, that Q track rules first before going to Ananda. Sindhuja. What was the plan? You know, if you see few of the things right, like CGTA, BD, Analytics, returns, and right those we have parked for this upcoming sprint. Uh, so that anything else which is being left for quantum implementation, right? We can discuss with the ON and then pick it up in the next sprint.
+
+00:45:09 - 00:45:53 Unknown Speaker:
+
+And that is the reason I did not assign anything to submit because those were the gaps which we need to discuss with Anand and close it out. So for summit, don't assign anything right now. I'll discuss with Anand and submit tomorrow and then we'll see which one we can pick up. Otherwise, we need to go away with the Algo optimization. If Anand mentioned right, nothing can be moved to the implementation. So maybe give us tomorrow's time, we'll set up a call with Anand, we'll review the data. For rest of the use cases, where you can see, right, a few of the blockers are there, right? Blog due to data issue, you can see razy the insurance Table DQI. The plan was to pick these two in the next sprint. You can see that that has been marked as sprint.
+
+00:45:53 - 00:46:57 Unknown Speaker:
+
+Is it still not unblocked then? No, it is still not being unblocked. So that is what I'm mentioning. Let us discuss with Anand tomorrow. So let me just set up a call and then I'll let you know tomorrow on this before the DSU. These are similar to those 17 records, right? So we need to discuss with Anand whether we need to pick up those or we just need to park it outside. Yeah. But with a different issue, yeah. Yeah, correct. Okay, so Contro, I'll leave for now. I think for Qtrap, DQIM, other than Nirmal, you said Atar also has to pick up some things, right? No, not the bulk delete. Okay, on this dqim, this work basket enrollment, uh okay. It was not part of the uh, sprint planning, but that is the add-on request, uh, which we need to pick it up.
+
+00:46:57 - 00:47:56 Unknown Speaker:
+
+Imagine these uh work basket additions, right? Can't we go into production support? Uh, yeah, yeah, yeah, yeah, we can, we can, because they will come like every yeah, correct. I agree. The new basket issues. Yes, yes, yes, yes, uh. Do one thing. There would be a business health. Uh, story right, uh. So assign other how much story pointer you need just to enroll that work basket? It's just that JSon mapping, right? I hope like one story point would be sufficient. Yes, yes, you can assign one story point. I'll create a task for different environmental. No, no, no, no. There would be three more basket, okay, so for three. You need to enter it to the database and the configuration would be same for all three. For the existing as like the existing workbasket, right?
+
+00:47:56 - 00:49:01 Unknown Speaker:
+
+Assigning two story pointer, those would take time, and maybe two story pointer to Kundan also for making the change in the backend. Those would be from the production support. Business health stories are there, right? So let's pick it. Yeah, yeah. So let me just make a note of it. I'll do it. So this is like under business health feature. Yes. Work basket assignment. Onboarding. Onboarding. Two story pointed to Arthur, two to Kundal. So how much, how many work baskets are you onboarding? Right now, we... see the details for one, awaiting details for a couple of more. So do you need, like, a four story pointer for one work basket? On voting? Not one? We are expecting three, right? It'll come in my next sprint start. Let's do one thing, reduce one for Kundan.
+
+00:49:01 - 00:50:03 Unknown Speaker:
+
+Kundan doesn't have much to do. He just need to update the JSON Config file, but Arthur would need at least two story pointer. What are the names? Names. We have to create those names. I'll do that. Okay. I'll just like keep it with a bracket. You can probably add as in when you're onboarding. Yeah. Okay. The feature is F855922 if you want to move that. I thought we had to create it under business help. Okay. It's already there as a production support feature. It's a F855922. Yeah, thank you, Anand. Yeah. And then their regular task of self-serve, right? They need a five-story pointer if he is working for seven days, like Kundan, right? Five story pointer for build and one story pointer for validation. And same goes for ether also.
+
+00:50:07 - 00:50:55 Unknown Speaker:
+
+And I hope you guys are viewing this build plan. I already shared it with all of you. So please make sure you are on track with respect to the build plan. Especially Athar and Kundan. We have to close this self-serve. So just to understand, can I know out of these 11 items, Kundan, how many are done and where you are at? So there is a change in that team. Request Okay. Earlier plan was to complete these five API, but as the priority request was to integrate the Lumi API, we did those two API integration. And I am expecting these three to be, uh, three additional API to be built by end of the sprint. And then he can complete the rest of the task.
+
+00:50:55 - 00:51:55 Unknown Speaker:
+
+So from this list, you won't be finding any of the build that he has done for this time because he was working on that Lumi API. So, but out of this, at least the API would get over by use case distribution list. Table name is done. Sorry, my bad. Table name, you can mark it as done. The whole details by table name. No, no, no, no, no, no, no, no, no, not done. This is that it's not being done. So, none are done is what you're saying. Yeah, none are done, but I'm expecting at least, Number five, number two and number one to be done by five, two and one. How many story pointers will this be? He'll finish all the five until E2, E3. What when you say it'll be done, or just the API build?
+
+00:51:55 - 00:52:59 Unknown Speaker:
+
+No, no, everything should be completed, uh, by end of this event. So you are saying, like, He will be doing a build, UAT and E3 deployment. Oh no, not E3 deployment. Maybe built only. Yeah, so that's what I told. Build will be completed. UAT we will be going in the next bit when we would be working with Anand for the validation. That would be the next bit. An E3 deployment post that next bit. Because if there is some observation from Anand, we will close that. It is there in the print. No, I think the sprints are different. So I just noted down for my, you know, tracking. So the same three APIs Arthur will also be picking if I'm not wrong, right? Yes. No, no, no. Look, these three API you would complete in this print only.
+
+00:53:00 - 00:53:58 Unknown Speaker:
+
+Okay. The one like, can you scroll down a bit? I'll tell you. Can you scroll down a bit for the backend build? Suppose we have these five API, right? So I am expecting at least these three API should be done from Kundan by end of this sprint only, the current sprint. Okay. And post that whatever left in this list, you need to close that. Yeah, Sachin, I understood. So Kundan will work on the backend API calls for these three, right? Yes. Okay, I see the same line items in Athar's bucket also, right? So my question is, only after Kundan is done in the sprint, will Athar pick them up for integration in the next sprint? Or is it going to be simultaneous in the same sprint? Basically, once Kundan is done, he can start.
+
+00:53:59 - 00:55:02 Unknown Speaker:
+
+Sending those details to other like, he did that Lumi yesterday, right? And that was able to integrate it yesterday only. Okay. So it just depends on the both, both the resource. Right. Yeah. So in that case, can I say that, um, can I add an integration story for the same, uh, APIs for other in the next sprint? Yeah. And how many story pointer? This will be for Athar and Kundan. Yes, so for Athar if you are considering his capacity as 7, then Athar would be 5 and Kundan would be 6. 5 for the build and 1 for the validation. So couldn't please make sure we are having that update feature also, right? Which would be going to take your time, so please make sure you are, uh, you know, wrapping up rest of the part also.
+
+00:55:02 - 00:55:50 Unknown Speaker:
+
+Yeah, so, uh, also sachin. Like, could we introduce this like going forward, right? Instead of like adding like a build and a validation story, like separately for them? Uh, could we probably do like a three and a three story pointer, where? In the same three-story pointer, maybe if he picks up one of the API, he has to complete both build and validation. It's just like one of the good practice from my other team. Just let me know if it makes sense for this team. It makes sense, but if you go to that Excel sheet, there are lots of things out there, right? You can put everything on that build. Like, we are not creating one single API over there, right? So, that is the problem. But this is like a single API, right?
+
+00:55:50 - 00:56:47 Unknown Speaker:
+
+Like, for example, If I say, like, out of this, uh, three, two of them are less complex. Again, again, you, I I think you did not get this one. These three API which you are mentioning this should be closed by this upcoming Monday. Okay, and now, if you go back, uh, to that Excel seed that is having additional task apart from these API. In the next print, he he may need to pick up the fourth API 5th API, then the line number 25, 26th, 27th, 28th, and then even 29th. And even the line number 30. So starting from his task ID 4 till 11, he would be picking up in his next sprint, not the first 3. First 3, he needs to close it before this Monday. In the current sprint action.
+
+00:56:49 - 00:57:56 Unknown Speaker:
+
+Okay, So since this is a grooming call for the next print, right, you're saying before this Monday in the sense like, 25th April. Yeah, yeah, correct, yeah, but this is a grooming call for the next print, right? So I was checking on the task for the next print. This is already there in the current board, right? Yes, this is already there in the current board. Yeah, then in that case, which line items is he picking up for? The next? Line number 4 till line number 11 means task ID 4 to task ID 11? Okay, 4 to 11, right? And um, same for, uh, a third, two, four to eleven. A third would be from six to. Even the APIs which Kundan is developing in the sprint, that would be a part of integration in the next sprint.
+
+00:57:57 - 00:59:01 Unknown Speaker:
+
+That is there, Athar. If you go to the N number 6, it would be there. All those APIs have been mentioned in the sprint too, only for you. Yeah. Yeah, okay. So I'll add these stories to them. Sachin, I think the next... cases, sorry. Yeah, so for new use cases, Ravan would be working on the one that Rachna has said, right? So most of the build would go on the next one. Apart from build, we would be expecting the validation to be completed in the next print itself. Which is a reports integrity check, right? No, no, no. Sorry, no, no, no. Benefits data analysis, right? Okay. So this build will be done by Shravan, Uh, in the next print, along with the validation. So you are expecting it to go till E3 because two resources are working on it?
+
+00:59:01 - 01:00:03 Unknown Speaker:
+
+I need to understand the complexity I would not commit right now. Okay, so for now, I'll just add like a five pointer. Yeah, because right now have received the input for a few of the rules, right? We have a call tomorrow for rest of the rules. So once we had, once we are done with that, then we would be able to, you know, give you the answer, or whether we can. On that. I think, uh, the one that Shravan is picking up, uh. I think those are like fairly less number of rules, only six rules, so I think that one should be doable. Just one column. He's pretty new to the system, so, uh okay, it may take a few. Uh uh, you know, maybe you write, uh, okay, okay, but we'll, we'll close this right now.
+
+01:00:03 - 01:01:13 Unknown Speaker:
+
+Yeah, so I've just added like, a five story point offer now, probably after tomorrow's. I think tomorrow's DSU will revisit this. I see that we are already five minutes past seven. I have to immediately connect with Anand for something regarding the migration. Is it all right if we reconnect for the grooming tomorrow during the same DSU hours with the rest of the folks? Is everyone all right with it? Okay, uh, if you're joining honest, please can we utilize this? When I need I find seven on this call? Sure, Anand, I'll call you on your uh, bridge. Yeah, I mean, you have, uh, send out an invite, right? Yeah, even I have to invite Sindhuja. Do you need me there or not? Um, Anand, is Rachna needed? Um, I don't think so. We can, we can continue.
+
+01:01:17 - 01:01:31 Unknown Speaker:
+
+Let me, let me do one thing. Sindhu Janan, you guys can carry on. Uh, I'll. No, no sanction. We have a different meeting, no issues, we'll just drop off from here. Okay, okay, thank you. Okay, thank you team. I'll extend tomorrow's call, okay to one hour.
+

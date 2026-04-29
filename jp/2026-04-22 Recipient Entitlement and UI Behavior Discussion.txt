@@ -1,0 +1,133 @@
+2026-04-22 Recipient Entitlement and UI Behavior Discussion
+
+Creation Time: 2026/04/22 16:18
+
+
+📅About Meeting
+
+• Date & Time: 2026-04-22 16:18 (Duration: ~20 minutes)
+• Location: No relevant content mentioned
+• Attendee: Nava, Kugel, Jagan, Marquez, Uwais, Omar (to be consulted), Krishna, Common Services team (referenced), DSP/TSP/CS Portal teams (referenced)
+
+📒Meeting Outline
+
+Recipient Entitlement and UI Behavior
+
+• Button click validation vs. pre-check
+  Team discussed whether to validate recipient entitlement on button click or pre-check earlier. Current thinking: leverage existing recipient entitlement already used within the Recipient module rather than reinventing checks.
+• Show/hide button logic
+  Proposal to derive a flag “isRecipientLookupEnabled” during initial data load. If true, show the “Select Recipient” button; if false, hide it to avoid showing an empty drawer/overlay.
+• Empty drawer UX concern
+  Showing the button unconditionally could result in an empty drawer for users without entitlement. Consensus leans toward hiding the button when entitlement is absent to avoid poor UX.
+
+Data Flow and Initialization Flags
+
+• Flag sourcing and service calls
+  On landing/initialization for Create Payment, backend should call Recipient Management to determine if the user is integrated and set isRecipientLookupEnabled accordingly. The button visibility is driven by this flag.
+• Existing APIs and Swagger check
+  There is mention of a new API in Recipient Store; team to verify existing coverage and details via Swagger and with the original implementer to avoid duplicating functionality.
+
+API Gateway and Service Topology
+
+• Direct calls within the “house”
+  Recipient Lookup from TSP Web to Recipient API is a direct internal call (no API gateway) since services are within the same domain/microservice ecosystem (“inside the house,” port 80894 for Recipient Management).
+• User Preferences path
+  Updating preferences goes via CS Portal’s APIs; may be behind an API gateway. For TSP it’s acceptable to call their exposed API; gateway presence is an implementation detail on their side.
+• Separation of concerns
+  Recipient APIs and Preferences APIs are unrelated; patterns can differ given their ownership and exposure model.
+
+Preferences, Re-initialization, and Language Change
+
+• Initialize call usage
+  Initialize is used on app load and for refetching UI after preference changes (e.g., language). After changing language in Preferences and navigating back to TSP UI, an initialize call is triggered to refresh context/UI strings.
+• Call origin and routing
+  Historically, Common Services made two initialize calls (from non-IFA gateway upon login and another flow). In Ember (current implementation), TSP can also issue initialize if user context/preferences aren’t available after navigation, especially when moving between apps/engines where context is lost.
+• Risk of over-refresh
+  Re-initializing the entire UI can be heavy; ensure initialize is scoped/triggered only when necessary (e.g., post-preference change) to avoid unnecessary data calls and reloads.
+
+Next Steps and Ownership Clarifications
+
+• Consult original implementer
+  Connect with Omar (built the recipient class) to confirm entitlement checks, available methods, and whether the “isRecipientLookupEnabled” flag already exists in current APIs.
+• Design alignment
+  Confirm with design that no recipient entitlement means the recipient button and drawer should not be shown; the review toggle is unrelated and should remain independent.
+
+📋Overview
+
+• Use existing recipient entitlement mechanisms; avoid duplicating checks.
+• Drive recipient button visibility via an “isRecipientLookupEnabled” flag resolved during initialization.
+• Do not show an empty recipient drawer; hide entry points when entitlement is absent.
+• Recipient Lookup: direct internal call from TSP Web to Recipient API (no gateway).
+• User Preferences: call CS Portal API; gateway presence is transparent to TSP.
+• Initialize is invoked on load and after preference changes to refresh UI; limit unnecessary full refreshes.
+• Verify API availability and details via Swagger and with Omar before adding new endpoints.
+• Review toggle is unrelated to recipient entitlement and should not be coupled.
+
+🎯Todo List
+
+• Nava, Kugel, Jagan, Marquez, Uwais:
+  • [ ] Schedule and conduct a working session with Omar to confirm existing recipient entitlement checks, methods, and the presence/shape of the isRecipientLookupEnabled flag; capture decisions, 2026-04-23
+  • [ ] Review Swagger for Recipient Store/Management to identify existing endpoints and avoid duplication; document findings, 2026-04-23
+
+• DSP/TSP Backend Owner:
+  • [ ] Implement/confirm initialization flow that sets isRecipientLookupEnabled by calling Recipient Management; expose flag to UI, 2026-04-26
+
+• TSP UI Owner:
+  • [ ] Update UI logic to conditionally render the Recipient button based on isRecipientLookupEnabled; hide drawer entirely when false, 2026-04-29
+  • [ ] Ensure the Review toggle remains independent from recipient entitlement state, 2026-04-24
+
+• CS Portal Integration Owner:
+  • [ ] Validate preferences API integration path and confirm if an API gateway is involved; no UI change required, just connection details, 2026-04-25
+
+• Common Services + TSP Tech Leads (Krishna + counterpart):
+  • [ ] Audit when initialize is triggered (on login, cross-app navigation, post-preference change); minimize redundant full UI refreshes while preserving language update behavior, 2026-04-30
+
+• QA:
+  • [ ] Test scenarios: with/without recipient entitlement (button visibility, no empty drawer), language change causing correct re-initialization and UI translation, 2026-05-02
+
+Transcription
+
+00:00:00 - 00:01:09 Unknown Speaker:
+
+That API should be checking again. Yeah, but we have to decide whether to call the API based on that button click, right? May I ask a simple thing? Can we just go into the recipient method and first check if that function is already there or not? Okay. Yeah, I would say let's explore that and come back. But correct, right now... Today, whether you can add a recipient, let's say you want to do the recipient, and you are within the recipient. There is some entitlement which is allowing you to go inside the recipient and do certain functions. It means recipient entitlement is already pulling the entitlement. It cannot work without entitlement. If it is already there, I understand why we are trying to reinvent everything. Yeah, I got it.
+
+00:01:09 - 00:01:56 Unknown Speaker:
+
+So what you are suggesting is on flick of the button we validate is what you are telling, right? Or we can convince CP on show the button all the time and then based on the entitlement it will automatically load or not load the overlay, right? That we also can discuss. But in that case, we'll be showing an empty drawer to the user. If we got to know that there is no entitlement for recipients, then the drawer will be showing that no recipients to select from, something like that. Yeah, that kind of experience, yes. When you were landing on create payment screen, when you clicked on the create payment, you made some backend call. I mean, you pre-continued first section or second section. Based on some value, you are entering some value on the UI.
+
+00:01:58 - 00:03:23 Unknown Speaker:
+
+Will you make a call? And you will have some attribute that this is coming from the new, Uh, that service should be calling UH. Recipient Management whether user is integrated. If user is integrated is recipient lookup, it will add a flag Is recipient lookup enabled? If not, you don't show will draw back. Okay. On the basis of that, that button will either be shown or hidden we can do on the result of that flag. So, um, okay, so what was I saying is I have a new AP in Recipient store. If we already have this area apart. Yeah. I think we got a swagger. We can also check. Can I suggest one more thing? In the evening, Nava, Kugel, Jagan, Marquez, Uwais, can you just connect with Omar? He is the one who built the entire recipient class.
+
+00:03:23 - 00:04:50 Unknown Speaker:
+
+He should be able to answer you everything. So, that means to give you one piece of detail. Okay. From design perspective, just one question there. If we don't have recipient access, do we want to show them the toggle on off? Getting the review section. No, right? Okay. No, toggle on and off is not for receiving. That is for... Review. We call it a review screen, but if it does not have... Okay, yeah. Actually, I was thinking... They are unrelated. They are unrelated. Unrelated. Okay. It's just for review. Are you all clear? We have one more item, right? Payment gateway. Yeah. So, one more question is, recipient lookup, we directly go through the DSP web and we make a call to the recipient API. Okay. There is no gateway involved in that. Okay.
+
+00:04:50 - 00:05:55 Unknown Speaker:
+
+Whereas, updating the preferences, We would end up connecting to the recipient API again from TSP back to the recipient API of CS portal We are not sure whether it is behind an API gateway or not, But we will end up connecting to it. You are talking about two unrelated APIs. The reference is no where related to recipient. No, they are not related. But the design wise, what pattern to be followed with a? We have a doubt. So first of all, you are okay to with us. Connecting from TSP Web to respond API directly correct no API gateway. Basically API is your API. When data is a micro service, okay, and in the sub window, you will end up creating many more micro services, okay. Actually, we had a confusion. So, it is a different team that is managing.
+
+00:05:56 - 00:06:56 Unknown Speaker:
+
+We thought that will also be exposed through payment gateway. We have to connect through payment gateway, we thought. But fine, no, no. Our assumption was wrong. So, we will directly connect to the recipient API without a gateway. For everyone's clarity, guys, just clarifying again. Recipient management is under 80894. Yeah. Sure, sure. You have to go from one room to another room. You don't go out of the door and then come again via the door inside exchanging rooms, right? It is all inside the house. Okay. But user preferences is an external, I mean not an external, but that will be a call to again CS portal API. They might have exposed through API gateway. I mean, it doesn't matter for us. We'll connect to their API. That's it.
+
+00:07:22 - 00:08:48 Unknown Speaker:
+
+It is going to be one more attribute, so you are not going to call specifically that I want use of reference for this particular IP. These are all part of the initialized call. Actually you may call multiple times. Initialized call, general initialized call is not going to be sufficient. On the browser itself, you have to take a lot. You log in on a portal, you go on TSP UI, you decided I want to change language from English to Spanish. You went into that tool and you changed your language preference. You came back on TSP, now you start seeing everything in Spanish. I mean user does not have to log off and log in again. In TSP, yeah, it makes initialized call again. When we go out, when we go to the preference page, we change something, then we are coming.
+
+00:08:48 - 00:10:39 Unknown Speaker:
+
+And also, like, okay, yesterday only I checked if I go to reports in our access portal, right? And then I come back to TSP UI again, then it's like... at each next call. So that is happening multiple times. Basically, when your app loads its calls, it supports. But initialize is also used for refetching the entire user interface. If it is reloading the entire user interface, it may create a problem. Call for us. Right, Krishna? Of course, common service will have to do initialize. Who else is going to do initialize? The only difference is, I mean, okay, architecture, when it comes to initialize call, it will be coming from non-IFA namespace. And if it is non-initialize call, then it is going to come by ISA domain. But right now in the current Ember, I think we are calling it, right?
+
+00:10:39 - 00:12:17 Unknown Speaker:
+
+Not common sources. Sorry? In the current Ember world, our Ember in kt yes so so yeah i mean when we are already on our dsp application and then we change the language from english to chinese. I have just changed the language through preferences. This was the first call that happened when I first landed onto our ESP UI and then when we changed the language, then again this initialized call happened and then we landed onto disk grid with the updated language. So whenever we are changing preferences and we are navigating back. Where is the data call? I mean other than initialize, much of other calls should have data call. Okay, okay. Yeah, I have actually filtered it out. So you again want to see, I'll clear this completely. No, no, this is okay. Oh.
+
+00:12:18 - 00:14:48 Unknown Speaker:
+
+I'll go to preferences. You already cleared, that's fine. Yeah. Okay. Yeah. Let me go to preferences. Yeah. Now if I change this to English, and on save, we are navigating back to our previous screen. Thank God. Thank God they have given English in parenthesis. Sir, you came back on landing.html. This is why you are getting this card. No, but it navigates to our PSP UI only once we finally and then this is initialized call that happens again. I think it's from our side only. Initialize just click on the initialize you should still be able to see it okay. I'm searching that, yeah. So I see that we are calling it the payment to my service. So the logic is based on if the user and the user preference is not available, then we call it.
+
+00:14:48 - 00:20:32 Unknown Speaker:
+
+But it will be called from us only. Like if you're already in a payments app, right, it will not be called. If you're out of the payment app, common services reloads are different. Engine or an app, then this user context gets lost. But due to some reason, we did ask common services to call us. Krishna, do you remember why? There was some session lock-off or something. As Mujay mentioned, Norman Services used to make two calls to our initialiser. One is from their non-IFA gateway. As soon as somebody logs in, sessions with respect to existing functionality. It is better to have two keys separately, otherwise it is a project.
+

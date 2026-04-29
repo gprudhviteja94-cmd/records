@@ -1,0 +1,117 @@
+2026-04-22 CI/CD Challenges and Team Development Strategies
+
+Creation Time: 2026/04/22 20:41
+
+
+📅About Meeting
+
+• Date & Time: 2026-04-22 20:41 (Duration: 1594 seconds)
+• Location: No relevant content mentioned
+• Attendee: No relevant content mentioned
+
+📒Meeting Outline
+
+CI/CD and GitHub Actions Stability
+
+• Current workflow failures
+  Discussed recurring GitHub Actions workflow errors and failures impacting CI/CD reliability. Need to identify root causes and standardize pipelines to reduce breakage.
+• Decision on tooling
+  Preference remains with GitHub Actions, but only if stability issues are resolved. Alternative was briefly mentioned, with no concrete switch decided.
+• Immediate remediation
+  Requested cleanup tasks such as removing stray commas and fixing file endings that break builds, and validating YAML syntax and job dependencies.
+
+Project Delivery and Environment Deployment
+
+• POC to production path
+  Completed analysis and POC on deploying Python code to a diagonal/platform environment; need a clear path to productionization, including packaging and orchestration.
+• Artifacts and data execution
+  Expectation that a SQL file will be provided for code execution; need alignment on where Python files live, target bucket, and access patterns.
+• Framework standardization
+  Proposal to design a lightweight framework to handle DAX/SQL tasks (mentioned “10 DAX” and “10 SQL files”) to streamline builds and reuse across platforms.
+
+Staffing, Roles, and Support
+
+• Bandwidth and interest
+  Team members have gained knowledge but want more involvement in development tasks. Interest shown on SQL side; need to balance learning with delivery targets.
+• Leveling and targets
+  Concerns raised about meeting targets at E1/E2 levels; need clearer expectations and a support plan to achieve them.
+• External support and guidance
+  Request for continued guidance and support from leadership; gratitude expressed and readiness to proceed with agreed plan.
+
+Leave Planning and Team Operations
+
+• Leave submission process
+  Team asked to submit their leave plans to the manager; avoid fragmented or last‑minute requests. Clarify acceptable consecutive leave blocks.
+• Coverage and communication
+  Ensure on-call/coverage during leaves. If external parties (e.g., “home/comp” stakeholders) reach out, establish a single point of contact.
+• Scheduling impacts
+  Acknowledge school-related constraints for some members; adjust office timings temporarily and plan for KG/next-day changes.
+
+Vendor/Partner and Direction Alignment
+
+• Partner selection
+  Briefly touched on Cinecrane vs IBM; no final decision recorded.
+• Workstream direction
+  Statement to “go back to the lab/company” indicates returning to core tracks and avoiding ad-hoc pivots unless pre-aligned.
+
+📋Overview
+
+• GitHub Actions failing; remain on GitHub Actions but fix workflows and enforce standards.
+• Move POC to a production-ready pipeline: define packaging, buckets, access, and orchestration.
+• Create a reusable framework for DAX/SQL execution to reduce repeated effort.
+• Team desires more development exposure; align tasks with interests while meeting E1/E2 targets.
+• Collect and approve leave plans; set coverage and a clear contact protocol during absences.
+• Vendor choice (Cinecrane vs IBM) not finalized; continue current workstreams pending decision.
+• Immediate code hygiene fixes required (formatting, commas, file endings) to stabilize CI.
+
+🎯Todo List
+
+• DevOps Lead:
+  • [ ] Audit GitHub Actions workflows, identify top 3 failure causes, and propose fixes, by 2026-04-26
+  • [ ] Implement YAML linting and required checks on main branches, by 2026-04-29
+
+• Data Engineering:
+  • [ ] Define target storage bucket, folder structure, and access policy for Python artifacts, by 2026-04-25
+  • [ ] Package POC Python code for deployment (versioning, dependencies, config), by 2026-04-30
+
+• Analytics/BI:
+  • [ ] Consolidate “10 DAX” and “10 SQL” tasks and map to framework requirements, by 2026-04-27
+  • [ ] Provide the promised SQL file(s) for execution pipeline testing, by 2026-04-26
+
+• Platform/Architecture:
+  • [ ] Draft a minimal framework design for DAX/SQL execution (config, runners, logging, retries, CI hooks), by 2026-05-02
+  • [ ] Document deployment path from POC to production on the target platform, by 2026-05-03
+
+• Engineering Managers:
+  • [ ] Clarify E1/E2 target expectations and pair interested members with development tasks, by 2026-04-28
+  • [ ] Set up weekly guidance/check-in to support delivery and skill growth, starting 2026-04-29
+
+• Team Members:
+  • [ ] Submit individual leave plans for the next 8 weeks to the manager, by 2026-04-24
+  • [ ] Arrange coverage and share a single contact channel for stakeholder queries during leave, by 2026-04-24
+
+• Code Owners:
+  • [ ] Fix formatting issues causing CI failures (trailing commas, file endings), raise PRs, by 2026-04-23
+  • [ ] Add pre-commit hooks for formatting and linting to reduce CI noise, by 2026-04-26
+
+• Leadership:
+  • [ ] Decide on vendor/partner direction (Cinecrane vs IBM) or confirm status quo, by 2026-05-05
+
+Transcription
+
+00:00:45 - 00:12:20 Unknown Speaker:
+
+C-I-C-D, github actions or not ok github actions actually github actions failure github actions workflow error github actions, 1,2 2 మీడి చాలన్నో ఉన్నారేన్ని? ఇప్పుడు ఇది దింట్లో లేరు చాన్నేనో? ఇది లింకో ఉన్నారేన్ని? మీడి ఉద్దరు ఇదింట్లో లేరు అంటా అందవల�, 1 అనందు ఆఫ్రైమే గేల్గువేడా శేట్, 4, 1 గాబ్బే రస్పండే ఏదే స్టించ్ ఏరియాస్తు, 1 స్పండ్ యేడు హాయ్ తేంస్ వరు కోన్టాక్టింగస్ లేట్ మీ చేక్ దా చాట్ సంమ్మరీ ఎంటే మీ కెట్ పెక్టింగస్, 1 నిష్టము అప్షణ్ డోకేసిందింది. గ్యాబు గోడే ఉలిస్. స్కూల్ గలతుందా సార్? ఆ యలతుంది. నర్స్రే ఇప్పింది. రేపు మేనించ్చి ఎల్కే జి. anyway మలు మాచ్చాలుస్తిందే పెద్ద స్కూర్యి ఇదే కుంచ్చ దగ్రిగా ఉంది దగ్రిగా ఉంది కాపెట్టి ఆఫిస్ టాయ్వింగ్స్ కావగా మెనేంచే స్కూర�, I work in a bank as a private job. I work in a bank as a private job. I work in a bank as a private job.
+
+00:12:21 - 00:16:37 Unknown Speaker:
+
+I work in a bank as a private job. 2 లేవ్ సేడంగా పెడితే ఉప్పుకోనాటే ఉప్పుకోనాన్నా లేవ్ అన్ని తీస్కోవండు నల్లక రోండే తీస్కోవాలి సేడంగా మీర్ ఆయ్దు పెడతారాన్న, their leave plans and submit to me. ఇంటి విల్లు మన కంప్పడింగ్ మేల్వేడితే ఇంటి వాలు ఉందా మనలే కాల్ యాస్తార్యాది ఎంది అన్ని పెట్టిరేన్ని. మన ఇంటి మన కంప�, 10 ము ఎబ్బేయంది నిక్కా రస్పండాలేంది తేవు ఇరోజ రాత్లి దవావపత్తన కల్లిండార్ సర్ ఇత్తా దిప్ప్లామెంట హాన్ పోయేత అప్పుడే చేప్ప�, remove comma and end of this file ఇదో ఫాయ్లు రిమూచేమాన్నాడింది, This is PR agent. I have made a proposal on the agentic process. I am not ready to do that. Today I am happy to do what I am doing. If you had told me earlier, I would not have listened to you. Whoever it may be, I would have been on the same line going forward.
+
+00:16:37 - 00:22:42 Unknown Speaker:
+
+We will go back to the lab. we will go back to the company. 1 సేక్కుం పాట్సా కరుంచిందే ప్రిక్టేన్ అవరువిదే, Cinecrane or IBM? 1 ఇరు 4 మంస్ హేందం నీ ప్రాజుట్ స్టాటింగ్, how to deploy it, how to place python files, in which bucket it should be placed, how to access it, analysis was enough for many days. After analysis, I actually did POC, how to deploy it in a diagonal platform, how to write python code, I did POC on it, and they told me that they will give me a SQL file for code execution. 10 DAX ని 10 SQL ఫాల్సి ని బిల్ల్ చేస్సా ప్రాస్స్ మత్తానిలి తర్వాత కొత్తనో పెర్లల్లగా దినీ ఒక ఫ్రేమ్వర్కు డిసాయ్యాద్దాం ఇదుందండి వ�, 4-6 మంస్ దా పెట్టిందం మాకు, Sql సాఇడ్ ఇంట్రస్ట్ చూబిచ్చిలు.
+
+00:22:48 - 00:26:04 Unknown Speaker:
+
+knowledge అంది but కాని అతంకి ఇలా development పాయిం టాఇపే ఇక్కు ఇండిరస్టర్నా ఇంకా అలాలా అది framework చేసింగా మనికి కీపాన్ మలి ఏస్ ఫ్లాట్ఫామ్ లి స్టార్ట్ జ, E2 బ్రద్ద్లేండ్ సార్ E1 లే పట్టిక్కుండే మనా తార్గిటు ప్రోపర్గా లే పట్టిక్కుండే, 9 ఇదే ఇదే ఇదే ఇదే ఇదే ఇదే ఇదే ఇదే ఇదే, Thank you sir, need support to thanks. 1 2 3 4 5,
+

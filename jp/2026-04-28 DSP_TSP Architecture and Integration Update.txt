@@ -1,0 +1,169 @@
+2026-04-28 DSP/TSP Architecture and Integration Update
+
+Creation Time: 2026/04/28 17:30
+
+
+📅About Meeting
+
+• Date & Time: 2026-04-28 17:30 (Duration: 44m 37s)
+• Location: Virtual call
+• Attendee: Pankaj, Rahul, Jeevan (referenced), Venkata (Bangalore lead), Khalil (tentative/not confirmed), India team members
+
+📒Meeting Outline
+
+DSP/TSP Architecture, Scope, and Integrations
+
+• Design confirmation and API scope
+  Team confirmed the new “discipline management” design and related services are standalone. All endpoints are new and not integrated with existing DSP hub logic. Objective is clarity on whether any existing APIs are reused—answer: no reuse; standalone services.
+
+• TSP application overview and supported products
+  TSP handles payment initiation “high value” (wires), real-time payments, wallet payments, and newer consent/mandate management (non-financial messages). Low-value ACH support has begun with India ACH; redesign underway to support global ACH. External/vendor-initiated payments for tax/utilities are supported via TSP access.
+
+• Workflow and approvals
+  All pay types share a common workflow in TSP except mandate/consent flows, which differ slightly. Client-configured, multi-level approvals are supported. Roles and entitlements are maintained in Admin Center.
+
+Entitlements, Roles, and Decommissioning Plan
+
+• Current roles integration path
+  TSP consumes roles via WPI Roles Adapter, which then calls Admin Center Roles API. This detour exists for historical reasons.
+
+• Runtime (RT) database decommission
+  The “runtime” database currently stores certain entitlements. It is scheduled for decommissioning around June–July. Strategy: migrate entitlement reads from RT to Admin Center/ROSE entitlements directly, eliminating WPI detours over time.
+
+• Scale and connectivity
+  Approximately 196K clients and 196K users are entitled. There are 50+ upstream/downstream interfaces.
+
+Templates, Beneficiaries, and File Import
+
+• Payment templates and mass payouts
+  Templates can prestore multiple beneficiaries to enable one-click initiation of many payments. Current TSP supports this via templates; uplift program plans a “Benny-first” global feature to streamline beneficiary-first flows.
+
+• File-based initiation
+  Two file import paths: (1) direct upload via UI (supporting two file formats), and (2) client uploads to S2H; S2H forwards to TSP for processing through the standard workflow. Users must follow a defined upload process before extraction.
+
+• Resiliency and support tools
+  TSP Support app is being technology-upgraded and functionally rewritten (new UI and backend) to assist production support with configuration and resiliency.
+
+Upstream/Downstream Architecture and Market Nuances
+
+• Reference/static data and messaging
+  TSP is upstream-connected to PBRM for static/reference data needed for market onboarding and new pay types. One-way publish via Kafka for certain data; two-way interactions exist where required.
+
+• Market coverage and routing
+  6–7 markets (LATAM/APAC) currently flow via the Kafka-based route; 45+ other markets follow legacy paths. Market-specific exceptions (e.g., Brazil, Russia) use direct connectivity. China routing migrated from CCAP to WPI last year.
+
+• Back office and routing components
+  Post-approval, payments route via WPI to strategic back offices under the “Graphite” umbrella (Graphite and Plutus). RTP vs other payment types may follow distinct processing paths before acknowledgments/callbacks return to TSP for status updates.
+
+Callbacks, APIs vs Queues, and Notifications
+
+• Callbacks and transport choices
+  WPI returns acknowledgments/callbacks to TSP using TSP-exposed endpoints; WPI prefers messaging queues for scale/reliability. APIs are used where immediate responses are necessary; otherwise, queues are preferred for extraction and status.
+
+• Notifications
+  TSP and WPI publish processing statuses (primarily from WPI) to Kafka; common services consume and surface these as UI notifications within TSP.
+
+Team and Ownership Updates
+
+• Bangalore team leadership
+  Venkata re-introduced as Bangalore team lead (20 years’ backend experience; ex-GBMC, rejoined in August). Bangalore focusing on DSP uplift: Create Payment Pages, Amber upgrade, TSP Support tech upgrade, and TSP technology modernization.
+
+• Attendance and logistics
+  India team present; Khalil’s attendance uncertain due to commute. Meeting proceeded without waiting.
+
+📋Overview
+
+• Standalone “discipline management” design confirmed; no reuse of existing DSP hub logic/endpoints.
+• TSP supports high-value wires, RTP, wallets, mandates/consents, vendor/external tax-utility flows; India ACH live with global ACH redesign in progress.
+• Common approval workflow across pay types; mandate/consent has a distinct non-financial flow. Roles managed in Admin Center.
+• Current roles/entitlements path via WPI Roles Adapter is historical; plan to shift reads directly to Admin Center/ROSE as the runtime (RT) DB is decommissioned by June–July.
+• Scale noted: ~196K clients and ~196K users; 50+ interfaces.
+• Templates enable multi-beneficiary payouts; uplift to add a global “Benny-first” capability. Dual file-import paths: UI upload and S2H-to-TSP pipeline.
+• TSP Support app undergoing a full tech upgrade (UI/backend) to improve production resiliency.
+• PBRM provides reference/static data; selective Kafka publish in place. Majority of markets still on legacy routes; special direct connections exist (e.g., Brazil, Russia). China routing moved to WPI last year.
+• Payments route through WPI to Graphite/Plutus back offices; callbacks/acks flow back to TSP for status.
+• Transport patterns: APIs for synchronous needs; queues for extraction/status at scale. Notifications published to Kafka and displayed via common services in TSP UI.
+• Venkata introduced as Bangalore lead; Bangalore team driving multiple uplift streams.
+
+🎯Todo List
+
+• Venkata:
+  • [ ] Share an updated DSP/TSP architecture deck reflecting current-state changes since early-year version, including RT decommission plan and ROSE entitlement model, by 2026-05-06.
+
+• Pankaj:
+  • [ ] Confirm whether any remaining components still require WPI Roles Adapter post-RT decommission and propose a cutover plan, by 2026-05-10.
+
+• Rahul:
+  • [ ] Validate market routing coverage: list of 6–7 Kafka-enabled markets vs 45+ legacy markets, and identify candidates for next migration wave, by 2026-05-09.
+
+• Jeevan:
+  • [ ] Reconfirm “discipline management” API endpoints and publish OpenAPI specs to the team repo; clarify any touchpoints (if any) with Admin Center or TSP, by 2026-05-03.
+
+• Bangalore Team:
+  • [ ] Document the “Benny-first” global feature design and its impact on templates/entitlements, and outline phased rollout, by 2026-05-17.
+  • [ ] Provide status report on TSP Support tech upgrade (UI/backend), including resiliency improvements and production runbooks, by 2026-05-08.
+
+• WPI Team:
+  • [ ] Align on transport choices (API vs queues) per interaction with TSP, and update interface contracts for callbacks/notifications, by 2026-05-13.
+
+• Common Services Team:
+  • [ ] Review Kafka topics for notification completeness and ensure all new TSP statuses are rendered in UI, by 2026-05-15.
+
+Transcription
+
+00:00:02 - 00:04:30 Unknown Speaker:
+
+It's a full photo. The summer. It's not early. It's good time. Hey, Pankaj, you are there already. Rahul is also there. We need confirmation on the design that we shared. Jeevan has shared that with respect to discipline management. I saw his ping. Discipline management? Yeah. He pinged me on some group. I believe. I read it. We just need to understand if it is being integrated or being integrated with any of our existing API, right? It's just a standalone API. Everything is standalone, correct? Everything is standalone. Standalone means all these endpoints and everything is new. Nothing is integrated with our existing logic. I mean, that is a DSP hub. Hello. Remote. Can you guys hear me? The call, I think from India, we will be only the person not sure Khalil is joining.
+
+00:04:30 - 00:05:50 Unknown Speaker:
+
+Okay, maybe a little, or he might be actually on his commute. I think around this time, okay, so I think we can get started, I don't think we will have to wait. I wanted to like, again, um, cover or continue our discussion, right? Uh, getting a bit more into what's the how the current is, how is the TSP right? And with intent of like, learning and also like, maybe like, when we are discussing the next year, I want to have like, just one minute, one minute before we move on. So yesterday Venkata was out sick, so let him just introduce, so I mean, Venkata is our lead for the Bangalore team. So he recently joined us. So why don't you just give a brief intro? Thank you about yourself? Hey hi, I mean, I joined the last August GBMC.
+
+00:05:50 - 00:06:40 Unknown Speaker:
+
+I was ex-GBMC employee. I worked in GBMC for five years, I left for almost five years and didn't join back. Yeah, I am actually leading Bangalore team here, so we are currently focusing. I mean, with respect to me, yeah, I totally have 20 years experience in it, so I'm back-end developer and now I'm leading a team. And I hope you have an idea like what we are doing. With respect from Bangalore. Uh, the DSP uplift program, we started working on it, especially on create payment pages and also Amber upgrade. And then TSP support, we are upgrading the technology. So TSP support is an application that is used for making changes to production data, configuration changes. So it's a tool that would be used by the production support team.
+
+00:06:40 - 00:07:45 Unknown Speaker:
+
+So that we are upgrading, the technology upgrade we are doing and rewriting that completely with the new screens and new backend. Market, run their platform, run the payment and all of it right, including entitlements, right? Uh so, yeah. So now I'm very familiar with this space. Uh so, yes, I can understand what you're doing. On the other side, I don't understand how the systems are set up because I believe I see a WPI is another entity here. Uh, which interface obviously with the payments and the payout, but we also have a direct connectivity with the with the payout for the payment. Back then again. I think we don't know what the period of time, but I want to understand the current state with the direction of the travel. Yesterday, I asked the team, like, the challenges of what they're seeing.
+
+00:07:45 - 00:08:39 Unknown Speaker:
+
+Okay? Sure, sure. Okay. So, I have just some older deck. I will try to present that deck, and we'll try to cover some, you know, some overview of DSP, what all supported in DSP, then architectural, and then how, you know, the GACS we are expecting into DSP. Data again, this, whatever that which I have is not up to date. I will say it's. It was prepared somewhere early this year. So that whatever data we have, it could have some changes on those data points. But yeah, at least the high level, this is what we have covered, right? So I think this is just a overview of our three different application which we have in Payment Initiation Wall TSP, ITC, GSH, and against applications. What all pay methods or product type which we support.
+
+00:08:39 - 00:09:43 Unknown Speaker:
+
+PSP being a high value processing applications right now, PSP is serving most number of product types, which includes high value. Wire payments, obviously, and then some new era payments, which is real time payments, wallet payments. And recently we introduced other than payment management, we introduced the mandate management or the consent management workflow in PSP. So from low value perspective, as we discussed yesterday, we have now started supporting low value, which is ACF payment for India ACF, limited to India ACF for now, and we are redesigning it so that it can support the global ACF markets. Again, the internal draft... Hello, Venkati, I'm Swati. Is this a good time to talk? Yeah, tell me. For choosing no broker packers and movers for movement of your household. We would like to hear your feedback about the shifting experience.
+
+00:10:05 - 00:11:21 Unknown Speaker:
+
+Which we introduced since last few year. These are mostly the external payments initiated by external vendor or some external services and by a TSP access we are processing those payments usually usually refer for tax and utilities. So these are the wide range of TSP pay type which we have. Which are supported, right? How does the workflow manage for this? Is it the part of the TSP application itself or is it sitting outside? No. So workflow perspective, it's within a TSP only. All pay types support same workflow other than the mandate management which I told you. Mandate management is not a payment actually. It's instructions basically, non-financial messages, instructions. So it has slight different workflow. Other than that, all pay type follow the same workflow. Okay, makes sense. Okay. And then you configure level of approval, clients configure rather, right?
+
+00:11:21 - 00:13:00 Unknown Speaker:
+
+I want one, two, three level approval and then you will get approved, right? Yeah. So because I'm assuming the roles are maintained in the admin center, correct? Correct. So roles are maintained in admin center and they have called the roles API which the admin center exposed. But right now, rather than directly connecting those roles API, we go via WPI, WPI adapter, which is a roles adapter. And then roles adapter make to roles API and send. Because the real-time database which we have is in decommission mode and by June, July that needs to be decomm. So first we need to move our RT entitlement to the ROSE entitlement. Sorry, I forgot to explain that part. Actually, yeah, it's a runtime database, not real-time, right? The name of the database is runtime and it is also holding certain entitlements which is being used at the moment.
+
+00:13:08 - 00:17:29 Unknown Speaker:
+
+With the strategic model. RT We need to start reading it from, Uh, okay, so look at the RT. Gets the data from the Admin Center itself at the moment now that data admin center directly facing those information to Admin Center rather than RT database. So that was the older model where these which we will target for, Uh, Rose Decom. Okay, okay, that's good, it's just like, in the near future, basically, yeah, yeah, okay, so that's good because I, I.It's very difficult for me to comprehend, like, why we are going through the WPR, but looks like it's historical reason. And then we are trying to move, move away from that, right? Um, so once once 196k plus client and 196k users entitlement, that the way I have just explained, right? These many entitlement.
+
+00:17:29 - 00:25:38 Unknown Speaker:
+
+These many clients and users are configured and 50 plus interface connectivity upstream, downstream. And basically using those templates, we can initiate the payments. Okay, so basically when you're initiating a payment, but you want to pay to the multiple people, yeah, so basically. We will have one template where multiple pennies are already configured, we will just use that template to initiate the payment. But by via one click, we can initiate for 70 000 people, or we don't have configure. 10 are coming to approach Account first and Benny first. If you are looking for Benny first, first we need to select the predefined store Benny's. This is what we are. That will be not a global feature in existing tsp but in uplift program. So these two file format, we can support it. We can upload it from UI.
+
+00:25:38 - 00:31:00 Unknown Speaker:
+
+But we have another flow where client is uploading their file in S2H and S2H sending that file to TSP location and that TSP processing that file and following the workflow. So these two types of file import flow we have right now. I do, man. User needs to follow that one law and then only we extract those papers. Support is mainly used for the resiliency purpose in production. Okay. So, and TSP is connected as an upstream. TSP is connected with right now PBRM. So, we receive the data, the static data which I told you, the reference data for any market onboarding or for any, you know, any new pay type which we are introducing in TSP. That data is... is something where we may communication, where we are receiving the data also and publishing the data.
+
+00:31:00 - 00:34:26 Unknown Speaker:
+
+But this is the one-way communication where we are publishing the data. By Kafka, the payment. But right now we have only 6-7 markets which goes via this flow which includes some LATAM markets and some APEC market but all other around more than 45 markets which still go via. We have some market level nuances also like Brazil and Russia where we have direct connectivity to those systems, but those are only those market where. MTS is something for cross-border, MTNFTS for the cross-border, right? The graphite, the strategic back-office application, which is the graphite, graphite applications. So these are the two graphite components, graphite and Plutus. So basically graphite, under graphite, we have two back-offices. We call it as a graphite, but ultimately payments are being processed in two different ways.
+
+00:34:55 - 00:39:57 Unknown Speaker:
+
+RTP payment which get processed in the payment after workflow and then we release the payment. Payment goes via these two routing application to back office application and these back office application. Sent back. As the acknowledgement or the callbacks, and based on those callbacks and acknowledgement, we mark our. We treated it as a routing that route to WPI. Recently, we completed it for China. The China was going to CCAP earlier, but last year only we completed the entire... are not building that. Flow again this has a WPI send it back to the TSP yes WPI send it to TSP so we expose some end point and there are prefer to go via their messaging queues. They have all the solutions even though payment extraction, everything via API only. API makes sense when you are expecting a response back immediately, right?
+
+00:39:57 - 00:41:39 Unknown Speaker:
+
+That's what the API is. You maybe one more thing, right? Things like for example notification and stuff like that, right, how does that work? Right? Yeah, so in TSP we have that notification thing for TSP and WPI, basically, that is the combination of TSP and WPI. Mainly, it's more to WPI whenever we process the data, and WPI sites and services are configured. So whenever we submit and we those status, they publish this over to over Kafka, I believe. And then those notifications get consumed by common services, and those and all these different will be displayed in our UI as a notification.
+

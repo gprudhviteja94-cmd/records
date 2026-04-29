@@ -1,0 +1,357 @@
+2026-04-23 Alert Operations and Project Updates Meeting
+
+Creation Time: 2026/04/23 18:04
+
+
+📅About Meeting
+
+• Date & Time: 2026-04-23 18:04 (Duration ~52m)
+• Location: Online
+• Attendee: Sachin, Sindhuja, Anand, Rachna, Nirmal, Athira, Kundan (expected), Prithvi, Shravan, Jason (as referenced), Suman (absent), Raj (review pending), Sharbir
+
+📒Meeting Outline
+
+Alert housekeeping and backend task operations
+
+• ICMB customer acquisition alerts
+  • Remaining ~200+ alerts; close all older items but do not close anything created “today or yesterday.” Some alerts already closed for varied reasons.
+• USC stop (PACE L1) alerts
+  • Keep only the latest-date alerts (yesterday’s/22nd) open; close all prior ones. Current list shows 54 open; intent is to close all except the most recent.
+• Bulk update vs. manual closure
+  • Current backend closure is possible individually; bulk update is failing due to permission/state issues in Work Management. Platform team support needed. Suspend/Cancel are supported; Resume not needed. Suspend can act on Ready/Reserve/In-Progress; Cancel can act across all (including Suspended). Need to validate permissions and feasibility for passing parameters on suspend/cancel via API.
+
+Insurance and metadata dependencies
+
+• Insurance builds and metadata
+  • Metadata and lineage still being figured out; warehouse table and metadata setup are blockers. Build to start with E1/E2 once metadata lands. Story will carry over to next sprint; timeline awareness flagged.
+• Sprint planning alignment
+  • Next sprint starts Tuesday; three sprints remain in PI. Plan: complete build next sprint; E1/E2/E3 testing in subsequent sprint(s). Quick 30-min planning with product owners (Anand, Rachna) proposed; Sachin on leave next week.
+
+Self-serve, Lumi integration, and data movement
+
+• Pay-now/pay-later data processing
+  • Code added to execute queries and write JSON to GCS in cluster; facing memory consumption issues. Alumni/platform team suggested increasing cluster size; will scale and re-validate.
+• Lumi API UI integration (E1)
+  • Athira integrated Lumi API for dynamic table/variable selection with loaders and refactoring for smoother UI. Deployed on E1; further form additions pending. Variable dropdown is disabled until table is selected; filtered search implemented; rule creation flow demonstrated. Follow-up to refine details view, approve/reject placement, and metadata display (timestamps, etc.) after design review.
+• CMV use case automation
+  • Kundan working on self-serve related APIs; team member tested records in E1 successfully on CMV; awaiting Sachin’s approval. BPMNs for next automation phase received; KD shared; work to continue.
+
+Launch readiness, RFCs, and environment coordination
+
+• E3 readiness and data moves
+  • Coordination with Sharbir; E2 data movement required. RFC process had issues; new RFC raised for upcoming Monday; pending approval and follow-up needed.
+• Rewards Integrity launch status
+  • E3 sign-off provided; deployment is live. One rule earlier failed; confirmation of alert emails pending. Business email group for Rewards Integrity needs update; code to be prepared for approval tomorrow.
+• UMDL check and role modifications
+  • No requirements received yet; keep placeholder for upcoming month. Potential assignment to Ansi later.
+
+Benefits data scope and backlog decisions
+
+• Benefits data migration (DQIDs)
+  • Decision: deprioritize migration to VIA Control; current Q5 runs suffice. Move items to backlog/unscheduled rather than close; retain for potential future benefit reassessment. Shravan to continue benefits data discovery, scripting; worked with Jason on URAC table additions (format/separator/date issues persist; Jason to fix).
+
+Threshold templates and testing expectations
+
+• Threshold check templates
+  • D1 deployment done; 7 of ~20 templates completed this sprint, targeting ~10 this sprint and remaining next sprint. Clarified “Done” requires unit testing; integration testing tracked separately. 98 queries/DQIDs mapping validated; ensure unit test completion per template.
+
+Bulk processing design walkthrough
+
+• Bulk task update (QTrak portal)
+  • UI: Bulk Processing module with file upload (Excel) and BPMN selection. File to include task IDs and outcome fields (TP/FP, outcome classification, dollar value, etc.).
+  • Validation: Discard invalid combinations; process only valid rows. Reserve tasks under runner’s AD ID; update tasks to TP/FP; exception handling in place.
+  • Batching: Process in batches (e.g., 10s), loop until all complete; wait for active instances to finish before finalizing.
+  • Downstream: Task finalization independently triggers main BPMN (incident creation as applicable). No hard dependency from bulk update to downstream completion.
+  • Reporting: Consolidated report generated with task ID, status (Completed/Business Exception/System Exception) and error tags; user can re-upload failed items after correction.
+  • Front-end: Bulk module available; needs integration. Design aligned with Raj earlier; final review pending.
+• Rule export and transfer for self-serve
+  • Phase 1: Export newly created/registered rules daily; write file; SFTP to Lumi; Lumi phase 2 (by Nirmal) ingests to Lumi DB.
+  • POC: Explore bypassing SFTP by pushing directly to GCP bucket via OpenShift/AWS bridge; until finalized, continue SFTP path. Exception handling included.
+
+Planning, leaves, and follow-ups
+
+• Near-term meetings
+  • Plan quick planning session with product owners (Anand, Rachna) tomorrow. Check with Raj: if no agenda, cancel; otherwise proceed. Demo of Lumi integration available on DEV/E1 for review.
+• Leaves
+  • Sachin on leave starting next Tuesday; may log off early Monday. Suman absent unexpectedly; follow up on availability.
+
+📋Overview
+
+• ICMB and USC alert backlogs to be closed selectively; exclude latest-day alerts.
+• Bulk backend closure works individually; bulk operation blocked by permissions; platform team needed.
+• Insurance build blocked by metadata/lineage; shift build to next sprint; testing to follow; still confident to close by PI end.
+• Pay-now/pay-later pipeline faces memory limits; will scale cluster and re-validate.
+• Lumi UI integration for tables/variables live on E1; further UI refinements after design review.
+• CMV E1 tests passed; pending Sachin’s approval; next-phase BPMNs and KD received.
+• E3 readiness underway; RFC raised for Monday; approvals pending.
+• Rewards Integrity deployed; verify alert emails; update business email group; code ready by tomorrow.
+• Benefits DQID migration deprioritized; move to backlog/unscheduled, not closed.
+• Threshold templates: 7 done with unit tests; target ~10 this sprint; remainder next sprint; integrate testing tracked separately.
+• Bulk processing design finalized; reporting and batching covered; front-end integration pending Raj’s review.
+• Self-serve rule transfer via SFTP active; direct GCP route under POC.
+• Sprint planning to be finalized tomorrow with product owners; placeholders for role modifications and UMDL maintained.
+
+🎯Todo List
+
+• Sachin:
+  • [ ] Validate feasibility to pass parameters on suspend/cancel via API; confirm permission model for bulk operations; sync with Platform team, by Apr 26
+  • [ ] Approve CMV E1 test results or provide feedback, by Apr 26
+  • [ ] Review and approve Rewards Integrity business email group code changes, by Apr 24
+  • [ ] Get Raj’s review/sign-off on Bulk Processing BPMN and UI integration plan, by Apr 24
+
+• Platform Team:
+  • [ ] Investigate and enable required permissions/states for bulk close/suspend/cancel in Work Management; advise on parameter passing, by Apr 26
+
+• Sindhuja:
+  • [ ] Set up 30-min sprint planning with product owners (Anand, Rachna) for tomorrow; share current board for validation, by Apr 24
+  • [ ] Create placeholders for Role Modifications and UMDL check in backlog, by Apr 24
+  • [ ] Mark Benefits data items as “Unscheduled/Backlog” per decision, by Apr 24
+
+• Anand:
+  • [ ] Confirm prioritization and acceptance of stories (bulk update, SFTP/self-serve) after design review, by Apr 24
+  • [ ] Validate sprint plan shared by Sindhuja, by Apr 24
+
+• Rachna:
+  • [ ] Validate sprint board and confirm items for next sprint, by Apr 24
+
+• Nirmal:
+  • [ ] Increase cluster size for pay-now/pay-later job; re-run and validate memory stability; proceed with further validation if stable, by Apr 25
+  • [ ] Continue self-serve backend: SFTP ingestion to Lumi DB; report issues/POC findings for direct GCP route, by Apr 26
+  • [ ] After current self-serve work, begin backend implementation of Bulk Processing per approved design, start by Apr 29
+
+• Athira:
+  • [ ] Finalize E1 UI changes: form additions; prepare for details view and approve/reject placement per post-review guidance; avoid structural changes until Raj review, by Apr 26
+  • [ ] Expose additional metadata (e.g., variable names, timestamps) on details view as available, post-review
+
+• Kundan:
+  • [ ] Continue work on self-serve related APIs (non-Lumi); provide daily status, ongoing
+
+• Prithvi:
+  • [ ] Complete ~10 threshold templates this sprint with unit tests; document which are done; plan remaining 10–12 for next sprint, by sprint end
+  • [ ] Separate integration testing tracking from unit testing status, ongoing
+
+• Shravan:
+  • [ ] Continue benefits data discovery and scripting, ongoing
+  • [ ] Assist Jason on URAC table additions; resolve file format/date/separator issues; confirm data reaches Lumi, by Apr 25
+  • [ ] Check Suman’s availability and follow up on participation, by Apr 24
+
+• Jason:
+  • [ ] Fix URAC file/table structure issues (separators/date formats) and re-share for validation, by Apr 25
+
+• Suman:
+  • [ ] Confirm status on Rewards Integrity alerts and deployments; ensure business email group is updated, by Apr 24
+  • [ ] Coordinate with Shravan on Benefits data tasks, ongoing
+
+• Sharbir:
+  • [ ] Support E2 data movement for launch/E3 readiness, by Apr 26
+
+• Raj:
+  • [ ] Review Bulk Processing design and E1 UI flow; advise on details view and action placement, by Apr 24
+
+• RFC Owner:
+  • [ ] Secure approval for Monday RFC; communicate status and next steps, by Apr 26
+
+• General Alert Closure team:
+  • [ ] ICMB: Close all remaining alerts except items from today/yesterday, by Apr 24
+  • [ ] USC PACE L1: Keep latest-date (yesterday/22nd) alerts; close all older alerts, by Apr 24
+
+If any item lacks a named owner above, the meeting coordinator (Sindhuja) to assign and track.
+
+Transcription
+
+00:00:00 - 00:01:21 Unknown Speaker:
+
+Have you opened the filter part? I think my screen is lagging then. Yeah, yeah, so it's ICMB customer acquisition, this one, uh, the one you were just hovering over. ICMB customer acquisition. Yeah, this one if you open it. So here, uh, like, uh. Some of the alerts they have already closed, which had like, different different reasons. And now there would be, uh, some 200 plus remaining. Give me a second. Let me note it down. Just yeah, I see a customer acquisition. This one, right? So whatever left, we need to close it out, correct? Yes, correct. Also, like this thing I had a line with them day before yesterday. So try not to close anything that has come today or yesterday. Okay, next one is USC stop, this is the pace level one, uh, the third from the bottom, yeah.
+
+00:01:21 - 00:02:56 Unknown Speaker:
+
+So here, uh, just leave out the latest, one, latest date alerts and then close everything else before. So what happened? And then this alert was coming all along, like all this time, entire April and a bit in March, also. All except, uh, all except uh. Yesterday's alert, so yesterday is the latest one that's present. 22nd, right? Okay, okay. So here also, we have closed, uh, some of the alerts, I think there are 51 remaining in total. Uh, can you change the number of rows per page just to see the total on the left bottom left bottom side? Just to achieve results? 54 is there, yeah, so out of those 54, I think they have with this one, because this is only the open one need to be used for it.
+
+00:02:56 - 00:04:08 Unknown Speaker:
+
+Yeah, there is no valid, yeah, okay, uh, anyone else apart from this? No, I think this is it okay. And for insurance, we started getting those alerts. No, I don't think so. I have not received any. For B40 and B45. Those details have been also updated today in today's department. Okay, okay, great. One question I had is, apart from closing it from the back end, right, is there anybody is telling? Is there a way to also update the parameters as well when we close it, or is it just getting suspended? No, it's it would be straight away suspended passing to those API, so are we not able to pass those parameters through when we suspend it? I can check that one, give me a second, I'll take it right away.
+
+00:04:08 - 00:05:58 Unknown Speaker:
+
+And even I'm not sure if I do have that required permission to do it. I.I haven't done it earlier, so even I need to check it whether I'll be able to. And I need the platform teams help on that. Suppose the MGM one we were targeting right now, MGM analytics. Suppose cancel all starting dates. SubMit Um, okay, so here I, I won't be able to add any additional parameters. What else is there apart from cancel? Uh, we can do it, as either suspend or cancel, these two would be possible. Resume is not required because we're not resuming. Any has been assigned to Rachna. Okay, and you would like to release it and assign it to someone else, completely cancel the one. Um, uh, I need to check it. Not sure. Are you seeing some some other uh?
+
+00:05:58 - 00:07:00 Unknown Speaker:
+
+Parameter? If you can select Suspend one, slide, No, no, even if you select Uh, no, no, there is no. Just the difference is that for Suspend one. These three tasks you can suspend, ready, reserve and in progress. But in case of cancel, you can select all of them, even if those are suspended. Progression, that is the difference. Okay, okay, okay, again, I need to test this functionality. I haven't done this one, uh, because this is platform one, right? So I'll check and I'll update you to try and analyze this. I'll be right back. Okay. We can go ahead with the update meanwhile. I think everybody has joined, right? It's Kundan who needs to join back online. And then, you know, I'll just say the insurance update only is there, right?
+
+00:07:00 - 00:07:56 Unknown Speaker:
+
+So I'll not let you wait for, you know, more time. Did you share that lineage also when you have said it yesterday? Yeah, okay, so, uh, just in heads up, right? Um, as we are still figuring out those metadata, right? So there would be slight delay in the, you know, build we need to carry on. That should start with the E1 or E2 build. And no, no, I, I already started on that. But until data is there, that data needs to be saved to the warehouse table, right? So I need to complete the metadata setup also, that's where I'm just giving you a heads up. I need to carry over this story to the next bit. Also the build part, and can this? Okay? So can the metadata setup be done without the language part, like it's the language part?
+
+00:07:56 - 00:08:57 Unknown Speaker:
+
+Also as a blocker? No, no, that is a complete blocker without some time, right? Okay. Okay. And I have already looped you in one of the email he dropped off. Srinuja, you can continue with the rest of the folks. Yeah, I'm sure, Sachin. We might have to connect with them because Nextprint, I see that they've added quite a lot of stories to insurance. So we might have get a buy-in, like, um, if we'll be able to complete all of these, No. So, on this one, any of the insurance one, right? Which is on my bucket. Um, that is being planned to get delivered by end of this PI, so I'll be able to close it. Just the story, we need to move it, few of the stories, because, uh, the metadata, right?
+
+00:08:57 - 00:09:37 Unknown Speaker:
+
+We still not receive the complete metadata as of now, right? And, uh, that is causing a bit of delay from. I'm, yeah, just keeping the timeline in mind, right? If we let go of next sprint, only few of them are picked up, right? We'll only have two more sprints. Well, we will be able to close it, Sindhuja. Okay. I do have confidence we will be able to close it. It's just that, you know, once that metadata setup is ready, I can, you know, start. So then you will be able to guide me, right? Which stories we can pick up in the next sprint and which have to be moved. Yes, yes. So basically a build would be required because I'll be out for the next week, right?
+
+00:09:37 - 00:10:58 Unknown Speaker:
+
+I'm targeting to complete the build in the next sprint and then I can start E1, E2 and E3 testing in the upcoming sprint. So we are left with three more sprints, right? Is that correct? Yeah, starting next Tuesday, yes. Three more sprints, yes. The upcoming RFC. And for the pay-now-pay letter, I had made the code changes for executing the queries and storing the result as a JSON file in the GCS bucket in the cluster side. So after that, I was seeing a memory consumption issue in the data problem system. So I had reached an alumni team and they had suggested to increase the cluster size. So I will have to do that change and check if that is working. Uh, if it works, means that I will proceed with the further validation across that.
+
+00:10:58 - 00:12:09 Unknown Speaker:
+
+Yeah, that was the things I was working on. Yeah, thank you and see other hi all, good evening. So today. Yeah, so today. I i ntegrated the Loomi API for the variables that should be dynamically based based on the table selection. So these changes are done and there are some couple of code refactoring that has been done to load this data and then make a UI smooth. These all changes are pushed in, even so I'll just proceed with some of the changes of form addition and then I'll push those changes too. So currently, the Lumia API integration for table and variable are deployed in even. I'll add some for that and I'll update my stories in the show. Yeah, sure, Arthur. Thank you. Condon is still not there, right, Sachin? No, he's not there.
+
+00:12:09 - 00:13:54 Unknown Speaker:
+
+And he was working on that, the different APIs which we were talking yesterday related to the self-serve. Not the Lumi one, Related to the is, uh, APis? So, uh, so, as I mentioned, like yesterday, like, I'm working on the CMV use case. So I have tested, uh, fit the records in E1 and, uh, executed successfully. So I'm just running a big number. Uh, hello, thank you Samir. Yeah, And I did the testing in E1. I guess Sachin was busy today, so I didn't get the approval from him. But from my side, it's good. And I did get the BPMNs from Sachin for the next phase of this automation job. And also got the KD for KD. So I'll be working on those. Thank you, Nirmal. Bye, Appa. Yeah, so I'm working on the launch use case for the E3 readiness.
+
+00:13:54 - 00:14:48 Unknown Speaker:
+
+Uh, this one, and also I'm coordinating with, UH, Sharbir on this part. Uh, because some of the E2 environment also, we need to move the data, so that part I'm working on. And today I spent some time with the RFC creation, but recently, uh, some process got injured, so that one, I have created one new RFC for the upcoming Monday. At that point, this is for the yes, so now let's move to Monday. Yeah, and uh, still, uh, not approved. So we have, uh, find out the process actually. So that one, I created the format and submitted that one, so waiting for the approval kind of thing. I need to follow up on that, yeah. And coming to benefit today, I had a discussion with Anna regarding this use case.
+
+00:14:48 - 00:15:49 Unknown Speaker:
+
+So currently we have not picking up this one as part of the sprint. You're not picking up this as part of the sprint? Yeah, yeah, yes. So this should be moved to next sprint then? Yeah, yeah. Benefits data. No, no, uh, so this is all going to be, you know, into the backlog if you have seen the tech business channel, right? We had a connect with Anand today. And those, uh, DQID is not required to make, uh, get migrated to via control. So that that is something we are aligned on that. Yeah, so I'll have to, like, make this unscheduled now, is it then? So Anand, if we really don't need this as a migration, right, do we need to drop from the plan or what exactly we need to do it?
+
+00:15:51 - 00:16:39 Unknown Speaker:
+
+Right, so Sachin, so like I said, the plan is basically whatever rules we've already migrated, we'll test them and make them go live first, right? And then we'll pick it up based on the priority. Because see, even these rules are running currently using Q5. So there is no urgency in the sense that do we even have to migrate it to the point or not. Only if there is a lot of weapon then we do it right otherwise we deprioritize it. Should we put it on the backlog or? In the sense like putting it in the backlog or what is the difference what you are trying to say? Means putting into the backlog means maybe, you know, in case required, we can pick it up again, right? If some, you know.
+
+00:16:39 - 00:17:23 Unknown Speaker:
+
+Different way of implementation we are going to do in future, that is one. Or if we have decided, right, like we really don't need to migrate it, right, then doesn't make sense to keep this user story also correct. Honestly, it is the first category, Vaisakhan, because we have to, like, let's just say there is some benefit in doing it, right? Because we just dropped it because, I mean, currently, we have something that is more priority, on more priority, right? This is a complex one, and we don't even see a lot of benefit. That's why we are dropping it for now. But I don't think in the future, probably, we might go back to this as well. So, yeah, I mean, we can do either ways, but I'd say probably we can drop it off when that should be fine.
+
+00:17:24 - 00:19:00 Unknown Speaker:
+
+Okay. Sindhuja, whatever you want to do, you can do it. Sindhuja, can we mark this as a one-pointer and close it because I think I did some analysis on this and we decided not to prioritize it or just not to work on this for longer because it doesn't make sense. There is no business benefit. Yeah, but is it really an eight-hour analysis that you guys did together? I'd rather just make it like unscheduled so that we can reutilize later on if we need it somewhere. Sure, sure. Okay, let's do that. Yeah. Yeah, Prithvi, probably you can go ahead with your updates. Yeah, so yesterday I have completed the D1 deployment and today I'm working on. So how many templates are there for this threshold check? So, until now, not even a single template is closed?
+
+00:19:01 - 00:20:09 Unknown Speaker:
+
+No, I have done nearly like 7 to 8, 7 templates are closed. But, I have to retest everything because, yeah. No, no, so out of 20 to 7 are done. Yeah, 7 are done. In this print and. You will do three more in this sprint. Yeah, I'm targeting more, but what's the scenario? It's not about completion. Also, testing is needed to be done. So that's why I'm saying... Yeah, that's like an integration testing, right? That'll be captured separately. I'm just asking in terms of template, you'll complete 10 this sprint and the remaining 12 next sprint. Yes, yes, yeah. Testing, I would say, testing, not integration testing. So when you say seven are done, shouldn't the unit testing also be included as part of done definition when you tell that?
+
+00:20:26 - 00:21:30 Unknown Speaker:
+
+98 queries matching, 98 DQIDs matching, at least 30, 40 are valid in case of confirming that it is working. That's an integration testing, Prithvi. It's not unit testing. Okay. So when you say seven templates are done, I want you to tell from the perspective that even the unit testing is done. Yeah, unit testing is done for sure. Okay. Yeah. Got it, okay. Anything else, Prithvi? I liked it, yeah, thank you. Okay. Sachin, anything else from you? Yeah, I'll discuss on, with respect to some of the design, I need to review it with Anand. Maybe you can wrap up with the rest of the folks and then I'll go ahead and say the update. Okay. Shravan? So I'm working on the benefits data discovery, trying to prepare the scripts for it.
+
+00:21:31 - 00:22:38 Unknown Speaker:
+
+Along with that, I spent a majority of time yesterday helping out Jason with the URAC table additions. We are still facing some table structure issue with respect to file format and the field definitions. So it is yet to be resolved. We'll work on it together today as well. What is the error, Shravan, if you can specify? Is the file is not reaching to Lumi? Initially, that was the error. Once we fixed it, then there were some data issues, majorly, like file separator issues or date format issues, all of these. Do you need support or you would be able to resolve? I think I'm good for now. Jason needs to fix it on his own. Okay, okay then. I don't see Suman on the call today also, Shravan. Is he on leave? I don't think so.
+
+00:22:40 - 00:23:35 Unknown Speaker:
+
+I asked him to join. Yeah, I'm not sure. Yeah, I'll speak with him. So, Sachin, you're also on? Your leave is starting next Tuesday, right? And we have sprint planning on Tuesday. So I was thinking, and since the grooming also was not completed yesterday, does it help if I set up like a quick 30 minutes tomorrow, maybe just Anand, you, me, so that we can close the sprint planning for the entire team? Yeah, because again on Monday, I may log a bit early also. Uh, so, if possible, let's connect tomorrow itself. Okay, do you need the entire team for this call, or should I just set it up with the product owners and us, uh, only product owners? I think most of the folks knows they have already those build plans, right?
+
+00:23:35 - 00:24:41 Unknown Speaker:
+
+And I'll have a different connect with them in case anybody need any clarity. Okay, uh, in that case, I'll also check with Jason, Uh, and, um, you know, like, I mean, like. I'll maybe set up like a two different instance of 30 minutes each. Not required. So it's just one connect with Anand, Rachna and one more with Jason, right? Yes. Yes. Okay. Yeah, sure. Yesterday, did we not cover it all? I think new rule notification, Rachna, do we have anything there? We did not cover that part. I don't think so. Have like modifications in our bucket. If anything comes up from any of the teams, then I'll let you know. Yeah, even for that, like we have not received the requirements still. Okay. So it's just this, I think Shravan working on benefits data.
+
+00:24:41 - 00:26:07 Unknown Speaker:
+
+So from QTrack, only that will be moved, right? Not only Shravan. It would be Suman also. I mean, yeah. Sorry, both of them. What about all these applications also? Check and all of those. Yeah, sorry. Go on. No, no. I was just saying, let's keep a placeholder for role modifications as well. They do not have the requirements right now, but we are expecting some to come up by next month. Then we can assign to ANSI. Okay, rewards integrity is completed. Yes, UMDL check, uh, reverse integrity. Has it been launched? Such an E3 sign off? I have provided, but I'm not sure if it's launched yet or not. Uh, we deployed it. Rewards indicated, right? Yeah, yeah, yeah, it's deployed. It's a live. Yeah. Sorry, Sanduja. I was just saying, I can see her.
+
+00:26:07 - 00:27:06 Unknown Speaker:
+
+That they've done the E3 deployment here in the Rewards Integrity launch story, right? I was just saying I did not receive any alerts. And there was a one particular rule in this set, which was failing, so I'm just wondering if it's deployed. Uh, how come I did not get the mail? Uh, can you check with Suman once? Sure? One more thing? I saw your restaurant mail. Uh, that one. We need to update the business email, right? Uh, that rewards integrity. One correct, correct. Yes, yeah, such. In this one. Also we need to consider this one, uh, business email group. With the update. Actually, whatever the code changes is ready, please keep it ready by tomorrow. I'll, I'll approve those changes. Yeah, sure. Yeah, so Rachna was asking UMDL check. Also, we are not picking up in the upcoming sprint, right?
+
+00:27:08 - 00:28:15 Unknown Speaker:
+
+Anu, do you have any update on this one? Yeah, not yet. We have not received the requirements yet. Okay. RPA, I think we'll come back to it on Monday. Benefits data is what Shravan and Suman are working on. ANSI will be closing the AFC UA Bank check. In this event. Yeah, UA Bank check would be closed. Most probably. No. It just the pin of the letter may get extended again. We are still facing lots of issues on that. Okay, um, so I'll just create one place holder for ANsi. Um, for the pain of pay later. Okay, I think the rest we are. GUARDIAN Okay, so I'll just, um, send you guys the board, Anand and Rachana in that case. So you can just validate and you know, like, in case, if you have anything, you can just get back to me.
+
+00:28:15 - 00:29:03 Unknown Speaker:
+
+And Sachin. Since he'll be on leave, uh, starting next week, right? That'll be useful for us if you can, just check tomorrow. Sure, sure. And Anand, let me walk you through some of the design that I have finalized. I just need to get it reviewed from Raj once. Uh. But let me share my stream. And one more update I'm not able to do the bulk update I thought of. This would fail because we might not be having the permission. Okay, I'll. I'll check with the platform team if there is an option to do it, otherwise we have to do it manually. That's the only option, because this is one of the one that I just closed it. Just, you know, testing with one of the tasks ready. So individually, it is getting close.
+
+00:29:03 - 00:30:11 Unknown Speaker:
+
+But for the bulk update, uh, some of the state is getting failed in the this operation itself, in the work management. I'll check and I'll update you on that. Okay, uh, with respect to design, uh, first of all, let me go you through the bulk update. Okay, you can also keep an eye on this because this is something you are going to get built, okay, so we have that alignment on in that. You would be getting that UI interface in the same portal, in this Qtrak portal, and that would something would look like this bulk processing. You'd be getting this file basically, okay, this file upload. Uh, here you need to select one DPMN that is something I'll specify to you, and then you have to select the file. Uh, the Excel sheet file.
+
+00:30:11 - 00:31:09 Unknown Speaker:
+
+Maybe I'll send it to you once I create it. Uh, I did not get time to create that file, but that file would be having all these information, okay? And apart from these information, there would be few additional column, like, you know, to mark it as true, positive, false positive, dollar value and all those additional details which we are submitting. While you know, closing the task. Okay, so once the file gets uploaded, okay so once the file gets uploaded, uh, it would identify the individual files. Okay, uh, through this trigger sub process, and then then it would call the main process. Okay, now let me go to the main process. Yeah. So in the main process, what we are doing, we are first of all doing a validation of that request, okay? What kind of validation?
+
+00:31:10 - 00:31:57 Unknown Speaker:
+
+Suppose you have selected a true positive and then post that there would be a combination for true positive, right? Like outcome classifications would be there or something is there. Yeah. Because in Excel, I won't be able to manipulate, right? That when true positive select, then that next column should appear, right? That is something not possible by Excel, okay? Uh, so in case the user selects an invalid UH request, we will discard that record. Suppose they have uploaded 100 records, right? But by default, suppose they have selected a, you know, incorrect, UH parameter. In the end of those records, then we would be marked those as invalid requests, so those would not get processed. Okay, the valid report would proceed. First of all, it would reserve the task.
+
+00:31:57 - 00:32:46 Unknown Speaker:
+
+And here I need to identify, I need to specify, I need to create a user ID, right? Because? Or the ads ID, whoever is running that task. Okay, we'll see if we can pull out the ads ID of that particular person, then those all tasks would be reserved under his or her name. Okay, once that is done, then we would be updating the task with either true positive or false positive. Okay, and then, in case any exception in between, then it would go by exception handler. Okay, why we are doing this, I'll tell you. Once this processing is done. Basically, this BPM is going to run 100 times if we are uploaded 100 records for that. Okay, post that my this BPMN is basically checking. So if I have to set up a threshold right, it would run in a loop, right?
+
+00:32:46 - 00:33:44 Unknown Speaker:
+
+For example, I'll divide this 100 record in 10 batches. Okay, each batches contains 10, 10, 10 records. So this process is basically checking when my first batch triggered whether all those 10 records completed or not, so that it would trigger next set of 10 batch. Like that. Okay, till 100, till it reaches 100, once it reaches 100, it would check if all process of trigger is done, right, uh, so if it is done, then it would check whether any of them are still active. Why? Active means when 100th of batch has been executed, right, those might be still running, right, although it is not required to, uh, you know, trigger the next batch. But out of these 10 instances, five might be still running. Okay, so this bundle is basically waiting until unless even this five records gets completed.
+
+00:33:44 - 00:34:41 Unknown Speaker:
+
+Okay, once everything is done, everything is the done means, uh, every processing is done. Basically, what would be happening? Uh, once this task gets updated, it is going to call our main BPMN, which is this one, it is just updating the task. Okay, but post that there is a other functionality also which is being involved, right? Incident creation and all, so once once, basically the task gets finalized, right? So even that task would be, you know, creating the incident, or it might not be creating the incident based on that result. So this BPMN would get triggered, but there is no dependency of this BPMN from that bulk. Delete Okay, basically. Once that marks the task has finalized, your portal would get updated with the required details. And then intermediately, this task would be, you know, processing in the pattern.
+
+00:34:41 - 00:35:49 Unknown Speaker:
+
+Okay, So once this is done, we are creating a report. Now as I told right, out of 100 record there might be a chance that 10 record might be having an invalid request sent by the user. So it would create a consolidated report for you and that report bundles look like this. So this is your report bundle, which would be fetching the record for all those 100 records. It would generate the output. Output might be, you know, this is your task ID. This is the status, right? Invalid or maybe consolidated report like this. BLR, no, that was on OMS, right? Merchant enrollment. The report might look like this. So this would be providing you, this is just a sample. Don't consider it. It's come from... process. What is your transaction ID? Right? What is the status?
+
+00:35:49 - 00:36:35 Unknown Speaker:
+
+So, if user have selected our wrong record, we would be marking it as business exception, with, you know, tagging, right? Why it has been marked as business exception. What was the error? Okay, in case some records failed while processing, those would be marked as system exception. In case it is being successful, it would be marked as completed. So, end of the day, you would be getting a consolidated report. You have uploaded 100 records, how many of them have been completed? What are business exception and what are system exception? Okay, and then if 10 have been failed, you can re-upload those 10 record again by rectifying the Excel with the input. All right, makes sense, yeah. So this would be the reporting, where it would be sending you the consolidated report at the end of the processing.
+
+00:36:35 - 00:37:34 Unknown Speaker:
+
+Okay, so this is bulk update. Uh, nirmal, uh will connect later. In case you have any query with respect to implementation, I'll guide you through this one. Okay, I just have one question, such as the content part of it, right? So you were showing some other? This is exactly no, no, no, this this file upload. We already had a word with the required participant, who was that right? Yeah, so we already received that bulk processing, uh, you know, uh. Module, basically front-end module. Okay, I just need to integrate it. Okay, perfect. Yeah, okay. So he just will be, you know, calling that one. So this, this discovery is already done. I already had that discussion, I already had an alignment with Raj also on this, so we are good to okay, right?
+
+00:37:34 - 00:38:35 Unknown Speaker:
+
+So you would be getting this functionality, these job details, transformation policy, activities and policy will all stand over here. Only. This is something I need to manage. Uh, uh, from the processing perspective, uh, users really don't need to, you know, take this part, uh. So that is something we are not going to provide over that. UI Okay, uh, so that is bulk update. And there is a one more initiative that we were doing right on that SFTP transfer. Basically, yeah, that for self-serve, right? So what we are doing, uh, so we would be getting those all the rule details, suppose three neuron onboarded today. Okay, and we wants to onboard that to the next parameter, like where those SQL file would be created and all right. So those rules, first of all, needs to transform to the Lumi uh system, right?
+
+00:38:36 - 00:39:27 Unknown Speaker:
+
+So what we are doing over here, we are getting all those rules which has been created or registered yesterday. Reading a file out of it and then sending it by SFD to the Lumi and then Lumi part. The phase two is already being done by Nirmal, where we are picking up the file from SFD and then saving it to the database LuMI Database. Here. More thing I am trying to do, trying to bypass this SFD, and we'll try to directly upload to the GCP bucket. So instead of using SFT dependency, I'm still doing a discovery of that. Like, you know, once the file gets created, uh, so there would be another bundle to upload that file to the AWS. Or the Openshift cloud that is supports. And from that Openshift cloud, I'm trying to transfer the file directly to the GCP bucket.
+
+00:39:27 - 00:40:11 Unknown Speaker:
+
+But that is still in, uh, you know, POC. So that is something I'm not designing it right now until unless I get the required details till the time it would be. Upload the file to the SFT. And again, like, in case of any error, it would be handled through the exception handler. Okay, so if I go to rally, I would request you to accept these two story, which was under my bucket. Uh, if you are okay with the design, or in case you have any question, do let me know. Yeah, this looks good, but again, I mean, because this is, it sounds good, right? Such that I think I'm also wondering if the bulk update, like now, the implementation part is left right, because you've done all the discovery and the VPN implementation.
+
+00:40:11 - 00:41:04 Unknown Speaker:
+
+Like, you know, Nirval would start the back-end implementation from this print. Only once he is done with that current work, which he is doing for that transforming of data to the SFT, the self-serve, the back-end part, right? Basically, once he's done with that, he would start working on this bulk update. But as I intimated you earlier, we don't have author right now, so author would be available to us in the next sprint. Where we need that, uh uh, API integration and all right. And then that is the problem because he is quite busy with this self-serve right now. Because we don't have any other why, folks, also, we can. Who can take this responsibility? Otherwise, I could have split it the way I did. It decided right to pull Nirmal to this ace build.
+
+00:41:04 - 00:42:15 Unknown Speaker:
+
+Otherwise, even this would be delayed because Kundan was only working on that a spot. Okay, do let me know and I'll try to get it reviewed from Raj tomorrow. All this, you know, BPM and all. And once you sign up, basically from Monday or Tuesday onward, Naval can start working on it. Okay, okay, uh, so those are the updates individually. From my side, I was working on these, uh, designing, and then, uh, some of the insurance part and the lazy part. Okay, mentioned Anand that he is having a conflict today. Yeah, right, so I was also wondering, do we want to have that then? Because, uh, one is, you wanted to showcase that API thing right right now itself, so that you can just communicate to. Uh, and even you can showcase that over that.
+
+00:42:15 - 00:43:08 Unknown Speaker:
+
+Uh, ui, uh, you already have the access, other, can you go ahead, please? Uh, can you do a demo? Quick demo? Correct, correct, I mean, that is one. The second is this welcome date also, we could have reviewed, but he's not there, right? So, yeah, I mean, I'm just thinking otherwise, I'll probably cancel that. Check with Raj once, if it is, uh, if Raj is not, if he doesn't have any agenda, then we can cancel the call. And meanwhile, you can just view the demo for this Lumi integration. Uh, so this one, you already have the access on the DEB URL, you can just log in. And then so it to, Uh, is my screen visible? Yeah, yeah, it's it's a fun, right? Yeah? So the API application we have, uh, integrated with the table and the variable component, uh, in this part.
+
+00:43:08 - 00:44:07 Unknown Speaker:
+
+So once the user comes in, we will be showing a user interface loader since the API takes some time to create it. And, uh, well, this time, we have already. So by this time, we already have the table data loaded. And once the user selects the table name, we'll have all the table details present here. As per the acceptance criteria, it should be filtered based on the user searches. So let me just try some data. So based on whatever the user is, we'll be getting exact same results here. Yeah, that's good. According to the user can select data is currently some of the stacking data because the rule table is not integrated yet. That's fine, that's fine, yeah, but this is good, same here. Also, we have integrated the table. Yeah.
+
+00:44:07 - 00:45:02 Unknown Speaker:
+
+Since the variable is dependent on the table initially, it will be disabled as soon as the user selects any one of the table name, the variable. API is loaded, it takes some time, since it's a Lumi API which is getting called. So you might see, uh, some type from this pencil and this is the user spinner also over here. Okay, I'm just checking the design. We have this one feature which is like loading feature coming in, so this it will be something like this, it will show the user as loading. Okay, um, yeah. Ideally, for this Xbox, we shouldn't be giving a spinner or something because it depends on the whole component of page. Kind of a thing. Okay, so I just integrate more loading part that will be so this is also safe filtering, and let's select that.
+
+00:45:02 - 00:45:59 Unknown Speaker:
+
+Based on that, this dynamic rule description will be updated. Yeah, okay, save this, okay. So the rule is created just to verify that. I can go to the approved paycheck page and just see the same has been created and here we can another one over here. Is that like, uh, uh, you would be getting those luminescent time stand and everything, because those are the part of that metadata, so even those would come to that variable component. That's fine, that's fine, whatever you need again should come, that's fine. Yeah, another thing is that use case name, right? As per the initial requirement, we are still going to map it with the use case. Uh, because if I start making those modifications, which we were discussing in the last one, right?
+
+00:45:59 - 00:46:52 Unknown Speaker:
+
+That is again, like, you know, code change and all, lots of design change. So let's go ahead, the current design and then maybe we can go ahead with the enhancement for the product. In the next page, Okay, okay, try to show the variable name also over here. Apart from table name, yeah, this page will require some more information. I mean, uh, we'll have to review this page one. Yeah, sure. So whatever the data which we are getting, okay, based on that, we can add some of the useful things. Because ideally, everything has to populate over here. Because based on that, only we'll take a decision, right? So, either, if you want to open it as a pop-up and show all the details, or like, because here itself you want to fit everything, it'll probably not good, right?
+
+00:46:52 - 00:47:50 Unknown Speaker:
+
+So you can see how you want to see like, more details and then open the pop-up and show all the details. Okay, so one thing whenever we have this approved for request where the user will preserve the task here, we can show all those so that it is. Oh, but yeah, I've already clicked on Approve, right, and I don't really want to click on approve and then being shown all the details, okay? So currently we have just reserved this task, we haven't approved or rejected yet. So that's the initial part where we have to just reserve a task and then only we'll take an action. So for this, the task is reserved, but, uh, it's not approved or rejected. So before approving or rejecting all these all details, entire data, and then, you know, he can go and approve, and is it?
+
+00:47:50 - 00:48:50 Unknown Speaker:
+
+After viewing the entire data, he can, you know, take the decision whether he has to. These are, you know, initial details, as the screen is not complete, right? Those would come over there, right? But we really don't want additional view button in case they wants to view it. Those would be like a summary on this page. Otherwise would become clumsy, right? By trying to write showing lots of data, right? This screen would become clumsy. Um, all the data anyhow you are, you know, if you are populating on the system, right? You have to scroll a lot, right? Not all the relevant data, right? Let's say 10 fields are there, right? So the entire page will be occupied, it will overlap each other or you either, you have to scroll it.
+
+00:48:50 - 00:49:39 Unknown Speaker:
+
+I mean, that should be fine, because it's ultimately RD most basically just taking action on this one, right? Yeah, I mean, either we include all the data in the table, or if we want to keep it this way. The way Athira has created it right now, that it opens up as a separate view, right? Then we need to, like, replace that approve, reject buttons on the page with, say, something like new detail. And once we are viewing it here, here only, we should have both approve and reject buttons at the bottom. Like right now, we have only approved. Yes, it's opened by our proof. Yeah, so this is something like we have it on the DQM portal, right? We click on those three buttons, it opens up something and then we put two positive, false positive and submit it.
+
+00:49:39 - 00:50:31 Unknown Speaker:
+
+Similarly, if we can show all the details first and then have upload nickname button, yeah, so one suggestion. So basically, currently in in the main screen, we have the two buttons take, approve or reject. We can do one thing, we can give a few details page, and once this page is loaded, we'll be giving the approve reject button here in the board. So based on the details, just wait on. Don't make that change and just get it reviewed with, uh, once, because might have some other thought, right? Uh, yeah, let's not make any code change right now. I'll give you a heads up once you know reviews. This phase. And if we have some other thought on this, okay, then we will incorporate that same. Once we get the input from.
+
+00:50:45 - 00:52:02 Unknown Speaker:
+
+Okay, okay, uh, so I'll I'll just send the details to you over that email. Uh, so, I hope you might have the credential for even right. Yeah, you do have right. Okay, okay, okay. Anyone having anything else to discuss. Would you be able to check with Raj or should I check with Raj regarding the meeting? I pinged him but I did not receive a response. I pinged him around 6.15 so he might be busy. Not regarding that meeting invite but regarding some other. So I did not receive a response as of now. So just ping him individually in case he... Yeah, sure. I'll check with him now. Yeah. Otherwise, we can just cancel that one. Yeah. Okay. Okay. Thank you. Thank you. Okay. Okay. Sure. I'll check it. Thank you. Yeah. Thank you.
+

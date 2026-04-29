@@ -1,0 +1,278 @@
+2026-04-22 Product Vision and AI Integration in Data Quality Portal
+
+Creation Time: 2026/04/22 17:31
+
+
+📅About Meeting
+
+• Date & Time: 2026-04-22 17:31–18:04 (approx. 33 min; recording duration 1994s)
+• Location: Virtual call
+• Attendee: Anand, Sachin, Athar/Atharv, Raj, Rachna, Acharya, Antarsh, Jagmeet, Charmi/Charmee, Manju (mentioned), Marcus (mentioned), Shabbir (mentioned), Data Office team (reviewers), wider team members
+
+📒Meeting Outline
+
+Product vision and platform scope
+
+• Intern introductions and current focus
+  Charlie and Anush introduced as interns (Jan–Jul). Current streams: Portal/UI, self-serve UI, and back-end automation. Upcoming stream: AI integration led by Acharya and Antarsh.
+
+• End-to-end evolution to a platform
+  Transition from server-run scripts (Corner Store) → Lumi framework → comprehensive DQI portal with UI, automation, and review workflows to make a “proper platform.”
+
+• High-level portal dashboard
+  Mock UI shows summary KPIs: tables covered, number of checks, open alerts, pass rate, total rules, volume trends, use-case filters, and a summarized open-alerts panel. Goal: enable teams to quickly extract metrics and status.
+
+Alerts and rules management
+
+• Alerts page parity with existing DQM
+  Left-nav to Alerts with stats, filters (incl. date range), and alert list. Inline actions via three-dot menu to manage alerts (action panel not in mock; exists in current tool).
+
+• Rules catalog and discovery
+  Rules tab to browse existing checks by table or use case (e.g., transaction table). Supports search and visibility for team-specific check sets. Being built into DQI portal.
+
+• Review and approval workflow
+  New requests flow to Data Office review: approve/decline/modify. Upon approval, SFT pipeline feeds automation to generate SQL, create artifacts, and deploy after testing/validation.
+
+New request intake and control-based guidance
+
+• Structured request form
+  Front-end captures table, column, check type (null/duplicate/threshold), and thresholds (e.g., 90–100). Submission triggers SFT to Lumi and back-end automation to generate/append SQL and push after validation.
+
+• Historical performance vs. ML-suggested thresholds
+  Control module shows:
+  • Historical 6–12 month performance to validate proposed ranges.
+  • ML-powered threshold suggestions (Quantro-related) tailored to historical behavior.
+  Users can compare “given vs. suggested,” view insights (false-positive reduction, pass-rate lift, seasonality/variance), and select via “add to cart.”
+
+• Real-time feasibility discussion
+  Real-time computation is limited due to ACE–Lumi integration restrictions and library constraints. Options:
+  • Batch or delayed report generation after executing BigQuery jobs.
+  • Store requisite historical aggregates in ACE where possible.
+  • Explore authenticated BigQuery access from ACE if policies permit; involves ASCORE review and leadership approvals.
+
+AI-driven check recommendations
+
+• LLM-assisted new checks generation
+  Inputs: business context (docs, PPT, Excel), metadata, current checks, data profiling, vector embeddings. Prompting via ChatGPT chat UI (no API) to propose 3 nuanced checks with descriptions, expected pass/fail metrics, findings, and SQL implementations. Partners can select relevant checks to add to cart.
+
+• Guardrails and cost considerations
+  Avoid unnecessary queries on sensitive SD/card/member data; minimize repeated decryptions; add prompt- and agent-level validation before execution. Balance compute cost and necessity.
+
+• AI access constraints and next steps
+  Current allowance: ChatGPT chat and Custom GPTs for metadata/profiling context; no programmatic/API use. Need leadership alignment (discuss with Manju and Marcus) and table-owner approvals for what metadata may be shared even in internal tools. Execution remains in BigQuery; LLMs only produce query logic.
+
+Anomaly detection and record-level insights
+
+• Isolation Forest for outlier patterns
+  Identify correlated variables aligned to business behavior; segment into clusters that reveal divergent trends (e.g., decreasing when normally increasing). Planned outputs:
+  • Normal behavior graphs for last year.
+  • 2–3 anomalous clusters with example customer trajectories.
+  • Drill-down to record-level patterns to inform new checks.
+
+• From insight to action
+  If a cluster appears anomalous, users can add a corresponding check to cart, proceed to submission, and route into review/approval.
+
+UI implementation feasibility and sharing
+
+• Library and workspace constraints
+  Q-Track space has restrictions on custom libraries; needs ASCORE review and leadership approval (Amex restrictions). Feasibility to be confirmed with Raj and platform owners.
+
+• Mock-up access/sharing
+  Replit sharing limited; files not consistently openable. Workaround: share annotated screenshots to guide self-serve/Q-Track UI improvements.
+
+📋Overview
+
+• Interns onboarded; product vision extends current portal with AI-assisted thresholds, AI-suggested checks, and anomaly detection.
+• Alerts and rules management will mirror/improve current DQM capabilities with better discoverability and workflow.
+• New request flow: structured intake → review → automated SQL generation/deployment via SFT/Lumi.
+• Control module compares user thresholds vs. ML suggestions; real-time is unlikely—batch/async report approach favored.
+• LLM-assisted recommendations proceed via ChatGPT UI only; no API. Guardrails required for sensitive data and cost control.
+• Anomaly detection (Isolation Forest) will surface cluster-based patterns for actionable checks.
+• Technical feasibility for UI libraries and ACE–Lumi/BigQuery integration requires ASCORE and leadership approvals.
+• Mock-ups will be shared as screenshots to inform near-term UI builds; deeper backend demos to be scheduled.
+
+🎯Todo List
+
+• Anand:
+  • [ ] Share annotated screenshots of the Replit mock-ups with Sachin and team for UI reference, by 2026-04-24
+  • [ ] Schedule follow-up sessions for backend demos (LLM check generation and anomaly detection) with Antarsh and Charmi, by 2026-04-26
+  • [ ] Confirm Replit sharing policies and any alternative secure sharing options, by 2026-04-24
+
+• Sachin:
+  • [ ] Coordinate with ASCORE and Raj to assess feasibility of required UI libraries in Q-Track and any policy constraints, by 2026-05-03
+  • [ ] Initiate leadership alignment conversations (with Manju and Marcus) on LLM API access and metadata guardrails, by 2026-05-06
+
+• Athar(v):
+  • [ ] Validate feasibility of BigQuery access from ACE (auth, libraries) and outline options for async/batch computations, by 2026-05-03
+  • [ ] Propose data strategy for historical aggregates (what to cache/store in ACE vs. pull from Lumi), by 2026-05-03
+
+• Data Office team:
+  • [ ] Define review criteria and guardrails for auto-generated SQL and AI-suggested checks (including sensitive data handling), by 2026-05-06
+
+• Acharya & Antarsh:
+  • [ ] Prepare example walkthrough: input DQ check → 3 AI-generated checks (prompts, outputs, SQL, evaluation), by 2026-04-30
+  • [ ] Document prompt guardrails to limit sensitive queries and redundant decryptions, by 2026-05-03
+
+• Charmi:
+  • [ ] Prepare anomaly detection demo with clusters, normal vs. anomalous trend visuals, and example customer drill-down, by 2026-04-30
+
+• Raj:
+  • [ ] Advise on library restrictions and approval pathway for custom UI components in Q-Track; coordinate with ASCORE, by 2026-05-03
+
+• Rachna:
+  • [ ] Use provided screenshots to propose incremental improvements to self-serve/Q-Track UI, share draft with team, by 2026-04-29
+
+• Shabbir:
+  • [ ] Align existing control module outputs with the new dashboard KPIs and define the “add to cart” selection flow, by 2026-05-01
+
+• Security/Compliance (as needed):
+  • [ ] Clarify what metadata/profiling can be included in ChatGPT/Custom GPT contexts; define red lines for table names and SD elements, by 2026-05-06
+
+If the topic is not mentioned, output 'No relevant content mentioned'.
+
+Transcription
+
+00:00:48 - 00:01:58 Unknown Speaker:
+
+I think you guys have seen them before, I believe so. So this is Charlie and this is Anush. They have joined our team as interns. They joined in somewhere in January. Then they'll be here till July. So I think, Sachin, so like we discussed, I think what we wanted to share with the team is like the vision for the new track as a product, right? They are already working on, one is Porto, one is the self-serve UI part of it, the back-end automation part of it, you know? But I think we also wanted to share what's... what's to come after that as well, right? So, there is some plans to integrate the AI side of things as well, which is something Acharya and Antarsh have been working for the past couple of months.
+
+00:01:59 - 00:02:45 Unknown Speaker:
+
+So, what I'll do is I'll start off with that replate UI that I created, right? Which I had shown, I think we discussed during Raj and Poonam's AI. Let me share it with the wider team as well. So, it's just a mock-up. It's not really like anything set in stone, but I mean, this would give you like a good idea of what are we planning to do. So last year, I think March, when we started off, we had a bunch of scripts that Rasta was basically running on servers of corner store. From there, we moved on to moving all of those scripts to Moony first, where you guys created the framework and everything. And now we're trying to build some kind of a UI and everything so that comes like more comprehensive, like a proper platform or a tool.
+
+00:02:46 - 00:03:31 Unknown Speaker:
+
+So, this is the UI screen. So, let's just say somebody comes to the portal, right? There is a view, a summarized view that could be probably shown in this initial part itself, wherein you're showing how many tables are covered, how many checks are there, how many alerts, some things like that, right? Open alerts, pass rate, total rules, implemented, all those kind of stuff. Then, I mean, just at the high level, what does the volume kind of look like? What is the rule being done and then you can probably add another little use case kind of filter as well. So, this is like all the chips probably and then use case wise also we can find all the statistics that any particular team if they want to take out the metrics they can do that as well.
+
+00:03:32 - 00:04:13 Unknown Speaker:
+
+And then there is a summarized view of all the alert, the open alerts as well. So, this is that which we already have as the DQI portal currently. Yeah. The first thing is let me start off with that as well. Because you already have that. So if I click on view alerts, on the left side, you have the navigation panel, right? So when you click on alerts, this is the exact DQM. It's just that a little more, I mean, there are some stats at the top, and then you have the filters as we already have, do have, with like the data range and all that we have as well. And then we have like all the records, alerts, and are there. It's just that that action part is not here, but I mean, we already have that on our phone.
+
+00:04:13 - 00:04:57 Unknown Speaker:
+
+Wherein we can click on the three button, three dot button to move here and then go and take an action on that particular alert. That's missing, but otherwise all the alerts are listed out over here. This is something that we already have. Now coming to the second part of it, which is rules, right? So this is something I think Athar and everybody are currently building up, wherein if you have a tab wherein people want to check what are the existing rules that are available, they can do this. So, this is a view where all the checks are there. If you want to search by some particular table name, you can do that. Here, just for example, transaction table, all the checks are here. And similarly, use case level as well.
+
+00:04:57 - 00:05:53 Unknown Speaker:
+
+If some team wants to check their set of the checks, they can do that as well. So, this is also something that we are building as a DQI portal. No, sorry. Okay. Third part of it is the review one. I'll come to a new request at the end, but this is just the review part of it. If somebody creates a new request on our platform, it comes to basically our data office team itself where they can come and see whether to approve, decline it, and modify something so that then. Once we approve it, it then goes to, I mean somebody from the team is building that SFT pipeline. So it'll get that information from here and send it to me. And then there'll be an artifact stable or something.
+
+00:05:53 - 00:07:15 Unknown Speaker:
+
+It will basically fix the information and create those SQL scripts and everything, the automation that will happen and then it will deploy at the back end. And so this is that process. Okay, I think moving before moving to the new request part, anything, any. Anybody has any questions or thoughts? Anything. Okay, anybody on the call. No. Just one thing. Are you planning for this kind of task? I mean, this is just a vision, obviously. If I mean, if you guys also like this. And then let's just say we are using the forms and we don't have this kind of templates available, right? Yeah. I mean, that's also one thing I wanted to check with you. Because we have this dedicated Q-Track space now, doesn't that allow you to use some custom code as well for the UI button?
+
+00:07:17 - 00:08:12 Unknown Speaker:
+
+I'm not pretty sure. I think Athar can better answer this question. But I don't think this much flexibility we have that we can integrate some library, other library. There are some restrictions out there. Well, I think library-wise it might not be using anything, but it will use the library. Yeah, so, you know, in order to incorporate these, we need to define our library. That is possible, right? It's not that, but we need to work with the ASCORE team and, you know, those are all things. First of all, we have to, you know, get it reviewed and, you know, feasibility and all that, something, you know, Raj can comment on that. Right, so even I am not the right person to, you know, comment on that because those are some leadership right related to those libraries because lots of things are being restricted over the Amex, right, with respect to using the libraries also.
+
+00:08:12 - 00:09:16 Unknown Speaker:
+
+So those things, I think, once we discuss with Raj, right, then we can get a conclusion whether that would be feasible or not. Right. Because right now in our workspace, the templates are not there. So I think that's pretty much still here. And then we come to the new request part of it, right? So here, again, the front-end UI that other is basically basically get the inputs, right? So that's also in a form like kind of a template or a format. Similarly, you have a form here, right? So when you can put in, let's say, that table name, some column name, to be arranged, like, for example, I can say 9200. So, the user comes here, fills in these details for any kind of a check that they want to place, right? And they click on submit.
+
+00:09:17 - 00:10:08 Unknown Speaker:
+
+Now, here is where I think what Jagmeet and Antarshi have worked on will come into effect. So, what we're trying to do here is, the first part is something that we're already working on, right? Somebody comes with a very simple kind of a request for a null check, duplicate check, threshold check. We've taken the inputs, we've sent it via SFT to Lumi. From Lumi, the back-end automation job that we're building, right, the script part of it, that runs, it creates SQL queries out of it, it appends it to the existing SQL scripts, and then it pushes to production after testing and validation. That's the simple format of it. But apart from that simple check that they're building, right, We want to also suggest some good checks too. So that is what this basically does.
+
+00:10:08 - 00:10:49 Unknown Speaker:
+
+So this first page, this one is simply the control part of it, right? Which already I think Shabbir and I have already worked on. So let's just say somebody gives us a check saying that it should lie between 90 to 100 or something like that. And first of all, what we do is historical performance, right? For the past 12 months, how does the performance look like? So, Is it actually they're falling into that bucket or not, or is it actually going out? And we need to refine the threshold ranges and this is something that they get instantly, like a view of it basically, rather than like sometimes. What happens is, I think even with RPA checks right now, it happened right then. When we actually build the checks and everything.
+
+00:10:49 - 00:11:32 Unknown Speaker:
+
+And when we run the checks, that's when we realized a lot of thresholds are different from the performance, right? So, then we'll have to go back and change all that rather than that. Then we can have an idea, okay, what exactly is the performance you would like for the last six months or something, or 12 months or something. And then, apparently what we're also showing is like the ML power prediction, right? So using 1-2, what should be the ideal, what they say, the threshold range that should be there. I mean, ideally in this case, it should be somewhere between this and 75 or something. Don't go by these two lines, but basically it will have a better threshold range kind of a thing to like. Guide based on whatever has been the historical threshold.
+
+00:11:34 - 00:12:17 Unknown Speaker:
+
+Right, so we are just giving them these two views. This is the check that you gave, versus this is the check that one propensity is suggesting. And then they can go ahead and select which one they want. So here we have an add to cart kind of an option which they can basically go and select which one. Ideally we would prefer them to go with the right set because that is more adapted to the values. And then there are some insights as well. So based on that historical data and everything, whatever the algorithm is sharing with us, right? Some information that is also something that we're putting out. Like how many false positives are actually reduced by this new algorithm? Pass rates are being increased by this algorithm. What is the recommended threshold check that actually it is suggesting?
+
+00:12:17 - 00:13:09 Unknown Speaker:
+
+And then is there any seasonality, some variance or something like that? Okay, so this is the first part of it. So right now what we're doing is we're automatically moving all our checks to one group. Going forward, we'll give this option to people like, do they want to stick with their check and their thresholds versus, uh, what control is suggesting? Basically? I'll take a step back if there are any questions over here. So are these suggestions going to be real time, right? That's a good question. Like, some of these checks are taken some time, which is where I think the real time part might not work out. So what we'll do is there are a couple of more things to come up on this page, right?
+
+00:13:09 - 00:14:43 Unknown Speaker:
+
+We consolidate all of that into a report and kind of send it to them after, like, so that all depends on how, how real time. Because there may be some new requests coming in for some new tables or some sensitive data elements which are not previously part of IGX, right? So we have to profile those elements. We have to figure out the access control and everything. So this is the first part of it. Feasibility is not possible, but we can think about it at least. Real time is not possible. But you know, if somebody wants to trend for certain months, then we have to store those record and then we can do it. No, it's not about storing records, such info. This part of it, right? This graph is also something we can calculate dynamically, so we don't have to.
+
+00:14:43 - 00:15:26 Unknown Speaker:
+
+No, so even these graphs are getting calculated on the threshold, right? So those just check. Basically, the results are getting saved into the DQ Results table, right, which is in gloomy platform, right? That's for an existing chat wherein you already have those values calculated. But what I'm saying is if somebody comes and says Transaction table, you put a check and just calculate the month over month count. Or let's just say the percentage or something, right? That is something we can dynamically do, right? We can pull the data of the last 12 months and then aggregate it on a monthly basis. The account, right, and that count has to be populated, right? That is just like the threshold that they have suggested. Yeah, so those 12 months of data would be lying over the Lumi.
+
+00:15:26 - 00:16:20 Unknown Speaker:
+
+Right, right, right, yeah, right. So right now, the UI platform that we have that is running in Ace. And that is the reason I told real time is not possible because you won't be able to directly interact with ACe to Lumi. Okay, you can score the traditional record in the ACE database. And then, uh, with those, like some, suppose you are trying to take the historical performance for the last six months. And if data is available for the last six months, then we can achieve this functionality. Yeah, but my point is, there are 400 tables or something that we already use, right? So we can't store historical data for even the 400 tables in this, for example. Then we'll have to figure out a way that this communication between these two big query happens in real time, right?
+
+00:16:20 - 00:17:10 Unknown Speaker:
+
+Yeah, that is something, because, look, big querying runs, uh, runs on that victory platform, right? And so that that's something we need to figure it out. But, uh, I mean, how much in real time is this communication possible, right? Let's say somebody puts a request over here, that information gets sent to Big Query. The queries get generated, then it runs the query and then sends the information. Yes, yes. So that would take at least, you know, maybe a few minutes at least, right to execute and give you the result. Not, at least. That would not be very real time. Like, you know, just a refresh button and done. No, uh, it, it would take. Maybe, you know. What I'm thinking is if we are able to somehow authenticate and use BigQuery libraries or something on his right.
+
+00:17:10 - 00:18:20 Unknown Speaker:
+
+If that gets enabled, I mean, then also that can be done. Yeah, I mean, again, those are solutioning part. We can test it out, right? So, we can check that one. Yeah. So, yeah, this is the first part. Just one thing, Anand, this ML prediction diet, we can go back. Historical performance, I can understand. What is this ML-powered prediction diet? Quantro-related result. This is Quantro-related result. And how you are pulling this data, those are again based on the real-time data, based on certain algorithm algorithm that we have built. Right based on that, it is creating those threshold check. And, uh, as you don't have that, you know, control base, uh, base understanding. Uh, I'll explain it to you, maybe. Got it, got it. Yeah. Okay, that's first. Then we'll move on to the second one, right?
+
+00:18:20 - 00:19:00 Unknown Speaker:
+
+So this is like AI improvised checks. So let's just say what Andres has done is the check that somebody gives us, right? Like the basic information of that table name, variable name, what exactly is it like a duplicate check or a null check or whatever it might be. And then some business context, right? So when we talk to our partners as well. They also provide us sometimes with some PPT, some PDFs, or some Excel sheets with some data of their analysis. Or why exactly? This is a boot check, what they thought of and all those information, right? That, uh, plus, I think some vector embeddings as well, right? So that also literally some vector embeddings. On top of that, uh, metadata, what else is there? Metadata, current check that is being applied?
+
+00:19:00 - 00:19:51 Unknown Speaker:
+
+Uh, profiling, that has been data profiling. Based on all of that, what he has done is he has created a prompt basically which uses all this information and then it passes on. So what we have done is it doesn't happen over backend because we don't have access to APIs, but he has used the chat GPT prompt, the chat part separate. So he's given all that context to chat GPT and asked chat GPT to basically give us some more relevant or more nuanced checks, right? So this is what we also do at our end. When somebody comes up with a request, we typically spend some time to also see what are other checks that we can figure out, which might be relevant to the business partner. And that's the same thing that we're trying to do via AI.
+
+00:19:52 - 00:20:38 Unknown Speaker:
+
+So we're providing all that context, all of it into a prompt, and then asking AI to give us checks, right? So basically, what it does is it gives like three checks that might be more relevant. And then similarly, you can get some description information over here. When you open that, it gives us more details, right? Okay? What is the pass rate? How many failures are actually seeing with that? Uh, how many records actually are being running? And then some findings, if there are some findings, and then the SQL implementation, the whole part of it. So again, the point is, if the partner feels this is also relevant to their process, business process, they can simply like, add that two part as well, something like that. And similarly, they can check the other one, the third one as well.
+
+00:20:40 - 00:21:26 Unknown Speaker:
+
+So again, point being this also like how much of it can be done by real time is something that we'll have to check back. But definitely as a report, probably we can send this out like, okay, these are the three checks. These are like when you create it in your SQL, this is how it looks like. And then when you run it at the backend, this is the pass rate, how many failures are you actually seeing and everything. So, first part was improving the existing check that they have given us. The second is suggesting like better checks or newer checks, right, which are related to the same business process. And, I mean, I think we are a little short on time right now, but I think probably I'll set up some more time with Ankur Shahjarvi to kind of,
+
+00:21:26 - 00:22:18 Unknown Speaker:
+
+they will also walk you through an example of how this looks like at the back end. So when they've written the code to let's just say take in one DQ check as an input and then like three different DQ checks as output, right? And how does it actually happen? That is something that they can walk you through in a later call. Okay, any questions on this page? Are there any quadrants around these checks? Let's say we are accessing some SD information, and we don't want to run decryption algorithm multiple times just to check some. That's a card, member information or anything, right? It is an internal to MX, so you really don't need to put that. Uh, that's also fair enough, but I think we this is a good point.
+
+00:22:18 - 00:23:20 Unknown Speaker:
+
+In general, we should look at any card really like like. It should not. At least create queries or run queries that are not supposed to be run, right? So that's a good enough point. I think we can definitely build that. Yeah. Plus it also adds a cost factor as well, right? To run it so many times. So is that really necessary? Yeah. I think probably we'll have some kind of agent or something that validates what is being created first and then kind of run, right? We can add the guardrails in the prompt itself. Yeah, okay, any other thoughts? Okay, uh, are we going to leverage the chat, GPT or any other AI prompt? Uh, like, you know, till now, it is being like, restricted, right? We are not allowed to say the metadata and all right.
+
+00:23:23 - 00:24:04 Unknown Speaker:
+
+Yeah, the instructions or just the guidance that we are talking is we can leverage chat GPT and give it prompts and let's say metadata and stuff. And we are also encouraged to create custom GPT, which is also similar to we put in all the context metadata documents and everything. And then iteratively we can use the same feature, right? That is the instruction that we have gotten, but still like no API access or any programmatic access has been given to us right now. So it is just the chat GPT. With the chat bot that is there, right? That's the only thing that we have access to. I think that is one of the conversations, Sachin, actually, we also have a conversation with Manju and Marcus, who's our new VP, right?
+
+00:24:04 - 00:24:54 Unknown Speaker:
+
+We had a meeting yesterday, actually, the day before yesterday, but he's out sick currently. So, we wanted to actually bring up that topic itself. We wanted to show all of this and also ask Manju and all. Yeah, correct. Let's just say within Manju who's already using some AI, right? Because he was mentioning something last year when we once spoke with him. But you wanted to see if there's any team that is already leveraging these APIs to building something, so same thing we can also do. Because we need to get that alignment from all the table owners, right? Because those SD and all, right? Whether those are being allowed to, you know, pass into that custom GPT or the chat. Definitely not.
+
+00:24:54 - 00:25:49 Unknown Speaker:
+
+Data we should not be putting in and that's where also we are just putting profiling methods or metadata, but not linked data as is into the, yeah. Because ultimately here also the intention is that we get the query. That's all that we are trying to get from, let's just say some AI. And this running part is happening in BigQuery, right? So that's different. Okay. Are we exposing the table name also here? Right. The table name itself is going into the problem. Everything. That is the reason I asked whether we would figure out to do that or not. I think that's where when the API gets exposed, then we'll have to check what are the guardrails on that. Because currently for the chat at our side, we are interested to with all of these things.
+
+00:25:55 - 00:26:34 Unknown Speaker:
+
+Okay, and I think last one thing and we just have a couple of minutes. So I think last one thing is, this is something Charmi was working on, right? So now, like just to reiterate, this is improving the check, this is adding new checks, but we're also trying to see at a record level if there are some patterns that we can identify, right? So let's just say if there's a table having 100 customers. Can we identify, let's say, 10 or 15 customers out of them, which are showing some out of pattern kind of behavior, right? And that's what basically this does. So what she has done is she's used this algorithm called isolation forest, so what it does is first of all. What we're trying to see is okay.
+
+00:26:34 - 00:27:14 Unknown Speaker:
+
+They have given some check and some variables in that right, so we are first of all seeing you. Are there any correlated variables? Uh, which put together can bring out some story, right? So that's. An example of that is shown over here, right? So if you have like some, I don't know, like one example she had is like let's just say we have remits data and we have payments data and billing data and all that. So we have like four or five different variables that can be put together to showcase like a credit card behavior of a customer, right? So that's first thing is we identify what are the related variables and then we put on all those variables into the MLM. So what it does is it's kind of divides the entire data into smaller smaller buckets.
+
+00:27:14 - 00:28:00 Unknown Speaker:
+
+So let's just say if you have, like, your card credit card balance data, right? So probably it gets split into two halves and then based on that same variable, probably split into another half. And then you can use other variables as well to create more and more spreads, right? And ultimately, the intention is to create smaller clusters. Let's just say of like, like, divergent behavior, right? Any, any kind of out of pattern kind of behavior. So, ideally what the outcome of, this is a little different, so this directly shows you the examples, but what she is also planning to build is, we will show what is, let us say, of those three variables, last one year's data, what is the normal graph look like, and then we will identify three different clusters of people who have different,
+
+00:28:00 - 00:28:42 Unknown Speaker:
+
+so let us say normally if it is increasing, there is one cluster for which people are, it is decreasing, for the other cluster it might be stable, and then for one, by going up and down constantly, right. So then based on these three clusters also, if we show those to the business partner, they can see, okay, if this is a variable that should never be decreasing, so then cluster one probably might be a problematic scenario, right? And then we can look at a particular example, like for a particular person, how does that query or graph kind of look like? So that's something like this key for that particular case for that cluster. Take out one customer's data and then plot it over the graph to see how much exactly they do select.
+
+00:28:43 - 00:29:45 Unknown Speaker:
+
+So this is the third set of suggestions that we want to provide with Qt Cloud. Okay, any questions on this one? I think once Andresha and Charmere will cover with examples, right? I think in the following call, I think it will be a little more clearer, what I'd say. And then finally, are we given with any key to connect or this is something? That is what we were discussing, right? So for now, we have all used like, especially this one doesn't use AI in the main algorithm. It's just like a machine learning algorithm. But for the previous work, We are simply putting it using the chat feature itself. So we don't have an LLM API or API key or anything like that. It's not programmatically happening from the back end.
+
+00:29:45 - 00:30:40 Unknown Speaker:
+
+We are manually putting it into chat capability and getting the results right. And that's what we want to automate later. If we can get some LLM API access. Got it. Thank you. Okay, so if somebody wants to... Yeah. These are kind of requirements which would be coming in the next API. Which we have to explore and figure out a solution to implement it. Okay. All mockups link. These are just data mockup. Okay. Yeah. So if somebody wants to add like a check and they see this cluster is looking anomalous and we want to get reported on such customer, they can only add it to card. And then simply the next page is just showing what all different checks have you basically added, right? And then you can submit the request.
+
+00:30:42 - 00:31:31 Unknown Speaker:
+
+So this way, I think I can get out into the review section where it, here you will probably see those checks over here and then somebody from our team will basically review it and then approve it. Okay. So I think that's pretty much for today. We are on time as well. But if you guys have any questions, I mean, please reach out to me directly. And also, I'll be setting up some more time for Andriksh and Jharvi to basically walk through some examples of what they have done. And Anil, is it possible to share this wire mock with Athar? We can check, like, you know, if it is feasible, then we will try to improvise the UI at our site. Right, let me check. There are some guidelines around replit sharing, right?
+
+00:31:31 - 00:32:45 Unknown Speaker:
+
+So let me just check that. I don't think very few people have access to actually go to their plate right now. Okay. Even with that, Anand, I don't think it's shareable. Last time you shared me the file, I was still not able to open it, even though I'm able to do things on your plate. We can take a screenshot, Rachna, right? Yeah, I think that should be fine. Yeah, we can take a screenshot, not the complete mock-up, but if we can take the screenshot. I can check with that what improvisation we can done at the self-serve or the Q Track. UI, right? He is already building that so we can live with that. So that I can share such an after the call, probably I can share it with you. Yeah, thank you, okay, thank you, thank you, thank you. Do you have a file? I don't have a file.
+

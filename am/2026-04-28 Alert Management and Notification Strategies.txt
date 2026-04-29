@@ -1,0 +1,105 @@
+2026-04-28 Alert Management and Notification Strategies
+
+Creation Time: 2026/04/28 18:31
+
+
+📅About Meeting
+
+• Date & Time: 2026-04-28 18:31 (Duration: 457 seconds)
+• Location: No relevant content mentioned
+• Attendee: Sindhuja, Sachin (referenced), Anand (referenced), Rachna/Rajna (referenced), others not specified
+
+📒Meeting Outline
+
+Alert management, email notifications, and recurring review
+
+• Status of deployment timing and day-count tracking
+  Participants clarified when the latest deployment went live (stated as last Monday/Tuesday; system shows five days ago). Today is effectively “Day 5,” with some ambiguity noted. Agreement to proceed using current system indicators for counts.
+• Bulk email escalation behavior and risk
+  Concern raised that if 100 alerts exist for a user, Band 40 escalation would trigger 100 emails, which is undesirable. Interim ask: share the latest consolidated alert list and reach out to owners to close items; for bulk false positives, consider bulk action similar to ICMV precedent.
+• Longer-term notification approach
+  Proposed to move toward a single consolidated/summary notification per user per day (or a generic “items in your basket need attention” email) instead of one email per alert. To be discussed and designed further.
+• Recurring review cadence
+  Establish a weekly review of alert lists and actions. Aim to automate list generation for recurring use.
+
+Data pull, list sharing, and access constraints
+
+• Data extraction and sharing timeline
+  Sindhuja is pulling the data and will share an Excel list that can be filtered by basket and other fields. Target: by EOD today or tomorrow morning after account validation.
+• Access for bulk delete
+  Current bulk delete access limited to Sachin; Anand and others don’t have access. Team to coordinate with Sachin for required deletions and confirmations.
+
+Bulk deletions and outstanding use cases
+
+• MGM rules bulk deletion
+  Confirmation received that MGM rules were bulk deleted.
+• ICMV/ICMB and Top 100 use cases
+  Items expected to be bulk deleted are still visible/open. Need confirmation from Sachin on whether deletions were executed for these two use cases.
+
+DQIM/Portal discrepancy
+
+• Missing alert in portal
+  A DQIM alert for RESI Analytics dated 20 April is not appearing in the portal. Evidence exists (screenshot/log); request to investigate routing/ingestion. The alert details will be forwarded for review.
+
+Table configuration and variable handling
+
+• Data repository table and filters
+  Guidance reiterated: it’s okay to keep fields null; if a date filter exists, add the variable name. For the data repository table, the data type name is already being included as required.
+
+📋Overview
+
+• Day-count since deployment aligned to current system indication (“~Day 5”); proceed accordingly.
+• Immediate risk identified: excessive escalation emails; use a consolidated list and direct outreach as a stop-gap.
+• Move toward consolidated/summary notifications per user; design to follow.
+• Weekly recurring review of alert lists to be instituted; aim to automate list generation.
+• Sindhuja to share a filterable Excel list by EOD or next morning after validation.
+• Bulk delete access sits with Sachin; coordinate for needed actions.
+• MGM deletions confirmed; ICMB/Top 100 deletions require Sachin’s confirmation.
+• DQIM discrepancy: RESI Analytics alert from 20 April missing in portal; to be investigated with shared evidence.
+• Table/config guidance: keep nulls where applicable; include date filter variable when present; data type name already captured.
+
+🎯Todo List
+
+• Sindhuja:
+  • [ ] Pull and share the filterable Excel alert list (including basket and related fields) after account validation, by EOD today or tomorrow morning.
+  • [ ] Forward the RESI Analytics alert (20 April) evidence/details to the team for investigation, today.
+  • [ ] Connect with Sachin to confirm bulk deletion status for ICMB and Top 100 use cases; update the team, by tomorrow.
+• Sachin:
+  • [ ] Confirm and, if needed, execute bulk deletions for ICMB and Top 100 use cases; provide written confirmation with counts, by tomorrow.
+  • [ ] Review access model for bulk delete and advise on granting/temporary facilitation for Anand/others, this week.
+• Anand:
+  • [ ] Coordinate on bulk delete needs and verify once Sachin confirms actions; report any residual items in the next review, this week.
+• Team (Owner TBC):
+  • [ ] Define a design for consolidated/summary notifications (one per user/day or generic “basket needs attention” message), with proposal for review in the next weekly meeting.
+  • [ ] Set up a weekly recurring review and explore automation for generating the alert list (owner/tooling TBC), by next meeting.
+
+Transcription
+
+00:00:02 - 00:01:01 Unknown Speaker:
+
+And it's okay to keep it null. But if you see a date filter in those cases, then just add that variable name. That's it. Oh, okay. Yeah. Yeah. For the data repository table, only for the data type also, we are already mentioning the name. Yeah. Thank you. Sure. Thank you. Sindhuja, we can continue, I think. Yeah, I think that's all from my side. If you guys have anything else, we can discuss it. Or we can end the call. Sure. Just one thing, if you can just pull up that list, which I mentioned to you yesterday, because I just don't want to be in a scenario where we send out 100 emails to somebody. Yeah, yeah, yeah. Yeah, I was checking that once. Uh, yesterday it was fourth day, only yesterday, today it will be fifth day.
+
+00:01:01 - 00:02:00 Unknown Speaker:
+
+Anyway. I am trying to pull the data. Okay, so, yeah, I will share you the list okay over the Excel see so that you know we can filter it out. Yeah, based on what basket and all that it is. Yeah, so maybe by tomorrow you will get that list. Okay, okay, so tomorrow will be what? Day five? Uh, today is day five. Okay, okay, sure, sure, yeah, yeah, uh, wait, wait, wait, uh. We deployed fourth, no, tomorrow will be 85 region began. We deployed late, right? And uh, file triggers next day in the morning, last Monday, though, right? Or Tuesday, something like that. Uh, no, last deployment. I can see I was checking, yes, uh, yesterday only one second, uh, platform because I.I remember Sachin messaging that it has gone live on Monday or Tuesday.
+
+00:02:00 - 00:03:32 Unknown Speaker:
+
+Tuesday last week. It's telling five days ago. Okay, um, yes, five days ago. Okay, okay, that will be Monday. Yeah, but no, he. He messaged me on 20th, saying that it's wait, let me check the date. Today is the 8th and the 7th day, then, okay. Avoid doing that before it happens. Also, one quick check, right? And then you would probably have access just if you want to bulk delete. Uh, a few more alerts, right? Uh uh, bulk delete right. I don't have access Anand right now. Okay, only Sachin has only such in heads. Just just get that list as soon as possible. Yeah, the details today, okay, yeah, okay, I will share with you. I think let's also think of how to get that in a recurring fashion.
+
+00:03:32 - 00:04:15 Unknown Speaker:
+
+Because we'll just have that review like once a week, every week. And then see, uh, so that's not. I mean, just to point out, right yesterday what we were discussing is, uh, I just like, thought of one thing. If there are a hundred alerts that come up on somebody's name, right? During the escalation on Band 40, that Band 40 will release 100 emails. Rest. Oh, okay, oh, that is a problem, right, right? Which would be very weird. So that's why I just asked, just share whatever, the latest list right now. And let's reach out to them and just ask them to close it as soon as possible. Or if it's like a very bulk false positive, then we can have the action like we did it for ICMV.
+
+00:04:15 - 00:05:05 Unknown Speaker:
+
+Yeah, yeah, yeah, and then we'll think of a solution for this one as well. So what I was thinking is key. Let's just say there's under alerts on what particular day that has come, right? So somebody can receive just one alert for that, right? I think that that's not the ideal scenario. Or something like a very generic email as well, right? So if you have like something open, uh, the mail goes out saying there is some something in your basket that needs attention. That's all right, right? Yeah, that, uh, we'll discuss that one. Let me check. Yeah, but yeah, please share that list as soon as possible. Yeah, I will. I will save you by. Yeah, most probably by EOD, or otherwise. Tomorrow morning you will receive that list. Just I have to validate the account.
+
+00:05:05 - 00:05:59 Unknown Speaker:
+
+Okay, okay, yeah, I will do and share with you. Uh, also one more thing. So, uh, the last day. I talked to Sachin now which was when I think on Thursday. So he had confirmed that he has bulk deleted the MGM rules. But we had discussed it for three use cases. Like the ICMV ones I am still seeing they are still open. So do you have any idea on that one? Like the ones which were supposed to be bulk deleted. Let me check with him. I will connect and let you know Rajna about this one. Sure because I did get a confirmation. From him regarding MGM. But he did not provide a confirmation for the other two use cases, which was ICMB and Top 100 and ICMB and Top 100. Right? Yes, and uh, one more thing.
+
+00:05:59 - 00:07:26 Unknown Speaker:
+
+Uh, so regarding this DQIM only? Uh. There was one alert for, UH, like RESI Analytics use case on uh, 20th of April, right last Monday, and it's not reflecting in the portal. So, uh, I'm not sure like, who is the one responsible for this support? Please look into this one. Uh, I can show you my screen once. Yeah, so uh. This alert came in on 20th of April, if you see, and this is like, not reflecting on the portal as of now. Okay, okay. Can you just forward this one to me? Yeah, sure. I'll do that, yeah. I think that's about it from my side. Rest, you can let us know once you talk with Sachin. Yeah, sure. I will keep you posted. Sure, sure. Thank you. okay thank you thank you uh yeah we are closing this call uh and see can you just stay back we'll discuss like whatever you had doubts
+

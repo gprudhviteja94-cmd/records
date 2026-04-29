@@ -1,0 +1,209 @@
+2026-04-23 Duplicate Run Flow and User Experience Discussion
+
+Creation Time: 2026/04/23 19:08
+
+
+📅 About Meeting
+
+• Date & Time: 2026-04-23 19:08
+• Location: No relevant content mentioned
+• Attendee: Jagadish, Pete, Ravi, Srinu, Siva, Rashmita, Rahul, Vinny, Avini, Ravinder, Gene
+
+📒 Meeting Outline
+
+Duplicate Run Flow and User Experience
+
+• Current duplication behavior
+  The team clarified that the current system only duplicates inputs, but the intended behavior is to duplicate the full editable run details, including values changed in the previous run.
+• Duplicate flow
+  From the original run screen, users click Duplicate, enter a new model/run name, and then land on a Run Details screen showing the copied values from the original run.
+• Editing after duplication
+  Users can review and edit the duplicated values on the new screen, then either Save, Save as Draft, or Save and Run. The flow ends after this screen for the current scope.
+• Draft behavior
+  Auto-save creates a draft state until the user explicitly saves or saves and runs.
+• Future-state items excluded for now
+  The expanded top menu and keeping tabs open were identified as future enhancements and are not part of the current implementation.
+
+Data Copying, Version Handling, and Backend Requirements
+
+• What must be copied
+  The duplicate run must include all editable fields and tabs that were changed in the original run, while keeping the original run unchanged.
+• Exact value preservation
+  Copied values must remain identical to the original editable values; no recalculation or transformation should occur during duplication.
+• Version compatibility
+  The team discussed whether a duplicated run can use the current/latest version. This depends on compatibility rules that must be defined and maintained when new versions are introduced.
+• Compatibility logic
+  The backend should determine which previous versions are compatible with the latest version. If a version is not compatible, the latest version option should not be shown.
+• Parent-child / duplicate storage approach
+  The team noted that the storage model for duplicates is still under discussion, including whether to use a parent-child structure or another approach.
+• Backend and UI alignment
+  The team agreed that backend and UI work should be aligned in parallel to avoid integration gaps and reduce rework.
+
+UI Scope, Editable Tabs, and Field Behavior
+
+• Editable tabs in duplicated run
+  Only certain tabs will be enabled for editing in the duplicated run; other tabs will remain disabled/greyed out.
+• Run details screen
+  A new UI screen is needed to show the duplicated run details and allow editing of the copied values.
+• Version dropdown
+  A version selection dropdown is needed in the edit flow, and the system version is not currently present and must be added.
+• Field dependencies
+  Some fields follow a sequence of dependency, where changes in one field affect downstream outputs. The team discussed the need to preserve logical consistency across these dependent fields.
+• FMS forecast and related fields
+  There was clarification that some values, such as FMS-related inputs, are editable in specific places, while some outputs remain non-editable or are derived through calculations.
+
+Planning, Estimation, and Next Steps
+
+• Story breakdown
+  The team agreed to break the work into smaller, technically meaningful stories rather than keeping it as one large item.
+• Backend story
+  A backend story will be created after the implementation approach is finalized, covering copying of editable fields and version compatibility logic.
+• UI stories
+  UI work will likely include the duplicate run details screen, editable tab behavior, and version dropdown support.
+• Technical follow-up
+  A technical discussion with the backend team will be scheduled before final estimation, so the stories can be estimated together with clearer requirements.
+• Figma and reference materials
+  The Figma link and feature references were shared in chat for review and implementation alignment.
+
+📋 Overview
+
+• The meeting focused on finalizing the duplicate run flow so that users can duplicate a run and see the copied editable details in a new run details screen.
+• The team agreed that duplication should copy all editable data from the original run while keeping the original unchanged.
+• Version compatibility is an important open point and must be defined in the backend before the latest version option can be safely shown.
+• UI scope includes the duplicate run details screen, editable tabs, and version dropdown support.
+• Backend and UI teams need to stay aligned, and a technical follow-up call will be held before final story estimation.
+
+🎯 Todo List
+
+• Jagadish / Team
+  
+  • [ ] Confirm whether Ravinder should be included in the implementation discussion and follow-up alignment, no deadline mentioned
+  • [ ] Schedule a technical call with the backend team to finalize implementation details, tomorrow or Monday morning
+  • [ ] Break the feature into smaller backend and UI stories after implementation is clarified, no deadline mentioned
+
+• Backend team
+  
+  • [ ] Define and implement the logic to copy all editable fields from the original run into the duplicated run, no deadline mentioned
+  • [ ] Establish version compatibility rules for current/latest version selection when duplicating runs, no deadline mentioned
+  • [ ] Confirm the storage approach for duplicate runs, including whether a parent-child model is needed, no deadline mentioned
+
+• UI team
+  
+  • [ ] Build the duplicate run details screen that shows copied values and allows editing, no deadline mentioned
+  • [ ] Add support for the version dropdown in the edit flow, no deadline mentioned
+  • [ ] Ensure only the intended tabs are enabled for editing while the rest remain disabled, no deadline mentioned
+
+• Rashmita
+  
+  • [ ] Share access/support for the Figma reference and feature details, no deadline mentioned
+
+• Avini
+  
+  • [ ] Update the Figma screen to reflect the correct editable tabs and remove any typo or incorrect activation states, no deadline mentioned
+
+Transcription
+
+00:00:38 - 00:02:55 Unknown Speaker:
+
+So you went to original run. Yeah, so you can choose to run it under the current version or the one that was original. Need to incorporate our I felt that Brazillian was made up of Brazillians. Both of them had to be compatible for the rank to be the leader or something. We can't discuss Brazillian with that. Let's just try to refine the duplication state. I don't know. Jagadish, do you know if Ravine is going to join? Should we move? Should we wait? Should we push? Are you there, Jagadish? Yes. Just give me a minute. Yeah, I can run with that. I can see we have Shira and others here. I think maybe we can just move, but I would like to have Ravinder as well because he was with us on the finance, the business and etc.
+
+00:02:55 - 00:04:13 Unknown Speaker:
+
+If we want to move, we can. I'm just waiting for his response. Just give me a moment. Or maybe we can discuss with the team regarding the future. Yeah, do you want to move? We can move. And then if we have technical questions, we can ask a figure later. It shouldn't be that much. It's just three screens. I can walk through the change, and then we can discuss and see if we need any more alignment. Thumbs up. If yes, we'll consider silence as a no. No silence. Okay. So today we are going to try to finish the duplication functionality. Just going back on what we discussed last time about this. So current system only duplicate the inputs, right? And we know that what we really need is duplicate everything.
+
+00:04:13 - 00:05:12 Unknown Speaker:
+
+And what I mean by everything, let's say that I have this one here, right? And then I went to raise property. I added some values here, say I would run, and then now I have this run here, which is like modified and added by me with new values, right? Then once I click on duplicate, run again here, and you see this option here, then we need to name the model here. We can continue, And now... the difference now is the input screen is the same as we are used to, but now we have the real details inside the the run. Because here we can see all the changes that they made on the previous one that they are duplicating now.
+
+00:05:12 - 00:06:17 Unknown Speaker:
+
+They can't go to the others because they can't edit those here, so they can only go to those here and see the values there, so they know what they did here. Anything else, Pete, you want to mention here at that time? No, I don't think so. Just note that we have the client details there when you duplicate the run on that screen. And there is a future state of this as well, but that's... probably going to be a whole different story here. So for today, it's more like just the basics here, just going through that. From the initial screen, click on duplicate, give a name. You can see now run details here, and then you see those options here where you can edit here. Is that correct? You cannot edit here? No, you should be able to.
+
+00:06:17 - 00:07:27 Unknown Speaker:
+
+Yeah, if you can get in there, you can edit it. Okay, we can actually edit from here. Yeah. Yeah. Oh, and ignore the expanded menu at the top for now. That's a future state, potential future state also, keeping these tabs open. So for today, the flow ends here. So you can go here, see this, you can open this, edit, save, and run again once you're ready to run. Or save as a draft. And then we have a draft as well, right? If you go click on that, yeah, click on that draft name, and then go all the way down to the bottom. Yeah, the auto-save creates the draft. So it's in draft mode until you save or save and run. Yeah. Ravi joined. Hey, Ravi. Good morning. Any other thing from your perspective here, Ravi?
+
+00:07:28 - 00:08:26 Unknown Speaker:
+
+Good morning. I'm sorry. I'm a little late. I did not follow the conversation. I'm sorry. Something and the release notes. I can run again. I can run again. That's okay. So we are going from that screen, duplicate run, give a model name, then we have a new option here, which would be here, the run details. Then we can see the tabs that they could edit from the original run. They can see the values here. If they don't submit the run right now, we could save as a draft. And then from here, they can submit, save that run. And that will lead us again to that screen. That's the flow. Correct. That's exactly it. Yes. What is the question? I was just checking if you were okay with that. No, that's not really the question.
+
+00:08:26 - 00:09:41 Unknown Speaker:
+
+That is what we discussed. Yeah. So here, there's only one place we are providing that we can try. We are not going inside that existing. Yeah, for now. Yeah, we've talked about that briefly. There is a future state of this, but yeah, with Vinny just online, it's just the initial approach. Before I go to the specific stories that we will cover today, any questions on the flow? Basically, we are just including this option here. Then the back end, of course, needs to bring everything. That was added from the previous run to the new screen here on Brown details. Yeah, possible questions here. If you select Like a new version, current version, like, the duplicate will be like the original one will be like a old one, right? So what, how, like? How will duplicate the data?
+
+00:09:43 - 00:10:28 Unknown Speaker:
+
+So when you are duplicating itself, right? Whatever version is executed, that RPT, right, that is the original version. And if we need to show the latest version, only two options, always, yeah, like for the latest. If they want to run with the latest version, so in that case, if they want to run the latest version. If they're compatible with the latest version, then only we'll show that latest version option, if not, we're not going to show, we'll show only the the version, which I will tell you so like if it is a latest version. So we are not going to duplicate, like we are not going to copy any of the existing whole data, right? No, no, no, we need to copy. We still need to copy that because we have duplicated, right? You duplicated it.
+
+00:10:28 - 00:11:21 Unknown Speaker:
+
+And if we can able to run with that. Like, we don't know the compatible methods yet when we are introducing new version, right? And if it is not compatible with the latest version of the existing RPT, then we will not show that latest version here. If it is compatible means, like you can introduce new field in the latest version by sending defaults that you find, or else the backend, the calculations impact, right? In those scenarios, we will do all the calculations and we'll put whether that RPT version is compatible with the latest version or not, right? Like, how can we check whether that is compatible or not? Those matters. When we introduce new version, we need to have that logic once we get a new version right, we need to analyze that.
+
+00:11:21 - 00:12:29 Unknown Speaker:
+
+And what version only, what previous versions only you can run on that latest, and what other versions we cannot run? We need to maintain that matter. And like now, like, are we copying entire data, like all the like outputs. No, we are still discussing on that. Srinu is suggesting to put it parent-child, but we can have a detailed discussion a little later on how to maintain the duplicate copy. Until draft, Srinu is suggesting not to copy the data, but that is implemented. We need to discuss Siva. But we need to copy certain tasks. We have a list. We are going to list out what tasks need to copy, which are basically editable in current arbitrage. Whatever the type of data we need to copy. Yeah. Yeah. So those all you need to copy.
+
+00:12:30 - 00:14:21 Unknown Speaker:
+
+So once we rerun that, like once we edit and once we resubmit, then only like we get the original data. My question is like how can we check if they want to run with the current version, how can we check whether it is compatible or not? When we are introducing new version itself, we should maintain what version is compatible. Maybe we can discuss implementation perspective, but we should have somewhere, we should know that whether the version is compatible. Any other questions? Sure. Do you think anything complicated here? You are muted for the talk. Yes, I'll take a day. We'll continue. I think we're good, what do you think? It's okay, fine? Okay, yeah, like, I don't know it is fine, but like, yeah, the implementation, the implementation says. I don't know how many things we will get.
+
+00:14:21 - 00:15:08 Unknown Speaker:
+
+But, uh, I render like one suggestion, not a suggestion. But, uh, like we have to sync with the back-end thing, then only like, we will get less. Oh yeah, no, we need to have that discussion. Yeah, well, we get the stories. Okay, um, this is a high level feature we are discussing, so we need going to put all the details which requirement is with this flow, then we can start discussing implementation back-end. Yeah, once the back-end implementation is done, we can do the UI, but once the UI is done, back-end is like after two, three sprints, if they are doing, we are not in sync, we are not doing integration properly. So this is what we have done, but we should be in sync, actually. We should do the parallel in parallel.
+
+00:15:09 - 00:16:16 Unknown Speaker:
+
+Yes, I'm not sure how that battle can go as well, but at least we can have and freeze the implementation also from both sides and agree that we can pick up whenever we have time. That way also we can do it. Yes, yes. Yeah, but let's have a discussion. Yeah, I'll start getting calls to discuss on this one. Once the flow is clear and requirements are clear and there's a lot of questions what we need to implement, then we can. Okay, anything else? We are back. Any question from your side? If you have, how is the time? It's not, I think two, one okay, so big. This is already there right today, this is one already exists parameter event, that's that's there, right? Yeah, yeah, so we don't need stars for for this, right?
+
+00:16:16 - 00:17:51 Unknown Speaker:
+
+Yeah, yeah, okay, so I will remove those two here because we don't need them. Okay, so the first one would be the backend. I think we discussed this one last time. So this is the story for the backend to bring all the fields that were edited on the previous run. And then just copy and paste file here so we can use this as a reference to this story. Someone run for the first time. Added something, and say, and click on duplicate, anything that was changed, we should move to the duplicate version of this model. This is the first story for backend. If it's too big, I mean, we can break, but that's the requirement. And then, so anything that's editable, any field here should be moved once we duplicate.
+
+00:17:54 - 00:18:58 Unknown Speaker:
+
+It needs to be identical when we bring them, we can't change sense or anything, it needs to be exactly the same value. So they are not calculated, they are just fields that they can edit once they run. That we don't change anything on the original one, so if they duplicate the original one here, we remain the same and that if they make any changes, they duplicate. The duplicate only will have the chains, but the original remains the same. Once they become duplicate and we bring everything, then we need to create a new line here with the new run. So we have the original run, the duplicate run. That's the back-end store, okay? To bring everything that was on the input tab and on the tab that they added originally here.
+
+00:18:59 - 00:19:57 Unknown Speaker:
+
+From the list that you have on the story that are those tabs and those fields that you know already because they are on the back end. If you need, those are the reference you need. This is the first story for the back end. Questions? Do we have someone from the back end here? You mean, do we need to put anything on the back end? That's what you're saying? I'll create a back end ticket once we have the finalized discussion of implementation plan we need. Should we estimate that story? No, we can estimate the UI stories. But the backend stories are great, and I will work with the team to make a point on it. Okay, so I will skip this one. So from UI, we have only, I think, two stories. So the first one would be...
+
+00:19:57 - 00:21:00 Unknown Speaker:
+
+No, I think we may get more, too. So one is the navigation, and that... Second one is the adding the run details, right? Yes. So first one is run details. Yeah. And then the second one I have here is, I think we already have this, right? Select versions inside the edit. Is it there already, right? No, I don't think so. I think that's maybe. The system version is also not there. The system version is not there. We need to add that. And we need to build an API, but API, sorry, I will add it. I have one of those too for UI. This one, I'll add one of the videos and then also version drop down here. We need one more. We need to disable an Apple page of the data. This is also a UI work.
+
+00:21:01 - 00:21:57 Unknown Speaker:
+
+Please, yeah, I agree with you. But I place that as an acceptance criteria. It can be a story if you want, but it's an acceptance criteria here. Yeah, I'll let you know. I'm not sure. Rahul, are you back? Yes, yeah. Rahul, you got the flow, right? Yeah. So we go to work. No, I know we go to work, but this story is enough, or do you want to speak more? Can you please speak up? And how much number? Is all the tabs going to copy or only a few of them? No, only a few. These are the list. So what they can see are those tabs here. They can see, they can edit, they can click. But the others will remain as you see here on gray state, so they can't click.
+
+00:21:57 - 00:23:30 Unknown Speaker:
+
+But the others, they can go there and edit if they want. My question is, I have just one story. Which is to include drum details and on the second scratch here, I'm warning that if you want to break in two stories, okay, you're good. So we can first... estimate just the inclusion of front details then, okay? Copy, complete copy, yeah. Sri? Yeah, so here, rates per quantity, area output, right? We know they can edit that, but we discussed in the previous part the sequence, right? Like, example, rates per quantity and area output if they update. The output of rate buildup will change. Obviously, the FMS forecast will change. So, Do we have that hierarchy number like? Example, they change rates for quantity, RA output, then they can't change the performance forecasting.
+
+00:23:30 - 00:24:25 Unknown Speaker:
+
+Um, right, like, and the build up, like, you know, there is a sequence of change, like, you know what comes, like, you know. Rates for quantity and RA. Output is the input to rate builder. Uh, rate buildup output is they're taking from UH output makes as a FMS forecast. So there is a sequence. So I believe they update rate for quantity and area output, then they can't update FMS broadcast. So those rules, we should have, that's what I'm thinking, right? I mean, if any back-end team join, they can answer this. Yeah, I ask you that, but from a business perspective, it doesn't make any sense for them. They say, I can't do anything at any time. I think it's more like how we, we do the back-end.
+
+00:24:25 - 00:26:05 Unknown Speaker:
+
+As I mentioned, they can go to Facebook, Instagram, or Facebook, expecting that they would be seeing something on RPG forecast, for example. But for them, it should be as free as they can. But I agree with you that if there is a logical back-end, we should bring that. Yeah. Otherwise, there is a chain will grow. I mean, there will be integrity issues. As simple as that. Like, again, there will be a lot of validation things will happen. Rashmita, you want to say something? Yes, so the FMS forecast, the additional factors that we are applying, that shouldn't have any difference in our output. Even they update the percentages, they're going to change, then output will come. That's what you're saying? Yeah. Because we're only giving the FMS input they will change, not any data points on the FMS, because that comes from a calculator.
+
+00:26:08 - 00:27:32 Unknown Speaker:
+
+That story then, which is now we can see real details while duplicating a run. So this, just for this new option here. Are we good to estimate them? Any more questions on this? This is just for UI first thing. And then, of course, there is a call to back end here to bring that, and we can estimate the API if we can right now. But if not, that's just a commodity one. Yeah, API, we need to get multiple. We need to copy in the back end and integrate the collection. So, yeah, we'll do a little later. Let me pause. Do you want to have... Do we understand now the flow we want to do, right? Do you want to have a technical call with the team and after that we try to estimate?
+
+00:27:33 - 00:28:43 Unknown Speaker:
+
+Yeah, I think that would be great. I'll create stories and we can together estimate all at once. Yeah, let's give some time to team also to go over this feature and the details, the flow. And then I will give you a call probably tomorrow or Monday morning to discuss the implementation. And then once we finalize, I'll create stories and then we can group together. Either way is fine. Yeah, that's a good idea. Avini, in the Figma, I think I am seeing Red Buildup is also activated. I think I am thinking that's a typo, right? I think it is just an example. I can share it to you. I can make the change right now. Yeah, you can enable all this stuff. I sent you the chat. Okay. Awesome. Rajmita is the owner. She can provide access.
+
+00:28:49 - 00:30:06 Unknown Speaker:
+
+Okay, I sent the Figma into the chat, Ravinder. So those are the, let's say, main stories. We can break them down in small ones that make more sense for the team in a technical way. Okay? Okay. If you have any questions regarding how this should work, business questions, you can include me. Sure. Okay? Yeah. Okay, Tim, any questions? And please, Ravinder, we also need this one, okay? When we go here, here, and we see this, this dropdown, okay? I'll send the feature number as well, so you can go there. Okay, please let me know if you have any questions here, okay? I will give time back. Can I speak to you for two minutes? Yeah, I have a quick question. So that screen that you were looking at with some tabs enabled and some disabled, those are just supposed to be the editable tabs.
+
+00:30:06 - 00:31:19 Unknown Speaker:
+
+I'm sorry. This is a partial run showing that not everything is available yet. OK. And also, FMS the forecast output though, that's not editable. Is that, but you have it as editable on this list. No, I think, I think the percentage they can, that's what Rashmuda is telling. So maybe. Again, we are combining, sorry to cut you, but we are combining the partial and this one. This is not a partial event, this is fixed. Always you get only few times enable. Yeah, no, I created a screen of just the... Okay, okay. Now I see this here, and I understand what you're saying. Yeah. We don't have this, but now I understand what you're saying. Okay. Yeah. Okay. So in your Excel file, you had FMS forecast, but it's editable? There's a place it is.
+
+00:31:19 - 00:32:39 Unknown Speaker:
+
+I can show you first. Yes. Oh. Just the person. Yeah, it's a non-validated. I remember now. Yes, it is, yeah. I remember that. It can be done at service layer itself. I think it's here. Oh, conservatism. Oh, yes, I see. So conservatism is eligible. Okay. All right. It's been a while. Yeah, it's just a small box in the Excel itself. Yeah, okay. But yes, it is there. That's right. So I'll make a screen with just these little tabs. Okay. For that to link to. Yeah, if you have any questions, we can connect again. Okay, sounds good. Thanks, guys. Thank you. Stay for a minute. Thank you, Gene. Yeah, thank you. Have a nice day. Bye. Thank you.
+

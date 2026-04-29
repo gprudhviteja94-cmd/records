@@ -1,0 +1,198 @@
+2026-04-24 Resubmission Planning and Tracking Meeting
+
+Creation Time: 2026/04/24 11:32
+
+
+📅About Meeting
+
+• Date & Time: 2026-04-24 11:32 (Duration ~58 minutes)
+• Location: Virtual (online call)
+• Attendee: Jagdish, Vaishali, Shrikant, Nikhil, Satya, Alok, Ankit, Ravinder, Rishmita, Srini, others (names mentioned or referenced on call)
+
+📒Meeting Outline
+
+Resubmission Planning and Tracking
+
+• Resubmission scope and process
+  Multiple resubmission cases will be submitted via the app. SharePoint will host the master Excel test case files. Team will open the relevant Excel, apply changes, and submit via the app for each resubmission.
+
+• SharePoint access and governance
+  SharePoint link will be shared for test cases and issue tracking. All defects/findings must be logged in a centralized Excel on SharePoint to avoid losing details in email threads. Each issue should include owner, status, and RPT ID.
+
+• Access approvals
+  Some team members cannot access the submission link; Shrikant (or designated approver) to approve access requests so everyone can submit/validate.
+
+UI/Data Validation Status and Issues
+
+• UI states and open issues
+  Vaishali confirmed overall UI states are fine. One data stats issue remains: missing test data for a few dropdowns; she is coordinating with Nikhil to populate.
+
+• Rates per Quantity: percentage display gap
+  Excel shows percentage values, but UI does not display them (values appear blank). Yesterday it worked; today regression observed on a new model. Values exist in the downloaded Excel (rates per quantity tab) but are missing in UI.
+  • Suspected areas: recent Mongo/collection changes; not a pure QA issue.
+  • Action: Check packet/collection and UI build logic; verify no zero-substitution for calculated fields to avoid misleading results.
+
+• Drafting flow and totals
+  One drafting flow validated; percentage worked yesterday. Concern raised on how “total values” are computed in UI. Team asked to confirm totals match RPT Excel. Vaishali is coordinating with Satya and Nikhil.
+
+• API/code deployment note
+  Do not use PTR stage for this flow yet; API code not updated. Keep coordination in chat and jump on calls if blocking issues arise.
+
+Issue Logging and Ownership
+
+• Centralized defect list
+  Team requested to:
+  • Put yesterday’s issue list into an Excel on SharePoint.
+  • Add fix status (fixed/not fixed), RPT IDs, and assign owners.
+  • Share the SharePoint link in chat for ongoing updates.
+
+• Assignment hygiene
+  Ensure each logged issue has a clear owner and due date where applicable.
+
+VGOVI (Vigovi) Adjustment Tab: Mapping and Test Design
+
+• Behavior and editability
+  In the VGOVI Adjustment screen: Carve-in, Carve-out, Medicaid groups are editable; Final Factors is read-only. Changes trigger corrections and update the model run transactions flag correctly (recent fix validated by Alok).
+
+• Mapping uncertainty
+  Current UI grouping/naming for VGOVI adjustments differs from earlier expectations and from how groups map in other tabs (e.g., RA Output). Excel test case mapping to UI fields is unclear.
+  • There was an enhancement user story (in FIP) that altered the design compared to prior discussions. Ravinder confirmed the story alignment.
+  • Team needs clarity on how UI groups map to Excel columns for VGOVI.
+
+• Data cleanliness
+  Extra starting/ending commas observed in Custom Adjustment data; suggested to correct at DB level (Ankit/Nikhil).
+
+• Next steps for mapping
+  Check the right-side columns in the VGOVI adjustment tab of the Excel; connect with the owners (suggested: Vaishali/Alok/Nikhil) for a walkthrough and finalize a mapping guide.
+
+Test Case Execution and Demonstration
+
+• Eligible tabs for resubmission validation
+  Currently validating 5–6 tabs: Rates per Quantity, RA Output, Custom Adjustment, Lift Adjustment, VGOVI, FMS Forecast.
+
+• Methodology (as demoed by Rishmita)
+  • Use T3/T17-style RPT files per test case; highlight cell-level changes in both the Excel file and companion document for visibility.
+  • For each NDC, record original values (e.g., PPA) and the updated values; maintain consistent naming conventions (e.g., “T3 RPT changes”, “T17 RPT custom lift updated to zero”).
+  • Ensure the same highlighted changes are applied in the RPD and resubmitted via app; verify flags update and corrections propagate.
+
+• Access to submission tool
+  If the submission link is inaccessible, raise a request; Shrikant/approver to enable access.
+
+📋Overview
+
+• Proceed with multiple resubmission cases using SharePoint-hosted Excel test files and the app submission flow.
+• Centralize all defects in a SharePoint Excel with owners, statuses, and RPT IDs; stop using scattered emails.
+• UI overall stable; one dropdown test data gap remains—Nikhil to provide data; Vaishali monitoring.
+• Rates per Quantity percentages appear in Excel but not in UI; investigate recent Mongo/collection and UI binding; do not coerce missing percentages to zero.
+• Drafting flow regression observed on percentages; totals must match RPT Excel; validation ongoing with Satya and Nikhil.
+• Do not use PTR stage until API code is updated.
+• VGOVI Adjustment mapping differs post-enhancement; Final Factors read-only by design; need a clear Excel-to-UI mapping guide.
+• Remove extra commas in Custom Adjustment at DB level.
+• Rishmita demonstrated the end-to-end validation approach; ensure consistent highlighting and documentation of changes; resolve access issues promptly.
+
+🎯Todo List
+
+• Jagdish:
+  • [ ] Share the SharePoint link to the master test case folder and the centralized issue log. Time: within 10 minutes post-call.
+
+• Vaishali:
+  • [ ] Confirm UI “states” remain stable after data fixes; retest dropdowns once data is populated. Time: EOD next business day.
+  • [ ] Validate “total values” alignment with RPT Excel and share findings with Satya and Nikhil. Time: EOD next business day.
+
+• Nikhil:
+  • [ ] Provide missing dropdown test data and coordinate with Vaishali. Time: ASAP, target within 1 day.
+  • [ ] Investigate Rates per Quantity percentage not rendering in UI (check collection fields, API responses, and UI bindings). Time: 1–2 days.
+  • [ ] Remove leading/trailing extra commas for Custom Adjustment at DB/source level. Time: 1 day.
+
+• Satya:
+  • [ ] Partner with Vaishali to verify totals and investigate drafting flow percentage regression. Time: 1–2 days.
+
+• Shrikant:
+  • [ ] Approve access requests for the submission tool/link. Time: Same day.
+  • [ ] Review recent data model/collection changes that could affect Rates per Quantity percentages. Time: 1–2 days.
+
+• Alok:
+  • [ ] Re-verify the model run transactions flag for resubmissions across sample RPT IDs and document results in the issue log. Time: 1 day.
+
+• Ankit:
+  • [ ] Coordinate with Nikhil to sanitize comma issues in Custom Adjustment data. Time: 1 day.
+
+• Ravinder:
+  • [ ] Confirm the finalized VGOVI enhancement scope and share reference documentation/user story for mapping. Time: 1 day.
+
+• Mapping Working Group (Vaishali, Alok, Nikhil, Ravinder):
+  • [ ] Produce a one-pager mapping guide for VGOVI Adjustment: Excel columns ↔ UI groups (Carve-in/Carve-out/Medicaid/Final Factors), including field IDs. Time: 2 days.
+
+• All Testers:
+  • [ ] Log all new issues in the SharePoint Excel with RPT ID, owner, status, and repro steps; stop reporting via ad-hoc emails. Time: Ongoing.
+  • [ ] Follow the highlighted-change methodology for each resubmission test case; ensure RPD updates mirror the documented Excel changes. Time: Ongoing.
+
+• Admin/DevOps:
+  • [ ] Avoid using PTR stage for this flow until API code is updated; notify team once deployment is complete. Time: No date provided (update when ready).
+
+Transcription
+
+00:00:01 - 00:01:40 Unknown Speaker:
+
+They're doing validation virtually so once they're digital maybe they'll push it thank you. In the other call, everybody was not there, so I had asked Jagdish to set up this call, but the intent was same that we want to submit multiple resubmission cases, right? So, like we discussed earlier, I'll share the SharePoint where the Excel sheets are there. We need to open that and submit in the app for the resubmissions. Okay. Okay. Anything from the UI test cases, Vaishali, are we good on states? Any open issues? Shrikant, there is only one issue from the data stats. A few of the drop-downs test data is missing, so I am coordinating with Nikhil. For the rest of the apps, I can see the data and we are good. Where is that drop down list coming from?
+
+00:01:41 - 00:02:59 Unknown Speaker:
+
+Can you show which drop down list you are talking about? Itself is not not the drop down list. Okay, correct, correct. So, uh, this was happening for few more taps and everything is fixed for all. I have pre-validated also, uh, also one of the issue was yesterday with the drafting, I have validated one of the flow. Regarding this percentage, it was working fine yesterday. I have the screenshot also, but again, I can see I'm not able to see the percentage value. This is also, I'm coordinating with Nikhil and Satya. Can you put up an Excel and log everything there? Again, that SharePoint. SharePoint and Excel so that we have a track. I think things are losing, we are losing these points in email. And we need to keep track of all the issues that are happening.
+
+00:03:00 - 00:04:02 Unknown Speaker:
+
+Actually, yesterday night, I have validated it was working fine. Again, today, when I created a new model and found that again, the issue is replicating, what? What is this issue about? Like this, I, I was not aware that this is happening here. Thank you, you're on the call. Yes, yes, uh, let me check in the Mongol division, uh. Values are blank. That's why it's pretending to. Can we check in the, you know, during calculation, do we have that value in the Excel? Even if it's a big, it is large, then we should put it as zero because it's a, it is a kind of field. Please recount yesterday. It cannot be zero. It cannot be? No, see, these percent are calculated based on back quantitative.
+
+00:04:02 - 00:06:08 Unknown Speaker:
+
+There is something in base, I'm a picker, and that divided by, where some value is coming, we cannot show zero. That will be misleading, yeah. Do you know in the Excel file if it has values? Yes, yes. So this is the Excel file for the rates per quantity. I have just downloaded it. Yesterday also the same issue was coming. In downloaded file, we can see the percentage values. But in the UI side, we can't see the values. This is an RA output or rates per quantity? Rates per quantity. And do we have the same functionality in RA? No, no, no. And this rates per quantity tab, Alok, we build it from that collection only? Yes, correct. Right, right. Okay, well, let me check. Uh, let me check. She can't like, Um, from last one or two days, we made changes to that.
+
+00:06:08 - 00:07:36 Unknown Speaker:
+
+Uh, Mongo strip. I'm just checking the packet, this no, this might not be qa uh issue. Uh, it might be earlier, but I might have missed some. Uh, for the recently changed phone, let me just check regarding this gate build up from UI side, also, I'm just validating the UI. I had a concern how these total values are coming. So I have been Satya, Nikhil and also- Is it matching with what is there in the RPTXL? Yes. Okay, okay, sorry. Just for my sake, can you give me one RPT ID? Sure, sure. I will push the data and I'll check them off for you guys. This one I have just created, so this is the latest one. Okay, this is latest. Okay. Can you, like the list you sent me yesterday, right?
+
+00:07:36 - 00:09:43 Unknown Speaker:
+
+Put that in an Excel, put the status whether it's fixed or not, okay? And any new issue comes, please log there, send me that link, okay? So that we can have a chat. Thanks. Can you get that list and make sure we have assigned people for each of them? I will try it. Yep. And I don't please use that for creating this, uh, PTR stage. We have not updated code for API. Yeah, keep this bridge. If please bring in the chat, if there is any issue, we'll jump onto the call. Okay, I'll, I'll send a list in like 10 minutes about that resubmission. Thank you, thank you. I want to discuss Vigovi adjustment tab. I'm not sure who worked on that. I want to make changes in the Excel for the test cases, but I'm not sure how the mapping was done for Vigovi adjustment.
+
+00:09:44 - 00:11:05 Unknown Speaker:
+
+Okay, Vigo we have just looked up. Yes, yeah, there was an enhancement user story that was worked in FIP and that looks completely different on what we discussed before that. Oh. Yeah, before we were only planning to show the final factors similar to how the ABA adjustment and all the other like, so this adjustment we are only showing final factors. I thought we were doing the same thing and that's what we were editing. But right now, the final factors is not editable, but there is other groups that are editable. But I'm not able to map what those groups are into the Excel. Okay. Once again, actually, I'm getting caught here. Once again. You can assign that to the pointer. And then when subset of A1, A2, that would be used for the pointer.
+
+00:11:05 - 00:15:01 Unknown Speaker:
+
+And then, as you can see, you have to go on top of this and drag it. It's very late. Okay. Um i think if the back end one this comma is coming it should not come from the daily. The extra commas, starting and ending commas. It should not become. So I think Ankit or Nikhil can modify the DB. This one. You know, which tab that is? Custom adjustment and it's enabled. Custom adjustment and it's enabled. Can you give me that RPD ID? The network is coming up. The network is coming up. Just give me that RPD ID. Hello for that detailed step where the data is not coming okay is there now you can take our help also and uh how we are going to read that action. Where is that? Yeah, I can show you.
+
+00:15:04 - 00:16:48 Unknown Speaker:
+
+We can divide now among each other, like you were saying. Is it already? Okay, Srini is calling me. One second. Let me start when all of these tags are up. We can show it. What about VGOV adjustment? Is there anyone who worked on that? VGOV adjustment resubmit, no? Yeah, in general VGOV adjustment. Okay, let me show you. So resubmit, Alok was working yesterday or day before yesterday? No, not about resubmission. Resubmission is working, like if you are making any change. The flag is getting updated in the model run transactions. That was not happening. He did yesterday. Yeah, he did yesterday. Yeah, he did yesterday. I validated that. It's not a word that's specific. So here. Yeah, Vigobi adjustment and all of these loops, right? Carve-in, carve-out, final factors. And final factors is read-only, so nothing is there.
+
+00:16:48 - 00:17:52 Unknown Speaker:
+
+But carve-in, carve-out has this Vigobi adjustment related to Vigobi related to Vigobi and rebate log adjustment. And this is eligible. If I make this change, the corrections are being updated. The flag is sent again. Everything is good. But right now, how I'm creating test cases, we already have 20 test cases, right? That the initial one, where it is getting validated. So on those 20 test cases, I'm taking different scenarios for each of the tabs that is editable. So I worked on tables, that is for the slip with and without. For GLP weight loss, the lift adjustment for lift adjustment, factor Bias and Himera and Stellara are. Those are not editable right now, FMS Forecast has these fields, these three, and this group of data that is editable.
+
+00:17:52 - 00:19:23 Unknown Speaker:
+
+So, uh, how I'm creating test cases, I make this change here highlighted, so that whoever is working on this, uh, specific test case, they'll do the same thing. Same changes in the RPD and resubmitted. But when I come to VGOV adjustment, it is a bit different. So it has carbon, carbon, Medicaid, Medicaid as the specific lines. And the rebate log adjustment is only, I found it only in one place. Over here, what about the rest of them? I I just want to understand how the mapping is done from UI to this. How we have the data, like, is it a DB level? Or like, is it UI level? Okay, if it is like, uh, if we have the like data, what we are? You can change the API if it is from DB level only.
+
+00:19:23 - 00:20:48 Unknown Speaker:
+
+Like, maybe it will take time, so yeah, just to go check the like for possibility. Oh, I don't think this is an issue, this is, I I think this is a story, this is correct. Like, this is matching with Eurostory. I cracked it with Ravinder as well. But we are not sure, like, how this change came up. What is the relation between the Excel and the UI groups? Because all the other, like, ARIA output and everything, it matches with the group you see in the Excel RPG, right? How are they mapping things? Something similar to whatever is here but the naming looks a bit different. I don't know. I just, the mapping, I'm just confused about the mapping. Okay, is this? Yeah, just check that one more time. Okay, if there is an issue, maybe we can sit and check that.
+
+00:20:49 - 00:22:55 Unknown Speaker:
+
+Okay. Yes, sir. We can connect. If you scroll to the right of the Excel sheet in the Google adjustment tab, so there are some more tabs there. I think if you have any issues, you can connect with me or something. Okay. Sounds good. No issue. Okay. Yes, thanks. Rishmita, can you show us how we validate that? How we have to validate a trace submission? So maybe everyone will understand. So that's the link to the submission of test cases. Before we start, do we have to raise any request for this because the link is not accessible. I think she can't. Someone will approve. Yeah. So the main idea is that we have around six to seven jobs. Yes. Yeah, so we have around five or six steps that are eligible right now.
+
+00:22:55 - 00:24:27 Unknown Speaker:
+
+Rates per quantity, RA output, take custom adjustment, left adjustment, BCOB, FMS forecast. So the first, starting with rates per quantity, I use P3 to validate these changes. T3 RPT changes, that would be your test case file. It's here, with the same name. Okay. T3 RPT changes. So, what I'm doing here is, this would be the NDC piece. When I'm copying, it's removing the zeros. Ignore that. But, for each of these NDCs, I'm making changes. So with the original values for PPA as this, and making changes to these new values. And you will be seeing the same thing with the highlight here as well. I have this open. T17 RPT custom left adjustment. I have the same file here. T17 RPT custom left updated to zero. So, here in the changes, I...
+
+00:24:27 - 00:48:25 Unknown Speaker:
+
+So, all of these files that you're seeing here, the test cases, the changes are highlighted both in the file as well as in this document. The initial values. Uh would be this set of data where i make changes for it to look as this one and in the document and here i highlighted with the yellow background so that it is easier to find. Yeah. Thank you. Thank you. Okay. Thank you. Um. Perfect. Oh  .  . Uh-huh. Thank you. Um. I don't know.  .  . Thank you. I don't know. I don't know. Um um uh... Thank you. Thank you.  .  . . . I said, you know what I'm saying? I didn't put this down. I didn't put this down. I was waiting in the room. Thank you. Thank you. Thank you. Thank you. Okay.
+
+00:48:54 - 00:57:52 Unknown Speaker:
+
+Thank you. Thank you. Thank you. Hi, Anish. You know, he's having some issues, like, if I'm making some changes, how are you going to do it? That kind of question is asking. I don't think you're going to do it. Yeah, it's okay to be slow. Yeah, you need to tell us.  .  . So, why don't you update the system? I'm worried about because and we are trying to match that sound similar to student with the excellent  .  . . . But see, these are all implements. There's nothing. See you next time. Thank you. We can go back and implement the system.
+

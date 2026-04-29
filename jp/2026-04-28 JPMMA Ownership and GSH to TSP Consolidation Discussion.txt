@@ -1,0 +1,138 @@
+2026-04-28 JPMMA Ownership and GSH to TSP Consolidation Discussion
+
+Creation Time: 2026/04/28 18:16
+
+
+📅About Meeting
+
+• Date & Time: 2026-04-28 18:16 (Duration: 771 seconds)
+• Location: No relevant content mentioned
+• Attendee: Sumit, Savita, Uday, WPI team representatives (referenced), Admin/Entitlements team (referenced)
+
+📒Meeting Outline
+
+JPMMA ownership, notifications, and Common Services alignment
+
+• JPMMA vs Common Services responsibilities
+  JPMMA now owns alert/notification publishing previously done by Common Services; client notification delivery flows go through JPMMA.
+• Client configuration ownership
+  Client-specific preferences (recipients, email IDs, view/data customization) remain under Common Services via the Client Preference module, integrated with Access World.
+• Ownership clarity and contacts
+  Common Services stakeholders identified as Sumit and Savita for coordination on preferences and integration touchpoints.
+
+GSH to TSP consolidation: scope, capabilities, and connectivity
+
+• Program context and goal
+  As part of JCH/JGSH commission and payment consolidation, replicate current GSH behaviors on TSP/DSP without requiring back-office changes; use new DSP services to mirror JCH connectivity.
+• Core batching capability on TSP
+  TSP currently supports single-beneficiary high-value payments; a redesigned batch framework is being built to support GSH-like batching for client parity.
+• File format expansion
+  DSP currently supports two formats; needs to expand to ~8–9 GSH formats. Technically these are variants of CSV or fixed-width, both already supported in DSP (e.g., ANG as CSV, GTI as fixed-width). ESB/payment model updates required to map new fields.
+• Back-office extraction/connectivity
+  Today DSP connects to WPI and CKF only; new adapters/connectivity needed (e.g., to LBBI/other BOs). Decision pending on routing via WPI vs direct TSP connectivity; prior leaning noted but final decision unclear.
+• Back-office interface replication
+  GACS-style connectivity and interfaces to back offices must be reproduced within TSP to preserve current JCH behaviors under the chosen “strategy trail” with minimal downstream impact.
+
+Entitlements and approval matrix migration
+
+• Centralization of approval rules
+  JCH currently holds matrix approval rules locally; migration will centralize these under Admin/Entitlements.
+• Client overlap and harmonization
+  Some clients use both DSP (high value) and GSH (low value) with potentially different approval matrices; rules must be merged and harmonized during migration with clear client communication.
+• Ownership and alignment
+  Summits’ team (Admin/Entitlements) is aware and will lead migration planning within the GSCF program.
+
+Delivery risks, resourcing, and prioritization
+
+• Competing initiatives
+  Parallel tracks include app/tech/UI modernization, consolidation, DSP market expansion, and regulatory items—creating resource contention and schedule risk.
+• Willingness to re-prioritize
+  Leadership open to pausing/repurposing efforts to protect critical path for GSH→TSP; follow-up discussion needed to make explicit trade-off decisions.
+• Open ownership decision
+  Unresolved decision on who builds certain DSP services/connectors (DSP vs WPI) impacts planning and timelines.
+
+📋Overview
+
+• JPMMA now publishes notifications; Common Services retains client preference/configuration via the Client Preference module integrated with Access World.
+• TSP must deliver a robust batch framework to match GSH client expectations for batching.
+• DSP to expand support to ~8–9 GSH file formats (all CSV/fixed-width variants) and update ESB/payment models to map new fields.
+• New back-office connectivity/adapters are required beyond current WPI/CKF; decision pending on using WPI as a hub vs direct TSP connections (e.g., LBBI).
+• GACS-like back-office connectivity patterns to be replicated in TSP to avoid changes in downstream systems.
+• JCH approval matrices to be centralized under Admin/Entitlements; overlapping DSP/GSH clients require rule harmonization and client communication.
+• Resource contention across modernization, consolidation, market expansion, and regulatory items is a key delivery risk; re-prioritization options to be discussed.
+• Ownership for building certain services/connectors (DSP vs WPI) remains undecided and needs resolution.
+
+🎯Todo List
+
+• Sumit (Common Services / Admin-Entitlements):
+  • [ ] Confirm ownership boundaries: JPMMA notifications vs Common Services client preferences; document integration touchpoints with Access World, by 2026-05-05
+  • [ ] Lead plan for migrating JCH approval matrices to centralized entitlements; include approach for clients with differing DSP/GSH matrices, by 2026-05-19
+
+• Savita (Common Services):
+  • [ ] Validate current client preference configurations (emails, delivery options) required for JPMMA notification flows; identify gaps, by 2026-05-08
+
+• DSP/TSP Engineering Lead:
+  • [ ] Finalize TSP batch framework design and delivery milestones to achieve GSH-equivalent batching, initial design sign-off by 2026-05-12
+  • [ ] Inventory and map ~8–9 GSH file formats to DSP’s CSV/fixed-width parsers; define ESB/payment model field extensions, by 2026-05-15
+  • [ ] Define and design new back-office adapters/connectivity (e.g., LBBI) and extraction flows; produce interface specs, by 2026-05-22
+  • [ ] Draft GACS-to-TSP connectivity replication plan ensuring no back-office changes; architecture review, by 2026-05-20
+
+• WPI Team Lead and DSP/TSP Engineering Lead (joint):
+  • [ ] Decide on connector strategy: route via WPI or direct from TSP; document RACI and delivery plan, by 2026-05-10
+
+• Program/Product Owner:
+  • [ ] Convene prioritization session to address resource contention across modernization, consolidation, market expansion, and regulatory work; confirm any pauses/repurposing, by 2026-05-07
+  • [ ] Communicate final decisions and timelines to impacted teams (DSP, WPI, Admin/Entitlements, Common Services), by 2026-05-13
+
+• Uday:
+  • [ ] Share finalized team structure/capacity and proposed resourcing adjustments based on prioritization outcomes, by 2026-05-09
+
+• Client Communication Lead:
+  • [ ] Prepare client-facing plan for approval matrix harmonization and batching/file format changes (no behavioral change messaging where applicable), draft by 2026-05-17
+
+Transcription
+
+00:00:16 - 00:01:25 Unknown Speaker:
+
+JPMMA is for the alert and notification, publishing those things, but the client defense is maintained by common services. So the actual notification, I think, goes by JPMMA only. So JPMMA, earlier common services was publishing those, but now that is moved to JPM. JPMMA. JPMMA. Now everything moved from CS to JPMMA. But the client configurations, what needs to be sent, which client, email ID, all these things need to be at common services. And when you say common services, what's the application common services? So we have one module called client preference module, which is owned by common services. Their client can configure their own preferences, how they want to. Customized their views, data, and all these things. So that model or that application is owned by common services, but integrated within an access world. Okay.
+
+00:01:25 - 00:03:19 Unknown Speaker:
+
+And we'll say common services, this is Sumit, this is somebody else. Common services with... This is Savita. Savita. Okay. Yeah. Okay. We'll stop here. I think this is what, as a part of our JCHD commission and payment consolidation journey, is how the JCH workflow we have right now, or basically the connectivity which we have when we are... What is the name of the egg in egg curry? 2-2 What is the name of the egg in egg curry? 2-2 What is the name of the egg in egg curry? 2-2 What is the name of the egg in egg curry? 2-2 What is the name of the egg in egg curry? 2-2 What is the name of the egg in egg curry? 2-2 this is the one of the connectivity which needs to be built in tsb and we are probably.
+
+00:03:21 - 00:04:22 Unknown Speaker:
+
+This decision also needs to be taken whether WPI is building it or we should be building it. So that's something I think is still under discussion. I'm not sure what was the final decision on that topic. But yeah. So these main markets. Okay, now when we say, okay, GSEH moving to GSP, right? So what are the big, maybe, what are the big rocks here which we are talking? Big initiative, right? Big goal for the year or the next few months, right? Correct. So, this is the big, I will say that, right? So, these are the miscellaneous flow which we have in GSH, which needs to be supported in TSD. These are the different file formats which GSH supports right now, which needs to be supported or needs to be built in TSD.
+
+00:04:22 - 00:05:20 Unknown Speaker:
+
+And these are the different kind of... you know, the channels connectivity and different connectivity, which needs to be, and connectivity-wise, this is the diagram, right? How that GACS is connected with different back-office applications, with the different interfaces. So this needs to be built as a part of GACS consolidation in TSP, when we are talking about back-office connectivity, because this is how this needs to be built, because... If we are going with the strategy trail, every back office system will require changes. Without impacting back office system, the goal is we will replicate the same behavior which JCH has right now using some new DSP services. Whether the service will build by DSP or WBI, that's something that is still under discussion. To your question with bigger, I mean, big items in terms of capability that we need to build on DSP, right?
+
+00:05:21 - 00:06:14 Unknown Speaker:
+
+Yes, like what, like, let's start the journey, right, from DSEH to DSP, right? So, what are the things which we need to do, right? Primarily, three, four things, right? So, First one is we spoke about yesterday about the... batch transaction capability right? Up until now, TSP primarily was used for only high value payment with single beneficiary, right? So the batch construct that was implemented in TSP, basically data redesign, which is what, like, our team is working on right now, right? So we are basically going to update the batch framework so that ultimately, we can provide the typical batching capability that exists today in GSH. And that is going to be the basic requirement for the GSH clients, right? So batching is one, the core batch framework is one of the big items, right?
+
+00:06:14 - 00:07:16 Unknown Speaker:
+
+Then comes like for different markets, the different file formats, like different markets use different file formats. So we need to make sure that we basically have the ability in DSP because up until now in DSP we only had those two formats. So we'll have to expand that to all of these formats so that ultimately we are able to these files and then provide the corresponding, basically enhance the ESB's model, right? Support whatever new fields that potentially are going to come from some of these formats in terms of the logical mapping, the payments model that we use. And how many file formats we have in the GSM? These are in GSM. I think eight, nine. One thing which I want to highlight here, even though we have nine different formats, but all these, if you talk about the technical spec, those are either CSB or fixed lab file format, which DSP already supports.
+
+00:07:16 - 00:08:43 Unknown Speaker:
+
+So ANG is CSB file format, which we already have, and GTI is the fixed lab file format, which we have. Fixed lab file format. Fixed lab file format. Fixed width. Fixed width or fixed length. Why become the second? What are the other things? And then the extraction one. Then second thing is file format. Another one is the extraction one. Basically how we are extracting the payment to back office. This is what I have explained. So currently DSP only have WPI and CKF connected. That's something which needs to be made as a new adapter. So yes, this will be a new connectivity to LBBI. Okay. But that's, this isn't something, you know, but whether it will be via WPI or directly from TSP. I think that was the going decision. I'm not sure what was the final decision.
+
+00:08:44 - 00:10:02 Unknown Speaker:
+
+LVP is the latter we said. Right. LVP is the latter. LVP is the latter vote. Yeah. It's the latter. All those are the effect. Some, some ACS payments. Okay, so here the decision is basically whether to go via WPI, right? Yes. The connector needs to be right whether it should be WPI or .  Okay. Yeah. Basically, the thing is that connector is something which we have in GSCS technology, which we have in GSP that needs to be extracted, organized. Okay, what did you make the decision? I think, I'm not sure if it was discussed between WPI, I mean, sorry, WPI and that time. Okay, okay, okay. Okay, so that's the third thing. The first one will be the entitlement migration, which is not in our space, but in admin sector space.
+
+00:10:03 - 00:10:56 Unknown Speaker:
+
+Right now, JCH, the metrics approval rules, which we just discussed, I know how many approvals, what kind of groups and all these things. In JCH, metrics approval is maintained within a JCH only. That is not centralized right now. But as a part of this migration, all JCH metrics approval rules needs to be migrated. There is a possibility, I think many clients who use both DSP and GSH, so there is a possibility that some of these metrics of Google tools may configure, maybe they have configured for DSP for specific high value payments might be slightly different compared to what they have set it up in GSH for low value. So I think that's a separate, as part of that migration, that would be one of the challenges.
+
+00:10:57 - 00:11:59 Unknown Speaker:
+
+Making sure that those are merged and you can format the client when it's basically getting migrated over PSP. And how do you do that? Talbot is bad with the Summits team, right? The Summits team is aware of this undertaking that they have to take this and then migrate it over? Yeah, yeah. This is what I think. This is the discussion that we have in this GSCF program. That is already discussed. Okay. Okay. Okay. That's the fourth item. Anything else? Other than that, the major challenge is our modernization journey plus the kind of work which we have right now, which is kind of conflicting and clashing because we are running app modernization, tech modernization, then UI modernization, consolidation, plus the DSPB work where we have market expansion. Regulatory items, all these things. This is the major challenge.
+
+00:11:59 - 00:12:37 Unknown Speaker:
+
+Basically, managing business tasks and our tech modernization journey is something. I'll say, like, let's say, like, I think Uday did share, because I asked in terms of how the team is structured, right? He did share a little bit of the structure, right? And I'm okay to have the discussion of, like, okay, if we need to stop something, repurpose something, We will be... like one of the three, right, eventually, right? And I'm okay to discuss it. I do want to take a call. And anyway, we're running out of the time, so we'll be correct. Uh, later with you guys. Okay, thank you, so much, thank you.
+
