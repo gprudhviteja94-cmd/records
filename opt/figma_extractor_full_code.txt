@@ -1,0 +1,206 @@
+const fs = require('fs');
+const https = require('https');
+
+const args = process.argv.slice(2);
+
+if (args.length < 2) {
+    console.log("Usage: node figma_extractor.js <FIGMA_URL_OR_FILE_KEY> <FIGMA_PERSONAL_ACCESS_TOKEN>");
+    console.log("Example 1: node figma_extractor.js \"https://www.figma.com/design/3yNMWRuu2gZCB68HMxZdC0/...\" your_token");
+    console.log("Example 2: node figma_extractor.js 3yNMWRuu2gZCB68HMxZdC0 your_token");
+    process.exit(1);
+}
+
+let inputStr = args[0];
+const TOKEN = args[1];
+
+let FILE_KEY = inputStr;
+let NODE_ID = null;
+
+// Auto-detect and parse full Figma URLs
+if (inputStr.includes('figma.com')) {
+
+    const keyMatch = inputStr.match(/figma\.com\/(?:file|design)\/([a-zA-Z0-9]+)/);
+
+    if (keyMatch && keyMatch[1]) {
+        FILE_KEY = keyMatch[1];
+    }
+
+    // Extract node-id if present (URL uses '-' but API needs ':')
+    const nodeMatch = inputStr.match(/node-id=([^&]+)/);
+
+    if (nodeMatch && nodeMatch[1]) {
+        NODE_ID = decodeURIComponent(nodeMatch[1]).replace(/-/g, ':');
+    }
+}
+
+function fetchFigmaData(fileKey, token, nodeId) {
+
+    return new Promise((resolve, reject) => {
+
+        let path = `/v1/files/${fileKey}`;
+
+        // If a specific node is requested, use the nodes endpoint
+        if (nodeId) {
+            path = `/v1/files/${fileKey}/nodes?ids=${encodeURIComponent(nodeId)}`;
+        }
+
+        const options = {
+            hostname: 'api.figma.com',
+            path: path,
+            method: 'GET',
+            headers: {
+                'X-Figma-Token': token
+            }
+        };
+
+        const req = https.request(options, (res) => {
+
+            let data = '';
+
+            res.on('data', (chunk) => {
+                data += chunk;
+            });
+
+            res.on('end', () => {
+
+                // Figma might return 200 but still have errors in body occasionally
+                if (res.statusCode >= 200 && res.statusCode < 300) {
+
+                    try {
+                        resolve(JSON.parse(data));
+
+                    } catch (e) {
+                        reject(new Error("Failed to parse JSON response"));
+                    }
+
+                } else {
+                    reject(new Error(`HTTP ${res.statusCode} - ${data}`));
+                }
+            });
+        });
+
+        req.on('error', (err) => {
+            reject(err);
+        });
+
+        req.end();
+    });
+}
+
+function extractNodeData(node, depth = 0) {
+
+    let lines = [];
+
+    const nodeType = node.type || "";
+    const name = node.name || "Unnamed";
+    const indent = " ".repeat(depth);
+
+    if (nodeType === "DOCUMENT") {
+
+        lines.push(`# Figma Document: ${name}`);
+
+    } else if (nodeType === "CANVAS") {
+
+        lines.push(`\n## Page: ${name}`);
+
+    } else if (nodeType === "FRAME" || nodeType === "SECTION") {
+
+        lines.push(`\n${indent}### 🖥️ Screen / Frame: ${name}`);
+
+    } else if (nodeType === "TEXT") {
+
+        const textContent = (node.characters || "").replace(/\n/g, " ").trim();
+
+        if (textContent.length > 0) {
+            lines.push(`${indent}- ▣ Text [${name}]: "${textContent}"`);
+        }
+
+    } else if (nodeType === "COMPONENT" || nodeType === "INSTANCE") {
+
+        lines.push(`${indent}- ⚙️ Component [Name: ${name}]`);
+
+    } else if (nodeType === "GROUP") {
+
+        lines.push(`${indent}- Group: ${name}`);
+    }
+
+    if (node.children && Array.isArray(node.children)) {
+
+        for (const child of node.children) {
+
+            const nextDepth =
+                ["CANVAS", "FRAME", "SECTION", "GROUP", "COMPONENT", "INSTANCE", "DOCUMENT"]
+                    .includes(nodeType)
+                    ? depth + 1
+                    : depth;
+
+            lines = lines.concat(extractNodeData(child, nextDepth));
+        }
+    }
+
+    return lines;
+}
+
+async function main() {
+
+    console.log(`📦 Fetching data for Figma file: ${FILE_KEY}`);
+
+    if (NODE_ID) {
+        console.log(`🎯 Targeting specific screen/node: ${NODE_ID}`);
+    }
+
+    try {
+
+        const data = await fetchFigmaData(FILE_KEY, TOKEN, NODE_ID);
+
+        const docName = data.name || "figma_document";
+
+        let rootNode = null;
+
+        // Handle response differences between /files and /files/nodes APIs
+        if (NODE_ID && data.nodes && data.nodes[NODE_ID]) {
+
+            rootNode = data.nodes[NODE_ID].document;
+
+        } else if (data.document) {
+
+            rootNode = data.document;
+        }
+
+        if (!rootNode) {
+            throw new Error("Could not find the document or node structure in the response.");
+        }
+
+        console.log("✅ Successfully fetched design data!");
+
+        const markdownLines = extractNodeData(rootNode);
+
+        const safeDocName = docName
+            .replace(/[^a-z0-9]/gi, '_')
+            .toLowerCase();
+
+        const suffix = NODE_ID
+            ? `_node_${NODE_ID.replace(/:/g, '_')}`
+            : '';
+
+        const outputFilename =
+            `${safeDocName}_${FILE_KEY}${suffix}_screens.md`;
+
+        fs.writeFileSync(
+            outputFilename,
+            markdownLines.join('\n'),
+            'utf8'
+        );
+
+        console.log(`\n🎉 Extraction complete! Structure saved to: ${outputFilename}`);
+        console.log("You can now share this Markdown file with other AI agents for end-to-end development.");
+
+    } catch (error) {
+
+        console.error(`\n❌ Fetch failed:\n${error.message}`);
+    }
+}
+
+main();
+
+node figma_extractor.js
