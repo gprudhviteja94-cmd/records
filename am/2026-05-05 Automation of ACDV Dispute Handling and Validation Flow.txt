@@ -1,0 +1,179 @@
+2026-05-05 Automation of ACDV Dispute Handling and Validation Flow
+
+Creation Time: 2026/05/05 14:06
+
+
+📅About Meeting
+
+• Date & Time: 2026-05-05 14:06 (Duration: ~21 minutes)
+• Location: No relevant content mentioned
+• Attendee: Suraj, Kavita, Yashur, Megha, Pata (Patah), Syed, Dhanesh (Danish), Anna; others unnamed
+
+📒Meeting Outline
+
+Automation of ACDV Dispute Handling and Validation Flow
+
+• Eligibility and account pattern checks
+  Business rules determine dispute eligibility based on account number patterns (e.g., empty, starts with 61, lengths 13/16 invalid), and disallowed patterns. Ineligible disputes are business-exceptioned before further processing.
+
+• GCBR report and request construction
+  System builds the search request, fetches account and override details from GCBR, and constructs the GCBR report used to query Triumph.
+
+• Data retrieval from Triumph and GAR
+  Triumph retrieves GAR account master details and performs early ACDV validations; system also retrieves account balances from GAR, identifying usable balance types (e.g., unbilled). Any bundle exceptions lead to business exceptioning, potentially skipping CLiC case creation based on conditions.
+
+• Negative/deletion policy checks (pre-deep verification)
+  Applies negative/deletion policies before deeper checks: evaluates dispute code (e.g., 111), account canceled status, SCC (special comment code), date of first delinquency (DOFD), line-of-business rules, and status-driven validations. Failing items are business-exceptioned.
+
+• Exception filtering updates (sold accounts)
+  Exception filter expanded to include SCC “AH” (sold accounts). Previously, only specific brands (JetBlue, Costco) with AH were filtered; now all AH are filtered alongside existing A, B, C, CO.
+
+• RPA-based account status and history retrieval
+  RPA retrieves account status, plastic history, and delinquency data. RPA failures are caught and exceptioned.
+
+• Satisfactory deletion (7-year) check
+  For negative request scenarios, compares Triumph FF30 cancellation date vs. current date. If >7 years, business-exceptioned; otherwise proceed and flag set to continue ACDV closure.
+
+• Second-pass exception filtering
+  After receiving additional Triumph details and applying satisfactory deletion checks, remaining exception scenarios are filtered again to ensure only valid cases proceed.
+
+• Bankruptcy details via ACON
+  Converts account number to account token with ACON utility; fetches last-stage collection/bankruptcy details and maps to card/loan accounts when the earlier-set condition triggers this path.
+
+• Consumer information verification (e-OSCAR)
+  Verifies ACDV consumer section: DOP, SSN, ECOA, PHP, and all consumer fields; marks each as same/changed; retrieves credit limit. Care enrollment check is performed.
+
+• Account information verification (e-OSCAR)
+  Builds account info view, evaluates account status, payment rating, CCC, SCC, portfolio type/date, etc., marking fields same/changed.
+
+• Response code computation and submission
+  Computes ACDV response code based on dispute context and field changes (e.g., 01 for no change; 21/22/23 for specific field-change scenarios). Creates CLiC note for closure rationale; validates response via APIs; submits final ACDV response to e-OSCAR. Validity of ACDV is checked prior to submission.
+
+Business Perspective and Use Case
+
+• End-to-end functional intent
+  Automates the bureau analyst workflow: aggregates data from multiple SORs (GAR, C360, ACON, Triumph, GCBR), verifies consumer and account info against e-OSCAR ACDV, determines if and what fields changed, responds back to ACDV with appropriate codes, and documents rationale in CLiC.
+
+• Operational improvements
+  Reduces manual verification effort, standardizes rule application (eligibility, negative/deletion, bankruptcy), and tightens exception handling for edge scenarios (e.g., AH sold accounts).
+
+Housekeeping, Next Sessions, and Team Items
+
+• Recording access
+  Meeting recording to be shared in the group for review at normal speed.
+
+• Upcoming knowledge session
+  Hydra overview to be taken by Kavita next Tuesday (not this week).
+
+• Team outing planning (Bangalore)
+  Outing targeted for this Thursday if feasible; otherwise next Thursday. Admin team exploring package options near office; update by end of today or tomorrow morning. Aim to combine entire Bangalore team.
+
+• Enablement and support
+  Dhanesh to support UI teams on design (Figma, wireframes) and general UI practices; prior sessions covered Dynatrace, LOMI migration reporting, automation use cases (KYC, USB support), with recordings to be shared.
+
+📋Overview
+
+• Eligibility rules and disallowed patterns gate ACDVs; ineligible items are business-exceptioned early.
+• GCBR and Triumph/GAR serve as primary data sources; exceptions in retrieval/validation halt or skip CLiC creation per rules.
+• Negative/deletion checks leverage dispute codes, SCC, DOFD, LOB, and statuses to filter out cases before deep verification.
+• Exception filter expanded to universally exclude SCC “AH” sold accounts (beyond brand-specific handling).
+• RPA pulls account status/history; failures are trapped and exceptioned.
+• Satisfactory deletion enforces the 7-year cancellation rule via FF30 vs. current date.
+• Second-pass filtering ensures residual exceptions are removed post-triumph data and checks.
+• Bankruptcy details fetched via ACON using account token; mapped to product type as needed.
+• Consumer and account info validated in e-OSCAR; per-field change detection drives response logic.
+• Response codes (01/21/22/23, etc.) computed from dispute and field-change context; responses validated by API and submitted; CLiC note created for audit.
+• Business value: streamlined, consistent, automated bureau verification and response, reducing manual workload.
+• Logistics: recording to be shared; Hydra session next Tuesday; Bangalore outing timing pending admin packages; Dhanesh as UI enablement POC.
+
+🎯Todo List
+
+• Suraj:
+  
+  • [ ] Share today’s meeting recording in the group, by end of day or tomorrow morning
+  • [ ] Coordinate Bangalore outing (package, venue near office); confirm date (this Thursday or next Thursday), by EOD today or tomorrow morning
+
+• Kavita:
+  
+  • [ ] Prepare and deliver Hydra overview session next Tuesday (date per team calendar)
+
+• Team (All attendees):
+  
+  • [ ] Review the recording to absorb technical details at normal speed, before next session
+  • [ ] Share follow-up questions on ACDV automation flow and exception rules in the group, this week
+
+• Dhanesh (Danish):
+  
+  • [ ] Provide UI support (Figma, wireframes, design guidance) to teams on request, ongoing
+  • [ ] Share links/recordings of prior enablement sessions (Dynatrace, LOMI migration reporting, automation use cases), this week
+
+• Owner: No relevant content mentioned
+  
+  • [ ] No relevant content mentioned, No relevant content mentioned
+
+Transcription
+
+00:00:00 - 00:01:08 Unknown Speaker:
+
+Like if they are eligible or not, there are various checks on the account number. If the account is empty, it starts with 61. Or if it is 13 and 16, is it invalid combinations? And there are business rules with disallowed patterns which are not allowed. So we are business exceptioning them for ineligible disputes. Next, we are collecting the bureau report, basically, and we are building the search request. From the GCBR, we are fetching the account details here and the override details here, which construct our GCBR report and, yeah, the GCBR report, which we use to retrieve the information from Triumph. So Triumph, this retrieve account information basically retrieves the GAR account master details and perform early ACDB validations. Then we also retrieve the account balance from GAR and identify the usable balance types like unbilled balances and all.
+
+00:01:08 - 00:01:55 Unknown Speaker:
+
+So if I show you the BPMN, this is like this. We validate the ACDV and we fetch the GCBR report. We retrieve the information, account information from GAR, then we retrieve the account balance. And if there are any exceptions in any of these bundles, then we are simply exceptioning them out. And basis of different exceptions here, what we are doing is we are either creating a click case or we are not creating the click case and ending the process itself. There are various conditions for this. Then we have this negative deletion check which applies all the negative or deletion policy hits before we go for the deeper verification. So there are different satisfactory checks like if the dispute code is 111 or account is cancelled or not.
+
+00:01:55 - 00:02:57 Unknown Speaker:
+
+Then we are business exceptioning them, and there are various other negative deletion checks as well that, uh, so this basically validates using the status. The SCC is basically the special comment code, uh, date of first delinquency and line of business rules. Various other rules are here, which we check and we exception them accordingly. Then we filter out the exception scenarios. There are various exception scenarios on which we are filtering out. So the change that we had for the sold accounts was one of the part of this class only wherein we have to filter out the ACDVs which has the special command code as AH. So here we have added it in this exception filter scenario. Apart from that, the earlier other exceptions were already there, like they were already filtering out A, B, C, and C, O.
+
+00:02:57 - 00:03:50 Unknown Speaker:
+
+We had to filter out the A, H now. Earlier what we were doing is, not in this class, but in the previous classes, in the previous bundles, we were exceptioning out only the accounts which were JetBlue or Costco. So those were also the A, H accounts, but now we have, Other accounts as well, which are the sole account that is the AH account, so now all the accounts with the AH will be exceptioned. As the part of this change that we have gone live with last week. Then we retrieve the account status and this is the RPA, and we retrieve the account status, account. Plastic history and delinquency data from this RPA. And then we process it and we accept out all the RPA failures and everything.
+
+00:03:50 - 00:05:10 Unknown Speaker:
+
+And then there is this satisfactory deletion check wherein if the status reason contains the negative request, then basically what satisfactory deletion check, we are basically comparing the cancellation date that we received from the Triumph FF30 history and the current date. So there is a seven years check. History is more than 7 years old. Then we are business exceptioning that, otherwise we are passing it and we are setting a flag as false so that we continue with the ACDB closure and in the process. And then we are filtering the exception scenarios in the second pass, for instance, here the filter, we are filtering out the exception scenarios. And yeah, there is a.Then after we have received other details from the triumph and we have also satisfactory like put this check, then also we are filtering out the leftover exception scenarios.
+
+00:05:13 - 00:06:18 Unknown Speaker:
+
+Then post that we are retrieving the bankruptcy details from ACON. So this basically pulls out the ACON last stage collection of bankruptcy details. When this check will be true, we set this check earlier in the class here. Okay, so basically we have to convert the account number to the account token via the ACON utility and then we use that account token to fetch the special IT details like card account, loan account and we map. We do the mapping in this class basically. Then there is verified consumer info. So now we are doing this verification of consumer info and verification of account info on the e-Oscar itself. So basically what we do is we are verifying the consumer section of the ACDB response if something is changed or if it is the same.
+
+00:06:18 - 00:07:17 Unknown Speaker:
+
+So we mark those checks like if it is false then we mark it as same. We do the DOP verification. We check the SSN, ECOA, PHP. Every field which is there in this consumer information page, we check it. And we are also retrieving the credit limit. Then care enrollment check. And basically in the end, we are verifying the account info. So as I said, there are two pages, right? Like the consumer info and the... account info. So here, while verifying the account info, we are building the account info. Response fields and determining like which account SEC account fields have either changed or if they are the same. Uh, it has all these information account info, account status, uh, payment rating, CCC, SEC, portfolio type and date, and all this.
+
+00:07:17 - 00:08:15 Unknown Speaker:
+
+So we are marking it if it is same or it is different. And then with all these details, we are responding to ACDV. Like, what we are doing in this class is we basically compute the response code on the basis of the previous dispute codes and whatever. The fields either in the account information or the customer information, yeah, consumer information, if anything has changed or not. Then we build a response code, we compute that response code, we create a click node that we are going to upload in the click that. Okay, we are closing this case with this and that node and the final response payload. We basically respond to ACDV, so while responding to ACDV, first we check if the ACDV is valid or not, and then we validate the response.
+
+00:08:18 - 00:09:44 Unknown Speaker:
+
+APIs through which we validate the response that we have created to be submitted to the ACDB and then in the final step in this then only we update like we submit the ACDB. So there are different response code selection criterias through which we selected either it will be 01 if there is a no change or there is a 21, 22, 23 based on what sort of fields are changed, if the disputed fields are changed or the non-disputed fields are changed. So, yes, this is the complete flow. And this is how we are basically validating and verifying the ACDB with different SORs and then we are responding back to the EOSCA that these ACDBs are valid or not and we are submitting it. Any questions? Hi. If you've got any questions, then we are good.
+
+00:09:47 - 00:10:45 Unknown Speaker:
+
+Yashur, Megha, can you please summarize the business view, what we are doing here in terms of functionality? So in terms of functionality, what we are doing here is basically we are automating the process in which our credit bureaus fetch the details from ACDB and they verify all the customer information and the account information. Earlier they used to do that, like there are different pages. They used to verify those details on the eOSCQR through various SORs like we are validating some fields from GAAR, we are validating some fields from C360, Econ and Triumph and from GCBR. And they identify if any of the fields have changed like for that particular ACDB, for that particular account number, if any of the things have changed or not. And if the things have changed, then what sort of fields have changed?
+
+00:10:45 - 00:12:44 Unknown Speaker:
+
+So they respond back to ACDB with those uh outputs. And we are also updating this in, uh, click that, why we have updated it. So that was the business use case. Any other questions? I think once they go through the recording in a slower, this was more like a 2x3, I guess. Once they go through the recording, they will have some questions. Anyway, so I think. Apart from the business case, I think it's more important to understand on the technical side as well, how the implementation is made, what kind of stuff we are using, how we have integrated. I think Pata raised his hand, he has questions. Yes, Pata. Yeah, so where can we find this recording actually? I'll share with everyone. I'll put it in the group. Okay, so I think today's topic was quick and we covered that.
+
+00:12:45 - 00:14:07 Unknown Speaker:
+
+Okay, so for next session, I see Kavita on the call. Kavita, you'll be able to take an overview on Hydra. Hi, Suraj. Not this week. Not this week, Suraj. Not now, next week. Next Tuesday. Sure. Okay, thank you. I think anything else from anyone? Any questions, concerns? Anything you want to highlight? We still have around 10 minutes. If you want, you can use this for a... or if you want to talk about something else apart from work also, it's fine. Sure, Suraj. I think there is some outing planned now. What is the final take on that? I will get back to you. I'm working on that. So either I'm trying to see if we can do something this week only, maybe Thursday. I'm getting help from our admin team also to work on that.
+
+00:14:07 - 00:15:15 Unknown Speaker:
+
+Some packages so we can get some additional benefits if at all. We are not able to do that this week. If we say that, then we will move into next Thursday. I will probably update you by end of today or latest by tomorrow morning. Fine, fine, thanks. Just working on some some best packages that is possible so that we can get some maximum benefits. And nowadays, Bangladesh has become too costly at source through the packages and gone up big time. And I was, I was actually hoping that since it rained yesterday, right? I was just hoping that different plan. And then it should start raining and everything will go for a toss. Let's see what best we can do. And then I loved it. But for sure it will be there shortly, then, this week or next week.
+
+00:15:15 - 00:16:57 Unknown Speaker:
+
+Sure, sure, thanks. Last time. How many of you were there in Bangalore? I think last time? There was an outing where you guys went to E-Zone or Torque or something, right? Syed, you were there last time? No, no, I was not there. I think Megha may be there. When we went to E-Zone, right? Megha... You guys were there last time? Yeah, six times. We are planning to combine entire Bangalore. So that count is more. Let's see. And I'm trying to find something near to office. Because it will be that day we can come into office and then we can... Anything else from anyone? Dhanesh, you can use these forums also and get some information. We covered a couple of topics around. I'll show you the recordings of previous things, what we did.
+
+00:16:58 - 00:19:34 Unknown Speaker:
+
+We covered a couple of things on Dynatrace. On the stone, Loamy Migration is reporting um, some of the use cases we have done for automation, um, KYC, USB sports, things like that. Not sure how much we would be interested in, but then, yes, I mean, connect with folks around. I think on the UI, UI side, many folks, we are working on the UI side. So we'll be working across different teams wherever we are doing UI work. So dedicatedly, if anyone working on UI and need some help, how to do what, doing around designing Figma, wireframes, anything, then reach out to Danish. He will help you out. Yeah, sure. Okay, if nothing else, yeah, we can close for today. Thank you all for joining. Thanks. Thank you. Anna, I want to ask you a question.
+
+00:19:36 - 00:20:33 Unknown Speaker:
+
+I want to ask you a question. I want to ask you a question. How do I do it? I mean, after I gave it to him, I removed it, right? I removed the extra parts, right? That's it. Okay. How do I ask him to come there? But let me always the good
+

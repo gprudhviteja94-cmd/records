@@ -1,0 +1,117 @@
+2026-05-11 QA Progress, Test Coverage, and UI Implementation Updates
+
+Creation Time: 2026/05/11 18:47
+
+
+📅About Meeting
+
+• Date & Time: 2026-05-11 18:47 (Duration: ~13 minutes)
+• Location: No relevant content mentioned
+• Attendee: Jagdish, Akanksha, Rahul, Ajay, Chagati, Alok, Ashish, Ravinder (referenced), Pond
+
+📒Meeting Outline
+
+QA progress and test coverage
+
+• User stories validation status
+  Akanksha created test cases for her user story and for Rahul’s user story; started execution and reported minor observations to Rahul and Ajay. She is documenting validations in the notes section per guidance.
+• XLQ automation scenarios and license
+  Akanksha and Chagati drafted XLQ automation scenarios; Akanksha’s XLQ license request remains pending (secure request not yet approved), blocking full execution.
+• Unit testing documentation expectations
+  Jagdish requested all engineers (not only Alok) performing unit testing on API/user stories to add concise one- to two-liner notes per scenario in the notes section, ensuring traceability of what was validated.
+
+Versioning and UI implementation decisions
+
+• UI implementation status
+  Ashish completed the version-related UI changes (dropdown-driven refresh and related logic); verified locally by tweaking configurations. Needs a plan for validation on dev.
+• Testing approach for versions
+  Initial idea required multiple versions on dev to validate dropdown behavior; Ashish to consult Ravinder about creating dummy versions for testing. However, business guidance from a Friday discussion now indicates not providing multiple version options for now (select only latest RP/version). Team agrees to keep the extended implementation (future-ready) without reverting, but test and document current cases.
+• Test scenario notes for version feature
+  Team will log the specific cases being verified for the version UI in the notes section as one-liners.
+
+Second story and API/data update flow
+
+• Scope adjustment after business sync
+  For Ashish’s second story, some version-related changes are no longer required per the latest requirement alignment; scope reduced accordingly.
+• Dependency and handoff
+  No new API needed; team will create a JSON payload and coordinate to have it updated in the DB using the existing API. The key change is preparing and supplying the correct JSON.
+
+Automation on detailed stats
+
+• Script progress and blockers
+  Pond reported progress of the detailed stats automation script to ~95–97% completion; remaining ~3–5% is tricky and under investigation. A script has been shared with Akanksha for confirmation; next steps depend on feedback and any residual issues.
+
+📋Overview
+
+• Akanksha has authored and begun executing test cases for two user stories; minor observations shared with devs; continues to document validations.
+• XLQ automation scenarios are prepared; execution is partially blocked pending Akanksha’s XLQ license approval.
+• All engineers must add concise unit test scenario notes (1–2 lines each) in the notes section for every API/user story validated.
+• Version-related UI is implemented and locally verified; current decision is to support selection of the latest version only for now, while retaining future-ready code. Testing strategy on dev to be finalized (dummy versions optional).
+• The second story’s scope is reduced; team to generate a JSON and use the existing API to update DB—no new API work anticipated.
+• Detailed stats automation is nearly complete; final edge cases pending confirmation and fixes based on feedback.
+
+🎯Todo List
+
+• Akanksha:
+  • [ ] Continue executing test cases for assigned user stories and log 1–2 line validations per scenario in notes, this week
+  • [ ] Share and track minor observations with Rahul/Ajay until resolved, ongoing
+  • [ ] Follow up on XLQ license secure request; escalate if not approved, by end of week
+
+• Rahul:
+  • [ ] Address minor observations from Akanksha on his user story; confirm fixes, this week
+
+• Ajay:
+  • [ ] Review and support fixes for observations reported by Akanksha; confirm closure, this week
+
+• All engineers performing unit testing (including Alok):
+  • [ ] Add concise (1–2 line) unit test scenario notes for each API/user story in the notes section, ongoing; first pass by end of week
+
+• Ashish:
+  • [ ] Coordinate with Ravinder on feasibility/need for creating dummy versions on dev to validate version UI behavior, by mid-week
+  • [ ] Document the specific version/UI test scenarios as one-liners in notes, by mid-week
+  • [ ] For the second story, finalize the required JSON payload and provide it for DB update via existing API, this week
+
+• Ravinder:
+  • [ ] Confirm approach for testing version UI on dev (dummy versions vs. latest-only), by mid-week
+
+• Pond:
+  • [ ] Resolve the remaining 3–5% of detailed stats automation; iterate based on Akanksha’s confirmation, this week
+  • [ ] Provide an update on final blockers and ETA after Akanksha’s feedback, within 1–2 days
+
+• Chagati:
+  • [ ] Continue XLQ automation work with Akanksha; proceed once license is approved, ongoing
+
+Transcription
+
+00:00:20 - 00:02:22 Unknown Speaker:
+
+I think it's not a big effort, but I would like to understand it. Okay. Let me start with Akanksha. Hi, Akanksha. Yeah, hi, Jagdish. Hello, everyone. So today I worked on the stories on his research. I created the test cases for the user story. I also created test cases for... Rahul's user story, and I started the testing for it. There were some minor observations. I shared those with Rahul and Ajay. Apart from it, I also worked with Chagati. We created the scenarios for XLQ automation, and we guys were working on that. And my XLQ license is still pending. The secure request is not approved yet. Thank you. Yeah, thank you. So Akanksha, whatever the user stories, you are just validating, right? Yes. So please keep it loading here. Okay. In the notes section. Yes, yes.
+
+00:02:23 - 00:05:04 Unknown Speaker:
+
+Okay, thank you. Thank you. I think what this is changes minor observations so i will fix it. Thank you. One fix also i had put that effort in support with their story this one right. And one more thing, Alok, as we mentioned that this unit testing, right, we are doing the unit testing. There's no doubt on it. So that scenarios, that scenarios also we need to consider. Like what kind of scenarios we are doing. So please two-liner each and every scenario. One-liner or two-liner are sufficient. Not only for Alok, but who are working on the unit testing. And each and every user story for the API. If you're doing the functionality, if you're validating under unit testing, please keep your notes, okay? Okay, thanks a lot.
+
+00:05:51 - 00:06:43 Unknown Speaker:
+
+So this is one thing the second one is something i'm continuing the version implementation part okay this this one is completed yeah this one the ui is completed even the last one is completed. But then the overall point is how we ask Akhanja to verify all those changes. For me, I have verified those changes locally by tweaking a few things and verifying them. So I can still showcase her that way, but how do we verify it on dev since we have just one version, right? As of now, the biggest thing is about multiple, when we have multiple versions, right? That way, how we can get it tested is something I just need to verify from Ravinder because. Apparently, later on, all things will also come in the same way for testing, right?
+
+00:06:44 - 00:07:39 Unknown Speaker:
+
+We need to have more versions. Sorry, Ashish. This is for which one, Ashish? This is for that drop-down, and then drop-down changes, and on the basis of that drop-down changes, apparently, the UI gets refreshed and everything, right? That's right. Still, that implementation, if something has to be verified, some change has to be done. Like a few more versions have to be created, some dummy versions at least so that it can be verified on them. Also. Right? Yeah, but yeah, I think I think this may little change because we had a call last week. We should not provide that. When you duplicate, it should be a only the same version, the original version actually. Again, if you would change it instantly, our understanding was to select you just can select the latest version, RP and the version, which is beautiful.
+
+00:07:39 - 00:08:59 Unknown Speaker:
+
+But now there's one last conversation on Friday. It's changing to these that we cannot. Uh, I don't think we are going with an option for multiple versions. There a lot of things will happen because we have made some changes to work on that. Right? No, no, no, you don't need to train them because it may come in the future. Right now, we are not going to provide any options. Necessary. Date code. So okay, let's, uh, yeah, yeah, we can discuss, we can discuss because we implemented more than what they want right now, but they may ask in the future. What they're suggesting is if it is a new version, so initially they requested that way, that's fine. We don't need to later on, we need to have a conversation about whatever later on. Things.
+
+00:08:59 - 00:10:49 Unknown Speaker:
+
+Also, we are doing, uh, we are taking everything into the consideration that new versions can get changed. Right, that's right, that's right, but let's keep whatever we implement so we don't need to revert it. Okay, that's what I'm saying. So, uh. And what are the cases scenarios we're testing over here? Just need to pop that in the note section, that's it. One liner. Okay, okay, thank you. So what about this one, Ashish? The second story? It's in in progress. But then, uh, after having discussion with the pandemic pickup, some things have to be. Not something like. There are a few things that we were taking as a with the current business requirement. But something will just go off from here. Because we were doing two changes with respect to version changes and everything.
+
+00:10:49 - 00:11:50 Unknown Speaker:
+
+But then that is not required anymore, so okay, so is there any dependency with the APA, I mean, API in the sense of the another story to come? It's just that we'll create one JSON and we'll provide that JSON. And to update it into the DB with respect to whatever JSON we provide. And the API is already there. So it's just that we create the JSON and we let them add it to DB. So that's the only change that will be there. Okay. Okay. Got it. Thanks, Ashish. Hi, Pond. Hey, hi, Zardish. So I could say, like, this is a supporting story. Apart of this, uh, are you parking your efforts in any other tasks? No, right now, this is the only thing. I mean, that's with the function on the script part for detailed stats automation.
+
+00:11:50 - 00:12:36 Unknown Speaker:
+
+I could make it up to 95 to 97 percentage. That five percent is somewhat tricky, so I'm working on that. I given her one script now and I'm waiting for to confirm it. And I can progress on the, if there's still an issue on that. Okay. You're talking about this one, only automation testing? Yeah. This one, right? Yeah. Okay. Okay. Got it. Okay. Thank you. Thank you. So, who are statuses? Completely, people can drop off, no issues.
+

@@ -1,0 +1,147 @@
+2026-05-05 QA Automation and Data Engineering Performance Optimization Meeting
+
+Creation Time: 2026/05/05 19:17
+
+
+📅About Meeting
+
+• Date & Time: 2026-05-05 19:17 (Duration: 12m 43s)
+• Location: No relevant content mentioned
+• Attendee: Angad, Dinesh, Nikhil, Rishmita, Shrikant(h), Sairam, Ravinder, backend team, UI team
+
+📒Meeting Outline
+
+QA automation, validation status, and environments
+
+• Automation for fresher standard models via Excel queue
+  Existing automation creates fresher standard models from an Excel-driven queue; Python validator leverages Source Truth to validate tabs.
+• Validation coverage: 12 export-enabled tabs, 20 scenarios (Dev & Stage)
+  All 20 scenarios now pass for the original 12 tabs in Dev; consolidated report confirms the same 12 tabs also pass in Stage.
+• Rerun scenarios with updated Source Truth and RPT IDs
+  Team provided updated Source Truth and RPT IDs (UI and Source Truth changes); reruns now passing in Dev and selected reader scenarios passing in Stage.
+• Non-export tabs (Detailed Stats Internal) validation
+  Validated code from “one’s code” and Rishmita’s code; shared observations with backend—mismatches due to differences between JSON values and Excel outputs; backend investigating.
+• User story testing (API)
+  Only one user story in current sprint; API user story tested and passing.
+• Scalability of test execution
+  Capability confirmed to test all tabs and any number of RPTs concurrently.
+• Environment deployment status
+  Data sets code running in Performance environment; not yet deployed to Stage (team testing). Submission flows not automated yet (in progress).
+
+Data engineering performance optimization (US: SWIT-2277)
+
+• Formulary information: move from Delta to UI-provided JSON
+  Replaced backend Delta table reads (with Spark collects) by consuming JSON from UI; reduced Spark jobs and execution time.
+• MFP factors: move from Delta to UI-provided JSON
+  Eliminated repeated Delta reads across 7–8 notebooks and removed collect operations by ingesting JSON directly from UI.
+• Measured improvements (Spark jobs and runtime)
+  • Biosim RA output section: reduced from 20 to 13 Spark jobs (-7).
+  • RA output section: reduced from 21 to 15 Spark jobs (-6).
+  • Runtime improvement: ~15–20 seconds average reduction across multiple RPT IDs.
+    • Example: 9m40s → 9m22s → 9m18s; another RPT: 9m54s → 9m36s.
+  • Note: Timings include ~2.5 minutes cluster startup on job clusters.
+• Code simplification and tech notes
+  All collect statements removed. Current Spark jobs mainly remain where reading aggregated forecast data via spark.table/parquet. Work executed on job clusters; request to also benchmark on all-purpose cluster to factor out startup overhead.
+• Dependency and maintenance note
+  UI must provide updated formulary/MFP JSON whenever those data change.
+
+Sprint, process, and next steps
+
+• Acknowledgments and workload
+  Leadership appreciation for extended efforts (incl. weekends) by testing and performance teams. Most story effort completed; remaining reviewer tasks to be addressed.
+• Documentation and quality gates
+  Request to include unit test coverage, unit tests, and short acceptance notes within stories; reviews to ensure tagging and completeness.
+• Upcoming sprint focus and capacity
+  Current sprint focused on unit/infra; next sprint to prioritize feature-aligned user stories mapped to previously presented S4 items.
+• Environment readiness
+  AS40 code repository and environment setup largely complete; team ready to proceed with next sprint user stories.
+• Open forum
+  No additional updates; feedback welcome offline.
+
+📋Overview
+
+• All 12 export-enabled tabs pass 20 scenarios in both Dev and Stage; consolidated reports available.
+• Rerun scenarios with updated Source Truth and RPT IDs pass in Dev; selected reader scenarios pass in Stage.
+• Non-export Detailed Stats Internal tabs show JSON vs Excel value mismatches; backend engaged.
+• API user story for the sprint tested and passed.
+• Testing framework can handle all tabs and multiple RPTs concurrently; data sets code live in Performance env, Stage pending; submission flows automation WIP.
+• Performance optimization (SWIT-2277) delivered: moved formulary and MFP from Delta to UI JSON, removed collects, reduced Spark jobs by ~6–7 and runtime by ~15–20s; timings include cluster startup.
+• Remaining Spark usage limited to aggregated forecast parquet/table reads; request to benchmark on all-purpose cluster.
+• Unit test artifacts and acceptance notes to be added to stories; reviewers to finalize today.
+• AS40 environment setup complete; next sprint will focus on feature delivery.
+
+🎯Todo List
+
+• Angad/Nikhil (Data Engineering):
+  • [ ] Run benchmarks on all-purpose cluster to measure runtime excluding cluster startup; share comparison report, 2026-05-08
+  • [ ] Document JSON contracts for formulary and MFP (schema, versioning, change process) and align with UI team, 2026-05-09
+
+• Backend team:
+  • [ ] Investigate and resolve JSON vs Excel value mismatches for Detailed Stats Internal tabs; provide root cause and fix plan, 2026-05-10
+
+• QA team:
+  • [ ] Complete automation for submission flows; provide coverage report and gaps, 2026-05-15
+  • [ ] Prepare and attach consolidated Dev/Stage validation reports for 12 export tabs and rerun scenarios to the sprint artifacts, 2026-05-07
+
+• UI team:
+  • [ ] Establish process to deliver updated formulary/MFP JSON upon data changes; share update cadence and endpoints, 2026-05-09
+
+• Reviewers (Dinesh and designated reviewers):
+  • [ ] Review remaining tasks and ensure unit tests, coverage metrics, and acceptance notes are present and tagged in each story, 2026-05-05
+
+• Sairam:
+  • [ ] Confirm AS40 environment readiness checklist and greenlight next sprint user stories, 2026-05-06
+
+• Shrikant(h) (PM/Lead):
+  • [ ] Finalize next sprint backlog focusing on feature-aligned user stories (S4 mapping) and share sprint plan, 2026-05-07
+
+Transcription
+
+00:00:03 - 00:01:03 Unknown Speaker:
+
+We were having one automation script in place for creating the fresher standard models using the Excel queue, and we are having the Python script for validating these tabs using the Source tool. So we validated all the 20 scenarios for 12 tabs, which were having the export functionality in Dev environment. And now those old, uh, those old 12 tabs are passing for all 20 scenarios. And this is the consolidated report. This is the consolidated report for the from the state environment, uh, those 12 tabs are also passing in stage environment. And then we work on rerun scenarios. So this is the change log. The team made changes in the Source TRUtH and in the UIS also. And they provided us the updated Source TRUth and the updated RPT IDs we validated across, those are updated RPT IDs and updated Source Truth.
+
+00:01:03 - 00:01:59 Unknown Speaker:
+
+And all those rerun scenarios are passing in Dev environment as well now, and we also validated few scenarios for reader in stage. Those were all the passing and we have started well, like we validated the one's code and Rishmita's code. Also for the. For those tabs which are not having export functionality in the detailed Stats Internal one, some findings or some observations were there, We shared them with the backend team, so they are working on those things. We are getting mismatches because there is difference in the value in the JSON value and in the value which we are getting in the Excel file. Yeah, that's it. And from the user stories perspective, we were having only one user story to test case in this to test in this current spring. And it was our API user story.
+
+00:01:59 - 00:03:15 Unknown Speaker:
+
+And I tested that. It is also passing. Yeah, thank you, that's it, thank you, thanks. So now we have ability to test all the tabs, right? Any number of RPTs at a time, right? Yes, yes. For the data sets, the code is working in performance environment as of now. It is not deployed in stage environment because the team is testing from their end. Okay. Yeah. Every submission flows are not automated yet because that is in progress. Okay. And, uh, we move on to data engineering, and, uh, there's a performance, uh, improvements that they have done. So, thank you, yeah, yeah, yeah, uh, thank you, yeah. So hi, team. Uh, so we have couple of actually, uh, scripts, or we can say notebooks, so we split it among us.
+
+00:03:15 - 00:04:08 Unknown Speaker:
+
+Me Nikhil Uh, so that we can quickly wrap this formulary information and MFE factor. So, uh, what we were doing earlier is so, actually. So this is the user story, Uh, that's in Switch 2277, so this is the user story we worked on. And these are the notebooks divided among us so that we can quickly wrap up the thing. So earlier, what we used to do is from the back end. We used to store the formulary information, so if we talk about the formulary information. Yeah, so if you see this this formulary information the code short code type left all this where we were storing in the back end in delta table. So just we asked UI team to give us in the JSON so that we don't have to read the delta and we can remove all the spark collects and all which actually takes some few seconds to execute.
+
+00:04:08 - 00:04:49 Unknown Speaker:
+
+So this is one change we did we are now reading instead of reading from the delta table we are reading from the JSON and it's actually helped us to reduce the number of Spark jobs, which help us to reduce few seconds on top of that. So, this is the first thing we did and the second change was the MFP. So, earlier MFP also, The MFP factors also where we were actually calculating from the back end and we were storing in a Delta table. And we were reading in, suppose, 7 to 8 number of notebooks, and that was also taking time and some collect information, collect operations were involved. So, we tried to remove them and we asked UISO can they give us in the JSON directly.
+
+00:04:49 - 00:05:43 Unknown Speaker:
+
+So, we implemented these two solutions and we found that on an average 15 to 20 seconds we were able to reduce and we were also able to reduce the Spark jobs. So, this is one of the screenshot which I am just sharing with you. So, there is some Biosim RA output section is there. When we are running this, it was taking 20 Spark jobs to execute. Now, after those 10 years, it's taking only 13 Spark jobs. So, we reduced 7 Spark jobs from here by implementing these. MFP scenario and the formulary scenario. And there is one also screenshot I have attached in this user story. So, this is the another section of... RA output. So in the RA output if you see earlier it was 21 spark jobs now it is reduced to 15 spark jobs.
+
+00:05:44 - 00:06:29 Unknown Speaker:
+
+So on an average 6 to 7 spark jobs we were able to reduce. And if I talk about the overall what is the time we reduced so I just took one RPTID that ends with XY and I took the previous RPTID on 20th of April. So it was taking 9 minutes 40 seconds to execute. And after that, when we did the changes and we ran today. It's taking now 9 minute, 22 seconds, so just to make sure that this number is constant and static, it should not very much. So I did a second round of run on the same, so now it took 9 minute, 18 seconds. And just to make sure all all these are, all these are again intact and our average time doesn't get impacted. Or anyway.
+
+00:06:29 - 00:07:30 Unknown Speaker:
+
+So I did a second, a third round of execution, where if you and and a different RPT ID too. So earlier, it was taking on 28th April. It was taking 9 minutes, 54 seconds. And after that, after, uh, implementing, uh, uh, the the formulary and MFP from directly from the UI. It's the time reduced to 9 minutes 36 seconds. So the summary is, uh, we were able to reduce, I can say, 20 seconds on an average. The only one thing is that that whenever the formulary information is is updated, we should get from the UI level in case of any change UI layer. And yeah, this, this is the slide in, uh, performance optimization we did, and, uh, it looks fine as of now. Yeah, so, yeah. So there is no more colored statements anywhere in the code.
+
+00:07:31 - 00:08:31 Unknown Speaker:
+
+Yes, yes, we, we removed all of them. Okay, okay, and uh, do we have? Like, you know, I mean, uh, this same job is that run on job cluster or all purpose cluster, this, this, uh, these are all for the job clusters, job cluster. So now you are saying, uh, the spark jobs reduced, right? I mean, there is no, there's no spark jobs now, correct? No, there will be spark jobs, but, uh, there's a reduction in the spark jobs. Where exactly we are? I mean, you guys have converted into Python code as well, right? The pandas and everything, where exactly spark jobs are creating now? So one point where we are reading the aggregated forecast data, so there we are using Spark dot table while reading the parquet data, we are using it there.
+
+00:08:31 - 00:09:40 Unknown Speaker:
+
+Yeah, okay, uh, okay. Can we run this version in the all purpose and see, uh, how much time it took? Uh, because this nine minutes again, it's a two minutes. Your cluster setup, right? Yes, yes, this is nine minute includes your 2.5 minute for cluster startup. Correct? Okay, yeah, thank you. I mean, that part U5 and everything, that layer we have to remove. That is something I will discuss with you later. But that is a good thing. We see some now. Okay, sure. Yeah, that's it team. Dinesh, over to you now. Thanks, Angad. Any questions to performance and performance? The calculation engine and no team has spent long hours including weekends to get this done the testing and the performance so great job team and thank you for all your efforts.
+
+00:09:54 - 00:10:58 Unknown Speaker:
+
+Thanks for the update of your user stories. I could see all the efforts which you have committed. It's already burned. And I could see only some reviewer tasks. Yeah, I'll cover that for you today. Yeah. Okay. And as I mentioned, so overall in the node section, please drop the unit test coverages. I mean unit tests. And the short notes, which describes about the acceptance and what, uh, scenarios you have covered. So hope all have been tagged, right? Most of them are already editing. Yeah, I'll review and make sure everything is in place in story today. Okay, yeah, so uh so. Shrikanta in sprint, uh, mostly, uh, team, uh, team capacity. We have it as part of the unit. And in the next print, uh, we will have the user stories, regular user stories.
+
+00:10:58 - 00:12:35 Unknown Speaker:
+
+I can say so. It will map to the the features which were already have presented in the Uh, S4s, so in the next print onwards, uh, we'll mostly will concentrate on the future side. SHRIKANTH Okay, any questions. Thanks. Any updates to share with the team? I don't know. Thank you. Thank you. Ravinder? I'm good. Thank you. Thank you. Thank you. Okay. So, Sairam, it's for you. So, already, Whatever this AS40 code repository is, the, uh, environment setup, it's commercial completed, right? Yeah, yeah, okay, so uh, we are good, uh, from environment side also. So we can go ahead for the next bit. I mean, uh, the user stories for the next bit. Okay, okay, team. Any questions are people have to share their feedbacks for the sprint, please feel free to connect with me. Sure, yeah, okay, then we can wrap up the call. Thank you.
+

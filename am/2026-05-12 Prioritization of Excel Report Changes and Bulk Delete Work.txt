@@ -1,0 +1,169 @@
+2026-05-12 Prioritization of Excel Report Changes and Bulk Delete Work
+
+Creation Time: 2026/05/12 11:19
+
+
+📅About Meeting
+
+• Date & Time: 2026-05-12 11:19 (Duration: ~17 minutes 26 seconds)
+• Location: No relevant content mentioned
+• Attendee: Nancy, Kundan, Jason (mentioned), Manju (mentioned), Rachna (mentioned), Muskan (mentioned), Anand (mentioned), Nirmal (mentioned), Sachin (speaker/lead), team members working on bulk delete, Excel report/graph changes, Pixi implementation, and file upload validation
+
+📒Meeting Outline
+
+Prioritization and Reassignment: Excel Report Graph Changes vs. Bulk Delete
+
+• Excel graphs expansion and new tab
+  The existing sheet’s single graph has been split into two; additionally, a new Excel tab has been added containing two more graphs. Estimated effort: 2–3 days. Request for Nancy to pick this up immediately.
+• Pause bulk delete; resume after delivery
+  Nancy to pause current bulk delete work and focus on completing the Excel graph changes by Thursday, with a potential Friday deployment. Post-delivery, she will resume bulk delete next week as planned in Rally.
+• Rally story tracking and time logging
+  The Excel story may not yet be added in Rally. If a new story is provided, log hours to that story; otherwise, continue logging to Production Support. Bulk delete currently sits at eight story points; the new Excel task is noted as three story points. Confirm story presence and ensure time capture.
+
+Deployment Governance and RFC/E2/E3 Readiness
+
+• Missed E2 completion and RFC window risk
+  Yesterday’s E2 build/deployment retries failed multiple times; the team did not escalate or close it same day. RFC window expires at ~3:30 p.m.; without successful E2, promotion to E3 cannot proceed today.
+• Escalation expectations for production defects
+  For production-impacting issues, fix and complete testing the same day; if RFC or approvals are needed, engage leadership (e.g., Manju) immediately. Avoid deferring to next day; stretch if required.
+• Process clarifications: PR, main merge, JAR, and tenancy deployment
+  Raise PR against main, get review, and merge. JAR generation does not require an RFC. Update charts for the repo post-merge to prepare tenancy deployment. Kundan to create the necessary PR and follow the deployment checklist.
+
+Accountability and Communication
+
+• Learning from failed retries
+  After multiple failed retries, status should have been posted and followed up immediately (in Studio/Slack/email), not assumed to pass later. Avoid mindset of carrying production tasks to the next day.
+• Impact and visibility of production failures
+  Failures create invalid failure tasks, leading to escalations (e.g., B40 MVP). Muskan flagged a system bug causing invalid tasks; leadership visibility is high. Be deployment-ready when commitments are communicated externally.
+
+Workspace Filtering Issue
+
+• “In Progress” filter not working
+  In the workspace, filtering by “In Progress” status does not function, while “Open” and “Closed” do. Prior discussions suggested status value mapping changes; need to re-verify correct status handling and fix accordingly. Follow-up planned after wrapping other items.
+
+Code Status and Handover
+
+• Commit current work for coordination
+  Team member to commit current local changes (four bundles logic added but not locally tested). Sachin will coordinate with Nirmal to integrate partial work where feasible.
+
+Pixi Implementation and Legacy SQL Alignment
+
+• Query parity and template checks
+  Most queries now match; some legacy SQL definitions are inconsistent/miscreated, causing mismatches. Requires joint review to confirm and close gaps.
+• Valid value checks
+  Valid value check templates created; to be reviewed with Nirmal. Post-lunch session planned for validation walkthrough and closure.
+
+File Upload Validation
+
+• Status check with Nirmal
+  Quick status callout to Nirmal on ongoing validation for file upload; no detailed update provided in the meeting.
+
+📋Overview
+
+• Excel report change (two graphs split plus new tab with two graphs) prioritized over bulk delete; target completion by Thursday, potential Friday deployment.
+• Bulk delete is paused for Nancy; to resume next week per Rally plan. Ensure correct story/time logging; add story in Rally if missing.
+• Production defect handling must be same-day: complete E2 testing and escalate early; do not rely on retries without communication.
+• RFC window hard stop at ~3:30 p.m.; without E2 completion, E3 promotion won’t proceed. Plan accordingly.
+• Process clarified: PR to main, review/merge, chart updates; JAR does not require RFC. Kundan to raise PR and align deployment steps.
+• Workspace “In Progress” filter is broken due to status mapping; needs fix after re-checking agreed statuses.
+• Partially completed code to be committed for coordination; Nirmal to help integrate.
+• Pixi queries largely match; resolve legacy SQL inconsistencies via joint review. Valid value check templates ready for review post-lunch.
+• File upload validation status pending from Nirmal.
+
+🎯Todo List
+
+• Nancy:
+  • [ ] Start Excel graph changes (split existing graph into two; add new tab with two graphs), target completion by Thu, May 14; prepare for potential Fri, May 15 deployment
+  • [ ] Pause bulk delete immediately and update Rally/status today
+  • [ ] Confirm whether the Excel story exists in Rally; if not, request creation and log time under Production Support until created, today
+
+• Kundan:
+  • [ ] Raise PR against main for the relevant repo, get it reviewed, and merge today
+  • [ ] Update deployment charts post-merge; prepare tenancy deployment artifacts today
+  • [ ] If deployment/E2 retried and fails, post status immediately in the channel and escalate; do not defer, ongoing
+  • [ ] Complete E2 testing within RFC window or escalate for approval if extension/exception is needed, today (before ~3:30 p.m.)
+
+• Sachin:
+  • [ ] Coordinate with Nirmal to integrate committed partial code from team member, today
+  • [ ] Set up post-lunch session to review Pixi query mismatches and validations, today
+
+• Nirmal:
+  • [ ] Assist with integrating partial code once committed, today
+  • [ ] Review valid value check templates; confirm acceptance or changes, post-lunch today
+  • [ ] Provide status/update on file upload validation and next steps, today
+
+• Reporting/PM (Rally admin):
+  • [ ] Create/confirm the Rally story for the Excel graph changes and ensure story points alignment (noted as 3 SP), today
+  • [ ] Ensure bulk delete remains planned for next sprint/week; current bulk delete logged at 8 SP, today
+
+• Workspace owner (Filter issue):
+  • [ ] Verify and correct “In Progress” status mapping so filtering works as expected; share the final status list and mapping, this week
+
+• Team member (four bundles work):
+  • [ ] Commit current local changes immediately; note untested parts and coordinate with Sachin/Nirmal for integration, today
+
+• All engineers handling prod defects:
+  • [ ] Follow the escalation protocol for failed retries; communicate in channel and avoid carrying over to next day, ongoing
+
+Transcription
+
+00:01:35 - 00:02:39 Unknown Speaker:
+
+Hey, sorry, I got a call. So, Nancy, coming back to that request, how we get that change? So, like earlier, there was only one graph in one of the sheets. So, now that graph has exploded into two. And plus, that's one, uh, new Excel, new tab in the Excel sheet. Uh, with the graph, two graphs are also there in that. So I think, uh, it will, uh, take like minimum like two to three days. I'm expecting, um, for this, uh build. So can you take it up from today? Pause the bulk delete part, which you are doing right now? And can you drive it to the closer by today's Tuesday, right? So can you close it by Thursday? You're just starting the days, so I'm giving you three days, as per your, you know, analysis.
+
+00:02:39 - 00:03:33 Unknown Speaker:
+
+So drive that to the closer so that you know there should not be any escalation like your. I can still utilize near million that bulk delete. Uh, wherever you have left it, uh. Meanwhile, you can go ahead and close that one first and then once you're done with that, on. Thursday, maybe a Friday deployment. And again, starting next week, I'll pull you back to this bulk delete part. That is what we have planned in the rally. I hope you have seen that also. Yeah, so I think the story is not added in the rally. Give me a second. It should be right. I didn't check today. Yesterday, it was not there. Okay. No, even I did not take any action as of now. So if it is not there, it would not be there.
+
+00:03:33 - 00:06:04 Unknown Speaker:
+
+And you are not having any holidays in this sprint, right? No. Did Jason accept it? I for this bulk delete. Yeah, this is the production support, right? You have to work on this production support only. All right, we have to ask for an enhancement story, but till that time, just replace this production support. You have eight story. Pointer Okay, let me revert. That means it was me who has reverted, right? No, no, it was me only who has reverted her, right. Yeah, I think I only looked it up was on May 7th. Yeah, it's very important if you're able to see us. So if they give a new story, right, then you need to log your hour over there, otherwise, just deliberately that production support as of now. Yeah, okay.
+
+00:06:04 - 00:07:13 Unknown Speaker:
+
+So again, it is having three story pointers, so please make sure if you have any blocker, raise it. Today itself, uh, it should not be, you know, we are starting today and, uh, it is again getting, uh, prolonged for, you know, a week or 10 days like that. This must get used this week itself. Okay. Anything else that you would like to discuss? No, apart from that, all the logic I have added. The four bundles. I didn't test in my local. So this is are completed, I will resume on that. Okay, okay, okay, thanks. Uh. I'll just commit your code so that you know we will coordinate, I'll connect with Nirmal and see where we can. You know, add with that whatever code you have done, so what? Just commit that code in the future.
+
+00:07:13 - 00:08:21 Unknown Speaker:
+
+Okay, Kundan to you, man, why didn't we raise that, uh, E2 build feeling, uh, yesterday night itself? No man, we have to close it, right? We have a deployment you have already seen that escalation, from which now you need to understand the criteria. Yeah, it will be successful. Okay, after two times, but you know, it got late and even I forget it. No man, that that is where I'm coming in, right? If it was not working, you should have closed it yesterday, got it now. We don't have RFC, right? Then? Uh? Post 3 p.m. How we are going to deploy it today? We have already communicated it yesterday, right? That we are going with the fix the same. That email also has been sent to Rational that we will be incorporating Fix and look at the RFC part, what is pending.
+
+00:08:21 - 00:09:11 Unknown Speaker:
+
+I don't, I didn't get RFC would expire at 3 30 p.m. Post that you won't be able to do i3 deployment. Oh, okay, RFC has a timeline, right? That has a new deployment timeline. It would not get extended beyond 3 30 p.m. And the problem is, we haven't completed the A2 testing. And without E3 testing, I won't be able to allow you to move it to the E3 environment. This is for, you know, please take it in a serious note, right? If it is a production environment, we have to close it that day itself. It's just that we got that buffer because we have to raise the RFC, which requires a two-day buffer, right? But going forward, if some critical issues like the one that you are handling, right, it will be there.
+
+00:09:12 - 00:10:10 Unknown Speaker:
+
+We have to fix it immediately that day itself. And if ERFC is required, I'll take the approval from Manju. So how you are going to explain, Kundan? This is something, you know, I did not expect it from your side, man. No, I thought that it will get deployed, Sachin. But, you know, till 12 a.m. Hard process is not going to work, Kundan. We have to fix it. Just... creating an imagination is not going to help us, man, I agree, it's not imagination. Okay, so till 12 p.m. it didn't, work. Okay, then, you know, I thought, you know, why did you do it again? Okay, because it was slow. Even if you have noticed yesterday, I even, you know, multiple time when I was depending. It is taking time. Posted it in yesterday, right?
+
+00:10:10 - 00:11:03 Unknown Speaker:
+
+We had a connect yesterday at 8, correct? And there only I have seen the deployment was failing. You could have posted it in that yesterday itself while doing a retry. No, sometimes it happens, you know, one or two times it fails and again it got successful, okay? I noticed it multiple times. So that's why I think of it. My question to you from then, even after second retry, if it got failed, right? Why didn't we posted it in a studio and why didn't we followed up yesterday itself? Uh, okay, that I missed it. I agree with it because I can't give give you guys for like, you know, we are just moving the UH task to the next day. Please come out of that mindset. We don't have that liberty now, right?
+
+00:11:05 - 00:11:49 Unknown Speaker:
+
+If some production issue is there, we need to close it then and there itself. And now I.I really don't know how much time they would take it to fix it, and even if they fix it right. You would take time to do a E2 testing and I don't think it would go live today. Then, if it will be fixed, it will not take time. Okay, because everything is ready, we have to just trigger it, you don't know right when, when they they are going to fix it. If we have posted it yesterday on a studio, somebody from, you know, even for your PR, right? I have specifically asked you to raise a PR for the main branch. Get it reviewed and, you know, merge it from. And that is also not being done.
+
+00:11:55 - 00:12:57 Unknown Speaker:
+
+No, not that tier. You have to create a tier for the tenancy deployment. For tenancy deployment, we need the jar, right? Yes. We have to give the RFC number, then only it will generate. No, RFC is not required to generate the jar. RFC is not required. Okay, okay, one second, one second. Okay, got it. Okay, that is, that is okay. Why you need a tier? One second. When you would update the chart for that repo, right? Once again, we merge it so that, uh, that is ready, main branch is deployed. Okay, I will raise it, you would raise it, that's fine, but I'm not sure, like, you know? Is there a, you know, instruction clarification is not there or what is going on? I really don't know.
+
+00:12:57 - 00:13:47 Unknown Speaker:
+
+Please take these predictions, defects, or any else that has been asked on a serious note. We should not be like, you know, a couple of times deployment failed and then we just logged off thinking that we will fix it tomorrow. That should not be the mindset. If required, right, please stretch and close those issues. E2 testing should have been done yesterday only, right? Uh, in the morning hours itself. But if it hasn't been done, you need to close it to drive, drive to a closer. Yesterday. Only don't think that we will buy time and then, you know, we would be deploying it tomorrow. Please come out of from that mindset. These are production defects, these are impacting the end user, right? The datas are getting failed from then, and then those are being created as a failure task, which is an invalid failure scenario.
+
+00:13:48 - 00:14:48 Unknown Speaker:
+
+And then post that it is getting escalated to B40 MVP, right? So I really don't know why you guys don't understand the criticalness of these initiatives. Rachna was showing one of the emails yesterday only, right? You have already been looped in over there. Right? The task has been escalated to B40. Right, and now Muskan is mentioning that that was the invalid task which has been created from the system. It's a system bug. Right, now suppose B40 director comes back with the feedback from Muskan to us. And when I have mentioned that we would go live today, right, we are not ready on E2 also. Correct. Please, Jagan, and get it done. Today itself, okay, but we won't be able to deploy Post-330, even though he's going to do, and I am not going to define into his DSU states.
+
+00:14:48 - 00:15:54 Unknown Speaker:
+
+Uh, why it hasn't been deployed today? You have to face them. Okay, thanks for that. Uh uh, for you. Um, uh. There there were a couple of requests that I have made. Is that being done? Yeah, there's been done, I'll just put those changes okay, uh. So there is a issue which is there in the workspace. Okay, uh. When we are filtering the data with in progress, right, the open and closed are working, but the in progress is not working. Let me share. We are already discussed on this, there are a couple of status which we are changing. Okay, So, last time also we shared the same in the group. So, I'll just search and share with you. Let me just... Because last time Anand also mentioned that same thing. So... It's just the task of this.
+
+00:15:55 - 00:16:54 Unknown Speaker:
+
+No, it's the task. No, let's just... The progress status is not being followed correctly. Yeah. Hold on, because, hold on, let me wrap up with rest of the folks, then I'll check with you. Uh okay, moving to Pixi uh briefing where we are with that implementation such, uh, yeah. If the queries are all matching now, there are few things, uh, with respect to the, I mean, the legacy SQLS itself, they are not properly created and done. So there there is a mismatch. Okay. So maybe I would ask request you to verify that me once. I will review all those things with you and then we can close those open things. Otherwise all are matching up. And the valid value check I will be discussing with Nirmal but I have done that also.
+
+00:16:54 - 00:17:22 Unknown Speaker:
+
+Valid value check templates also I have created it. I will review it with him and then I will close that as well. So let me connect with you post-lunch, helping you with the validation. And same with me, you guys, if you're done, feel free to drop off. Nirmal, where we are with that validation that you're doing for that file upload?
+

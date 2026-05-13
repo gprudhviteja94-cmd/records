@@ -1,0 +1,173 @@
+2026-04-29 Engineering Updates and New Framework Guidelines
+
+Creation Time: 2026/04/29 18:02
+
+
+📅About Meeting
+
+• Date & Time: 2026-04-29 18:02 (Duration: 1078 seconds)
+• Location: Online meeting
+• Attendee: Anand, Tanisha (mentioned), Rachna/Rachana (mentioned), Sindhuja, Nirmal, Shamir (on leave), Srishti, Sundan, Jason, Architecture Team (mentioned), NC (mentioned), Lexner (mentioned), Portal Team (mentioned), Team members working on E1/E2/E3/Prod
+
+📒Meeting Outline
+
+Engineering updates: fixes, integrations, deployments
+
+• Validation and production alert fix
+  • Post-change validation to be done in E3 today; one production failure alert not sending correctly will be fixed. “Pay later” validation results sent to Tanisha; one sheet had incorrect aggregated columns—work in progress and user story logged.
+• DQIM service bundle implementation
+  • Service bundle classes created; proceeding with implementation next.
+• Virtual list API integration
+  • Code changes completed; UH changes tested. Event deployment planned; will start integrating remaining items from tomorrow.
+• PR review and production incident root cause
+  • Connected regarding a PR: suggested table insertion changes; a new structure created. Investigated issue raised by Lexner (ISO white failure). Synced with NC on a production issue, identified root cause, explained, and deployed the fix. Adjusted data placement from context to app data; changes deployed on “even” and confirmed working. Update API work to start now.
+• New tables and accessibility
+  • Addressed points from Srishti; fixed two tables. One table inaccessible; Nirmal has raised a ticket.
+• Q-track scripts testing
+  • Continuing testing; will test in E1 and E2 today.
+• NSID rewards integrity and benefit data
+  • R42 loyalty address Snapchat NSID rule filtered per Rachna’s inputs; moved to production with weekly cron configured. Benefit data build in progress (24 rules); testing targeted this week.
+• Threshold check template
+  • Progressing on listing and building templates; to share status in the group due to audio issues.
+
+Coordination, process, and follow-ups
+
+• Data quality open checks reporting
+  • Request to automate weekly email to Anand and Rachna summarizing open data quality checks. Approach to be finalized after Sachin joins; parked for 2–3 days.
+• VRB document review scheduling
+  • Jason following up with architecture team; no response yet, May 5 meeting not set. If no reply within 1–2 days, send a reminder.
+• Support to team members
+  • Assisted Nirmal with insurance-related Java questions. Shamir is on leave.
+• Incident tracking hygiene
+  • Nirmal to post incident IDs, depth/channel, and tags in the group for reference and follow-up visibility.
+
+New framework guideline: configuration-driven inserts/updates (no new Python files)
+
+• Config-first task design
+  • For any insert (and update) operations, do not create new tags or Python files. Use a generic task in the framework file with SQL kept in configured paths; execution handled by existing utility methods.
+• Utility-centric input handling
+  • All repeatable input processing is centralized in utility methods. Input params to be registered in the utility; tasks must avoid direct input object mutations (e.g., no input.update patterns). Use get_attribute/execute and new insert-data execution helpers.
+• XCom and parameter management
+  • XCom variables validated via utility (validate input param). Teams can register new XComs/conditions as needed without changing structure.
+• Backward-compatible configuration structure
+  • Maintain prior config layout: properties, XComs, SQL file paths. Single or multiple tasks can be defined; parameters maintained in input params. Implement similarly for update paths.
+• Scope
+  • Applies uniformly across environments (E1, E3, etc.). All owners working on update/insert parts should adopt immediately.
+
+📋Overview
+
+• E3 validation and a production failure alert fix are in progress today.
+• Aggregated column issue in “pay later” sheet acknowledged; fix underway and user story added.
+• DQIM service bundle classes ready; implementation to proceed.
+• Virtual list API integration code completed; event deployment next; further integrations start tomorrow.
+• PR review led to a new insertion structure; multiple incidents investigated and fixed/deployed; data placement shifted to app data and verified.
+• Update API work to commence now.
+• Table fixes completed for two items; one table access pending via portal ticket.
+• Q-track scripts to be tested in E1/E2 today.
+• NSID rewards integrity rule deployed to prod with weekly schedule; benefit data (24 rules) building, testing this week.
+• Threshold check templates progressing; status to be posted in group.
+• Weekly automated email for open DQ checks requested; approach to be finalized post-Sachin’s return.
+• VRB review meeting pending architecture response; set reminder cadence of 1–2 days.
+• New framework mandates config-driven inserts/updates using shared utilities; no new Python files/tags for such operations across environments.
+
+🎯Todo List
+
+• Anand:
+  • [ ] Validate the recent change in E3, today
+  • [ ] Fix the production failure alert not sending correctly, today
+  • [ ] Correct aggregated columns in “pay later” validation sheet; update Tanisha on results, this week
+  • [ ] Proceed with DQIM service bundle implementation, start this week
+
+• Virtual list API owner:
+  • [ ] Deploy event for virtual list API changes, today
+  • [ ] Start integration of remaining items, from tomorrow
+
+• PR/Incident owner (same speaker):
+  • [ ] Begin Update API implementation, start now
+  • [ ] Monitor deployed fix for production incident (NC case), ongoing
+  • [ ] Ensure app data vs context data change remains stable in “even,” ongoing
+
+• Nirmal:
+  • [ ] Continue testing completed code; verify two changes already shared with Srishti, today
+  • [ ] Track portal tickets for the two remaining items; post incident IDs, depth/channel, and tags in group, today
+
+• Shravan:
+  • [ ] Resolve accessibility for the remaining table once portal team enables access, pending portal ticket
+  • [ ] Test Q-track scripts in E1 and E2, today
+  • [ ] Follow up with architecture team on VRB doc review; if no response in 1–2 days, send reminder, in 1–2 days
+
+• Threshold template owner:
+  • [ ] Post status update and list of threshold check templates in the group, after this call/today
+
+• Benefit data owner:
+  • [ ] Complete build for remaining of 24 rules and finish testing, this week
+
+• All engineers working on insert/update tasks:
+  • [ ] Adopt new config-driven framework: no new Python files/tags for inserts/updates; register inputs in utility, use SQL in config paths, and use execute/insert helpers, effective immediately
+  • [ ] Keep configuration structure consistent; manage XCom via utility validation; apply across E1/E3/Prod, ongoing
+
+• Process automation (after Sachin joins):
+  • [ ] Define and implement weekly automated email to Anand and Rachna on open DQ checks status, within 2–3 days after Sachin’s return
+
+Transcription
+
+00:00:00 - 00:01:16 Unknown Speaker:
+
+So, when it is done, I will validate the change. Also, there was one production issue for one failure alert which was not sending correctly. That also I will fix. So, I will validate it in E3 today. And, you know, pay later. We had sent the validation result to Tanisha. So, in that, in one sheet, some aggregated columns was not coming correctly, she mentioned. So, that I am currently working to fix that. And I have added the task for that user story. And on the DQIM, I created the service bundle classes and I have to start proceeding with the implementation for that. Yeah, that's all. Thank you. So I've started working on the integration of the virtual list API, so the code changes are done. I saw a couple of UH changes are placed, so I have tested that too.
+
+00:01:16 - 00:02:41 Unknown Speaker:
+
+I'll proceed with the event deployment for this one, that's it from us, and then from tomorrow I'll start integrating the other. Okay, so I was involved in a lot of calls. First, I connected with if regarding that PR. Uh, there was some changes I suggested for inserting the table, okay, so one new structure has been created. And uh, after that, uh, I work in on the uh issue raised by the Lexner. So I said, with that's now, uh, what was the ISO white fail? And after that I connected with NC. Uh, regarding, uh, one of the uh, production is so okay, so. So we found the root cause and I explained everything to her. And that change is deploying that one. And apparently I started looking into this other request where he wants the data to be in the app data rather than in the context data.
+
+00:02:41 - 00:03:40 Unknown Speaker:
+
+So those changes I made and deployed on even and it is working fine as that are confirmed. I'm working on this update API, but I didn't get time. Now I will start on that part. Let's stop it. I saw the two and four emails, Anand. Has it been clarified on the field column for you? Which one, sorry? Regarding the data. Yeah, yes, yes, I was just going through that, right? Uh, I think this is the one, right? Uh, sorry, let me share my screen, yeah, and then this is the one that you shared, right? Very good. 49. Yeah, so these all are open right now. I believe so, because I think I did just see three emails come to Putna right now. This is the ninth day once, right? Yes, yeah, okay.
+
+00:03:40 - 00:04:31 Unknown Speaker:
+
+So I think this has started to go to people as well. Yeah, but, uh, just one help I'll need is probably one one day of the week, right? You can decide which way, but just try to see if you can automate this process, right? Send out an email to me and Rachna to show. I mean, what is the status of the data quality checks that are in open state? Uh, yeah, we have to create a process, so, uh, yeah, we let let such income and then we are trying to use the uploads. Uh, and okay, yesterday I discussed with him, Okay. Just park it for two, three days. Let me come and we'll decide the approach and then we will finalize the things. Got it, got it. Sure, yeah. One more thing, Sindhuja.
+
+00:04:31 - 00:05:47 Unknown Speaker:
+
+I connected with Nirmal too regarding that insurance one. So I helped him with a few of the questions. On the Java side also. So that also took some time for me. That's the update. Thank you. Shamir is on leave. Nirmal. So today I was working on the same part and the code part is complete. I'm testing it right now. And made two changes. I already verified those. I have been demanded to Srishti regarding that. The remaining two, those two are not on the Srishti's pipeline. So I took help from Sundan to create like raise tickets regarding these two to the portal team. So I'm following up with the ticket. Yeah, that's all from my side. Nirmal, just one thing. Just put that incident ID.
+
+00:05:48 - 00:07:22 Unknown Speaker:
+
+Depth channel okay and tags it's in me also okay just for reference purpose so that you know if it will be not disclosed you have to do the follow-up yeah so i'll do it okay thank you. Yeah, I'm continuing working on the threshold check template. I listed the templates and I'm progressing on that. Your voice is too low. Oh, okay, sorry. Can you hear me now? Not properly. Still low. Okay. Sorry, so I'm progressing on threshold check template. Okay. Probably you can type your updates on the channel. We can't hear you that clearly, okay? Sir, just one thing. A morning I told you to share the status on the group, right? I didn't saw that message there, okay? So can you do that? I'm listing all the templates, okay? So I do that after this call, I'll do it.
+
+00:07:23 - 00:08:28 Unknown Speaker:
+
+Yeah, sir, thank you. Sir, it's raining here, so that's why no network, sorry. Yeah, no issues. Just type the message on the group, okay? Yeah, sure. Okay, Shravan? Hello. Hey, So I was working on the... crazy new tables. Uh, there were some points raised by Srishti, so I have fixed two of the tables. Uh, one of the table is not accessible. Yet. I think Normal has already raised a ticket for it. And, uh, uh, for the question that you had asked yesterday about the VRB document review. Jason is still following up with the architecture team, but he hasn't heard back any concrete response, so the meeting for 5th of May has not been set. Then not yet. He has been following up with the architects, but they haven't responded back.
+
+00:08:28 - 00:09:32 Unknown Speaker:
+
+Okay, I, you are also there in that loop, right? Shavin? Like, Yes, you know, whatever. Okay, yes, um, so I would say that just, uh, probably, like, you know, like after one or two days. If they don't respond, like, uh, just yes, okay, yes, yes, I'll do that. Okay, yeah. Apart from that, the Q track scripts, I'm still working on testing it out, I'll probably do some testing in E1 and E2 today. Yeah, sure, noted. Thank you so one hi everyone. Um, first of all, the. Yesterday, we have moved to the production that the NSID is failing, right, Anand? That one is moved to the actual table, DQ result table. Sorry, can you come again? Rewards integrity in the BNSID is failing, right? For the R42 loyalty address, Snapchat one.
+
+00:09:34 - 00:11:29 Unknown Speaker:
+
+That one, Rachana gave me some filters, so I applied the filters. And the test table itself. Yesterday we moved to the production, that one, as the crown expressions also, that we'll be working on every week. Yeah, okay. And the benefit data, I'm in still building phase, I have 24 roles, so I need to complete that one, maybe today or tomorrow. And I need to be. Testing will be done on this week. So yep, that's it. Anything else. Team Okay, thank you everyone, thank you. Uh uh. This call only. We have one thing I have to discuss with everyone. Okay, so let me share my screen. Okay, there's a new change. Uh, we have introduced it today. Okay, so I want you guys to follow that, to see my screen. Yeah, okay.
+
+00:11:29 - 00:12:30 Unknown Speaker:
+
+So going forward, for any of the insert query, right? So we are not going to create any tag. Okay? So what we did is basically we make it configurable, so if you'll see, this is the rule creation insertion, right? So we created a task and here we provided our SQL path, okay, all of the SQL queries here, and this task is there in our framework file. That is the generic method that directly you guys can, you know, utilize it. So what it is doing is basically it is inserting the data in our table. Okay, so no need to write any Python file new Python file. We are going to, you know, consume this one. That's the one thing, another thing is. All those, what I've noticed is that is going to be repeatable everywhere. Okay.
+
+00:12:30 - 00:13:31 Unknown Speaker:
+
+In most of our tasks, I can see the repeatable things. Okay. So what we came with is only SIM where we don't need to, you know, use that one. Okay. We are not going to write that thing again and again. So we created a utility method. Wait, let me see where I kept it. Okay, so in your utility class? Okay, so here we are maintaining the input params. Okay, so going forward, if you have something new input param, you can, you know, keep it here and return it. So in our QT framework, whatever the new task you guys are adding now, the expectation is there should nothing like input dot, update, input dot, you know, dot, any operation. Okay, it should be very neat, it should be neat and clean. We are reading it from the utility.
+
+00:13:31 - 00:14:19 Unknown Speaker:
+
+Okay, register it there, get the data and just parse it, okay, and you will get that particular query. And then this execution is there. We already have a method to get attribute, and we have this execute, right? Same goes with this one we created for insert data. And we have to, you know, whoever is going to create a table, we have to come with that kind of solution. No new Python file will be introduced. You have to create some configuration kind of thing that I showed you just now for this update one. You have to come with, you know, configuration, come with your SQL file, come with, you know, some of the parameter manipulation. You know, we'll do that here so that every time if we have to perform anything. We will simply register it here.
+
+00:14:19 - 00:15:46 Unknown Speaker:
+
+And our tag will be created and that particular script it will pick and start executing it. Any doubt, got it? So this will be both in E1 as well as E3, like even everywhere, everywhere, yeah, it will be uniform throughout. That is all up to you. That is all up to the requirement, okay? If you want some XCOM variable, you can register it here. If you see this, we are loading this attribute, right? We have this load attribute, is there right where it is one second utility somewhere, this get attribute is there right here. We are in this method, we are basically loading our XCom. Okay, so if you'll see this method, right? Validate input param is there to validate the XCOM variable. So if you want to introduce anything, you can do this method.
+
+00:15:46 - 00:16:41 Unknown Speaker:
+
+Here you can introduce your condition and utilize that one. So there is no restriction. The configuration will be same as what it was earlier. Wait, let me show it to you. There is no change in the structure. It will be similar to the older one. Any extra parameter you want to pass, you put a property, you want to pass XCOM, pass that one, SQL file, pass it, and you maintain that one, you know how you want. How we are maintaining it earlier, you can maintain it. Task, as you know, right, we are adjusting it here and our framework is doing the thing right. Same way here. We have this tag ID task here, we created only one task. If you want, you can create multiple tasks. And you can maintain these variables in the input.
+
+00:16:41 - 00:17:46 Unknown Speaker:
+
+Parents here. If you see, we have this two, I think two property, another is XCode, if you want more property, you can introduce it here and then you know you can utilize it in your tasks. Any questions. Well, consider no. That's the, you know, new change. I thought to, you know, just inform you guys so that you can, you know, utilize this framework in a better way, okay? So whoever is working on the update part and inside part, please consider this one, okay? And implement it in a similar fashion. thank you thank you everyone
+

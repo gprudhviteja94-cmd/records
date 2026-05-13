@@ -1,0 +1,141 @@
+2026-05-12 Frontier Security Program and Spring Upgrades Discussion
+
+Creation Time: 2026/05/12 12:07
+
+
+📅About Meeting
+
+• Date & Time: 2026-05-12 12:07 (Duration: ~24 minutes)
+• Location: No relevant content mentioned
+• Attendee: Sunil, Priya, Uday, others not explicitly named
+
+📒Meeting Outline
+
+Frontier security program and Spring upgrades
+
+• Early-access vulnerability intel (Frontier/Cloud Mythos/Anthropic)
+  The team discussed the Frontier program providing early access vulnerability signals (via Cloud Mythos) to a small set of companies, including JP Morgan. Expect rapid public exploitation once disclosures go GA; aim to remediate proactively before that.
+
+• Scope and impact confirmation
+  Current note indicates ITC, TSP, GSH not impacted by Frontier items. Primary concerns center on Spring Security Web and related components across services; created a P1 S4 item to track all applications/services potentially impacted.
+
+• Ownership vs. notifications
+  While Sunil and Priya will help track, the team will not rely solely on email/Excel notifications. Plan to self-drive scanning and upgrades; confirm how formal notifications (“breaks”) will arrive and track in parallel.
+
+Versioning strategy and timelines
+
+• Current baseline and support window
+  Many services are at Spring Boot 3.4.19; support ends September. Initial scans may not flag issues now, but upgrades are required to stay ahead of Frontier-related risks.
+
+• Upgrade timing and release planning
+  Target upgrades in August monthly release or earlier if feasible; aim for Q3 completion at the latest. Use this as an opportunity to modernize dependencies beyond just vulnerability fixes.
+
+• Branches and release alignment
+  Excel exports show scan results per release branch; if a later release contains fixes, older branch findings may be superseded. Confirm branch coverage to avoid redundant work.
+
+Tracking, filtering, and reporting
+
+• Filtering by application/services
+  Filter by application IDs (e.g., V1, V2) and engineer pages to focus scanning. Ensure farm/form IDs are checked for current status and findings.
+
+• Baseline and delta tracking approach
+  Desire to baseline all open items (a full “dump/snapshot”) and then track only new deltas over time. Options discussed: export two consecutive snapshots and diff locally; explore API access for automation if available.
+
+• Jira process for “breaks”
+  Continue creating Jira tickets for Frontier “breaks” (farm/form items). For large volumes, one aggregate Jira can track many similar items by attaching Excel and linking references; otherwise create individual Jiras. Assign correct sprint/team so items appear in backlog.
+
+Process changes and governance
+
+• Change process update
+  A new process allows deploying Frontier-related “break” fixes to production more directly. Team to align on usage while maintaining control and auditability.
+
+• Sprint planning
+  Assign newly identified items to the next sprint (starting tomorrow) to ensure visibility and throughput.
+
+• Housekeeping and credentials
+  A noted password reference (possibly “A_KP” used in Genius long ago) appears obsolete; verify and remove if not in use.
+
+📋Overview
+
+• Frontier early-access signals will likely precede public exploitation; team will remediate proactively, not just on notification.
+• Primary focus is Spring Security Web and related Spring stack; P1 S4 tracker established across applications/services.
+• Current Spring Boot 3.4.19 is only supported until September; plan upgrades by August release or earlier.
+• Use exports/snapshots to baseline all open items and track deltas monthly; consider API-based automation if feasible.
+• Continue Jira-based tracking for “breaks”; use aggregate Jira for bulk, individual Jiras when distinct, and assign to the next sprint.
+• Leverage updated change process to deploy Frontier fixes to production with priority.
+• Validate branch coverage: newer fixed releases may supersede older-branch findings; avoid duplicate remediation.
+• Review legacy credentials; deprecate any not in active use.
+
+🎯Todo List
+
+• Sunil:
+  • [ ] Confirm the list of applications/services in scope for Spring Security Web issues and update the P1 S4 tracker, time: EOW
+  • [ ] Validate whether ITC, TSP, GSH remain non-impacted after latest scans, time: EOW
+
+• Priya:
+  • [ ] Prepare two consecutive farm/form export snapshots and produce a delta report (new vs existing findings), time: next sprint planning (tomorrow)
+  • [ ] Explore API or filtering options for automated monthly diff; document feasibility and steps, time: next 2 weeks
+
+• Uday:
+  • [ ] Share any Frontier/Cloud Mythos guidance on upcoming “breaks” and expected sequencing/priorities, time: as received; initial summary by EOW
+  • [ ] Confirm change process details for production deployments specific to Frontier fixes, time: EOW
+
+• Engineering Leads (per app team):
+  • [ ] Review current Spring Boot/Spring Security versions; propose target versions beyond 3.4.19 with compatibility notes, time: by next sprint start (tomorrow)
+  • [ ] Create/assign Jira(s) for open farm/form “breaks”; aggregate where volume is high; ensure correct team and sprint, time: by next sprint start (tomorrow)
+  • [ ] Identify branches/releases where fixes already exist to close/ignore duplicate findings, time: within next sprint
+
+• DevOps/Platform:
+  • [ ] Schedule August monthly release window for Spring upgrades; assess feasibility for earlier drops, time: by end of current sprint
+  • [ ] Set up a recurring monthly export-and-diff workflow for farm/form outputs (manual or scripted), time: within 2 weeks
+
+• Security Team:
+  • [ ] Validate that initial scanning baselines are up-to-date and confirm notification channels for new “breaks” (email, farm/form), time: EOW
+  • [ ] Reassess any legacy credentials (e.g., Genius-related) and remove if unused, time: within next sprint
+
+Transcription
+
+00:00:06 - 00:01:17 Unknown Speaker:
+
+Do we rely on somebody sending the excel and... Sunil and Priya are going to track. However, let's not rely on them. Let's basically be proactive from our perspective. Yeah, but yesterday on the email I see that ITC, TSP, GSH is not impacted with the frontier. Let's just say now see. Basically, project frontier may primarily to be exploitable plus non-exploitable. Wallah Jira's, I mean, have especially Spring Security web, Wallah, that we know of, right? Those. I think we have to basically take care of it. See some of it for the some of it we have taken care of. I think only until Spring Boot version 3.4. 19, right? But it's life is only till September. So technically, initial scanning point of view, it will not show up, but we should plan that also subsequently during August,
+
+00:01:18 - 00:02:50 Unknown Speaker:
+
+September or Q3 timeframe to get that upgraded or even before any, if at all possible, even before that, during any of the monthly release. For example, I think August, let's say, right? We should target that. So apart from, so you have to just filter, you know, right? My application ID and the other two, right? V1, V2, whatever, right? But apart from that, if you go to the engineers page, so I would say scan this. Let me add it in that group. Yesterday in the team meeting, right? So, there is a P1 S4 that has been created to track all the applications having their services, which has a potentially impactful vulnerabilities with respect to Spring Security Web. Uday was telling you that there is some program where JP Morgan is also part of it and we are getting early access before it is GA.
+
+00:03:05 - 00:04:35 Unknown Speaker:
+
+Detecting and exploiting vulnerabilities. Okay, so they like, they got together these 10 companies and, uh, the guys. Anthropic said that we will give you early access to it and you guys can go about fixing your vulnerabilities, uh, ahead of time. So these vulnerabilities are identified by, UH, cloud mythos. Once this goes out, once it is out in the open, vulnerability detection and exploitation will happen at an exponential rate. Okay. That I get it. My point is, what we are fixing now, is this being discovered by Mythos or we have discovered it? No, basically we have been told that, I don't know who is running the... Highlight that your spring security needs to be upgraded because of the Frontier program. This has come as a break. Now. Fix something else as well.
+
+00:04:35 - 00:05:33 Unknown Speaker:
+
+There is a probability that we will get lots of more things to before Gab. If they are giving that model for DP Morgan to test that they will run across all the applications, right? They must be doing it right now. In fact, some of these also would be the outcome of that. Only they must be releasing this, releasing the brakes, probably in certain priority order, I, I would assume, but they must be doing it. And and you see, there's another new change process has also come. No, uh, no, like you can go and deploy any break related to Frontier in production. Lots of things are happening across this project frontier. Our objective is that whatever is related and reported to us regarding those securities, uh, stuff, we we clean them up and get ready with.
+
+00:05:33 - 00:06:37 Unknown Speaker:
+
+So we'll get a mail for the notification or how we'll get notified that this is breaking and we have to fix it. So two things, two things. Farm is one part. This is my subset, okay for the respective Spring, Boot version, etc. As in terms of the fixed version, right? However, we also need to. That's what we have been advised because we know our services, so we should also. Need to be mindful .  Not just for the sake of vulnerability, but in general also to keep it upright. So this could be an opportunity to do that upgrade quicker this year, like now literally. Okay. And the proposal is because of the confusion that we open the farm. There are lots of items and we know that. Let's search something.
+
+00:06:37 - 00:07:29 Unknown Speaker:
+
+Is it possible that we take a baseline of the dump of all open, put it somewhere? Okay, and next time when we talk and visit, we just talk after that, like, Okay, these are the new ones that has come, let's focus. I don't have a solution, I don't know how to do that. I would want exactly the same thing, and this is the first thing I had also asked, I think, in one of our discussions some time long back, right, when we started this weekly review. I also wanted it, but I don't know how to do it. You will have to explore, I think. What you're asking is ready-made, I don't know. You can play around and potentially if you can filter then you can export it into something.
+
+00:07:32 - 00:09:22 Unknown Speaker:
+
+I just want to ensure that what is new coming, I know it and I start planning what what to do about it. I don't want to get lost in those existing. And I mean, we don't have an option. But to basically maybe track it via V1, V2 sort of thing. I feel otherwise. I don't know. Is exposed through some API, I can come up with some agent that connects and get the list. But why? Tell you what. I can't do one thing. You can just basically maybe download the export for two files and ask the local to do whatever. It will do it for you. You don't need agent for that. That might be easier with a snapshot.
+
+00:09:34 - 00:12:23 Unknown Speaker:
+
+Then it will tell you right if you have just that that is my question reference link so what means that has a solution to that uh somehow i don't know why it does not. So basically, I mean, I don't have the what I'm trying to say is probably on the basis of this. Each month. So, if it is every month, we fix in all the branches for each month. No, no, no. That is not what this is. This is only telling you that Excel is only telling you that whatever release branch certain scan results it has picked up, it has that version or something. But I believe if we have the later release version, right, which has got the fix, then we don't need to worry.
+
+00:12:23 - 00:18:43 Unknown Speaker:
+
+If there are reports, for example, where we have not touched in, say, for example, some of the CGPR reports where we didn't touch. Recently to fix this right so those potentially would have been showing up here. What is the form ID? Can we check what is the current status there? What is the form finding? That is not an issue but it is even you sign it sir and get it done but uh yeah we are working can you scroll on the left and open one of the from break id. So we are still going with that process. If there is any palm break, we are creating our Jira and assigning, right? If it is assigned, then it will work. Yes, we need to definitely, yes. But in the form, I can see there are lots of overview which are assigned to April and May.
+
+00:18:43 - 00:21:18 Unknown Speaker:
+
+So are we not revisiting them? Jira for all 300 issues. So, I used one jira and changed the subject to excel and linked to one of them. But others will not have, it will be tracked from one. This is how you do it when you have lots of similar kind of things. When there are individual ones, individual ones, we can still follow the same process, create jira and assign. Form, right? So, you can just get it created from here and then make sure that you just assign the correct sprint and the team so that it shows up in the backlog and just attach it. Assign for next sprint starting tomorrow. So, let's assign them for next sprint and then so that we can. That is what we are saying. What is this. What is this?
+
+00:21:19 - 00:24:10 Unknown Speaker:
+
+What is this? What is this? What is this? What is this? I know it looks like, uh, that password was, uh, used in uh, genius. It looks like used in Genius long time back. Maybe it is not in use now. A underscore KP Or is that this call actually like, primarily for project frontier related stuff? Only GPMC Farm Rick issues?
+

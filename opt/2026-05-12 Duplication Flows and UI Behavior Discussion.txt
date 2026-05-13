@@ -1,0 +1,165 @@
+2026-05-12 Duplication Flows and UI Behavior Discussion
+
+Creation Time: 2026/05/12 19:43
+
+
+📅About Meeting
+
+• Date & Time: 2026-05-12 19:43 (Duration: ~17 min 38 sec)
+• Location: No relevant content mentioned
+• Attendee: Vinny, Ashish, Pete (absent), Alex, Ravindra, Rahul, team members (names not fully captured)
+
+📒Meeting Outline
+
+Duplication flows and UI behavior
+
+• Duplicate with data (checkbox selected)
+  Team aligned that tooltip(s) and field disabling apply only when the user selects “Duplicate with data.” In this case, certain fields will be disabled and helper texts/tooltips shown per Figma. The run details tab should be visible even while the model remains in Draft after duplication with data.
+• Duplicate without data (checkbox not selected)
+  No UI/behavior change needed; it should continue to work exactly as it does today. No tooltips or disabled fields for this path.
+• Tooltips and conditional disabling
+  Tooltips are displayed only in the “duplicate with data” scenario to explain disabled fields and constraints. “Enable everything” clarification was corrected to mean enable per current behavior for “without data,” and apply restrictions for “with data.”
+
+Run Details tab logic and backend considerations
+
+• When to show Run Details
+  Agreement that Run Details should be shown for duplicates created “with data,” even if the status is Draft. Do not rely on a “success” status to render Run Details for this scenario.
+• Flag vs. inferred state
+  Discussion on whether a backend/UI flag is required to control Run Details visibility and other UI states. Ashish proposed a flag for quick UI determination (lighter initial API payload) rather than waiting for full Run Details data. Counterpoint suggested data presence (copied tabs/data) and existing RPT Reference ID could implicitly indicate “with data.” Conclusion: treat this as an implementation detail between UI and API; create a backend story only if needed during implementation.
+• RPT Reference ID usage
+  RPT Reference ID will exist for both duplication paths. It alone is insufficient to distinguish “with data” vs “without data”; additional signal (flag or data presence) may be used to control Run Details/tab rendering.
+
+User stories, automation, and refinement
+
+• Current user stories
+  Two small UI stories will proceed now; remaining items will be refined once Pete is back. Team to vote/confirm user story readiness and impacts.
+• Automation impact
+  Existing automation needs enhancement to cover the “duplicate with data” scenario and related UI conditions. Team acknowledged potential impact and will update tests accordingly.
+• Backend story (conditional)
+  If a flag is needed to control Run Details/tab visibility or persist “copied with data” state, a backend story will be created. For now, proceed with UI story and verify during implementation.
+
+Release planning and environments
+
+• Release timing
+  Not targeted for June 2 production; plan toward a later release (mentioned as September release window for second-gen plugin).
+• UAT to Production policy
+  Whatever is in UAT is what goes to Production; no additional features beyond UAT for this train. Defects may still be addressed.
+• Code freeze and branching
+  Keep a production-ready copy of main; last UAT release is the production candidate. Coordinate push to production; prepare activities and checklists in advance.
+
+Migration and production readiness
+
+• Migration report
+  Expectation to have a migration report for existing data when releasing second-gen changes; plan to discuss details once the demand is scheduled.
+• Production preparation cadence
+  Rahul to schedule recurring calls (every 1–2 days) for production preparation over the next ~3 weeks. Ravindra to share the list of items included in second-gen for production alignment.
+
+📋Overview
+
+• Tooltips and field disabling apply only to “duplicate with data”; “duplicate without data” remains unchanged.
+• Run Details must be shown for “duplicate with data” even in Draft; do not gate it on success status.
+• RPT Reference ID exists in both flows; additional signal may be required to distinguish flows—decision deferred to implementation (potential backend flag).
+• Two small UI stories proceed now; remaining items to be refined when Pete returns.
+• Test automation must be enhanced to cover the new “duplicate with data” behavior.
+• Targeting a later production release (not June 2); align UAT content with production, maintain production-ready branch, and handle defects as needed.
+• Prepare migration approach/report for second-gen; set up regular production-prep calls and share the second-gen scope list.
+
+🎯Todo List
+
+• Vinny:
+  • [ ] Share/update Figma for the duplication flows (with/without data) and tooltip/disable rules, 2026-05-14
+
+• Ashish:
+  • [ ] Draft proposal for UI/API interaction to determine Run Details/tab visibility (flag vs. inferred from data), 2026-05-16
+  • [ ] Identify automation test cases impacted and list needed enhancements, 2026-05-16
+
+• UI Team:
+  • [ ] Implement two small UI stories for duplication behavior per Figma (tooltips, disabled fields, Run Details visibility for “with data”), 2026-05-23
+  • [ ] Validate no changes are introduced for “duplicate without data,” 2026-05-23
+
+• Backend/API Team:
+  • [ ] Evaluate need for a “duplicated_with_data” flag in the model payload; if required, define schema and persistence approach, 2026-05-20
+  • [ ] Expose/confirm RPT Reference ID handling for both flows and ensure Run Details data retrieval supports Draft duplicates, 2026-05-20
+
+• QA/Automation:
+  • [ ] Enhance automation to cover “duplicate with data” path, including tooltip presence, disabled fields, and Run Details visibility in Draft, 2026-05-27
+  • [ ] Regression to confirm “duplicate without data” path remains unchanged, 2026-05-27
+
+• Pete:
+  • [ ] Participate in refinement for the remaining two items/stories upon return; confirm scope and acceptance criteria, 2026-05-20
+
+• Alex:
+  • [ ] Align on migration report requirements for second-gen changes; draft outline, 2026-05-24
+
+• Ravindra:
+  • [ ] Share the list of features/items planned for second-gen production release and current UAT scope, 2026-05-14
+
+• Rahul:
+  • [ ] Schedule recurring production-preparation calls (every 1–2 days) and circulate agenda/checklist, 2026-05-13
+  • [ ] Confirm code-freeze policy and branch management plan; ensure last UAT build is tagged as production candidate, 2026-05-15
+
+• Release Manager/DevOps:
+  • [ ] Maintain a production-ready branch from the last UAT release; prepare deployment plan and rollback strategy, 2026-05-20
+
+• Product Owner/BA:
+  • [ ] Confirm acceptance criteria for showing Run Details in Draft when “duplicate with data,” 2026-05-15
+  • [ ] Create backend story for flag persistence if implementation confirms the need, 2026-05-20
+
+Transcription
+
+00:00:02 - 00:01:02 Unknown Speaker:
+
+Only if duplicate. Then only this tooltip will be there, otherwise tooltip will not be there. Correct. Okay. But only if duplicate in the scenario where we don't copy the data. Right, Vinny? Yes. But if we don't want to copy the data, then the other duplicate, we don't need this. Yes. We should enable everything. Okay. Oh no, sorry, I didn't get on this one, sorry, so I see. So you have two scenarios, right? When you're duplicating, there is a checkbox, small checkbox, when you're naming it, right? That's what we showed without copy, so when it is not copy without copy, yeah, this one duplicate with the data. Then only these conditions will come to disable certain fields. And then having these tooltips, okay. But if you are duplicating without the data, it should work as it is saying, like how it is working currently.
+
+00:01:02 - 00:05:09 Unknown Speaker:
+
+You don't need any changes there. Oh, yeah, got it. Any other questions here? Yes. Can you show me that user story? Ready? One second. Yes. There are six responses I could see. Team, please stop multitasking for some time. Please participate. Your story. I think you people can vote here. Getting impacted, the automation which is already there in place? Is there any impact? We need to enhance this scenario, but let them take a choice. But this is a scenario basically, right? So we need to enhance automation for this scenario. Okay, we can stop here for today. We can refine the other two things once Pete is back. So let's do it later this week. But for now, it's just those two small stories, okay? Any questions regarding duplication at all? Any other thing we need to check with the business?
+
+00:05:11 - 00:06:25 Unknown Speaker:
+
+Suggestions, concerns, anything? I have one thing. For the one that we discussed on the earlier one with that check mark of copy, a package change will also be required, right? Because today if I select something as a duplicate one and I mark it as a copy one, tomorrow if I come back again as a fresh start, Again, those fields and those attributes, the messages we were seeing, those should be maintained, right? So apparently that has to be flagged somewhere. The flag that has to be popularized. When we are duplicating, we are giving that checkbox, right? Correct. So that checkbox, and on the basis of that checkbox, we are changing that icon and how the things have to go, right? So we need to save that flag at somewhere that the copy has to happen or not for a duplicate one in the backend.
+
+00:06:25 - 00:07:57 Unknown Speaker:
+
+So because tomorrow if we come on a fresh screen and select the one that we created with the duplicate and a copy selection, We have to show the same things, right? So, back and change to get the flag, to map the flag has to be there or store the flag somewhere. Correct, correct. That's implementation, I say, so you can discuss. That is why we need that story beforehand. Yeah, I'm sure. I'm sure. I think we're confusing a bit here, Ashish. So it's not dynamic, right? It's always static. When you're duplicating the checkbox, what you enable, what not you enable is static always. So it can't be handled in the UI. No, I mean, but then what if I come... Sorry, Vinny, can we share the Figma again? Has to be stored somewhere, right?
+
+00:07:57 - 00:09:00 Unknown Speaker:
+
+So if I create some model, name a duplicate model with this selection. On the basis of that, I'm showing. Those are like, helper text and everything changed, right? So tomorrow, if I again come back as a press start and open the one that I created with this selection, I should keep on seeing it the same way. Once you select this, based on this flag, we are going to either copy all the tabs or not, right in the model, including the tabs. Then that is a duplicate with the data, right? Why do we need to maintain a separate flag association? He keeps it as the edit state and come back to it, that's what you want. Does the next and everything who happens? You will come to this point only once correct, only once you selected duplicate with data right, and then continue.
+
+00:09:00 - 00:09:45 Unknown Speaker:
+
+And then backend what we are doing when you, when you send this file to backend? What we are going to do it. We are going to copy the the eight tabs data as well, right, right, and we need to load that also, right? You need to get back that data and show it in the UI, right, the wrong details you need to show. How are we showing the run details now? How are we thinking the run details tabs to show? We are showing it by when we are duplicating we are creating an attribute which is RPT reference ID. So that is something that like for example from the one model I am creating an RPT reference ID attribute is getting generated. RPT reference ID will be there for both scenarios. Right.
+
+00:09:45 - 00:10:31 Unknown Speaker:
+
+Whether we check the box or not but we need to separate it out. Details tab will show up only when you select This flag here, right? So that is what I'm saying, that this this flag has to be there if we don't have this flag again. I'm saying you have the run details at all the seven tabs. We copied the data. That data itself indicates that you selected. With this. Why do we need to store separately? If that, I got it. What he's trying to ask are the run details we are showing on basis of status? Suppose then only we are showing run details. No, no. Where is the status? What status rather we are talking? We did not even talk about it. We did not even talk about it.
+
+00:10:32 - 00:11:21 Unknown Speaker:
+
+On the normal flow, if the flow is submitted, then only status is success, then only we are showing the run details. We are not talking about that scenario. We are talking about duplicate scenario. On duplicate, the status will stay as draft. So, in that case, how will we... We are not showing the run details. If it is a duplicate before submission, we should show, right? That's what we are talking about. We should show that we have not shown so far. But when you duplicate the RPTV data, we need to show the run details. And then it gives us 10 tabs, right? Yes. But that won't involve there. We should not depend on the success status, right? To show the run details? 10 hours dependent on success status. So we need to see how we can.
+
+00:11:21 - 00:11:59 Unknown Speaker:
+
+Modify that. Agreed. The run details will be there even if it's a draft but then the point is these are two separate calls, right? So the first call is just getting that model which is a smaller one. Getting a flag over there is much more easier for us to show that run details instead of waiting for that run details data to be there and then to figure out if the tab has to be shown or not. So that is my point but let's try the one that... That's an implementation, so what you're asking Ashish is to, we need a flag to show Run Detail staff. I feel so. Yeah, I feel so there should be one flag for this one.
+
+00:11:59 - 00:12:43 Unknown Speaker:
+
+That is an implementation between UI and API, that we can talk, Ashish, but since we need to hear, and this is a UI story, do we have any questions from the user? I felt that there has to be a story that the backend, like the field has to be there, but since we're saying that, we'll just verify with the implementation. Then we can maybe create a user story later on. Yeah, if needed, we can create it for sure. But so far, for when, do we have any questions on the requirement perspective? That's why we need to consider it now. Do we have any questions related to the user activity or the requirement perspective? We are clear, right? Whether the checkbox is enabled, checkbox is disabled. Yeah, we're just doing the user story.
+
+00:12:44 - 00:13:30 Unknown Speaker:
+
+So I thought that if we need a user story, we will create it as of now, like in this current form only. But we will check it, stick with it later on. Yes, sure, sure. We can check if required on the backend side. Sure, sure. We will go ahead and create it. No worries on that. But my point is, I thought like we already handled the show the run details with the enable disable the tabs when you copy with the data, right? No, no. That is what we need. Yeah, so no problem. Yeah, because there is already story to show the data, the run details tab, right? Yeah, part of that we should have, if we need it, we can store it. We have API story, I need a UI story.
+
+00:13:30 - 00:15:09 Unknown Speaker:
+
+We are still discussing whether we copy everything or we can make it there and so on and so on. We are still discussing other, but we already have the stories to show the run details tab. Right? Part of that, if we need it, we can have a flag to store it. Right? Okay. Got it. Yeah. Okay. Anything else? I have a question. Are you going with this version? Is it going in the second year of the plugin? So whenever it goes to production, like we will go with just one one, right? Or more than one, first time deployment will be with just one version. So you are clear, right? It's not going in June 2nd production. Look, this is still going and we can take it in the next print. So it is, um, and then it takes practices.
+
+00:15:12 - 00:16:16 Unknown Speaker:
+
+I mean September's release. September's release? Okay. Yeah. Okay. Then that time we'll have migration report also, right? To move all the existing data to our channel. Yeah. Yeah, Alex. Yeah, we can discuss the plan. Okay. But once we schedule the demand expense, then we can discuss and if we need any jobs, we can... And Ravindra, do we have the list what all is going on with your second gen? Yeah, yeah. Whatever it is in the production, I mean, UAT, it should go into the production, but I'll share it, yeah. We need to prepare for production also, Rahul. I'm going to schedule a call every other day or two days for preparation for production because we have pretty much three weeks, nearly. So, we'll start work on it. I'm already working, preparing the activities.
+
+00:16:17 - 00:17:10 Unknown Speaker:
+
+If you can tell us when we should freeze our code here. No, no, the code freeze is already, like, whatever we release to the UAT, that is going to the production. We are not going to release anymore. Yeah. Okay. Yeah, the last release to UAT should go to the production. That's all. Okay? But any defects comes in, we need to take care, but we can discuss. You should keep a copy of main for production and ready. Yeah, yeah. And then someone will push. Yeah, sure. We need to make sure. Okay. Any other questions? Nothing from your side? We're good?
+

@@ -1,0 +1,165 @@
+2026-05-04 Consolidation of Tools and Code Standardization
+
+Creation Time: 2026/05/04 15:03
+
+
+📅About Meeting
+
+• Date & Time: 2026-05-04 15:03–15:23 (Duration: 1225 seconds)
+• Location: No relevant content mentioned
+• Attendee: Anish, Mayank, Ravi, Karan, Renu, Mahesh, Pallavi (for follow-up), teams working on agents CL, TRV, DT, DL verification, Live Devices; others not explicitly named
+
+📒Meeting Outline
+
+Code standardization and tool consolidation
+
+• Current fragmentation across agents
+  The team acknowledged that multiple agents have separate, duplicative tool files and helper methods (e.g., Baganizer access, test tracker, Topdate, Sponge), causing inconsistent function names, API call wrappers, and redundant code that will not pass higher-level reviews (LGT/engineering review).
+
+• Move to a single shared tools module
+  Agreement to consolidate common utilities into a central tools folder/module with a dedicated build file. Everyone should use shared methods rather than creating agent-specific variants. Even agent-unique tools should be hosted in tools to enable reuse later.
+
+• Central documentation and ownership
+  A shared document will list available tools, conventions, and usage examples. Karan to initiate the doc, covering which ports/agents use which tools, function naming patterns, and integration notes so teams can align and avoid divergence.
+
+UAT, development status, and sequencing of changes
+
+• Agent readiness and code review status
+  CL code review completed; DT expected complete in 1–2 days; DT and TRV targeted by Wednesday; Live Devices and DL verification also cited as near-ready. Some teams remain mid-development.
+
+• Change window alignment with UAT
+  Teams with no active UAT/development can begin refactoring to shared tools immediately. Teams in active UAT may defer refactoring to avoid showstoppers, then adopt changes post-UAT.
+
+• Staged rollout and follow-up CLs
+  Current deployments can proceed as-is, followed by refactoring CLs to migrate to the common tools. Plan to start with the first four agents that have completed development and code review to validate the consolidation approach.
+
+Governance, review, and escalation planning
+
+• Orcas guideline and code review consistency
+  Code should align with Orcas guidelines; a pass through code review is expected so shared code can merge cleanly into each agent’s framework. Past reviews were agent-specific and did not fully cover commonization; the new pass will.
+
+• Preparation for LGT/engineering review
+  Redundancy must be eliminated before LGT; engineering will scrutinize code quality, performance, and duplication. Target is to clean up within 1–2 weeks ahead of review.
+
+• Escalation to Pallavi with plan and effort
+  Before approaching Pallavi for timeline adjustments, the team will compile a concrete plan: scope, concerns, required effort, and proposed timeline extension (if any) to implement the shared tools and refactors.
+
+Build and technical considerations
+
+• Separate build for tools
+  A separate build file for the tools module already exists. Open question on build size/line count will be revisited after analysis; growth is acceptable if it improves consistency.
+
+• Repository structure and folder usage
+  A common folder exists outside the agent section and was recently moved, but not fully adopted. Action is to start using it for all shared utilities and ensure communication so others can leverage existing code.
+
+• Agent-to-agent collaboration
+  Agents using the same tool must align on identical code paths and method names. Owners should proactively sync and avoid bespoke wrappers. Communication channels should be used to announce new/updated shared utilities.
+
+📋Overview
+
+• Consolidate all common utilities into a central tools module with a dedicated build; stop creating agent-specific duplicates.
+• Begin refactoring with agents that have completed code review (CL, DT, TRV, DL verification, Live Devices as applicable); others follow after UAT to avoid risks.
+• Create and maintain a central document of tools, conventions, and usage; Karan to initiate and coordinate inputs.
+• Prepare a concrete consolidation plan (scope, effort, risks, timeline) before discussing timeline needs with Pallavi.
+• Aim to remove redundancy and align with Orcas guidelines within the next 1–2 weeks to be ready for LGT/engineering review.
+• Continue current deployments; submit subsequent CLs for refactoring to shared tools.
+
+🎯Todo List
+
+• Karan:
+  
+  • [ ] Create the central tools documentation (inventory of tools, naming conventions, integration guide, owners), initial draft by 2026-05-07
+  • [ ] Coordinate inputs from all agent teams and publish v1.0, 2026-05-08
+
+• Anish (coordination), with CL/DT/TRV/DL verification/Live Devices owners:
+  
+  • [ ] Kick off refactor for first four agents to adopt shared tools, start 2026-05-06, target completion 2026-05-13
+  • [ ] Submit follow-up CLs for refactoring after current deployments, rolling basis through 2026-05-13
+
+• Ravi and agent owners (CL, DT, TRV):
+  
+  • [ ] Complete code review alignment with commonization focus, by Wednesday (2026-05-06)
+  • [ ] Begin immediate migration to shared tools where UAT is clear, 2026-05-06 to 2026-05-10
+
+• Mahesh:
+  
+  • [ ] Ensure tools folder and separate build file are ready and documented for team adoption, 2026-05-06
+  • [ ] Move/merge existing agent-local tools into the central module and deprecate duplicates, 2026-05-10
+
+• All agent teams:
+  
+  • [ ] Identify duplicate utilities and propose consolidation PRs to tools module, list items in Karan’s doc, 2026-05-08
+  • [ ] Align on function names and API wrappers for shared tools; avoid bespoke methods, ongoing, first checkpoint 2026-05-09
+  • [ ] Communicate tool changes in the central doc and team channel; tag impacted agents, ongoing
+
+• Renu (with Anish):
+  
+  • [ ] Draft the plan for Pallavi: objectives, scope, risks, effort estimates, and any requested timeline extension, 2026-05-08
+  • [ ] Schedule discussion with Pallavi after plan is ready, 2026-05-09
+
+• Quality/Engineering liaison:
+  
+  • [ ] Define readiness checklist for LGT/engineering review focused on duplication, performance, and Orcas compliance, 2026-05-08
+
+• All:
+  
+  • [ ] Continue current deployments; ensure refactor CLs follow without blocking UAT, ongoing through 2026-05-13
+
+Transcription
+
+00:00:03 - 00:01:01 Unknown Speaker:
+
+And then we can map out, okay, for example, if someone is using Baganizer, as in me, then I can share my Baganizer code with them. Because I think right now, since we have to wrap up the development, everyone must have written their own separate code to even access, let us say, Baganizer. So function names must be different, API calls name must be different. So I don't know if we do right now. Scope the existing flow of UAT and development deadlines. So this maybe others can give the point. Yeah, so yeah, um, yeah. These are the concerns that we have, I think, uh, because, uh, my concern is now it's okay. We have done this region wise, we have done that, but when we send this for review, okay, they may ask.
+
+00:01:03 - 00:02:35 Unknown Speaker:
+
+Implement other way, if that's what your time. Also, we need to reset to this, right? See, uh, we are not sending it to them. Uh, in few week, okay, maybe one or two weeks. Yeah, yeah, okay, so let's do it like that, we can plan the change. Okay, you can, can keep it ready once your UAT, if your UAT is completed, then you can, of course, use that change change your code. If your UAT is going on or any development is going on, you can wait. We don't want any showstopper. But Ravi, my point is we definitely start implementing that. So currently what the code review that we have done is right yes um see anyways. It's CL, TRV and DT. DT will be completed in one or two days. CL is already completed.
+
+00:02:36 - 00:03:27 Unknown Speaker:
+
+DT and TRV will be completed on Wednesday. Okay, so you can make the changes as you don't have anything going on. Others, if there is anything going on, you can wait. You can do it later. But for these three parts, we can do, we can make the change. And whoever is implementing, so whoever is, so currently there are some agents, some are in progress, right? So they also start implementing these things. We should, everyone should do the same thing, right? Anish, one suggestion from Mayank. Yeah, sure, just. So what the creative parts can do is like, there are multiple tool files, okay, for some agents. So we are like, They have organized it in that way.
+
+00:03:27 - 00:04:26 Unknown Speaker:
+
+So now everyone can start like, so, coming up with one single tool file later on, like, once everyone gives the single tool file, one can sit and verify and put it in that way, one tool file will can happen in that way. Yeah, those things, I think, uh, exactly, we are just giving an idea how we should. So these implementation, what code has to be written in the common and how we can utilize. Those, you people should have a coordination on that, right? But a prerequisite for that will be to at least know what all ports are working on and the tools that they're using. Anybody can take initiative, okay, and then create a document how we are using. Karan, you can do that. Because we don't have... multiple tools that we are using.
+
+00:04:26 - 00:06:26 Unknown Speaker:
+
+Generally the same tools will be used by different teams. Right? So repeating. Yes, exactly. They'll be repeating in all the ways because will be used. Test tracker will be used. Right? Top date. Top date. Sponge. Yeah. We can maintain one document. And there everybody can follow. And what are all the things you can discuss, what you have written, and what is the difference? So whoever is working on this particular agent tools, you people can connect and you can share it, write it in a common common thing and utilize the same. Nobody initiated anybody? Nobody? Very encouraging man. Literally we have 21 people and nobody is ready to take. And after, Uh, I think we already been started working on those things. And and as I said, once we start these deployments ourselves, we will come to know these types of things.
+
+00:06:26 - 00:07:33 Unknown Speaker:
+
+That can be one thing more so since we are developing using Orcas guideline, so does everyone needs to pass through the code review once with menu. So that if we. Even if we share code, for example, from the Common tool, they should be easy to be merging that to their Orcas framework. So are we on the same page? Code review done? This should also work in has completed the code review. People are still in development three parts as of now TRB, DT, CL, and live devices. These four are down. Yes, everybody else, we have to do the code. So, as I said, the code review was done with respect to the individual agent. So the complete point was where we need to have the common. This was not being discussed at the time, so when I went through these things, I observed this.
+
+00:07:33 - 00:08:36 Unknown Speaker:
+
+Once the core has been submitted, so I have 100. So we have. Can we do that? Or is there any concerns? So that if we have concerns, how can we work on those things? This has to be attached right, and also how much time we need to spend. Someone can take this initiative and come up with these points. So, we can discuss with Pallavi on that. Because these are the things that we brought up. So, to implement these things, we have these concerns. Where this much timeline has to be extended. How we can do that, we can discuss. Right, Renu? Yeah, yes. But, before going into the Pallavi and these things, we have to come up with some plan. Because she will be asking on these things, right? Yes. Anyway, it will not go for LGDN without this.
+
+00:08:36 - 00:09:45 Unknown Speaker:
+
+Yes, exactly. Google will... Anyway, they will be appealing to this aspect. Yeah. Because redundancy of code, no one will allow us to do that. Yes. And there are redundancy codes, I have seen it. Yeah. Okay, then. I need to somebody to maintain one central report. I mean, you can use it similar with the current deployments can be done, but later on after these changes are done, we can send one more CL for this and multiple CLs on this. That's what, whatever the code currently we can be pushing it and we are doing the refactoring and. These things will be done and we'll see it once again. Yes, we can plan it for first four agents, because they are done with the development and code review is also done for that. Yeah, you take the initiative on that.
+
+00:09:45 - 00:11:04 Unknown Speaker:
+
+I can do that. So that because when we go with these agents also, they will be looking into these aspects as well. Because without this, it will not go for LGT. Yeah, anyway, yeah, so that anyway, it will not go for LGT, which we need anyway. We need to do that actually. But, uh, as we are in the early stage itself, at least now we should. Uh, yeah, yes, and even I have discussed with this in the initial stage, I think the common place. And we have created the folder outside the Agent section. But somehow the implementation is not being done. At least we need to start implementing that. Why we are not using that if we already have this folder? Anybody? Same problem. We have moved it last week.
+
+00:11:04 - 00:13:01 Unknown Speaker:
+
+Yeah, folder was moved, but are we using the tools folder as well? Where whatever the tools that you are using here, have you prevented in the foods? No, no, that was not it, the folder contains itself. No, no, that's what I'm saying. Everybody is aware of what we have done, right? If you are silent and you don't get it, you are getting it wrong. Communication also will be available. Whatever, let's say I'm coming amazing. But his code also will be present there and I can utilize less. So that's why I didn't brought up trying, thinking about it. Uh, nothing, whatever, you told me. Yes, there are a lot of redundant codes from everybody, Joshua and everybody we have to get rid of, not be approved, yeah, it will not get approved.
+
+00:13:01 - 00:14:04 Unknown Speaker:
+
+So we are going to the engineering team where they will be reviewing the code and our performance. And all these things will consider all right. And all this will happen in coming two week, one or two weeks, two weeks. Okay, by the time we need to clean up these things, actually okay. So the other reason? I just wanted to have this week today and I want to get your inputs as well on these things. Do you have any challenges? What are other things? So if you can bring up those points, the challenges, okay? So that we can discuss all those things, how we can get it done. First four agents, we should go ahead and start working on it. DL verification, live device, DT and DRE. Because you guys are done with it. Hello?
+
+00:14:04 - 00:16:25 Unknown Speaker:
+
+Is it there? Yes. We are just, you know, we just want, if somebody, if two agents are using the same tool, code should be similar. We don't want the dependent code. You should not write your own method and they should not write their own method. This will fade in the... Yeah, I just connected with Mahesh today morning and asked him to move these tools. And not only adding, it should not, the same cannot be, should be used with other, right? But you should communicate with other agents as well. Using your with your dog. Okay, yeah, any other questions? We are good, right? So in this, yeah, start implementing and just have a discussion on those things. Okay with, uh, these things. And uh, what are all the common agents?
+
+00:16:25 - 00:18:33 Unknown Speaker:
+
+Even though, if it is not common, better to have it, uh, in the tools mode because. Maybe in which case wants to use it, it will be there. Right? On these things, you could have more better view on this as your development, right? Yeah, now mostly it will be a thing in parts. Yeah, no, but then one point, like Maesh said. So will there be two build file, one for the tools folder, which will be entirely used by everyone, one for our own as well? Then, yes, exactly exactly, we always already created a separate build file the tools we have created. Okay, how many lines you may get it? Will it increase more than that? Yeah, yeah, I understood, but I am asking will it increase?
+
+00:18:50 - 00:20:08 Unknown Speaker:
+
+When we when we start analyzing and going going into these things again we come to know we can have a discussion without uh going into those things with the assumptions we cannot. But that is fine. I mean, even if it is increasing that. Any other questions? Yes, yes.
+

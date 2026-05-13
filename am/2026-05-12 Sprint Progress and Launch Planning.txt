@@ -1,0 +1,249 @@
+2026-05-12 Sprint Progress and Launch Planning
+
+Creation Time: 2026/05/12 18:03
+
+
+📅About Meeting
+
+• Date & Time: 2026-05-12 18:03 (Duration: ~32 minutes)
+• Location: Online call
+• Attendee: Sachin, Rachna/Rajna, Ananda/Anand, Athar, Suman, Prithvi, Nirmal, Shravan, Sinduja/Sindhuji, Appa, Shamir/Sameer, Kundan, Poonam, Muskaan, Saurabh, OM, Partner team (SRE/Platform), Others as referenced
+
+📒Meeting Outline
+
+Sprint Health, Scope, and Carry-overs
+
+• Story/task copying behavior and cleanup
+  When copying user stories from previous sprints/spreads, associated tasks were also copied, causing confusion with hours and ownership. Team agreed to delete outdated/copied tasks when cloning stories and correct pointers. Example: prior tasks on stories (e.g., Lulu/Lululemon case) to be removed if already live; some user stories to be deleted if completed.
+
+• Sprint alignment and capacity
+  Team confirmed only one sprint left before launch; most are aligned to API planning. 90% of items targeted by 27 Apr/11 May are done; remaining in progress due to 2–3 day slip from production issues in Task Management. Aim to close remaining build by end of this week.
+
+• Launch scope confirmation (target 8 June)
+  MVP launch scope: Platform tab shows all rules; user can create/modify rules (auto-populate table/variable names via Lumi API), approve/reject; on action, data persists to artifacts table. Existing data migration from DK repository to E3 is required to avoid empty UI. DB creation in E3 and firewall setup pending; both depend on UAT sign-offs and Platform/SRE reviews, which may add 3–4 days delay.
+
+UAT, Reviews, and Environment/Deployment
+
+• UAT timeline and gating reviews
+  UAT planned to start tomorrow or day after; bug fixes in rule creation/update to be closed within two days. Platform review and SRE review may delay launch by ~1 week; mitigating to 3–4 days over target 8 June.
+
+• Environment setup and RFCs
+  DB creation in E3 and firewall setup pending pre-launch; deployments blocked pending RFC scheduling. Port deployment to E3 awaiting RFC tomorrow; expectation to enable file sending in E3 afterward.
+
+• Data migration and visibility
+  Need to migrate existing rules from DK repository to E3 prior to launch; Appa progressing BD analytics DQ rule substitution across E1/E2/E3 and collecting model IDs before production deletion.
+
+Automated SQL Generation (MVP1 → MVP2 Path)
+
+• Current status (MVP1)
+  From artifacts table, flow generates SQL based on check type and places file to SFTP; ingestion from SFTP back to artifacts table implemented with deployments in progress. Most check-type templates done; threshold and valid value templates being finalized. Manual validation step retained: dev validates generated SQL before integration.
+
+• Future consideration (MVP2)
+  Post-validation automation to promote SQL to higher/analytics environment for execution and UAT data checks to be explored later.
+
+Workstream Updates and Issues
+
+• Self-serve / Platform (Athar)
+  • Onboarded AppLink Controls workbasket in E1; config updated; PR shared; query shared to Saurabh.
+  • Dashboard card reorder and removal of “use case” field completed; testing ongoing.
+  • Investigating “In Progress” status filter not working due to status conflicts; multiple alerts reserved under others’ IDs cannot be closed by team; plan to mass-close stale alerts after partner confirmation.
+
+• DQIM and enhancements
+  • Bulk delete and SLS kill enhancement: Phase 1 launched; Phase 2 build starts this sprint.
+  • AFC new enhancement Phase 2 build in progress (Ansi). Not to be tracked under production support; a proper user story to be created and assigned, then remove from support story.
+
+• Quant/Control/Algo
+  • Quantum documentation and optimization requirements being coordinated (Shamir/Sameer) with Anand and Anantrik; call postponed post-DSU; to reconnect today.
+  • Quant customer analytics data moved to production (Appa).
+  • Algo optimization plus testing targeted this sprint; one engineer shifted from Control to parity-one escalation enhancement; multivariate item moved to next sprint.
+
+• Templates and checks (Prithvi/Nirmal)
+  • Threshold template completed; valid value in progress to finish tonight.
+  • Alou/“Aloo” check code changes coordinated; completed and deployed to E1; incident resolved; data available; OM to validate.
+
+• Rule creation/update defects
+  • Athar to coordinate with Kundan; close bugs in two days to start UAT.
+
+• Task management production issues
+  • Data moved to different tab caused delay; fix deployed/closing; residual 2–3 day slip acknowledged.
+
+Backlog, New Use Cases, and Prioritization
+
+• Incoming high-priority use case
+  A new leadership-aligned use case expected for June; to be prioritized over current application controls work if bandwidth-limited; swap stories as needed. RAZY initiative tasks were not on current Excel plan; Seven and Suman to coordinate with stakeholders.
+
+• Existing use cases
+  One use case from Rachna to Suman targeted this sprint; if an additional ad hoc item arises, consider leveling resources (Level/Suman) and add placeholder as needed.
+
+• Story hygiene
+  Delete done E3 production stories (not needed); scheduling tasks can be assisted by IAPA. Avoid using production support bucket for enhancements.
+
+📋Overview
+
+• Team will delete copied legacy tasks when cloning stories; correct effort pointers; remove completed user stories (e.g., live Lulu items).
+• Sprint is ~90% complete; remaining items delayed by production issues but expected to close by week’s end.
+• MVP launch scope confirmed: rules listing, create/modify with Lumi auto-populate, approve/reject with persistence to artifacts; requires DK→E3 data migration.
+• UAT to start within 1–2 days; rule-creation/update bugs to be fixed in 2 days. Platform/SRE reviews may shift launch by 3–4 days past 8 June.
+• E3 DB creation and firewall setup pending UAT sign-offs; RFC for E3 port deployment scheduled for tomorrow.
+• Automated SQL: templates mostly done; threshold/valid value finishing; manual validation remains for MVP1; future automation considered for MVP2.
+• Platform updates delivered: AppLink Controls onboarded in E1; dashboard reorder and field removal done; status filter bug under investigation.
+• DQIM Phase 2 build to start; AFC Phase 2 enhancement in progress under a new user story (not production support).
+• Quant work progressing; optimization to be aligned today; engineer reallocated to priority escalation; multivariate moved to next sprint.
+• Close stale in-progress alerts reserved under partner IDs after quick partner check; mass-close acceptable due to age.
+
+🎯Todo List
+
+• Sachin:
+  • [ ] Confirm launch dependencies and adjust plan for possible 3–4 day delay beyond 8 Jun; communicate to stakeholders, by 2026-05-15
+  • [ ] Approve deletion of completed/duplicated stories and ensure task hygiene across the board, by 2026-05-14
+
+• Rachna/Rajna:
+  • [ ] Create a dedicated user story for AFC new enhancement Phase 2 and assign to Ansi; remove it from production support, by 2026-05-13
+  • [ ] Add placeholder if leadership-priority use case arrives; prepare to swap with application controls, by 2026-05-16
+
+• Athar:
+  • [ ] Coordinate with Kundan to fix rule creation/update bugs and enable UAT start, within 2 days (by 2026-05-14)
+  • [ ] Complete testing for dashboard reorder and use case field removal; raise PRs to deploy, by 2026-05-15
+  • [ ] Investigate and fix “In Progress” status filter; provide closure plan for alerts reserved under partner IDs, by 2026-05-16
+
+• Kundan:
+  • [ ] Support bug fixes on rule creation/update flows and readiness for UAT, by 2026-05-14
+
+• Appa:
+  • [ ] Complete BD analytics DQ rule substitution across environments; finalize model ID collection and safe production deletions, by 2026-05-17
+  • [ ] Validate customer analytics data moved to production and report, by 2026-05-14
+
+• Prithvi:
+  • [ ] Finalize valid value template; confirm merges and deployments, by 2026-05-13
+  • [ ] Coordinate with Nirmal on any residual “Aloo” check changes; ensure OM validation in E1, by 2026-05-14
+
+• Nirmal:
+  • [ ] Support OM validation for the deployed “Aloo” check in E1; address findings, by 2026-05-14
+
+• OM:
+  • [ ] Validate E1 data for the “Aloo” check and share results, by 2026-05-14
+
+• Shamir/Sameer:
+  • [ ] Reconnect with Anand and Anantrik for quant optimization requirements; lock scope and next steps, today (by 2026-05-12 EOD)
+  • [ ] Prepare tasks for tomorrow’s ISTRs based on agreed requirements, by 2026-05-13
+
+• Anand / Anantrik:
+  • [ ] Provide inputs and alignment on quant optimization requirements on call with Shamir, by 2026-05-12 EOD
+
+• Suman:
+  • [ ] Pick up Rachna’s use case for this sprint; confirm if any ad hoc item requires reprioritization, by 2026-05-13
+  • [ ] Migrate Lululemon/YouTube-aligned items to E3 post sign-off; confirm PPT access issue and get replacement, by 2026-05-14
+
+• Platform/SRE teams:
+  • [ ] Conduct platform review and SRE review post-UAT sign-off; target completion allowing 3–4 day slip from 8 Jun, window 2026-06-08 to 2026-06-12
+
+• Deployment/Infra (with Kundan/Sachin):
+  • [ ] Execute RFC for E3 port deployment; enable file transfer to E3, by 2026-05-13
+  • [ ] Complete E3 DB creation and firewall setup after UAT sign-off, by 2026-05-20
+
+• Team (general):
+  • [ ] Delete copied/legacy tasks from cloned stories; correct story pointers/hours, ongoing this sprint
+  • [ ] Close stale in-progress alerts reserved to partner IDs after quick validation with partners; proceed to mass-close if no feedback, by 2026-05-15
+
+Transcription
+
+00:00:11 - 00:01:09 Unknown Speaker:
+
+So Sindhuji? One thing while we are copying a story from, like previous print, the tasks related to that are also copied. So that's the reason. One thing, like the hours are not right, so we are able to change the pointers for that, but the task remains the same, whatever we have copied it. So one thing we can do, maybe when we are copying the story from previous spread or something, we can delete the task related to those stories. Is this what Shravan got it? Shravan, have you added this or is it like previous task? These are previous tasks. Previous one and Sinuja, delete this user story altogether. This went live now. The Lulu man in case, is it? Yeah. I'll assign him different users to view all together. This isn't live yet, Sachin.
+
+00:01:09 - 00:02:38 Unknown Speaker:
+
+We still need to... Hold on. Hold on. What are the changes? It's just the scheduling of the job, right? Correct. Yes, yes. The scheduling would not take more than an hour and a half. Yeah, yeah. Such a new, added new task to your story. Yeah, yeah, I updated my stories. What about you? Yeah, thank you. What about you? Truthfully? Is pretty on the call. I'll come back to him. IFI are these new tasks that you've added. What about you, Nirmal? One I have added and second one I'm adding. Okay. Other yours is new, right? Yes, yes, I have updated. There were a couple of tasks which were copied, so I have updated those to new. Okay, that's something we'll keep in mind. Sprint Um, Sachin, do you have anything? Or can we start with the updates?
+
+00:02:38 - 00:03:50 Unknown Speaker:
+
+Are you guys up here with what needs to be done with this sprint, right? Because we are left with one sprint only, right? So I hope, uh, seeing the user stories, right? Are we on track? Like you guys? Are, you know, able to achieve with whatever has been communicated on the API planning. Sachin, one more thing, like the integration of the modify API that the watchers list and modify rule. That two API we planned for last sprint, but we have to work in this sprint as the API .  So on that, Athar was mentioning that was for update one, right? And the reason being the delay is that there was a production issues on that. Task. Management, right, where the data has been switched to a different tab together, right?
+
+00:03:50 - 00:04:56 Unknown Speaker:
+
+So that took two to three days of effort to close that build, which we are trying to deploy it, but hopefully there will be maybe a one or two days delay. But apart from that, it should be good to close this in a city. So can you bring up that Excel which we initially put together? Let's see, I mean, comparing this print in the next class, let's what, what all I mean, where are we, and how will we complete all of it? Just let's discuss that once. Give me a second, okay, uh, when we are submitting the request, okay, update part. Few changes are going on anyhow. We are planning to start the UAT from tomorrow or day after tomorrow, right? So during the period of UID right, we can close those build also.
+
+00:04:56 - 00:05:50 Unknown Speaker:
+
+Okay, just one challenge that I have seen is that, uh, that platform review and then the SRE review. Okay, that may delay a bit, like a week, okay. Launch date 8th of June, so it may delay maybe 3 to 4 days over there. Apart from that, I think we are on track to close this. OK, so whatever is mentioned to be completed, let us say by 27th April or 11th May. Has all of that been wrapped up? 90%? I would say some of them are in progress. The reason being that task management right that was to be completed, so mentioned three or four days of lag. Yes, yes, yes, that's it. Otherwise, rest, everything is in place. We were able to see the data in the database, uh, the APIS and all are already being tested.
+
+00:05:50 - 00:06:38 Unknown Speaker:
+
+So we should be able to go to close the rest of this build by end of this week. Got it? So, I mean, when we say launch, right, which is marked for eight, two or just three or four days after that as well. Um, somebody like somebody from our partner team would be able to go to the platform. In E3 page where we can create. First of all, see all the rules, uh, create or modify you to view the existing rule. We have to migrate the existing data on it right from on the DK repository, so let me work on that. We have to migrate those data on E3. Because that also has to be added in the plan itself, right? Because there is no point in showing the UI with zero data, right?
+
+00:06:39 - 00:08:22 Unknown Speaker:
+
+Okay Couple of things one is that DB creation in e3 it is pending. Okay firewall setup These are for that one deployment Platform keep you just before this launch of the product. Okay, so let's go back to what I was saying, right? So somebody comes to the platform, opens that tab, sees all the existing rules, clicks add new rule, has the option to fill in those details with that Lumi API, like auto populating table variable names, clicks on create it, Click on Reject or Approve, and once we click on Reject or approve, that data gets flown and gets saved into the artifacts table. Right? Yes, okay, so that much is what we have said for launch. Is there anything else? Uh, no, I think, uh, this is where, uh, this may take time, otherwise I think, uh, uh.
+
+00:08:22 - 00:09:19 Unknown Speaker:
+
+Rest of the thing is DB crease and request. Also, I won't be able to submit. Two are dependent on UAT because they would require those UAT sign up before proceeding to these setup. This firewall setup DB creation in E3. So let's try like as soon as we can, you know, wrap up these things in this print itself so that the next print I can take and plan for the launch. Okay. And then coming to the second part of it, right? Automated process of SQL. Where are we on that? Because there my vision is from artifacts table it should pick up based on the check type. Create the sequel query and push it to whatever bucket, right? Yeah, so again on that. So rest of the check types are done. Threshold. Some of the template are pending.
+
+00:09:19 - 00:11:30 Unknown Speaker:
+
+Okay, those are, you know, some. Did we join the call? Okay, okay, can you go on? Update on that threshold? Check the rest of the one that you are building with. Uh, and that is also getting close. Okay, um, yeah, I'm good with respect to testing and also UID also. Uh, this print only, uh, for these one, and then this, uh, you know? Creating the file out of those requests, sending it to SFT, and then from reading from SFT to saving it to that artifact table, right? So those build also is being done. It's just that deployment is in going on. Okay, and um, I think, uh, we can start that UID also again this week itself. Correct? Yeah, you mean, from the artifacts, it gets picked up and the code gets generated and the SQL file is kept, right?
+
+00:11:30 - 00:12:16 Unknown Speaker:
+
+That part of it. Yeah, yeah, yeah. SQL generates it and then post that any of we have decided to go ahead with a manual approach, right? Like validation from the user standpoint, dev would validate that SQL and then just integrate it into that. Correct, correct. At least for now, yes, yeah, right. For the MVP1, I think for MVP2, we can still think if there's a way to move. As Poonam was mentioning this as well, right? If we can move that code also, like once we have had a look at it. Move it to some higher environment or analytics environment, wherein it can run on actual data and share the UAT details as well. Yeah, okay, yeah, we'll see that, but that's fine. I think for now at least, the plan is just at least till the code creation part.
+
+00:12:16 - 00:13:17 Unknown Speaker:
+
+Okay, so on this one, Athar coordinate with Kundan, right? So we need to close this in upcoming two days so that we can start the UAT. Whatever bug is there in that rule creation and the update. Okay, and on this dqim, uh, like, you know, the build is in progress on in the as mentioned, right? The bulk, delete one. And then the SLS kill is in its gain and enhancement. So for that, like first phase anyhow, it has been launched. The second phase, we will start the build starting this sprint. Okay. Okay. New use case. I don't think we have anything like one use case which has been saved by Rachna to Suman. So that would be picked up by Suman for this sprint. Okay. Actually, Sachin, there is one more new use case coming up if we have the bandwidth.
+
+00:13:31 - 00:14:21 Unknown Speaker:
+
+I think, Sachin, we'll have to prioritize that first. Because I think it's aligned at the leadership level that that has to go in, I think, somewhere in June or something. We'll see that, yeah. I mean, as and when that comes up, right, Sachin, I think let's have a discussion. Yeah, I mean, we can deprioritize the application controls one that is currently available. So we'll swap them. Yeah, because here on self-serve, I have four resources. For resources who are already engaged, and then if I go to this DQIM right again, here, a couple of resources have been engaged, six are gone on. Razy. I have to keep a couple of resources and then, uh, insurance myself and, you know, monitoring the list. So we really don't have bandwidth because we have to close all this.
+
+00:14:21 - 00:15:18 Unknown Speaker:
+
+And then these are any of these are ad hoc tasks which I am already taking care of. Stopping the current one, which Suman is working on. That should be all right. Because, like, you know, few of the production issues, right, like, which you are observing, right, we have to have bandwidth to fix those also. Correct. Yeah. Okay. Anyhow, and then this rule modification and all, like, API is already taken care of. Yeah. And Quantro, like, you know, Sameer... going to get engaged with Anthrax to close it. Yeah, yeah. We'll have this discussion. I think rather than the algo optimization part, I think that also plus the testing part has to be closed, I think. Yes, yes. The same we have planned for the sprint on it. Yeah, yeah. Right.
+
+00:15:18 - 00:16:14 Unknown Speaker:
+
+Just one change is that I'll be suffering to make this enhancement, this escalation as this is the parity one. Okay. So so he would be moved out from control to here, and then, uh, we'll, we'll close that, right? It was an important one, so we just moved out. And, um, can we move this uh, uh, this, uh, multivariant then to the next sprint? Yeah, yeah, that's right, that's okay, okay uh. And Jason, uh, like, uh, the lazy was not being part of this build plan. But, uh, whichever we have communicated, right, we will be taking care of those initiatives. Sorry, can we get such a like a RAZy initiative, right? As those were not particularly right? That's the reason you are not seeing those details over this Excel sheet, okay?
+
+00:16:14 - 00:17:41 Unknown Speaker:
+
+But whatever requirement that you have placed, we will be working with that. So seven and so many would be coordinating with you. Close, that is a RAZY initiative. So no more changes, right Sachin? I think one for an, uh, whatever Rajna mentioned requirement. Will it be covered in one of the stories, or should we add a placeholder? Uh, let's let him build the current one, the one that he's building right now, right? And in case it comes up as an ad hoc request, right? Uh, then we can either leverage level or maybe a summoner based on, you know, the now keep it, got it and multivariate check also should I move it or not? Multivariate type, sum and rule. Uh, is having two story pointer only for the No? Sorry for escalation, he is having three story pointer, right?
+
+00:17:41 - 00:18:49 Unknown Speaker:
+
+That should be sufficient. At least let him do the discovery with respect to the requirement, okay, but his more focus should be on this, uh, escalation. Email one got it and is that you just mentioned only production is pending, E3. Should I delete the story point? No, no. We really don't need story. You can erase this one. Delete it or make it unscheduled. No, this is just you can go ahead and delete it. This has been done. And that scheduling even IAPA can help and just close it out. Top at 6.30. Ansi, can you please start with your updates? Today I was working on the AFC new enhancement phase 2. The build is in progress and no blockers as of now. I have added it in the production support story.
+
+00:18:49 - 00:20:00 Unknown Speaker:
+
+One call out over here, Richna and Ananda, We should not be taking that into and support, right? That's a enhancement request, so ideally we should have a user story for that. This is actually for the enhancement of. Yes, we can add that yes. So, uh, maybe once they add that story, right, uh, we can assign that story to ANSI and then delete this. Production support. Okay, Rajna, once you add it, just keep me posted, okay? Sure, sure, sure. Thanks. Athar? Yeah, hi, all. Good evening. So I have onboarded the new workbasket that is AppLink controls in E1. And I have updated the config and shared the PR, also shared the query to Saurabh to Moisture E1. Enhancement which was mentioned to reorder the cards in the main dashboard.
+
+00:20:00 - 00:20:54 Unknown Speaker:
+
+That's been done, also the removal of the use case field from platform, so that's also been done. I'm currently testing it and I'm looking into the status format, which such in center, where the data is not getting filtered on the in progress status. So since we have a like a conflict of the status which, we are modifying it. So I'm looking status fields, which Sachin asked me to just check on that. So yeah, that's all from my side. One call out, Rachna, you've seen that the task which has been assigned on Muskaan's name, right, that has been closed. Right, right, I told her to close that because what was happening, I was trying to close it on my end but apparently because she has reserved it, I cannot close it, right.
+
+00:20:54 - 00:21:47 Unknown Speaker:
+
+So, I thought please ask them to close it from their side. We won't be able to do it, Rachna. Even you won't be able to do it? No, no, no. As it has been reserved on their ADS ID. Got it. Actually, Sachin, that filter is not working in progress. So it's a little difficult to keep track of what all is reserved right now. I got your point. So just one thing. Let me check the list. If it is a big list, I'll let you know. What needs to be? Closed it out? Otherwise? Should I close all those alerts which are assigned to someone? I think there should be more of such cases. I think this class one should have been there. But you can once confirm, right? So like, just in case there are, I will check with the partners.
+
+00:21:47 - 00:24:22 Unknown Speaker:
+
+Okay, okay, yeah. So I think he might have taken a break. Sure, Shamir. Hi, I'm currently working on the quantum documentation and as well as like whatever the doubts for the quantum I'm just clearing it. And yeah, I have scheduled a call today to work on this. Optimization requirement, like to care that like, yeah, it got postponed after DSU. So yeah, I will connect with Anand and Sachin and Anantrik to get that requirement. Just connect with him today so that you will have work in tomorrow ISTRs, okay? Close it by today. I'm working on the last three service starters. I'll test it in two user story for ANSI, you can check and assign that once. Okay, yeah, sure. I'll load that. Thanks. Hi, Appa. Yeah, hi, Sindhuji. So, from my side, I'm working on the BD analytics, the DK root substitution.
+
+00:24:22 - 00:26:56 Unknown Speaker:
+
+So, that is completed in the E1 and E2 and E3 environment. There are 72 model IDs. Was there so that when I'm collecting the all the DQ rules and before deleting in the production, so that part, it is in progress. And, uh, parallelly, for the uh, quant related one, uh, customer analytics data, we just move to the production environment. Yeah, that is completed. Yeah, that's all about from me, because that would take three story pointers. So we will be covering up those eight story pointers. An even now. Yeah, yeah. I created templates for everything. The PR is reviewed and merged, right? Because I missed yesterday's. I was not there yesterday. Yeah, yeah. But the threshold is completed. Valid value check is what I'm working currently now. I'll finish that also tonight. Sachin?
+
+00:26:58 - 00:28:16 Unknown Speaker:
+
+Aloo Check was something Nirmal was working on, right? Yeah, exactly. But there was some code changes announcement which Prithvi did, and I asked both of them to coordinate and close it, so I think Prithvi has taken that initiative. So that has been completed and deployed to the E1 environment. There was an incident that has been created for the issue. So that has also been sorted out and now the data is there in E1 environment and I have asked OM to validate it. That is number one and then secondly like you know I was working with Kundan on that port deployment to the E3 environment. RFC and due to that we were not able to close it out, those deployment we have RFC for tomorrow, so we'll try to close it again tomorrow.
+
+00:28:16 - 00:29:57 Unknown Speaker:
+
+A few of the code reviews and the, you know, the blocker the team has faced, so I just sorted out those. You would be able to send the file in the E3 environment. Perfect. Thank you. So the task for this will be to get started on them. I got a sign up from Rachana for the benefits room. So I'll the next RFC and I was assigned a task by Raj, so I'm currently working on that. Okay, someone? Yeah, hi everyone, actually, what, you know? I study how she had me like a PPT, and I want you please explain. Uh, yeah, yeah, I'll connect today. So yesterday I was in some meetings in the evening, I could not connect, but, uh, let's connect today and I'll give you an overview. Also. Uh, lululemon one, right?
+
+00:29:57 - 00:31:06 Unknown Speaker:
+
+That also you can now that is the YouTube one for me, like, don't mix that Lululemon and YouTube one. So I've gotten the alignment for both. I'll provide sign off to you as well on so you can migrate that to to E3. Yeah, sure, because I am waiting for that, only that, uh, YouTube one. And I have started because I have gone through yesterday this Excel because I have a.I think there is a six rules. Is there one PPT that is not, uh, opening for me? Okay, let me check on, start working on on the this new task. Synergy. Yeah, sure, someone thank you, anything else? Team? Uh, just, uh. I have shared you the list, those are in progress, right? Oh, as you have asked, I'll.
+
+00:31:22 - 00:31:57 Unknown Speaker:
+
+I don't think we'll get input on such old alerts from the partners now, so let's just close it. Okay, I'll do that. Yeah, thanks. Anand, I'm searching like when we can connect on this like with Antarek. I think we can continue on this. Rest of us can drop off, right, Sachin? Yeah. Yeah, thank you.
+

@@ -1,0 +1,223 @@
+2026-05-05 Engineering and Delivery Updates Meeting
+
+Creation Time: 2026/05/05 18:04
+
+
+📅About Meeting
+
+• Date & Time: 2026-05-05 18:04–18:27 (approx. 23 minutes; session duration 1397 seconds)
+• Location: No relevant content mentioned
+• Attendee: Sindhuja, Anand (joined later), Ansi, Kundan, Sameer, Pruthvi, Ayappa (Appa), Sachin, Rajendra (mentioned), Rachna (mentioned), Jason (mentioned), Anindya (mentioned), Dejna (mentioned), Sandeep (addressed), Platform Team (mentioned), Pack Engine Team (mentioned)
+
+📒Meeting Outline
+
+Delivery and Engineering Updates
+
+• DQI bulk update validation (Ansi)
+  Implemented validation logic for true-positive/false-positive scenarios in DQI bulk update; facing build errors when running in A-scor/A-score environment and actively fixing.
+
+• Critical vulnerabilities and package upgrades (Unnamed speaker)
+  Addressed critical vulnerabilities flagged by platform for QTrap workspace packages; upgraded outdated packages, incorporated Sachin’s review comments, and handling minor merge conflicts before closing.
+
+• Prompt and build: integrate getRuleByUseCaseId (Task ...0328)
+  Completed table-1 earlier; integrated getRuleByUseCaseId in same file; local testing in progress with minor compatibility issues to resolve before pushing.
+
+• Create API/service bundle and PR to double-crunch (Kundan)
+  Encountering issues with create API/service bundle; preparing PR from feature to double-crunch branch, modifying code and deploying to event environment; committed to provide status within 30 minutes on-call and was asked to complete immediately.
+
+• DQ rules data quality and missing tables across envs (Sameer)
+  Continuing work on remaining DQ rules not yet in production; coordinated with Anand on noted data issues; identified several DQR IDs where source tables are absent in one environment and only present in EP, requiring testing in EP; will sync with Anand post-call.
+
+• Template integration and reviews (Pruthvi and peer)
+  Waiting for review comments; connected with Pruthvi to integrate templates with framework; will reconnect after call.
+
+• Story point adjustment and production support (Ayappa)
+  Adjusted story points: reduced one item from 5 to 2 due to scope (quantum work mostly data support and a single use case); added 2 points for ad-hoc production support tasks from Rachna (rule description updates).
+
+• Threshold-check templates completion (Unnamed contributor)
+  Completed all threshold-check templates and code; will raise PR; assisting others with local environment setup issues; will continue working after the call; asked to update task details with exact number of templates.
+
+• Insurance build, ARV docs, platform coordination (Sachin)
+  Progressing insurance use case build; reviewed ARV documentation; set up pre-ARV review with platform; following up on bulk release and access issue; coordinating with Pack Engine Team on metadata updates; designing consolidated escalation email (B40/B45) per Anand's ask, aligned with Rajendra; awaiting Anand’s info to finalize.
+
+• Bulk role deletion requests (Sachin + Sindhuja)
+  DQ role bulk delete raised to platform; interim approach: local backup then proceed with deletions; received additional 50–60 roles to delete—details to be shared with Sachin.
+
+Testing, Environments, and Releases
+
+• E2 testing complete; move to E3 (Owner not named)
+  Completed E2 testing for four tables; emailed Jason for approval to proceed to E3; requested Sachin to raise RFC and additional ticket for QTran benefits data; pending XCom data insertion by Ayappa to proceed with testing; target to move 24 rules to E3 tomorrow (RFC scheduled).
+
+• Terminology and ticket hygiene (Sindhuja guidance)
+  Replace “Silver/Palladium” terms with “E2 testing” in Lumi context; request Jason to validate data before approving via email to avoid rollback risks; ensure accurate story point tracking (2-point stories should not exceed 16 hours).
+
+• Capacity note on benefits data dependency
+  Morning E2 done; monthly load waits for dependent task completing tomorrow; capacity to be adjusted given 24 hours logged on a 2-point story; plan to advance 24 rules to E3 with tomorrow’s RFC.
+
+Execution Discipline and Task Closure
+
+• Close open tasks today (Sachin to team)
+  Reinforced expectation to drive assigned activities to closure today; escalate blockers early; specific ask to close template work needing preface assistance; offered to connect if human test creation issue persists; clarified actor ID not needed and to verify task management.
+
+• Open notes/status list by EOD (Kundan)
+  Reiterated commitment to deliver list of open notes by EOD and share via email.
+
+Tooling and Process: Rally to Jira Migration
+
+• Phase 3 schedule and training (Sindhuja)
+  Migration moved from May 18 to June; team to complete assigned Jira trainings from email during the extension; suggested creating a Confluence tracker to log completion status per individual.
+
+Design Discussion: Timestamp/Filter Logic
+
+• Timestamp column selection and query structure
+  Issue: some customer marketing candidate tables lack updated_at; only have run_date.
+  Decision: use run_date as the timestamp for aggregation/filters where updated_at is absent.
+  Guidance from Anand/Sachin:
+  • Move join logic inside the core query so downstream expects a single table with applied filters.
+  • Prefer embedding date equality conditions within the query rather than external filters when feasible.
+  • Create necessary intermediate table/CTE first if required, then apply filters; keep filter empty externally if handled inside the query.
+
+📋Overview
+
+• DQI bulk update validation implemented; build errors in A-score being resolved.
+• Critical vulnerabilities in QTrap workspace packages fixed; merge conflicts pending resolution.
+• getRuleByUseCaseId integration done locally; minor compatibility fixes before push.
+• Create API/service bundle facing issues; PR to double-crunch to be raised today; EOD open-notes list promised.
+• Remaining DQ rules progressing; EP-only tables to be tested in EP; sync with Anand post-call.
+• All threshold-check templates completed; PR to be raised; tasks to reflect exact counts.
+• Insurance use case build and ARV prep underway; platform/Pack Engine coordination active; consolidated escalation email design awaiting Anand’s input.
+• Bulk DQ role deletions proceeding with local backups; additional 50–60 roles to be added to the request.
+• E2 testing for four tables completed; awaiting Jason’s validated approval; aiming 24 rules to E3 with tomorrow’s RFC; adjust capacity tracking.
+• Team to close assigned tasks today; escalate blockers; clarify “actor ID not needed” for human test creation.
+• Rally-to-Jira migration moved to June; team to complete trainings; Confluence tracker to monitor completion.
+• For tables without updated_at, use run_date; embed join and date filters within the core query or create intermediate table then filter.
+
+🎯Todo List
+
+• Ansi:
+  • [ ] Fix A-score build errors for DQI bulk update validation and rerun pipeline, Today
+
+• Owner (vuln/package fixes):
+  • [ ] Resolve remaining merge conflicts and finalize PR for QTrap workspace package upgrades, Today
+
+• Prompt/Build Developer (task ...0328):
+  • [ ] Finalize compatibility fixes for getRuleByUseCaseId integration; push changes post local testing, Today
+
+• Kundan:
+  • [ ] Resolve create API/service bundle issues and update deployment on event environment, Today
+  • [ ] Raise PR from feature to double-crunch branch, Today
+  • [ ] Share EOD list of all open notes via email to Anand, Today
+
+• Sameer:
+  • [ ] Validate DQ rules where tables exist only in EP; coordinate EP testing plan, This week
+  • [ ] Sync with Anand to review noted data issues and specific DQR IDs, Today
+
+• Template Owner (threshold check):
+  • [ ] Raise PR for completed threshold-check templates, Today
+  • [ ] Update task with exact number of templates delivered, Today
+
+• Sachin:
+  • [ ] Follow up with Platform Team on bulk release and access issue, Ongoing
+  • [ ] Coordinate with Pack Engine Team for required metadata updates, Ongoing
+  • [ ] Finalize consolidated escalation email design (B40/B45) after inputs from Anand, Tomorrow
+  • [ ] Proceed with DQ role deletions after local backups; include additional 50–60 roles, This week
+  • [ ] Raise RFC for moving rules to E3 and open ticket for QTran benefits data, Tomorrow
+
+• Ayappa:
+  • [ ] Insert required data into XCom to unblock testing for QTran benefits data, Today
+
+• E2/E3 Testing Owner:
+  • [ ] Obtain Jason’s validated approval (with data verification) to proceed from E2 to E3, Today
+  • [ ] Move 24 rules to E3 following RFC schedule and validate, Tomorrow
+
+• Sindhuja:
+  • [ ] Create Confluence tracker for Rally-to-Jira training completion and monitor progress, This week
+
+• Pruthvi:
+  • [ ] Complete integration of templates with framework and coordinate reviews, This week
+
+• All Team Members:
+  • [ ] Complete Jira migration trainings from emailed list; update Confluence tracker upon completion, Before June migration
+  • [ ] Drive assigned tasks to closure today; escalate blockers promptly, Today
+
+• Developer on timestamp/filter task:
+  • [ ] Implement logic to use run_date where updated_at is absent; embed join and date filter inside core query or via intermediate CTE/table as agreed, This week
+
+Transcription
+
+00:00:18 - 00:01:54 Unknown Speaker:
+
+It's Razi. So for Razi I think... So there are two use cases for resi. One is resi analytics, and there is resi SORs. So you need to update it for resi analytics, right? Yes. No. Okay. Okay. Okay. Is Anand with you? Can I start? Sindhuja, you can start. I think Anand is a little occupied right now. So he'll join after some time. Thank you. Ansi? Hi, Sindhuja. I was working on the story DQI bulk update. So I worked on the value that was bundled today. The validation logic based on the true positive and false positive scenario. So right now I'm getting some build errors when running this in the A score. So I'm trying to solve that. So that is the update. Hi all, good evening.
+
+00:01:55 - 00:02:52 Unknown Speaker:
+
+So for the first story that is ending with 1290, I have added a task to fix the critical vulnerability. So there were like some packages that were outdated and that was raised by the platform. It was in a critical path. So I have fixed those and then I have launched those changes. There are some review comments also given by Sachin. So I incorporated this also, and I'm looking into those merge PRs. It has some minor conflicts, I'll resolve that and resolve this. Critical vulnerabilities for our workspace package, basically QTrap workspace packages. Apart from that, the other story ending with the 3807 from the prompt and build. I worked on the task that is ending with zero, three, two, eight. To integrate the get rule by use case ID. And the table one, I have already did it.
+
+00:02:53 - 00:04:11 Unknown Speaker:
+
+So it's in the same file. Today, I integrated to get the rule by the use case ID. So currently, I'm testing in local. And there are some minor issues. I need to do the to make it more compatible and everything. So once that is done, I'll push this . That's all from my side thank you i was working on this uh uh i'm sorry create api create service bundle facing some issue okay trying to resolve that one uh. Along with that, I am working on creating the PR from feature to double crunch. So I modify few of the codes and deploying the changes on event. I will update the status by half an hour. That's the update. Kundan, I asked you yesterday also. You've not done that. I know, I know, I know, I didn't burn out.
+
+00:04:11 - 00:05:04 Unknown Speaker:
+
+Can you please do it on the call? I'll come back to you towards the end, okay? Please do it now. Just one thing, right? We are on track to get that list by the end of the day, right? All the open notes? Yes, I will. Yeah, yes, sorry. Anand, I will do that one. I will share with you by e-mail. Sure, sir. Thank you. Sameer, you can go ahead, yeah. Okay, hi, Sandeep. So, whatever the records are, like the DQ rules, was left apart from the, which are moved and already into the production, right? I am working on that. So, we had a discussion with Anand, and whatever the data issues we actually noted down, and we are working on that accordingly. But, like, I have a few notes. And few records.
+
+00:05:04 - 00:06:29 Unknown Speaker:
+
+So maybe after this caller, sometime once Anan was me, I need to check with him. But yeah, we are. I'm progressing in, even on the other records for DQ rules, for the quantum. Uh, and one more thing, I want to let you know what is like, uh? There are a few few DQR IDs where the tables was not existing in one. So those tables need to be tested, like those DQ should be tested in YouTube, because those tables are present in EP. So yeah, so that one thing I would like to tell you, notice Shamir, thank you. I'm waiting for the review comments. And I did connect up with Pruthvi to integrate my templates with the framework. I will connect with him again after this. That's all for my session. Hello. Hi, Appa.
+
+00:06:39 - 00:07:38 Unknown Speaker:
+
+Change the story pointers, according to our morning discussion, such okay so, uh, here on in the just to your notice. Uh, IPA is really not working much on the quantum. Okay, so it was just the data support and, uh, one of the uses that he was working. Okay. So we just reduce this story pointer from five to two for the point row. And as there were ad hoc request from Rachna for updating the rules of, you know, changing the description. So we have given him a production support with two story pointer. Sorry, sorry. Sure. Yeah. Hi, Sindhuja. Hello. Yeah, me, I've completed all templates for threshold check. I completed my code as well. I'll raise a pull request. And I was also helping in setting up the environment locally.
+
+00:07:38 - 00:08:51 Unknown Speaker:
+
+There are a few issues in the system, so I'll be working after this call as well. That's the status. I have to continue testing for the next three days. But otherwise, with respect to templates, all templates are created, including threshold checker. Can you update the task accordingly, right? Yeah, sure, I'll update it, yeah. You can just mention the number of templates instead of mentioning it as remaining templates. Sure, sure, yeah. Thank you. Sachin? So in Science 1, I started, you know, I was just progressing on the build for the insurance use case. Then I analyzed this ARV documentation, and I already set up a call before that ARV review call with the platform team. Following up with the platform team on the bulk release and part, and then one of the access that was facing the issue.
+
+00:08:52 - 00:09:52 Unknown Speaker:
+
+So we are just waiting for the response. Then how to connect with the pack engine team where they need metadata update for few of the tables. So the conversation is going on with respect to the requirement. Apart from that, I was working on the designing of that one of the requests that Anand has asked yesterday for, you know, consolidating escalation email to, you know, one consolidated mail with B40 or B45. So maybe post this call, I'll just discuss with Anand on that approach. I already discussed that approach with Rajendra yesterday. It is aligned, I just need that information from Anand before finalizing the design. Also, Sachin, on the role deletion part, actually I have received one more request for role deletion and that will be some 40 to 50 roles. Role deletion, as I mentioned, for that bulk up.
+
+00:09:52 - 00:11:01 Unknown Speaker:
+
+Bulk delete right? I have posted that issue to the platform team. As of now, I did not receive any. Yes, that is for DQ. I am right such. And I am asking like, Yeah, yeah. I have already asked to delete those roles. I have given him confirmation, just take a backup in your local and then go ahead and delete those roles. There are some additional rules to be deleted. I just received only so that would be some another 50 to 60 rules. So I shared info with you like which one? Okay, okay, okay, thank you. Yeah, those are the updates. We were able to complete the E2 testing yesterday for all four tables. I've sent an email confirmation to J. Son and requested him for, uH, approval for E3 deployment status. Uh, received, uh, alerted.
+
+00:11:01 - 00:12:18 Unknown Speaker:
+
+Searching to raise an RFC and the other ticket for QTran benefits data that vote changes have been deployed to E2. I was waiting for Ayapa to insert the data in XCom before I can proceed with my testing. So once that is done, we have an RFC, I think for tomorrow, and we can move the what is rules to A3 and validate. Um, can you just update the silver testing, the one that has been on Seven's name? Instead of silver testing, can you make it, uh, into testing or palladium testing? Actually, we really don't call it as silver or palladium on the Lumi, so you can mark it as Z2 testing. These are the terms used in the connoisseur, not in the looming.
+
+00:12:19 - 00:13:10 Unknown Speaker:
+
+And just request Jason to accept the stories as you are already done with, you know, in Jason's part, if we receive the sign-off over the email. I hope, just ask him to validate the data also from his side once. Yeah, send him those data. He should not be blindly just sending the approval. Validate the data, because once we move to E3, it would be very challenging to, you know, revert back everything to E1. So that would be a reason if you don't validate. And then, you know, ours is. It's a two-story pointer and you have claimed 24 hours over, that is that correct? Two-story pointers should not move beyond 16. Actually, I was not sure what that Palladium testing ticket means, I was not sure about the terminology.
+
+00:13:10 - 00:15:17 Unknown Speaker:
+
+You have spent 24 hours, we are fine, but on the top of that one, right, the benefits data. Then there you need to reduce your capacity. Oh, yeah. E2, I have done early in the morning. For the monthly, we need to wait for tomorrow because the table is for the dependency task. It will be done by tomorrow. And all the 24 rules moving to E3 for tomorrow. We have the RFC on tomorrow. Thank you. Anything Anindya that you need to discuss? Anindya and Dejna, you both are on mute. Any other thing that you would like to discuss? No, I think that's about it, Sachin. Other things I already highlighted during the start of the call. This is to Kundan, who else was working on Prithvi Nirmal.
+
+00:15:18 - 00:16:00 Unknown Speaker:
+
+Can you guys please make sure that the task that you are doing right, whatever activity that has been assigned, please drive it to the future developer. In case of any issue, please do let me know. But let's not drag it to tomorrow. Whichever is there in your bucket, please try to close it today itself. Close means, like normally, you were working on one of the template, right where you need preface assistance. Right? So close that one today itself, and then the issue that you are facing, right? We already had a connect today, so in case that issue is still not resolved, just do let me know. But please mark it as a closer today itself. Because we lots of things to validate on that self, so there are lots of things being pending.
+
+00:16:00 - 00:17:03 Unknown Speaker:
+
+Yeah, I was trying that one, this now, the human test, you know, it's not getting created. Okay? So again, you know, I have to look into this earlier with that. Uh, you know, uh. ID, actor ID was there, it was getting created, now it's not getting, so you don't need an actor. And then you can check that task management in this one. Okay. Give me some time. Let me know in case you still face challenges we can connect but let's close it today. Yeah. Okay. Anything from your side, Sindhuja? No, Sachin. Nothing on my side. I need Anand, you only. Just one more thing. Sorry. I think the team must have received an email from me about rally to Jira migration, right? Yeah. Yeah. So we've been moved to phase three now, so it's not, uh, May 18th, rather it will be in June, uh.
+
+00:17:03 - 00:18:17 Unknown Speaker:
+
+But during this time, right since we've got the extension. I request all the team members to go through the set of trainings that I've copied in the email. Um, this will help, like, help us for the smooth, smooth transition. Yeah, it's not listed in your learning, but I request all of you to take it seriously and go through the trainings. If you start doing now, it won't be a burden in June. Okay, yeah, that's all from my side section. You can create a tracker or create a conference page with a tracker, right? And then you can check the progress over there with the individuals. Yeah, okay. So whoever has completed, right, they would just update it as completed. Okay, I'll do that, yeah. Okay, Anand, can we discuss on that approach? Can I also stay?
+
+00:18:18 - 00:20:05 Unknown Speaker:
+
+I have a few questions. So hey so i am like i have started working on this so so like if you remember like we don't have this date filter column so so that's why we are getting as update is. So if you see here, they're just adding to it and they're getting actual value from this, which is not there, but this is a column where some business value is there. So it has come again, I think I did not follow. Oh, what is the issue is like, we don't like these, for these records, we don't have a timestamp columns. So on the day we actually picked as a bit as a timestamp for the, all of these customer marketing candidates table. Okay.
+
+00:20:06 - 00:21:04 Unknown Speaker:
+
+But these two tables, we are having this column name, but like for these two, for this table, we are having only run date, not as update. Okay. So, What I am saying is like, even like. So, to identify the timestamp column, I am actually can see only the simple logic here where they are just this one, this will get. We have silver, platinum and these type of. Yeah, that's fine. But still, if we have one date, right? We can still use that column itself. Because I think the point is it should aggregate based on some timestamp column, right? Which is all. I got it, Anand, but like, I just want to get confirmation from you see here I will also show this. So here we are having run date, so this is a date where date when a file was run at the partner.
+
+00:21:04 - 00:22:07 Unknown Speaker:
+
+That should make sense. Yeah, so for these columns, I will treat this one as the run date. And I can, there is one other thing, like I'm not sure this will be false and then like a complex one or like, so if you see here, just a second, this is really simple one, I'll finish it. So if you see here, they're actually joining with the above CTE. And where date equal to this, create timestamp and the city data, which is again. So the filter condition should be like the whole thing, or like how I no, no. So even this join part, right? That should move into that code, because ultimately phone would require only one table with filter conditions, right? Yeah, so your join has to go inside. This should be created before that right, right, correct, correct, exactly.
+
+00:22:08 - 00:23:13 Unknown Speaker:
+
+So this should be created and should be joined. Not that part, Sachin. Sorry, Shamil. From line 17 to line 20. Yeah, what I meant is like this complete join part should be created as one table. From there, this filter should be added. This should be table name. Even not necessarily, right? If you can have that condition also inside that. Query itself then we don't need to put any filter condition, we just need to filter will be empty. That join also requires that filter. I think like, join CT on one is equal to one is like, join everything, and then we are doing dates are equal, right? So let's have that also inside the query itself. You can just bring the table. Yeah, so then. For this war, it will happen.
+

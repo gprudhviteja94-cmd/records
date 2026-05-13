@@ -1,0 +1,276 @@
+2026-05-07 Duplication Flow Enhancements and Versioning Logic
+
+Creation Time: 2026/05/07 19:03
+
+
+📅About Meeting
+
+• Date & Time: 2026-05-07 19:03 (Duration: 47m 3s)
+• Location: No relevant content mentioned
+• Attendee: Vini, Siva (Shiva), Satyam, Ashish, Ravindra(n), Rabindran, Pete (mentioned), Rashmita (mentioned), Backend/API team (10 members), Calculation/Engine team (mentioned)
+
+📒Meeting Outline
+
+Duplication flow: goals, scope, and UI behavior
+
+• Duplicate preserves prior run edits
+  The duplicated run must retain all user edits from the original successful run. On the duplication screen, include and pre-populate the editable tabs the user had modified previously, so users can understand what they’re duplicating and re-running.
+• Run details visible in duplication UI
+  Include “Run Details” in the duplication screen, bringing forward the original run’s reports. In the UI, clearly highlight the tabs that were editable in the previous run (7–8 specific tabs per design). Run Details represent the original run and do not change while the duplicate is in draft.
+• Version indicators and switching
+  Show two version references: the version used in the original run (base) and the latest/current version. Users may switch between the base and latest versions while in draft (with auto-save). Until compatibility rules are defined, duplicates will run on the original version only. Later, if compatible, allow running on latest; otherwise, show an error.
+
+Versioning logic and edge cases
+
+• Limited version choices
+  Only two options are presented: the base version (from which the duplicate originated) and the latest version. There is no full list of historical versions in the dropdown.
+• Auto-save and UI reflection
+  When a user switches the draft to the latest version, auto-save updates the model to that version. If both “version used” and “current version” become the same (e.g., V3), the dropdown still allows switching back to the other available option (base or latest) until submission.
+• Run details source of truth
+  Run Details always reflect the executed version and data from the original run (the base). They don’t update to the latest selection until the new run is submitted and completed.
+
+What can and cannot be edited in a duplicate
+
+• Formulary locking
+  Do not allow changing the formulary in a duplicate. Since outputs (e.g., Rate per Quantity, RA Output) depend on formulary, changing it invalidates duplication intent. Block formulary edits to preserve forecast integrity.
+• Other inputs and tabs
+  • Allow changes to inputs that do not invalidate the duplicated scenario; these changes will regenerate outputs upon submission.
+  • Business segment and forecast-level standard selectors likely remain fixed (non-editable); clarification to be finalized per design.
+  • Weight loss, biosimilar selections (e.g., Stelara, Humira) and related flags are copied from the original run and can be adjusted in the duplicate; outputs should update accordingly after submission.
+• Clarification on “outputs” vs “forecast”
+  The “copied output tabs” (e.g., RA Rate per Quantity, RA Output) represent forecasted data used as editable inputs for the new run, not finalized outputs. Users may edit them; final results will be regenerated via resubmission flow.
+
+Compatibility and calculations
+
+• Compatibility rules (TBD)
+  Compatibility criteria between versions are not yet defined. Interim rule: run duplicates on the original version only. Future logic to be introduced once versioning/compatibility rules are available.
+• Engine refresh and master data
+  Upcoming 22.8 refresh is expected to be master-data-only (no new calculations). Version tagging will be applied across documents. No new compatibility constraints yet.
+• Resubmission behavior
+  Duplicating creates a new RPT ID. After edits, submitting follows the standard resubmission flow to regenerate all tabs through the calculation engine. Until submission, discrepancies can exist between copied “forecast” tabs and changed inputs; this is acceptable and will be resolved on run.
+
+Discoverability and identification
+
+• UI cues to distinguish run type
+  • The version dropdown appears only for duplicates (not fresh runs), serving as a UI indicator.
+  • Backend maintains a “base reference RPT ID” for duplicates; null for fresh runs.
+  • Enhancement request: consider a column/indicator on the RPT table to label duplicates and show base reference without opening the model (new user story to be explored with Pete).
+
+API, persistence, and backlog management
+
+• Save vs Submit APIs
+  • Save API: persist model inputs and edited “forecast” tabs against the new RPT (auto-save and manual save).
+  • Submit API: finalize and trigger the calculation engine run with the selected version and all edited data.
+• Data payload requirements
+  Submit flow must send both model inputs and edited tab data. Existing resubmission flow is not sufficient as-is; it needs enhancement to carry model inputs plus tab data.
+• Collections and relationships
+  New MongoDB collection(s) for “duplicate RPT run with full editable input preservation” to model parent-child/tab relationships. Technical details to be finalized after the scheduled Tuesday technical call.
+• Story pointing and prioritization
+  • Debate on API story sizing: votes clustered at 3 and 5; 8 not considered appropriate; 2 generally discouraged for API stories. Tentative majority: 5.
+  • UI story to highlight previously editable tabs: discussion between 3 and 5; proponents of 5 note enable/disable logic and QA scope; lean toward majority decision after reviewing acceptance criteria.
+  • Iteration hygiene: ensure stories are assigned to the current iteration (avoid “unscheduled”). Ravindra to rebalance capacity and swap lower-priority stories (e.g., aggregation) to prioritize duplication items.
+
+📋Overview
+
+• The duplicate flow will preserve prior run edits, include Run Details in the duplication screen, and highlight previously editable tabs.
+• Until compatibility rules are defined, duplicates will run on the original version only; UI may still allow draft switching between base and latest with auto-save.
+• Formulary edits are blocked in duplicates; other permissible inputs and “forecast” tabs can be edited and will drive regenerated outputs upon submission.
+• Run Details always reflect the original executed run until the new duplicate is submitted and completed.
+• Two versions shown in UI: base (used in original run) and latest; no full historical list.
+• Save and Submit APIs must support persisting both model inputs and edited tabs; resubmission flow needs enhancement.
+• New data structures in MongoDB are needed for full editable input preservation; design to be finalized post-technical call.
+• Add discoverability enhancements to identify duplicates in the RPT table; work with Pete on UI story.
+• Story sizing leaning to 5 for key API; UI tab-highlighting story debated between 3 and 5; ensure iteration assignments and capacity alignment.
+
+🎯Todo List
+
+• Vini:
+  • [ ] Align with Pete on formulary-locking UX, duplicate indicators on RPT table, and the exact list of “previously editable” tabs to highlight, 2026-05-14
+  • [ ] Provide clarity on which standard selectors (e.g., business segment, forecast level) are non-editable in duplicates, 2026-05-14
+
+• Satyam:
+  • [ ] Review backend story needs from today’s discussion; propose additional stories if required, 2026-05-14
+  • [ ] Lead technical design for MongoDB collections/parent-child/tab relationships for duplicate preservation (post-Tuesday call), 2026-05-19
+
+• Ravindra(n):
+  • [ ] Reprioritize and assign stories into the current iteration; swap out lower-priority items (e.g., aggregation) as needed, 2026-05-08
+  • [ ] Confirm final story point decisions for API (likely 5) and UI tab-highlighting (3 or 5) after acceptance criteria review, 2026-05-08
+
+• Backend/API Team:
+  • [ ] Implement Save API to persist model inputs and edited “forecast” tabs against new RPT (auto-save + manual save), 2026-05-21
+  • [ ] Implement Submit API to send model inputs + edited tab data to engine; ensure version selection is honored, 2026-05-28
+  • [ ] Add version tagging at all document levels; ensure base reference RPT ID is persisted for duplicates, 2026-05-21
+
+• UI Team:
+  • [ ] Build duplication screen: include Run Details from original run; highlight previously editable tabs; block formulary edits; allow draft version switch (base/latest) with auto-save, 2026-05-21
+  • [ ] Implement conditional enable/disable logic for tabs and edit forms per duplication rules; reflect changes upon version switch, 2026-05-21
+  • [ ] Add UI affordance to switch versions in draft and educate users that Run Details reflect the original run until resubmission completes, 2026-05-21
+
+• Calculation/Engine Team:
+  • [ ] Confirm that 22.8 refresh is master-data-only; validate no calculation changes impacting duplication compatibility, 2026-05-21
+  • [ ] Define future compatibility rules for running duplicates on latest versions; provide UI/back-end integration guidance, 2026-06-04
+
+• QA:
+  • [ ] Validate duplication flow end-to-end: preservation of edits, blocked formulary, version switching, Save/Submit flows, and tab enable/disable logic, 2026-05-29
+  • [ ] Verify Run Details remain from original run in draft and update only after successful resubmission, 2026-05-29
+
+• All (Story Pointing/Process):
+  • [ ] Ensure all stories are assigned to the active iteration (no “unscheduled”); confirm final points per acceptance criteria, 2026-05-08
+
+• Scheduler/Coordinator:
+  • [ ] Conduct the Tuesday technical call to finalize MongoDB collection design for duplicate preservation, 2026-05-12
+
+Transcription
+
+00:00:02 - 00:01:35 Unknown Speaker:
+
+So assuming that we have one run that is successfully done by the user, the user can go there and duplicate, right? This run then needs to keep the information that the user added before running again. So those tabs should be here. The user can understand what he is running again and duplicating. So this one, this tab is new, so from the details we are bringing this again to that duplication screen. For the user, just the tab that he can edit and then we also have once you duplicate. Here, you can also see the version that you are running against you. So the latest version, which is the original version, and then the current version. Okay, So those are the three main things. So keep the original run edits that the user made.
+
+00:01:36 - 00:02:40 Unknown Speaker:
+
+Include the run details here as part of the UI. In that screen, highlight the tabs that the user could have edited before. Those are the three main features. And then we have a few stories here for API and UI as well. Any questions on the floor? Go ahead, Siva. Yeah, when we are duplicating it, instead of version, like what version we are selecting, we have to copy the data, right, and then data. Yes. You bring the data, yes, if that was the question. If that is like a current version, if that is a previous version, whatever you're selecting. So we have to bring the all the data so for that particular tabs right, right. So, like if for the current version, uh, if there is any changes like for example if the previous.
+
+00:02:40 - 00:03:26 Unknown Speaker:
+
+I have created version one for the current version, like now we have current version three. So if I select current version three, so in the current version. If I don't want to see some of the like output tabs or like some of the things, so in the previous version. If you have that, how can we differentiate that? I don't know if I get your question, are you asking? No? My question is, my question is. For example, uh, like the original version of the like, the original run version is V1, okay, okay, now here, like we had, uh, like here we had a version. Current version is three. Okay. Okay. So for for the v1 version,
+
+00:03:26 - 00:04:29 Unknown Speaker:
+
+so I don't like I am able to see all the like tabs like there is some rule if so I Don't think they could duplicate and run on the new version right when they duplicate they run on the same version, correct? Not exactly if the latest version is compatible. They could be running on the latest version with no problem. If it's not compatible, then we should show some error. But we don't know yet, right? Because we don't have any versions at this point. We would like you to know. Yeah, compatibility is one, but we don't know what is the rules of compatibility. So for now, can we consider it until the rules are defined? Previous version only It's okay. Yeah, for now, it's okay. Yes. So. Does that answer your question? Yeah, she can't. Yes.
+
+00:04:29 - 00:05:29 Unknown Speaker:
+
+Uh, so like, yeah, if we don't know the rules, exact rules for the previous version, current version. So yeah, that is my question. Yeah, like, if we are okay with that, okay, yeah, good, but. But we discussed that. Um, if it is comfortable, then we will show them and we show that we need to know it. How can we get to know, like, what is compatible, what is not? Yeah, yeah. So as of now, like, we will go with the previous version only for the duplicate. Yes, yes, okay, and once you want, we understand the rules and that will come later one day. Provide some, uh, details and new versions, new templates, then we can start to to create those logics. So when we are duplicating, so everything starts based on formulary.
+
+00:05:29 - 00:06:32 Unknown Speaker:
+
+So in the RA output rate by quantity, if you look at this data is for a given formulary. So shouldn't we make sure we are not modifying the formula because this data will change in itself? So there is a no point, uh, in having this R output rate upon any data in details tab. So am I making sense? Vini Not not sure. Yeah, so what I'm trying to say here is when we are creating this model, we are selecting this formula. And based on that formulary, we have rate per quantity, we have RA output, we have all the edits and we have all the functionalities. So now when we are duplicating it, so we are duplicating it and making this duplicate enable for other formulary also. Which means if I'm changing the formulary, everything is changing.
+
+00:06:32 - 00:07:48 Unknown Speaker:
+
+So there is no point of duplicate. Block the formulary edition here? Yes, yes, yes. Otherwise there is no forecast for that formulary, right? Makes sense. I can ask Pete to change this and add something for this. Is it only formulary, or is there any, like any other changes, that we need to block? So we need to understand, like what all changes are permissible and what are not? Because if, like, other than formulary, are there any other cases? Yes, yes, so this is one case. So if you look at we can go. We need to run details once when we're copying it, so we are making sure like the edits are happening, all the edits are copied from the previous run. So, we have this lift adjustment, we have biosim, sterag, mera.
+
+00:07:48 - 00:09:00 Unknown Speaker:
+
+So, what we're assuming is, these are coming from... Available? Okay, sorry. Available, okay. Yeah, so we are making sure the selection for weight loss and biosim are mandated. I mean, like when I'm duplicating it, so we are copying those selection from the previous one, even for the biosim in Humira. So let's suppose if user has this flexibility to not select in the stellar at Humira, so ideally this will impact my rate per quantity RA output in the radar. So, Are we considering those scenarios? That's fine, right? Because then we are changing the inputs and the outputs should change anyway. Because now we know we don't need to think on this screen as an output. Right now. This is, we are currently just saying, okay, if I don't change anything, use that input here, but if I change anything here on some duplicating.
+
+00:09:01 - 00:10:08 Unknown Speaker:
+
+Everything should change because I'm changing. So the logic for duplication is to give the user that possibility to change things and play around, let's say. They could do that. Okay. It means this change will have precedence over what we see already we compared to character. For sure, because then the new reports will be generated again with a new input. So the results would be of change. Okay, okay. And, uh, so I understand we have this, um, FMS forecast, so why do we need to duplicate? FMS focus? Is this FMS forecast? Yeah, this, because, um, ultimately, um, we have to. I know we have the edits, but it depends upon, uh, rate per quantity, RA output, so this is only there because we have some edits. But I feel like when we are duplicating it.
+
+00:10:08 - 00:11:05 Unknown Speaker:
+
+So there is intent of modifying the input, and there is intent of modifying the rate per quantity and re output. Also, this whole base data will change. No, no, I think about Satyam. For FMS Bullcash, you don't need to copy, you just need to give that option. That percentage changes, I believe those only, I think, if you click that, I mean, Yeah, we see the data here. We should not be. Yeah, you should have that percent that some kind of letter is there, right? Yeah, I'm just trying to find here. Yeah, just click on the calculator. Yeah. Something they can just. Yeah, Rashmita, you remember I asked the same question long back to you. You are there in this. A few changes they can do correct. I don't know she is.
+
+00:11:05 - 00:12:39 Unknown Speaker:
+
+Yeah, there is a pop-up in that performance, convertism, so coinciding, yeah, this pop-up. I think it's not coming, yeah, but it is there and that we can see it is there. Yeah, the design is not allowing me to do it, but I is there, I know it's there, yeah. Yeah, this pop-up is fine, but this data will change. The only information they can use to change anything, so just a percentage, yes. We need to have those, yes. I still have a few questions. First, if we are showing the dropdown as v1 or v2, like the current version used and current version, right? So my question is, first question is, let's consider that there are three versions, one, two, and three that are there, right? When I created a duplicate, I created it from v1, and the new version that was there was v2, okay?
+
+00:12:39 - 00:13:32 Unknown Speaker:
+
+So I have shown- Let me just stop you, sorry. We will never see three versions. We'll be only-. We have three versions. Let's say the versioning has taken place in some amount of a time. So three versions are available, V1, V2, V3. So base was V1. We created duplicate something from V1. And at that moment, V2 was something that was available as a new version. So the version being used is V1 and the current version is V2. The user went and changed on something as V2. Version used and the current version both becomes V2, right? Yes, so the drop down value apparently should be what? Because we are using this version used and current version, but these are same, right it? Now? Both of them are V2. The current version that is available is v2, and the version we have changed.
+
+00:13:32 - 00:14:19 Unknown Speaker:
+
+It which the our model is using right now is also V2. So both of them become same. You're talking about the scenario where a user first select the latest version and update this model and tabs and then log out and it comes back. What do we need to do? Like this version changes or like an auto save, right? Like whatever we change on the drop, any of the drop down, there is an auto save that happens. So at that particular moment only, the refresh happened within the model. The new model that we got, the version used we are getting is V2 and the current version available is also V2. So now, both of them are same. So in the drop-down, we are quoting something as version use and current version. Both of them become same, right?
+
+00:14:20 - 00:15:07 Unknown Speaker:
+
+We should provide option to switch back and forth, right? Until the submit, you can able to switch the versions, right? But I think he's saying, like, let's say that the original RAM was V1, and then we have a V2, and then we duplicate that. So we run with V2. And then we have a V3 right now. So, your question is, should we present V2 and V3 or V1 or V2, right? So, yeah. So, no. Now, let's say there is V3 also. So, the version used is V2 and the current version that is available is V3, okay? Now, I show these two in the drop-down. Now, the user comes in and he selects something as the version, as the V3 as the version to be used now in the drop-down, okay?
+
+00:15:08 - 00:15:58 Unknown Speaker:
+
+Auto Save happens in the Auto Save in the model. The version now changes from V2 to V3. Agree? Apparently. When V3 will change, then only if some fields are not there, then only like the UI will remove those fields, or a few fields are added, then only the UI will show those fields. Right? Until unless the version is not updated for the model, it won't show, so we updated the model to v3, now the version used is v3, the current version is V3. So now in the drop-down what do we show? Ashish again, So you selected that is drop-down is one of the option, right? Like you selected V3 and you are filling the form. You are still in the draft, you always show V3 only, but you are going to provide an option you can switch back to V2 again in the draft.
+
+00:15:58 - 00:16:45 Unknown Speaker:
+
+But then the like, the codes that we are saying is version used and the current version, right, so the version that's, that's implementation we need to discuss. But uh? But as a user perspective, he can switch back and forth in the draft model. What will he switch to when he switched to V1, from which he started, or will he switch to V2, which was the last one. There is no v1 at all. You duplicated from v1 and you created v2 and you selected v2 and you submitted that RPT with v2 right now. V2 only the reference as the used version, correct? There is no v1 reference here anymore. So, Ashish, there is always the version that you duplicated from and the latest version. There are only two options. Correct. There are no multiple options.
+
+00:16:45 - 00:17:35 Unknown Speaker:
+
+Yeah, I just wanted to say that, yes. Okay. Version Okay, okay, fair enough. So the two options are those now. Uh, like, if I selected something, let's say from V2 to V3, I selected and on the like again, the same question. I guess the answer has been given, but correct me if I'm wrong, uh, I changed something from V2 to V3 on the basis of that. Some run detail tabs also got changed, right? So since auto save happened, will I show the run details now on the basis of V2 or V3. Run details come up only when the version is run, right? Model is run. And model was run on the version you duplicated from. So the run details will be always on the one which you duplicated from.
+
+00:17:35 - 00:18:50 Unknown Speaker:
+
+Even though you selected latest version in the draft, that's something user has to be educated with that when it is in draft, It of the run details are always from the I think they already know, right? So they are crea. They have changed some forecast data, some of the rates data within the run details tab. And they want to reuse the same thing. So that's why they are duplicating it. When they are duplicating it, they know that this was a previous run data. Okay, yeah, I guess that's something that I had. Yeah, I got it. I think we can take the points also. Uh, we need, um, until this is there, you can pull it and add the points too. And and this break break up that you have done of your stories is only from the UI perspective, right?
+
+00:18:50 - 00:20:01 Unknown Speaker:
+
+We haven't yet done it. On the back end, the calculation layer side, correct I.I created two Srikanth um, but Sathyam can add more. But I created two of the stories where one is to integrate with, like, I mean, consume that API. What we are sending, including the run details and other one, the calculation. But if you need more stories, I can, I can work with something to create, but I created, I know, two stories. Okay, do you think we need anything else here? Those are the resources we have right now. Yeah, maybe I will check back based on, like, today's conversation, I'll add more. So for version changes from back on, like, you know, they're given any formulas, anything like that? I mean, from version to version, like now 22.7, did they given any 22.8 calculations elsewhere?
+
+00:20:02 - 00:21:18 Unknown Speaker:
+
+No, the refresh did not get it yet. The latest one, we didn't get it yet. Two weeks. Two weeks, yeah. That is 22.8. So just a master data chain. There is no calculation yet. Yeah, correct. But are we adding the version at all the document levels, right? Yes. I think you have a story. Yeah. Okay. We can start from the backend then. I think backend we can do a little later. I want Satyam to go over that and if you need to add more. We can do UAPI and then the backend we can do later time. That's what my thinking. But it's your call. That's okay. That's okay. So the first one is to bring round details. Then include the Round Details tab here, bringing all the reports here.
+
+00:21:18 - 00:22:50 Unknown Speaker:
+
+And then there is a substance criteria as well to show only those that were possible editable on the previous run. You can see in the design there which ones, and then I'd have here the list as well if you're needed. This is the first one, just UI, so again, include run details and then bring all. So these are all like edit tabs. Yeah, but the design is more clear which ones should be there here. Yeah, okay. So like when we, once that edit is done, like we have to submit the, like we have to resubmit that. So when we resubmit, it will go to the resubmission flow. Once the complete resubmission is done, like we will enable all the tabs. He submit So here there's no word submission because we are running for the first time, right?
+
+00:22:50 - 00:23:42 Unknown Speaker:
+
+So we duplicate this is as if we are running for the first time. Yeah, now, like for the first time once we go to rates per quantity or RV output. If we do any edits there, so in that case, like we will do the trace submission, right, so everything. So it's like a new model, right? Uh, Shiva Yes, I can do edit, I can, I can submit as this, I can change the input and it will go as a new submission. So, in short, it's a new RPT ID altogether. You're you're not touching the previous RPT ID data. You're not supposed to edit anything on the previous RPT data now. Like, yeah, now we are doing the same like once, we are duplicating it, like we are creating new RP data, but we are not copying the output tabs.
+
+00:23:43 - 00:24:50 Unknown Speaker:
+
+Now we have to copy the output tabs also. But here we can change this drop-downs, business segment, anything, like foreign reselection, everything, right? That's what we need to understand. That's what we were asking. Like what all could be editable and what are not. But the idea is anything that doesn't impact should be editable. They should be able to change exclusions like for example formulary and business segment. These are like all standard ones, right? So related to forecast, forecast level. So they those they might not be able to edit, but other things, yes. Yeah, yeah, from here downwards, probably everything isn't. Life has not changed. There's no sense for them to change that, but from here, everything can change. Okay, so can they can change? Sure, like you can assume, even though they copy outputs, it's not output, right?
+
+00:24:50 - 00:25:43 Unknown Speaker:
+
+It's a forecast. They're copying R A.rates per quantity. R a output. That is a forecast, they're copying, not output. We need to plan that properly. We'll discuss that. Like, you know, I mean, you can go with your questions like, yeah, yeah, now. Like if we change those inputs, like now we're not, we do not go to the calculation engine, right? So now directly we are copying the data, so there is there will be mismatch, right based on the inputs we are selecting again. That is what, uh, that is what I'm saying. Even if you put you that supplement team are already doing analysis on that. Okay, uh, what, what? What will change? Or we are required to copy the data or not, it's just simply in the forecast, you can think that they can change the forecast or the master data sets.
+
+00:25:43 - 00:27:33 Unknown Speaker:
+
+Okay, okay. So once the once we copy the this four output steps, like, uh, we can edit those output tabs, once the, uh, we can once we edit it. Like, we will enable the like resubmission flow, once the resubmission flow is done, like, it will be like, uh, again. Once the entire submission is done, like, we will get the all tabs data, right? In calculation engine, we have to do the analysis as per our understanding. Because based on the inputs we are selecting, based on the inputs we are changing, maybe it will affect the result. One question I have, like from third-person perspective, and I'm opening up this UI, is there any way I can simply look at the model and say, okay, this is my resubmitted, this is my duplicate, and this is my first run.
+
+00:27:33 - 00:28:29 Unknown Speaker:
+
+Is there any way I can simply look at it and distinguish and say, okay, this is what it is? So you're saying how, if they have this screen open, how do you say if it is like first time you're running Office Duplicate? Is that your question? There is. On the RPT table, if you see, if you can just go back to the model page. So the dropdown will only, for the version will only come when it's a duplicate. It does not come when it's a fresh one. So the system version dropdown that you are seeing, is something that only exists for a duplicate one. And similarly, the logic that we have written to show that is the same that we'll be using for this current details. So it has a base reference ID from which RPT has been created.
+
+00:28:29 - 00:29:14 Unknown Speaker:
+
+So if it has been created a new RPT reference ID will be null. But if it has been duplicated, the RPT reference ID will be the one from which it is duplicated from. So internally, this is how we handle things. And on the UI, this is how you understand. When I'm looking at the RPT tables, right? So from user perspective, so I have to open the model, then I will understand, okay, it is duplicate or it is executed. So when I'm at the RPT tab, RPT, the very first step, so how I can know about it? From here, yeah. Right now, we don't have any business requirement that came from the, to figure it out on the table. But if... Yeah, but if later on it comes up again. That's a good point, Satyam.
+
+00:29:15 - 00:32:06 Unknown Speaker:
+
+I can work with Pit on something probably here before we run. After we run, I think it's okay. Before we run, I can work with Pit on that screen here to have a new user story. So just indicate that it's a duplication. And we can reference it from where we are duplicating that. It's a good point, yes. Right now we also don't have a place where we can see who has run that model and also how has it started for this in the current sprint that you have GitHub Copilot, you have all the tools that you have. Yes or no? Okay, now is the story for back end to choose the version here. So when you're rerunning and duplicating, you can choose the version. A resignation. If the storage is required, right, this is just for saving.
+
+00:32:06 - 00:33:30 Unknown Speaker:
+
+We already. We have already worked on this right to show the versions here, and it will save also on Auto save. Do we have that? Yeah, those changes we are already done. We have one here I thought was just for UI. We did everything then. Yeah, that is also done. Yeah, this was something on backlog. We had a discussion that it's just been verified and we'll close it. So we haven't given much story. Okay, are we good with that then, Rabindran? Can I delete this one? API. We need that. We need that, because we need an API to take this all the data, model it, assign the run details, and send the details to back-end, right? So we need this API. I mean... They did it already. That is already done. No, no, no.
+
+00:33:30 - 00:34:18 Unknown Speaker:
+
+That is including the updated tabs, right? Look. It's not done because if you're updating that we have not designed The collection yet right like we need to send the taps that also right a look You got my point right? I think the flow is already there like resubmission flow is already there. Just we have Yeah, we need to enhance that but resubmission we are not sending any model inputs there, right? Yeah, I don't think we can use that as it is now. We need to send in this API, we need to send both the model inputs as well as these, yeah, tabs data. But I already have one user history assigned over there. What is that? This is the same, this is him. Yeah, I just assigned to start work on it, but they did not.
+
+00:34:18 - 00:35:30 Unknown Speaker:
+
+Uh, this is on your name only. I think we have, because we have those two here in the progress right now. Now, one for save, one for submit, there are two things. Winning okay, same is different, subject is different, same. When we modify anything on the model or the perhaps data, we need to save that against that RPD. That's one API, and submit is the final submission to run the model. Okay, hello, yeah, I just assigned to start analyzing since we start the sprint test today, right? So, but this is the same story that we are talking. Not this one. I mean, whatever that says. Okay? Hello? Any questions? I'll check the acceptance criteria. Yeah, sure. Please. Thank you. You don't need to delete anything. So we have one vote for two, two votes for five.
+
+00:35:30 - 00:36:44 Unknown Speaker:
+
+One vote for eight, just four votes so far. Um, yeah, we can, we can go around. Not sure who voted eight. Uh, can we have some justification, which can we discuss on this one, three, four, five now? So, uh, in this API uh team, we have a team almost all, we have 10 people here. Let's ask who voted 8 and justification on that one. And also similarly we can go with the 2 and the justification on 2. Already 3 and 5 we can consider. 8 we never considered for the APA story, Ravinder. So 2 I can go with, but 8 we can't consider. 3 and 5. We have 5 people voting on 5, so I think we can go with 5. No, but it's definitely I would ask because it's a validation task also we have to consider.
+
+00:36:45 - 00:38:10 Unknown Speaker:
+
+But I could say like a two, two I can consider why we are going with the two. Okay. AP, I mean, team, back-end team. But next time when we are going for the polls, please take care. We never used the two till now for any AP story, you should not be using it. Like, whoever has put up two, they can come speak up, like, why do they think that is two? Yes, two, three, five. Uh, that's why I'm just asking two who have given that poll, say, why, guys? There's no problem say eight, if you think it's eight. Yeah, it's an open floor. Please, uh, discuss no issues. And really, one more thing I have observed, Oh, we have not, uh. Filling the details of iteration, it's going unscheduled only, and the other one, yeah, iteration there.
+
+00:38:10 - 00:39:26 Unknown Speaker:
+
+Yeah, it's time, right? No, no. Currently we are in 10, so this. Ravindra, can you please help on this to prioritize this story? Let me go over. Let's put it in. Don't sell it now. I'll do it. I'll do it. I need to see the capacity. I need to swap one of the other stories also, but I'll do that because yesterday, since we didn't have the stories, I assigned the aggregation story, but I need to swap that since this is going to be priority. I'll adjust the iterations. There's one story from MongoDB, duplicate rpt run with full editable input preservation, collection creation. Can we vote for this? All the data, like the parent-child relationships, like which one we can go based on that one. We will point at this thing.
+
+00:39:26 - 00:41:45 Unknown Speaker:
+
+Yeah, yeah, so this is, yeah, we can hold on this one. We have a call scheduled on Tuesday. Um, once we have, once we finalize that, I think this is technical story. We can, we can offline point it, we don't need to do it here. Okay, for this screen here to highlight the tabs that could be added in the previous run. So they started basically just highlighting those here seven, eight formulas that could be added in the previous run. Point is one. Yes, Vinny. When I could see five pointers and two pointers. Can you go to the acceptance criteria once again? Yeah. Yeah. So team, just see the acceptance criteria so that we'll come to know how much complexity of this user story. Based upon that, you can pull it. Two pointers, three pointers, five pointers.
+
+00:41:49 - 00:43:38 Unknown Speaker:
+
+Okay, just see, yeah. From the other ones. Let me go back, sorry. That's what you want. That save API is there right there. This is the purpose. We can save this data and the model input changes, everything we can hold with that save API, but we can discuss how do we store these updates against this RPT. It's only just for those. It's not there. Just check it. So this UI, these pointers, including validation efforts also. Okay, we are concluding. Is it fine? Two people saying five. Can you just go and see why? Maybe we can discuss that. Yeah, we need, like, here, like, we have to enable and disable, like, already. For the part children, we are disabling and enabling the like tabs okay, for the four children, like we are disabling the edit like edit forms.
+
+00:43:38 - 00:44:54 Unknown Speaker:
+
+Okay. So we can use the same logic, but here, like when it is, uh, this duplication, so we have to enable, so we have to check those conditions for the other tabs, right? So I'm feeling like it will be like, uh, fine, because here we have to check. Each and every tab that will be comes under like a QOI task, and as well as development and validating everything. So that's why I feel it's a fine. Okay. Thanks, Shiba. But I could see like two pointers including of all the, to cover all the acceptance. So, can you see? Now we have four, four, five. Should we go with three or five? I think majority. I prefer three because it's not that complicated here because we already have the functionality to just reuse, right?
+
+00:44:54 - 00:46:56 Unknown Speaker:
+
+The resubmission edit is already there. Should we go with the majority then? This one already. And explain this one, Ravi. For back-end, let's let's hold on this one we need, um, what? Satyam is going to review as we discuss this two? Back-end, let's hold on that. Okay, okay, so we have two back-ends and this one, we can skip those. I think we are good then for today. Yeah. Any questions seen on this flow, any other thing do you think we should discuss here? And concerns. Anything from your side, Shikha? Any concerns here? Nothing from me, really. Okay, so I think we are good for close doing, and then if you have any questions, let me know. Sure. Thank you. Thank you. Thank you, guys. Thanks, guys. Thank you.
+
