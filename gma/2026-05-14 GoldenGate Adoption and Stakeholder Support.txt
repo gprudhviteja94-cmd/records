@@ -1,0 +1,471 @@
+2026-05-14 GoldenGate Adoption and Stakeholder Support
+
+Creation Time: 2026/05/14 10:04
+
+
+📅About Meeting
+
+• Date & Time: 2026-05-14 10:04–11:36 (approx.)
+• Location: No relevant content mentioned
+• Attendee: Abhimanyu, Manoj, Sai, Sandeep, Shahil, Satish, Mohit, L300 project team members, GDC-side members, Google FTE/GBM stakeholders (referenced)
+
+📒Meeting Outline
+
+GoldenGate adoption and stakeholder support
+
+• Project context and support channels
+  The team is actively developing and deploying agent solutions and facing challenges with GoldenGate framework setup. Abhimanyu, the L300 team, and members from GDC-side offered hands-on support and escalation guidance.
+
+• Stakeholder identification (GBM/FTE)
+  Emphasis on identifying the correct Google Business Manager (GBM) / FTE stakeholders who can approve IAM, billing, and access. Many delays come from not knowing the right approver; use IAM visibility to find owners. Expect 1–3 days for GBM/FTE to understand scope and roles.
+
+• Parallelization and sequencing
+  Several prerequisites can proceed in parallel, but some must precede others (e.g., billing before Vertex/Gemini API). Leads/managers should start critical steps pre–Day 1 to avoid multi-week delays.
+
+Prerequisites: Projects, billing, groups, and access
+
+• GCP project and billing association
+  A GCP project with an associated billing account is mandatory, especially for Vertex AI/Gemini (no free tier). Billing enables API keys; without it, agent dev is blocked. Share step-by-step docs to non-technical PMs to avoid creation delays.
+
+• Org components and budget (Organizer)
+  Each project needs an Organizer/Buganizer component ID and budget component. If missing, request creation via project owners/GBM. Associate relevant Google Groups during project setup.
+
+• Lantern/JFG Next groups and roles
+  Set up JFG groups via Lantern/JFG Next per project need. Define group names and roles; GBM should propose the JFG group structure. Provide process references for TBCs and align with vendor managers.
+
+• Strings access and business justification
+  Use Strings to manage policy-driven access. Prepare solid business cases for unrestricted or sensitive accesses; approvals are typically quick once rationale is clear.
+
+• Production path enablement (G3 authors space)
+  For productionization, GBM must enable the production path in G3/authors. Expect 1–2 days for path/team approvals; align IAM groups (MDB) and policies early.
+
+• Additional tool/project-level accesses
+  Plan 2–3 weeks buffer for extra tool/API accesses (Organizer, Sponge, trackers, etc.). Billing permissions are required before API keys are issued. Document expirations and blockers.
+
+Technical design documentation (Elephant–Owl–Goldfish)
+
+• EOG document purpose and flow
+  Before production, prepare Technical Design Document following Elephant (context), Owl (analysis/statefulness), Goldfish (validate/critique) structure. Include a mandatory architecture diagram and list approved tools/APIs.
+
+• Tooling recommendations and exceptions
+  SpannerDB is recommended; Cloud SQL may be used with exception approvals. External APIs (e.g., Zendesk, GEL test APIs) typically require exceptions. Using recommended tools speeds approvals.
+
+• References and samples
+  Team will share a masked, approved TDD example and internal talk link to guide format and content.
+
+Reference architecture and data/storage choices
+
+• SpannerDB recommendation
+  GoldenGate recommends Spanner for security and internal compliance. It’s not MySQL/Cloud SQL; schema under review with FTEs is pending. Access is tightly controlled—changes should be code-driven and reviewed.
+
+• Block store for large artifacts
+  For multi-GB/TB payloads, use approved block store services for instant retrieval and managed spaces; integrate with agent IO paths.
+
+• Queues for long-running tasks
+  For jobs >10 minutes (beyond RPC timeouts), use SparrowQube (preferred for easier security approval) or Manyfold (more customization) per use case.
+
+UI and user experience constraints
+
+• Supported UI patterns
+  Minimal UIs via Gemini Enterprise chat are currently preferred/allowed. Rich UIs (Angular/BoxWebline/BoxCX) face stringent RPC/stubby connectivity approvals and long lead times; only one team reportedly obtained SSO so far.
+
+• Approval challenges
+  UI-to-backend RPC is the main bottleneck due to strict code-leakage prevention and stubby policies. Expect months to obtain necessary RPC pathways; plan for CLI/chat interfaces where feasible.
+
+Access, approvals, and process accelerators
+
+• FTE dependency and escalation
+  Many steps require FTE action (latchkey confirmation, IAM CL reviews, GoldenGate CLI execution, agent registration). Prior projects took months until the right approvers were identified; recent cycles reduced to ~2 weeks with known contacts.
+
+• Knowledge re-use
+  Leverage known proactive internal teams and named contacts (to be shared offline) to accelerate Spanner, GoldenGate, and policy approvals. Ask managers to include these approvers early.
+
+• Security/data policies and guardrails
+  Include data security/PII policies in design and SOW: pre-LLM guardrails (masking before send), post-LLM remapping, sensitive data handling, and required CL-reviewed controls.
+
+Latchkey, IAM policy, and CL workflow
+
+• Latchkey enablement
+  Latchkey (infra-as-code for GCP in Piper) is implicitly enabled when billing is associated. If unsure, get owner confirmation. Create IAM policy YAML listing roles/members (MDB/Google groups) using provided templates; submit as CL for FTE review.
+
+• Policy review cadence
+  Expect iterative review cycles (LGTM/LWT); keep approvers engaged. Document owners, groups, and role bindings clearly to minimize back-and-forth.
+
+GoldenGate CLI, authors migration, and dependencies
+
+• GoldenGate CLI usage
+  Use GoldenGate CLI to scaffold and deploy agent services to Box servers. FD involvement is mandatory. Buganizer component ID is required for steps and tickets.
+
+• Authors environment changes
+  Secrets and clients differ in authors space; replace external client libs with first-party internal equivalents. Local testing via orca slipper; production path follows GoldenGate hierarchy.
+
+• Service/RPC compatibility
+  Some external tools (e.g., Vertex AI Search) may be incompatible with authors; switch to internal alternatives (e.g., MoMA Search) with team approvals and RPC permissions.
+
+Agent registration and publishing
+
+• Registration via GBM/FTE
+  Manager/FTE must file the registration request detailing retention, service connections, leads/operations, and code review. Create a Buganizer ticket using the component ID; include agent card and values from gate.yaml.
+
+• Dolphin server configuration
+  Add dependencies to allow Dolphin server to connect to the agent; include agent card and page address. Create and submit CLs; engage FTE reviewers for LGTM/LWT approvals.
+
+• Elder/final production stamp
+  Moving from POP (GoldenGate namespace) to agent space requires Elder/production stamp—a lengthy, security-heavy process that can escalate to very senior leadership. Plan months; meanwhile, provide DOQ-based code to users as an interim.
+
+SOW guidance and communications
+
+• Set expectations in SOW/RFP
+  Clearly state GoldenGate is mandatory, outline approval dependencies on FTEs, include timeline buffers (weeks to months), and list prerequisites owners (billing, groups, policies, RPC/UI). Note that UI productionization is high-risk/long-lead.
+
+• Shared documentation hub
+  Slides, templates (IAM YAML, TDD), and examples will be shared in a common repo/space. Team members are encouraged to contribute lessons learned (e.g., UI constraints, Spanner access patterns).
+
+📋Overview
+
+• GCP project creation, billing association, and Organizer/Buganizer component setup are mandatory starters; begin pre–Day 1 to reduce delays.
+• Identify GBM/FTE approvers early; many steps (IAM, GoldenGate, agent registration) require their explicit actions.
+• Prepare EOG Technical Design Document with architecture diagram; prefer recommended internal tools (Spanner, SparrowQube) and seek exceptions where needed.
+• UI routes beyond Gemini chat face strict RPC/stubby constraints; plan CLI/chat-first and treat rich UI as long-lead.
+• Latchkey is typically enabled with billing; create IAM policy YAML and submit CLs for review and enforcement.
+• GoldenGate CLI deployment to authors/Box requires FTE participation; adjust secrets/clients to first-party libs and validate RPC compatibility.
+• Agent registration needs manager-filed Buganizer requests and Dolphin server configuration; approvals via LGTM/LWT.
+• Final production (Elder) approval is lengthy; provide DOQ-based interim usage and reflect risks/timelines in the SOW.
+• Include data security/PII controls and guardrails (pre/post-LLM) in design and SOW; document all dependencies and expirations.
+
+🎯Todo List
+
+• Abhimanyu and L300 core team:
+  • [ ] Share masked, approved Technical Design Document sample and internal talk link; include architecture diagram guidance, by 2026-05-21
+  • [ ] Publish templates for IAM policy YAML and gate.yaml with examples in shared repo, by 2026-05-16
+  • [ ] Provide list of recommended internal tools/services and known exception paths (e.g., Zendesk, GEL test API), by 2026-05-21
+
+• Project Leads/Managers (GBM/FTE coordination):
+  • [ ] Create/verify GCP project and associate billing account; confirm latchkey enabled, within project Day 0–2
+  • [ ] Ensure Organizer/Buganizer component IDs and budget components exist; share IDs with dev team, by project Day 2
+  • [ ] Set up JFG/Lantern groups and assign roles; confirm MDB groups for project/billing, by project Day 3–5
+
+• Engineering/Dev team (TBCs/TVCs):
+  • [ ] Draft EOG Technical Design Document (Elephant/Owl/Goldfish) with architecture diagram and security notes, by 2026-05-24
+  • [ ] Prepare IAM policy YAML (roles/members/groups) and submit CL for review, by 2026-05-20
+  • [ ] Migrate secrets/clients to first-party authors equivalents; validate via orca slipper locally, by 2026-05-27
+  • [ ] Switch incompatible services to internal alternatives (e.g., Vertex AI Search → MoMA Search) and initiate required approvals, start by 2026-05-17
+
+• GBM/FTE Owners:
+  • [ ] Review and approve IAM policy CLs (LGTM/LWT), within 3 business days of submission
+  • [ ] Enable production path in G3/authors; confirm folder hierarchy, by 2026-05-22
+  • [ ] Execute necessary GoldenGate CLI steps and support Box deployment, schedule 3 hours/week until completion
+
+• Security/Compliance stakeholders:
+  • [ ] Review data security/PII handling, pre/post-LLM guardrails, and mapping strategy; provide feedback, by 2026-05-28
+
+• Registration/Publishing (Manager-led):
+  • [ ] File agent registration Buganizer request with retention, connections, and code links; include values from gate.yaml, upon staging readiness
+  • [ ] Configure Dolphin server dependencies; submit CL with agent card and page address, within 5 days of ticket creation
+
+• SOW/EA team (Manoj, EA group, Mohit):
+  • [ ] Update SOW templates to reflect GoldenGate mandate, FTE dependencies, long-lead UI/RPC approvals, and buffer timelines, by 2026-05-23
+  • [ ] Add data security/PII policy requirements and guardrails to SOW checklists, by 2026-05-23
+
+• Knowledge sharing:
+  • [ ] Schedule a follow-up session on authors development best practices (ROOPS, skills, orders, bridge aliases), target next week
+  • [ ] Contribute project-specific constraints (e.g., CRM/PII rules, API access timelines) to shared repo, ongoing
+
+Transcription
+
+00:00:00 - 00:00:59 Unknown Speaker:
+
+In the same direction, already developing and deploying your agent solution struggling in Golden Gate framework establishment. Please feel free to reach us. Uh, me Abhimanyu and our entire L300 project team and some of the members from GDC Size would definitely help. Moving to the next slide, we will talk about the prerequisites first, because before we can build anything, Slide outlines the essential prerequisites. This takes import the TBC to project leads as well as the team managers to cover everything from the project information, gathering the access rights and all. So if you can see that numberings are also important here because many times we do not know what to start first, what to start next. Some of them can be parallel also if your Google is so supported. So the very first.
+
+00:00:59 - 00:01:58 Unknown Speaker:
+
+First thing as we know to kick off a project, we need a GCP project. We need a billing account association, which is mandatory. You will understand the necessity of a billing account inclusion in the GoldenGate framework is a magnet. Then this information needs to be passed on. Next, if you are using Puckinizer, then definitely for your project, for GoldenGate approval framework, you need a Puckinizer. Component ID For every project, there should be a budget component ID. If it is not created, ask the project owners or who are the stakeholders? Sorry, if you are given in the access, ask that. That. We need a organizer component, so what I mentioned, a GCP project created billing and bond association is important organizer component ID for that project. Wax We can raise the part for this, but where you are associated with management.
+
+00:01:58 - 00:03:30 Unknown Speaker:
+
+And identify the FD stakeholder means from that IAM access from the project leader or purchaser side who definitely able to see who are the owners of that particular project, who can give approval going forward for any IAM policy access or any other accesses that you need who can provide. So you should know correctly who is a FD stakeholder. GBM only should be there. Basically, GBM was not part of the GCP project. It could be your project manager, or might be the project manager is not so technical. Might be you are not aware of, but you can see this from your IAM access. So try to identify who is the right of these stakeholders. Is correct that it is less than one hour? A couple of projects where it is awkward if they may not know the creation of the project itself.
+
+00:03:30 - 00:04:25 Unknown Speaker:
+
+So that's the other challenge, where we we need to give them all the links, step by step what they have to create. Because exactly in joint sessions, sometimes they take more than days to resolve. Creating a project if it is a non-technical manager, documentation here itself. So let us create what are the artifacts. We created multiple artifacts, but this Pallavi highlighted rightly because GCP project creation or something maybe, you know, the manager can request, do you know the process already? So proactively we can share the document. So I think we have something earlier created. Let us rectify it and put a link here itself in the box that this is the step we can share at least to the Google FTE managers. And create a GCP project and associate the billing account.
+
+00:04:26 - 00:06:13 Unknown Speaker:
+
+I think we have something, a document I remember, going to this particular tab, making enablement of the billing account. So that process we can share. So while associating as a component we are associated like that we have to also associate a Google group as well. So it should be part of your documentation because that's the first step in the GCP creation. Which group do you want to assign this to? If the manager is not aware of, okay? Similarly, the same second box also, I think then there is a necessity because there is a lantern and JFG next. Either of these two tools will be responsible to create the JFG group, but this depends on the project requirement.
+
+00:06:13 - 00:07:12 Unknown Speaker:
+
+JFG groups, basically the name of the JFG, which role to be given, there are differences because many... or accesses is needed, but at least we can share that process, how the TVCs can go to the Lantern and JFG Next, whatever we know, and further, the Google's vendor manager. We are basically not the Google project manager, specifically mentioned, because this is one of the very primary things to be addressed. The GBM, according to the nature of the project, should offer the JFG Group to us. Here also, that one to three days, they take some time to understand the nature of the work. And generally, these things are started background before the project is take off. The important one next is the already we are known, many people have already done this, the strings access.
+
+00:07:13 - 00:08:21 Unknown Speaker:
+
+This is one of the major portal where basically, you know, an application for managing the group membership and access the request from the roles and policies. Tool to use you know, automated and policy driven access control. Whether you are going to use Cloud Top as that VM, and then you are using your promoting services, Tubby services. All these are to be done and there is a proper documentation is already available. I think every team members who have joined here have seen this documentation. We sometimes need proper business cases, so talk to your project leads, get it drafted there while asking for an unrestricted access for, suppose, a organizer or anything might be a business visit. Though in our documentation it is covered, but sometimes depending on the nature of the project, some detailed description of the business visits need to be provided.
+
+00:08:27 - 00:09:54 Unknown Speaker:
+
+Is required, to be honest. We just mentioned that approval is expected from them, but the hours to calculate is very minimal, I think it's just an approval they have to give. By seeing whatever that business reasons you have provided to get some access. If you go with an agentic development, we already know that we have to use the authors, which is a Google internal way to use the tools and everything. But at the same time, we need a production path enablement where your code will be available inside G3 in a particular way. To enable your production, but experimental note, there is nothing you can start around itself to develop your identity code. But if you have to go for a production, that is the main purpose of this call today.
+
+00:09:54 - 00:11:50 Unknown Speaker:
+
+The Google FT manager should enable that particular path access, so duration is one to two days. Sometimes they need to discuss, like which particular path or which particular team name, they need to give an approval, and maybe from their perspective. And here you can see, there are two things we need to do. One is related to whatever the rules and responsibilities in your IAM policies. In your GCT project is there. People need to put into certain groups, these are called MDB groups. Definitely for your project, also we have to create MDB groups for that billing account, same GCP project, but not directly involved with your project. We need to think that those people, or might be the Google FTs who are involved into the project, should be seeing that.
+
+00:11:50 - 00:13:18 Unknown Speaker:
+
+You are now creating your own IA policy for making the solution productionized. So there is certain operations are there, certain actions are there, and this is already documented in L300 that state. You can follow this and share this with Google manager. It is just only go and execute by the manager. We cannot execute that. Is it clear? So to sync is nothing but associating the Google manager. If you can see from start to end, all these processes might be, some of them can be in parallel, might be some of them should be done before even the project is started. One and two I would request. Or it is recommendation to the project leads that it need to be kicked off even before the project first day is getting started. This is mandatory, or even within the first two days.
+
+00:13:18 - 00:14:24 Unknown Speaker:
+
+Only we need to resolve it is to get a production path access. Because if you have to go through the LDTM process and you want to use the Golden Gate framework, that is mandatory. So the fourth also we need to initiate till the time the people are familiarizing with CIDR and developing the solution in office. Yes. Between three and four, once you have the experimental folder where they can start, right? You also have to do the GVC if they are new people. Correct. There might be some project level access, like organizer, desk tracker, spawn, whatever they have, right? That itself takes a couple of things, may not be in the overall, but somewhere we'll have to highlight that because each project might have their own needs for accessing. Exactly.
+
+00:14:24 - 00:15:21 Unknown Speaker:
+
+Like the third one itself, where we can wait for the access. Between third and fourth, there might be a smaller segment where they might have to ask additional access. The implementation once you get that. But to get up to that stage, maybe it is a two to three week window, it's not just two weeks. Got it, got it, no, that is, that is perfect. Like these are something an action like whatever they need to contribute. But you are absolutely right. We can put a message here between thought and the areas that actually need some, uh, you know, weeks for that, yeah, if you're asking any API access, that in itself takes time, so those needs to be planned.
+
+00:15:21 - 00:17:10 Unknown Speaker:
+
+Yes, please share some incident, but let me like where we have seen like it goes two to three weeks access if we have to call out sponge access, which we have to get, and continuing implementation. Fantastic. We can share with us some of the examples where we have seen that the accesses like in organizers, sponge access, whatever we can. So just to add to that, so you might, there is a time delay to get access to the tools, but in addition to that, you also need to get the payments, billing permissions as well. And only when the billing permissions happen, you start getting the API key. This is a mandatory. I have already cleared it out. Anywhere I am going, like in Android where if anyone joined here, I don't know. Deloves also I mentioned the same.
+
+00:17:11 - 00:17:58 Unknown Speaker:
+
+There is no point until and unless a GCP project near access will not going to help because we are not going to use any free tier services of the Gemini and all. If you have to use Vertex AI and Gemini, it's a mandatory that GCP billing account ID is there. When they join an engineering team, these things are available, then it goes in the right order that we're mentioning. Okay? In our case, we do not directly work with the engineering team, right? So we are setting up all of these things. As this goes the other way around, unfortunately, this order was not followed. And we eventually had to get the payment billing approval, and then we got the API. Just a FYI for others who might be interested. Okay.
+
+00:18:03 - 00:18:51 Unknown Speaker:
+
+Whether it being at the engineering team, being not at the engineering team level from the Google. I think from the TVC perspective, whenever we are accepting going towards a POC or a complete billing based project, we have to have this. There is no other alternate choice. GCP, billing account, so I think mostly the leadership team who is going in a discussion to the stakeholders. These are the things going forward. To ask in any project to pick up. Yeah, but I really appreciate that you mentioned like somewhere cases like you have already got the project, the billing account enablement, even third and fourth is getting started. You still do not have that, you know, the Vertex API key to use your Gemini modules and all.
+
+00:18:51 - 00:20:18 Unknown Speaker:
+
+So to be able to do the billing and... has been expired, so mention that in the documentation of the project, you know, for the stakeholders. Okay, okay. Moving to the next slide due to the interest of time, because this slide will be shared to all of you. So please have a look now. This is one of the important area for the Golden Gates, and now we are talking about the Golden Gates framework. Like, what is the first step, what are the things you need to do? The very important point. During that time, whatever the development we were doing or might be, we were already continuing, there would be sudden changes come. And some shock we can get when you have to go with your desired document approval. I am talking about when you are productionizing the solution.
+
+00:20:18 - 00:21:29 Unknown Speaker:
+
+During that time you are not productionizing you are just demoing the solution multiple times the stakeholders are happy to be honest. Is important, but when you really go into the production development. Due to some security measures, due to some lot of interfaces that is are allowed inside Google and not allowed inside Google is need to be cleared out. We call it as a technical design document. This is a important approach and you can see there is somewhere it is mentioned elephant this particular, you know, what I can say, like you navigate to your client, like G40 and suppose you're my client, and then you build and run that particular command to initiate the Gemini CLI, and then you have to, you know, install this particular plugin. The command is also given. This plugin is allowed to install.
+
+00:21:29 - 00:22:25 Unknown Speaker:
+
+It's nothing to worry if you have this cloud top and your workspace access is already enabled. Then you are going to use what is that called? Elephant, owl, goldfish, that command will install this plugin. What is this one actually? This is nothing but elephant, owl, goldfish, this elephant will gather all context. So the larger context, every such thing should be documented. This is another type of documentation only. So elephant will talk about every context is documented in the same document. Owl makes you analyze and provide insights. What is the importance of this? This one, why we need a stateless or stateful conditions of your agentic solution. All this will be provided in the OWL section. That is your analyze and provide insight. And goldfish is nothing but finally the validate and the critique design.
+
+00:22:25 - 00:23:18 Unknown Speaker:
+
+How you are saying that this solution will move towards a productionized, how you are validating that it covers all the validations in terms of security and all. So don't be panicked like how this documentation looks like and all. There is one mandatory thing is A, Uh, important diagram, architectural diagram within the next slide is a mandatory there, and you would be knowing some of the important tools which are allowed. Today's view, which are allowed by the Golden Gate framework, that those need to be used. Suppose today, you might have aware of there is a particular database instance or database tool which we use in GCP. Is cloud simple? But to be honest, towards this GoldenGate framework, it will change from that to Span and DB. So that means you are not going to use Cloud SQL.
+
+00:23:18 - 00:24:05 Unknown Speaker:
+
+No, that is not the case. You can still use the Cloud SQL depending on that project access or nature, you can get an exceptional approval also. So there is no hard and fast flow like this tool or this API, external API you cannot use. Like in GDC, we have to use a gel test API. To be honest, these external APIs are not sometimes allowed. Get an exceptional approval from the project manager. Basically, he or she should give an access to the architect who will be reviewing that golden, this particular documentation, the design documentation, and then everything is possible. So there is no hard and soft truth that you can use or you can't use. But still, there are some recommended tools. If you can use. Basically, you can get the approval faster, that's it.
+
+00:24:05 - 00:24:59 Unknown Speaker:
+
+So this is nothing but it documentation you need to create. The Google FTE software engineers, they need to get an approval. We know some of the names, we can share offline, not in this call, I can tell the name right now, but you can get an approval for those particular, you know, documentation. So this is what the elephant, owl, goldfish concept, where you have to prepare a technical documentation before you start the development. Already developed in an experimental note, don't stop it. It is just a little bit of fine-tuning. Generally, they will approve everything. Only thing is they will counter, hey, while you are using Cloud SQL DB, it should be spalleted. These interfaces is not allowed internally in Google to get a production approval. Otherwise, you need to take an approval from your Google manager.
+
+00:25:18 - 00:26:49 Unknown Speaker:
+
+Internal Spanner or Clock Spanner means I didn't get that. Be there for the structured data, basically utilize the cloud standard. Okay, yeah, that is coming next like this is just I tell before that. So the documentation, you understood, right? This documentation talks about one one sample reference he has given here. But I would request, Uh, I think Abhimanyu, I told you to give a uh, one talk link. Also because we cannot share the project, actually what is there? But we are masking the data, we will provide on it to mark the data. Due to the shortage of time, we could not finish it, so we will share the documentation. You will understand how the technical design document, which is an approved document, how it looks like. Okay, so that we will be sharing in this, so this is your design document formative.
+
+00:26:49 - 00:31:12 Unknown Speaker:
+
+Now, the next slide 428, can you please take over? Like? This is the reference architecture, thank you so much, so this is a reference architecture. SpannerDB is a recommended DB which we should use. So the reason behind using SpannerDB and why the Google GoldenGateDB is recommending this DB is because internally, like someone right now mentioned like internal. Security and those of the ones is also we had some challenges. Yeah. So maybe he's asking, is it a SQL DB? No, it's not a SQL DB. It's different. MySQL DB is different. Yeah, go ahead. We have basically built a schema right now that is not yet reviewed by the FT due to some constraint right now. So we are in process that we will get that reviewed by the people who are there, who are helping us on this ARCAS development.
+
+00:31:12 - 00:34:26 Unknown Speaker:
+
+So I believe we are. Yeah, that's where the challenge is. Again, I might be wrong, but I've seen in the past, trying to create this vanity, we had to go back to the FTE, just like the actions that Bill mentioned right in the beginning, where FTE has to resort to actions. We have seen that a lot of dependence on FTE is just a forewarning. Update the URL and once we update the URL, we need to restart the server. Or re-trigger the build so that the latest value which we have changed within the code, uh, that need to be picked up. So on this protocol, basically, we do not need to re-trigger the build. It dynamically reads the data and it dynamically reflects. Have any, um, like, if you are facing any issue, I think we should be able to request like those kind of queries.
+
+00:34:26 - 00:36:24 Unknown Speaker:
+
+Uh, you know, Shahil or anyone is having, please connect with us. Uh, separately, uh, in a separate forum, uh, to showcase. Like, whatever you are done, what is the challenges that you are faced? We'll short this in and, you know, call okay, okay, sure, that would be more acceptable now, which Manuel has also talked about, like in this particular moment, if we go to the Golden Gate team, so like officially they say that they do not support any third party service integration to all us and while registering on ASMO. So like we got one exception. So in GDC project, we are using Zendesk, Which was initially not... Data whichever you want to store in the Block store, so it provides instant retrieval through Load Artifact. And we can, like, directly manage the spaces.
+
+00:36:24 - 00:38:16 Unknown Speaker:
+
+Also, they provide a very good uh like uh storage that you can store uh finds up to TBS. So in our use case, we all we need to store the data so we get packet data, and that packet data basically contain, uh, contain information in multiple GB. So we need some solution where we can store a huge. So we are using service for that. As SpannerDB, we are basically using SpannerDB, like I mentioned, for all the input which is coming to us and all the output which we are generating. So this system with the agent which we are developing, some other third-party printer is also integrating with our agent. So there is a UI platform which needs to connect to our agent, so the input-output. Basically works. Transaction where we we.
+
+00:38:16 - 00:40:13 Unknown Speaker:
+
+You basically provide the task and you need to make some changes within the standard DB. And um, like, like it like. I mentioned that it is a asynchronous task, so whenever you basically make a hit, you like, you hardly get that return. So certain more configurations, so it is a similar thing, but it is the purpose for which we use both of them is. So suppose we are having something where we have a very a certain process take up, use an amount of time and user cannot wait for that particular time. So you do need to distribute. To add here, just an important thing, this is an optional, this particular slide is an optional for your project configuration. You might be aware of... and it may require 15 minutes, 20 minutes, or more than 30 minutes or so, and the process is going on.
+
+00:40:13 - 00:41:01 Unknown Speaker:
+
+So in that case, you know, you have a timeout and that is an issue that is the prep. So for that purpose, Google have this option that, as you know, right, earlier, if you are already aware of active queue and all, right, the queues will be created, and these queues will be executed during that time only, the duration will be captured along with that execution time. Recommend Like both of them, one of them should be in use, so it is only in case. Your execution time it is that the stipulated time of that RTC timeout, that is 10 minutes likely. So we have some operations, which is more than you know, 15 20 minutes, where some GB's of file need to be processed. So that is why this.
+
+00:41:23 - 00:43:05 Unknown Speaker:
+
+If you want to use any of these, go with SparrowQube because of the security review that those things we can easily get. But if you need something which provide more customization, then Manyfold is a better option. So like based on your particular use case, you can choose. Okay, let's sync up again, maybe the same thing. We can sync up and check all this. We'll also share our feedback. My past, I've seen a lot of challenges. Oh, thanks. Now coming to user experience. So whenever we need to build like any UI, so that capability we also have. So if we have a... then we have something which is Bob Webline. So if we need flexible, uh, flexible support with type, State or Javascript, then we basically go with Bob Webline. So that option is also available.
+
+00:43:05 - 00:44:56 Unknown Speaker:
+
+So if we need to build a UI, so we can leverage this that we have raised. So that's a sample show of how user experience can be used in Angular. Did you get a single sign-on? We have not built a UI. Yeah, I will tell, I will take this question. Only one account so far who have got this, it is from code search. There is a dashboard team who is creating their UI. Approval Till then, as in the right side, the prerequisites are mentioned. This is one of the major challenges to get such access, even though you have an engineering in support to proceed with all the approvals, like in Spanner, Spanner, PP and every other thing. But this is one of the major challenges whenever you even create a simple UI, those three things which are the prerequisites is mentioned to get an approval.
+
+00:44:56 - 00:46:43 Unknown Speaker:
+
+It is a nightmare because the project team, which I know I was there for another one or half years there. I am seeing almost they are working in one or two years. After that. They got that initially, they started with the freelance, now they are developing the things in an angular. We need to have a prompt UI, AI-based UI. Any thoughts on that? Have you guys? Only the recommendation, if you can see, like in L300, whether it is in GDC, the only thing they are allowing now, this is the, if you know, right, the very mere UI means the chat interfaces only for the Gemini enterprises. That is the only thing they are expecting as of now, because mostly what we have seen, like in L300, Same thing they have... the UI.
+
+00:46:44 - 00:47:45 Unknown Speaker:
+
+If the team who is using the solution is again another purchaser team or another TBCs, that is still okay. We can have to give that complete code setup in their system and they can access like a developer is using. Otherwise, if you have to make it productionized, what you mentioned, the way that I mentioned that these Angular UI for accesses and all, this is very hard for one TBCs who are working which I call it, you know, command base or CLI base or Gemini interface, the chat base. That is the only way they are at this moment. Okay. Yeah. So the prompt is going to be a challenge. Yeah. Yeah. Yeah. So yeah. I'm clear because I have discussed with a lot of times with the default. I didn't simply ask like, what is the challenge that they mentioned?
+
+00:47:47 - 00:48:32 Unknown Speaker:
+
+Every RPC connectivity, even a person who is joining a Google, she takes almost two years of time. Now as a TPC, when we are onboarding this project, to use of RPC, giving an approval, we are, our hands are restricted. So that is a very, very stringent policy. The main problem is not the UI, to be honest, though it is mentioned in this slide, it is the connectivity from the UI to the backend. And Google is a strict policy to maintain because at... any point of time there could be a leakage of code. So this RPC itself with the stubby call to connect to your backend, suppose you pitch a submit and it go and initiate your code to execute, that step is the more clumsiest process.
+
+00:49:06 - 00:51:05 Unknown Speaker:
+
+Whatever Abhimanyu mentioned, if you can see the coloring code, I have created the simple UI is the first one. If you want to even talk about an enriched UI, then you have three different box services, BoxWidth, BoxCX, Angular Component Exchange. Please share the details to me. I will include in one of the documentation how to use it. Sorry, if you can share. Okay, yeah, go next. So actually I will be requesting from Sai for this. Sai, actually you mentioned that presently the team which is working with you in exploring the standard data and you are also facing certain issues which you actually mentioned, right? No, in my previous project, I tried to do and it was a challenge. In spite of it, we were working with the engineering team in spite of the challenge, because it's very restricted and highly secure.
+
+00:51:05 - 00:52:03 Unknown Speaker:
+
+For example, if you have to create a schema you get access only for 24 hours to do a command and every 24 hours we have to do a request just like G server. Things like that, but they want everything to be done through the code. So we are doing it through the C, they expect it to be done through the code because the reason why they want the security is because the CL will be reviewed and approved by multiple links. So that's it. So what's happening is we are working on an engagement called .  We are currently trying to build . So we just need to know from one of our users who is in the client side that SpannerDB would be able to go ahead considering the fact that we need the DB access.
+
+00:52:04 - 00:53:09 Unknown Speaker:
+
+So even we didn't get the access of SpannerDB, but we were actually exploring. If SpannerDB comes into the picture, how is it going to affect? So I was curious when you mentioned that about the standard issues, some issues with this. Please, please make a note. It is not an issue. It is very powerful. The side is working here. We also mentioned that you can use as a SQL DB as well as an embedded data. So we have done that. For the access part, Sai and Sandeep, as I told, the team, whichever we have identified now, they are very, very proactive. I cannot name it here for security reasons, but they are very, very proactive. We will tell you the way that we can include what happens, you know, suppose the next person, say for Sandeep, you are the one who knows this entire process to set up and give those accesses.
+
+00:53:10 - 00:53:53 Unknown Speaker:
+
+Okay, one project you are doing it, or already done few steps, then what is the area that I am just exercising here? We need to tell that name to your project manager or leaders. Like you can say, like, this is one in another, you know, TVC site. This person supported. He knows the process to get approval for the PBCs. In a faster manner, we can improve, so we have seen one project when it is success effect, but not, there is no. They actually agreed with the cloud sequence, that is for different reason. But now we need a spalleting in L300. So we got that particular person or the team who is having it, then we are including them with an approval from our project. 25 point.
+
+00:53:53 - 00:54:54 Unknown Speaker:
+
+So this is what we need to do, because already some of the steps which we was nightmare for us. And even in the first project when it started, it took four months, to be honest, when we started in L300. To identify the person, it takes a lot of time. Our process of thinking, like as we created human parts now, like Abhimanyu, me, all are supporting here. And here, after that, what is our main thought? The person who is actually approachable or the team which can be approachable. We need to understand because sometimes what Google managers will say, they will never say something like completely as a no. They will try to understand if there is any easy and alternative approach and to be honest, easy and alternative approach. Right?
+
+00:54:54 - 00:55:50 Unknown Speaker:
+
+So only thing is we can say like XYZ project which is running by TVC from the producer already gets support from this Google FD group or team. We need to include them in our project. If you can have a talk, we can arrange a call so that what happens, you know, in that including that particular member from the Google and he can join with your manager and explaining the process. Then what happens? So, you know, when Google to Google, they will start speaking, the things will be spread out. Yeah. Initially also minor, we took care of for Margaret and all. Margaret and all, correct. Another small question. Can I ask for? Yes, go ahead. Is it related to technical? Then you can talk to Abhimanyu. Is required to control this call because to arrange this call, it is very difficult, to be honest.
+
+00:55:50 - 00:57:15 Unknown Speaker:
+
+So it is okay, right? We can extend another 10 to 10 minutes to close the call. Is it okay to everyone? The agent deployment journey, and this is where lot of times AP's involvement is a magnet. You cannot avoid this test. Okay? So if you can see, right? When we are talking about the latch key enablement, what is latch key? Basically? I'll tell you, so latch key is nothing but your. Google's infrastructure as code tool to GCP, and its purpose is to securely configure and manage the GCP project. Permissions, I can say, and configurations in Piper. Now, the point is when you see this latch is required, to be honest, latch key is already in Apple. If you have a proper GCP project and billing Account association, so for the TCCS when they provide the Billing Account association with your GCP project, that time latch key is already in Apple.
+
+00:57:15 - 00:58:16 Unknown Speaker:
+
+Even though some cases, like if you still have a conclusion, or sometimes whenever I am speaking to the next team, right, will be executed. Try to understand if it's really confident or not. So you can take just an approval from your, uh, owner of that particular GCP project. Please confirm the latchkey enabled or not. Mostly, we'll get an answer as yes if the billing account is associated, if not, the billing account. Association is a mandatory created for which you have already created certain MDB group using group. They need to be part of a particular document, which is nothing but your IAM policy viable file, which we have already given. A sample file here. This is the way that you have to create a sample file of your IAM policy.
+
+00:58:16 - 00:59:24 Unknown Speaker:
+
+Access where each groups of your project or each other Google groups who are already part of your service account. Same things will be mentioned here. In a YML file. There is a template and that template file will have already been given as a link here. And this need to be CLM. So what is the one is the task here? So FB will confirm your project is already associated with the billing account, and it will actually enable yes or no. TBC will be creating this IAM policy, related documentation IAM policy by ML5. Their template is given. For this, the MTB and TBC group is already created as a prerequisite. Then, specifying the roles and members, basically, if you open the document, you will see there are roles and the members are there. You can open it later.
+
+00:59:24 - 01:00:09 Unknown Speaker:
+
+We can share the feedback. You can have an answer. If they give you an approval of this IAM policy, who is CL? Because everything is nothing but the CL reference. So these documents, whenever we will create and put it in our project folder, you are creating a CL, right? In your workspace, you are creating the CL. The CL will go to the FD who will review. Now, the challenge is that it might fail. Your current Google manager, who is not so technical, might not be aware of what other things is written here and how we can get it up. So for that also we know a group or member of team or might be a team member name whom we can tell you that according to the same, you know, knowledge base that the person is having, you can identify someone from your Google project.
+
+01:00:09 - 01:01:01 Unknown Speaker:
+
+But this process is known to us. This process is already working fine. So you will be getting the approval very soon once you create this document. This is called your last year development. Nothing that the main activity is to create a documentation. That IAM policy YML file, it is very simple documentation. If you go through it, you will understand. The group name to be decided, role to be decided, mentioned, and then you are done. You have to get an approval from the Google. So this is a very simple process you will get it. Duration and everything is mentioned. Whatever the duration we are experiencing now, if you know the right person. Is nothing but the Golden Gate command execution, so there is a portal already available.
+
+01:01:01 - 01:01:54 Unknown Speaker:
+
+You can understand that what is the Golden Gate is all about, so Golden Gate is having nothing. But next we have to use this Golden Gate CLI, then through the gate. Who's, you know? Scaffold and deploy the Agents Box Servers. That means your agent code now need to be hosted in a box server where you have to follow certain processes. Some of the commands you can execute, I think two commands, which we are talking about. They need to execute each and every step. And this is an important step that KFD's involvement is a mandatory. If there is a mandatory prerequisites to obtain a Baganizer component ID, so remember I mentioned at the beginning, you need a Baganizer component ID because from the FD's perspective, you have to get this one.
+
+01:02:01 - 01:02:46 Unknown Speaker:
+
+This is a mandatory step that you have to understand your Baganizer component ID, get that approval, sorry, get the component ID from your manager and use this one. So this is smart. Now coming to this agent deployment, that is an office development, which we already doing. So Abhimanyu, you want to add something about RPC and the IDS framework? Yeah, so there is this, basically whatever code which we are developing, so agent code, we need to put that agent. Location, the production path. So that production part, there is a hierarchy which is being set up by the golden key. So we need to follow the same hierarchy and we need to put the code on that specific place. So for testing the code, we can use this orcaslipper command.
+
+01:02:47 - 01:04:23 Unknown Speaker:
+
+So using this orcaslipper command on our local... services like someone mentioned, like this databases, which are the database which we are connecting to. So that connection basically changed if we are using Secret Manager. So in Secret Manager, previously we used the client package, the client language which is available, but when we move to the author space, so those things mostly doesn't work there. So we need to shift to the first party internal. So that is something which we basically need to test on the environment only. So you can just create the CL with your code, you can get the LGTM approval and the DWT approval. And once you've got the approval, you can submit the CL. Directly get access to the RPC also.
+
+01:04:23 - 01:05:27 Unknown Speaker:
+
+Suppose one of our project in UDC project, we are using MoMA search API in place of vertex AI search tool, which we are previously using. Since vertex AI search tool is not something which is compatible with the author's base, this agent. So we need to switch from vertex AI search tool to MoMA search API. So in MoMA search API, we have certain restriction that we need certain permission and certain approval from the MoMA team. So we have applied for that particular permission and approval. Once we get that approval, then only the RPC basically, the RPC columns are dropped for our agent. So those are certain additional permission which we basically need to take if we need to access any specific RPC. And this is our ongoing activity. And also if the CL is very short, then LWT approval works.
+
+01:05:28 - 01:06:32 Unknown Speaker:
+
+Otherwise, we also need some LWT approval. We basically change whether the code is good from a LWT perspective or not. And sometimes, if we are accessing to any RPC call, which another team does this, So that we basically ready to get, but no issues there. So, like, these are the only things. Uh, yeah, so so this one is a real development work that generally people should have. We can plan for different sessions that might be from this team itself, whoever have joined and working already in auto development. They can talk about this practices someday in another call, might be next week or so, please come forward and take sessions. Like, as we know, right? There is no function driven, task-driven development that you have to use. ROOPS concept.
+
+01:06:32 - 01:07:16 Unknown Speaker:
+
+And then how the new skills are required, how the skills are configured, what is my orders. There are several things and best practices can be planned and discussed within our team. So this is very important to the EBC's learning perspective to understand what is orders development, what is important, what is orders are in here. All those things, how the bridge command aliases created over there. Every such thing is very important as a business. This is how you recommend, like, if anyone for that, from your team can come and talk about it, and that would be great. And we can definitely fine-tune it further, like, to increase the development strategy. So they are all in the development. If there's involvement, we have not mentioned.
+
+01:07:16 - 01:08:03 Unknown Speaker:
+
+It is all about the LTTM, of course, the regular process, whether your particular project manager is not going to be involved with the Google site, so it is a group, or a team member. Google site when you submit the seal, they need to have code. So that time I'm not recording here to be honest. So that is not causing any trouble because Google is already around. That is an HDL process. The next slide, if you can go to the one, this is before Kavim and you take it. This is an important area and most specific. Now your code is where? In POP. Golden gate means you're moving the code in a POP name space. But to access that particular code by the entire code, Or in the way to use the building in Google.
+
+01:08:03 - 01:08:51 Unknown Speaker:
+
+If you have to move your particular agent before to the agent space, then this process is a factory. And this is required, which is called a final production stamp. That now this solution is in production and for that this approval from the like in purchase. So we have a BSOT piso right for the security approval and everything, but this is very, very challenging. TVC It took a lot of months, I think last week for this Monday. Somehow, in this time period, only we got that approval. And to be honest. The escalation went till the person who is reporting to Sundar, Sundar, which I have talked to the CEO so you can understand what is the depth of this particular approval and all. And it is a nightmare to get it.
+
+01:08:51 - 01:09:46 Unknown Speaker:
+
+This requires even some months, so if you start from the beginning to get it, we don't know like when to end. So we should have a.So this is our decision also, because we are not aware of the Golden Gate process and everything like this. Everywhere it looks like it is a simple job, get some accesses. Up to Golden Gate or the POQ where the food is available, still it is okay. But from this to this journey, another development work will be also required after this approval, which is called elder. This is the process. We'll talk about it. But these need to be triggered and we need to clearly mention. Might require some approval and then delay, we cannot sit idle. We can give the DOQ base code to them and they can use it further to integrate in the agent space.
+
+01:09:46 - 01:10:42 Unknown Speaker:
+
+That is something better to mention in the SOW. We are also thinking that the way the statement can be provided inside the SOW, but this is a mandatory process, but we do not have any other hope. I can see like we need an approval from them and it takes at least sometimes a few months. Very good question. Golden gate is a mandatory now. Probably the Google every site what connected to the TV system are very new to this process because golden gate is also improving day by day. The commands, the list of commands as you know today as well. Maybe tomorrow it can be with three components, so we don't know. So Golden Gate is also improving for the PBCS to go ahead and develop internal code access.
+
+01:10:42 - 01:11:36 Unknown Speaker:
+
+But this entire process to know by any manager whom we are speaking with, starting from GPM, then the Google project manager, sorry to say, might not be. They are completely available. The reason is very simple, like in PBC's perspective, the accesses and all these matters, but for a real Google MP, these are already available. They can. So that is the main challenges, but expectation should be, I think, till that golden gate because nobody will be allowing only to be utilizing TCP with the vertex AI workbench notebook based code. This is only for a quick demo to show to the client or might be at least at an autos experimental level. If you are to experimental node, if you are developing the code and share. Definitely should be part of your SOW. This is the easiest way.
+
+01:11:37 - 01:12:25 Unknown Speaker:
+
+Now, coming to the production path, whichever the point that we discussed, this particular slide, not this published agent, the agent process, the agent process. Before agent process, at least those are doable because the path, at least I can see it in such a way that if you are going through those right process, like we are getting the approval, and already one of the problem, as I told you, we got the agent process approval also. Today, we are presenting this slide where we have already reached elder process, also done after elder process. What are the challenges? Are there? Still? It is undergoing. It is not yet accepted, but approval received. Configuration details, if any other reports are there, we even don't know. The GDCM started working on that, but before Elder process something at a golden gate.
+
+01:12:25 - 01:13:53 Unknown Speaker:
+
+When it is configured, the code or solution is in DOQ till the time it is achievable. Only everything is support from this FD or relevant FDs are missing. Correct. That's up to this, but then again, particular solution and execute will be difficult. Then you have to give it with B5, right? Whenever the discussion is going on right these are the processes is a mandatory holding gate mandatory support needed is needed as i can assume golden gate building, the golden gate is everything need to be covered. It is a month process, right? Entire month, because my setup, all the setup is there. So from part week, if a Google FD or group of members can support three hours of part week, at least at the minimum, then 12 hours or 15 hours job, they need to spend to us.
+
+01:13:53 - 01:14:34 Unknown Speaker:
+
+Now this 12, 15 hours, how they will be available, that is up to their direct, like from the Google side who is managing that. Is a mandatory result. We are dependent on them to execute such things. And L300 will be the first project which will be passing the golden gate and going to the UK. Golden gate GDC also. GDC already done even the elder process is there. So L300, we are at the stage of getting golden gate command execution. Let's see. If they want to continue, if they want to stop at that moment from there on, they will take the interview and do it. It's a separate discussion. Sometimes what happens, you know, you are at the golden gate stage and they understood, like, now I want shipping, go ahead.
+
+01:14:34 - 01:15:33 Unknown Speaker:
+
+It will be difficult from there, let us stop, but we can take that and we can continue this. Sometimes what happens, you know, while you are providing the access, you are executing the command, you can also feel, right, I can take this up and come. So that is something, of course, and something they want to rethink. I can include in this project and support. So there are a lot of noises here and there. But in GDC I can see in the development process we have done because in GDC there is not so much dependence is all, I'm not sure. Despite that time already BigQuery and other things are already supported. So we do not have that much of challenges that in L300 we have. Because in our L300 complex task is to managing some file process and querying those files of nearby some GBC.
+
+01:15:33 - 01:16:32 Unknown Speaker:
+
+So the execution time itself process, span and queue is important or manifold is important. So depending on the complexity of the project, GBCs can take a, sorry, GSTs can take a decision. And I would request to hesitate to, you know, bring the context and these are the things I've managed. Because this is why these slides we are going to share today. I will share with everyone. And basically, I will highlight to the leaders that this is the right thing which we can discuss during our SOW kind of things. Or the enterprise architect when they are talking first time to the project, we are blindly saying everything is possible. Because we can dream about it. Because whenever we... as an architect, as a, what I can say, the enterprise architect, we can think about and bringing a solution can be demonstrated in a very fancy and simple UI.
+
+01:16:32 - 01:17:17 Unknown Speaker:
+
+I'm not saying the complexity, right? But it is not supporting here. Who actually went inside the Google, we have understood like that the recommendation when I code, it is not just I like a code. I have experienced that the UI is the design of a simple submit button to connect with your backend code. You know, even in six months to one year, that has also happened, that also happened. It's not like that. Uh, everything is so much freely accessible, and whatever we are dreaming about, so so, double inclusion, I would recommend, like as a project, as an architect, chief architect, anyone should be very, very sincere. Might be. Internally, we can create that because the whole group we have created now. Is that to be reviewed?
+
+01:17:17 - 01:18:11 Unknown Speaker:
+
+Also because our commitment can make us to the desert, because we are committing a UI to be developed, this thing, right? So that is what I want to give that barrier. These are the limitations we have experienced because now we are pretty much inside the Google. We know the processes. We know the restriction. Even in GoldenGate, so far, the time we have taken now, this slide, you understood that how many times that we need to go through a certain process. Because here you can never see this kind of things, right? Yesterday we discussed something. We are talking about your data security policy. Now, who will come and enrich this slide talking about in your project, exceptional cases. But if you have a data security, then there is another way, right?
+
+01:18:11 - 01:19:07 Unknown Speaker:
+
+We have understood there is a data security policy, of PII. So those three are not covered here. Correct. So that is what all these details like how to handle it need to be also mentioned because in a project like that is there. Now MPBUD is following this blindly. Again, I am requesting to everyone who is a senior lead architect who are there, don't follow this only blindly. If you feel some pointers are more there in our cases, include that here also. If in your project, the data security or sensitive information restrictions are there, if you're working on a project like CRM or enterprise or Salesforce, those kind of applications are involved. You need to follow these kind of policies. You need to create this documentation and get a CLR. How you can build the guardrails?
+
+01:19:07 - 01:19:58 Unknown Speaker:
+
+I have not talked about the guardrails here. Yesterday, I mentioned about you, right? Yes. Correct. Before LLM, You have to have a guttural because we always talk about the guttural post LLM. No. Even before LLM, once we have a guttural, that whatever the responses you are requesting, you need to mask those areas where you don't want to share the information of it by accessing the Gemini API. After responses also, you need to match it back because you have responses received, some in a generic way. Now some of the places, you need to replace it with a real command that... They can ask you like, are you sending the PII? No, PII data you're not sending. Post LLM that process, then how I can map it? So we have a mapping algorithm.
+
+01:19:58 - 01:20:51 Unknown Speaker:
+
+So we need to think about all this and put this in the SOW or any other technical. I got an understanding that this is a very long process and it can take huge amount of time. So I should not sound as a joke because your slides are clearly mentioning that these are the processes which have to be taken out there. Yeah, there is no push. There is no push from the leadership team should be. As I mentioned, right, if we take this task and execute it after 10 days, it is not our responsibility. If I say in this way. They need to review your sale and give it back to you. Back and forth communication. Because if they review your one of this policy documentation which you created, they go through it.
+
+01:20:51 - 01:21:32 Unknown Speaker:
+
+They have some concept, they raise it, you are reporting it, they fix it. Now, this lead type lifetime, nobody can put in any slide, but I know personally. If they have to review a document of one pager, that may take less than an hour, or might be max to max one hour. That is what I'm saying each and every processes. In a week, they can spend two to three, I mean, three hours is the max, you can say. Two to three hours, logically, they can spend, till one month. Many of these processes, till the golden gate, till that process event, I have made my hands hot. Like, I don't know, like, how much time the exact process took, as I told. The recent process event went, till that person who is reporting to the CEO.
+
+01:21:32 - 01:22:15 Unknown Speaker:
+
+This condition happens. So, this is a known fact. It is not like I'm hiding, or it is a secretive. It's a known fact. It took time. And that is what, in the process, I cannot guarantee. Golden Gate if we have the right person, because that's what I'm saying in TDC. When we started with, it almost took four, four months for that Golden Gate approval for many cases. But in the LC100, at least at the current stage, we discussed. Last week. When I visited, Right, it almost took only for two weeks, so four months journey converted to two weeks. This is what the experiences we get. And again, another additional things, if you or you know, shy or anyone can add it here. We can increase the process. Because the first thing is basically is a struggle.
+
+01:22:15 - 01:23:09 Unknown Speaker:
+
+Second time any project in all these areas, we try to understand how we can speed up this process. That is our main intention about this kind of a .  Okay? Sure. Okay, Abhimanyu, can finish it off in two minutes, then we are done. This slide only. Yes, yes. So  I will talk about how  we  are going to register and how the registration process of the agent. So first we need to file a request. So this is something which only a Google FTE that is your manager needs to do on your particular behalf. So basically they need to file this request where they need to list down everything, what is the retention plan, how you are connecting to which particular services, and how the connection is made, which particular lead and operation, or what exactly you are doing.
+
+01:23:31 - 01:25:00 Unknown Speaker:
+
+And even they will go through your code how exactly you are establishing team which basically manually registered this agent to Gemini Enterprise. So we need to create a bug for them and we need to assign this bug to them. So this is the component ID after which we need to create this ongoing bug. And within this bug there is a lot of details. So they have a template in which we need to list down this is our agent and they will ask a lot of things like what is your agent card. So the agent card is something using which they basically connect to our agent. So this agent card and all the details basically come from the gate. EMl file, which we have shown in the very initial phase where we are building the agent.
+
+01:25:00 - 01:27:36 Unknown Speaker:
+
+So we are creating a gate. Eml file. So within that file we have all the things listed there, so you can directly access from there and you can add those things within this particular ticket. Now next thing is, we need to configure the and it provides accessibility to that agent. So we first need to make some dependencies in our agent so that this Dolphin server can basically connect to our agent and basically access our agent and it can allow... You also need to add the agent card and the page address, how you can contact our agent using the Dolphin server. So those need, all those things need to be taken care and we need to create a CL and we need to submit the CL. So once the CL is submitted, what we have seen.
+
+01:28:21 - 01:30:04 Unknown Speaker:
+
+Then it is better to discuss about it. Yeah, you can give a hint to the manager that this is required. But yeah, that's what. So this is the end of our this session. So these are, there are two sessions we have conducted. Initially, I talked about overview what was there. Here it is more detailed about. Whoever have joined today this call, you will get a mail from my site and with some key pointers to the stakeholders that while SW you are preparing, while committing in front of Google, doing an RFP stage, doing sales stage, whatever. We need to ensure that onboarding is one area for the Google. We will be sharing, and I will ask, like, whatever his experiences on the UI part, he can also send something, like, request there,
+
+01:30:04 - 01:30:54 Unknown Speaker:
+
+so anyone who want to add some pointers, please add, please enrich, this is one, and this will be available in a public repo, going forward publicly, here in this group, we're creating a space where this common documentation will be shared across, so please use that. Already known to all of you now, right? Abhimanyu, me, whoever you want can have a call, connect with us and we can discuss about this part. And Manoj, just one more thing. When we were talking about this SW and what points we can mention that will actually help us. So I don't know, Manoj, I was just asking because our SW is still, is it possible that we can see some part of the SW? Yes, yes. We are the enterprise architect, whoever it is, need to be part of this and maybe... or anyone, right?
+
+01:30:54 - 01:31:57 Unknown Speaker:
+
+We can discuss. And Satish is also with us. And we mentioned Mohit is also joining the call, right? So you can talk to Mohit and make sure these things can be improved. But for that, your manager of GBM will inform first. Because the discussion happened first and then a sort of inclusion comes, right? And while preparing the SRW, is it good to take the reference from any other Google project? Right, right. Yes, so that's it. Sorry for that, you know? Extended call duration. Uh, we have no other options left because we are we have been pushed to take this kind of association. I hope it is fruitful to all of you. Share your feedback going forward, come proactive to support any other areas that you also want to cover. I am also with all of you.
+
+01:31:57 - 01:32:11 Unknown Speaker:
+
+So please feel free to support us and we need your help for making this better project. Okay? Thank you very much.
+

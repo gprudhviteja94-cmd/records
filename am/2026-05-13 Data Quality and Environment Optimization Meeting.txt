@@ -1,0 +1,229 @@
+2026-05-13 Data Quality and Environment Optimization Meeting
+
+Creation Time: 2026/05/13 18:02
+
+
+📅About Meeting
+
+• Date & Time: 2026-05-13 18:02–18:32 (approx. 30 min)
+• Location: Online meeting (screen share)
+• Attendee: Anand, Sachin, Kundan, Rachana/Rachna, Sindhuja, Nikita, Prithvi (Pithvi), Samir/Shamir, Jason, APA team, Platform team, Control Center/DQM stakeholders (names inferred from context)
+
+📒Meeting Outline
+
+DQ Routing, Workbaskets, and Distribution Lists
+
+• Queue/Workbasket mapping (India vs Q-Track)
+  The “US Consumer Data Office - India” DL is the active route; Q-Track lacks a corresponding workbasket. Recent failures stemmed from items not tagged to any workbasket. Decision: switch remaining Q-Track mappings to the India workbasket; small scope (count ~5) allows quick change in the DQ repository.
+
+• Resi MX Cust and DL mapping
+  Items currently tied to “Resi MX Cust” can be mapped to Resi DL (SOR1 confirmed). Team is not taking action on the former going forward. Sachin to list impacted checks and confirm final DL.
+
+• Onboarding status and workspace task creation failures
+  Four results failed to create tasks due to ongoing onboarding for PD analytics. Failures under analysis; tagging gaps identified and tied to missing workbasket assignment.
+
+Environment, Deployments, and Testing
+
+• Environment health (E1/E2/E3)
+  E1/E2 experienced downtime; E2 hostname mismatch fixed with Platform team, resolving build failures. E3 deployment done; validation performed on Control Center and DQM portal. Control Center intermittent downtime blocked some testing.
+
+• Email property externalization
+  uH email IDs moved to properties file; implementation done, testing pending until Control Center is up.
+
+• Role creation and property updates
+  Role creation task in progress; a removed property needs re-introduction. Port changes to onboard matrix completed; pending data validation with Antrix post-DSU.
+
+• Sign-offs and release cadence
+  For E3 deployments, obtain Anand’s sign-off before raising RLC. Given it’s Wednesday, target deployment Monday; secure approval by Thursday EOD.
+
+Data, Metrics, and DQ Logic Adjustments
+
+• Null metric diagnosis and frequency windows
+  Null values traced to data availability vs frequency window. Daily should consider 30 days; monthly currently 30 days but should be 90 to avoid nulls. Anand aligned via DSU; proceed with changes and redeploy.
+
+• Graph persistence and GCS
+  Excel report with new sheet is generated; graph not saving to GCS—fix in progress. Aim to close build today.
+
+• GSR updates and reporting cadence
+  Update GSR page and share by EOD; standardize weekly delivery every Tuesday EOD, include Excel attachment.
+
+Use Cases, Pipelines, and Tagging
+
+• CGTA tag enablement in production
+  Tag enabled in prod; results to be shared with Rachana once executions complete.
+
+• MGM script updates
+  Rule code and descriptions require updates; shared via email, work in progress.
+
+• New use case/table onboarding and pipeline
+  Clone pipeline request raised with Nikita; SFTP profile and mapping to be set up once pipeline is ready. US-hours dependency noted for support.
+
+• Workbasket onboarding (DB + FunPay)
+  Newly received workbasket details from Racha will be onboarded in DB and FunPay.
+
+Design, Code Quality, and Validation Practices
+
+• Query optimization guardrails
+  Optimize SQL as needed but do not change filter semantics. First run partner-provided queries in E3, save results, then compare after optimization for an apples-to-apples match. Use DQ result test table and a utility method to iterate queries without repeated deployments.
+
+• Tooling and compliance
+  Do not use ChatGPT for proprietary metadata; GitHub Copilot acceptable. Keep Anand informed of any E3 uploads; adhere to cloud cost constraints and environment governance.
+
+Knowledge Sharing and Next Steps
+
+• Code walkthrough and KAT
+  Schedule tomorrow’s 8:30 p.m. session for code walkthrough/KAT. Prithvi to present this week; Samir to start Controller Automation walkthrough next week.
+
+• Dev-only scope for certain use cases
+  Some partner-control automation use cases will remain in Dev; no promotion planned. Anand to review logic when available.
+
+📋Overview
+
+• Q-Track items will be remapped to the India workbasket; Resi MX Cust to be aligned to the Resi DL (SOR1).
+• Environment issues resolved (E2 hostname); E3 deployment/validation progressed; Control Center downtime still affects testing.
+• Email IDs externalized to properties; testing pending. Role creation and property re-add underway; onboard matrix port changes done pending validation.
+• Null metrics caused by short frequency windows; adopt 30-day daily and 90-day monthly windows; proceed to deploy and retest.
+• Reporting cadence: GSR updates every Tuesday EOD with Excel; fix GCS graph save issue; close build today if possible.
+• CGTA tag live in prod; MGM rule and description updates in progress.
+• Clone pipeline requested with Nikita; SFTP profile/mapping to follow; workbasket onboarding into DB and FunPay planned.
+• Enforce query optimization best practices with saved baseline results and a utility runner; avoid changing filters; no ChatGPT for code with metadata.
+• Tomorrow: code walkthrough/KAT at 8:30 p.m.; Prithvi presents; Samir to cover Controller next week. Some use cases will remain in Dev only.
+
+🎯Todo List
+
+• Sachin:
+  • [ ] List DQ checks currently mapped to Q-Track and confirm final mapping to India workbasket; identify “Resi MX Cust” items and align to Resi DL (SOR1), by 2026-05-15 EOD
+  • [ ] Validate E1 changes; seek Anand’s approval for E3 deployment; raise RLC post sign-off, approval by 2026-05-14 EOD, deploy Monday
+
+• Kundan:
+  • [ ] Add tagging feasibility for API-pulled data; implement tag creation approach, by 2026-05-17
+  • [ ] Fix graph save to GCS in Excel build; close the build, by 2026-05-13 EOD
+
+• Anand:
+  • [ ] Provide E3 deployment approval upon E1 validation results, by 2026-05-14 EOD
+  • [ ] Review code/logic for Dev-only use case when available; schedule time post-2026-05-14
+
+• Rachana/Rachna:
+  • [ ] Provide/confirm DL mapping for Resi items (SOR1) and validate CGTA tag results upon receipt, by 2026-05-15
+
+• Platform team:
+  • [ ] Monitor Control Center availability; notify team when stable for pending tests, ASAP
+
+• APA team:
+  • [ ] Proceed with ODL job promotion to next environment and begin design implementation per provided review, timeline per standard release
+
+• Nikita:
+  • [ ] Provide cloned pipeline for new use case; confirm US-hours support window; enable SFTP profile/mapping handoff, by 2026-05-16
+
+• Jason:
+  • [ ] Resolve access-related items and support data submission dependencies, ASAP
+
+• Antrix:
+  • [ ] Complete data validation session on onboard matrix/port changes with team post-DSU, by 2026-05-14
+
+• Prithvi:
+  • [ ] Lead tomorrow’s 8:30 p.m. code walkthrough/KAT session, 2026-05-14
+
+• Samir/Shamir:
+  • [ ] Prepare Controller Automation walkthrough for next week’s session, by 2026-05-20
+  • [ ] Continue MGM script rule/description updates; share change details with team, by 2026-05-16
+
+• Sindhuja:
+  • [ ] Track cloud billing/capacity and flag anomalies for E3 usage, ongoing
+
+• Owner (Reporting):
+  • [ ] Update GSR page and circulate weekly every Tuesday EOD with Excel attachment, starting 2026-05-19
+
+• DB/FunPay Ops:
+  • [ ] Onboard new workbasket changes into DB and FunPay per details from Racha, by 2026-05-16
+
+• Engineering (general):
+  • [ ] Implement frequency window changes (30-day daily, 90-day monthly), deploy to E1, validate, then proceed to E3 after approval, by 2026-05-16
+  • [ ] Build utility method to execute partner SQL and capture baseline vs optimized results in DQ result test table, by 2026-05-17
+
+Transcription
+
+00:00:04 - 00:01:26 Unknown Speaker:
+
+Yes, yes, exactly. So that has been changed, uh, to the India one. Okay, I'm just sharing my screen. Uh, so there are few, you know? Uh, failure yesterday. Okay, media analytics, anyhow, we. We are still in the process of onboarding, but we have figured it out. There are this distribution list called. No, but this has been changed to us consumer data office hyphen India I Think I just need to go to this. There are other people in there. You have mentioned it, right? And even due to that, right, this was failing. This is for insurance, this is not for the other ones. Oh, no, no, look, even for this India, right, the one that Ananda has given initially, right? So these were for, you can see this India was being used, not the Q-Track one.
+
+00:01:26 - 00:02:28 Unknown Speaker:
+
+Okay. Right, and I can see there are still some, uh, because today, these four results fail to create a task on the workspace. But this, I'm aware, like this is, uh, that onboarding process is going on. For a PD analytics, right? But for these one right, when it failed. Whenever I analyze it, this is not being tagged to any of the work basket and for the previous conversation, right, right. But there is other DQ checks which is already being there where that, you know, so just one thing. So currently we do not have a work basket corresponding to this queue track one, we have the work basket for India one, right? Yes, then we can change this in the DQ repository itself. Yeah, we have a count of five only, so we can just go ahead and.
+
+00:02:28 - 00:05:14 Unknown Speaker:
+
+So Sachin, can you show which are the ones which has this one? I think that is the Resi MX Cust basically. Okay, then you can even map it to the Resi DL, right? Because even we don't take action on this one now going forward. Okay, so for Resi, which DL can you confirm me? There are two, right? The SOR1. The SOR1, right? Also this because even this one right some changes were being made on b40 so I'll request you you know just review this page once so if I just one request update the. GSR, right? Whatever is available. By EOD you will get it Anand. Yesterday I didn't get the time. Yeah, sure. I mean just make sure that you send it out every Tuesday EOD, right? Every Tuesday EOD. And then create it to the Excel file, right?
+
+00:05:17 - 00:07:03 Unknown Speaker:
+
+Kundan, you should even just check the feasibility. If you can just create a tag, right? I'm thinking of that, but the thing is right now we are pulling the data through the API. Um, so, um, I was able to generate the Excel with the new sheet. Um. Also, one issue was the graph was not getting saved in the GCS bucket. So yeah, I'm trying to fix that. So yeah, I will try to close the build by today. Yeah, that's my update solution fancy process that's already present in the ACE Control Center, so how we can use those components. I didn't progress much on the development task as E1 and E2 is down since morning and it's not resolved yet, so working on the analysis and then I have just received the work basket details from Racha just before this call,
+
+00:07:03 - 00:09:22 Unknown Speaker:
+
+so I'll be onboarding that work basket changes in DB as well as in the FunPay. From myself. Process. We need to capture it and then you can create that task under your but sure, sure, and yes. So today I was involved in this E3 deployment one, and after that deployment got previous day tag and today today's tag. Okay, and validated the data on the Control Center and on the DQM portal as well. And after that, I, there was some uh, change in the uH email id. Okay, so that we are moving to properties file, so those changes are done. But testing is pending as Control Center is down, so I am not able to test it okay. So once it will be up, E2 deployment is done and after that, right now I am working on this role creation one.
+
+00:09:22 - 00:11:02 Unknown Speaker:
+
+There are some changes, uh, in the two property I've been removed, so that one I am including in that particular task. Like where Antrix has suggested to fix some of the changes in the existing onboard matrix. So yeah, I have done the port changes and so I need to connect with Antrix for data validation. I have scheduled a call, but like due to some, he has found some work. So like after DSU we are going to connect for the validation part, like to decide to check on the results. So apart from that, like I'm also, Like, working on this, uh, fixes which Anand also mentioned, like, uh, or the discussion chat. So I am looking on it, so I have it out on it. So I need to check with Anand.
+
+00:11:02 - 00:12:03 Unknown Speaker:
+
+After the DSU, which is like, which you mentioned the metric which is getting null and, uh, one for actual. JSON, right? So that's not like I want to show you something by showing you the results, so that, uh. I can show you how it is actually happening. And suspecting the changes which others have suggested, right? Like for daily load frequency, it is. So that will sort, I'm guessing, because like data, it is getting dull. That's why you see whatever the metric you have given, right? That is actually a monthly load frequency DQID. And so for the last month, it has data. We got one value, like which is having a max value of one, like with the current timestamp. So, and the current month, I think we don't have data, that's why we are getting null.
+
+00:12:03 - 00:15:05 Unknown Speaker:
+
+Okay, okay. Okay, that's fine then. Then you can proceed with the changes first and deploy them, and then we can run it again. So, Sachin, like once, like these changes, like once tested in E1, right, Like, right, yes, so just get a sign up from Onan to, you know, have an approval for E3 deployment, because we need that, uh, approval for i3 deployment, uh, before creating the RLC. Okay, so we are already on Wednesday, right? So you would be able to deploy it on Monday, so get the approval by tomorrow. Yeah, that's all from my industry. Let me. For the sign-off request for the Rachana for the E3 deployment. So after that one, I will proceed for the E3 deployment once I receive the sign-off. And parallel, I'm just working on this part also for the MGM script analysis that I'm doing.
+
+00:15:05 - 00:16:21 Unknown Speaker:
+
+And apart from that one, there is a CGTA use case. So that one, we have enabled the tag in production environment. Maybe once the tag got executed and I will share the results to the Rachana for the request. What was the change for MGM? No, no, that is MGM script use case like that one. No, I'm asking what exactly we are doing for that. Some rule updates. Yeah. I've shared that over mail also. So the rules code also needs to be updated. Description also needs to be updated. Started working on that. Over to your section. From my side, first of all, we have resolved that deployment issue yesterday night itself. There was a host name mismatch, which we have configured in the A2 environment for which the build was failing. So post.
+
+00:16:22 - 00:17:25 Unknown Speaker:
+
+Having a connect with the platform team, they have rectified the host name and post which the build issue got resolved. Then I was working with Kundan to have a E3 deployment and then data creation for the workspace. So that has been also sorted out. And a few of the discrepancy which I was just mentioning in the starting of the call, which I have observed while those records got filled. So I was analyzing the root cause for that. Uh, so that is already being, you know, discussed at the beginning of the call. Uh, I for raising a new use case, those new uh tables, onboarding, right? I already created a chat with Nikita. Uh, to have a clone pipeline that is number one. Uh, second, uh, the Lumi uh space is still not working for intimated the um regarding that.
+
+00:17:25 - 00:19:09 Unknown Speaker:
+
+And, uh, with respect to the ODL job which has been built, right? It would get floated to the next environment. As confirmed by Home. Thing is not there in the call. So I have already given a design review to APA to start working on that. Yeah, so those are the updates from my side, Sindhuja. And some discussion with respect to the design with Anand and then, you know, some access related thing with Jason and then that data needs submission. So moreover, I was working on those part also. I'm still waiting for feedback from Sachin on how to proceed. Would give you a pipeline, okay, okay, and then we need to start doing a testing. Uh, once that pipeline is ready. I can set up the SFT profile and mapping, so just follow up with Nikita.
+
+00:19:09 - 00:21:10 Unknown Speaker:
+
+C works during the U.S. Hours only into that group. And, uh, with respect to that, uh, you know, JSon object, uh enhancement, right? I already reported back to you over that email so you can start working on that. Also, I've taken input from the Rachana up to the morning and I'm implementing that one in my code. We just had a connection, so Rachana and we are aware with the changes that someone needs to incorporate, so we are good to that. We were receiving from the partners, right? There are certain filter condition which are getting twisted from our side, right? We should do the code optimization, there is no, you know, restriction from that, but please make sure when we are doing that code optimization. First of all, run the query that they have sent it to you.
+
+00:21:10 - 00:22:01 Unknown Speaker:
+
+On the A3 environment, save the result and then, with the code optimization, validate whether the result matches or not. So that we would be having an, you know, justification that if I have added these conditions, the result matches. It's Apple to Apple comparison basically. Okay. So I would not say don't make any changes. We are an engineering team and we are getting those SQL query from our business partners who are basically product owners, right? So we do have much more capability on engineering compared to them. So it's not that whatever query that they are sharing to you, that is the finalized query. Okay, you can always go ahead and optimize it, but please make sure the filter conditions should not change. Number one. The reason being, uh, they have already, you know, analyzed the data, right?
+
+00:22:01 - 00:23:00 Unknown Speaker:
+
+Uh, for example for ANSI cases, right? There were lots of lowercase trim and all right. Those have been applied. And when we did that, uh, data analysis, right, we could have find out that there is a discrepancy in the data. Right? That is not the query problem, it is it is basically ingested, right? They did not apply that condition to put everything in the lower case or in the upper case. And that's created that problem when you are comparing the conditions, right? So go ahead, optimize the query, but please make sure the result remains same. And then whatever piece of code that we have optimized, right, we should have a idea what exactly that piece of code is doing. Even if you are getting it, don't use Chat GPT, because if you're using Chat GPT, ultimately you are exposing the metadata, which is not allowed in the organization.
+
+00:23:00 - 00:23:49 Unknown Speaker:
+
+If you are getting some suggestion from GitHub co-pilot, that's fine, but please make sure we're not twisting the filter criteria. Anything that they need from our side, any questions. I think that's true. Sachin We missed out that. The only issue that we could not validate is we did not have access to data in E3. So we could not run the actual pool. I completely agree that. And that is the reason like, you know, we have the DQ result test table, right? That is the reason only that we have created. Run it through your DAG. Okay, once you are able to do a deployment, maybe create a couple of version of that. And then once you are testing it, then you can drop that other alternate.
+
+00:23:49 - 00:24:38 Unknown Speaker:
+
+And I would request, right, even, you know, Created one utility method where you can just run that query, place your query. I have given you one of the example that they write. Maybe you can discuss that in tomorrow's call, you can just call that method, what that method would do? At least it would run your query and give you the result, right? So you can run that tag multiple times by twisting in the query. And then just, okay, our deployment would be, and even deployment would not be required, at least for, uh, U.S. Time zone. I can allow you to upload those files in the E3, UH, space. For India, it would be IAPA only no one else is allowed to do that upload.
+
+00:24:38 - 00:25:47 Unknown Speaker:
+
+But keep me posted whatever changes you are making in the E3 environment, because ultimately, Raj would reach out to us if anything goes wrong in the E3 environment. And again, please make sure we are working in the cloud and everything is chargeable, right? So we are not going anything beyond, uh, beyond the, you know, uh, defined capacity which has been given to us. Because that central car ID. Uh, have a billing and all right, Sindhuji is already taking care of those, but even I am not aware. But there is a billing aspect. Uh, the the info that we own, right, that has a billing aspect over there? Okay, so maybe, uh, might have been observing so we might have done it earlier also for a single instance, it never come backs. And, you know, and feedback to us.
+
+00:25:47 - 00:26:49 Unknown Speaker:
+
+It might have been happened earlier also, which I'm not aware. Because, you know, you always, you know, working closely with Rachna, and, you know, sharing the results, so you might have observed it earlier. There might be multiple occasion and that that's the reason she come back and share that feedback with us. Okay, for your use case, your use case will stand in the Dev environment, only no need to promote it to the higher environment. I'll let you know the logic. I'm quite busy till tomorrow, but I'll try to spend some time with you to review your code. And all that would remain in the dev environment, there is a plan for that, we don't need to move that to the production environment case and Samir use case from the control automation.
+
+00:26:49 - 00:28:02 Unknown Speaker:
+
+That if you are building and, uh, as you are already preparing the document, uh, just let me know. If you can take up tomorrow's 8 30 p.m. Call that, the one that we have set up for, you know, giving the kat to the rest of the team or any new thing that we have did again. Pithvi to go through, I think we did not done the code walkthrough, right? Let pithvi. You can carry on tomorrow with the code walkthrough. Okay, and maybe in the next week Samir can start with the controller. Okay, that's good, that's right, I'm good with that. Not like there's only four points only. Which who is working on which one? So from he had it out. That actual JSON has actually getting null values, so that is actually based on the data.
+
+00:28:02 - 00:28:57 Unknown Speaker:
+
+Uh, so whatever the Antrix has proposed, right? Like, finally, for daily, monthly, and, uh, newly onboarded metric frequency changes, like for daily, we need to consider 30 days, right? So that will result. Uh, this because, like, since there is more data, we are getting null. So if we like the metric which Anand has actually checked right that is for monthly we are only checking 30 days. Now if you move that time range to 90 days definitely we'll have data and we will not get null values. Okay let's discuss with Anand maybe once he has set up a call right so we can do that. Yeah I actually updated the same in DSU he is good with that so yeah. I have to drop up for another call, guys. Thank you. Thank you.
+
+00:29:15 - 00:30:23 Unknown Speaker:
+
+From next week, Shamir will be working on his use case. You both can work on it. Shamir is doing some use case in the corner. After your walkthrough, Shamir will be there. After seeing us, Shamir will work. Okay okay stagnant and threshold. I don't think you will accept what I said, so please don't reply to it. I got zero mismatches.
+
