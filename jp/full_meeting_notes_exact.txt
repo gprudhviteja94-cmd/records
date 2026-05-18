@@ -1,0 +1,50 @@
+Meeting Date: 2026/05/15 11:12 - 2026/05/15 12:26
+Meeting Location: 
+Attendees: Speaker 1, Speaker 4, Speaker 3, Speaker 2, Speaker 5, Speaker 6
+Meeting Agenda and key Content
+Agenda Overview:
+Ember change and detailed response body object
+Batch detail view and payment details link
+New design for API endpoints
+Handling multi-value payments
+Batch details response for individual payments
+New table view for beneficiary section
+Lightweight custom endpoint for grid data
+Potential columns for the grid
+Modify functionality for batch transactions
+View versus modify screen differences
+Notification at beneficiary level
+Recipient drawer for individual row details
+Backend calls for detail view
+Homework for background work on current implementation
+ITC implementation analysis
+Copy template functionality
+Handling large numbers of recipients in copy/modify
+Storing recipient details in staging
+Database view for data loading
+Modified payment submission
+Key Points:
+Ember Change and Detailed Response: The detailed response body object was added for Ember changes to contain details about underlying transactions, specifically for batch records to show the batch grid.
+Batch Detail and Payment Details Link: It was stated that when clicking on batch detail, a link to payment details is needed, with only the multi-value indicator required to be passed on.
+New Design API Endpoints: The discussion revolved around having two API endpoints from UI: one for batch information (top portion) and an independent API for populating the grid and filtering.
+Multi-Value Payment Handling: The suggestion was to call payment details for both single and multi-value payments, with the backend deciding to send a summary for multi-value payments and setting a multi-value indicator.
+Batch Details Response: It was suggested that the batch details contain the same response as individual payments, but only two sections (payment information) would be available.
+New Table View for Beneficiary Section: A new table view for the beneficiary section was proposed, with a view id, view type, system id, and view id defined for filtering.
+Lightweight Custom Endpoint: A new, very lightweight custom endpoint was proposed for loading grid data for the beneficiary list within the batch history, without entitlement checks.
+Grid Column Attributes: The attributes for beneficiary or debit party that will show up in the grid are being captured, and a specific set of fields will be available for filtering.
+Modify Functionality: The modify functionality for batch transactions was discussed, including editing individual recipient-related details and the process of modifying a batch of beneficiaries.
+View vs. Modify Screens: The difference between view and modify screens was highlighted, with view being read-only and modify allowing editable fields.
+Notification Level: It was confirmed that notifications will always be at the beneficiary level, not at the batch level.
+Recipient Drawer for Individual Rows: When clicking on an individual row in the batch details view, a recipient drawer will open to show detailed recipient information.
+Backend Calls for Detail View: The existing detail view will be used with the same request and response, and the response will include a field indicating if it's a batch transaction.
+Homework for Implementation: A need for background work on current implementation, including payload and response data attributes, was emphasized to avoid assumptions.
+Copy Template Functionality: Copying a template should take the user to the create flow with prefilled data, and the backend endpoint needs to be enhanced to support this.
+Large Recipient Handling: For copy and modify, it was suggested not to load the entire payload for thousands of recipients at once, but to call for individual recipient cards when needed.
+Staging Recipient Details: For new payments, a temporary unique ID will be generated on submission, and recipient details will be held in a staging area before submission.
+Database View for Data Loading: Creating a database view was suggested for loading data efficiently, especially for selected columns from multiple tables.
+Modified Payment Submission: For modified payments, only the modified transactions will be sent as part of the submission, not the whole list.
+Consensus:
+For batch details view, the first details viewpoint will be the payment summary part, followed by a new endpoint to return recipient or beneficiary details with search, filter, and pagination capabilities.
+In modify, the display part will use the same API, and the subsequent submit payload will only collect changed details (added, removed, modified records).
+Meeting Summary
+The meeting focused on refining the batch details view and associated API endpoints, agreeing on a two-part approach for displaying payment summaries and recipient details with filtering and pagination. Discussions also covered the handling of multi-value payments, the need for lightweight custom endpoints, and the process for modifying and copying batch transactions, emphasizing the importance of efficient data loading and targeted payload submissions.
