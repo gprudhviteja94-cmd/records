@@ -1,0 +1,120 @@
+2026-05-19 Payments Uplift and UI Technology Migration Discussion
+
+Creation Time: 2026/05/19 19:32
+
+
+📅About Meeting
+
+• Date & Time: 2026-05-19 19:32–20:00 (approx.)
+• Location: No relevant content mentioned
+• Attendee: Jagan, Tanuja, Jerry, BAU team (mentioned), U.S. Payments stakeholders (referenced)
+
+📒Meeting Outline
+
+Payments Uplift and UI Technology Migration
+
+• Uplift scope and objectives
+  The uplift is primarily client-focused, targeting improved batching capacity and a better UI experience (Danujan product). Aim is to support up to 100,000 payments per batch so complete GSH can flow into DSP.
+
+• Technology migration (Ember to React)
+  Current UI is on Ember; target is React. Request to add a “Technology Current” column in documentation to clearly indicate stack changes (e.g., Ember → React) for each flow/segment.
+
+• UI isolation and navigation changes
+  Flows will be isolated with a clearer view; mega menu/navigation remains but is refined. Movement to “Standard” navigation persists; backend behavior remains unchanged.
+
+Batch Limits, Market Needs, and Constraints
+
+• Current limits and regional asks
+  Present UI limit is around 100 payments per batch. There is an active request from Saudi and other regions to support 500,000 payments per batch to avoid repetitive operations (e.g., paying 500 subcontractors requires multiple runs today).
+
+• Root-cause investigation (UI vs server)
+  Need to determine whether limits are due to UI real estate, server constraints, export mechanisms, or other factors. Initial view: some constraints (e.g., Excel/PDF exports) likely not UI-related.
+
+• Operational impact and client workflows
+  Monthly use cases require separate templates per company; current 50–100 item constraints force 5–10 repeated operations for larger payee sets. Expanded batching would materially reduce operational burden.
+
+Exports, Templates, and Data Handling
+
+• Export limitations (Excel/PDF/media)
+  Users analyzing CDPR are unable to download ≥1,000 records (often capped around 250). This likely ties to backend/export services rather than UI. Need to review Excel generation and media limits.
+
+• Template management
+  Separate templates per company are needed; larger batch operations should align with export and import capabilities to avoid bottlenecks.
+
+Backend Integrity and Feature Toggles
+
+• Backend impact assessment
+  Backend code and data contracts remain unchanged; uplift focuses on UI rendering (“painting the screen”). Payment workflows and FDM-related logic remain intact.
+
+• Deployment philosophy and toggles
+  Team historically leans toward confident “all-in” deployments without toggles (cited prior success). Discussion on whether to enable selective rollout/toggles, especially for U.S. Wire scenarios, to support limited-client enablement if needed.
+
+U.S. Wire and Rollout Readiness
+
+• U.S. Wire context
+  Importance highlighted for U.S. users; any enablement for even 1–2 clients should include clear support/escalation (ping responsible owners).
+
+• Readiness and stability
+  Team feels prepared; no expectation of shutdown or disruption. Opportunity to onboard some clients on M1/standalone uplift without broad production toggling, if feasible.
+
+📋Overview
+
+• Uplift will enhance client UI and batching to target 100,000 payments; full GSH to DSP integration is a goal.
+• Migration from Ember to React proceeds; add “Technology Current” column to track stack changes per flow/segment.
+• Batch and export limits hinder large clients; need to distinguish UI vs backend constraints and plan scalability.
+• Export caps (Excel/PDF/media) affecting CDPR analysis likely stem from backend/export service limits, not UI.
+• Backend contracts remain stable; uplift is UI-layer only.
+• Consider pragmatic feature toggles for controlled rollout, particularly for U.S. Wire, despite prior all-in success.
+• Team is confident in readiness; navigation shifts to Standard persist without backend impact.
+
+🎯Todo List
+
+• Jagan:
+  • [ ] Add “Technology Current” column (showing Ember → React) for each relevant flow/segment; share updated doc, by 2026-05-23.
+  • [ ] Investigate feasibility to expand UI batch creation/view beyond 100 (real estate, pagination/virtualization, performance), initial findings by 2026-05-27.
+  • [ ] Review Excel/PDF export pathways to confirm non-UI constraints and coordinate with backend/export owners, by 2026-05-24.
+
+• Tanuja:
+  • [ ] Validate that backend contracts/responses are unchanged across uplift screens; document any edge cases, by 2026-05-24.
+  • [ ] Map U.S. Wire user journeys in uplift UI and define escalation contacts for pilot clients, by 2026-05-28.
+
+• Jerry:
+  • [ ] Send an email detailing the business ask/justification for increasing batch limits (100 → up to 500,000), including Saudi/other market needs and operational pain points, by 2026-05-21.
+
+• BAU/Export Owners:
+  • [ ] Analyze and raise limits for CDPR-related exports (target ≥1,000 records) and address 250 record cap; propose phased limits and performance safeguards, by 2026-05-31.
+
+• Product/Release Management:
+  • [ ] Decide on feature toggle/gradual rollout strategy for uplift (especially U.S. Wire), with criteria for enabling select clients, by 2026-05-27.
+  • [ ] Define target batch capacity roadmap (100k near-term; evaluate path to 500k), with technical feasibility and infra requirements, by 2026-06-05.
+
+Transcription
+
+00:00:00 - 00:06:31 Unknown Speaker:
+
+I'll stop. Uplift KT by Jagan. That's okay. I think so that I don't have to give the basics. On what this is going to be about that will help even though i know little bit but payments right now. This new batching will improve batch capability up to 100,000 payments, so we can put complete GSH into DSP. And uplift is mainly client-focused. The Danujan product is more invested in the UI experience from an uplift perspective, and that will be achieved. Like you said earlier, we are moving to ember, from ember to react, right? So if you can just add another column, technology current, which will show easily, like, okay, we were ember, now we'll be technology, now we'll be react. Flow segment. Isolated. There's a decent view.
+
+00:11:24 - 00:12:18 Unknown Speaker:
+
+We need to see if that limitation is because of the server or UI or something like that. I don't know if it's UI. It may be UI real estate. I don't know. We need to see as part of the subject if there is a way to increase that. If it is UI related. Because there is an ask from Saudi and other countries to book and read for 500,000 payments. Also, they have this restriction of exports, right? I'm not saying, Jagan, that need to be like a JIRA. I mean, we are just putting out everything to see anything that can be fixed. Yes, it is a UI related. I will write an email, Jagan, on this one. You can read why we are blogging to 100 because there's an active real ask.
+
+00:12:25 - 00:13:09 Unknown Speaker:
+
+Have separate template to play different companies every month, something, and if that company pays 500 sub companies, like subcontractors or something. Now they can only do like 50 or 100. Now they have to do this operation five times and ten times, right? So that kind of kind of you, you need the batching, yeah, something, yeah, yeah. It's like in the you can really allow only up to 100 and then we don't do more. I just want I.I will look into this, where is the like, is there a way to expand it or something, okay? Yeah, yeah, definitely. If there is a chance to enhance the UI. Yeah, PDF and media. Yeah, Excel and Tenoja, I need to understand. Okay, we'll talk after. Yeah, because we are getting that feedback now for CDPR, right?
+
+00:13:10 - 00:14:22 Unknown Speaker:
+
+But plants are trying to download their templates to analyze the CDPR. In fact, they are not able to download a thousand or more than 250 at a time. Okay, yeah, I will see what that is. That may not be UI at all because Excel and UI... Yeah, that mostly is not UI. Yeah, yeah. How long we will live with these age-old constraints, like trying to improve now, right? Okay, yeah. Okay, so even account transfer has that limit of 100, I guess, right? Yeah, that's okay because I don't cancel all the problem, but we have real ask. Okay, yeah, yeah. Okay, thank you, Jerry. More, yeah. So there's a piece that we upgraded for setting up the local for the device. Any payment attempted at workflows or anything FDM related like how we are painting the screen, those are not impacted.
+
+00:14:22 - 00:23:52 Unknown Speaker:
+
+No, no, Tanuja, the backend code is not impacted. Backend is not sensitive. So basically the same data, the backend will return and Jagan is just painting the UI. Menu for all them right on the Mega menu and take the product that we have is still there, right? Like how we move ITC Standard on PS, we also know for the M1 upgrade standard. All right, sorry, um, just. We move to Standard right. Like ITC move to standalone PS, we also move to Standard Right forever, so that stays right. It's only the navigation. So when I made it up. From the U.S, like I mentioned U.S, that makes it more important for us people to understand this. Okay, U.S. wire is supposed to okay, whenever this go, even for one or two client.
+
+00:23:52 - 00:25:07 Unknown Speaker:
+
+If they do payment like afternoon or evening or whatever, then we will ping you or me or somebody. So you selected U.S. Wire because you are in. So we have toggle, right? We have toggle to switch on or something like that? Yeah. I mean, so right now what we did is BAU came to... No, no, Jagan goes... Now we're going to do standalone to Uplift. No, Jagan goes all in every time. He's confident. You saw with the... Right? We went all in. Not even single. Yeah. In production. Can you name a project where we went all in without any toggle in production? Yeah, that was a great one. Seriously, right? I think we might be able to have some clients in one without having to go through the production. Yeah. Hopefully, we will be able to do this.
+
+00:25:07 - 00:25:36 Unknown Speaker:
+
+Yeah, that's it. We've been so prepared on that from that perspective. Yeah. And also, we are, we don't see this. We don't see this. It's completely shutting down. Right, so I think whatever you're working on is complete. yeah yeah
+
