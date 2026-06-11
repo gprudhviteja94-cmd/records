@@ -1,0 +1,140 @@
+2026-06-11 Migration Challenges and Action Plan for DAGs
+
+Creation Time: 2026/06/11 11:44
+
+
+📅About Meeting
+
+• Date & Time: 2026-06-11 11:44  
+• Location: [Not specified]  
+• Attendee: [Not specified]
+
+📒Meeting Outline
+
+Migration and Timeline Challenges for DAGs and Related Processes
+
+• The team has approximately 3 to 4 months to migrate around 330 DAGs before a freeze date. This migration also impacts related processes, including an automatic SQL creation use case developed by Prithvi, which requires changes in database connectivity, code pieces, and file transfer paths.
+• The current pace of work is insufficient to meet the timeline, necessitating urgent alignment and increased effort from all team members.
+• There is a mandate to complete the migration on time; delays are not acceptable, and responsibility for any process failures post-migration will not be taken by the team if deadlines are missed.
+• The migration involves major changes due to the deprecation of Google Composer by Google, requiring a shift to a new platform (Astronomer).
+• Phase two of the migration should start immediately to avoid issues, while phase three requires higher-level approvals and business justification.
+• The team discussed the need to create a clear roadmap, estimate effort, and allocate resources without halting ongoing product work already committed in the PI (Program Increment).
+• A proposal was made to assign resources both offshore and on-site, with initial POC work by Suman and further assignments accordingly.
+• Cost implications of the migration work should be considered, potentially charging it to the business side, requiring coordination with Anand for VLH feature creation.
+• Emphasis was placed on addressing the backlog of tasks, including UI and data migration tasks (Snowflake, GCP to GCP, GCP to AWS), with strict adherence to deadlines and leave planning to avoid resource shortages.
+
+Task Assignments and Technical Details for Migration and Development
+
+• Sameer confirmed completion of a recent CD (Continuous Deployment) and clarified that upcoming work will be plain Python coding, not involving AI initiatives.
+• Immediate tasks for Sameer include working on project space logs and sensitive data element API integration, with API details to be shared.
+• The team is encouraged to review existing implementations (e.g., from Switch) but also consider improvements rather than blindly copying.
+• Access issues related to Lumi space must be resolved promptly by raising incidents and following up with the distribution list, copying Rajendra and the meeting lead for transparency.
+• New use cases should be developed using Astronomer rather than Composer to avoid future migration issues.
+• A Jira ticket raised for clarification on URL path usage in the SQL file framework was advised to be closed, as the team will adopt the feasible Astronomer options to avoid rework.
+• The current SQL file reading method using underscore read is widely used and can be directly implemented in the migration.
+• The team was instructed to review the meeting invite materials, understand proposed changes, and create sample DAGs reflecting those changes.
+• Database connectivity changes will be centralized via a common utility, requiring minimal changes for path updates.
+• Specific path changes involve updating bucket paths in deployment configurations and monitoring tools.
+• Cluster creation files related to susceptibility connections will also require path updates.
+• Validation of all 330 DAGs remains a significant effort but is simplified by the centralized design of database connectivity and path management.
+
+📋Overview
+
+• The migration of DAGs and associated processes must be completed within 3 to 4 months to meet the freeze deadline.
+• Major platform changes due to Composer deprecation require moving to Astronomer, with phase two starting immediately.
+• Resource allocation and effort estimation are critical to avoid disruption of ongoing product commitments.
+• Clear communication and escalation protocols are established for access issues and delays.
+• Technical tasks focus on Python coding for logs and API integration, with emphasis on using Astronomer for new developments.
+• Centralized utilities will simplify database connectivity and path changes, reducing the complexity of migration.
+• Team members must plan leaves carefully to maintain resource availability during this critical period.
+
+🎯Todo List
+
+• Sachin & Team:  
+  • [ ] Prepare a detailed migration plan for DAGs and related processes, incorporating resource allocation and timelines, and get it reviewed by Rajendra. (ASAP)  
+  • [ ] Coordinate with Anand to create a VLH feature for migration cost allocation. (ASAP)  
+  • [ ] Ensure all new SQL onboarding uses Astronomer platform, not Composer. (Ongoing)  
+  • [ ] Monitor and enforce strict adherence to backlog task deadlines and leave planning. (Ongoing)
+
+• Sameer:  
+  • [ ] Start work on project space logs and sensitive data element API integration using provided API details. (Immediate)  
+  • [ ] Develop Python code for these tasks without AI components. (Immediate)  
+  • [ ] Ensure access to Lumi space and follow up on any pending incidents by emailing the distribution list, copying Rajendra and Sachin. (Immediate)
+
+• Prithvi:  
+  • [ ] Modify database connectivity, code, and file transfer paths as per migration requirements. (Within migration timeline)  
+  • [ ] Collaborate with Sachin and team to align on migration approach and resource usage. (Ongoing)
+
+• Platform Team:  
+  • [ ] Provide clarification on URL path usage for SQL file framework if needed. (Closed as per current decision)  
+
+• All Team Members:  
+  • [ ] Review migration meeting materials and create sample DAGs reflecting proposed changes. (ASAP)  
+  • [ ] Plan leaves in advance and communicate to ensure resource availability. (Ongoing)
+
+Transcription
+
+00:00:00 - 00:00:53 Unknown Speaker:
+
+We have hardly 3 to 4 months to migrate all these DAGs because I don't want to stretch it to the very last moment when the freeze date would be there. So it's not only 330 DAGs, even the use case which Prithvi has built, which is creating the automatic SQL out of it. So even that process is having an impact on that. So even he need to change his database connectivity, some pieces of code, the path that we have used that would change the ragy cases where we are making to that asset to be file transferring. USCDO, complete project whatever number of taxes, that will completely impact with that. So now, with the speed, the way team is working, right, we are not going to meet the timeline.
+
+00:00:53 - 00:01:51 Unknown Speaker:
+
+And that's we really need to, you know, pitch in because we can't keep on, you know, working on a piece of work that has been assigned to us. And then set of mind that if I don't complete it today, beginning tomorrow's time, I already intimated if we are not going to meet that timeline. I am going to send the details to Rajendra copying your PAM. So, we just need to get an alignment from Sintuja. Anyhow, that is a mandate, right? We won't be able to do because if they say delay it, right? Then we are not going to take that responsibility if their process doesn't run post-paste it. That is something they need to do on it. Okay, let me share my screen. So these are major changes that they have talked about.
+
+00:01:51 - 00:03:32 Unknown Speaker:
+
+Yeah, so this is where I already intimated them, right? I think you have, you have already been looking over here. Although they have kept our process in phase two, which should ideally start from now only, otherwise we would be in trouble. And for this phase three, uh, you need a more than 50 level approval. I think that's what they have mentioned yeah valid reason business justification okay and if you go to this ppt. Without dag history with dag history right what we are doing it all these workspace would change basically Okay, and these are having multiple changes that we need to do That's what we are changing basically. And it's not even from the Lumi platform. It's basically, you know, the composer is going to get deprecated from Google site itself. They're not upgrading it.
+
+00:03:33 - 00:04:31 Unknown Speaker:
+
+I think we'll have to, like, discuss with him and come with a clear roadmap, right? Yeah, yeah. How much effort and how many resources we have to dedicate because we can't stop the product work completely. Because we've already committed to the PI, and this came in like a long time, to be honest, at least we could have accommodated it during the PI planning. Yeah, exactly, but yeah, I mean, we'll see, right, like we'll see how much effort and stuff. Just let me know if you need help in putting up the migration plan. We can mix it together today and do it and then get it reviewed by Raj. Okay. Okay, but ultimately, yeah. I did not add a story, so we can actually start accommodating it in this sprint itself. Exactly.
+
+00:04:32 - 00:05:54 Unknown Speaker:
+
+I thought of, yeah, I thought of... putting couple of resources, one from offshore, one from on-site, maybe a to do it from the offshore and Suman initially do a POC and then maybe to Suman, assign some work to Suman. Yeah, we also have to discuss under what we need to pay it, right? All these stored material stuff. Cost shouldn't be affected because it's a technical piece of work. Yeah. Maybe it should go on the business end. In that case, we have to ask Anand to create a VLH feature. But yeah, Sachin, I mean, let's sit together, like, probably. And get it reviewed by Sachin. OK. Do you want to add ? But just to reiterate to all of you, all right, we have bunch of tasks in the backlog. As I stated, other even for you, right?
+
+00:05:54 - 00:07:09 Unknown Speaker:
+
+For UI again, we have bunch of tasks. Okay, don't consider only for Pack and even for UI. We really have the backlog sitting behind. There is a snowflake, GCP to GCP, GCP to AWS, for the and then .  When you guys are working, please meet the target with . No further delay is going to be acceptable. And one more thing. Please plan your leave accordingly. There is no restriction to take a leave from Ashraya. But please plan it so that we will, you know, resupply the resources based on your availability. The last moment leave is going to create a problem for us. Coming to Sameer, you are done, right? I think we had a CD yesterday, right? Right, so we really don't need, don't think it would be an AI initiative altogether, okay?
+
+00:07:11 - 00:08:53 Unknown Speaker:
+
+It's going to be as, you know, plain Python-related stuff, Python code. Okay, and on this one, at least... So, I hope you can at least start with this one, project space logs. This one and then this sensitive data element to the API. I'll share you the API details. Okay, let me start with these two, and then this one, the sixth one. Okay, well, I'll. I'll work on the description of this page. Logic Space log. You know, right? Do you have that table handy? This is the one, this is the one, and on the API, let me give you the API. This is the API, okay, and this API, how you are going to get that critical data element when you call this, right? So if you see this JSON object, okay, yeah, this is the flag, so raise the user.
+
+00:08:53 - 00:09:59 Unknown Speaker:
+
+This is the table right for this table. This is your attribute, whether it is critical or not, you can get it from this one, OK? Similarly, this would be the next JSOn. Again. This is the new column, right? Whether it is a critical data element or not, it is being marked over here. OK, so start with these two, these three, basically, while I am exploring this. Kris Manta and Polygraph. OK, let me bring it to you. You might not be there in this email. One, two and six. Well, I'll figure out rest of the details and then I'll let you know. Okay, and let's have a connect with a switch. If they have already did something, then we can take the reference. But again, let's not go blindly with the way they have made the implementation.
+
+00:09:59 - 00:11:06 Unknown Speaker:
+
+If we can come up with a better plan, we can do it. And this piece of work would be done in the Lumi space, so please make sure you have the access. Did you get any response? Or on the incident? The incident might have been assigned to somebody, right? Drop an email to that distribution list, copy me and Rajendra over there. You have created an incident, right? So that would have been assigned to our distribution list. You would get the distribution list over there. If you don't know, correct me, submit, submit, we'll collect you. I want them to copy Rajendra and myself in CC and send an email that I am looking for this access and it has been pending for a while now and please help with the resolution. Please make sure you do not post this call.
+
+00:11:07 - 00:12:08 Unknown Speaker:
+
+Because if Rajendra asks why you are blocked, at least that mail would be there for you. And in case you have any clarity required for this, just do let me know on this CD. But this is again, highly sensitive, you know, objective that we need to close as soon as possible. This you have heard from Anand yesterday also, right? So this has come from the, you know, BP level, right? What exactly you guys are doing? And then they need this one to be done on a quick note. Okay, so just build a Python game, no need to go ahead with any AI initiative. It would be plain Python, not Python. And science. Because last time, the final part also you can go on saving the data to the table that Rajnath was sharing.
+
+00:12:30 - 00:13:36 Unknown Speaker:
+
+So that last part also, you can create like and please follow the so guys, please make sure like, you know. If we are building any new use case, we have to go by the astronomer one, not the composer. Okay, mean to say, any new SQL onboarding that would go via this composer only. But the way we are getting new project, please make sure we are going by the astronomer. So then there should not be any remote for that. Okay. Now, with me and AIPOP, AIPOP, first of all, can you confirm me, where are you with that SQL file suffering from the composure to this project? Yeah. Actually, there is a URL path which we are using, right, in that framework file, right? So that one, I just started with the platform team.
+
+00:13:36 - 00:14:26 Unknown Speaker:
+
+So they asked me to raise a Jira ticket for that one, for the clarification. Why? Because most of the numbers are using for the, uh, this one only. This is a cloud location project, right, uh, project location path right. So that one. If we are accessing, UH, we are using the code is different, and another way if we are using the home URL pathway, that is completely different. So that's why you need a clarification for this one, which you are no need to raise the Jira ticket. Leave it, close this task. We will make all these supplements once we are implementing with the astronomer. Leave it then. Whatever feasible option would be there from the astronomer, we'll do that. Let's not do a rework again. So you mean to say most of the teams are using from that same composer path only, right?
+
+00:14:27 - 00:15:45 Unknown Speaker:
+
+The way of some syntax we are using, the last time you showed me, right? The underscore read method we are using, right? So that way, they're using the reading the SQL file, not for the whole problem, starting with the home slash something, right? So that should be straight away implementation, right? Yeah, yeah. So that's why we're just asking for the clarification. If that is the one, we can use that same existing methodology that we have already that one, right? We can replace with those two lines and we can call that method simplification. Okay, for a brief overview, I will tell you what you need to do. This one you already have this meeting invite, right? Yes. Right, so go through this one, right, and then what are the changes that they are proposing.
+
+00:15:46 - 00:17:05 Unknown Speaker:
+
+Okay, just go through this one and try to create a sample tag, okay, which would be running through these changes, okay? And then go ahead with these GCP and then, you know, you are a member of the PRC group with access to it for GCP. Okay, we need to know this. This is the one. No, no, that is we already have this access. It's not a major change, but the problem is the validation you won't need time for validating those 330 tags, right? Yeah, database connectivity. For us, it would be a single place change, right? Because the way we have designed a table, we are creating a common utility for creating our database connectivity, right? So it would be one change with respect to the path change, again, that would be a one change.
+
+00:17:05 - 00:18:13 Unknown Speaker:
+
+Because again we are providing path like this, your this path will change, uh, the way you are providing, right where it deploy configuration. So basically, .  So you just need to change this bucket path. That's it. So you have to change this. And for this piece of code, we don't have the database connectivity. So we might need to go to this one. Monitoring tool, right? So even for here, This one, you need to change this one. This is the once you change this, the path I have already shown you, right? This would be the path that you need to change. Right, so these two are done and the next thing is when we are creating the susceptibility connection, right? We are creating the cluster here, this cluster tag.
+
+00:18:14 - 00:18:26 Unknown Speaker:
+
+So there might be some change with respect to this file path change over this list. That would be the third thing. That's it. But once you're done with the change, you have to
+

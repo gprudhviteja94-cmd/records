@@ -1,0 +1,103 @@
+2026-06-11 Data Migration and SQL Updates for DQ Repository and ACE Table
+
+Creation Time: 2026/06/11 12:04
+
+
+📅About Meeting
+
+• Date & Time: 2026-06-11 12:04  
+• Location: Not specified  
+• Attendee: Nirmal, Rachna, IFR team, Suman, and other team members
+
+📒Meeting Outline
+
+Data Migration and SQL Updates for DQ Repository and ACE Table
+
+• SQL Query Execution and Confirmation Process  
+  The team discussed adding new SQL queries and use cases. It was emphasized that execution of these queries in the event environment should only proceed after receiving confirmation from Rachna. This step is critical to avoid blocking issues related to astronomer number changes.
+
+• Data Transformation for ACE Table Based on DQ Repository Changes  
+  The data changes made for the DQ repository need to be replicated similarly for the ACE table. Nirmal was asked to confirm the specific ACE table name. The allowed values for the data must be aligned and inserted into the ACE table, following the structure used in the DQ artifacts.
+
+• Maintaining Both Tables and Use Case ID Mapping  
+  Both the DQ repository table and the ACE table will be maintained going forward. The ACE table is designed to receive inputs from the front end. Use case IDs must be correctly mapped: for example, the use case name "RESI" corresponds to use case ID 1, and benefits data corresponds to use case ID 16. The use case name will not appear in the ACE table, only the ID.
+
+• Data Refactoring and Allowed Values Population  
+  The data must be refactored to replace incorrect use case IDs and to ensure allowed margin values are correctly populated in the ACE table. The allowed values should be extracted from the provided Excel sheets and mapped accordingly. This is essential for the data to be visible on the UI after migration.
+
+• Migration of Existing Data and Default Flags  
+  All 260 records need to be migrated to the ACE table. After migration, the data will be copied and handed over to the ASDBA team for execution in the ASD database. Default values for the complex flag will be set to false, and the approve flag will be set to true for all migrated data.
+
+Coordination and Responsibility for Query Execution and Issue Handling
+
+• Sharing SQL with IFR and Execution Responsibility  
+  The SQL created to update existing entries in the DQ repository is ready to be shared with the IFR team for execution, pending sign-off from Rachna. Once shared, IFR will be responsible for running the queries and handling any issues, including duplicate records.
+
+• Monitoring Usage and Issue Escalation  
+  It was noted that users have started using the tool, and some duplicate record issues have been reported. These issues need to be understood and resolved by IFR. Any impact or escalation will be communicated accordingly, with Suman involved as needed.
+
+• Meeting Participation and Updates  
+  Nirmal was requested to stay on the call for further clarifications, while other members were allowed to leave after providing their updates.
+
+📋Overview
+
+• SQL queries for new use cases will be executed after Rachna’s confirmation to avoid blocking issues.
+• Data changes made for the DQ repository must be replicated in the ACE table, with proper allowed values and use case ID mapping.
+• Both DQ repository and ACE tables will be maintained; ACE table will receive frontend inputs.
+• Existing data (260 records) must be migrated with default flags set and handed over to ASDBA for database update.
+• IFR team will execute the SQL updates after Rachna’s approval and handle any duplicate record issues.
+• Monitoring of tool usage and issue escalation processes are in place, with Suman involved if necessary.
+• Nirmal remains on the call for ongoing support and clarifications.
+
+🎯Todo List
+
+• Nirmal:  
+  • [ ] Confirm ACE table name and details, ASAP  
+  • [ ] Refactor data with correct use case IDs and allowed values, ASAP  
+  • [ ] Migrate all 260 records to ACE table with default flags, ASAP  
+
+• Rachna:  
+  • [ ] Provide confirmation to proceed with SQL execution, ASAP  
+
+• IFR Team:  
+  • [ ] Execute SQL queries in the event environment after Rachna’s approval  
+  • [ ] Investigate and resolve duplicate record issues reported  
+  • [ ] Monitor tool usage and escalate impacts as necessary  
+
+• ASDBA Team:  
+  • [ ] Run the provided data migration scripts in the ASD database after receiving data from Nirmal/IFR team
+
+Transcription
+
+00:00:02 - 00:01:05 Unknown Speaker:
+
+Add new SQL, add new use case, right? Then it will be completely blocked if we are using the astronomer number changes to over here. OK, yeah, now once Rachna gives you a confirmation, just run those query in the even environment. OK, that is the part for you quickly. What I need from you, the way you have changed these data for DQ repository, right? Similarly, we have created one table for ACE in that one, right? What was that table? Nirmal? Can you inform me, man, quickly? Nirmal? Or even if you are aware, right DQ artifacts, right? So you have to twist this data based on that. I mean to say, when you are putting those allowed values right, so your allowed values would go over here. Okay, okay, got it right. We'll get rid of this completely.
+
+00:01:05 - 00:02:26 Unknown Speaker:
+
+Yes, yes, yes, no, no, we are not going to get rid of this table, man. You would be maintaining both the tables because in future you will be getting that. In future, you are going to get the data, the way we are going to store it. What is that? Uh, okay, this is to get the inputs from the front end, that is to make exactly exactly exactly. So now, use case ID if is already having a list, which we have decided, so use case ID this one. Also, you have to take care if you don't have, let me send you these details. What is the use case under? What? I'll tell you, give me a second, yeah, so if you go over this one, I'll forward this to you as one.
+
+00:02:26 - 00:03:21 Unknown Speaker:
+
+Use case ID one, so wherever you are seeing the use case name as RESI, your use case ID over here should be one. Okay, because in this table you don't see use case name, it would not be there. In this table, use case name won't be there. Okay, and whenever you see these benefits data, the use case is 16 for that. Okay, that is the reason I am asking you. You have to refactor that one and then again, next the data that you have created. Right? Just follow this one, because one would be your use case ID that would be changed, right? Don't see this crazy, right? It would be one only. It has been written incorrectly. Okay? Where name, table, name, type, role, description, filter, name, old, variable. Look, yeah. Mean, max, aggregate.
+
+00:03:26 - 00:04:34 Unknown Speaker:
+
+Look, allowed margin. Right? So your value should go on to this bit. Wherever you are selecting those allowed margins. Got it or you have a confusion? But right now, there is no values for the existing entries, right? No. So that's something we are making. And that would be populated in the UI once we migrate the data that was the purpose for creating these records. Now I got that, so this one for existing data. Do you want me to extract this margin and update? Yes, yes, yes, you have to put it over here. This is available, this one that I have sent to you, right? Where it is. Now suppose this is the Excel sheet that you have. This is your current data. Okay, let me go for the one which is okay. No, no, okay request.
+
+00:04:34 - 00:05:36 Unknown Speaker:
+
+Another sheet is there. Open that. Yeah. Okay. Now suppose this is where we used to have invalid values only, right? That is what I am asking. So value-value checklist should do it. Allowed values is there, right? So that allowed values should go into this one. If you go over here, allowed value would be there, right? Look for this one, right? Valued-valued text. Whatever valued value would be there, that would come over here. Okay. Okay, that mapping you have to do. It mean value, max, value, right? Aggregate, accurate margin allows. AP. Those should be populated over here, then only it would be visible on the UI. Okay, so for all 260 records so far, we yes, all that right, right, right. You just need to migrate to this, this table. Once you are done with this.
+
+00:05:36 - 00:06:33 Unknown Speaker:
+
+We just need to copy it and then provide it to the ASDBA team to run it in the ASD database. Okay, so they will store it and we will have to store it. And this complex flag would be false for all the data that you are migrating. Okay. By default. Okay. And approve in should be true. Okay. So, just start with this and in case you face any challenges, do let me know. Sure. Okay. And see where we are with UMDL. The rest of the folks, like, if you given your update right, drop off until unless I asked you to stay, right? Like Nirmal need to stay, and I don't think anyone else is required, right? Anyone else having any query I find Nirmal is required, you know, be there in the call.
+
+00:06:38 - 00:08:23 Unknown Speaker:
+
+I have created that SQL to update the existing entries in DT repository. Shall I share it with IFR to execute that? No, we need that sign up from Rachna, right? Then only we will... But my site, the query list is there. Whatever we need... Yeah, yeah, yeah. Go ahead and share it to IFR. And IFR, it will be your responsibility because... there are two records which have been reported you need to understand the problem with that if the duplicate record. I hope you have been logged in over here, right? You might have seen people started using this tool now, right? So, here are the cases like here, right? Right, business does. I think ANSI was located in multiple regions. There it was. But ultimately, I have verified those DQ rules in the computer config.
+
+00:08:44 - 00:09:18 Unknown Speaker:
+
+This is another email, right? Again, they started jumping on people who were already being... This is one, and then there is the... using this right and then any impact it would be escalated there was one email where suman was also moved in for his
+

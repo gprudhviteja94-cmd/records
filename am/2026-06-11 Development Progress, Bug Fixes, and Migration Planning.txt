@@ -1,0 +1,136 @@
+2026-06-11 Development Progress, Bug Fixes, and Migration Planning
+
+Creation Time: 2026/06/11 11:33
+
+
+📅About Meeting
+
+• Date & Time: 2026-06-11 11:33  
+• Location: Not specified  
+• Attendee: Sameer, Irman, Kundal, Rachna, Sachin, Athir, Sindhuja, Anand, Rajendra, Purna
+
+📒Meeting Outline
+
+Development Progress and Bug Fixes
+
+• Testing and Bug Fixes  
+  Sameer reported that he has integrated changes and fixed minor bugs found during testing. He plans to test bulk changes locally after the call and push them to the EY environment if successful. There was an issue with the API not fetching deployment ID details, which he will test and update accordingly.
+
+• Approval and Deployment Process  
+  The team discussed the need to close the current work by Monday. A call will be set up to coordinate with the work basket owner to ensure UAT sign-off and deployment by the end of the week. It was emphasized that database entries must be added correctly, and no deployment is needed once changes are merged and DB updates are done.
+
+• UI Data Validation and Minor Fixes  
+  Data validation for the UI search is completed, but testing for the use case list is pending. A minor bug was identified on the approve/reject page where the table does not refresh properly after an action; currently, a page refresh is used as a workaround.
+
+Configuration and Deployment Details
+
+• Vault Properties and Deployment Configuration  
+  Kundal was reminded to confirm if the asset PR has been merged and to provide key vault properties to avoid multiple deployments. Sameer will send a mail to the DevOps team to configure these properties in the vault. A list of updated and mandatory fields is needed, with Rachna confirming mandatory fields except for filter criteria.
+
+• Field Renaming and User Story Clarifications  
+  There is a user story related to field renaming that needs to be cross-checked with Rachna during the DSU meeting. Documentation of requirements in user stories was suggested to reduce rework and improve clarity.
+
+Deployment Challenges and Rule Execution
+
+• Long Deployment Times and Rule Execution  
+  Sachin highlighted that deployments have taken over three hours, causing delays. It was agreed that all rules must be run and completed even if it requires extending the deployment time. Sachin will update the team by 1 p.m. on the status of report sessions.
+
+• Backlog and Rework Issues  
+  The team acknowledged a significant backlog that cannot be addressed until current jobs are closed. Concerns were raised about repeated rework due to unclear or missing requirements. It was proposed to document detailed requirements in user stories to prevent future delays.
+
+Migration from Composure to Astronomer Platform
+
+• Mandatory Migration and Impact  
+  Sindhuja was informed about the mandatory migration of all use cases from Composure to Astronomer due to Composure's planned deprecation by October. This migration requires VP-level approval for any extension, which is unlikely. The migration will involve significant changes including database connectivity, path updates, and code rewrites.
+
+• Scope and Validation  
+  The migration affects all use cases running in Lumi but not those in ACE. Approximately 330 tags will need validation post-migration. Coordination with Rajendra and others is ongoing, with migration planning already initiated.
+
+📋Overview
+
+• Sameer has fixed minor bugs and is preparing to push bulk changes after testing.
+• A call will be arranged to ensure UAT sign-off and deployment by week's end, with database entries confirmed.
+• UI data validation is mostly complete; minor UI bugs are being addressed.
+• Kundal to provide vault properties to avoid multiple deployments; DevOps will configure these.
+• Field renaming and mandatory fields require confirmation with Rachna.
+• Deployment delays due to long rule execution times are being managed; all rules must run to completion.
+• Repeated rework due to unclear requirements is slowing progress; documentation in user stories is proposed.
+• Mandatory migration from Composure to Astronomer platform is underway, affecting most use cases and requiring extensive validation.
+
+🎯Todo List
+
+• Sameer:  
+  • [ ] Test bulk changes locally and push to EY environment after successful testing (ASAP)  
+  • [ ] Test API fetching deployment ID and update team (ASAP)  
+  • [ ] Send vault property details to DevOps and team within 1 hour  
+
+• Kundal:  
+  • [ ] Confirm if asset PR is merged and provide key vault properties (ASAP)  
+  • [ ] Check for any other vault properties in use and inform Sameer (ASAP)  
+
+• Rachna:  
+  • [ ] Confirm mandatory fields and filter criteria (Completed)  
+  • [ ] Clarify field renaming user story during DSU meeting  
+
+• Sachin:  
+  • [ ] Ensure all rules run to completion post-deployment and update status by 1 p.m.  
+
+• Team Coordinator (unspecified):  
+  • [ ] Set up call with work basket owner to confirm UAT sign-off and deployment schedule (Today)  
+
+• Documentation Owner (unspecified):  
+  • [ ] Document detailed requirements in user stories to reduce rework (As needed)  
+
+• Sindhuja, Anand, Rajendra, Purna:  
+  • [ ] Continue planning and executing migration from Composure to Astronomer platform (Ongoing)
+
+Transcription
+
+00:00:02 - 00:00:54 Unknown Speaker:
+
+I was feeling and yesterday I was doing the testing and I have integrated the changes, which I found the errors. There were some bug that was there in the minor bugs, so that I have fixed it today. I'll just check it and then push those changes. Also, the bulk changes in even actually I'm not able to test from locally, that's the reason I didn't push in even. But after this call, I'll just test it and then if everything works fine, I'll push it in EY. EY changes are there. The API is not able to fetch the transformation API which was there, not able to fetch the details of the deployment ID. I'll test it and update. Integrate it and then if there are any issues, we'll connect and we'll sort it out.
+
+00:00:54 - 00:01:46 Unknown Speaker:
+
+At least the build should be there, right? During the testing, I I'll connect with you and Irman. To close it out. Let's try to close it out by Monday, not beyond Monday. Oh yeah, sure. And for the work basket I pinged yesterday, I've seen that he was not available till the 9 30 ISD hours yesterday. Maybe he might have joined late yesterday. So I will just ask you to just pitch in and then check if we can close that. Uh, set up a call today, Okay, that is the way we have to go around and just set up a call with them. And, you know, just mention that we have received the UAT sign up and this needs to go live by end of this week. So if you just merge it right, you just need a deployment, a E3 deployment.
+
+00:01:46 - 00:02:34 Unknown Speaker:
+
+Correct, and please make sure that he is adding those entry to the database also. Yeah, we don't need any deployment for this one. Once the changes are merged, DB changes are done, we'll be able to just see the. Because. Yeah, then, uh, please make sure you are setting up a call today with him, okay? And uh, what about the data validation? All those are done right from the UI for the search of UI. Yeah, yeah, data validation is done. I.I still need to test for the use case list. So once you'll add it, I'll just check the list. Let me let me do that, let me do that, uh, and then I'll let you know all that. Okay, I have a minor box which I thought we can fix it.
+
+00:02:34 - 00:03:18 Unknown Speaker:
+
+Basically, in the approve reject page, whenever we approve or reject it, the table remains if that particular rule is still is there in the table. So what I'm doing currently, I'm just refreshing the page. Yeah, that is something. The update we heard from you yesterday only right during the day. Yeah, that's what. Yeah, that's what I was listening. So these are the changes which has been done today. I'll look into the bulk one. Okay, okay, then, uh, then close it out. And Kundal. Please make sure that asset has been, that asset PR has been merged, right? Or it is still yes, right, then, then, first of all, give me those key property, right. Otherwise we would need multiple deployment if you give me those property, right.
+
+00:03:18 - 00:04:26 Unknown Speaker:
+
+I'll send a mail to the DevoPs team to configure that into the vault that is number one and second. This is the statement I used to report. Right now you guys are working, and why should I keep a track? No, actually, I missed that when I was awesome. It's okay, okay, so so make that, give me those properties and thoroughly check if any other vault property that you are using. Then just do let me know and send the details to me in next one hour so that I'll configure that to the world. Working with that about okay. I would need the list of the updated fields and the mandatory ones. So, we need to check with Rachna. Mandatory ones, Rachna has already confirmed you. Apart from the filter criteria, rest everything remains as mandatory ones.
+
+00:04:27 - 00:05:26 Unknown Speaker:
+
+Okay. And the field renaming which is mentioned for this field, that we need to get it right. Which field renaming? There is one user story which is called field renaming. That is something we need to check with Rachna. Let's cross-check during the DSU itself. Okay. Okay. Thank you. Anything else, Athir? No, that's also fine. Thank you. Thanks. Sameer, did you run all the rules? Sachin, as we mentioned yesterday, right, like we tried to move that records to the artifacts history at all, not like it crossed, like the deployment has taken. More than two and a half hours and it crossed that tournament. So whatever the mistake is for that, I mean, we are now, you know, now, getting quite a delayed on this. Yes, sure, definitely session.
+
+00:05:26 - 00:06:16 Unknown Speaker:
+
+But like, uh, yeah, like that got like the deployment got, like, more than three hours, right? Like we expected that actually on that night. Then please make sure once the deployment is done, even if it is required time, please stretch a bit, make sure all the rules run. Yeah, it's not only the month, even the daily one. I will take care of all the report session and I will update you like at 1 p.m. It will be opened and I will take care and I will let you know the status. Yeah, so that's what I am asking you. Once the deployment is done, okay, please make sure you run all the rules and close it by today. YURI Yeah, sure, because this is what I am intimating all of you.
+
+00:06:16 - 00:07:14 Unknown Speaker:
+
+There are use backlog sitting behind us, okay, so we won't be able to pick up those until unless we close our existing job. Okay, for for that PBS PI for three months. The work that you have data, you already appreciated your work for that, right? But now, you know, it is the very last moment which is getting delayed unnecessarily. Yes, like, actually we have a department section, sorry for that, but like, Yeah, problem is that again, like, you know, you guys are not understanding the requirement, right? Let me know if if I need to write it on your user story, then I'll start documenting it. If that helps to all of you, right? Uh, if that helps, we will start writing down each and bit of pieces in the user stories.
+
+00:07:14 - 00:08:02 Unknown Speaker:
+
+Okay, because, uh, the way we are doing the rework, right? That is unnecessarily consuming our time, right? If you know? Somehow you you are missing it or you know, you are not able to remember what exactly we have to do then The problem is now if you have made that changes for 12 months, right? He would have completed this by by now. No, No such an. I have made that one session. But for the very first instance, it was not there, right? So me? And that is the reason we are again struggling with these deployment. I'm not only pointing it to you, Samir. It's a miss from lots of people, right? It's my observation, right? And that's the reason, like, I was just asking you guys, right?
+
+00:08:02 - 00:09:04 Unknown Speaker:
+
+It's a miss from normal side, it's a miss from Pathway side or from Kundan side, or from other side, whoever right, it's all all the individuals who are working. Yeah, if you feel, if you guys feel, uh, like, we need it documented in the user story or somewhere in the conference or the dev group, right? I'll be happy to write it down. It would not take me much more than half an hour. But going forward, I would not like to see these, you know, repeated work that we are doing on a daily basis because there is a huge backlog. And now the challenge. Sindhuja I think I have looped you in one of the mail. We have to migrate the complete use case to astronomer from the composure Which is not being planned Okay, And that is a mandatory requirement because they are going to deprecate this composure by end of this October.
+
+00:09:04 - 00:10:08 Unknown Speaker:
+
+And In case we wants to extend it, that would really require more than VP level approval, which we are sure we are not going to get that up to one. And that is the reason I have already given a heads up to Anand and looping Rajendra and Purna already over there. So the use case, all the use case, it's all the use case, yeah, apart from the one those are running in A's, right? For example, this data quality issue management tool which is running in ACE, that is not having any impact. But rest of all the use case which is running in Lumi, those all have been impacted due to this, you know, platform change from the composure to the astronomer. So we need to change the database connectivity, we need to change the path, we need to change the approach, the way it is being created.
+
+00:10:09 - 00:10:59 Unknown Speaker:
+
+So this is not only impacting the US CDO, it will be impacting the US case also. And it's like, you know, rewriting the code altogether. It will be a big change. Because once you do that, you know, we have to validate each and every tag that we have created. And I think we have more than 250 tags. I am expecting almost 250 tags. Sorry? It's 3.30, great. Yes, has the migration already been created section along with Raj? No, I attended this call yesterday night.
+
