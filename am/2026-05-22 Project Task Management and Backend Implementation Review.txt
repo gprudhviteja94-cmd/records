@@ -1,0 +1,201 @@
+2026-05-22 Project Task Management and Backend Implementation Review
+
+Creation Time: 2026/05/22 11:32
+
+
+📅About Meeting
+
+• Date & Time: 2026-05-22 11:32  
+• Location: Virtual Meeting  
+• Attendee: Sachin, Kundan, Nirmal, Sameer, Athar, Rachna, Anand, Roshna, Nancy, Prithvi, Petri, Sindhuja, Vargar, and others
+
+📒Meeting Outline
+
+Project Task Management and Deployment
+
+• Current Work Status and Assignments  
+  The team discussed ongoing tasks, with emphasis on continuing work related to MGM and RPA as shared by Roshna. Tasks previously assigned to Nirmal were completed promptly and are pending deployment. Sachin instructed the team to focus on MGM and RPA tasks and ensure Rally status updates are maintained accurately.  
+• Task Closure and Environment Management  
+  Emphasis was placed on closing tasks immediately after testing to avoid escalations. Sachin highlighted a recent escalation that was prevented by timely intervention and urged the team to ensure accurate configuration and closure of tasks in both lower and higher environments. Bundles removed from E1 were deployed to E2 but were not reflecting as expected, requiring further investigation.  
+• Bulk Update and Dependencies  
+  Nancy was advised to hold off on bulk delete operations until changes by Nirmal are moved to production to avoid conflicts. Coordination between Nancy and Kundan was encouraged to align on dependencies and environment updates.  
+
+Backend Implementation and Email Functionality
+
+• Backend Development Progress  
+  Kundan confirmed backend implementations for update and create operations, with pending work on rejection bundles to be completed the same day. Email templates were implemented but lacked some required data fields, which need to be addressed.  
+• Email Escalations and Template Corrections  
+  Sachin shared details of an escalation email sent to B40 and stressed the importance of avoiding repeated escalations by proper task management. Minor changes to email formats, such as hyperlink display and full award names, were requested to improve clarity.  
+• Database Calls Optimization  
+  The team discussed optimizing database calls by caching human task details in context data to reduce redundant calls during notifications and other operations. This approach aims to improve performance and reduce backend load.  
+
+Testing, Documentation, and UAT Preparation
+
+• Test Case Documentation and Sign-Off Process  
+  Athar demonstrated exemplary test case documentation, including pass/fail criteria and detailed steps. The team was encouraged to adopt this approach for clarity and traceability. Test results are to be shared with Anand for sign-off, keeping Rachna in CC.  
+• Test Case Management and Automation Potential  
+  Discussion included the possibility of automating test case creation via Excel uploads to streamline the process in future sprints.  
+• UAT Scheduling and Data Preparation  
+  The UAT session was confirmed to continue with backend verification and check type validations. Nirmal has scheduled daily jobs to update data artifacts, facilitating testing. The team was reminded to create roles using the self-sub UI for upcoming tests.  
+• Communication and Reporting Protocols  
+  Sachin emphasized sharing updates via email or designated channels rather than individual messages to ensure transparency and easy tracking. The use of common channels for alerts and notifications was reinforced to avoid duplication and confusion.  
+
+Product Overview and Coordination
+
+• Product Knowledge Sharing  
+  Vargar was advised to connect with Sameer for detailed information on Quantro, with plans for an overall product overview session.  
+• Channel Management for Alerts  
+  The team reviewed existing alert channels, confirming the use of a common production channel and discouraging creation of multiple channels for the same purpose. Sachin requested confirmation of alert names and details to raise necessary alerts appropriately.  
+• Meeting Scheduling and Availability  
+  The necessity of the 3:30 PM call was confirmed to continue UAT activities. Scheduling challenges due to team availability were acknowledged, with a request for advance notice on any changes to allow proper planning.  
+
+📋Overview
+
+• MGM and RPA tasks are prioritized; deployment planned for completed tasks by Nirmal.  
+• Rally updates must be maintained consistently to reflect current task status.  
+• Task closure immediately after testing is critical to prevent escalations and maintain environment integrity.  
+• Backend implementations for update, create, and rejection bundles are progressing; email templates require data completion.  
+• Escalation emails highlighted the need for precise task management and configuration accuracy.  
+• Database call optimization through caching human task details is to be implemented.  
+• Test case documentation standards were set, with sign-off processes clarified.  
+• Automation of test case creation via Excel upload is under consideration.  
+• UAT sessions scheduled with data preparation and role creation tasks assigned.  
+• Communication protocols emphasize use of shared channels and email for transparency.  
+• Alert channel consolidation confirmed; alert names to be shared for raising alerts.  
+• Coordination for product overview and scheduling adjustments discussed.  
+
+🎯Todo List
+
+• Kundan:  
+  • [ ] Complete implementation of rejection bundle and email template data updates, due today.  
+  • [ ] Implement ANSI keyword updates in code base, due today.  
+  • [ ] Optimize database calls by caching human task details in context data, due ASAP.  
+  • [ ] Share test case documentation with Anand for sign-off, CC Rachna, due ASAP.  
+
+• Nancy:  
+  • [ ] Hold off on bulk delete operations until Nirmal’s changes are deployed to production.  
+  • [ ] Coordinate with Kundan on dependencies and environment updates.  
+
+• Nirmal:  
+  • [ ] Deploy completed tasks to production environment.  
+  • [ ] Continue scheduled daily jobs for data dumping to DQ artifacts table.  
+
+• Athar:  
+  • [ ] Send test case documentation email to Anand, CC Rachna, for sign-off.  
+  • [ ] Support testing activities before going on leave Thursday.  
+
+• Sachin:  
+  • [ ] Monitor Rally status updates and ensure team compliance.  
+  • [ ] Investigate bundle deployment issues on E2 environment.  
+  • [ ] Confirm alert names and raise necessary alerts.  
+  • [ ] Coordinate with Rachna and team on UAT scheduling and communication.  
+
+• Vargar:  
+  • [ ] Connect with Sameer for Quantro details and product overview session.  
+
+• Sameer:  
+  • [ ] Provide product overview and assist Vargar with Quantro information.  
+
+• All Team Members:  
+  • [ ] Follow standardized test case documentation format demonstrated by Athar.  
+  • [ ] Use designated channels and email for all updates and communications.  
+  • [ ] Close testing tasks immediately after completion to avoid escalations.
+
+Transcription
+
+00:00:05 - 00:02:11 Unknown Speaker:
+
+I have been already being closed long back. Then there is no dependency here. What else now you are working on? If any work with maybe I will continue. Otherwise, I will continue with the resume, the work with MGM and RPA, which Roshna has shared. You can go ahead and start working on MGM and RPA. Anyhow, the one that I have assigned to Nirmal, he already did that within six to seven hours. That day itself. That needs a deployment, so I'll plan for it. So you can focus on MGM and RPA. Another thing, make sure you are updating Rally. I did not see the Rally status as of now. Okay. Give me a second. Okay. Thanks, Hepa. Once you share the update, you can filter to drop off. Sameer, Are you ready? Or...
+
+00:02:11 - 00:03:11 Unknown Speaker:
+
+The query is, uh, taking time. I'm talking about, uh, Curry is taking time. Just give me, yeah, then wait on the phone. We'll, uh, continue over this. Okay, yeah, yeah, yeah, okay. Uh, you started on the bulk update, right? Yes, okay, uh. Anything that is pending from the back inside, where you need, uh, help. So scheme. I think that you have the shared right. Is there any dependency on? Look, if you ask me whatever question that with the business. If we can clarify that in today's call, anyhow, it is going to be a dynamic ID which account would be generating. Correct name this bad type name, right? Where? Type name. We need that business team, business TOC name. Uh, we don't have a free text over there, right? Exactly?
+
+00:03:11 - 00:04:43 Unknown Speaker:
+
+We don't have anything in the UI where we are showing this. Okay, so this will go to them, we need to check with them. Check type rule description allowed values null valid values. Kundan, all the backend implementation is done or you are still working on it? Related to which one update one, update one, create one, right even the create one. I have asked you to include one more bundle over there, right for the rejection part. Yeah, that I will implement it today. What about emails? And all emails? Uh, it's been implemented, but we don't have that uh, template. The template contains, uh, some other data, okay, which we don't have. Resolution and one more call out, right? Um, please make sure this is to all of the team.
+
+00:04:43 - 00:05:38 Unknown Speaker:
+
+Somehow, I have saved yesterday from getting this escalated to the next, uh, you know, corner. Kundan, this is the escalation male that has went to B40. Okay. And now there was a revert from the B40 person. And he was getting irritated with 15 to 16 males from last 15 days. Somehow I was able to convince Anand not to further escalate it to Pune or Rajendra. Please make sure whatever task you are creating in the lower environment, you are driving it to a closer data itself. Because on a very wrong. That means there is a work that director needs to do. All the BP, so please take care. We are not doing that in the lower environment, and again, on the higher environment. Your configuration should be accurate.
+
+00:05:38 - 00:06:48 Unknown Speaker:
+
+Okay, I have a plan to move it to ECM, but please take care, at least like whoever is working on these use cases. But hoping I have removed those bundles in E1 and have deployed on E2, E2. I am not sure why it is not reflecting. That is something I need to check. I i mmediately removed those after seeing these escalation email, you removed it, right? Okay, save it, you didn't. Yes, yes, no, no, no, we haven't published it because that would impact. Then it is fine, then the Mail, even if somebody will trigger it, the mail will not. But still take care of further escalation. I won't be able to save you guys, so. Please make sure if you are creating a task for the testing purpose, please close it then and there itself.
+
+00:06:49 - 00:09:01 Unknown Speaker:
+
+Now on this one, all these three email bundle functionality and the rejection part which you need to include over here. That is number one. Let me tell you, otherwise you would forget. This BPMN I have already provided to you, okay, this is something, and let me know if you have any query with respect to that. So even over here, right? One thing that you have to see that this needs to be updated. User response This should just closed. Okay, it should not go to this service exception handler. Even. We don't need this. Uh, below and business extension, right? We are not throwing any business. You are going for the rule of business. Yeah, keep it, uh, there are future requirement, and that is the reason I have kept it. But still, you are pointing to rule update one day.
+
+00:09:03 - 00:10:14 Unknown Speaker:
+
+How can you update the rule? No, we are we. I'll tell you right now, just just leave it. There is a future requirement that is something discuss and we I'll let you know once that is being finalized. So these email and update watcher and all right, please make sure everything is being done for this one uh l implementation. If you need ANSI, include ANSI. ANSI, there was some comment, right? Did you... You have to do it, Kundan. That was your fault. You won't be able to do it. Okay, I will check that. So, ANSI, this is on this one, right? This is not the hope that you have created. This is, you have to update that keyword in the code base. Okay, and I need this closer today itself.
+
+00:10:14 - 00:11:27 Unknown Speaker:
+
+So that we'll have a thorough, uh, you know, testing on Monday because Athar is going on leave from, Uh, Thursday. Okay, so in case any changes or anything would be required, we need to close that before Ather goes to the lab. Ather, can you please send that email to Anand? You guys should follow how he has documented it. This is really well the way he has documented his test cases. So this is one of the test cases. What is the fail or pass criteria? What exactly he did, right? This is how... this is pretty precise way he has documented each and built up pieces. Okay, so please follow this approach going forward, right? Uh, this looks good and then we would be able to justify what exactly? So for you, Kundan, he has covered up most of the things.
+
+00:11:48 - 00:13:07 Unknown Speaker:
+
+Just copy this one and then just ask Anand to give a sign up, not Rachna. Keep Rachna in CC. But I'll spawn it because I know I have already pinged him. But as you haven't shared the result yesterday, right? And then one more thing, I think we can do it right, like this one. These many test cases you have, you could have created, like this is under one test case, right? These will be these many number of test cases which you have done. And that is the reason I did not mention anything yesterday. I'm just giving you, you know, heads up. Like there are some feasibility where we can just upload the Excel and that would create all the tasks and test cases, so we'll look into that.
+
+00:13:07 - 00:14:18 Unknown Speaker:
+
+If that's there, then I'll create in this current sprint only for all this. Okay, okay, but this is good, man, this is pretty good. At least this has captured everything that that we are, you know, targeting for the picture. Um, well, it was Dev, I have published it, right, the one that I was trying to do. Kundan, I am done. Athar, I am good from your side. Just see if you can give me a second. First reminder, second reminder. Yeah, yeah, yeah. Request ID can be your task ID. Okay. Submitted on can be the date when the you can create that. We don't have task ID, right? You have task ID. Once you are, you just need to read the data, you are not reading that data right now.
+
+00:14:18 - 00:15:16 Unknown Speaker:
+
+This human task ID, so when it is going over here, right right, just read the human task ID and the date. When this human task gets created, you can pull it from the task data. Okay, let me check. Uh, and again, one reminder, uh, to you, you have to pull the human task details in this one, not on this one and this one or this one. The reason being those you can always save in the context data, right when it would come to this bundle for the first time, pull it set into the context data. So that again, you don't need to make a database call database call for what the human task details that you are going to fetch. So whenever you are calling those human task details, right, it is making a database call in the backend.
+
+00:15:18 - 00:16:21 Unknown Speaker:
+
+Okay, okay, okay, I have to call this. Guys understand the model, right? So when you are making a call to this, right? Suppose, I am making a call to this, suppose from this. MGM Analytics, get it, get it. So when you are doing a search and whatever details is getting populated, right? So that is nothing, but it is making a database call to the ASDB, right? So my ask to you when you get this task ID details, right? Suppose this is the task ID, so the ask to you is that. When you are searching this task ID, right, just call a database call to this bundle when you are sending that notification, right, and then save these details. Basically, task data details now from here, uh, this task metadata, you can use this task ID, right, and then creation time or whatever you wants to get.
+
+00:16:21 - 00:17:25 Unknown Speaker:
+
+Basically, that would be there now. Save those, okay, and then reutilize in rest of the bundle. Don't make a DB call again. Okay? Any? Any other question on this one? No. The submitted date will be date. And what is this URL access URL, the self-sub portal access right? This one again, Nirmal did it on a good note. If I show you where is Nirmal. Look, you can give a portal link like this Q track, they can just hover over it and then they can click on this. This is a hyperlink, right? You can, yes, just just just a hyperlink, correct? Uh, such, in just one small color, basically the node which we are sending it. Can we give the full please award? The short form looks like this should have been addressed. Please.
+
+00:17:25 - 00:18:24 Unknown Speaker:
+
+Uh, take a look into this. It's a minor change. The other escalation also had that. The one which is going to be this is the same same email format. It is that, as we were having data for multiple workbasket, that's the reason for all of emails went. Uh, that is the only reason. Make it complete, please. Uh, okay, yeah, okay. Got it any other question from them? No, no, okay, I have one more query, so you have to stay back. Uh, do you have any question? I'll just drop a mail to Anand and we'll continue on the file process. Okay, Nancy, you can continue on this and the reason I have asked you not to proceed ahead with that bulk delete because I would like to move. The changes, which is, you know, been done by Nirmal first.
+
+00:18:24 - 00:19:18 Unknown Speaker:
+
+And then we can test your flow in the lower environment. Otherwise, your changes would also move to the production, and for your production, we need to update that in Nancy with the bulk feature. So we need to update the AS4 version and then the bulk dependency we have to add it over there. So wait till the time I confirm you. Okay. And meanwhile you can work with Kugan. Hey Kugan, those elf names remain same which I have given to you yesterday or is there any change? It is not same Sachin. Okay. So it's a different. I have created seven alerts. Okay. Just ping me those alerts. NC shared those details, shared all those seven alerts. Otherwise, I will ping you the name. Just ping me so that I'll raise that alert.
+
+00:19:19 - 00:20:23 Unknown Speaker:
+
+Once, Arthur, you send the UAD sign of request, that is when I request and second, Mukundan, you're helpful. And I hope you have used the channel for production, the prod channel, right? Why I will create the... It's already been created, right? Which channel you are live-raising? We already created a channel right last time, uh, for QA, for uh fraud. There are different, different channels are there for that. So product. Can you share your screen and show me which is the channel you're using? One second, I'm sharing six? Meanwhile, Uh, can you please make sure to send the details to Rachna that is number one? And secondly, uh, didn't inserted some data yesterday? Uh, no, no, such. I have the data for the other check type also. Okay, then then let's, uh.
+
+00:20:23 - 00:22:03 Unknown Speaker:
+
+But that would not be pulled today, right? Because it would be date minus two days. Then. Yeah, data we can update. I'll ask if, uh, to update the dates yesterday. Okay, okay, uh. That is the Prod channel which I was talking about, that is the production, it is not our channel. Uh, yeah, it's a common channel, sorry, team channel. And what about the test one? Can you go? No, no, no in this this right, that? Okay, that would be in the test one, right? Okay, go to the Dev, you try UI Test. Alpha Alerts This channel exists, right? He created last time. Can you check? Once? Delete? No, man, that channel doesn't exist. Can you check any of the previous alert that we have created? Where to take that there would be other alerts that has been created for that task.
+
+00:22:03 - 00:24:12 Unknown Speaker:
+
+Management. Right, it's the same one, right? Give me a second, can you ping me that channel name? Let me see if it is being there? Man? Channel is not there. I remember I raised this, use this one, then use this one, use the same one, don't create multiple channel. Doesn't make a sense. Vargar, for you, just continue having a connect with Sameer to get more details on Quantro and I'll try to fetch some time today to give you the overall product overview. Anyone having any questions? If no, I need Sameer, Nirmal, Kundan, three of you to be there in the call. Nirmal, Sameer and Kundan. It will drop up once you share your update in the channel. Sachin, do we need the call at 3.30? Because I will share it with Rachana. The details and everything.
+
+00:24:13 - 00:25:04 Unknown Speaker:
+
+If required, I will review it with her once. When you are sharing the details, share it either over an email or in that channel. Don't do an individual thing. So share it to her. See myself and Sindhuja over there. If you're sending over email or in that tech channel, uh, sure, I'll share it then in the group, I mean, when she asked there itself, I'll share it. Better to keep it on email, right? Okay, if you want to track it back right channel again, you would be searching it, right? Where did I think? Where did? I think? It's better to document it over the email, right? Um, and do you have that handy so that at least I can review it? What exactly you are sharing? Yeah, let me share it with such in the UAT mail.
+
+00:25:04 - 00:26:05 Unknown Speaker:
+
+We have to just send to Anand Rachna. Should we include also? Um, not required. Okay, so I'm sending to Anand. Keeping you Rachna. And CCC is a part of that initiative, right? So let's add it such in. Can you see my screen? Yeah, yeah, so these are all the DQ IDs. Okay, these are these. Just confirm me. One thing is it a clone of AQ repository? Or we have modified the description over here? It's a clone clone. Then go ahead and share it. You don't need my review, then. No, you know what, actually? She asked. I'll just confirm it with you. The matching template. Yes, yes, yes. And are we using anything from the description? Yes, And what is that we are using? This threshold we are using in this. Again, your voice is not coming, Prithvi.
+
+00:26:05 - 00:27:00 Unknown Speaker:
+
+Okay. So, what... Can you hear me now? Prithvi, go ahead and share it. I got your point. If you did not make any changes to the description, I am good. Yeah, it is raw description. I have not made anything. Yeah. Sachin, do we need the 330 call still? Yes, yes, yes. The UAT would continue, right? It would continue with your use case, man. We are done with... but the backend part which you have built, that would continue till the end. We verify all the template and once they give a sign up for your use case, okay, all the this one. I mean, the check types is that? Yes, all the check type would be verified during the UAT. Okay, okay, okay. And one more thing, you have to keep a note whatever you want to test the next day, right?
+
+00:27:01 - 00:27:58 Unknown Speaker:
+
+Uh, create those roles using the self-sub UI, right? And um, Nirmal has already scheduled a job, so those are, anyhow, running in the morning 10 a.m. Okay, so, uh, the data would be dumped to the, UH, DQ artifacts table every day. Yeah, like, Uh, for Monday, UAT, maybe. You don't have to log in for half an hour. And the amount of testing you would be doing right, you would be able to know if there is a gap in the implementation. Yeah, right, so let's do as much as we can. Okay, yeah, actually, I have some work at that point of time. That's why you are asking if it is mandatory, because I can do it before, that's not a problem. No man, that is their availability, right? Oh, I can't move it because this is the earlier.
+
+00:27:58 - 00:28:47 Unknown Speaker:
+
+It has been scheduled from 3 30 to 4 30. We have to keep it down for half an hour because they were not available in 4pm. Okay. Okay. Yeah. So, we are the productive men. I can't, you know, ask them, like, to just... Because they used to join around 1pm, right? So, if somebody is joining 1pm, they would go for a lunch, right, once they are back. And again, somebody is having a UAT at 2.30, right? So, it would go till 3, right? Yeah, so I won't be able to ask them to, you know, reschedule it to 12 p.m. Or something, right? If some some cases like those comes up, right? At least intimate me in advance so that I can plan it out. Yeah, if you tell me just, you know, at the very last moment, it would be very difficult for me.
+
+00:28:47 - 00:29:07 Unknown Speaker:
+
+No, that's fine, that's fine. Yeah, thanks Petri. Yeah, thank you. Uh, do you have anything? Sachin, I'm dropping. Is that okay? Yeah, yeah, yeah. You can drop up. Just provide me the update. Sure. Thank you.
+

@@ -1,0 +1,148 @@
+2026-01-26 BigQuery Access and Data Management Best Practices
+
+Creation Time: 2026/01/26 13:06
+
+
+📅About Meeting
+
+• Date & Time: 2026-01-26 13:06 (Duration: 2731 seconds)
+• Location: No location mentioned
+• Attendee: No relevant content mentioned
+
+📒Meeting Outline
+
+Access & Onboarding to BigQuery
+
+• Access levels
+  The meeting described three BigQuery access levels:
+  • Project access level: Grants access to BigQuery as part of the GCP console. Typical approval time ~4 hours after requesting via Identity IQ (IIQ).
+  • Data reader access level: Allows read/analysis access to AXP Lumi (foundational tables). Typical approval time ~2 business days after IIQ authorization.
+  • ONCOP / PII access: Special elevated access for sensitive data with column-level restrictions to protect personally identifiable information; only authorized personnel should have this access.
+  Emphasis was placed on requesting appropriate access before exploring data.
+
+• How to access the BigQuery web console
+  Step-by-step path was provided:
+  • Go to Lumi portal: lumi.exp.com
+  • Select BigQuery on the opening screen
+  • Click "Go to BigQuery" then "Continue"
+  • Log in to GCP BigQuery using Amex credentials and complete Okta verification
+  • After successful login, you'll reach the BigQuery initial screen but must have the required approvals to explore.
+  It was noted that detailed access instructions will be emailed once approvals are granted.
+
+BigQuery Data Management Concepts
+
+• Datasets, tables, and collation
+  Datasets are top-level containers used to organize and control access to tables and views. Collation settings can be configured at table or dataset level and are useful for analytical users.
+
+• Query modes and caching
+  BigQuery supports interactive and batch queries. Batch queries are queued and run when resources become available. Query results are cached for roughly 24 hours — re-running the same interactive query within that window can use the cache to return results faster.
+
+• SQL capabilities
+  BigQuery supports SQL-based scripts, stored procedures, user-defined functions, and table functions. These features were noted as part of data management and querying capability.
+
+Best Practices: Data Load, Table Design, Query Optimization
+
+• Data load strategies
+  • Handle very large tables (especially >20 TB) by breaking them into manageable chunks.
+  • Snapshot/delta loads (daily deltas of ~5–10%) are best applied via MERGE from staging to main tables.
+  • For full-refresh loads where incoming volume is similar to existing data, either TRUNCATE & LOAD or MERGE is recommended.
+
+• Table design
+  • For tables >1 GB, use partitioning and clustering to improve performance and cost efficiency.
+  • BigQuery supports partitioning by DATE, TIMESTAMP, and INTEGER types — choose based on data characteristics.
+  • When clustering, consider query patterns and choose columns accordingly. Multiple columns can be used for clustering.
+
+• Query optimization
+  • Select only necessary columns; in inner queries prefer selecting essential fields. Use SELECT EXCEPT to exclude unnecessary columns when many are returned.
+  • LIMIT does not reduce read cost — it only restricts returned rows.
+  • Join strategy:
+    • Join larger tables first and reduce data before subsequent joins. Manual ordering by table size (largest first, then decreasing) is recommended; BigQuery may reorder under certain conditions but not always.
+    • Aggregations should be performed as late as practical but used to reduce data sent to joins when beneficial.
+  • WHERE clauses:
+    • Place the most selective/“interesting” expressions first to avoid expensive evaluations.
+    • When fetching latest records, use array_agg patterns for efficiency.
+    • Avoid expensive expressions (e.g., LIKE on entire column) where possible; narrow the expression to target subsets (example given: apply to specific user content rather than whole column).
+
+• Reference materials
+  A Confluence page was recommended for more best practices and deeper guidance.
+
+📋Overview
+
+• Project access, data reader access, and ONCOP/PII access are the three access levels; each has different approval times and permissions.
+• Access path to BigQuery: lumi.exp.com → BigQuery → Go to BigQuery → login with Amex + Okta verification; approvals required before exploration.
+• Datasets organize tables and views; collation can be set at dataset or table level.
+• Use interactive or batch query modes; query results cache for ~24 hours.
+• BigQuery supports scripts, stored procedures, UDFs, and table functions.
+• For large tables, prefer partitioning and clustering (partition by date/timestamp/integer); cluster based on query patterns.
+• For heavy data loads: use MERGE for deltas, TRUNCATE & LOAD or MERGE for full refreshes.
+• Query optimization principles: select minimal columns, careful join ordering, defer aggregation where appropriate, and structure WHERE clauses to avoid expensive operations.
+
+🎯Todo List
+
+• Access requester:
+  
+  • [ ] Submit access request in Identity IQ for appropriate BigQuery level (project / data reader / ONCOP-PII), time: as soon as possible (approval times: ~4 hours for project, ~2 business days for data reader).
+  • [ ] Confirm receipt of approval and await access instruction email, time: upon approval.
+
+• Data owners / Engineers:
+  
+  • [ ] Review large tables (>20 TB) and propose partitioning/clustering plan (deliverable: partition/cluster design document), time: 2 weeks.
+  • [ ] Implement MERGE workflows for daily delta loads from staging to main tables (deliverable: ETL/SQL scripts + runbook), time: 3 weeks.
+
+• Analytics / SQL developers:
+  
+  • [ ] Audit commonly used queries to apply best-practice optimizations (select minimal columns, order joins by size, use array_agg for latest-record patterns), time: 2 weeks.
+  • [ ] Update queries to avoid full-column expensive expressions (e.g., broad LIKE) and use targeted expressions, time: 2 weeks.
+
+• Documentation owner:
+  
+  • [ ] Publish consolidated BigQuery best-practices and onboarding steps on Confluence, including access request procedure and Okta/Amex login steps (deliverable: Confluence page), time: 1 week.
+
+If any attendee needs clarified assignments or to claim ownership of the above items, please respond with name and the specific item(s) to be owned.
+
+Transcription
+
+00:00:01 - 00:03:52 Unknown Speaker:
+
+Big query This video. We will show you the different access levels, where to access the platform, and some data management elements. Let's get into it access levels. First. Things first, you'll need to gain access to the Google Cloud Platform console. This is your ticket to use BigQuery as part of the GCP console. So let's now explain the three access levels for BigQuery. Once granted project access level, users can access the BigQuery service as part of the GCP. Cp console it usually takes about four hours to get approval after making a request through identity iq. As for data reader access level, this allows users to access AXP Lumi, also known as foundational tables. You'll be able to read and analyze the data stored. In these tables. It typically takes around two business days to get approval after your request is authorized in IIQ.
+
+00:03:53 - 00:08:07 Unknown Speaker:
+
+Now, if you're dealing with sensitive data, you'll need ONCOP and PII access. This is a special level of access that provides for. What are you talking about? What are you doing? And column level restrictions. It's all about ensuring that sensitive data, like personally identifiable information, is well protected and only accessible by authorized personnel. Access BigQuery web console. Ready to git? Started with BigQuery? Head over to the Lumi portal by typing in your web browser, lumi.exp.com. Once logged in, select BigQuery on the opening screen. Then click on the Go to BigQuery button. Press Continue, and log in to GCP BigQuery using your Amex credential. Don't forget to verify yourself using Okta Verification. And voila! You're at the BigQuery initial screen. But remember... You can't start exploring until you've requested and received approval for the appropriate access level.
+
+00:08:08 - 00:09:56 Unknown Speaker:
+
+Don't worry, we'll send over all the access instructions via email once you're approved. BigQuery Data Management Now, let's talk a bit about BigQuery. Data management. It's all about handling, organizing, and maintaining data in the most efficient and effective way possible. You'll work with things called datasets, which are essentially top-level containers used to organize and control access to tables and views. Think of them as a way to group related data together. Within BigQuery, you'll learn about collation settings, which can be changed at the table or dataset. Level 1 required. This can be quite handy for you analytical users out there. And let's not forget that you'll have the option for interactive. Or a batch query. The batch query option queues up the queries and runs them when resources become available. Leslie, about scripts and the query data cache.
+
+00:10:15 - 00:12:12 Unknown Speaker:
+
+BigQuery supports SQL-based scripts, stored procedures, user-defined functions . And table functions. Plus, if you rerun the same interactive query within approximately 24 hours, the data in the cache will be used. This allows the system to retrieve the data more quickly by not having to fetch or recalculate the data again. Before we wrap up, let's take a moment to review what you've learned today. Successfully navigating BigQuery is all about understanding how to access the platform, the different levels of access, and key data management elements. It's important to remember that while gaining access may take some time, it's a necessary step to ensure the right individuals have the correct permissions. Do you recall the three different types of permissions? You should be thinking about project access level, data reader access level, and on-go PII access.
+
+00:12:12 - 00:15:13 Unknown Speaker:
+
+Once inside, you'll be able to explore the wealth of data and features that BigQuery offers, From working with data sets to utilizing scripts and managing query data. By the end of this video you are now able to identify the three different types of access levels for BigQuery web console, outline the steps to access BigQuery, and understand data management within BigQuery. Keep expanding your knowledge like this. And that's it. You're now ready to get started with BigQuery. Keep exploring by checking out the best practices for BigQuery video. Hello again. This video purpose is to help elevate your skills in BigQuery. Prior to watching this video, you've already taken your first steps understanding and accessing BigQuery. Now we're diving into the heart of efficiency. The best practices for data load, table design, and query optimization.
+
+00:15:15 - 00:18:23 Unknown Speaker:
+
+Data Load In our data load journey, we often encounter tables that are overwhelming. Especially those exceeding 20 terabytes are trickier. We break down these tables into manageable chunks snapshot data. Those daily deltas that are just five to ten percent of the actual table are like small puzzle pieces. We handle these. In the merge option, it's our data traffic controller that smoothly directs these pieces from the staging area to the main data repository. Full refresh data usually comes in similar volumes to our existing data. In these cases, we either opt for a fresh start with truncate and load or use our dependable merge statement. Table design. Now, let's talk about designing our data building, or table design. For buildings larger than 1 gigabyte, Use partitions and clusters to help you move around efficiently.
+
+00:18:24 - 00:20:38 Unknown Speaker:
+
+Do you know BigQuery allows us to partition with datetime stamp edit? Did your data types well? This offers us the flexibility we need when deciding to cluster by several columns. We consider our query patterns first, query optimization. Now, let's talk about designing our data building or table design. For buildings larger than one gigabyte. We use partitions and clusters to help you move around efficiently. Do you know BigQuery allows us to partition. In our data load journey, we often encounter tables that are overwhelming, especially those exceeding 20 terabytes. Our trick here? We break down these tables into manageable chunks. Snapshot data, those daily deltas that are just 5 to 10% of the actual table, are like small puzzle pieces. We handle these using the merge option. It's our data traffic controller that smoothly directs these pieces from the staging area to the main data repository.
+
+00:20:39 - 00:22:11 Unknown Speaker:
+
+Full refresh data usually comes in similar volumes to our existing data. In these cases, we either opt for a fresh start with truncate and load or use our dependable merge statement. Table Design Now, let's talk about designing our data building, or table design. For buildings larger than 1 gigabyte, we use partitions and clusters to help you move around efficiently. Do you know BigQuery allows us to partition with date timestamp and integer data types? Well, this offers us the flexibility we need. When deciding to cluster by several columns, we consider our query patterns first. Query optimization. And finally, Query optimization. Now, let's talk about designing our data building, or table design. For buildings larger than 1 gigabyte, we use partitions and clusters to help you move. Around efficiently, do you know?
+
+00:22:11 - 00:32:40 Unknown Speaker:
+
+BigQuery allows us to partition with date, timestamp, and integer data types. Well, this offers us the flexibility we need when deciding to cluster. By several columns. We consider our query patterns, first, query optimization, and finally, we're on to query optimization. We aim to select only the essential columns, particularly in inner queries. If we have many columns to return, we use select, except to exclude the unnecessary ones. Remember, the limit clause doesn't reduce the crowd, it merely controls who we see. We join the large tables first and reduce data before performing joins. Thank you. Aggregation should be your showstopper move. We use it as late and not often as possible. Performing aggregations early reduces the amount of data. This is sent to the join resulting. In a smaller data set and improve performance speed.
+
+00:32:41 - 00:35:49 Unknown Speaker:
+
+When using joins consider the order which you are merging the data. It is recommended to order your join tables largest to smallest. The best practice is to manually place the largest table first, followed by the smallest, and then by decreasing size. Only under specific table conditions, BigQuery automatically reorder optimize the table based on its size. Our where clauses should start with the most interesting expressions, and when fetching the latest record, we use array act for efficiency. BigQuery soon. That the user has provided the best order of expressions in the where clauses and does not attempt to reorder expressions. The optimized code example you are seeing now in screen is faster because it doesn't execute the expensive like expression. If you don't want to do it, you can do it on your own.
+
+00:39:21 - 00:42:38 Unknown Speaker:
+
+On the entire column content, but rather only on the content from user, Bob. And that's it for this video. You've come a long way. By the end of this video, you are now able to understand best practices for table design, query optimization, and data load within BigQuery web console. These best practices are your keys to unlocking a smoother, more efficient data journey. If you would like to learn about more best practices, Please refer to the Confluence page. Together let's redefine the way we work. All right.
+

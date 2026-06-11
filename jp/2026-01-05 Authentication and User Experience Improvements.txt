@@ -1,0 +1,161 @@
+2026-01-05 Authentication and User Experience Improvements
+
+Creation Time: 2026/01/05 20:06
+
+
+📅About Meeting
+
+• Date & Time: 2026-01-05 20:06 (Duration: ~6 minutes)
+• Location: No relevant content mentioned
+• Attendee: Speaker 1, Speaker 2, Speaker 3, Speaker 4, Speaker 5, Speaker 6, Speaker 7, Speaker 8 (Manmeet), Peter, Farista, Rahul
+
+📒Meeting Outline
+
+Authentication and Login Flow
+
+• login button necessity
+  Team discussed skipping the explicit “Sign in” button when users arrive via shared URL. Expectation is to leverage Microsoft Authenticator for seamless SSO without an extra click.
+• organizational standards
+  Question raised whether Optum has standards/guidelines for auto sign-in. No known standard was identified; consensus formed that absence of a restriction allows auto-login.
+• precedent in CPM
+  Reference made to CPM flow where users are taken directly into the app without a login button. Stakeholders prefer replicating this behavior if feasible to reduce friction.
+
+User Story and UI Behavior
+
+• UI vs edit values
+  Manmeet referenced a user story to clarify/display “UI value” vs “edit value” in the capability; planned to demo after pulling it up in Rally.
+• ownership and follow-up
+  Manmeet to present details; Speaker 3 to coordinate confirmation that the story covers the requested behavior.
+
+Release Planning, Milestones, and Branching
+
+• milestone tagging
+  Request to add milestones to stories currently in the sprint to avoid ambiguity when merging into the sprint branch, especially if certain items won’t ship in the Jan 13 release.
+• inclusion in 13th release
+  Agreement that if stories are completed in time, they can be included in the 13th release; otherwise they remain in UAT and not production. After first version release, formal milestone/versioning discipline will be enforced.
+• code freeze/branch cut
+  Recommendation to establish an earlier code freeze or branch cut for the first version (e.g., by the 10th) to stop ongoing merges and stabilize for release.
+
+📋Overview
+
+• Team aligned to remove the extra sign-in click and enable automatic SSO via Microsoft Authenticator when available.
+• No Optum standard blocks auto-login; CPM precedent supports proceeding without a login button.
+• Manmeet to review and demonstrate the “UI value vs edit value” user story details.
+• Milestones will be added/maintained; post–first version, versioning and milestones will be enforced consistently.
+• If stories finish in time, they may enter the Jan 13 release; otherwise they stay in UAT.
+• Early code freeze/branch cut (around Jan 10) proposed to stabilize the release.
+
+🎯Todo List
+
+• Manmeet:
+  • [ ] Present the “UI value vs edit value” story and confirm behavior coverage, time: next working session/during current sprint
+  • [ ] Share Rally link and walkthrough, time: ASAP
+
+• Speaker 3:
+  • [ ] Coordinate with Manmeet and confirm the user story scope addresses the UI/edit value requirement, time: ASAP
+
+• Engineering (Auth/Frontend owner to be assigned):
+  • [ ] Implement automatic SSO on coupon-shared URL, bypassing the explicit login button when Authenticator is available, time: target before Jan 10 code freeze
+  • [ ] Add fallback path to show login only when SSO is unavailable, time: with above change
+
+• Rahul:
+  • [ ] Tag current sprint stories with appropriate milestones to reflect inclusion/exclusion for Jan 13 release, time: this sprint (before branch cut)
+
+• Release Manager (Speaker 7 or delegate):
+  • [ ] Define and communicate code freeze/branch cut plan for first version (proposed by Jan 10), time: immediately
+  • [ ] Ensure post–first version milestone and versioning practices are documented and followed, time: after first version release
+
+Transcription
+
+00:00:00 - 00:00:08 Speaker 1:
+
+So when the URL link is shared in the coupon, you should be able to see this page. Is that what you're saying? Rather than going to...
+
+00:00:08 - 00:00:21 Speaker 2:
+
+No, he's expecting that we should skip the sign-in. The sign-in should detect the authentication by default from the Microsoft Authenticator, but not by an extra click.
+
+00:00:23 - 00:00:23 Speaker 3:
+
+Yeah.
+
+00:00:24 - 00:00:34 Speaker 4:
+
+Does Optim have any standards around that today? Allow, you know, just the automatic sign-in if it's available?
+
+00:00:35 - 00:00:41 Speaker 5:
+
+I haven't seen anywhere. He has something. He was doing that someplace.
+
+00:00:41 - 00:01:03 Speaker 6:
+
+They are not doing it. Second step. Actually, for the CPM, they are directly going to the, like, without that login, that button, without that button, they are directly going to that. So he's expecting that. So, like, he's asking, like, do we really need this, or, like, we can go directly like that, he's asking.
+
+00:01:04 - 00:01:26 Speaker 4:
+
+Yeah, yeah, no, I get it. I'm all for directly going to it, not showing the button if we can do that. I just didn't know if Optum had any standards or guidelines to follow as far as the automatic login like that. But, you know, I'm all about making it easier for the user.
+
+00:01:38 - 00:01:50 Speaker 1:
+
+Okay that's a run for an easy one avoiding a click and time hey she can't hey everyone.
+
+00:01:55 - 00:01:57 Speaker 5:
+
+I was just asking Farista about this login button.
+
+00:02:10 - 00:02:21 Speaker 1:
+
+Well that's what we even me and people are not sure if that's our optimum standard everything is a matter you can if there is no optimum standard and we can avoid the flip then i am.
+
+00:02:33 - 00:02:38 Speaker 7:
+
+I don't think this is a standard, so we don't need this additional click.
+
+00:02:39 - 00:02:44 Speaker 1:
+
+Yeah, that would be awesome.
+
+00:02:44 - 00:02:46 Speaker 4:
+
+We could just automatically go in.
+
+00:02:51 - 00:03:01 Speaker 3:
+
+I think Manmeet had user story. I don't see him in the community. Let me check with him.
+
+00:03:03 - 00:03:04 Speaker 7:
+
+Oh, he's done this call.
+
+00:03:04 - 00:03:09 Speaker 8:
+
+Hey, good morning, Good morning, Good evening everybody.
+
+00:03:09 - 00:03:12 Speaker 3:
+
+Hey man, meet over to you. Yeah.
+
+00:03:12 - 00:04:36 Speaker 8:
+
+First of all, happy New Year to all of you. Let me pull up my rally. Welcome back Peter. Thank you sharing my screen. So yeah, one of the stories that came up last week, and I think it came up as a question during the implementation, is to see what is a UI value versus edit value. So let me pull up that capability. Uh, I hope I'm not forgetting. First, I know I put it in the right place. Let's see if it's here.
+
+00:04:36 - 00:05:03 Speaker 5:
+
+Let me while you find out I just had one one, sure, go ahead stories. We are working in current sprint, uh, can we put some milestones in there because we are keeping on merging into the sprint branch and the later on. If it might be not for this, this release, 13th release, then it will be an extra of us.
+
+00:05:03 - 00:05:15 Speaker 7:
+
+Yeah, um, yes, uh, Rahul. We will follow that milestones going forward. After our first version release, um, which.
+
+00:05:15 - 00:05:24 Speaker 5:
+
+Uh, that means we, we may not go for the 13th release with those stories.
+
+00:05:25 - 00:05:49 Speaker 7:
+
+No, that's okay. If we complete and we can include in 13th release, that's fine. So after 13th release, we want to include the specific scenarios which we officially released. So if code is there, that's fine. It's a UAT only, right? Not production. So, but yeah, yeah. Once we release first version, then we'll maintain that milestones and we'll make sure versioning correctly after the first version.
+
+00:05:51 - 00:06:05 Speaker 8:
+
+Even for first version why don't you put a deadline like freeze or create a branch out of it early right don't wait till like when maybe like 10th or something if we can stop merging
+

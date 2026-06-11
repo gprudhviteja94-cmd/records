@@ -1,0 +1,295 @@
+December 23, 2025 AI Agent Development and Governance Standards
+
+Creation Time: 2025/12/23 18:01
+
+
+📅About Meeting
+
+• Date & Time: December 23, 2025, 18:01
+• Location: Virtual Meeting
+• Attendee: [Not specified]
+
+📒Meeting Outline
+
+AI Agent Development Standards and Governance
+
+• Security and Trust Requirements Discussion centered on how AI agents have been given excessive power without proper cost controls, ownership, or governance. This has led to production launch delays, security review rejections, unexpected billing spikes, and teams losing trust in AI systems. The session aims to address these issues by providing a stage-by-stage approach for building AI agents with proper governance.
+• Developer Responsibilities and Framework Covered the comprehensive responsibilities for developers, DevOps engineers, and QA teams in AI agent development. Emphasized building secure and ethical agents, defining clear requirements, choosing appropriate LLMs with cost optimization in mind, and maintaining proper orchestration logic using appropriate GCP services.
+• Deployment Approaches Two main deployment approaches were discussed: Agent Engine-based deployment and Orcas development/deployment. Agent Engine is preferred for rapid prototyping and MVP activities with enterprise-scale specifications. Orcas is used for Google's internal pre-production and production environments with specific internal tools and automation.
+
+Roles and Performance Metrics
+
+• Team Goals and KPIs Developers must achieve 90% task completion accuracy and reduce agent execution latency. DevOps engineers need to ensure 99% uptime availability, implement cost-effective infrastructure, and achieve infrastructure-as-code compliance. QA teams should reach 90% automated test coverage and ensure 60% of P0/P1 bugs are fixed before release.
+• Deliverables by Role Developers deliver high-quality modular Python code and integration pipelines. DevOps engineers provide fully automated CI/CD pipelines, infrastructure scripts, and monitoring dashboards. QA teams deliver automated test scripts, detailed bug reports, and UAT sign-off reports.
+
+Development Lifecycle Stages
+
+• Trust and Readiness Planning Critical first phase requiring agents to be built only in approved projects, respecting regional logging and data rules, designing with audit assumption, and never bypassing security controls for speed. Example given of a bank building a loan-related AI agent with proper regional restrictions and data governance.
+• Architecture and Agent Design Agents must be broken down into small, focused components with clearly defined roles. Developers should maintain orchestrator layers, enable context sharing between agents, and avoid creating monolithic agents that do everything. Code size should not exceed certain thresholds (mentioned size "L").
+• Identity and Access Control Every agent must have a unique identity with minimum access policies applied. Time-based or rule-based access controls should be implemented, and all actions must be traceable and auditable.
+• Model and Prompt Management Models and prompts are treated as production assets, not experiments. Prompts must be stored centrally with proper version control in source code repositories. Sensitive instructions require special security measures.
+
+Technical Implementation Details
+
+• Authentication and Security Discussion about Titan USB security keys being mandatory enforcement that cannot be bypassed. For production deployments, Borg (equivalent to Jenkins) will be used with scheduled cron jobs, eliminating the need for manual security key authentication.
+• Google-Specific Libraries Google3-based packages and libraries must be used instead of standard Python imports. RPC and Stubby protocols are required for connecting to internal libraries, providing enhanced security with keyless authentication.
+
+📋Overview
+
+• AI agents require strict governance, security standards, and clear ownership to prevent production delays and cost overruns
+• Three key roles (Developers, DevOps, QA) have specific responsibilities and KPIs for successful AI agent delivery
+• Two deployment approaches available: Agent Engine for rapid prototyping and Orcas for internal production environments
+• Development must follow four critical stages: Trust/Readiness, Architecture Design, Access Control, and Model Management
+• Google's security requirements including USB keys and specific libraries are mandatory and cannot be bypassed
+• All code, prompts, and configurations must be version controlled and auditable
+• Agents should be modular, focused components rather than monolithic solutions
+
+🎯Todo List
+
+• Developers:
+
+    • [ ] Build agents only in approved GCP projects
+    • [ ] Implement proper LLM selection with cost optimization
+    • [ ] Maintain code size within specified limits (size L)
+    • [ ] Store prompts centrally with version control
+
+• DevOps Engineers:
+
+    • [ ] Achieve 99% uptime availability for agents
+    • [ ] Implement automated CI/CD pipelines
+    • [ ] Set up infrastructure-as-code compliance
+    • [ ] Configure Borg deployment for production
+
+• QA Teams:
+
+    • [ ] Achieve 90% automated test coverage for core flows
+    • [ ] Ensure 60% P0/P1 bugs fixed before release
+    • [ ] Prepare UAT sign-off reports
+    • [ ] Implement continuous testing in CI/CD pipeline
+
+Transcription
+
+00:00:00 - 00:00:59 Unknown Speaker:
+
+As an afterthought, agents were given too much power to consume, right? Costs were not controlled, and there was no clear ownership or governance or any kind of a checklist that developers can follow and adhere to that particular area. As a result, what we see, production might be launches get delayed by months, security reviews rejecting the deployment, even unexpected billing spikes are observed, and you know, sometimes the teams also losing trust. In building this AI systems in a Google web. So this is why we are delivering this session and why this is matter for us. Like as a vendor team, as a vendor development teams, working with Google platforms. You are not just writing the code, you are actually representing the Google security and trust standards. Integrating into the customer enterprise environment, building systems that make and handle sensitive business or personal data.
+
+00:00:59 - 00:01:59 Unknown Speaker:
+
+And customers expect that anything built on Google should follow the strict governance, should be auditable, is secure by default and also behaves predictably. So that expectation applies to whatever the development solution that you are developing the solution or agent there also. So in this session, you will get a coverage of all this in a glimpse of, you know, how we can manage the stage-by-stage approach in building the AI agents, where we should be responsible as a developer, what kind of roles and responsibilities that need to be maintained, how we in a project to execute, what is our role there, and when I am talking about the developers, it is not only the developers. It can be a real developers for the Genia and Agent TKI solution developer, then the Devox engineer, then the QA, and it can be extended to UY, UX Ba.
+
+00:01:59 - 00:06:41 Unknown Speaker:
+
+Whoever be, the other rules are there, which is needed for our project. So that is what this session is all about. Any questions or? But if you want to add anything, here. Google has certain basic practices as well as process adherence while you you know it also has a variation of the way you deploy global standard. And let us start with so before I start, anyone have any expectations from this particular session that you are expecting like that to be covered? Please feel free to start with, I'll give a one minute and to any one of you to speak about it, I'll pick any one or two comments. Can anyone tell about that? What you are expecting after hearing from me and Barak.
+
+00:06:48 - 00:07:50 Unknown Speaker:
+
+So as we are going to cover all this AI project delivery, so what are the technology we are going to use and what are the topics in that technology we need to cover? Can you please share the details? Okay. Yeah. Please wait for that. Thank you for highlighting this. You will definitely get to know, uh, that adherence to that, you know, Google standards way, you know, utilizing the process, utilizing the technology. A stack that we need to maintain. Everything it will be covered. Thanks one more, I can pick and then I'll start anyone. So how the AI can be, uh, utilized in any of the the work environment? And how can it be? Uh, you know, trained for? Uh, when we are using uh, LLm, uh, when we are trying to prompt the LLM, so how can we train?
+
+00:07:50 - 00:08:33 Unknown Speaker:
+
+So are we? Uh, my expectations are this, so that will this be covered? Okay, so this will be little bit on, you know how, day to day like that coding to be done and everything. There could be some touch bases there. But as Uh, Birth already highlighted, and me also, uh. We are here in this particular session where we will know that process, compliance, security. How? Yes, definitely, you can understand, like how to kick off that. You know your project related activities, starting with JNAI, AI, and you know, agent TKI, basically. So those kind of things you'll get. I think not the full, but you get some hints and the portions from here, from this particular session, and you will be enabled, for sure.
+
+00:08:39 - 00:10:29 Unknown Speaker:
+
+It is not going to talk of how to build an agent or what are the techniques, whether it is ADK, whether it is agent space. We are not going to cover the details of those things. It is more of, if you build an agent like that, how do you check in code? How do you build it through archives? If you are using agent space, these are the ways to do. If you are using ADK, these are the ways to do. At a high level, there will be some guidance, but not at a granular level of how to build an agent. I think that also will help as it is a base. Moving to then. So, first of all, I just want to say, like, the scope of this particular session, I think.
+
+00:10:29 - 00:11:18 Unknown Speaker:
+
+But I have already cleared the alignment of the role. Where different Daybox or developers, or Kiwi or VA engineers who are responsible to deliver in your project. What are the role and responsibilities they have to do? Some framework which is expected by Google to use in your day-to-day delivery or operations that need to be discussed. The agile scope, like the, you know, the remain that it will be subject to your project requirements and the team expertise. So don't expect, like, might be in your Google project that some steps or some, you know, methodologies are followed differently. So, yeah, so sorry to say that like that could be covered well, as is like in your project, it is getting executed. Might be there will be some deviations, but you will understand the flow then.
+
+00:11:18 - 00:12:08 Unknown Speaker:
+
+Comprehensive life cycle it covers the implementation spectrum. I try to get that strategy from start to end. Like when I start the first code written in my, you know, kind of a notebook, kind of an orchestra, like you people use CIDR, you know, some of you like how the CIDR ID is getting used. That will be given till that end of deployment of where the project looks like is now deployed and available mainly for pre-prod cases will be covered. And yes, I would also love like this session is not the end. And going forward, who are the experienced developers, or whoever from the experience? QA can contribute going forward and enrich this kind of document set? And you are always welcome to, you know, contribute here.
+
+00:12:08 - 00:12:59 Unknown Speaker:
+
+Uh, whatever the journey that you are going through might not be, I am knowing, or better not be knowing, or anyone is not aware of, please contribute there. Now we'll start with, uh. So, typically, if you can see in a uh, Google AI driven projects inside Google. Where we deliver, we have different kind of roles, there is architect, there is TPN, then developer QA, the Ba UI, uh developer. Sometimes it is optional, like if your particular project requires a particular developer to be build the UI and UX, then it is there. Needed. And many of the project, which is very complex in terms of lot of integration needed between UI, UX and to the back-end code, you always demand a full stack developer for each of them.
+
+00:12:59 - 00:13:51 Unknown Speaker:
+
+The project roles and responsibilities I captured in a particular spreadsheet that you can cover through. But my today's journey, like. In this particular session, we'll talk about mainly the developer QA, and in the developer, we also cover the dev of engineer also. But whoever is, feel free to discuss and take some time to talk about the BA and UI U.S. Developer side also. I know some of you are already here, so who can talk about this? You are feel free to suggest. Let us go, uh, to the first slide, mainly, which I talk about the responsibilities and the goal mainly. As I told, like the three sets of, you know, roles or users I have picked here, one is the developer dev box engineer and the QA, so basically, developer has lot of roles.
+
+00:13:51 - 00:14:36 Unknown Speaker:
+
+In details will go through the main responsibilities, uh, expected from the Google, as per the delivery navigator, that the responsibilities lies. You have to build secure and ethical agent, that is what Google always talks about it. The very first point is important, like if in an agent KAI based development, you are going through so that is what mean. Focus area of the AI and agent build and everything. So I put the first point like build secure and ethical agents, define clear agent requirements so it adhere to your, you know, Genia and AI based development. Also, that your requirements are clearly outlined, that means in scope, out, scope is clearly mentioned, you can talk to your corresponding PPM and architect to make sure that you are aware of that.
+
+00:14:36 - 00:15:25 Unknown Speaker:
+
+Which requirements are going to be delivered in terms of your coding and everything, then architect the AI agent integrating, right? LLM. Because many times the Googler will ask you, the full-time Google employee is will ask you why you have choose this particular, you know, LLM from the model Garden of the Vertex AI platform. Then you have to have your answers ready that instead of 1.5 Pro or 2.0 or 2.5 pro, what is the main reason that you opted for this particular NLM? So you have to be ready with two ways the answers should be given, one is cost optimization should be keep in mind, as well as the quality. And what is the demand as part? That is why the second point I mentioned the requirements must be very much clear.
+
+00:15:25 - 00:16:18 Unknown Speaker:
+
+So if that adhere to the requirements where we have to compromise cost, that need to be checked and give a proper answer. So, as a developer who are working on choosing the right you know, algorithm or LLM to use, make sure these things are keeping into mind. Then you have to build orchestration logic. This is where some of that, you know, a full-time Googlers who are bit aware of that logical flow or little bit of technical manager, I can say. Then they can definitely ask about your orchestration logic, they need to know that. How autonomous is your agentic solution is? And are you using the GCP proper services? Because there are a lot of GCP services, uh, without any need, we might jump into multiple services to use.
+
+00:16:18 - 00:17:14 Unknown Speaker:
+
+That is not the right approach, so make sure you adhere to the requirements you pick up the right GCP services for your need. And which should not make the cost very high in terms of the project execution. So all these responsibilities holds good for the developer. Moves towards the responsibilities as DevOps engineer, then it all lies related to, you know, your automatic agent deployment pipeline. The deployment pipeline means I'm talking about CICD pipelines should be, you know, automated. Then you have to manage the scale, the agent infrastructure, the infrastructure as a core need to be maintained. You monitor the agent production performance. This is something very crucial. Many times with respect to or in adhere to that QA, you know, have provided the test suit. You need to ensure that the production performance are getting tracked.
+
+00:17:15 - 00:18:05 Unknown Speaker:
+
+But this is only required when the agents are live in production. That time kind of monitoring and observability is needed. Though in the pre-prod level also you should maintain this. And implement agent security best practices. That is always required, as Google started saying from the beginning, either from the developer or from the DevOps engineer, that you need to adhere to the security best practices. I will share subsequently in one of the slides, which will talk about, like, in an agent AI solution development, there are some agent security principles. Development security principles are created by Google itself. So anyone interested can have a look into that. You will get the full details, what is expected while you are developing, your agents coming to the QA, who are the members from the QA will develop.
+
+00:18:05 - 00:19:00 Unknown Speaker:
+
+You know, test plan, very strong, robust test plan. They are in a mode of trying to see, like, where that agent is, you know, lacking in terms of security, in terms of performances, then the test agent decisions are making. The processes validate agent tool integration. That integration is the key. If the proper services are not picked, if the if that there is some network issue, outage, performance related issues are there. How to adhere? How agents are, you know, providing your responses that need to be validated. And finally, again, the same term you can see repeatedly used in every role, and that assess the agent safety and reliability. So out of which whatever you can see the common intersection is the safety, security, ethical guidelines that need to be adhered always in terms of, you know, in your delivery.
+
+00:19:00 - 00:19:59 Unknown Speaker:
+
+Whatever the agentic AI solution you are providing, at least I'm talking about the agentic AI perspective, but it holds good for your GNI based development as well. Try to make sure these things are covered. So this is the most common intersection area across the roles you are able to see here. Any comment, any ask here from anyone. Okay, I'll take that as a no, then no ask. Then I go to the goals, so goals depends on that particular goals like where you are fitting, if you are a developer, your. Accuracy In terms of the task completion, there could be multiple other key PS and matrices. So I just picked a hand pick like feature, minimal, or that is something mandatory. For the developers to ensure that whatever that agent they are creating, it covers 90% of the completion accuracy, whatever the task.
+
+00:19:59 - 00:20:49 Unknown Speaker:
+
+Actually demanded from that agentic AI flow workflow, basically, and reduce the agent execution latency. Google is very particular in that sometimes they, uh, clear it out that. This is what the threshold I am giving you as part of your response time or anything that you need to adhere with. So make sure there could be some. You know, a tweak is needed in your code, and you know, optimize the code in such a way that you know this execution latency can be met and easily met. I'm saying like, it is not something like you will get something which is very unusual, so make sure. But you need to adhere this particular policy every time your architect, your TPM, may ask you and query you. Hey, I find like earlier this, uh, features get added, or two, three more features get added, your execution latency gets crossed.
+
+00:20:49 - 00:21:36 Unknown Speaker:
+
+I am waiting now for four, five minutes, two, ten, fifteen minutes, suddenly, it's a huge jump for, you know, two times, two x, three x, uh, that. The execution is not yet completed. So that kind of things you need to be keen to see, like where you can optimize, raise the flag at the right time, that inclusion of new features or inclusion of new services path should not cause you into a trouble where your execution latency get crossed as per the agreed latency. Coming to the DevOps engineer, making that agent all the time, there are ways you know when you are moving towards the GCP. Uh, whether you like it or not like it, there is something like your instances is up and running because nobody would love to you. Make.
+
+00:21:36 - 00:23:11 Unknown Speaker:
+
+Things are always running, so make the cost go high, the spike of the cost goes high. So you have to ensure the dev of engineer in a day-to-day activity. During the weekend, some plan to take that your agent should be 99%. Almost all the time is uptime, because when? Basically. This is majorly for the offshore team who works in Indian time zone and in Google. Like in the US side, when people log in that time, if they want to use, there are several mailers. I'm hoping, like you people might have got, Hey, I'm not able to access your, you know, development code. This is not running because they are not ready to. You know, trigger that start that particular, you know instance of agent engine, whatever is configured by you.
+
+00:23:11 - 00:24:44 Unknown Speaker:
+
+So make sure that is the DevOps engineer role to have a proper look for. Nine percent of time of the agents are available and it is available for your execution. Implement the cost-effective way, definitely. It should not cause a lot of VMs to consume a lot of cloud services to you. Just check which are cost-effective to use it. That should always be the goal. And auto-scaling. Uh, achieve infrastructure as a code compliance, so we will talk about that, you will, don't worry. With those AB terms, what is is all about that auto scaling and achieve the infrastructure as a code. What actually the technique do we have to apply? Here? There is a concept that Google suggests to use blue green deployment rather than Canada deployment. Why? It is everything you will come to know.
+
+00:24:44 - 00:26:48 Unknown Speaker:
+
+So those are the goals to be achieved by the DevoPs engineer. Similarly, QA, it is more clear that they should reach the 90 automated test coverage, as I told, automated, the word we need to emphasize. Yeah, whenever you move towards the development of the taste suit. Normal testing or manual testing is not too much liked by the, you know, Google side. Uh, you know, stakeholders they always think about. Your agent is live. Your you know, JNI based solution is working fine. Then I need to have a constant testing to be done. And it can be part of the CICD pipeline. Only that that means that sense of city, right? Continuous testing and that can be done, and that is why. We have to ensure that 90% of the automation test coverage in the core flows.
+
+00:26:48 - 00:27:38 Unknown Speaker:
+
+I'm not talking about the entire flows like where some of them here and there is there, but at least the core flows need to be tested and evaluated by the suit prepared by the QA engineer. And almost at the same time, that ensure there are P0, P1 bugs can be raised by the QA, but equally the QA team is also responsible, collaborating with the other engineers. That it should ensure that 6% of the P0, P1 bugs are fixed before the release. And I hope whoever the QA, I think a good amount of QA joined today, they know very well like these bugs raised is another one, but you need to be fixed and make sure all things are cleared out before the release. So any comment from any of these roles who are present in this particular call?
+
+00:27:38 - 00:28:32 Unknown Speaker:
+
+Did you understand the goals clearly now? Along with the responsibilities. I hope there are multiple members from the good amount of QA, less amount of DevOps engineer, and good amount of developers are present in the call. That's my expectation. I cannot see the screen, but yeah. Anyone have any comment? If I would like to speak up, because this is an interactive session I am expecting, and please, Share your experience, you want to say something? Yes, these goals are how much important these responsibilities are how much important you want to add something like, which I missed here. That could be also expected. Like, you know better in your day-to-day, you know, operation like. What are the goals that you have to keen to adhere? What are the responsibilities that you need to obey?
+
+00:28:32 - 00:29:42 Unknown Speaker:
+
+Some things like you want to add here, anyone? No comment. I think they have covered pretty much everything and everything sounds good. Especially from the developer and DevOps engineer. Okay. Thank you. Thank you. That gives me motivated to keep this morning effective. So let us see going for the next one. Deliverables, more or less, I am not going to touch much time here because. You are the best to know, like, what times that you need to deliver time to time, that details you are already sharing with the architect. I'm not going to provide that kind of, you know, delivery, which is an overhead of the documentation and all, but mostly, like, a developer, right, high-quality modular Python code, integration pipeline, CICT that has been built by the DevOps engineer should adhere to there, like, the code is pushed at right one.
+
+00:29:42 - 00:30:30 Unknown Speaker:
+
+Adhere to the process of, you know, the development and production or feature related branches, which is created in the Google. Source code repo. And developer has a main important role to play, which many of the developers. Or sometimes, if you do not have a DevoPs engineer in your project or somewhere, you miss it. To push your code in a source code repo. See, your written code is not to be there for your. You know, local consume, local consume means in your local laptop Chromebook, wherever you are writing your code, right? It should be stay there. And you just put a very good demonstration and everything towards the client. It will not fly until and unless the code has moved and followed this kind of, you know, source code repo structure, like as you do earlier in the your Sweet hub and get repo to maintain.
+
+00:30:30 - 00:31:22 Unknown Speaker:
+
+So this is the mandatory steps, right? And also, while moving the code towards this pre-production Google internal tool specific usage, you have to use Google packages. We will talk about that more and, uh, clear in this particular session. I'm confident that that that would enable you that to know, like, okay, these kind of Google specific packages, how important those are coming to the deliverables of the DEVOPs engineers, a fully automated CICD pipeline is expected. As you know, right, there is the data from our cloud deployment manager, IC scripts to be maintained, detailed system monitoring dashboards are there. There could be something related to your agent engine specific guidelines to be followed and how that could be maintained with different agent engine instances, all these to be covered.
+
+00:31:22 - 00:32:10 Unknown Speaker:
+
+In a short place, I cannot cover everything, but these deliverables, I think, who are the DevOps engineers present here is well aware about these terminologies. And then coming to the deliverables of the QA, it is more clear than full suit of the automated test scripts, test reports, detailed bug reports, and also you are responsible to give a final UAT sign of report. So you are the one who will talk about that how the UAT went, how the Googlers have performed the UAT. Your, you know, viewpoint is a mandatory rather than your architect and TPM talks about it. Share that and you say how confident you are in the robustness of the solution. Depending on the UAT report analysis or UAT, you know, whatever that.
+
+00:32:10 - 00:33:05 Unknown Speaker:
+
+In a result you have captured from the recent fish food, dog food, you know that Google terminologies, there are fish food, dog food. Kind of a concept for the UAT. With a limited audience, with a little bit of moderate audience to trigger the testing. Moving to the next one. Now, this is very important that in Google, when now I talk a little bit about that agentic AI-based solution development and deployment, which is currently on focus over multiple projects. So I thought of keeping this slide. These are the two approaches as per the pattern I see in Google. These are the two approaches are mostly welcome by the Google. It's not like that in another project. Another approach could not be accepted, but as it is full proven, these are the two areas that I want to cover.
+
+00:33:05 - 00:34:01 Unknown Speaker:
+
+One is agent engine-based deployment. Another is the Orcus development and deployment. The first one is more or less who have been experienced in Google GCP platform and utilize that development of the agent. And finally, there are two ways, right? One is agent engine-based deployment or Cloud Run-based deployment. Google prefers to have it something like an agent-engine-based deployment because they want to promote their Gemini enterprise where that agent space to be published and utilize the agent. So this particular left side, agent-engine-based deployment is more or less even. The vendor team is aware of to use it. The right side is about Google's specific internal pre-plot and going forward in the production also. That kind of a development and deployment to be carried out, it is quite a moderate audience to treat.
+
+00:34:01 - 00:34:53 Unknown Speaker:
+
+Now, this is very important that in Google, when now I talk a little bit about that agentic AI-based solution development and deployment, which is currently on focus over multiple projects, so I thought of keeping this slide. These are the two approaches as per the pattern I see in Google. These are the two approaches are mostly welcome by the Google. It's not like that in another project if the another approach could not be accepted. But as it is full proven, these are the two areas that I want to cover. One is agent engine based deployment, another is the orcus development and deployment. The first one is more or less who have been experienced in Google, uh, GCP platform and utilize that development of the agent. And finally, there are two ways, right?
+
+00:34:53 - 00:35:46 Unknown Speaker:
+
+One is agent engine best deployment or cloud run best deployment. Google prefers to have it something like an agent engine deployment, because they want to promote their Gemini enterprise where that agent space to be published. And, you know, utilize agent. So this particular, uh, left side agent engine deployment is more or less even the vendor team is aware of to use it. The right side is about Google's specific internal pre-prod and going forward in the production also. That kind of development and deployment to be carried out. It is more tricky and internal tools and automation to use. So if you can see where to use and which purpose, the left side is all about rapid prototyping and MVP related activity. Enterprise scale and critical specifications also can be covered here.
+
+00:35:46 - 00:36:37 Unknown Speaker:
+
+Here it is more on the Google production and pre-production, internal tools and automation to use the Orcus way of deployment. Benefits, if you can see, definitely agent engine-based deployment. I need not to say you might have been experienced who are the pro developers here. Know that it's robust, scalable. It manages the services of the Google. It is well-coupled. Enterprise-based security is also there because Google is the correct manager. Is the one which is getting adhered here, and there is a seamless Gemini integration as well. Coming to the right side of the Orcas, the fast development interact iterations are there. Uh, it is flexible for the orchestration logic, and I have personally felt, uh, compared to the left hand side, the right hand side, the orchestration logic, the decision power and everything is very fast.
+
+00:36:37 - 00:37:28 Unknown Speaker:
+
+And you know, it is very effective. Also, many times leverages internal framework, easier local testing that whatever that QA, I will come to. That latter that you want to adopt in your day-to-day operations of your or evaluation of your agentic solution, then it is good for, you know, easier local testing. Uh, that actually helping the workers based development and deployment dependencies is the key here in this entire slide. The left hand side. You know that GCP needed. You have an enterprise API enablement to use the Gemini API key, and then you have an inappropriate IM permissions needed. We'll talk about that, and you know, potential cost implications are there. Whereas right side is mainly important, where we have to access to the Orchest libraries and platform.
+
+00:37:28 - 00:38:32 Unknown Speaker:
+
+It is not the same way like how you use in, you know, outside, like a Python, there is a Google 3 best development environment to be used. The libraries are a little bit different here. LLM model to be accessed and API will not work directly here. So you have to be familiar with some concept of RPC and Stubby. So this is a very important slide in terms of, you know, knowing, like, the two ways of deployment or development expected in Juggle. Is there anyone who have actually worked on agent-engine-based deployment here in this particular team now who have joined the call today? Hi, this is Tarun. I have one doubt before answering that. We actually are using agent-engine-based deployment and we are shifting to Orcus right now. My question is here, can you access Google 3 and everything that is fine?
+
+00:38:32 - 00:41:42 Unknown Speaker:
+
+So can we bypass this touch key and anything like that the agent engine, generally we run the G set, that is fine. And in the Cloud Run, everything is possible, but without Cloud Run, generally we need to keep the touch key and the password for everything to log in and everything. So while we are doing automation in Argus. Okay, so first of all. As we need that authentication, can we bypass that? No, that bypass is not possible because as per the security principle, I'll open one, Documentation where you can see like that is a recommended ways Google recommended way of deployment. That the strategy they follow, because they feel that is the more secured way of, you know, developing and deploying your solution in Agentic, and that is the security principle they talk about in a decay.
+
+00:41:42 - 00:42:32 Unknown Speaker:
+
+If you are using Google ADK for your multi agent or Agentic solution. Development that is expected and that need to be maintained through August development and deployment strategy. Only now coming to this way, like whether you can use the G third or something going forward, no, that is also not expected. There is a tool of services called Port services, where a particular MDB group for your entire team would be created and they are only. It will be triggered two days. You know that Linux best you know approach where you can trigger, right the place command and build it and then execute it. That would not be there going forward once you will move this code, which we call it as a production. Because still, Orcas development and deployment, we are talking here.
+
+00:42:32 - 00:43:26 Unknown Speaker:
+
+Mostly we are accessible for towards the pre-plot deployment only if you want to move it to the production deployment. There is a role called bulk role to be created for your MDB group, and then your solution need to be hosted in a services, a board account to be created. That time you can use it, and it will fill the budget. For that, we need to use the voice. Tarun, your voice is speaking. Tarun is asking for this Titan touch key, the USB touch key, right, Tarun? Yes, yes. And he gave an answer. No, no, because, Dharun, USB test key, that is a security enforcement from Google, Dharun. That cannot be overridden. Okay, okay. So, because your question, you know, it is in context of security, right? Because... Yeah, that's what I told, no?
+
+00:43:26 - 00:44:10 Unknown Speaker:
+
+Linux way of using, you know, when the gsat command you give, you have to attach your security key. That is needed... That is a enforcement. Correct. That is the enforcement and while developing in your orcas at the beginning level. If you move towards the production level, you are not going to use the G-SAT or cloud of G-Linux, right? You are moving it to kind of Borg is equivalent to your Jenkins. How your Jenkins is get auto-triggered and scheduled. So, cron job kind of a scheduler. That time you do not have any dependency on the security key enforcement at that time. It will be running periodically as per your schedule. Like in a cloud, you use that cloud scheduler, right same way in the board. You can schedule your cron job for your particular job.
+
+00:44:10 - 00:45:09 Unknown Speaker:
+
+Which is nothing but, uh, solving the same purpose. Okay, so first, you have to code through this slider, make it authenticated with respect to the GSAT. Once that is done, then you can move towards this because the libraries, that stuffy, the RPC connectivity is an important to use in your day-to-day development of your, you know, board activity. Because when I will go to that particular slide, where if you have already experienced how the authors' libraries are to be imported and everything, you might have seen there is a change from the regular way of... utilizing the Python import than in the CIDR import. Did you observe that? You have seen, right, that Google 3-based libraries or dependent libraries are getting used there.
+
+00:45:10 - 00:46:13 Unknown Speaker:
+
+So it is not like that whatever the code you are using here in the left-hand side, the way that Python imports and everything are there, it would be applicable and set towards your blog deployment. Did you get that, what I'm saying? Yeah, I got it. So Google's three best packages and libraries to use, that is what they call it. Because RPC and stubby is the way that they want to connect to their equivalent libraries. They offer that the more security adherence with a keyless authentication and then go for it. So the Orca's development and deployment is necessary and well coupled to your next goal towards the Borg technology. Okay? Okay. Any other comments from anyone? Okay. Now, this slide onwards, we will spend good amount of time and I need a full engagement kind of a discussion.
+
+00:46:13 - 00:47:02 Unknown Speaker:
+
+This is one of the, this next two slides is very crucial in terms of your end-to-end responsibility across the different phases. Uh, what does this mean? What developers have to contribute here is a mandatory contribution that we expect from the developers. Uh, see, adhering to all them is a mandatory, but many of them, as you know, depends on the project to project. It may vary, but try to adhere most of these things and try to understand these two slides. It is very important for all of us, and that is why this slide, I think, is the heart of this entire presentation. So let's start with the first one, the stages that we are going to build in an identical development. Then you can add here to your JNI based or NMT carrier development.
+
+00:47:02 - 00:47:57 Unknown Speaker:
+
+You will understand the flow. The very first phase, we talked about the trust and readiness line, which is the mandatory. What this stage really means is that, before writing even a single line of agent code, the vendor side, like, we actually decided, like, what is allowed and what is forbidden? That means from the Google site, the restriction that you know very well what is allowed and what is forbidden. These stage prevent, you know, legal security and your compliance disasters as well. What developers should do in this particular phase? Basically, if you can see like, what are the four bullets are given they should, you know, build agent only inside the approved projects. We are not recommending in Google. Google is not the way like the GCP project or somehow you just play around with them.
+
+00:47:57 - 00:48:50 Unknown Speaker:
+
+Make sure every footprint of your activity are getting notified. And sometimes, we have observed, the billers are written or might be. To your stakeholders. That message will go and say that some of your team members are illegally using some of the services and all. So don't play until and unless you are fully confident or aware and you are adhering to the security norms. Or you have a very good touch base with your, you know, um, architects, or, you know, TPM, so build agents only inside the approved project. This is a must, and you then respect the region logging and data rules, that there are many cases. The data rules and governance policies will be shared from project to project. It may vary, but that need to be adhered. Then you design the agents, assuming everything is audited.
+
+00:48:50 - 00:50:22 Unknown Speaker:
+
+That is the way you should think through. It is not like that arbitrarily. You are using it during the first two, three weeks when you are starting, that time that will be not adhere. But the moment your first milestone, you covered and everything, consider yourself. That agent will be. It should assume that your agent will be audited. Then never bypass the security, you know, controls, uh, for the speed and execution, whatever you like it. If this stage is ignored, I think you don't need to. You need to create a separate controller. Then from there, you need to call the blog this particular, you know, entire development will be blocked later. So, if I give a story out of it, like, how I can see, like, this need to be achieved.
+
+00:50:22 - 00:51:13 Unknown Speaker:
+
+Say, for example, you know, I'm thinking in this way. A bank, suppose, is trying to building an AI agent, right? That answers the customer loan-related questions, right? Now, developers try to quickly, you know, deploy it in a region. And save the conversation. For the debug, right, I want to use, like whatever the past historical data I received later for debug. Like, what is going to happen? And for the security blocks and deployment are there after stage one, what will happen? Agents are only in approved region, conversations are blocked safely, no customer data is used in training. Now, the bank will be legally allowed or to launch the agent. If you follow this page because you are not going to use it for any region, right? You should be allowed, and then only you go for the different regions to use.
+
+00:51:13 - 00:52:48 Unknown Speaker:
+
+Your conversations are logged safely and no customer data you can reuse for your training purpose. Then it is okay that you adhere that the principles have been told to you that need to be followed. So make sure this particular phase is strictly followed going forward. I know we are ever enthusiasts to try out something on R&D work and everything. That's right. But it's a very limited scale that we can do inside. Like this if you want to really practice you want to do it outside and come there because. Google, I am telling you, this is clearly mentioned that while using any design rules to follow, while your agent is liable to be audited at any point of time, they sometimes add here to their Google full-time employee to see the code.
+
+00:52:48 - 00:54:16 Unknown Speaker:
+
+In L300 project where I am currently in, might be some of us here not sure who joined, they know client ID. Okay. Okay. Okay. Okay. To give the full raw code access to the full-time employee as well. I'm not sure anyone is here from the L300 joint today, but they know the developer side, they knows, right? That access document we have created for them, they can directly access your raw code. They play around, right? Yeah, so they will ask the code, Yeah, yeah, so they will, but they will do it because we are writing so they will say that. We have to share the code and we have to share the steps, how we have to run that code and Google Active will run that code.
+
+00:54:16 - 00:55:04 Unknown Speaker:
+
+So it is not like that, we are just writing the code and nobody will see, so they will see the code. So that is what that the very first phase is very strict to follow, and if you have any queries, we have our L300 developers, including me, we can have a session to you. Whether you are following the right, you know, the guidelines in your trust and readiness planning phase, please ensure that coming to the next one, uh, architecture and agent design, this is also mandatory. What this stage actually really means is this stage defines who does what, basically that agents are not. You know, smart humans, right? And they are actually workers with the strict roles that you have to follow, Some strict roles, definitely.
+
+00:55:04 - 00:55:59 Unknown Speaker:
+
+That's what developers have to contribute here, when the developers must break down big, walk into small, focused agents, right? Clearly define the agent roles as per that. You can know that Google education definitions to follow, the orchestrator layer to be maintained. Decide how agents can share context simply among each other and with that particular external system that is required, and avoid one agent that does everything. That is not at all recommended. Okay. Don't consider every such thing. Even there is a size they maintain like even your agent code, a raw agent code should not exceed even the size L. Correct? So they go for S, L, M and different kind of size of the coding but you should not cross L. There are some lines of code which is talking about that your agent actual code should not cross the size L.
+
+00:56:01 - 00:56:47 Unknown Speaker:
+
+We will talk about that later, like how much size it is all about. The lines of code is required to be part of it, so they need the modular agentic code and everything to be have it and make it smaller way. At this stage. What actually prevents it, prevents the chaos and, you know, unpredictable behavior that you are talking about. So, multi-agent role decomposition, shared agent. Memory design should be there because sometimes you have to in your project. It is recommended that you have to use. Uh, the memory of your, that conversation that going to happen, uh, for your future work, so that memory design plan is already shared. That architecture is well granted by your, uh, this one, and in Google, in the architecture and TPM level discussions in the other day.
+
+00:56:47 - 00:57:41 Unknown Speaker:
+
+On the other day, I have told clearly that every such architecture, that design that we are coming up with, it should be aligned and it should be agreed. And sign up. Before even trying that one for BIOS. BIOS means here the developer's dev of the engineer QA to follow. Yeah. Any comment anyone want to add here? One question, Manil. So we mainly focused more discussing on things like how agents need to be built, how we need to structure things and everything. Just a high-level query that as. I mean, any agent, as you mentioned, now it has, it needs some basic information. So how is the data being fetched? Are you using MCP protocol or any other protocol that is followed in Google? Adding to that, how it is being implemented in L300 project?
+
+00:57:42 - 00:58:25 Unknown Speaker:
+
+Okay, so once this L300 project part will come, depending on the project, but as I told, right, based on the first part, like when you know very well what to do and how to do part, Then you will find out, like how we have managed this, we will cover that one. Once this L300 project discussion will come in, the latter in the slide, it is there, so you will identify like how we are managing this, but it depends on the project to project difference, right? That in some projects where that data pipeline is stronger, where multiple data sources is required to be. Connect and get your data. Process it and then push it for your agent tools and, you know, corresponding sub-agents or MCPs.
+
+00:58:25 - 00:59:19 Unknown Speaker:
+
+So how that is done and what is maintained here and in our L300 project, also in that context, I will share that view as well later. Thanks, yeah. So moving to the stage three, where identity and access control, uh, this is one of the important area. Uh, this page is actually needed when you need a digital identity, right? Just like an employee badge, like, I just always call it. Because developer must assign a unique, you know, identity to every agent. Give agents, you know, minimum access policy that is mandatory and apply time based or rule based access ensure and actions are addressable. These are in term important, and at the same time, as a developer, we also know that what are the IM conditions for the agents are given?
+
+00:59:19 - 01:00:12 Unknown Speaker:
+
+And then only this could be reused or used for a several purpose. Then coming to the stage four, which is the most important one. The model and the prompt management. I think mostly we adhere to this more or less. The models and prompts are production assets and not experiments. And what developers must contribute here? Developers must choose the right model for the job. At the beginning slide, I have told the right element to be picked up. Store the prompts centrally. That is important to maintain the prompts version of the prompts. Like code is also, and we need to adhere to this because prompts are not like. Only just to try this now next time. Not like that. And you can maintain that even if you are going to the source code report, that version of the prompts, like the code need to be maintained secure.
+
+01:00:12 - 01:00:39 Unknown Speaker:
+
+The sensitive instructions are required. So let's make sure and revisit time to time, talk about it, see that feedback, whatever you are getting from each maestro. So, uh, if a collective story, if I can think here, right? A customer support agent starts giving some rude answers, right? So developer what? They discovered that problem was changed directly in the code and no decision.
+

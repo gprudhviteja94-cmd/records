@@ -1,0 +1,199 @@
+2026-06-04 Data Quality Check Templates and SQL Query Standardization
+
+Creation Time: 2026/06/04 15:30
+
+
+📅About Meeting
+
+• Date & Time: 2026-06-04 15:30  
+• Location: Virtual Meeting  
+• Attendee: Prithvi, Sachin, Rachna, Ayyappa, Anand (absent), AVC (uncertain), others
+
+📒Meeting Outline
+
+Data Quality Check Templates and SQL Query Formation
+
+• Challenges with Descriptions and SQL Queries  
+  The team discussed how the current descriptions for data quality checks (e.g., 100% fill rate, null values greater than 1%, duplicate checks) directly influence the formation of SQL queries. However, the descriptions vary widely, making it difficult to create uniform SQL templates that can handle all cases. For example, different descriptions for duplicate checks require different SQL queries, which complicates template standardization.
+
+• Existing vs. New Rule Handling  
+  It was clarified that past rules have diverse descriptions and SQL queries, requiring multiple templates. Going forward, new rules will follow a standardized input form, resulting in a single template per check type. This standardization will simplify SQL generation for new entries, but legacy rules will need special handling.
+
+• UI Form Template vs. Free Text for Complex Checks  
+  The team agreed that rules fitting the standard template will be editable via segmented UI forms, while complex or non-conforming rules will be shown as free text for manual editing. A "complex flag" will be used to identify such rules, enabling the UI to toggle between form-based and free-text editing modes.
+
+• Segregation and Mapping of Existing Templates  
+  Prithvi was tasked with analyzing existing rules to identify which templates align with the new UI form and which should be marked as complex. Examples like missing value checks and stagnant data checks were discussed to illustrate how some descriptions can fit the template while others cannot.
+
+• Handling Updates and Edits  
+  It was emphasized that for existing rules fitting the UI template, users will edit only the segmented fields, not the free-text description. For complex rules, free-text editing will be allowed. The backend will need to support these distinctions to ensure proper SQL query generation.
+
+• Future Enhancements and AI Integration  
+  Complex checks that cannot be handled by current templates may be enhanced in future iterations, potentially leveraging AI to automate or simplify SQL generation for such cases.
+
+Collaboration and Next Steps
+
+• Coordination with Ayyappa and Product Team  
+  Prithvi was advised to work closely with Ayyappa, who has a strong understanding of the existing templates and updates, to identify overlaps and ensure proper mapping to the new UI templates.
+
+• Clarifications on Rule Identification  
+  The team confirmed that there is an identifier to distinguish new rule creation from rule modification, which will help in managing updates appropriately.
+
+• Avoiding Excessive Free Text Usage  
+  The importance of minimizing free-text descriptions was highlighted to prevent users from making unsupported edits that could break backend SQL generation.
+
+• Acknowledgement of Migration Complexity  
+  It was acknowledged that migrating existing rules to the new system is complex and requires careful analysis and phased implementation.
+
+📋Overview
+
+• The variability in existing rule descriptions complicates uniform SQL template creation.  
+• New rules will follow standardized templates, simplifying future SQL query generation.  
+• Complex or non-conforming rules will be handled via free-text editing and flagged accordingly.  
+• Prithvi will analyze existing rules to map them to new UI templates or mark them as complex.  
+• Users will edit segmented UI fields for template-fitting rules and free text only for complex rules.  
+• Collaboration with Ayyappa is critical for understanding and mapping existing templates.  
+• Future enhancements may include AI to handle complex checks more effectively.  
+• Migration of legacy rules is recognized as a non-trivial task requiring careful handling.
+
+🎯Todo List
+
+• Prithvi:  
+  • [ ] Analyze existing data quality check templates to identify which fit the new UI form templates and which should be marked as complex.  
+  • [ ] Collaborate with Ayyappa to cross-check template mappings and clarify any ambiguities.  
+  • [ ] Update descriptions and templates based on Rachna’s shared standards.  
+  • [ ] Investigate feasibility of handling minor numerical changes in free-text complex rules via existing backend templates.  
+
+• Sachin:  
+  • [ ] Support Prithvi in template analysis and provide clarifications on rule identification and UI behavior.  
+
+• Rachna:  
+  • [ ] Provide finalized template standards and assist in clarifying complex check handling.  
+  • [ ] Coordinate with the UI team to implement complex flag logic for enabling free-text editing.  
+
+• Team (General):  
+  • [ ] Prepare for future enhancements involving AI to automate complex SQL query generation.  
+  • [ ] Plan phased migration strategy for legacy rules to minimize disruption.
+
+Transcription
+
+00:00:08 - 00:02:34 Unknown Speaker:
+
+I have already got duplicate check and missing one by one. Don't know. I'm setting my screen. Hold on. Let's play through only, right? Just let me know if the product team joined. I don't want to discuss in front of the product team. Right now, suppose composure in file path is in SQL folder. Suppose the file path for this composure slash SQL. Suppose AVC also can join? Uh, Anand won't be joining such, and he's an another call right now. Okay, uh, so right now, um, uh, if we bring your screen, so right now we did the brainstorming on the one that, uh, that data one, right so now what is happening? I'll tell you, uh, if you can share your stream. Yeah, no, no, don't, don't show this proposed one.
+
+00:02:34 - 00:03:44 Unknown Speaker:
+
+Can you go to the one where we were having ratio, the CSV where we have all that? Yeah, yeah, yeah, okay, yeah, yeah, can you go go to that one? So now, uh? And can you open any one of the SQL query pathway, any, any one single query, which is handy? Right? Yeah, let me check. Yeah, okay. So originally look, uh, whatever we are going to place over the filter criteria, those are basically your where clause, right? Yeah, correct. But, you know, now Priti can install to write and show me the description. Yeah, but over here, right, look how that, hold on, hold on, how that description look like. It's a 100% filled rate or the customer with null values should be greater than 1% or CM15 should not be null or count of reports should be plus or minus 20 as compared to the previous days, right?
+
+00:03:46 - 00:04:40 Unknown Speaker:
+
+Based on this description, your SQL gets formed. Based on this description, the SQL gets formed. Now, the challenge, what we have, can you show one of the templates which was being shared by Ayyappa P3? Now, if we are going to eliminate these, go ahead. I have has it, can you share it? No need to say, no need to share. So basically, what I I would like to, uh, iterate is that. If we are going to form these messages in a unique way, or it would be same for all right? Then I won't be able to decide my select clause over there in the SQL query. How I am going to segregate between this 100 field rate or the null values greater than one percent or Cm, you know, 15 should be null or something.
+
+00:04:40 - 00:06:44 Unknown Speaker:
+
+Because that piece of information is not there in your filter. Or, you know, sorry, I missed that information. Yeah, if you can bring that SQL file, can you save your screen? If you can open that file? Yeah, Now, the one that you have sent, right, the description part, I'm just bothered about the description. Can you just go to the description? The proposed description. Yeah. Not this one. The one that we shared with Rachana, right? Yeah, yeah. Oh, okay. This one's not opening. Just open from the mail if you are not figuring it out. Now go to the description. Okay, yep, so if you view it over here, uh, right, this all says like, you know? The variable CM11 should not uh, should only contain the count of duplicate CM11 right or can contain the non-numeric CM11 right.
+
+00:06:45 - 00:07:47 Unknown Speaker:
+
+So with these one, right, we won't be able to create those different SQL queries out of there. Or, you know, the distinguish between different template which Prithvi has created. That is practically, you know, next to impossible. Because how would you segregate? Now I would request, Prithvi, can you bring that duplicate check one where we have only couple of template? Yeah. That that gives you a clear idea, basically, okay, yeah, just let's see one example. Uh, I am still a little confused on which part of the description you are saying yes, yes, that. That's the reason I asked you to show that that would give you the clarity. And then I'll, I'll let you know what we are, you know, proposing you the solution for that. Uh, yeah, look, look for this, not not this.
+
+00:07:47 - 00:08:53 Unknown Speaker:
+
+One man. Uh, we have the previous duplicate check, right where those all, uh, all details were there, the existing one show me the existing duplicate check, not this proposed one. You have access it right where just filter it with a duplicate check system is somewhat slow. So look now on this description based on this description, right? One template is when there would be no duplicate record should exist. That creates one signal, right where that lazy user ID should be unique, right? That's create altogether a different SQL. The reason being now if you see those SQL for both these template are different. The way it has been written. But soon we have already discussed such in right. Like these are interchangeable even though like it might have been written in a different way.
+
+00:08:53 - 00:09:45 Unknown Speaker:
+
+I am just giving you an example. This is I am aware like we are aligned. So let's say there is some other check and it's written like two different things right. Like two different records have two different ways of saying it. So you are saying that based on how the description is written, we are currently choosing the template correct. Yes, yes, and uh, because the uniqueness that we have figured it out, right? Can you go to any other check type with Free? And so the description where you know the number of template is a bit less, don't go to the missing value, missing values having bunch of template, right? Maybe that's actually so such an I.I understand your concern that for the previous rules, we might have like different different kinds, right?
+
+00:09:45 - 00:10:41 Unknown Speaker:
+
+So, uh, you have to segregate it somewhere like this. But also, yeah. But what I also want you to consider is going forward, we will not have these kind of segments. We will get only one kind of check in one check type. Because we are giving a standard form to the users, right? They cannot provide us two different kind of descriptions for the same, uh, check type. So it will end up picking one of the templates only, right you're going forward? Like, for the new entries, a template cannot be same for all different descriptions, even though. No no, past ones it cannot be same Prithvi. You have to understand like just keep these two projects separate and think about it. Like past ones I understand that the rules are very different and the SQL is different so you have to create the template differently.
+
+00:10:41 - 00:11:33 Unknown Speaker:
+
+But for the new rules what I am saying is when we are giving the users only one way to give input for one particular check type. We cannot get different kind of rule uh descriptions, right? We will be getting a single type of rule description for one particular check type going forward. Okay, okay, even even if we aligned on that part. Now, tell me how we are going to, uh, you know, map this existing one. Suppose somebody comes to modify these rules tomorrow, right? Then? How to handle that situation? Yeah, right, so this is something we've discussed earlier also, right, such, and I'm not sure I discussed this with Anand. But we were thinking of. Like, keeping it in a free text form where we are not able to fit the template, at least for missing value check.
+
+00:11:33 - 00:12:28 Unknown Speaker:
+
+We had this discussion right, that there are too many templates and we cannot fit it in one particular UI form. So we'll give that free text thing. So we'll just show them the description, they can edit it in the description itself. And then what would be the sequel? Query expectation with the new template? Then suppose somebody's, you know, and rolling a new rule, right? What would be the sequel that we are expecting to create then? Out of that. Right. So it is one of your templates, right? Because the new requirements like the UI is based on whatever was most common among the existing check types. So suppose like for stagnant data check or you say timeliness check. This format is the most common that, uh, your, uh, like, you know.
+
+00:12:28 - 00:13:23 Unknown Speaker:
+
+Maximum run date should lie between past 45 days, only your latest refresh has happened between, uh, within past 45 days. So that is the template we will go with. So if you think that description is helping you segregate these, then it's okay, like, if you just want to go ahead with the description, we can do that. But going forward, like since, we will be getting only one standard form of it, so like, just make sure that we will be picking that one. Only. Right, like the corresponding sequel, for the new ones at least, but what about this one, the stagnant itself? If you see the fourth row? Okay, um, those are complex. Let's not reiterate those which we already discussed, right? I already clarified you that don't consider these, one see us already.
+
+00:13:23 - 00:14:23 Unknown Speaker:
+
+Even the confirmation on these four, right? We are necessarily pitching into the same, uh, stuff, just ignore those, right? Actually taking that as an example, okay, maybe we don't see value. No, no, so so Rachna, now my question is to you. So when a user comes in and would try to update these descriptions, so in update case, you are mentioning? We are not going to give them an option. Where the rules are getting created from the UI side, right? Because how I am going to identify whether it's a new rule or the previous rule, right? But that is already segmented, right? SACHIN No, is there? No, is there no like identifier for that? Like, when we are getting a new request versus when we are modifying it. No, that is there, that is there.
+
+00:14:23 - 00:15:18 Unknown Speaker:
+
+But yeah, yeah, just just just take an example. Instead of user coming from that. You, uh, that, you know, new rule, uh, enrollment, right? You've created that format that worked right now, just just take an example. These would be the existing rules, which would be, uh, you know, already being there for the previous rules, right, which is there. So you want this as a free text, right? So such a, uh, one minute one clarification here when I said, we will have rest of it in free text. I'm talking about those rows which do not fit the UI Form template, but those rows which are fitting that will show up in UI Form template. Only. Right, because that is the corresponding template. We can, we can show that data segmented that way, like this example only.
+
+00:15:18 - 00:16:11 Unknown Speaker:
+
+I said, right that for stagnant data check, your majority of like 80% rules are of the format that for this model ID Max Rendit is within past 45 days. So this one we can show in the template because it has all those fields. But then there would be a few, like 10%, 20% of the rules which will not fit the template that we can show as pretext. That should be fine, but but how I the front end would decide whether it's, uh, you know, fitting or not? Building? Because we already have these templates decided on the back end right now, for existing, we have already done that. Segregate no, like here, it's segregated into these, uh, templates, which, frankly, has mentioned column s No. Just just take an example for line number 29 and 16, right?
+
+00:16:11 - 00:16:58 Unknown Speaker:
+
+16? Just take an example 16 can be converted with the new template. Okay, so that you have shown to the UI no modification request. The user is not going to modify it, right? We would keep it disabled, right? But how UI is going to enable the line number 29 based on what criteria, so that they can modify it manually. Yeah, so this is what Sachin, like suppose this is a complex check, right? There is no way to show this in a segmented UI form. Then we can only show it in a free text form that this is the role description. You mean to say we have to enable the complex flag for those which are not fitting in the UI? And if UI receives... a response as complex flag?
+
+00:16:58 - 00:17:43 Unknown Speaker:
+
+Then they just need to enable the textbook as an edit button. Right? Yes, yes, yes, correct, yeah, take care, got it, uh, so, uh, look, what you need to do? Based on those look, these are going to remain as it is right. Whatever changes AFA has made, we just need to just twist those description. Listen to me and then if you have any query, do let me know. Okay, uh, so there would be a slight deviation for this model ID and all right. And then that should fit to your template which you have built. That is number one. Second, whichever request you are going to get into the you know through the new requirement. If you want to form a new template, form a new template for the new one. Okay, which would, uh, going to form.
+
+00:17:43 - 00:18:33 Unknown Speaker:
+
+Any of that is going to remain same. That's something you have to analyze, whether we can fit it with the existing one, or you need a new template for that. Okay, and the complex one, as Reginald stated, that would remain as free float and we might not be able to create the sequel for that, so that is, that is okay. Yeah, so I was just asking that, uh, for suppose this free text one, right? So suppose we take example of Route 29, so here it says, uh, whatever, like it shows us pretext suppose. The user wants to just change the threshold of, like, plus minus three standard deviation, and they change it to plus minus two standard deviation. That is the only change they make, just, uh, one single number change.
+
+00:18:33 - 00:19:23 Unknown Speaker:
+
+Then can we execute it via the same back-end template? Like that is possible, right? We need to check that feasibility. Rachna Because if it is a complex, the complex one, right? The expectation is that it should not go through the sequel, right? It would not create a sequence. That is some enhancement we can do later, right? Who isn't? And all right, but with the existing system. Why I am asking this is because, uh, just now we discussed, right? Like, whatever is not fitting the template, we are calling it complex, but most of the times, it might not be complex in reality. Like, it's just something that's not fitting the template. Uh, I, I agree. We'll check that feasibility, we'll check that. Why? Also why I am saying it, because Prudhvi has already created the back-end templates for each.
+
+00:19:23 - 00:20:21 Unknown Speaker:
+
+So if it's just a numerical change, I think his template should be able to handle it right. That is something we could be able, right? We need to, you know, sure, you can, like, take it on your end and let us know. If that works right, then we would be good with this. Like the thing we just discussed, that segmenting that is complex and then the common ones as the main UI thing. So then we should be good enough with the whole thing if that would work now. PRITHVI Uh, what is the question that you have? Yeah, can I take an example of another check type that is missing? Yeah, okay, let me okay if you see there are multiple descriptions, right? So okay.
+
+00:20:21 - 00:21:12 Unknown Speaker:
+
+If you are going to keep as one template now who, you have planned to come up with one template for missing value check. So, that would be one of this, right? Not all of this, right? Correct, correct. One of this. Okay. And remaining check types, we will never get it. Remaining check types will show up as pretext. Remaining descriptions, new requests, we will never get. Yeah, yeah, going forward, you are going to get only one, the way the template has been defined, right? You are going to get those type of request only. And if it would be complex, then they need to enable it as a complex check. And then, uh, that would go via a different route. Either I isn't can generate that sequel, or we will explore that part later. Okay, any new requests?
+
+00:21:15 - 00:22:11 Unknown Speaker:
+
+It's, it's not that we won't have new, uh, different kind of requests going forward in the DQ repository. Just that via the UI Form template, we will not get it. Uh, you might come via the complex uh check route, right? Okay? So, you know, try to update these description, uh, based on the template that has been shared by Rachna. I have passed one are done, just searching. What I understood is, we will keep them as is no right now, we'll keep them as is if they're editing these, uh, descriptions. No, no, again, again, you have a confusion. We need to transfer as many rules as much we can with the the template that has been said by Rachna. If these those are already getting transfer, we have to transfer it.
+
+00:22:11 - 00:23:06 Unknown Speaker:
+
+So that that would be treated as a simple check. But just take, take the line number 27, right? The missing rate should be less than this, this, this, this, this, this, this. So this is a complex check, complex state. Okay, but not hundred percent filtered. Hundred percent filters should fit to your template, which said by Rachna, and, uh, your, uh, template should, uh, you know, support this hundred percent filter. Or count of records where values are not positive, right? Just check the feasibility. How many of them? We can convert, like, Ayapa's part is done right, but still cross check Ayapa one and the duplicate is done right. So we are just left with the stagnant and missing value. Yeah, I was just saying that right now, as Sachin mentioned, your task is to identify which all templates are closest to what we have in the UI.
+
+00:23:06 - 00:23:57 Unknown Speaker:
+
+So simply looking, if you say that missing value check, then 100% fill rate seems like which will fit the UI template exactly. But then other than those also, you have to look at rules like row number 28 and 31. Customers with null values, not more than 1%, right? So even this would fit, because now we have that allowed null margin column, right? So one percent becomes your that thing, and this fits the same template. So even though you have these as separate templates, you are missing value. Underscore double zero five and double zero four, but both of these will actually end up fitting the new template. So you have to, like, basically, identify each of the these template sets which would fit in the UI thing, correct? Okay, and those which doesn't fit.
+
+00:23:57 - 00:24:49 Unknown Speaker:
+
+Let's discuss it and close it out, and then we'll mark it as complex. Yeah, and just to take another example, this row 54, also right. It says count of records where values are not positive. So, uh, this, uh, like, on surface, it looks like something very different. But if you just look into the query used for this check, or if you just think about it, okay, values are not positive. Then this thing can simply go into your filter and then it will end up fitting the template again, right? If just not positive thing goes into your filter, then rest of the thing again becomes your fill rate. Check. Okay. So it's mainly that only Prithvi. Like you have to just analyze which all templates will align with the current UI form and then having it configured in that way.
+
+00:24:51 - 00:25:52 Unknown Speaker:
+
+Even though the descriptions look similar, but the actual queries are different. So, Prithvi, this we already discussed regarding duplicate check also, right? That there can be multiple ways to create a SQL for the same output. Like, I can write it in so many ways, right? Even the SQL part. Unless it is something fundamentally different. No, I saw some extra fields also. Like? No, Rachana, I saw some extra fields being displayed. Some extra where conditions being added. So, that type of changes also there. So, uh, can you show one example where you feel it's not fitting? If not now, then maybe later, like, can you just keep those examples handy so that we can just align on that as well? If there is a confusion like this, my suggestion is keeping these descriptions as is would create any problem.
+
+00:25:52 - 00:26:46 Unknown Speaker:
+
+Because anyway, new requests will be in one template, obviously we'll be dealing with a new template, we'll create the query, okay, so existing one, if in case you. As you said, if they're updating some values in the description when they're editing, they will only update, for example, 100 percent. We don't want to give free text where we can fit it in the template, right? That's the thing, like, if we just give them, they might end up making other edits to it. No, even edit also, existing entries edit also. No, sorry, I did not understand. No, existing entries, if they are editing it, are we allowing them to edit the description? So, whatever is not fitting the UI template, only in those cases we are letting them edit the description.
+
+00:26:46 - 00:27:36 Unknown Speaker:
+
+Otherwise, they have to just edit the fields that shows up in the UI form. That would be altogether a new UI which would be formed for the complex check in future. Right now the UI that you see, those are for simple checks. I mean, let me just like, understand why me and Sachin are insisting on identifying the overlapping templates. Because if you want to just continue with rule descriptions like this, then we will end up providing that custom thing for more than 50% of the rules. Because this description can be different for all, right? So we don't want to do that like cases like Row 28 and 31. If this can be merged with the current thing, then we want to merge it, because if we keep this separate.
+
+00:27:36 - 00:28:28 Unknown Speaker:
+
+Then again, we are giving them free text and then again, we are giving them the option to basically make other changes. Which might not be able to, like, run on the back end, right? Because it might not fit any of the scripts. Okay, maybe spend some time with the app is having a very good understanding on these, right? So just work with him. And then do let me know in case you still have any query, and I'll connect with you. Because he is doing those update on a regular basis, right? And that was the only reason I have included Hyper. So just get into a bridge, okay, and try to, uh, you know. Transform those to UI matched templates here by Rachna. And whichever is not possible, like line number 27, right? And that is something understandable.
+
+00:28:28 - 00:29:25 Unknown Speaker:
+
+And then we will anyhow going to consider those as a complex check, and anyhow complex check would be having altogether a separate UI and right? As per current requirement. My expectation is not that your template, should, you know, support the complex check also. That is something we can improvise the tool later. That is not the initial requirement that we have received from the product team right now. So, you know, the complex check, we can, you know, groom it. Maybe in the next TI, either the same automation can work with that, or maybe we need to create a hazard using the AI capability. Okay, and that is the reason, right, those AI and all that comes to a picture now, right? So we would start using that. So even we would be simplifying lots of things through that.
+
+00:29:31 - 00:30:38 Unknown Speaker:
+
+Rajna, we'll try to close it. I hope you understand this is not a straightforward migration, right? And that's the reason, you know, multiple... It's all right. I understand. Yeah. Okay. Thanks, Rajna. Aipa, you can just... Thank you, everyone. Okay. So for your one right what i have conveyed to you is. Hello?
+

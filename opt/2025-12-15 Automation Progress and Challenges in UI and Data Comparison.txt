@@ -1,0 +1,210 @@
+2025-12-15 Automation Progress and Challenges in UI and Data Comparison
+
+Creation Time: 2025/12/15 19:35
+
+
+📅About Meeting
+
+• Date & Time: 2025-12-15 19:35 (Duration: ~28 minutes)
+• Location: Online meeting
+• Attendee: Vaishali, Akanksha (Akanksha Mithal), Rahul, Srikant, Ravinder, Jagdish, Shane, Preston (referenced), Ankit, Navya, Shagundeep
+
+📒Meeting Outline
+
+Automation progress and demo
+
+• UI automation using Excel tool
+  • Implemented first-phase UI automation on staging via Excel-based tool/test suite. Global properties hold environment URL; switching to Dev requires only URL change.
+  • P1 functional test cases for RPT module added to a test suite; can run entire suite (10 cases) or individual cases. Execution produces a dashboard with pass/fail/not run counts, completion status, and duration. Example run took ~45 seconds and validated tabs like RA Output and Rates per Quantity.
+  • Intended to support UAT/regression by sharing execution reports. API automation has not started yet; focus remains on UI/functional coverage.
+
+• Data comparison automation (Excel/CSV)
+  • Automated validation of Dev-delivered spreadsheets using a Python script that ingests two CSVs and outputs an HTML comparison report.
+  • Report details: total rows/headers/columns validated; number of matches/mismatches; per-header mismatch counts; exact mismatches with row/column identification and values from both files; tolerant to column order differences by matching on column names.
+  • Current workflow converts XLSX to CSV manually; Pandas libraries are now available and will be integrated next to compare XLSX directly and handle merged cells and grouped headers (e.g., “Group” + “Detail” combined into single header).
+  • Example results showed 35 mismatches detected within ~20 seconds on a large dataset. The script is generic for export outputs and intended to work across multiple tabs; currently file-level (not multi-tab-aware) and single-pair execution.
+
+Challenges, scope, and enhancements
+
+• Handling complex sheets and tabs
+  • Rate Buildup tab flagged as the most complex for layout; current blocker: unable to download its Excel from UI. Team to obtain the file and validate the script on it as a priority.
+  • Existing issues include merged cells, grouped headers, and column sequence differences. Enhancements planned: unmerge handling, header normalization, direct XLSX comparison via Pandas.
+
+• Gold-standard validation and UAT approach
+  • Need a “gold standard” expected output set to validate against. Options discussed:
+    • Use existing production tool outputs as expected once January production deployment occurs.
+    • In the interim, use curated “automation test data” on staging; compare daily runs and perform RCA for deltas (XPaths/data issues vs. app changes).
+    • For features like BioSIMs, consider before/after comparisons to establish truth sets.
+  • Agreement that UAT requires a clear source of truth for actual vs. expected; planning needed post-scope confirmation.
+
+• Scaling comparisons and reporting granularity
+  • Desire to batch-compare many files (e.g., 100 client/scenario RA Output files) by pointing the tool at two directories and auto-matching pairs.
+  • Reporting improvements requested:
+    • High-level summary at group level (e.g., PPA, AWP, etc.): per-group match percentage, counts of matches/mismatches.
+    • Overall sheet match percentage and concise rollups before detailed row/column diffs.
+    • Include only necessary cell references; since column names are stable, emphasize semantic headers over coordinates.
+  • Suggestion to trial an image comparison tool (shared previously) for visual validation where layout matters.
+
+Execution status and responsibilities
+
+• Ownership and contributions
+  • Akanksha led core comparison logic; Vaishali handled report generation and the UI automation test suite configuration.
+  • Team open to feedback; focus on delivering a solid first release for testing and then iterating with enhancements.
+
+📋Overview
+
+• UI automation via Excel tool is live on staging with a P1 test suite; produces execution dashboards and supports per-test or full-suite runs.
+• API automation not started; current efforts focus on UI coverage.
+• Python-based comparison tool generates HTML reports, matches by column names, and flags detailed mismatches; runs quickly and reduces manual effort.
+• Pandas integration and direct XLSX handling (including merged cells and grouped headers) planned for next demo; libraries obtained.
+• Rate Buildup tab testing is a key next step once its Excel can be downloaded/shared.
+• UAT requires a gold-standard dataset; plan to leverage production outputs post-January deployment and curated staging data in the meantime.
+• Enhancements requested: batch directory comparisons, group-level and sheet-level match percentages, concise summaries, and optional image comparison for visual parity.
+• Daily validation and RCA approach in place to monitor changes and distinguish data vs. locator/app issues.
+
+🎯Todo List
+
+• Vaishali:
+  • [ ] Configure and maintain global properties for easy env switching (Staging/Dev) and share run dashboards for current P1 suite, ongoing
+
+• Akanksha:
+  • [ ] Integrate Pandas to support direct XLSX-to-XLSX comparison (no manual CSV conversion), next demo
+  • [ ] Implement handling for merged cells and grouped headers (combine “Group” + “Detail” into normalized headers), next demo
+  • [ ] Add per-group and overall sheet match percentages to the HTML report; provide high-level summary before detailed diffs, next demo
+  • [ ] Enable batch comparison by directory (auto-pair expected vs. actual files; output consolidated summary + per-file reports), planned after next demo
+  • [ ] Prioritize Rate Buildup tab validation once sample Excel is available; confirm tool works on its complex layout, ASAP after file receipt
+
+• Srikant:
+  • [ ] Support dependency/library setup and enhancement review for Pandas/XLSX features, before next demo
+
+• Ravinder and Jagdish:
+  • [ ] Provide feedback on demo outputs and confirm priority groups/metrics needed in reports, before next demo
+
+• Ankit and Navya:
+  • [ ] Share representative Excel outputs (including RA Output, Financial Summary, and especially Rate Buildup) with the QA team for comparison runs, ASAP
+  • [ ] Coordinate test data scenarios for broader coverage (multiple clients/scenarios) and assist in pairing expected vs. actual files, ongoing
+
+• Shane:
+  • [ ] Align on gold-standard data strategy for UAT (production outputs post-January; interim curated sets) and confirm scope/dates, post-scope meeting
+
+• Preston (referenced):
+  • [ ] Confirm January production deployment timeline to enable capturing gold-standard outputs, when available
+
+• Team (General):
+  • [ ] Trial the suggested image comparison tool for visual diff use cases and report findings, next 1–2 sprints
+  • [ ] Continue daily runs and perform RCA for any pass-to-fail regressions; document issues and engage Dev as needed, ongoing
+
+Transcription
+
+00:00:00 - 00:00:57 Unknown Speaker:
+
+I'm going to represent what we have achieved in terms of automation. So today in the demo, I'm going to share two things. One thing, we have done one UI automation using Excel Qtool. So whatever functional testing we are doing, side by side we are trying to automate it. So for that, I have used Excel tool and for that, We are getting a proper report. How many of these cases got executed, passed, failed? Secondly, here is one challenge. Vaishali, give me one minute. Rahul, can you hear me? Rahul, I think we're getting background noise from you. Can you hear me, please? Yeah, go ahead, Vaishali. Yeah, thank you. So UI automation we have achieved through Excel tool for which we are getting the proper reports. Second concern was, manually we were... have to test the Excel sheets.
+
+00:00:57 - 00:02:06 Unknown Speaker:
+
+We used to get to Excel sheets from the Dev side, and manually we were trying to validate the data. So that flow. We have automated it using Python code. So Akanksha Mithal has done that part, she has took Excel sheets and done the data validation, Akanksha. Can you please share your screen with the code? So it has reduce our manual efforts. We are not manually validating the data. We have a Python code with the help of which we are just comparing the data. I hope my screen is visible. So currently we are having a Python script in which we are able to input two CSV files and on the basis of those two input CSV files, we are getting an HTML report in which we are getting all the mismatches, even if we are having column sequence, if column sequence is not the same in both the files.
+
+00:02:20 - 00:03:04 Unknown Speaker:
+
+And then our download is also in Excel, so how are you? How are we going to use this? So currently, Uh, I am manually converting the UH Dot XLSX format into the Dot CSV one. But, uh, right now I get to know like, uh, we can use pandas also, uh, earlier, I was not able to import Pandas in my VS code. I was having some issues, so that's why I was not able to work on that. So SriKANT Uh, yes, we are working on the enhancement part, we got the libraries. So in the next demo, we can implement those libraries, those dependencies, with the help of which we will be able to compare the two Excel files. So yes, that is being taken care for the next demo.
+
+00:03:22 - 00:04:07 Unknown Speaker:
+
+Where we are just comparing the two CSV files and we got the library with the help of which we will be able to compare the two Excel sheets also. It's a minus change that we will be able to implement. So this reporting part is taken care by me. Now we are getting the HTML report. So how many rows we have validated? As you can see in this comparison report, we can see 35 mismatches we found. File one and file two will be the two Excel files. Currently they are CSV files. The headers we have validated, the rows we have validated, columns we have validated. You can see rows in file number 1 and 2. Can you please scroll down? Yes. So when it comes to mismatches, how many matches were found? How many mismatches were found?
+
+00:04:08 - 00:05:00 Unknown Speaker:
+
+Which headers were there? So these are the headers and these are the number of mismatches and what was the exactly mismatch. So every report we are getting through this. This such kind of data, so it will be very helpful. Within a minute, we will be able to compare the two X's and exact mismatch we will be able to find. So this is what we have done so far is, and this sheet we can share with the dev that we have. We found some mismatch, there are mismatch and it needs to be fixed, so manual effort has been reduced. But this one and the Excel sheet looks like this. So earlier, what? What was the challenge for us? That we are having these merge cells?
+
+00:05:00 - 00:05:48 Unknown Speaker:
+
+And apart from it, the column header like this is this one is the group one and this one is the detail. So I have to work on it so that we can resolve like we can unmerge these merge cells. Apart from it, we can combine this group and this here also into one header name. And apart from it, one of the challenge which I faced in manual validation that the column sequence was not same. In one file, we are having PPL slash quantity at Z occurrence, while in the other one, we are having PPL slash quantity after the PPA. So this Python script is running well, even if there is no sequence of column. As we are not checking the sequence, like as we are comparing,
+
+00:05:49 - 00:07:10 Unknown Speaker:
+
+by checking the column name this script has been retained for only one tab or it's a generic code like we can feed in any tab and any excel and we can get that. It's for general. Right now it's not getting the data from any tab. We have to inject the file. So it's working fine in general. It will work for all the export functionality that we have in our Arduino. So we will be sharing this file and it's generic. It will work for all the tabs. Maybe I, I maybe need some, uh uh. This help to just validate my work and our team from the back end. So thank you Vishali and Akansha. So, uh, help me understand how many tabs have we executed on this? Uh uh, I know like RA output, great build up, great build up.
+
+00:07:10 - 00:08:02 Unknown Speaker:
+
+Have you tried on? Great build up also? This one is regarding the rates per quantity, the demo which we have showcased. This was regarding the rates per quantity. And we have tried with one or two more tabs and it was working as expected. So we are hoping it will work for all and even for our output as well. Okay. Yeah, because rate buildup, just try with the rate buildup because it is the most complex one. Not in terms of data, but in terms of the how the data is spread across the sheet. So if that, if it works for the rate builder, it would be good win for us. Yeah, okay, sure, actually. Uh. Currently, we were not able to download the UH, Excel file from the UI for rate buildup.
+
+00:08:02 - 00:08:56 Unknown Speaker:
+
+Yeah, so that's why I was not able to drive with that tab, like we were not able to drive with that tab. But if we will have the Excel sheet for rate buildup also, then yeah, we can share it, we can share it. Yeah, yeah, hello, okay, thank you. Yeah, so team. The major work for the comparison is taken by taken care by Akanksha and the reporting part only that I have taken care. Uh, rest, it's all Akanksha's work that she has done. So this was regarding the first automation demo, which we have shown. Uh, yes, we have discussed, right? Regarding the memory and the cleanup activity, how, how frequently it will, I mean, how how much memory it will consume. Here to validate how fast the latency, uh, so that was regarding the API automation.
+
+00:08:56 - 00:09:59 Unknown Speaker:
+
+This is just the Excel comparison, as you have seen in the demo regarding the Excel comparison. It hardly took, uh, I think, 20 seconds to generate the results, so I think it's pretty fast and we are getting the expected results as well. So within accuracy, you can say virtually what we did. We intentionally mismatched the data and checked, uh, so it was giving correct mismatch number of mismatches. So I think 100 till now. Thank you, yeah. So this was the first demo which we have done, which are reducing our manual efforts greatly. And the second one is the automation UI automation, which we have done using the Excel tool. So since all the automation, we are doing on the staging environment, so in the global properties, I have mentioned the application URL, it's on the staging environment.
+
+00:09:59 - 00:10:42 Unknown Speaker:
+
+If I want to run my automation scripts on a Dev environment, I just need to change it here. So in the global properties, I have shared the application URL in the navigator site. I have created one test weights, this is our first phase of our automation. So I created one test suite, automation of RPT module and I have added the functional test cases, the P1 cases in this one. So here it includes all this, so all the drop down values which we functionally tested manually, so that thing is being taken care by automation now. If I want to run all the test cases, I will just go to the run button, test suite, and it will run all the 10 test cases which are being there.
+
+00:10:42 - 00:11:34 Unknown Speaker:
+
+And at the end of this, I will get one dashboard, how many test cases got passed, failed, not run, the completed status, and the time duration in which it got passed. But if I just want to run one of the test case, so I will go to the run, just select the scenario, for instance, I want to run test case number nine. It is going to validate all the tabs present on the run details page. For instance, RA output rates per quantity. It is going to validate all the tabs. I will go and run view progress. So I can see how it will automate and the time that we said no, that also will be mentioned, how much time it took to automate. So when it comes to... have to do the UAT testing.
+
+00:11:34 - 00:13:00 Unknown Speaker:
+
+We will just run this automation report and we will be sharing that. These are the test cases which we have written for the automation part and all are getting passed, so this will be helping us in the regression testing. Uh, one more update. This is only for the UI automation, API automation. We have not stated yet, we are just focusing on the UH, functional, and if we want to see how it is automating, we can see. Tab. We have just validated all the tabs, so this is how it looks like and at the end we will get how much time it took. It took 45 seconds to run the script. And all the elements which we have validated RA output rates per quantity, these tabs validation.
+
+00:13:00 - 00:14:17 Unknown Speaker:
+
+We have done so, all the test cases which we are doing it, we have kept the sharepoint for the automation one, these are the scenarios which are being automated and this list will be shared to Ravinder. So this is what we have achieved using AI UI automation using Excel tool. Any questions for this? So Ravinder and Jagdish, this is what we have done. Thank you. Thank you, Vaishali. Thank you, Akansh and Shagundeep. That would be great. Yeah, we'll take any feedback and we can enhance, but we'll try to concentrate on the first release, which I discussed with Vaishali, to automate everything for your testing. Okay? Thank you. And I'll just comment as well. So I think from what I'm hearing here, first of all, thank you. This is great.
+
+00:14:17 - 00:15:15 Unknown Speaker:
+
+I think it will be very, very useful for the UI in particular and the reports, as in the output of all the reports coming from the modernized RPT, comparing that with the outputs from the existing Excel file. This, from what I'm gathering, will have to provide the functionality to go through a load of different reports for a load of different scenarios and check if they're equal or not. Is that fair to say? Very. Yep. So, very good. Thank you. Looks good. Sure. Thanks. So, actually, are we, okay, this is only for UI automated. API response, those things, we haven't started, right? Correct. So, this is the first phase. We have just started with the automation part where we have just started with the UI one. API, we have not started yet.
+
+00:15:15 - 00:16:16 Unknown Speaker:
+
+And for the UI also, we are getting the time frame that this much time it took to execute one of the script or the whole suite. Okay, yes, yeah, thanks for the demo by Charlie. So my question is like, you are comparing the UM the current tool Excel with the UM with the new one? Correct? So. After that, I'm just putting a scenario. So in the current tool, what we are building, we run it, we get an output. And then we go rerun it with changing the data or uploading few data and running it. And we will get another output, okay? So how are you going to validate that's a valid one? So what we have suggested, there is a different environment, staging environment. We are creating a different test data, for instance, the automation test data.
+
+00:16:16 - 00:17:12 Unknown Speaker:
+
+So that data only we are validating it. So creating a different automation test data for the verification part, just to ensure that we are getting the exact data. And whatever we are doing for the functional testing in the manual part, same thing we are replicating in the automation part. So it will be a time-saving thing. We can just share the report and all the scenarios will be validated. Because there should be somewhere, because the current tool, we are not mimicking the current tool, correct? So there are a lot of changes, updates. So how do you know that whatever an update being done to the existing run versus, so who is going to give you that data once there is an update? In the UI, if there is a look there, if a user is loading or importing something, okay.
+
+00:17:12 - 00:18:03 Unknown Speaker:
+
+Currently, some some features are not there in the current Excel and it is going to rerun and resubmit. And another set of file, how, how? How do we know that's the current correct data? Am I asking? Uh, hope you're able to follow. Yeah. So on the daily basis, we are running it and validating it. And for instance, today it is passing and tomorrow it's failing, right? So what changed? So we tried to find the root cause analysis. And if there is a difference in our X paths or some data issues, either we try to fix it or check with the dev side. So this is what approach we are following right now. On a daily basis, we are doing that, test cases.
+
+00:18:07 - 00:19:09 Unknown Speaker:
+
+Shane, what I'm trying to ask is for UAT testing, how do we know that, like, you know, actually knows, like, okay, I'm adding this data, and this is what I'm expecting as an output. Yeah, I know. So having the gold standard source of truth to compare with, yeah, I think that's something that, We won't be able to answer that until, I guess, after today's call and finding out exactly what is going to be in scope, what's not in scope, by what date. But, I mean, in order to validate figures, we will need to have some gold standard. And one of the things that was mentioned was... can't remember what the functionality was. Was the biosims? For example? That we would have a before and after, so maybe this tool will be comparing the results before, um, you know, because maybe we don't have the after we.
+
+00:19:09 - 00:20:04 Unknown Speaker:
+
+We need to really plan, think through this, because it is we have to have some gold standard to compare with. For the validation part, we need actual and expected result. Based on that, only we will be able to generate report. And for the actual results, we are just checking with the dev side. So this is the approach we are following right now. And if something needs to be changed, yes, we are open to that. I think this is based on the assumption that we will have a gold standard actual figures to compare with. And I think that's a fair assumption to make. Yeah, based on that, only we are doing correct. Yeah, but the plan is actually. Once the latest you deploy to the production, um, share, they did not deploy it, right?
+
+00:20:04 - 00:21:08 Unknown Speaker:
+
+As Preston mentioned, they're going to do that in January. We can generate that original production file from existing tool and that we can compare with, UM, by generating in our new application. Okay, then we can compare. So far, we just need to compare with the manual created sheet from the existing application. Makes sense, yeah. At a very high level, if we had to run, say, I'm just picking a number, 100 different Excel files to compare, so we've 100 actual results, 100 expected results, and we want to compare, how long would it take to do that? I'm sure we still need to enhance that to take multiple files, but for now, we are going to feed by one Excel at a time. All right, I don't think it takes more than few minutes, like five minutes, I'm not sure, I think less than a minute.
+
+00:21:08 - 00:21:57 Unknown Speaker:
+
+We are able to compare two files, so it was just a phase one. And yes, definitely, we can add the enhancements and verify. Very good. Because I, I would see, um, say, if we. We will want to check loads of different scenarios. So we might have, you know, might have, say, 100 different client data, loads of Excels with different RPTs ran for different client data. And we might have, say, an RA output file for 100 different clients slash scenarios. In that kind of, it might be useful to have functionality where we can, okay? Here is the location of 100 ORI output files. Um, that have been ran in the Excel tool, and also that have been ran used in the modernized tool. Can we compare them? Something like that would be useful.
+
+00:21:57 - 00:23:02 Unknown Speaker:
+
+I think that is because, right? And uh, like, you know, I mean to say. We have to decide like how many Excel models they generate, right? Like, you know, 10 Excel models versus the 10 Python models, right? So that is where we have to start our work. Like, how many, right? Yeah, and uh, and why surely? Like, uh, like, no. Your report should be like, you know, say they like, you know, you guys are capturing, uh, the numbers, like an exact Excel numbers and everything that is fine. But if there is any data problems like, that is main content thing we have to capture, right? That is, I believe you guys are capturing that, okay, Excel site. Uh, let me showcase. So I have my maximum file. So, for instance, there are changes.
+
+00:23:02 - 00:23:59 Unknown Speaker:
+
+Uh, so what is the header name, what were the mismatches, and what are in which row, which column? It's a value mismatch at which column, so they are sharing the column name, headers, name, file number, so that exact value? Also, we are fetching it, but what is the value there? You're putting a cell number? Zero? Uh, yeah, value was 0, and in the another file, it was 10. In first value, it was 0 and another one, it was 110. So we explicitly made these changes and verify. What was the value in the file one and what is the value in the file two? And what are the cell numbers? But the numbers are going to be the same for file one file. You don't need to put two actually. Um, Like in some scenarios, the column sequence is different.
+
+00:23:59 - 00:25:00 Unknown Speaker:
+
+So that's why we need to put these cell number also. BC7 is not a column name. BH7, BC7 is not a column name. Because even though it is in different places, but the column name should be same. See, this is, you have a proper structure for this to compare rates per quantity. But other things are not. Uh, like, you know, did you compare, uh, this RA output rates per quantity or any sheets? No, this is for not sure, not for specific to rates per quantity. But, you know, but, uh, it is generic. Basically, you can feed any two, um, that can bring names, if any mismatches are there of that column on both the sheets. Okay, just try that for our output, let's see, let's bring that results.
+
+00:25:00 - 00:26:00 Unknown Speaker:
+
+If you guys have, or any financial summary, uh, right, or any tab, uh, we have, right. Just run that and let's get that report and that will help. That actually helps, you're sure, yeah. And this is an image comparison tool, like, uh, if there is anything, you guys have to put a lot of code and everything and use that image comparison. Like, you know, tool. Uh, also, uh, like, you know that I given into that, what is that? A back-end status call? Just try that. Yeah, I was planning to say that with the Um, actually, I will do that. Um, actually, I'll share it. Seen shared one image comparison tool, I'll. I'll share that too. Let's see. Yeah, the report again, this is good, but report should be at uh, like group level.
+
+00:26:00 - 00:26:47 Unknown Speaker:
+
+Like each tab has some specific groups like, uh, like PPA, AWP, in area output, there are a lot of groups, right? Uh, if you give the high level summary, uh, we may not need to see everything right. I mean, high level, this group matching exactly 100, this group is matching. This is like, you know, and then people want to see the summary, what is that? Then? They can see. But high level information, uh, we should also have that, you're sure. In this one, we just focused on the mismatch, like it was a huge data, only 35 mismatches were there, so we just focused on the mismatch. And yes, we are side by side, uh, working on the enhancements. So whatever inputs you will share, no, we will add that as well.
+
+00:26:47 - 00:27:37 Unknown Speaker:
+
+So this was just a phase one and we'll implement this thing also. Yeah, high level summary and this is, uh, good, okay, I level like. When you compare both the sheets, what is the percentage of each sheet? It is matching all that, right? That sheet group level, what is the percentage matching? That's 100. That will be a good thing. Okay, guys. I need to drop. Ankit and Navya, connect with them and try to compare your files. Sure, sure. Yeah. Thank you. Sure. Thank you, guys. Another call is there.
+

@@ -1,0 +1,158 @@
+2026-05-18 Coordination on Test Request Filtering and CL Verification
+
+Creation Time: 2026/05/18 14:31
+
+
+📅About Meeting
+
+• Date & Time: 2026-05-18 14:31  
+• Location: Virtual meeting  
+• Attendee: Vamshi, Madhuni, Aparna, and others (Srikanth absent, Padmini joining late)
+
+📒Meeting Outline
+
+Coordination and Attendance
+
+• Team member availability  
+  Srikanth was unable to join due to other commitments. Padmini was expected to join within 10 minutes but was delayed. The meeting proceeded with the current attendees while waiting for her.
+
+Test Request Filtering and CL Verification Process
+
+• Filtering test requests for new features  
+  The team discussed the need to filter test requests related to new features that do not require exploration. Vamshi took the lead in explaining the current approach and challenges.
+
+• Agent-based CL extraction and verification  
+  The process involves agents extracting Change Lists (CLs) based on paths provided by Subject Matter Experts (SMEs). These paths can be by activity, flow, or functionality. The agent fetches CLs and decides which require verification, passing relevant information to the SMEs.
+
+• Handling discrepancies between agent and human decisions  
+  If there is a difference in CLs marked for verification by the agent versus human SMEs, these discrepancies will be analyzed by the team (including RT, Andrew, Gary). The goal is to refine filtering criteria based on this analysis.
+
+• Use of existing app scripts and automation  
+  The current CL extraction uses app scripts in sheets, which will continue to be leveraged through the agent.
+
+Filtering Criteria and Folder Path Strategy
+
+• Folder path exclusion for new features  
+  One proposed solution is to exclude CLs from specific folder paths related to new features (e.g., voice home, voice calling). If developers specify folder paths that should not be touched, those CLs will be excluded from verification.
+
+• Limitations of tagging CLs for new features  
+  The team acknowledged that Google’s infrastructure does not currently support tagging CLs explicitly as new features or NTK (Next To Know) in the code or CL metadata.
+
+• Challenges with regression and new feature overlap  
+  Regression fixes and new feature code often reside in the same folders, complicating filtering. The team emphasized the need for absolute path information to differentiate these cases.
+
+• Human intervention and approval  
+  Final approval and agreement on filtering criteria need to come from Andrew and Gary. The team will present the existing logic and proposed solutions to them for validation.
+
+Learning and Improving the Agent Model
+
+• Incorporating human decisions into the agent’s learning  
+  The agent will learn from ad hoc human decisions that go beyond predefined rules, improving its accuracy over time.
+
+• Suggestion to add tags for new features  
+  It was suggested to request Gary to consider adding tags or parameters to CLs to identify new features, which would aid filtering.
+
+• Limitations in schema and CL creation  
+  Adding such tags at the code file or CL creation level is currently not feasible due to schema constraints.
+
+Next Steps and Communication
+
+• Upcoming discussions with Andrew and Gary  
+  No fixed timeline yet, but an email will be sent to propose solutions and explain the current process. Aparna’s team is preparing documentation on the sale verification and agent logic.
+
+• Sharing updates and cascading information  
+  Once updates are received, the team will be informed. The message will also be cascaded to Vandenik.
+
+• General alignment and questions  
+  All attendees confirmed alignment with the discussed points and had no further questions.
+
+📋Overview
+
+• Srikanth was absent; Padmini joined late but did not impact the meeting flow.  
+• The team is working on filtering CLs for verification using agent automation and SME input.  
+• Folder path exclusion is the primary proposed method for filtering new feature CLs.  
+• Google’s current infrastructure lacks tagging for new feature CLs, posing challenges.  
+• Discrepancies between agent and human decisions will be analyzed to refine filtering criteria.  
+• Human decisions will be used to train the agent model for better future accuracy.  
+• Approval from Andrew and Gary is critical before finalizing filtering logic.  
+• Documentation on current processes is being prepared for stakeholder review.  
+• Communication will continue with key stakeholders, and updates will be shared promptly.
+
+🎯Todo List
+
+• Vamshi / Aparna:  
+  • [ ] Prepare and send email to Andrew and Gary explaining current process and proposed filtering solutions, no specific deadline but before the call with Petro tonight.  
+  • [ ] Provide documentation on sale verification and ATRV agent logic to stakeholders.  
+
+• Meeting organizer:  
+  • [ ] Follow up with Padmini to ensure her involvement and share meeting updates.  
+
+• Gary / Andrew:  
+  • [ ] Review proposed filtering criteria and provide approval or feedback.  
+  • [ ] Consider feasibility of adding tags or parameters to CLs for new feature identification.  
+
+• Vamshi:  
+  • [ ] Cascade meeting updates and decisions to Vandenik after receiving feedback from Andrew and Gary.
+
+Transcription
+
+00:00:12 - 00:02:57 Unknown Speaker:
+
+So, who else is missing? One minute, let me call Padmini also. Srikanth actually, he is not able to join. He has some other work. Let me ping Padmini once. And if I am working on a report, you can start with the point of the day that we discussed. I can chip in if you need. Yeah, yeah. I will be here, but yeah. She is joining. We can go ahead. I think. Yeah. I think she will be joining in another 10 minutes. I think we are good to go ahead. But it will take a little more than 10 minutes. I think she will be joining in another time. Let me message. Yeah, I think, uh, when she can start with the discussion. What we had, uh, so, uh, so, and uh.
+
+00:02:57 - 00:04:08 Unknown Speaker:
+
+What we need is, can we filter the test request which new features which doesn't need to explore? But so, Vamshi as you see, Vamshi, let me take this one. Okay, give me that. Sorry, I'll join back. You guys continue. Okay, did, did, did voice the number of all of you are working on sale verification from your team perspective. Few people are like, we are distributing the tasks function, so few will work on like CL verification, few will work on smoke testing and all. It's like everyone is having the idea. See the agent All the agent needs are is the paths where voice team CLs will be submitted. If it is by activity or by flow, or by functionality. We are good. Okay, uh, if you need additional information. Okay, sure, sure, okay.
+
+00:04:08 - 00:05:03 Unknown Speaker:
+
+So the paths, uh, is all the agent needed, and it will once the path is provided by SMES, and when I say SMEs, it's all you guys. The agent will start fetching or extracting the CL based on these selections. ID right can be between rapids, it can be a platform, or days from CL to CL. Okay, and whatever the information that is there in the cell call, a description attached bug ID, all this information will be passed by the agent only. Okay, I know I have an intervention here. It's all by agent. And the output will be provided to the SMS to you only. But we will interfere only during the UIT, okay, even the UIT. Also, the agent will take a decision that particular CL needed a verification or not. So, we will validate the numbers.
+
+00:05:03 - 00:05:55 Unknown Speaker:
+
+Let us say for a given day, there are 40 CLs and agent identifies 5 CLs needed verification, 35 are obsolete. Versus your team members said, concluded saying 30 CLs were obsoleted, 10 CLs needed verification. So, there is a delta of 5 CLs. Those 5 CLs will be analyzed by RT. If you think, or Andrew, or Gary thinks that they are the MDK or new feature things, we don't mind. Giving that information to you. And you can do the analysis and you can give us the filtering criteria. Like, on what based this decision has taken and this CL is qualified for verification versus the agent decision? Are you clear till here? So, currently, we are fetching the CS based on the app script that we have written in the sheets.
+
+00:05:55 - 00:06:51 Unknown Speaker:
+
+Okay, so we will be using the same abstract to extract the CLs Okay through the agent. Okay, okay, so so once the sales are reached, this is on the Uh. And when I say happy path, we convince Andrew and Gary, though Gary asked me to provide the uh, logic, existing logic. How the CL will be extracted. On all those things, I'm talking about the happy path. Okay, Gary and Andrew agrees to decrease the agenda to go through. And, uh. No matter whether they are NTK rated CL or a conventionally feature related CM, Okay, the same thing happened at Gmail as well. Just Fai. Okay. If they say no filtering criteria, what is the filter criteria that you have? Either? It's a part. So, I mean to say, let us say voice has five paths.
+
+00:06:51 - 00:07:52 Unknown Speaker:
+
+Voice, home, voice, calling, voice, contacts, voice, message. Let us say there is a path called google.com slash voice that home. Voice, messaging, voice, calling, voice, contact, voice, and voice message. I am just giving some raw data based on my experience with voice, okay? So, let us say you guys are working on a new feature at voice home, okay? If that is concluded, we won't extract the CLs for valid verification with that particular path. This is one kind of filtering we are thinking of. Can you come again to the last one? How will you filter if it is calling? You say that there is NTK and a new feature that is getting pushed into home screen of voice. And obviously the code will be pushed into that particular folder, right? Home and home related activities will be having the new code.
+
+00:07:53 - 00:08:49 Unknown Speaker:
+
+So we won't fetch any CLs into that particular path. That is one exception that we have. One solution that we are thinking of, Madhuni. Second, with respect to our paths, let us say if there is any parameter or a tag that a CL consists of, Identifying it, or to separate it out, or call it as NTK or new feature. We are good, I don't think that is an infrastructure that we have in Google. I don't think we have any particular parameter or a tag to write down. Saying that this particular series is for an NTK, or this particular series is for a new feature. Tab and show you the machine feature, right? I don't think so. That is where we are coming from, the folder infrastructure, if for a given, for a given time period.
+
+00:08:49 - 00:09:41 Unknown Speaker:
+
+If you, if developers can provide particular code path folder path, say that do not touch this particular folder path, we are good to exclude that. I have a question here. Okay, for the first solution, you said, right? Like, if, if any. Feature. If you are submitting any code for a new feature in one particular section, like, suppose, go, use it okay, suppose state calling okay, that is in for the respective of like new feature, okay. But at the same time, I have a regression general introduction. But there also the, you know, like, the developer will fix and push the same code in the same folder. Okay, yeah, that I called part of the first solution at the basic solution. We will convince Andrew and Gary because, see, there is no human intervention here.
+
+00:09:41 - 00:10:42 Unknown Speaker:
+
+All the code analysis will done by an agent correct the data, too. I mean, no, no, when we are like you said that you will not touch that code, right? If you have any new feature relevant code in that section, agent will not touch that. But my question, these are all the points? Sorry to overlap, these are all the pointers will enforce Andrew and Gary to give us the approval. Okay, because there is nothing I can do in that. So second, one point, one point. One would be yes, giving the specific activity path if it is Android giving particular page in iOS. That I always thought will have all the regressions and everything will have new features. I'm not seeing the folder path here, the absolute path. Okay, we have to provide the absolute path.
+
+00:10:42 - 00:11:48 Unknown Speaker:
+
+See Gmail versus Voice. I will again discuss this again. See Gmail also have the same things. Uh, end users end of the day. Once the agent analyzes, agent provides the decision. Whatever the delta that we will have between human and human and agent during a UAT was analyzed by the Gmail team here. In our case, in Y's case, we don't mind sharing the data, the data sales with you, where you can tell us the specific or absolute reason why a human or an SME decided to go for a verification versus the set of rules defined. So before we start doing this agent, we will reach out to you. For all the standards and considerations you guys will take into consideration for, consider for making a CL obsolete, or go for verification. If any.
+
+00:11:48 - 00:12:48 Unknown Speaker:
+
+It's the same rules applies, right? So we we anticipate no different, if at all, there is a difference. That is where I can say that a human with this experience took a call beyond the set of rules that we defined, or we agreed, right or wrong. Yeah, so those those ad hoc decisions. We want to teach the model and the rag. So that it will add that information as an additional pointer. And then it start it, start learning from its own. And it will apply the same logic in the next, in the next iteration. Who are making sense here? Yes, like, when you are talking to Gary like, you can also suggest him to add a tag. Maybe if they are okay, like new feature kind of thing, something, if they can add it, that will be really helpful.
+
+00:12:48 - 00:13:42 Unknown Speaker:
+
+Then see, they have all sales and all that, right? When they're pushing code, see our CLS. They have some metrics due to which only that you are, uh, segregating, right? Which we are, which is not applicable, or which is, like, you know, verified or visited, right? We have some certain CX or sorry metrics. Okay, it has to be done in two, two sections, two places for me, one, an actual code file. Yeah, that will become a, uh, obsolete, uh, that is, that's a different that that is not possible because that will go beyond the schema definition. They can't do this for they can't do this for these kind of things, right? They have to have a parameter, they have to define a parameter. And then that will qualify for a flag cleanup post quarter.
+
+00:13:42 - 00:14:31 Unknown Speaker:
+
+So that's not the right programming and the second place that can be done here at the Seal creation, I don't think we have a placeholder for placeholder for these kind of tags at sale creation. No, we can't do it. That's not possible for sale creation. Okay, maybe maybe I can ask Gary if he's okay to have to accept parameters. Uh, highlighting. Now you're clear, right? You guys are clear, right? So when do you guys have meeting with Andrew and Gary? New Country? Uh, I don't have a specific timeline, but I have to send a mail to these gentlemen. Because I had a call with him on last Friday around 11 30 and I and I have a call with Petro tonight, I have to give him an update. So, we will be proposing all these solutions.
+
+00:14:31 - 00:15:50 Unknown Speaker:
+
+My team, Aparna, and we are working on explaining the existing process, how a sale verification will be done and how ATRV agent logic works. So, that will be given to them. And on top of it, I will provide all these options to Gary and Ben. Okay. Okay. You are all aligned, right? Yeah. Any questions? That we gave it to her last week. Yeah, that's it. So once you get the update, please keep us posted. Okay, if given a chance, cascade this message to Vandenik Yeah, yeah. Today I already had a call with her. I'll tell her in brief, you can give her this modified update. Yeah, sure, sure, I'll do that. Watch anything you want to add. Nothing. Yeah, that's all time. Okay, okay, people are waiting for me at the other call.
+
+00:15:50 - 00:17:35 Unknown Speaker:
+
+Yeah, I'll drop off. If you need anything, you guys can discuss otherwise. Uh, yeah, thank you, thank you. Yes. What is it? Vamshi's voice is different. Vamshi is talking so fluently. He is talking fluently. I don't know. I don't know. I feel Vamshi's voice is different today. If you ask a question on that, he says, what is it madam, are you crying? What is it? He asked a question on that, brother. In this CL, it is not like this, it is like that. In Telugu, what is it madam, are you crying? He says. Umm. Umm. Umm. Umm. Umm. Umm. Umm. Umm. Umm. ok bro
+

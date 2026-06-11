@@ -1,0 +1,276 @@
+2026-05-15 Deployment Challenges and UAT Progress
+
+Creation Time: 2026/05/15 11:31
+
+
+📅About Meeting
+
+• Date & Time: 2026-05-15 11:31  
+• Location: Virtual Meeting  
+• Attendee: Sachin, Akhtar, Kundan, Nirmal, Sindhuja, Athar, Aipa, and others
+
+📒Meeting Outline
+
+Deployment and Data Validation Challenges
+
+• Excel Generation and Syntax Errors  
+  The Excel file was not generated due to SQL syntax errors, although graphs were saved correctly in the TCP bucket. The issue was linked to missing data for a new truck type in the E3 environment, which was not present in the lower environment during testing. Sachin emphasized the importance of validating SQL queries using an existing utility before deployment to avoid such issues.
+
+• SQL File Management and DAG Usage  
+  It was clarified that the SQL file should not be changed structurally; only the query inside it should be updated. The same DAG (Directed Acyclic Graph) should be reused for running jobs, avoiding the creation of new DAGs. This approach will save time during E3 validation and reduce syntax errors.
+
+• Mock Data Creation for Validation  
+  Sachin suggested creating mock JSON objects or Excel files from E3 environment data to validate further processing locally, minimizing dependency on E3 deployments and speeding up validation.
+
+UAT Progress and UI Enhancements
+
+• UAT Status and Data Integrity  
+  UAT started on the day of the meeting. Valid data must be used for testing instead of placeholder text like "test" to ensure meaningful feedback from the product team. Sachin requested Akhtar and Kundan to coordinate and provide updates on the technical flow.
+
+• UI Improvements and Feature Requests  
+  Anand requested adding a three-dot dropdown on the UI similar to DQIM for easier approval or rejection actions. However, this feature was not planned for the current sprint and will be considered later. The team is focused on closing the current UAT and integration tasks.
+
+• Use Case Name Field Removal  
+  The use case name field was removed from the add user feature but still appears on the approval/rejection page. This inconsistency needs to be addressed during UAT, with possible cosmetic changes based on user feedback.
+
+Sprint Priorities and Blockers
+
+• Current Sprint Focus  
+  The team is prioritizing bulk processing, integration of update APIs, and closing the UAT by the end of the upcoming week. Delays have occurred due to blockers like local environment issues and backend changes.
+
+• Blocker Management and Communication  
+  Sachin emphasized the importance of logging blockers in the tracking system and communicating delays transparently. He also highlighted the need for buffer time for testing and product owner feedback incorporation.
+
+• Local Environment Issues  
+  Local development was blocked due to token failures and other issues, impacting progress. The team is working to resolve these quickly.
+
+Code and Automation Status
+
+• Missing Files in Feature Branch  
+  Nirmal’s pull request lacked necessary files, delaying automation and validation. Sachin requested Nirmal to consolidate changes in a single commit and demonstrate compatibility with existing use cases.
+
+• Documentation for Regex and Methods  
+  Sachin requested detailed documentation on the regex implementation and method logic to ensure smooth handover and understanding among team members. Nirmal agreed to provide this documentation promptly.
+
+• Automation Confidence and Participation  
+  Sachin expressed concern about the lack of confidence and participation from some team members in automation tasks and meetings. He encouraged active involvement to avoid delays.
+
+AI Initiative and Team Growth
+
+• New AI Team Member Introduction  
+  Bhargav, an AI specialist based in Bangalore, will join the team to lead AI module integration. The goal is to groom the team for AI initiatives alongside current cloud technologies like Snowflake, AWS, and GCP.
+
+• Focus on Current Deliverables  
+  Team members were reminded to complete existing tasks before shifting focus to AI initiatives to ensure timely delivery.
+
+Task Updates and Coordination
+
+• High Priority Tasks  
+  Aipa is prioritizing load date consolidation and MGM script deployment, which are critical for the sprint and must be completed without delay.
+
+• Bandwidth and Task Prioritization  
+  Sindhuja and others were advised to deny new feature requests that conflict with current sprint priorities and escalate them through proper channels if needed.
+
+• Status Reporting and Communication  
+  Team members shared updates on data formatting, bundle implementation, and incident management. Sachin requested timely sharing of updates and coordination before ending calls.
+
+📋Overview
+
+• Excel generation failed due to SQL syntax errors linked to missing data in the lower environment; validation utility recommended before deployment.
+• SQL files should remain structurally unchanged; only queries inside should be updated and reused with existing DAGs.
+• Mock data creation from E3 environment data advised to speed up validation and reduce dependency on live deployments.
+• UAT started with emphasis on using valid data and addressing UI inconsistencies like the use case name field.
+• Current sprint priorities include bulk processing, API integration, and closing UAT by next week; blockers and local environment issues causing delays.
+• Missing files in feature branch delayed automation; documentation on regex and method logic requested for better understanding.
+• New AI team member to lead AI initiatives; team reminded to focus on current deliverables before shifting focus.
+• High priority tasks like load date consolidation and MGM scripts must be completed this sprint.
+• Requests for new features outside sprint scope to be denied or escalated appropriately.
+• Team encouraged to improve communication, confidence, and participation in automation and meetings.
+
+🎯Todo List
+
+• Sachin:  
+  • [ ] Validate deployment changes in E3 and share results, today  
+  • [ ] Pin SQL file and DAG usage guidelines in Groove, today  
+  • [ ] Follow up with Nirmal for regex documentation, today  
+  • [ ] Coordinate AI team introduction call with Bhargav, soon  
+
+• Akhtar and Kundan:  
+  • [ ] Retry deployment and validate with valid data, ASAP  
+  • [ ] Coordinate and provide technical flow updates before call ends, today  
+
+• Nirmal:  
+  • [ ] Consolidate missing files in feature branch and commit, ASAP  
+  • [ ] Provide detailed documentation on regex and method logic, today  
+  • [ ] Demonstrate automation compatibility with existing use cases, today  
+
+• Aipa:  
+  • [ ] Prioritize load date consolidation and MGM script deployment, this sprint  
+
+• Sindhuja:  
+  • [ ] Manage feature request prioritization and communicate bandwidth constraints, ongoing  
+  • [ ] Share weekly status report, ASAP  
+
+• All Team Members:  
+  • [ ] Use valid data for testing instead of placeholders, ongoing  
+  • [ ] Log blockers in tracking system and communicate delays transparently, ongoing  
+  • [ ] Participate actively in meetings and automation tasks, ongoing
+
+Transcription
+
+00:00:17 - 00:01:18 Unknown Speaker:
+
+So yeah, so after that I think the Excel was not getting generated because of the syntax errors, but the graphs were getting saved, I checked in the TCP bucket, so yeah, so in today's deployment I will validate the change system and I will share the result with you. But, uh, and see why we are struggling with syntaxes when all didn't, we tested in the lower environment. Uh, so this one session, we didn't have the data for this new truck type car, even I didn't have the data. So that's why we are getting this in, uh, E3. Only I can validate those things. Uh, few things I had already handled. Uh, the other, uh, sheets, like, uh, there was no issues, only for this. Uh, the one which we are not having. The data is over.
+
+00:01:18 - 00:02:11 Unknown Speaker:
+
+Uh, we are getting this error symmetry for SQL. I would suggest, right going forward. Uh, like if you observe that the data is not there in the lower environment, right? And I was communicating all of you, right? Repeatedly. There was already a utility, uh, which IPA is already executing it, right? So run your query itself even before you know jumping into the implementation, use that utility. Okay, uh, without A3 deployment directly. Go ahead. And if you don't have the data, just you just need to change the SQL file, you even don't need to, you know, change any method or something. You just need to take help from IPA. He will be uploading your SQL file. Okay, and even the SQL file should remain same. We should not be, you know, changing the SQL file.
+
+00:02:11 - 00:03:36 Unknown Speaker:
+
+SQL file should remain same. It's just that query need to be changed in that SQL file. I hope you are getting my point. No, it's not a very big change. I did just one implementation, right? And then I'm quite clear with what exactly that method is doing. But I'm not sure why the same is not communicated to all of you. We should have done yesterday only, but we were engaged with some other stuff. Okay, I have to take a poll, so just give me a second. Data monitoring. This is the method. Okay, don't change this, you know, this is for my tag, right? So anyhow I might be having one. We do have one another tag for this, right or no? Yeah, yes, there is a new BQ, Yeah, right, so there is a tag for that, this particular task.
+
+00:03:36 - 00:04:27 Unknown Speaker:
+
+And see, Okay, so if I go, look, this is the one right? So you really don't need to change this tag or this SQL file, even just replace your SQL query into this SQL file. Ask IFR to upload it to E3. Run this tag and validate whether this is for all of you guys, like whoever is working on this data monitoring tool, right? Like, mostly right now, FY and ANSI, but anyone going in future, I, I don't want to hear that. There is a syntax as when we were fixing that one. Use this DAG. No need to change the DAG name or you really don't need to create a DAG out of it. Just reuse the same DAG. Just replace your SQL query in the SQL file. And then execute that DAG.
+
+00:04:28 - 00:07:25 Unknown Speaker:
+
+If any issue, fix it, rerun it. So with that, you would save your time in E3 validation also. I'll pin it in the groove. Again, on that, what I would say, whatever result that SQL is providing it to you, right? Another round of working, right? It's just like a mock-up of data, what you need to do. Just give me a second, I think I'm getting a call. So it's just that mockup of JSON object or however you would like to pass it. Get the data from E3 environment, right? And then just create a mockup JSON and then utilize that mockup JSON to validate your, you know, further processing so that you would not end up spending lots of time on E3 deployment. We were, you know, just bypassing the lower environment is not going to help.
+
+00:07:25 - 00:08:18 Unknown Speaker:
+
+There is a multiple way around, right? How we can validate our job, right? And the concern is, as you already started from Tuesday, right? We were supposed to, you know, again, release this Friday itself. Now, there is a significant delay and understand now, again, the question would come back from Rachna and Anand, why it is taking four days or five days. So, you know, there is multiple way how you can, you know, close this validation and all right. Just get the data from E3, create a JSON object, or, however you are trying to pass it, if you want to pass it using Excel file, right, convert that to Excel file and then process that same Excel file. Even keeping in your local, or, you know, in the environment, somewhere in the bucket, because E3.
+
+00:08:18 - 00:09:13 Unknown Speaker:
+
+You're not going to get that easy RFC every time until unless you validate it in the environment. Okay, so just keep in mind, uh, so, you know, going forward, just take that, uh into our consideration. And please make sure you are closing this today and see this would not be any extension on this. Uh, because from Monday onwards, I need you on that, uh, the task that you were performing earlier. Okay, thank you, thank you. Okay. Akhtar and Kundan, can you do one thing? Can you retry a deployment? Did you did that? Actually, yes. So, what happened yesterday, it was showing failing. But basically, it was successful from there. So, I tried inserting that. Let me save my screen quickly. Even yesterday night, I reached out to Bharat. I did not receive it.
+
+00:09:13 - 00:10:26 Unknown Speaker:
+
+I was trying in the night. So, around I think 10.30 it worked. But still, it was failing, right? So they have to fix it. Okay, so it is working now. Yes, let me let me get out of it in front of you. Even Athar is there in the call, right? So we have, you can see, there are 16 records. Are there, right? Doing the entry here? Let me put something where name testing again, there should be a valid data. I'm repeating it for you, that we will enter it. No, the dashboard is not going to look good when you would be doing it in front of the product team, right? Yeah, we are starting the UAT from today. That data, I will remove it, that's not a problem. I have that access, so just modify those records before we pitch it.
+
+00:10:26 - 00:12:02 Unknown Speaker:
+
+Even the use case name method that you have hardcoded to the UI, right, or whatever data is there, it's okay, you have to close. Then only I'll proceed with the next step. Okay, fine, then just give me a second now. No, did we tested it through the UI? Not through this postman. I will test it from here. Then I will connect with Arthur. Okay. And we'll do that. No, then can you just go to the... the ui and just see if that comes to the appropriate if if it worked yeah let's try from here and then again we'll do it from here. This is the output parent that we are checking. That is mandatory. Yes. I am going and submitting it. Let me take out this process ID again.
+
+00:12:12 - 00:13:15 Unknown Speaker:
+
+So it got completed, we have total 15 that 16 that was right now 17 rows, so this got inserted CSV 11. Okay, so can you try to hit it from front end? Guys? Let's not make this call as a testing platform. Okay, then you close this, uh, close the, you know, stand up, so we'll continue over there. Yeah, yeah, that's what I told. Uh, you can, uh, you know, because rest of the folks are waiting, so just coordinate. And this makes it be where running with the valid data. Uh, and uh. I think if you can bring up your screen one observation over there, right? Uh, on the DUI now, if you remember, Anand was asking if we can have that three drop-down just like DQIM, right? And then that should go to the F2.1 reset phase.
+
+00:13:16 - 00:14:04 Unknown Speaker:
+
+When he would be viewing this one, he would be asking for that same details. Most surely. The F2.1 reset. Okay, in that group, or is it? He was asking for the three dots, right? Just like Dqin? So that so that these two buttons can be in one where you can just do a single approval or region. Right, right, so can you do that? Yeah, we, man, we have to close everything in the this. This task was not planned in current sprint, right? And you know, like we are already blocked if you will see the even. Sorry, the local is not up since yesterday, I'm not able to access any of the APIS or anything. The local token is failing and this has been reported in the code.
+
+00:14:04 - 00:15:02 Unknown Speaker:
+
+So we also have the bulk task, then also the large sprint integration of the update APIS. This should be required before moving to the production environment. So this was not even in the roaming or planned session, so we need to list out the priority tasks. For this sprint, we already planned for bulk integration, but we also have to integrate the two APIs of the update, which was planned for initially last year. And again, this is a planned task, which is there for the year. The end goal is to close the UAT by end of this upcoming week, so whatever changes, right? Why this integration testing and UAT where I know there is a blocker and we are already delayed by a week, right? Yeah, one thing is, the second thing is the unplanned one.
+
+00:15:02 - 00:16:07 Unknown Speaker:
+
+This one we planned like we'll do it later once we'll get approval from, like, No. They might come up with that request because they have raised it and I think I have communicated this. So let's let's get that review from them. Because I see there are three main features, one is bulk processing, the other one is the integration of the modifier. If you go with that Excel scene. We have given the view that build time, right. The ask is to complete the UAT, right, whatever changes and all right, just don't consider that, you know? If it is an integration testing, integration testing means end-to-end testing means, you know, just keep that blocker aside. I am considering that one, right? It's not that I'm not considering those, uh, blockers. But they may come back with some information, right?
+
+00:16:07 - 00:16:49 Unknown Speaker:
+
+UAT is that user acceptance test, right? And if they create some changes, we have to incorporate in this build problem and we need to close out. When you are doing a UAT. There might be some bug which they may report us, right, and maybe here and there small, small enhancement, which again they are going to report us. We have to close all those before. You know, I'm not even asking you to do a major update. I am already taking care of that, right? I have already restricted their product team that they were asking to, you know, uh, pull back that, uh, to the all together a new page, right? I only denied that because I know where is the, you know, those changes? But here and there, some cosmetic changes.
+
+00:16:49 - 00:17:42 Unknown Speaker:
+
+We have to close it, without that, we are taking some new features, then profit. That would impact the delay rate. We'll try to close it, but once we commit it, then it's like, we have to do it. And you know, the challenges like we already have, like the One Island of the last print and this, so we'll try to close it. But in case if it is getting delayed due to something, then we have to take a backup on that. Because for testing also we need to keep a buffer time. Before going for like product owner or other suggestion, we might also face some issue like currently we are checking it. Initially this whole flow was working but due to some changes in the backend or some platform changes or something which Kundan is working.
+
+00:17:42 - 00:18:31 Unknown Speaker:
+
+So this flow is broken. So there might be some thing which is there we have to take about. We are going on a wrong direction I would say. I already communicated to you that I am taking those blockers, I already asked you to create that blocker in that rally, right day before yesterday. So I'm already considering those times and I'm already communicated this to Anand. Also, right that there might be significant delay, maybe one or two days, right? But why is this UAT to be completed next week? The reason being, post that next week, you would be going to leave for three days, right? We have to take that into consideration. And if you guys were not able to complete this UAT by next week, I won't be able to wrap up the SRE review call.
+
+00:18:31 - 00:19:13 Unknown Speaker:
+
+SRE review call is going to take 15 days. This platform review call took me almost one and a half month, right? I had a three different call with Carlos and Jairo. You were there in yesterday's call, right? As they are already aware with that process, right? Seeing the, you know, progress, they have approved it. So similarly, maybe next week I have to set up a call with SRE and then SRE team is going to give you a sign up. Only when, uh, you know, uh, they would get a UAT sign up from the product team number one. And then next is that is for update. They might not allow us to move ahead with the current A Score version, which is there in the platform. No, I got your point and I'm aligned on that.
+
+00:19:14 - 00:20:00 Unknown Speaker:
+
+The only concern is that we are delayed with some of the future things. So, I'm just giving you a heads up on that. I can incorporate, but we need to take a buffer in that case. That's the only concern. I already considered repeating that one. And here, if you see this use case name, right? Now, you are pretty sure that we are not going to get the use case name. We have removed that field, right? We should have created this page in that case. The use case should not have been over here when we have removed it from that add user feature. The use case should not be populating over here. So only three fields will be coming up? Or is there any additional field which they have to show?
+
+00:20:00 - 00:21:01 Unknown Speaker:
+
+That is something that is something we need to check during the UAT, right? And based on their input. That is what I am telling you, right? There might be some cosmetic change on this UI based on their observation, and we have to incorporate before, you know, getting a UAT sign up, sure? So, for direct changes, this column has to be removed, and this approve reject page should be a single page, right? With the view details 3.0 coming in and also use the clicks on that, that could be coming in. Okay. Can you refresh this one? I would like to see whether that request came in or not, which Kundan has just created. Yeah. Let me just do that. I don't think it is. Hold on, man. This would not come over here. He has already approved it.
+
+00:21:02 - 00:22:21 Unknown Speaker:
+
+Should I create a new... We can do that post this call. Yeah, maybe we can. Yes, we can run a test. Again, when you guys are inserting the data, Kundan and Nathak, both of you, add valid record. Don't do just test, test, test, test, test. I have already added the valid record in the DB and going forward I will be using those on purpose. Yeah, so just use the valid record. Don't use test, test, test because these boards are getting reviewed by Kuhn now. He has that credential. Okay. Just don't use this test, test, test. That doesn't look good because he is going to give that feedback to us. I think we are, we are going to delete it. And, you know, once the you know the use case is working, and we will go with the, you know, the UH, web name, type and business column views.
+
+00:22:21 - 00:23:42 Unknown Speaker:
+
+If we are just put test test right, try to imagine from the perspective. They would try to map it with the real-time use case, which is already ready. And if they are not able to correlate with that again, you know, that will delay the UIT. Got your points. Then both of you just coordinate and before dropping the call, just provide your updates on the tech flow. Okay. And Nirmal, one surprise that I have seen, your WordPress itself is not there in that feature branch. This was the... a PR that you have created, right? This pull request right from Nirmal SFT file upload to this feature Rule creation correct. Um, I have this one point, so Nirmal, did you validated your files are there or not in this? Friends? That is what I'm asking, that is what I'm asking him.
+
+00:23:44 - 00:25:36 Unknown Speaker:
+
+That is the PR, but if I go and check this one, I don't see those files. Bundles, yes. Bundles are not there. Is that being deleted or something? See so previously these all are kundan's commit right until 6th of april i don't see even a single commit that has come from your side so where this changes when this is used to do business. Let's not do a lot of things. Can you just let me take that? Latest. And then, you know, add your friends and do in a single committee. Yes, yeah, okay, because again, I need this automation to validate it and run today itself. There is a significant delay on this one also because we have to validate this one. Plus additional thing that should be running in the Numi site. Roomy site.
+
+00:25:36 - 00:27:33 Unknown Speaker:
+
+At least let's have a call today and then just showcase me that, whether it's working or not. Okay, and how much compatible you are with the use case that Bigfay has built. Is it now the setup is running in your local, or you're still struggling. I really don't understand why I always need to ask you guys. Why there is a delay of just handling one module at your end? Why can't you spend couple of hours and sort it out again when I'm asking whether it's you or I have a right? When I ask for a control, I don't see that confidence, when I ask you for that automation. Which victory is building? I don't see that confidence from your side. And in case, suppose, with this going on, leave and I need to continue the UIT.
+
+00:27:35 - 00:29:18 Unknown Speaker:
+
+How can I do that then? You have to give me an answer. Silence is not an answer. That is something I am not understanding. Even I am not involving you in different use cases. I don't know like even when we were having that run yesterday, right? First of all, why didn't you guys join the TPM? Is that mean like you are already aware with the use case which with this building you'd be able to. Fix that. No, no, Sachin. Actually, I might have forgot to join the call. I cancelled that call. I'm not doing that for my sake, right? Anyhow, I'm connecting with all of you individually for your individual use case, right? So, I can manage it. If you guys don't have those interests, I can just go ahead and cancel that call.
+
+00:29:19 - 00:30:22 Unknown Speaker:
+
+No, no, Sachin. We have interests, but I forgot this time. It will not happen. So please make sure, uh, number one is that that system should run end-to-end in your system. Okay, and basically, I did not hear back from you on that Regex, right? And now don't tell me that that Regex has been, uh, created by the system, even if that Regex has been created by the GitHub. Any alternate way, right? I need a documentation on that, and I was waiting for the documentation from last week, I did not receive the documentation from your side. Because even if I'm handing handling that use case to Nirmal, right? He should have knowledge, right what method is exactly doing, why we are doing that. Otherwise he would not be able to, you know, handle those code from his side.
+
+00:30:25 - 00:31:30 Unknown Speaker:
+
+Can we get the documentation today itself with P? You don't know? Yeah, sorry. Yes, I'll create a document. But is it required at method level or is it should be at overall documentation about the project? Read me file I created already. Okay. But if you do that, look a simple method where you are creating a big query connection object or defining the different check types. Uh, loading the, you know, some variables, and all right. That is something known, whoever knows Python, they can understand, right? But we know we just start the rejects patterns. How? What are the inputs that we are getting and how we are converting into the yes, yes, yes, based on what logic we are converting it and how much efficient it is? Again, like we were, we have done a dry run yesterday.
+
+00:31:30 - 00:32:36 Unknown Speaker:
+
+It failed due to certain reason. Whatever it would be, you know, primitive sequel, or logical signal, whatever, yeah, but we we should have that answer when we are running it, because there would be a UT. I'm planning it from next week. Uh, I'll see if I can connect with you today, or maybe let me see if I can continue on this call itself. Yeah, yeah, uh, I think, uh, anyone else having any other questions like, Uh, I have dropped off? So I am still waiting for the update from Athari and the rest of you folks and see you have provided your update, right? Yeah, I'm here, sir. Okay. Sindhuja, do you have anything from your side? One more information. I'm not sure. One AI folk is going to join our team called Bhargav.
+
+00:32:36 - 00:33:32 Unknown Speaker:
+
+I think he's based out in Bangalore only. I'll set up a call with him to introduce with you guys. So he is going to basically lead the AI module that we are going to integrate in our use case. Okay, so let's see how much knowledge he comes up with so that that would help us to. Just the reason being, you know, including a AI resource is to groom the team to start with the AI initiative. So that is what I'm repeating you, all of you, until unless you wrap up your existing work, which is there in the bucket, right? We do have multiple AI initiative that needs to be incorporated. And then, as I mentioned, there is a lots of use cases in Raze where you can get an, uh, hands-on working with Snowflake or AWS cloud.
+
+00:33:32 - 00:34:28 Unknown Speaker:
+
+Along with the GCP, which you are already working, so target to close your existing use case. The world has already moved towards your AI, right? Also, if you continue working on what you are doing, you would not get time to learn the new features of AI. Because this Java Python, you already know, right? So there would be some significant difference what AI comes up with, okay, Aipa, as you have joined, where are you going to progress on that bundle that I have shared to you yesterday? No, Sachin. Actually, I just blocked with other things. And also, today, Shamir is also prioritized with load date. I need to check that one also, Sachin. Because that load date was there, right? That we need to consolidate all the DQIDs, what are the DAGs, cron expression, right?
+
+00:34:29 - 00:35:22 Unknown Speaker:
+
+So, that one and MGM scripts also need to deploy today. Maybe I will try to start that today. I will plan that one. That is the highest priority that is coming from BP and B40 level. I have already repeated it to you and that needs to be closed in this sprint only. We won't be able to move ahead to the next to next sprint. I would not reiterate that again. These couple of sprints if required stretch a bit. That comes from the VP, you can imagine that that request is directly coming from VP. Because they started getting those emails and then nobody likes that, you know, uh, flooded of emails to their email box. Yeah, sure, I really don't know. That is the question that I asked you yesterday, right?
+
+00:35:22 - 00:36:13 Unknown Speaker:
+
+Data analysis, I can still understand, but why that data migration, the deletion, updates, and this is consuming your whole day. Yeah, so yesterday if it occurred with this one, right, analyzing with Contro, I just communicated with Chani. And this one also, like YouTube, right, that Shravan and the debugging, the two use cases, it's taken time actually. Yeah, and also due to that one, that MGM scripts also not went actually. So, how that's, but I completed, plan to finish it today for the E3 and immediately I will do the test. Because there is no development activity so that is completed, so I will try to focus on today this development activity. Okay, do you have anything in your bucket which you are building, or you are done with the build?
+
+00:36:13 - 00:37:15 Unknown Speaker:
+
+No, man, uh, you need to then start the reporting build, don't tell me that you are done with the build. There are other bundles that I have told you, right, that you need to start building. Okay, okay, the BPM has already been shared to you. And then see if those four mediums are saying, yes, okay, who's going to pick the next? Okay, I'll tell you, we'll stay on the call then. Uh, Sindhuja, uh, anything from your side? Uh, no such, in just the weekly status report. Okay, um, so Athar and Kundan, did you guys share your update? I'm just sharing it, I'm just combining all those data, formatting. It will be shared in five minutes. Yeah, I'll share in next two minutes. Uh. Once you are saved, then only drop up. Otherwise, please be there in the call.
+
+00:37:15 - 00:37:59 Unknown Speaker:
+
+Yeah, I don't want to wait till 3 30 because I am having all from 2 to 4 30 continuous call. I just have a half an hour break in between. So I need to, you know, say that right away to Sindhuja. Just close your update right now. Okay, I'll start with, uh, other. Can you go ahead and uh so and see? Oh, you can drop up uh prithvi and drop up post sharing your update? Uh, there. Can you share your screen? Uh, synergy if nothing, even if you can feel free to drop up. So I just need to discuss one small thing. So one of the PO's reached out to me yesterday regarding some tasks, so which would you like to discuss now, or maybe we can discuss later?
+
+00:37:59 - 00:38:56 Unknown Speaker:
+
+She was asking, like, if I could, and then she would need some time to prioritize that. No, man, now is that a request from Rajendra? No, no, it's from, uh, from CITL. And she mentioned that she has some critical feature in development that has visibility to leadership and dependency on your support. So, we really don't have bandwidth to have to close the USCDA prioritize. If she wants to come up, ask her to reach out to Rajendra. And even if Rajendra comes in with a request, you have to explicitly mention that we won't be able to deliver these features within this PI and then this would be escalated. Yeah. Sure, I'll just mention the same to her and we'll see. Just even don't route her to Rajendra, route her to Sindhuja first of all.
+
+00:38:56 - 00:39:51 Unknown Speaker:
+
+Sindhuja, you can just let her know, alright, we have higher priority tasks, we need to close this in this PI. We really don't have that bandwidth right now. And again, he is going on leave right on for three days. Yeah, just ask her to reach out to me, let me check with Raj and get back, okay? Certainly, she cannot reach out to resources that way, she has to get it prioritized from leadership. Or let the adjunct champion know. Exactly. Did you work before? Or how could I mean, on what basis? Yeah, so I was working with Reviti, I was helping her for some of the tasks. So I think Mukta is the product owner of her project, so she was working, Revati was working on CIDL Project. So, she reached out to me and then her product owner, product lead.
+
+00:39:52 - 00:40:49 Unknown Speaker:
+
+Just loop in Sindhuja and Sindhuja, please explicitly call out. We have critical release for the US CDO. I won't be able to leverage that to work on any other initiative. We need to close this one on priority. Because we are getting funded from Anand's team, right? And if we are delaying their initiative, Doesn't make a sense then. In that case, it would be escalated by another. He really don't have that bandwidth to close other initiatives right now and then. Then just I'll leave it to you. I need this to be closed. And if you think that apart from working on this, you can support, that's your problem. Exactly because you have to complete that bulk uh, bulk delete feature, also that integration of that UI model, calling those, uh, APIS, that should be done also on a priority.
+
+00:40:49 - 00:42:02 Unknown Speaker:
+
+And this three days of outreach of like local changes has impacted a lot, so it's not yet, so my local development is totally blocked. No, then then just deny it. Even you don't need to loop in Sindhuja right now. Just deny them and let them come back with Raj if they want. Sure, I'll just drop the numbers. It's the same. Yeah. Click on add rule. Go ahead and submit a new request. So, Kundan, now... I'll be dropping off, okay? Yeah, thank you. If you want, tell me to drop off. If you have provided your updates on the channel, can you share me the that repo link? Uh, that bundle implementation, right? Okay, so you're working on that escalation, right? That there is the task management. I I think I have already shared it to you, man, uh, when you're working on that service now.
+
+00:42:02 - 00:44:08 Unknown Speaker:
+
+Incident. Ah, okay, oh, that is the one same thing only, right? Okay, yeah, that's what I have here, okay. Now, can you see if it has went to that human test? No, Sachin. It's breaking, right? Yeah. I don't see any entry. Can you send me that paper, what you're sending me? Read a new one, first one. Just... app on the network app let's not waste your time you can put your drop up if you have already provided your update you can drop up. Click on that start process in the second one here. Click on the payload. Can we go to ACE control centre also? I would like to see whether the human task request has come or not. At least the process instance must have been made, right? And it is fine if it breaks on the process instance.
+
+00:44:11 - 00:46:35 Unknown Speaker:
+
+We can see it from there itself no you won't be no no no go to that process lookup. Go to that process lookup. Select the process name. That should be your role creation. It won't be from here. It is there. It is a single one. Yeah. First one. Increase the future date. Thanks. Thanks. And then give data. First one is there right can you open that one. I wrote the Gmail Ivoice and sent it to the server. So now I have to write the profile and send it to the server. I wrote the Gmail Ivoice and sent it to the server. So now I have to write the Gmail Ivoice and send it to the server.  .  . . As a very general
+

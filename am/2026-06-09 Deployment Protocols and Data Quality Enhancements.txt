@@ -1,0 +1,796 @@
+2026-06-09 Deployment Protocols and Data Quality Enhancements
+
+Creation Time: 2026/06/09 12:37
+
+
+📅About Meeting
+
+• Date & Time: 2026-06-09, approximately 10:00 AM to 12:37 PM  
+• Location: Virtual meeting (platform not specified)  
+• Attendee: Sachin, Samir, Bhargav, Prithvi, Iepa, Nirmal, and others
+
+📒Meeting Outline
+
+Deployment and Environment Management
+
+• Code Deployment Concerns  
+  Sachin emphasized the importance of obtaining sign-off from the product owner before deploying any changes to the production environment. A recent incident was discussed where a pull request was merged and deployed without a formal change request or approval, leading to issues. The team agreed to adhere strictly to the deployment protocol going forward.
+
+• Environment Issues and Troubleshooting  
+  Sachin and team reviewed a problem with the E2 environment where definition names were breaking due to gateway errors. They tested different user IDs and confirmed the issue was environment-specific. It was agreed to take screenshots and tag responsible team members (Jagan and Silva) for resolution.
+
+Data Quality and Algorithm Selection
+
+• Proposed Method for Threshold Checks  
+  Samir presented a proposal to improve the current data quality threshold checking process. Instead of using a single method (fault vendors) based on one metric (e.g., autocorrelation factor, ACF), the proposal involves creating a shortlist of candidate methods (e.g., ARIMA plus, mean standard deviation, EWM) depending on the data type and seasonality. This approach aims to select the best method for threshold evaluation dynamically.
+
+• Discussion on Seasonality and Metric Selection  
+  Sachin questioned the rationale behind combining fault vendors and ARIMA plus methods for records with seasonality indicated by ACF values. Bhargav explained that seasonality is identified using the autocorrelation factor and that ARIMA plus is suitable for high seasonality and SKU data. The team agreed to further discuss and clarify the criteria for selecting algorithms based on data characteristics.
+
+Data Aggregation and Execution Date Clarification
+
+• Aggregation Period for Data Quality Jobs  
+  Samir demonstrated the current execution of data aggregation jobs, which were aggregating data for six months instead of the agreed one-year period. Sachin highlighted the misunderstanding and stressed the need to aggregate data for the last 12 months relative to the execution month (e.g., for March job, aggregate from previous April to current February). This misunderstanding has caused rework and delays.
+
+• Urgency to Resolve Understanding Gaps  
+  Sachin expressed concern about repeated misunderstandings affecting delivery timelines and urged the team to focus and clarify requirements promptly. He offered to provide additional time for clarifications and requested updates on progress after lunch.
+
+SQL Query and Description Updates for Data Quality IDs (DQIDs)
+
+• Updating Descriptions and Filter Criteria  
+  Prithvi and Iepa discussed updating descriptions and filter criteria for approximately 260 DQIDs based on templates provided by Nakshi Rachana. Sachin emphasized the importance of updating descriptions consistently and avoiding delays. Complex records (37 DQIDs) were excluded from this update.
+
+• Review and Finalization Process  
+  Sachin requested that before execution, the updates be reviewed with him and a Q&A session be conducted. He also advised caution in using personal email IDs on client laptops due to security and privacy concerns.
+
+• Clarification on SQL and Filter Criteria Files  
+  The team clarified that two files would be sent: one for filter criteria updates and one for DQID description updates. Sachin requested confirmation that all required updates are included and urged timely completion by 4:00 to 5:00 PM on the meeting day.
+
+Network and Attendance Issues
+
+• Network Stability and Office Attendance  
+  Sachin reminded team members experiencing network issues to work from the office during the week to ensure meeting participation and productivity. He stressed the importance of reliable connectivity for ongoing collaboration.
+
+• Team Member Availability  
+  Anand was noted as sick and absent, which affected the demo schedule. The team acknowledged the impact of absences on progress.
+
+📋Overview
+
+• Deployment to production requires formal sign-off to avoid unapproved changes causing issues.  
+• Environment-specific problems (E2 gateway errors) were identified and assigned for fixing.  
+• Proposal to enhance threshold checking by dynamically selecting algorithms based on data seasonality and characteristics was discussed; further clarification needed.  
+• Aggregation of data for data quality jobs must cover the last 12 months relative to execution date; current six-month aggregation causes rework.  
+• Descriptions and filter criteria for 260 DQIDs need updating by end of day, excluding 37 complex cases.  
+• Security advice given regarding the use of personal email IDs on client laptops.  
+• Network issues require team members to work from office to maintain meeting effectiveness.  
+• Team member absence affects delivery timelines; focus and communication emphasized.
+
+🎯Todo List
+
+• Sachin:  
+  • [ ] Monitor deployment approvals and ensure sign-off process is followed (ongoing).  
+  • [ ] Review updated DQID descriptions and filter criteria before execution, coordinate Q&A session (by 2026-06-09, 5:00 PM).  
+  • [ ] Follow up with Jagan and Silva on fixing E2 environment gateway errors (ASAP).  
+
+• Samir:  
+  • [ ] Coordinate with Bhargav to finalize criteria for selecting threshold checking algorithms based on seasonality (ASAP).  
+  • [ ] Adjust data aggregation jobs to cover one-year data period relative to execution date (ASAP).  
+  • [ ] Provide progress updates after lunch on aggregation and threshold checking tasks (2026-06-09).  
+
+• Prithvi and Iepa:  
+  • [ ] Complete updates to DQID descriptions and filter criteria for 260 DQIDs, excluding complex cases (by 2026-06-09, 5:00 PM).  
+  • [ ] Review updates with Sachin before execution (by 2026-06-09, 5:00 PM).  
+
+• All Team Members:  
+  • [ ] Work from office if experiencing network issues to ensure meeting participation (immediate).
+
+Transcription
+
+00:00:18 - 00:00:28 Unknown Speaker:
+
+Wait lang, hindi ko naman alam kung ano yung ina-address lang kasi dahil nagtataka ako sa ganoong kalaking tao. Yung closet ay nasa sa may poste, may poste po sa may crosswalk.
+
+00:00:33 - 00:00:44 Unknown Speaker:
+
+Tingnan niyo. Wait lang, may— may— may isang bago pa ako, guys. Hindi rin siya, hindi rin siya. Hindi yan kasi bago yung female, may pagkakaposok na dito. Meron pang panandaliang tsismis, as of the moment.
+
+00:00:45 - 00:00:47 Unknown Speaker:
+
+Bumabalik na rin po ako ngayon, mga 5:00 oras.
+
+00:00:56 - 00:01:09 Unknown Speaker:
+
+So kahit hindi tayo tikom, kahit na hindi ako nagsasalita, may pag-check din tayo. Nag-reserve ako ng 100%. Kahit na hindi siya nakakapasok, okay lang. So that's why hindi po. So that's all.
+
+00:01:10 - 00:01:17 Unknown Speaker:
+
+And that's the end of the—end of the—end of the—end of the—end of the—end of the—end of the—end. So that's why hindi 1. 5 minutes lang, 1. 5 minutes, 1. 5 minutes lang.
+
+00:01:17 - 00:01:35 Unknown Speaker:
+
+Yan. And still, speakers on the record, dahil naman hindi kami nire-record ng video. So 1:00 past 10:00 na yung 69 minutes lang, 1:00 past 11:00. Mainly may nagse-send lang din ng mga updates, kung ano yung pag-update, update lang din. Main update lagi na full change na dahil nung 3 years old, hindi pa safe pa yung closet, 7 years old na yan.
+
+00:01:36 - 00:01:40 Unknown Speaker:
+
+Depende lang din, ano, kung ano yung fix or ano yung problema na nagiging issue sa inyo.
+
+00:01:53 - 00:01:55 Unknown Speaker:
+
+Samir, can you check with Ed po?
+
+00:01:59 - 00:02:00 Unknown Speaker:
+
+Sure, sir, change yan. I will call him.
+
+00:03:01 - 00:03:06 Unknown Speaker:
+
+Uh, sachin is not picking the phone. I think might be he's in travel, like he went for pickup.
+
+00:03:08 - 00:03:09 Unknown Speaker:
+
+Okay.
+
+00:03:33 - 00:03:39 Unknown Speaker:
+
+Uh, starting with NC, can you go ahead and showcase me the configuration that you did for E2?
+
+00:03:42 - 00:03:57 Unknown Speaker:
+
+Uh, sachin, um, for the record, ANC1? Yes. First of all, you know, uh, if you're not getting a sign-off, right, uh, we should not be deploying it to the E3 environment.
+
+00:03:59 - 00:04:15 Unknown Speaker:
+
+Okay. Uh, if your code was there in E1, how it moved to the production environment? Uh, no, no, sachin. Uh, that was that small change in that email, uh, one— I know. I need just the— just the text, right?
+
+00:04:16 - 00:04:25 Unknown Speaker:
+
+Yeah. So that PR I had raised yesterday, and it was merged, uh, yesterday. So I think after that, there was a deployment.
+
+00:04:29 - 00:04:37 Unknown Speaker:
+
+Okay. Now, the problem is they did not even, uh, create that, uh, change request, right, and it went to the production.
+
+00:04:43 - 00:05:01 Unknown Speaker:
+
+So yesterday I thought of, uh, making that change, and that's why I raised that, uh, pull request. And it was already merged, but, uh— This letter know that this— this went to production, but going forward, please, uh, you know, uh, take care of these, right, until unless we get a sign-off from the product owner, we should not be moving it to the production environment.
+
+00:05:03 - 00:05:08 Unknown Speaker:
+
+Okay? Okay. Anything else, NC? No, right? Nothing from your side, IU?
+
+00:05:10 - 00:05:12 Unknown Speaker:
+
+Uh, no, sachin. Nothing. Okay. Yeah.
+
+00:05:14 - 00:05:32 Unknown Speaker:
+
+Uh, you can stay if you have bandwidth, uh, because, uh, that bulk action I'll demo it to Nirmal, right? So just wait for some time. Uh, next, uh, again, AEPA is not there, right? That's— that's what the problem. Even if I discussed with you, Prithvi, so let's wait if, uh, uh, AEPA joins in between.
+
+00:05:32 - 00:05:35 Unknown Speaker:
+
+Let's wait for 10 to 15 minutes. Samir, you can go ahead.
+
+00:05:36 - 00:05:45 Unknown Speaker:
+
+And even— even before, Samir, you, uh, Bhargav, can you, uh, bring back that slide that you have shared to me? Uh, what is the, uh, idea that you have come up with?
+
+00:06:09 - 00:06:24 Unknown Speaker:
+
+Uh, nothing visible, right, sir? Yeah, yeah, it's visible. So here, uh, like, uh, as you have proposed, like, mm-hmm, in the current command row, we have everything in series, right? Mm-hmm. So each and every check will be happening.
+
+00:06:24 - 00:06:38 Unknown Speaker:
+
+If one check is, uh, fulfilled, then you'll only go with one threshold. Exactly. One method. Yeah. So here, what we are doing is, in this particular my proposal, we are creating, along with the primary method, we are creating candidate method shortlist.
+
+00:06:39 - 00:06:45 Unknown Speaker:
+
+So depending upon the type of data, we'll also shortlist some kind of threshold checks for that particular method.
+
+00:06:46 - 00:07:15 Unknown Speaker:
+
+Based on— So let us say, uh, based on, let us say, we are talking about, uh. NC. So if the autocorrelation factor is, uh, for 7 days and 30 is less than 0. 3, along with fault vendors, we'll also implement ARIMA plus for that particular metric. So based on the score of the both, it will be shortlisting, uh, which method is actually giving better threshold, better value compared to that.
+
+00:07:15 - 00:07:27 Unknown Speaker:
+
+Similarly, for, uh, if you're going with the coefficient of variation of less than 0. 1, that means the— Hold on. Hold on a second. Uh, I just need to join one call. It is from platform team.
+
+00:07:27 - 00:07:28 Unknown Speaker:
+
+Just give me a second. Okay.
+
+00:07:32 - 00:07:33 Unknown Speaker:
+
+Hey, hi, Patha.
+
+00:07:35 - 00:07:39 Unknown Speaker:
+
+Hi, sachin. I connected with you regarding this, uh, problem, right? Yeah, yeah. Correct.
+
+00:07:41 - 00:07:44 Unknown Speaker:
+
+Let me share my screen. Yeah, yeah. I'll— I'll share my screen.
+
+00:07:46 - 00:07:49 Unknown Speaker:
+
+Let me know once you're able to. So this is the problem that we were getting.
+
+00:07:50 - 00:07:54 Unknown Speaker:
+
+Should I retry in front of you? If you ask me, I'll— I'll do it again.
+
+00:07:56 - 00:08:01 Unknown Speaker:
+
+Yeah, Prithvi. Yeah, just hold on a bit. Let me make it bigger screen. Yeah. This screen?
+
+00:08:01 - 00:08:11 Unknown Speaker:
+
+Yeah. Now let me log out from here and re-log in. No, no, not. Give me a second. Let me log out, right, so that, uh, we'll be getting a clarity on this, right, so.
+
+00:08:13 - 00:08:21 Unknown Speaker:
+
+Yes, control center. Yes, for keyway, right? Yes, for keyway. I did not test it for E1. I hope it would be working over there.
+
+00:08:21 - 00:08:27 Unknown Speaker:
+
+If you want, we can cross-check over there also. Yeah, yeah. Just cross-check once. That was the reason. Okay.
+
+00:08:28 - 00:08:34 Unknown Speaker:
+
+So here you can see, right, this is the problem, right? Yeah, yeah. Let me go to the demo. Yeah, just hold on. Hold on.
+
+00:08:34 - 00:08:47 Unknown Speaker:
+
+Hold on. Just do an A12. Now go to the network app. Yeah. Now refresh once it's important.
+
+00:08:50 - 00:08:52 Unknown Speaker:
+
+Yeah, right. Yeah, okay. You're all set.
+
+00:09:03 - 00:09:12 Unknown Speaker:
+
+Definition name 403. This is something breaking. Yes, yeah, I'm getting. Same thing I'm also getting. Some gateway problem.
+
+00:09:12 - 00:09:16 Unknown Speaker:
+
+All right. Let's go to this thing. Yeah, yeah, I understood. Okay. So, yeah.
+
+00:09:17 - 00:09:22 Unknown Speaker:
+
+Right? Open a new tab. Open a new tab. All right.
+
+00:09:45 - 00:09:47 Unknown Speaker:
+
+Let me try with a different ID altogether.
+
+00:10:10 - 00:10:19 Unknown Speaker:
+
+Okay. Here it is working. I think on E2, this definition names was breaking. Yeah, yeah. So go to the E2, take the screenshot, and paste it.
+
+00:10:19 - 00:10:23 Unknown Speaker:
+
+All right. Also, let me wait for— I will do that.
+
+00:10:24 - 00:10:26 Unknown Speaker:
+
+I stop sharing? I'll just share.
+
+00:10:31 - 00:10:39 Unknown Speaker:
+
+So who needs to fix it? Is it you or someone else needs to fix it? Oh, no, no, no. No, they— they work still. Some things failing, right?
+
+00:10:39 - 00:10:54 Unknown Speaker:
+
+Hmm. Yeah, then— then just take inside and then tag Jagan and Silva, right? Yeah, just— yeah, yeah. That was— that's all they have to do. So once I search— so this is— it is failing.
+
+00:10:56 - 00:10:57 Unknown Speaker:
+
+What is this coming in?
+
+00:11:08 - 00:11:14 Unknown Speaker:
+
+Okay. Uh, do you need any more information from me? Because I'm, uh, into a different call, so I need to drop off now.
+
+00:11:16 - 00:11:17 Unknown Speaker:
+
+Please drop off. Okay. Thanks.
+
+00:11:22 - 00:11:24 Unknown Speaker:
+
+Uh, am I audible, guys?
+
+00:11:26 - 00:11:28 Unknown Speaker:
+
+Yes, sir. Okay. Yeah, go ahead.
+
+00:11:30 - 00:11:51 Unknown Speaker:
+
+So here, what we are— what I'm proposing is, like, instead of, uh, testing every, uh, metric for every threshold, we are creating a shortlist, uh, uh, along with the primary method. Let us say we are talking about, uh, for, let us say, the coefficient of variation less than 0. 1. So the primary method will be EWM.
+
+00:11:51 - 00:12:08 Unknown Speaker:
+
+But also, we'll be creating a, a secondary candidate method, shortlist methods, which are, like, since the variation is less, the, uh, data is not skewed or anything. So we'll be implementing, uh, mean standard deviation also.
+
+00:12:08 - 00:12:36 Unknown Speaker:
+
+And if there are any— Basically, what you are— basically, what you are mentioning, once we receive the data, irrespective of type, you are asking to calculate all these, uh, ARIMA plus mean SD, mean SD, EMW, fault vendors for all of those records, right? Uh, not every— for all, not for every record, sachin. So depending upon the type of data, we'll be, uh, creating another shortlist. How would you— How would you, uh, you know, categorize those data?
+
+00:12:38 - 00:12:59 Unknown Speaker:
+
+Uh, so, uh, again, this comes down to this kind of check. So depending upon the type of data. No, right now, what is happening, they are calculating this one, right? These AFC, CV, SKU, so all the EP median, right? And based on that, uh, suppose, uh, they got the fault vendors as the very first one, right?
+
+00:12:59 - 00:13:16 Unknown Speaker:
+
+They are just going ahead with the fault vendors, right? So it's not that— Yeah. Yeah. So here, it's not that, uh, you know, they are not, uh, calculating this AFC, CV, or SKU, or distribution SAFE with the mean median, right? These all values are getting calculated, right?
+
+00:13:16 - 00:13:35 Unknown Speaker:
+
+But, uh, once the values have been populated, right, suppose 0. 3, right? So blindly, they are going for the fault vendors, ignoring the EWM or the mean SD. Yes, that's right, sachin. For this particular seasonality, we'll also check with ARIMA plus if there is seasonality existing in that particular, uh, metric or that record.
+
+00:13:35 - 00:13:40 Unknown Speaker:
+
+So that is— that seasonality, how would you identify? There is a seasonality.
+
+00:13:42 - 00:13:51 Unknown Speaker:
+
+Okay. We are talking about, uh, right, coming about, uh, these metrics. Yeah. Suppose you already calculated ACF, CV, SKU, and S, right? Yes.
+
+00:13:52 - 00:14:11 Unknown Speaker:
+
+Now, as we receive the ACF as 0. 3, it— it's directly just going to the fault vendors, right? It is ignoring the CV, correct, or the SKU, and S. Now, you are asking me, if I receive the ACF 0. 3, I should be going for the fault vendors as well as the ARIMA plus, but— ARIMA plus.
+
+00:14:11 - 00:14:28 Unknown Speaker:
+
+Right, but why? And based on what seasonality of the data? There should be some, uh, you know, uh, some parameter or some constant based on which I'll be, why not EWM, why ARIMA plus, why not mean SD, why fault vendors?
+
+00:14:30 - 00:14:50 Unknown Speaker:
+
+So that decision, you need to explain me, right, on basis of what I'm calculating fault vendors as well as the ARIMA plus? Yes, sachin. For if there is a seasonality existing, EWM will not be able to actually analyze the data. Seasonality, how would you identify that seasonality, Bhargav? Okay.
+
+00:14:51 - 00:15:02 Unknown Speaker:
+
+By using— so we will be identifying— it's already there, right? We will be identifying using the autocorrelation factor. We'll be plotting those plots, right, based on the data.
+
+00:15:04 - 00:15:13 Unknown Speaker:
+
+No, ma'am. If— if it is getting with that autocorrelation factor, right, it is blindly going through the fault vendors. It is not even going for the ARIMA plus. Okay.
+
+00:15:14 - 00:15:34 Unknown Speaker:
+
+So suppose, like, Bhargav, what our intention is, like, suppose there is a record— Not my question. Samir, Samir, Samir, you got my point, right, as you are more into this. Yeah, no, no. Like, what would be the— For the question, example, uh, if, Bhargav, if ACF for a record, we have taken two records, okay? And we have two records.
+
+00:15:34 - 00:15:49 Unknown Speaker:
+
+One is ACF 7 is greater than it, uh, equal to 0. 3. One is less than 0. 3. So now, like, uh, like, why should we calculate which, like, suppose whatever the record which is getting greater than or equal to 0.
+
+00:15:49 - 00:15:54 Unknown Speaker:
+
+3, why should we calculate ARIMA plus also along with fault vendors?
+
+00:15:55 - 00:16:10 Unknown Speaker:
+
+And how, like, so ACF 7 means, like, when we find a seasonality in the data, then only we are picking. Yeah. And here, in this case, and ARIMA plus is, like, where we have a high SKU, and we are picking. So why we need to club together?
+
+00:16:13 - 00:16:32 Unknown Speaker:
+
+So that is something, uh, have a discussion with Samir, uh, Bhargav. Okay. Because look, if your ACF 7 is coming, right, or as 0. 8, it's already a seasonality of data. You may propose me, instead of fault vendors, or apart from fault vendors, can I go ahead with another algorithm?
+
+00:16:33 - 00:16:51 Unknown Speaker:
+
+Okay. Right? Because ARIMA plus, as Samir stated, right, is that would be calculating your mean median, right, a trailer type of data train. Now, data train is being given by this ACF, CV, SKU, and SO of the distribution SAFE of mean median, okay? And based on that, they have chosen an algorithm, right?
+
+00:16:51 - 00:16:56 Unknown Speaker:
+
+But if you want to replace fault vendors, you need to think what else if not fault vendors.
+
+00:16:57 - 00:17:05 Unknown Speaker:
+
+Okay? So just have this discussion with Samir, and then do let me know in case you have any query. Okay. Okay.
+
+00:17:07 - 00:17:15 Unknown Speaker:
+
+Yeah. And Samir, go ahead next. Even I'll rise there. I'll wrap up quickly. Anand is sick out again today, Samir.
+
+00:17:16 - 00:17:16 Unknown Speaker:
+
+Okay.
+
+00:17:22 - 00:17:29 Unknown Speaker:
+
+Uh, sachin, please confirm, like, you're able to see my screen? Yes, it's visible. Let's go on. Sachin, if you see— Yeah.
+
+00:17:32 - 00:17:36 Unknown Speaker:
+
+Yeah, sure. So I have passed these DQIDs. Sorry.
+
+00:17:38 - 00:18:02 Unknown Speaker:
+
+And I have given the execution date, sachin. So, like, uh, 3rd means, like, March, right? So, so I have taken output also, like, for April, May. So if you see, this is the execution date, and it is, like, execution date. If you pass execution date as, like, 4 of 1, so from there, it will take history of last six months, like, October, not October.
+
+00:18:03 - 00:18:08 Unknown Speaker:
+
+Sorry, October. Yeah. We are calculating for last one year, right? Not six months.
+
+00:18:11 - 00:18:15 Unknown Speaker:
+
+We are supposed to calculate for one year, right? That is what the decision was being made.
+
+00:18:20 - 00:18:27 Unknown Speaker:
+
+Okay. Samir, and test stand, we need to aggregate the data for last one year for last five months.
+
+00:18:29 - 00:18:50 Unknown Speaker:
+
+When you would be running it in the month of Jan, right? We need to aggregate the data for last one year. That is starting 1st of Jan 2025 to 31st of December 2025. When you would be running it for the— So— Hello? Yeah, I think I need to increase the range then.
+
+00:18:50 - 00:18:52 Unknown Speaker:
+
+Yeah. The functionality is the same.
+
+00:18:54 - 00:19:03 Unknown Speaker:
+
+Yeah. And if you see here, sachin, if you take over six months— But this is a rework, right? And this is where I'm telling you all of you, right?
+
+00:19:05 - 00:19:14 Unknown Speaker:
+
+Why there is a gap in understanding the requirement, again, you have to do a rework, right? And again, that is going to consume your time.
+
+00:19:17 - 00:19:27 Unknown Speaker:
+
+Even Bhargav, I hope you are also pretty clear, right, what exactly we were doing. Yes, yes, sachin. Then why there is an aggregation for six months of data then?
+
+00:19:28 - 00:19:29 Unknown Speaker:
+
+How?
+
+00:19:32 - 00:19:43 Unknown Speaker:
+
+We have already displayed, right, for the last five months, we have to, like, one year data, we need to go back, right? Exactly. Exactly. Then why there is a discrepancy in the result then?
+
+00:19:46 - 00:20:02 Unknown Speaker:
+
+You need to understand, Samir, when I'm aggregating the data for the month of March, it would be aggregating the data for me from last year April to this year February. It's a 12-month.
+
+00:20:04 - 00:20:23 Unknown Speaker:
+
+Okay. So what happened is, like, initially, like, given one year only, sachin, but in the call, mentioned for six months, right? Like, I thought— And you are getting confused. You are getting confused, Samir. Six months means you have to aggregate the data for Jan, February, March, April, May of this year, and the June.
+
+00:20:24 - 00:20:32 Unknown Speaker:
+
+But when you are running a monthly job for the month of March, it needs to aggregate the data for last one year.
+
+00:20:34 - 00:20:38 Unknown Speaker:
+
+When you would be running it for the month of April, it would be aggregating the data for last one year.
+
+00:20:41 - 00:20:58 Unknown Speaker:
+
+Okay. Then just give me, like, after lunch, like— I can give you half an hour or even two hours, right? But the problem lies over here is that why we have this understanding gap and why we are going for a rework.
+
+00:21:01 - 00:21:02 Unknown Speaker:
+
+Yeah.
+
+00:21:05 - 00:21:10 Unknown Speaker:
+
+This, again, suppose Anand is available today, right? Again, we would have missed this demo.
+
+00:21:12 - 00:21:19 Unknown Speaker:
+
+He is sick out, right? But if he is available, again, you would be, you know, done with a day which would be wasted.
+
+00:21:23 - 00:21:33 Unknown Speaker:
+
+Guys, please be focused, right? We really don't have— we really don't have time, you know, to just go ahead and, you know, keep wasting the days on these bases.
+
+00:21:37 - 00:21:41 Unknown Speaker:
+
+This was, I think, we discussed it very thoroughly, Samir.
+
+00:21:45 - 00:21:51 Unknown Speaker:
+
+Okay. Just let me know once the process runs done. Thanks, Bhargav. Thanks, Samir. You guys can feel free to drop off.
+
+00:21:52 - 00:22:10 Unknown Speaker:
+
+Yeah, yeah. But, like, see the values, sachin. So for this one, this is May, and this is April, right? Like, if you see the values, the lower value is 956 here, and here it is 952. And here it is 1008 for the upper value, and here it is 1000.
+
+00:22:10 - 00:22:18 Unknown Speaker:
+
+Likewise for the SAFE, for the other, sachin. Yeah, that is fine, Samir. But I feel like you are not understanding what I'm trying to convey.
+
+00:22:20 - 00:22:23 Unknown Speaker:
+
+These are delaying our, you know, deliverables, right?
+
+00:22:26 - 00:22:32 Unknown Speaker:
+
+And then you would keep on working on this use case. You are not going to pick up the new use case if the trend goes like this.
+
+00:22:35 - 00:22:51 Unknown Speaker:
+
+And that is the reason if you feel Anand has given a quick, you know, screenshot of that also, right, so that you would be aware. Now, suppose you just demo this to Anand, right? He would feel, and he would share that feedback to Punna then.
+
+00:23:03 - 00:23:11 Unknown Speaker:
+
+Ma'am, forget about his screenshot. At the very first place, right, why the requirements are not getting cleared, Samir?
+
+00:23:14 - 00:23:18 Unknown Speaker:
+
+And if you have any query, right, you should reach out to me.
+
+00:23:46 - 00:23:53 Unknown Speaker:
+
+I mean, these are, you know, a repeated thing that is being, you know, I am observing it from quite a few times now.
+
+00:24:00 - 00:24:11 Unknown Speaker:
+
+Here is the screenshot. Let me share my screen if you're not able to find the screenshot. Look, he has given this screenshot also, right? So when he is mentioning about the Jan, open that screenshot for me.
+
+00:24:15 - 00:24:21 Unknown Speaker:
+
+Right? When he is asking for Jan 2025, right, that should aggregate the one-year data for monthly job.
+
+00:24:26 - 00:24:38 Unknown Speaker:
+
+And when it is February, right, it would be aggregating for one-year data, March, one-year data, April, one-year data, May, one-year data. So when we are talking about one-year data, it would be current month minus 12 months.
+
+00:24:49 - 00:24:57 Unknown Speaker:
+
+And just see, it has been said eight days ago, right? And we took eight days, and the implementation is still not being done.
+
+00:25:01 - 00:25:10 Unknown Speaker:
+
+It was a very minor change, Samir. No leave you have taken in this period, right?
+
+00:25:12 - 00:25:20 Unknown Speaker:
+
+So you need to, you know, basically justify the execution speed that you are running with this one, Samir.
+
+00:25:25 - 00:25:31 Unknown Speaker:
+
+Okay. Samir and Bhargav, guys, you can feel free to drop off. Please go ahead and share your screen.
+
+00:25:43 - 00:25:44 Unknown Speaker:
+
+Able to hear me, Prithvi?
+
+00:25:49 - 00:25:51 Unknown Speaker:
+
+Yeah, yeah. I think he's in mute, I think so.
+
+00:25:58 - 00:26:10 Unknown Speaker:
+
+Prithvi, able to hear us? And ma'am, if you, Prithvi, if you are able to hear me, right, and if you are facing challenges over the network, makes you sure you are in office for all the five days.
+
+00:26:12 - 00:26:19 Unknown Speaker:
+
+We can't prevail if you have a network issue. You need to be in office for all the five days.
+
+00:26:25 - 00:26:31 Unknown Speaker:
+
+Sure, sachin. No, sachin, I was unable to admit that. Yeah, please do me, sachin. Yeah, I'm sharing this. Go ahead and share your screen.
+
+00:26:32 - 00:26:35 Unknown Speaker:
+
+Yeah. The next one is going to take time.
+
+00:26:40 - 00:26:44 Unknown Speaker:
+
+Anybody facing network issue, they need to be at their office.
+
+00:26:46 - 00:27:01 Unknown Speaker:
+
+You know, these meetings and all, right? Then again, I'll be busy post half an hour, right? So I won't be able to connect with you, right? This is the second connect that we are having for in that case.
+
+00:27:07 - 00:27:09 Unknown Speaker:
+
+You're sharing your screen, Prithvi?
+
+00:27:10 - 00:27:12 Unknown Speaker:
+
+Yeah, yeah. I'm sharing. Give me a second.
+
+00:27:39 - 00:27:39 Unknown Speaker:
+
+Yeah.
+
+00:27:42 - 00:27:42 Unknown Speaker:
+
+Open that file.
+
+00:27:44 - 00:27:58 Unknown Speaker:
+
+Yeah. So I hope you have excluded those, yeah, complex ones. Okay. And there would be two to three where the check type has been updated. Yeah, yeah.
+
+00:28:00 - 00:28:14 Unknown Speaker:
+
+No, ma'am. In this way, I don't see you are just updating the filter criteria. What about that description? No, no. Wherever the description needs an update, I updated it.
+
+00:28:15 - 00:28:20 Unknown Speaker:
+
+Where is— Wherever the— No, no, no. Where is that description updated? Yeah.
+
+00:28:22 - 00:28:24 Unknown Speaker:
+
+So I can show. Give me a second.
+
+00:28:25 - 00:28:30 Unknown Speaker:
+
+And that could be in a single SQL query, right? Why do I need a multiple query for that?
+
+00:28:33 - 00:28:44 Unknown Speaker:
+
+When you are updating the check query, yeah, right? No, no. Wherever— Then look, ma'am. Whatever roles you are modifying, you have to modify the description also, right?
+
+00:28:46 - 00:28:57 Unknown Speaker:
+
+Can you show me this 5366101 description? What is the description for this DQID in the production environment? The first one, 5366101? Yeah.
+
+00:28:59 - 00:29:08 Unknown Speaker:
+
+Now, copy the DQID, 5366101, and can you show me the description for this? What is there in the production environment? Run a SQL query quickly.
+
+00:29:10 - 00:29:10 Unknown Speaker:
+
+Yeah.
+
+00:29:19 - 00:29:34 Unknown Speaker:
+
+Just write down big query in the tab. It would open it. You really don't need to, you know— And just a piece of advice, ma'am. You take it up, but don't use your Gmail ID, ma'am, on the client laptop.
+
+00:29:37 - 00:29:44 Unknown Speaker:
+
+Yeah, sure, sachin. I'll leave it to you, right? But I would suggest avoid using your personal email ID in the client laptop.
+
+00:29:47 - 00:29:47 Unknown Speaker:
+
+Okay.
+
+00:29:50 - 00:29:54 Unknown Speaker:
+
+These all are being— You know, the logs have been generated, right? So everything is getting captured.
+
+00:29:56 - 00:30:00 Unknown Speaker:
+
+Use this personal email ID to your personal laptop. Don't use it over there.
+
+00:30:05 - 00:30:14 Unknown Speaker:
+
+I even highly recommend not to use your personal email ID even to the organization for which you are working, even for the CineCon-provided laptop.
+
+00:30:16 - 00:30:31 Unknown Speaker:
+
+Yeah, but nothing works, sachin. None of those Gmail IDs work. Even though dispatcher, and I tried— No, even. Look, so— No, that's what I'm telling. Why you are generating all necessary logs over there, right?
+
+00:30:31 - 00:30:45 Unknown Speaker:
+
+They are capturing your personal information. Suppose you feel you might be in a— You might be doing your bank transactions through that laptop, right? It might not be restricted, right? But why do you do those stuff? That's my thought process.
+
+00:30:46 - 00:30:57 Unknown Speaker:
+
+Means, I'll leave it like how you want to— No, no, no. That is correct point, actually. Because one of my team members got this kind of thing, actually. They noted, actually, the Gmail ID. Yeah, yeah, yeah.
+
+00:30:57 - 00:31:08 Unknown Speaker:
+
+Right. Yeah, exactly. Be cautious, Prithvi, on this one. Because my same team member only got this mail, actually. So that will be circulated to my internal manager, so.
+
+00:31:08 - 00:31:12 Unknown Speaker:
+
+Yeah, look, this needs to be updated, Prithvi, right? This description.
+
+00:31:14 - 00:31:32 Unknown Speaker:
+
+Okay. You need to update, ma'am. Again, Prithvi, this is the reason, right, I'm getting disappointed with you on the calls, right? You know what needs to be done, and we are still just consuming time, right, without finalizing these stuff. This description, what is the missing value check, right?
+
+00:31:33 - 00:31:36 Unknown Speaker:
+
+We have already finalized this description, right, for this one.
+
+00:31:38 - 00:31:49 Unknown Speaker:
+
+What is the template shared by Nakshi Rachana, right? This description needs to be updated based on that, right? Now, it's from Friday till now, again, we are on Tuesday, and we are still struggling to update the data.
+
+00:31:54 - 00:32:07 Unknown Speaker:
+
+At least what— Can I update it on all of things? Iepa, Iepa, can you share your screen? No, at least for the duplicate value which Iepa was sharing to me yesterday. Can you share your screen, Iepa? Yeah.
+
+00:32:16 - 00:32:30 Unknown Speaker:
+
+Look, at least this one, right? The duplicate, the variable ref ID should be null, right? The variable policy number should be null, right? This is what we have decided when we were in to call with Rachana.
+
+00:32:32 - 00:32:38 Unknown Speaker:
+
+And why this description and filter criteria is something you need, right? We really don't need that filter criteria.
+
+00:32:40 - 00:32:47 Unknown Speaker:
+
+And again, you would consume today's time, and again, it would not be done, right? Then what exactly are you working on, ma'am?
+
+00:32:48 - 00:33:06 Unknown Speaker:
+
+Iepa, is this SQL you created, or he shared it? No, you have only shared— You only have shared there was some modification which I have asked him to do. But I have all these things, but maybe the latest one what I have updated might be missing.
+
+00:33:08 - 00:33:24 Unknown Speaker:
+
+Then how can I— How can I update the data then, Prithvi? Right? Apart from those 37 complex records for all these four types, I'll again give you next two to three hours. Apart from those, let me share my screen.
+
+00:33:28 - 00:33:54 Unknown Speaker:
+
+And this needs to be closed by 4:00 to 5:00 PM today. There should not be any further delay. The one that we have decided over here, right, I already copied you both of you over here, right? So wherever the status is okay, right, for this one, right, I have given this one new description to me. So for this one, the variable tree should not be null, right?
+
+00:33:55 - 00:34:09 Unknown Speaker:
+
+So that is something you have to update it over here. The description would be updated for all these ones. Apart from the one, those have been marked as complex, right? Leave the complex one. No need to update complex one.
+
+00:34:09 - 00:34:18 Unknown Speaker:
+
+So the complex size remains as 37 count. No need to update complex DQID. But those which are— Yeah, yeah. I will not consider them. Right?
+
+00:34:19 - 00:34:46 Unknown Speaker:
+
+So those which are already okay, right, even you need to check here, the duplicate check might have been reduced or some check might have been updated. One or two, we have updated to match with that, like this valid value, right? Some of them we have updated. So please make sure this remains— This is 260 DQID needs to be updated with the new description that we have decided with Rachana that day.
+
+00:34:46 - 00:34:51 Unknown Speaker:
+
+And if you want, you can update the filter criteria based on your requirement.
+
+00:34:53 - 00:35:12 Unknown Speaker:
+
+Now, this is the last time I'm asking, Prithvi, to you, give me this list by UD, not UD, by 4:00 or 5:00 PM. The description for all these DQID needs to be updated along with the filter criteria. Now, do let me know if there is any understanding gap or if you're not understanding English.
+
+00:35:16 - 00:35:24 Unknown Speaker:
+
+No, no. I left this one. I'm not sure why it is missing. And I shared the old one with Iepa. The one what he was sharing is mine only.
+
+00:35:24 - 00:35:29 Unknown Speaker:
+
+Okay. I'll check that, and I'll get back to you, sachin. Okay. So Iepa— I have it, sachin. Yeah.
+
+00:35:30 - 00:35:42 Unknown Speaker:
+
+Please close this out. And before executing it, just have a review with me, and then we will do a Q&A survey, okay? Yeah. Iepa, Prithvi, one question. Yeah, go ahead.
+
+00:35:43 - 00:35:48 Unknown Speaker:
+
+Suppose, sachin, if I go for this ID, right, this DQID, so.
+
+00:36:09 - 00:36:16 Unknown Speaker:
+
+అన్నా, అన్నా, అతను చూస్తుంది ఫిల్టర్ క్రైటీరియా. ఇది SQL ఫైల్ అప్డేట్ అయ్యే ఉందన్న.
+
+00:36:21 - 00:36:23 Unknown Speaker:
+
+అది ఫిల్టర్ క్రైటీరియా, SQL కాదు.
+
+00:36:34 - 00:36:37 Unknown Speaker:
+
+ఇది SQL, ఆల్ DQIDస్ అప్డేట్ అయిన దాంట్లో అయింది.
+
+00:36:38 - 00:36:40 Unknown Speaker:
+
+టూ ఫైల్స్ కదన్న, మనం పంపిస్తుంది.
+
+00:36:43 - 00:36:57 Unknown Speaker:
+
+ఆ ఐఎఫ్ కి టూ ఫైల్స్ అన్న. ఫిల్టర్ క్రైటీరియా ఒకటి పంపించాము, DQIDస్ అన్ని అప్డేట్ అయినవి ఒకటి పంపించాము. ఇప్పుడు సచిన్ చూసిన ఫిల్టర్ క్రైటీరియా.
+
+00:37:06 - 00:37:12 Unknown Speaker:
+
+ఆ అంటే ఇప్పుడు ఫిల్టర్ క్రైటీరియా కూడా అదే కాలం అప్డేట్ చేయమంటాడు.
+
+00:37:16 - 00:37:16 Unknown Speaker:
+
+ఓకే.
+
+00:37:27 - 00:37:27 Unknown Speaker:
+
+ఆ ఓకే.
+
+00:37:35 - 00:37:40 Unknown Speaker:
+
+అన్న, ఫిల్టర్ క్రైటీరియా ఓపెన్ చేసి పెట్టాను. తను అదే చూశాడు. నేను SQL చేశాను టైం లో, అది అది సర్చ్ చేయమని చెప్పాడు.
+
+00:38:15 - 00:38:19 Unknown Speaker:
+
+అది ఫిల్టర్ క్రైటీరియా అర్థమైతే చూసేయ్, అన్న. ఇది ఆల్రెడీ నేను ఇది రెండు చేసినవి కూడా ఉన్నాయి నా దగ్గర.
+

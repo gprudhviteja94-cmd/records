@@ -1,0 +1,221 @@
+2026-02-10 Template Selection and Automation Strategy for DQ SQL Generation sachin call
+
+Creation Time: 2026/02/10 17:00
+
+
+📅About Meeting
+
+• Date & Time: 2026-02-10 17:00 (Duration: 2095 seconds)  
+• Location: Virtual meeting / Call  
+• Attendee: Sachin, Kundan, Prithvi, Ansi, Rachna, Kundalini (business partner), Samir, other DSU members (some attendees unnamed)
+
+📒Meeting Outline
+
+Template selection & automation approach for DQ SQL generation
+
+• Common templates and patterns
+  The team reviewed existing DQ SQLs for RAC-related tables (RACI user reservation, user venue, RACI user) and identified recurring query patterns. Duplicate-check queries follow a consistent template (Template A). Other checks (null/valid value/field-key checks) follow other reusable patterns. There is agreement that many existing SQLs can be categorized into a finite set of templates (example: 20 templates) and new DQ rules should map to one of those templates with parameter substitution (table name, columns, conditions).
+
+• How to pick the right template
+  The group discussed that selecting the correct template for a new DQ rule requires an input parameter indicating the check type (e.g., duplicate, null, valid-value). Duplicate-check -> Template A is straightforward. For Template B/C/D (null/valid value/other), team members requested clarity on exact criteria (which input flags or metadata indicate which template to use). There is no final, agreed automated decision rule yet — business input is required to map rule types to templates.
+
+• Edge cases and per-table differences
+  Even when templates are shared across tables, small variations exist (e.g., feed_key filter present in reservation table queries but absent in venue table). These differences mean templates must support optional parts or provide table-specific parameters. The team recognized potential conflicts where multiple templates might apply to the same table; thus, deterministic selection criteria are needed.
+
+• Automation vs manual integration
+  Two approaches discussed:
+  1. Full automation: The automation picks up DQ rule input, generates SQL using templates and merges/updates existing SQL in repository automatically. This requires reliable identification of template for each incoming rule (which currently lacks a robust, consistent input).
+  2. Hybrid (alternate) approach: Automation ingests rule input, generates a new standalone SQL file and stores it in a staging area. A developer then manually inspects and integrates the generated SQL into existing sequences/files and commits to Git (manual merge/integration step). This reduces automation complexity (automation produces SQL but does not alter existing SQLs), at cost of some manual work.
+  Team leaned toward the hybrid approach if template selection inputs are not provided by business.
+
+• Tooling concerns (VS Code plugin / LLM)
+  Usage of a VS Code plugin or developer-local LLM/Copilot was debated. Concerns:
+  • Management overhead of installing and updating plugins on multiple developer machines.
+  • If plugin or LLM logic changes, updates must be propagated to all developers.
+  • Uncertainty if plugin/LLM will run in the target environment.
+  Agreement: If plugin/LLM can be run centrally in environment, it could be acceptable; otherwise avoid reliance on per-developer local installations. The hybrid automation is appealing because it minimizes local setup needs.
+
+• Need for business input
+  Repeated point: To fully automate template selection, product/business partners must provide metadata or selection guidance when onboarding new DQ rules (e.g., rule type = duplicate/null/valid-value or explicit template ID). Without such input, automation cannot deterministically select templates.
+
+SQL quality, reuse and optimization
+
+• Common utility framework and SQL improvements
+  The existing data-quality execution and monitoring framework was acknowledged as substantial work and operational in production. Team has earlier refactoring efforts: moving common expressions/libraries to top of scripts and referencing them to reduce duplication. Some scripts have adopted these improvements; some still need refactoring. Samir (SQL expert) provided optimizations and expressions that have been adopted in part; further optimization may be possible but limited by business constraints.
+
+• Handling Many Patterns
+  Concern that thousands of patterns/rules exist and without identification input automation will struggle. The suggestion is to either require pattern selection input at rule creation time or adopt the hybrid workflow to reduce automation scope.
+
+Specific alert / rule validation discussion (insurance policy counts)
+
+• Observed alert anomaly
+  Ansi presented an alert for insurance-related DQ rule comparing unique policy counts "today" vs "yesterday". The rule expects today's unique count >= yesterday's unique count, but team noted this assumption can be invalid because daily ingestion volumes vary and unique counts can decrease day-over-day (e.g., if fewer records are ingested). The rule may therefore be overly strict or incorrectly configured for daily comparison.
+
+• Clarifications and follow-up
+  Rachna had earlier noted some failures were expected due to latest ingestions for one of the rules. The team agreed to check expected business logic with Rachna and the data owners to confirm whether the comparison semantics (daily vs aggregated/rolling window) are correct and whether the rule should be adjusted (e.g., compare weekly or use different threshold logic).
+
+📋Overview
+
+• The existing DQ SQLs exhibit repeatable templates/patterns (duplicate check, null check, valid-value check, feed_key differences).
+• Duplicate check mapping to Template A is clear; mapping rules for other templates remain unclear and require input.
+• Two implementation options: full automation (requires deterministic template-selection input) vs hybrid (automation generates SQL; developer manually integrates).
+• VS Code plugin / LLM usage has operational concerns (installation, updates, environment compatibility); centralized runtime would alleviate issues.
+• Refactoring/optimization of SQLs (common utilities moved to top) has been partially applied; more scripts need alignment.
+• Insurance policy count rule appears to be wrongly assuming monotonic non-decrease of daily unique counts; business clarification needed.
+
+🎯Todo List
+
+• Sachin:
+  • [ ] Confirm feasibility of running VS Code plugin / LLM centrally in environment and discuss with Raj (ASAP / before DSU call)
+  • [ ] Take alternate hybrid approach forward if central execution is not feasible (start design/spec) (by next week)
+
+• Kundan:
+  • [ ] Finalize list of template patterns from existing SQLs (target ~20 templates) and document template parameters and optional parts (including feed_key differences) (draft within 3 business days)
+  • [ ] Share template list & mapping doc with team and business for review (after draft)
+
+• Prithvi:
+  • [ ] Validate common query patterns already identified and supply examples from repository (provide 5–10 representative SQLs mapped to templates) (2 business days)
+
+• Ansi:
+  • [ ] Investigate the failing insurance DQ alerts and confirm whether failures are expected due to ingestion timing; coordinate with Rachna and data owners (today / immediate)
+  • [ ] Provide corrected expectation/logic for the daily unique-count comparison (if required) (after investigation)
+
+• Rachna:
+  • [ ] Confirm business expectation for the insurance policy-count rule (daily vs aggregated comparison, acceptable thresholds) and inform the team (today / by next DSU)
+  • [ ] Clarify which rules should be labeled as duplicate/null/valid-value (or provide template selection metadata) for new DQ onboarding (ongoing)
+
+• Business partners (Kundalini / product owners):
+  • [ ] Provide input on template selection criteria when new DQ rule is created (e.g., rule-type metadata or explicit template ID). If possible, endorse a mapping of rule types to templates or approve the hybrid approach (discuss during DSU call / ASAP)
+
+• Dev leads / Tags:
+  • [ ] Agree on manual integration workflow for generated SQLs: where automation will drop generated SQLs, developer responsibilities for merging, and commit process to GitHub/CI pipeline (define process doc within 1 week)
+
+• Team (collective):
+  • [ ] Prepare the Excel (or template mapping doc) to present to business during DSU call (before DSU today/evening)
+  • [ ] Continue profiling scripts to identify remaining places that need refactoring to use shared common expressions (ongoing)
+
+Notes:
+• If business provides explicit template-selection metadata at rule creation time, full automation can be revisited. Otherwise, proceed with hybrid automation to reduce manual effort while keeping integration manageable.
+
+Transcription
+
+00:00:27 - 00:03:25 Unknown Speaker:
+
+Hey, Give it to me. Same DQVD appearing twice Union distinct 7th per rule Union all same rule spilt across queries, Union distinct profiling, Union distinct, DQVD adaptation Union all. Profiling means just observation data monitoring. In that case, you have to use union distinct. In any situation, you have to use inner join same missing check, no inner join. Hello? Can you hear me? Hello? Yes, we can hear you. Sorry guys, I was into another call. Yeah. Okay, so can I get some input if we have what we did, what we analyzed? Can I share my screen? Yeah, go ahead. Tables of the RACI user reservation, user venue and RACI user. So, out of this, these things, I mean the select statement which we are inserting into the results table, these all remains common as we discussed on that day.
+
+00:03:25 - 00:04:32 Unknown Speaker:
+
+So, which is like not having that common. These are template, right? I'll consider this. As for the user version, these are four template. Uh for. Uh, resume is new, these are four or five or six, whatever the template is right. Is there a common functionality between the user and ResUser venue? Uh, yes, so this particular? Um, is it matching to this one, right? Okay now. Okay, so whatever this is, right? So now tell me under which circumstances we are using one of the template for that one. Yeah, so I checked in DQ repository only for the RAC tables we are having this duplicate check and that is on two variables. When two variables are there, we are using this piece of code. We are taking it as a primary key. We are checking it is not duplicate.
+
+00:04:32 - 00:05:43 Unknown Speaker:
+
+Same goes here, also in the Racy user. Also, we have the same format for this DKYd, so rest of the DKYds are like. Whichever is the null value check or the valid value check, that all are common across these three scripts. That is what I have checks and see, right? So what you mean to say whenever there is a check type is different, based on that, the query is getting suffered. If it is a duplicate check, then we are going with template one, if it is a null check, we are going with template two. If it is something X, then we are going with Template C. Is that the case? So duplicate check I could see that we are using this template first one, yeah, other check type. Now your column a is your template one, right?
+
+00:05:43 - 00:06:42 Unknown Speaker:
+
+So whenever I am going to get the input from the user for a duplicate check, I'll go ahead and pick up your template one that is template A.Right now, I would like to know under which certain criteria I need to check. Uh, go for Template B, or Template C, or Template D. A is clear there is a duplicate check, right? You would be using this template one. Okay, yes, what about B, C and D? Uh, so B, C and D I have, uh, it is not such the template. It is the common, uh, things which, uh, which is the common query pattern, which is there that one I have, uh, listed here. Common query pattern, you have figured it out that I understand, right? But what I, suppose just take an example for this template D, right?
+
+00:06:44 - 00:07:52 Unknown Speaker:
+
+Null as current matrix or the D matrix, right? Now, we need to get an input on this one. So, do you have any input? Did you find any observation on this? Under which scenario we have to use these templates? So what I understood and what I initially planned is having a template for each use case. I mean not for each table but different templates. We can list down all the different templates that we are having from the existing SQLs. So maybe we can derive 20 templates for example. So all of those SQLs. Existing SQLs would fall in one of the template. Okay. So, if I create a template, so when I request, when a new requirement comes in, that requirement should be any one of the 20 templates that we are going to define.
+
+00:07:53 - 00:08:48 Unknown Speaker:
+
+So, we will use the template and it is substitution of the data. I mean, if the table name and then the condition name, condition, query, and we will simply put that information. And then generate that query a scale file. That is, we already derived the Prithvi long back. Now you have 20 template, just consider you have 20 template, you have defined those 20 template now out of those 20 template, which one to select? Suppose you, you receive one, one new request, one new DQ ID right out of those 30 template. Either you are going to pick the template 8 or template 15 or the template 1. How you are going to identify that? For that what I thought the table name is there right for which the rule is being created.
+
+00:08:49 - 00:09:52 Unknown Speaker:
+
+That table name there must be some SQL for it. So always try to see if we can use the existing SQL itself right. And for example, for that table, there would be is there any possibility of two templates getting matched for same table name? Yes, that is what common functionality is, even viewing it to you, right? If you see the column A right, these are for two different table or three different table, the column A template is same for three tables. Is mentioning now when this template A is common for Table A, Table B, Table C right, and again, the template B is common for Table A, Table B, Table C. Now how I am going to? For an example, C has given a justification for duplicate check. We can select Template A for, you know, any table.
+
+00:09:52 - 00:10:55 Unknown Speaker:
+
+My question was now how I am going to select between b. What would be the input parameter? Okay. This is something we already concluded this one guys. Like this template Kundan has already derived it on 30th. The one that I was mentioning. Okay. Let's do one thing. You guys can continue. But at the same time, let me take it forward with the product partners today in the DSU call. If they have an input, if they can come back with some input, then well and good. Otherwise, I will work on the alternate solution that I was thinking about it. Because if I won't be able to identify under what certain criteria, whenever, you know, whenever I am getting that request from the user.
+
+00:10:56 - 00:12:09 Unknown Speaker:
+
+There should be some parameter based on which I need to select the sequel query Or write down a sequel query whatever it is Such in one thing this column B Also, This one can fit in when it is Not Value or Valid Value check. Because this pattern is also same between tables, sometimes it is different. This we are checking this field key also, so in first the reservation table, we are checking that in the wear condition, but whereas in the venue table, that particular check is not there. If you see here, only that filter is applied. And if we go to this table also, we have that condition for the feed key. And then the figure condition will come. Okay. Okay, now these are the input NC we are looking for, right?
+
+00:12:09 - 00:13:12 Unknown Speaker:
+
+So then based on that, we will check with them. Let's not, you know, spend lots of time. If you are able to figure it out, let's do it. Otherwise, We'll talk to them, what is their... piece of code it is. Otherwise, the alternate solution for this one is that we are not going to build automation. Where we are going to refine this sequence, it just that the automation would be creating a new sequence. And then what would happen? The Dev need to figure it out, and they need to merge that sequel to the existing sequence. Once you, once you, once you receive the uh, uh, the DQ, right, then you need your ID. So the tag would be ingesting the data to the new table, and then it would be creating a new SQL file out of it.
+
+00:13:12 - 00:14:21 Unknown Speaker:
+
+Okay, and then the SQL file, you need the tag need to analyze that SQL file. And then he or she need to existing sequence, right? It would be manual, yeah, just it would create a sequel out of it, but it is not going to manipulate any existing sequel on that app. Then such an, it involves manual intervention, right? In that case, yeah, that would be a manual, but only integration part is manual, not the complete stuff generated to that automation. Only a fresh SQL we generated, but the SQL that is being generated, the developer needs to identify for that table. If there is SQLS already existing, then we need to accommodate that generated SQL with the existing SQL, which is there in the system. And then commit the code to GitHub from there. CSAD Pipeline.
+
+00:14:21 - 00:15:36 Unknown Speaker:
+
+Yeah, because if there are thousands of pattern, and if there is a thousands of pattern, right? And if we don't have a input to identify the pattern, then how would you automate it, man? There should be some piece of input required to identify the pattern, right? I need some kind of right like she was mentioning duplicate check then go for this template. If it is a null value check then go for this template right. So those piece of information even the bot is required right. Otherwise how it would create those or you know modify the existing SQL that is not possible right. But see. Understanding the complexity, number of SQLS that are present and the requirement, I would suggest again the VS code plugin itself. But I mean, don't think that I am going back to the same thing.
+
+00:15:36 - 00:16:21 Unknown Speaker:
+
+Okay, because, uh, if it is a razy, if you look I, I, I don't want to, you know, get into that discussion again and again. The reason? I have clearly specified it to you if you are able to run that over the environment. We really don't have an issue to use that VS Code plugin. I can go ahead and talk to Raj on that. But if we are not able to run it over the environment, then we are not supposed to use that one. But here also, it's not completely getting automated now, Sachin. See, my only worry, leave about something that I am forcing, okay. My only worry is lot of effort required in automating this process, especially if you are going with Python scripts kind of thing.
+
+00:16:33 - 00:17:34 Unknown Speaker:
+
+The automation job which is running for which you are getting the alerts on a daily basis right? We did that job right? It is running on the production. No, no, that is SQLS being executed, and then the output monitoring. Haven't you seen the framework, the common utility framework that is running for the data quality check? Yeah, that's right, that's monitoring, right? That framework is. Do you think that framework was easy to implement? We have spent quite a good amount of time on designing that framework. Also. No, no, that is good, I'm not. That is, it is doing the quality check on the data. Okay, so you need to write a script and execute that and check the thing that is fine. But whereas here, we are trying to generate something out of the uh, input.
+
+00:17:34 - 00:18:32 Unknown Speaker:
+
+Okay, so SDL I, I told you, right? If you are able to run it over the environment, go ahead. And then I can talk to Raj on that. But. I don't want to set up those, you know, individual VS code plugins on every individual system, every individual person system, right? Yeah, yeah. Once the team gets dissolved, right, who would be doing that? So here, at least, what would be happening, the automation would at least pick up the data, right, store it into the database, right, get a SQL out of it. Now, The only part remaining for the Dev is that it is going to, you know, update the existing sequel with the new created sequel one, that's it, nothing else. And even when we build the system, once we start getting some input, we may define this system also, right?
+
+00:18:32 - 00:19:29 Unknown Speaker:
+
+We may be able to identify the template. And then we can, you know, at least we can start and then start exploring the idea where we can improvise the system. But at least 90 percent of work is going to run on the environment. Only 10 manual integration is there, but the process that you are asking, that is completely a manual one. Suppose there are introduction of new, uh, BQ rules right right now it is 1500, suppose there may be 500 more rules get inserted again. I need to take a dump out of it. Insert into that plug-in, right, the visual studio code that you have asked, right? Saving the data to a different plugin. And again, you know, and that is not on your system. If I have 10 resources, I have to make the changes to 10 resources system, right?
+
+00:19:29 - 00:20:23 Unknown Speaker:
+
+So so that is the challenge with the plugin. If you can run it on the environment, pulling the data from the database running over the environment, then we are good. But here, what would happen? Any change, even a fraction of change, even. There is a change in the description of the DQ rule ID. You have to update your local plugin setup. So try to understand that, uh, that complexity, which is there the input for that, uh job. I mean, okay, maybe I have not explained you last time. The input for that is the rule information, it doesn't need access to the existing rules information. So new rules in a JSON format, that's it. No, so if you don't have the existing rule, how would you groom that well? It actually generates some patterns.
+
+00:20:23 - 00:22:03 Unknown Speaker:
+
+It will see if there is an SQL like that and when a new request comes, it will see if it has to create a new query based on the instructions provided to it. It will look for the existing query and understands it. Similarly, it will create a new query. There is no business logic there. Yeah, so that's where the problem is right you have to make that update every time and when you are making that change Find such in anything. So yeah, you you take addition. That's fine. Yeah Okay, do you have any other input apart from this the one that ANSI was presenting? And then you're on mute. Is he there on the call? Are you there on the call or we will close the call? Is not there, I think, so, let's talk to the business folks.
+
+00:22:03 - 00:23:04 Unknown Speaker:
+
+Even evening DSU are called. So I suggest, you know, keep this Excel ready. We'll talk to them if they have certain input over there, then we'll take it forward from there. Otherwise we'll go ahead with the alternate approach. Thinking, so, then so, see, the pattern is matching, okay, but. But the thing is, uh, you know, you cannot identify. Oh, that's what I I discussed already, right? Till the time you're not able to identify which pattern to select, you won't be able to automate it. Correct, that should be some some input, right? Either while creating the right, or when the user submits a request, right? Somebody need to, you know, mention it either. It's Business folks, right? We can help them with different different patterns, right?
+
+00:23:05 - 00:23:59 Unknown Speaker:
+
+We have this 20 set of sequel patterns now, when the rule gets onboarded, when you are giving the approval to let us know which pattern you would like to select. So that is number one. If they can help us with that input, then we can automate it otherwise, You know, as I stated, like, we just need to create a SQL out of that one and then suppose if it is an existing table for which 10 books are already running. Then once the new SQL file gets created, right, and then we can just, you know, add this new SQL to that existing SQL file. Okay, that PUCNC already did that, okay, so that we all have, okay, that is the one thing, and. This is the input that I was mentioning. There are alternate approaches.
+
+00:24:00 - 00:25:20 Unknown Speaker:
+
+We already have implemented this one. And this would be running on the environment. So that is environment running to be with us. Okay. Yeah. Thank you, Sachin. Business partner Kundalini. It will be really tough, you know, to take the decision when to, you know, utilize which template that's, you know, that something I think their input will be needed on. Yeah, let's talk to them today and then will take it forward from there. Otherwise, you know, if things will be, then we have to work on the optimization of the existing ones. So, that, you know, that is one of the things. Optimizing the SQL existing one, I had a connect with Samir Manal last time. Okay. So, he mentioned that the suggestion that he has given, right. He was a SQL expert, right.
+
+00:25:20 - 00:26:22 Unknown Speaker:
+
+So, Mentioned that this much we can do. Apart from this. He was not having any idea. That was a, you know, input from a 15 years of experience there, right? So we can't discard it right away if we cannot provide great alternate way. Wait 20 years is sitting here and see the inputs Amin was giving, right? We have accommodated those changes, right? The SQL file he was sending to you, which we were working, we were using that same code. Yeah, I think even I received few of them and we accommodated that one. Yeah, then then he I had a decision with him. So he mentioned, like, you know, this is the most updated one that we can use for libraries. Expression you are referring, right?
+
+00:26:22 - 00:27:23 Unknown Speaker:
+
+Yes, yes, yes, that I think we adopted in the I saw few of the script that is already been adopted. We moved it at the top and doing that joint so that reduces the number of lines. Okay, that I saw it. The DK repository, you know? He pulled from all of the script and defined it at the top. And the reference we are using throughout this, that implementation. But I already found in the scripts some some places it is not there. I will not tell that everywhere the same pattern is getting followed. But yeah. But few of the script I checked they have this, this implementation okay, and any input on phase one, right? My point of view is that if if we are going to use the LLM right through the visual studio code, right.
+
+00:27:23 - 00:28:15 Unknown Speaker:
+
+So if I have 10 folks, number one I have to install in individual system, right? And if there is a pattern change or whatever change is there, right, then again, you have to make that change to the 10 developers, right? And anyhow, we are going to share the MD and everything, whatever piece of details to that visual studio code, which is not a American Express enterprise level tool. And the next drawback, we are not 100% sure that that would run on the environment. The environment could not run. The individual developer level, you can even leverage that one. You can leverage it. You have this one. We have, what is that? Not GPT, we have copilot, right? So you can leverage over that.
+
+00:28:16 - 00:29:20 Unknown Speaker:
+
+But not recommend to, you know, paste the code and everything exactly exactly so, so, you know, if you have any other suggestion like, do let me know. Because you know, I don't want to go to Raj with half-hearted solution, then he would come back, you know, you guys know right, how many questions that comes from Raj with those half attack solution, he would not. Anyhow that manual interface, and anyhow he is going to straightly, you know, straight away reset it, right? We are not going to do any manual, what we need to build that automation anyhow. You know, once we are keeping that UI to the user right, so manual definitely, you know, that is not going to be able to. Okay. Let's talk during the DSV call. Ansi, just one thing. Let me share my screen.
+
+00:29:20 - 00:30:28 Unknown Speaker:
+
+This is regarding the alert that we are receiving for the insurance one. Is that fine? Did you check this one today? Yeah, this one. Actually, yesterday, that second rule was only failing. That was expected. Yeah, the second one. The first one, I think two days back we were getting a pass result, but today we are getting... This came today only, right? Yes, yes. And this doesn't look correct to me. If you see this count of records where unique count today greater than unique count yesterday, right? My expected value is greater than equals to 7277. Is it hard-coded? No, no, it's not hardcoded. It is the policy numbers count of today. It should be greater than yesterday. That is the But this this doesn't look good right the reason I'll tell you let me say my screen over here Suppose there is a data ingestion.
+
+00:30:28 - 00:31:37 Unknown Speaker:
+
+Okay? Right, so I'm talking about that same table. Okay. This is 953. Let me go to the 9. I think this is the 661, right? So sometimes you might receive a 6000 record, the next day you might receive 1200 record, right? So how this is going to work? In that case, if you are receiving lesser number of record, count, so how? Your policy number is going to be always greater than 7277. You got my point. Like yesterday, the data ingested. Just take an example 940 okay, and today we will save 932 records, right? So your unique policy, anyhow, is going to less than 940, right? Because the number of ingestion for that record is less compared to the yesterday days. Check this one. I, I'm okay with this one. Okay, but this doesn't look good to me.
+
+00:31:40 - 00:32:42 Unknown Speaker:
+
+Yeah, let me take a look. Did you get my point? This is a policy purchase at detail. Suppose today 100 users purchase the policy, right? Tomorrow, it might happen 200 users purchase the policy or it might happen that only 50 persons purchase the policy, right? So, It's not that always going to be greater than yesterday's unicorn. If you are checking it on a daily basis, if it is a you know some, some grouping by has been done based on, you know, a monthly data. And then you are taking then. Then. In that case, also, that differs, right? Suppose I sum up these two, value these two, these two, these two. Suppose. Till this point, that may not be higher than this 6413, right? If you are clubbing a weekly data also, that may be also lesser than the today's data initial.
+
+00:32:45 - 00:33:49 Unknown Speaker:
+
+So, yesterday's count will become today's count, right? Right. So, yesterday count suppose it is 876. Today's count is 6413, right? So, yesterday your unique policy was 876 while today's unique policy is 6417. Then how could this rule expected value remains like this, right? You could always fail, right? Yes. Is this what I understood from the rule description? Count of records where unique count today means today's unique count. Suppose today's unique count is 6413 is greater than equals to yesterday's one, right? So, for this scenario, this is correct. Today's count is greater than yesterday, right? But if I consider these two, 881 and 886. So, today's count is lesser than yesterday count, right? Then your rule would fail. Okay, I will once check that. During the validation, it was coming as a pass result. I'm not sure.
+
+00:33:50 - 00:34:49 Unknown Speaker:
+
+Yeah, so just check this one with Rachna. What is the expectation over here? And here, count record by data div, loony, loony, timestamp, greater than 3. This is, I'm not sure what you're doing over here. Is it a group pass? Something amped, so even check this one, yeah, so this, that second one, I think, is day before. Yesterday, Rechna had confirmed with O. He said that it's due to the latest injections, so that is that was expected. She mentioned in the event. Okay, okay, just take this one, okay, otherwise, you know, mails from these folks who are owning this source table. Okay, thank you guys, bye.
+

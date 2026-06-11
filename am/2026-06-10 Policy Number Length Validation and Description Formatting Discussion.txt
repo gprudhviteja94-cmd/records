@@ -1,0 +1,95 @@
+2026-06-10 Policy Number Length Validation and Description Formatting Discussion
+
+Creation Time: 2026/06/10 16:01
+
+
+📅About Meeting
+
+• Date & Time: 2026-06-10 16:01
+• Location: Not specified
+• Attendee: Rachna, Sachin, Sathya, and others (names partially mentioned)
+
+📒Meeting Outline
+
+Policy Number Length Validation and Description Formatting
+
+• Discussion on Length Validation Logic  
+  The team discussed the validation logic for policy numbers, specifically focusing on ensuring the length of the policy number equals 12. The current approach involves counting records where the length is not equal to 12. There was consideration about how to incorporate this length validation into the filter criteria rather than hardcoding it into the description.
+
+• Description Text and Filter Criteria Integration  
+  It was agreed that the description should clearly state the variable name and the allowed value condition, e.g., "variable name should only take values of length equal to 12." The length condition should be derived from the filter criteria and displayed in the description for clarity. The description is a combination of filter criteria and variable information.
+
+• Template and UI Constraints  
+  The team noted that the query for length validation differs from the query for "in condition," making it challenging to use the same template for both. While creating a new template for length validation is possible, the frontend UI cannot support dynamic templates. Therefore, the existing frontend template will remain unchanged, and any new templates will be handled separately.
+
+• Handling Allowed Values and Length Conditions  
+  The allowed values are currently handled as an open pre-text array, which complicates fitting length conditions like "length equals 12" into the allowed values section. The team discussed modifying this approach to accommodate length-based conditions instead of fixed arrays.
+
+• Action on Description Text Finalization  
+  The team decided to finalize a new description format, such as "should only take values of length equal to [value]," where the length value can be 12, 6, 15, etc. It was emphasized to document this new description format clearly to avoid forgetting it later.
+
+Data Handling and Excel Coordination
+
+• Copying and Pasting Description in Excel  
+  There was a detailed discussion on copying the updated description text into the correct rows and columns in the Excel sheet, specifically mentioning line number 247 and column M1. Some difficulties were encountered due to system slowness and copying errors, but the team stressed following directions carefully.
+
+• Variable Name Reference and Data Entry  
+  The variable name is located in column G of the Excel sheet. Team members were instructed to use column G for variable names and to avoid switching to other columns or rows unnecessarily. Clear instructions were given to work from the office if network or system issues arise to maintain data accuracy.
+
+• System Performance and Collaboration  
+  Due to slow system performance, some participants suggested disconnecting and reconnecting the session to improve responsiveness. The team agreed to share edits and updates promptly to avoid gaps in the data.
+
+📋Overview
+
+• The length validation for policy numbers should be integrated into filter criteria and reflected clearly in the description text.
+• The description format will be standardized to indicate allowed values based on length conditions.
+• Existing frontend UI templates cannot dynamically adapt to new validation types; new templates must be handled separately.
+• Allowed values handling needs adjustment to accommodate length-based conditions rather than fixed arrays.
+• Clear documentation and communication are essential to avoid confusion and errors in description formatting.
+• Excel data entry must follow strict guidelines, using specified columns and rows, with office work mandated if technical issues occur.
+• Collaboration challenges due to system slowness were acknowledged, with steps to mitigate them.
+
+🎯Todo List
+
+• Sachin / Rachna / Sathya:
+  
+  • [ ] Finalize and document the new description format: "variable name should only take values of length equal to [value]" (ASAP)
+  • [ ] Modify allowed values handling to support length-based conditions instead of fixed arrays (Next sprint)
+  • [ ] Copy and paste the updated description into the correct Excel rows and columns (line 247, column M1) and ensure formatting consistency (Immediate)
+  • [ ] Share the updated Excel file with all team members after corrections (Immediate)
+  • [ ] Coordinate with frontend team regarding template limitations and explore options for new template creation (Next meeting)
+
+Transcription
+
+00:00:15 - 00:02:19 Unknown Speaker:
+
+It was about length, Rachna. So, you know, let him share that one and then you'll be able to... yeah so if you see this one hold on the current description right count of records where length of policy number is not equal to 12. Actually i'm just thinking out loud but uh let's see if we use that function will then will be able to fit this but where exactly we are going to just thinking that. And one more observation, I would like to just focus you. We will put that in the filter, but in the description, what we have to keep is the variable. Suppose policy number should only take values and then the allowed value would be OK. So that will come in text format instead of like, just direct comma, comma, where allowed values are length equal to, say, 12.
+
+00:02:30 - 00:04:00 Unknown Speaker:
+
+Can you just remove the status with complex one and just. So let's say the variable name should only take values of length equal to 12. Now of length equal to 12, where you are going to put it? But anyway, we will not take it from the description, we will get it from the filter criteria only. Correct, correct. We will get it from the filter criteria only, but we will just display it. Right. The description, you know, the description, is a combination of that filter criteria, also, right? So that is something, then you have to put it over there in that filter criteria. Yeah, there I will add it, that's fine, but in description, what should I put? So description becomes like the variable whatever variable name should only take values of length equal to 12.
+
+00:04:00 - 00:05:23 Unknown Speaker:
+
+So here this length equal to 12, length equal to 6 just of length equal to this thing is getting replaced by your bracket allowed values. But allowed values are not. Let me see what there is there. And also, Sachin, the query is not same. To map it with the same template, query will not be same. Length query is different from in condition. No, you can create a template with no restriction for that, right? Right now the intention is to fit these things to the description that we are trying to format over there, right? You can create a template, I am not denying that. If you are creating a new template, let that be a different description also. We are not creating a template. You can create template at your end. Frontend template would remain same.
+
+00:05:24 - 00:06:34 Unknown Speaker:
+
+We can't create dynamic template at UI. Yes, sorry about that. Yes, what were we saying? Should only take values and then you are asking should only take values. If we are able to append, I think it will fit. But how will we do that with UI, Rachna? Right? If somebody is taking length, then he has to change the distance. Correct? Sathya, can you bring that up? Sathya, one question. Here, we have kept the allowed values as open pre-text array, right? Because of that, we are going to pay values by doing commas. Look, should only take values, but how we are going to fit the length over there? Should only take values, but you are going to put over there in the allowed values. Because these are like length equals to 11 or length not equals to 6.
+
+00:06:35 - 00:07:54 Unknown Speaker:
+
+That's what I'm thinking. Instead of a fixed array, it says off length equal to 12. Okay, then make that change. Uh, with three, can you create? Uh, uh, can you write down the general, the new description? Otherwise, again, we are going to forget it. Yeah, should only take values of length, that's it, right of length equal to whatever, 12 or 6 or 15. Please write it down again yeah no not that one again uh can you write it down and maybe on the m otherwise you know again uh we forget and then uh. We reach out to Rachna again. So let's finalize this one. You copy the J description. Can you copy the J description? Paste it on M. Anyone copy it? Put it into the M1. Put in the M1. One second.
+
+00:07:54 - 00:09:05 Unknown Speaker:
+
+No, not that one. Not that one. Not there, man. Just in front of that line. I don't know what is the problem. Man, whatever copy... Suppose you are working on line number 247, right? Can you just copy the line number 247J and paste it into the... No, no. The description is the same only. It's the same description. Can you just do it for one? Can you do it for one and then leave it? The rest one. Just paste for one of them. And can you format it? Copy it and then paste it into the M1. What is the problem? Again, he has copied from somewhere. Just follow the direction. Can you just follow the direction? Hold on quickly. Can you follow the direction? You have copied the 247, right? Paste it on 247. Okay. Now...
+
+00:09:05 - 00:10:14 Unknown Speaker:
+
+Change the description. Now, can you go to the variable for this 247? Go to the variable. You would be getting the variable in the variable column, right? It would not be there. Go to the left. What is the variable for this? Sachin, set me again and share it with you. Okay. Now, actually what's happening is... My system is somewhat slow here. So, okay. I'll edit it and share it. Nothing to worry. No, again, we would come back and then we would have those, you know, gaps. You can write it from column G only. Exactly. What is the problem over there? And again, clear-cut instruction to all of you. If network is not working, system is not working, you are directed to work from the office. Then column G only you can take.
+
+00:10:15 - 00:12:44 Unknown Speaker:
+
+There is no need to go to the other excel. This excel only has that detail. All the details is there. I really don't know. This column G you are seeing, right? Here you have the variable name. Just form one text for one of the right. Copy this one. Just copy that SRBC option and roll ID. Now you went to the different column altogether. Different row. Yeah okay just copy cm11 just anyone or literally my cursor is somewhat slow that's why sorry let me disconnect and share again. Can we copy this? Is it on M1? Is it on M1? I will paste it on M1. Is it on China?  .  . . .
+

@@ -1,0 +1,231 @@
+2026-02-10 Data Ingestion and Automation Strategy Discussion Stand up
+
+Creation Time: 2026/02/10 18:01
+
+
+📅About Meeting
+
+• Date & Time: 2026-02-10 18:01 (Duration: 2345 seconds)  
+• Location: DSU call (virtual)  
+• Attendee: Sindhita, Jason, Samit, Rachna, Sachin, Karthik, Ayyappa, Prithvi, Kundan, Nimble (absent), plus other unnamed participants
+
+📒Meeting Outline
+
+Data ingestion status and next steps
+
+• Resume venue ingestion / sync issue
+  Discussion: Jason confirmed the metadata sync issue was resolved and data moved back to world state, but reconfiguration is required. Jason will be asked to send the ingestion file for the "even" environment once reconfiguration and attribute registration are completed. Samit requested Jason to send data; Jason to confirm after validating with a test file. Team agreed to keep Jason updated in the next hour.  
+  Notes: Register feed attributes still pending (Samit to update). Jason to send the file for even environment when ready.
+
+• SFTP profile and file mapping
+  Discussion: An SFTP profile has been created and credentials saved. Samit offered to set up file mapping; Ayyappa will push one file to SFTP for testing and Jason (or team) will try to pull it from their side. Plan: try today, confirm on tech channel; if confirmed, mapping will be set up tomorrow morning and tested tomorrow evening.  
+  Notes: Confirm whether profile is external (Jason asked); Samit to set up mapping after confirmation. Ayyappa to assist with pushing test file.
+
+• Data flow build / pipeline onboarding
+  Discussion: A build for the data flow is ready and will be tested in the even environment (test today, max by tomorrow). A new pipeline for the Regi status (stable) has been onboarded but requires validations from the team (Samit/NC to validate). A follow-up meeting will be scheduled to confirm validations and close pending items.  
+  Notes: Some decisions require joint sign-off; will reconnect in the next meeting.
+
+Rule descriptions and validation logic (policy counts / daily vs cumulative)
+
+• Ambiguity in rule description (policy count comparison)
+  Discussion: Karthik raised a failure caused by a misleading rule description. The rule text currently reads as comparing "count of records per unique count per day" (daily ingestion), while the intended rule is to compare cumulative unique policy count up to today's date versus cumulative up to yesterday. Team clarified the intended semantics: "Unique count of policy number today is greater than unique count of policy number yesterday", where "today" is cumulative till today's date (not only today's ingestion).  
+  Actionable fix: Change filters from strict equality to date ranges or <= conditions (e.g., use <= current_date rather than = current_date) so the comparison uses cumulative counts. Samit noted there were ~6–7 similar rules that need description updates to the agreed standard description. Sachin/ANSI alignment was referenced; descriptions should be updated to the standard wording previously shared.
+
+• Failures and remediation status
+  Discussion: One failing rule was due to manual ingestion; remediation completed from the team's side and no further external dependency is required. Resume ingestion remains to be completed for final verification.
+
+Automation / self-serve generation of SQL rules and templates
+
+• Overview of current investigation
+  Discussion: Team reviewed several tables (CM11 CSP model, CM11 iPod edit, Raze tables) and observed multiple SQL patterns for the same check-types across tables. Columns (A, B, C, D, E, F) were used to illustrate different SQL templates/patterns. When a user registers a new rule, the system must choose which template to apply or generate a new SQL. The problem: selecting which template to use when existing templates vary considerably even within a single check type.
+
+• When to apply where clauses / filter conditions
+  Discussion: If user input contains filter conditions, include WHERE clause; if not, do not add WHERE. Variation arises from different patterns like full-refresh (stagnant) versus incremental (load-up) tables. For full-refresh tables, previous day's data may not be present in source; DQ results or inner joins to previous snapshots are sometimes used. For load-up tables, date filters can be applied directly. Team discussed rules for differentiating templates by these characteristics.
+
+• Template divergence causes and possible consolidation
+  Discussion: Divergence is often caused by differences in:
+    • Whether table is full-refresh (stagnant) vs incremental (load-up)
+    • Use of inner join with SOR vs joining with DQ results
+    • Presence/absence of user-provided filter criteria
+    • Different calculation style across check types
+  Team agreed some divergent cases can be normalized by consistently using DQ results (store today's DQ results, then use them for comparisons), enabling reuse of a single template across more cases. But not all cases can be forced into one template.
+
+• Approach for new/complex rules
+  Discussion: Proposed flow:
+    • Receive user description and inputs
+    • Generate a SQL query (or SQL file) automatically from the input according to identified patterns
+    • Attempt to match the generated SQL to an existing template (and update existing SQL/JSON with new rule ID if it fits)
+    • If it does not fit, produce a generated SQL artifact which developers will review for feasibility (possible commit to repo or replacement of the existing SQL)
+    • For complex cases that cannot be auto-fit, keep a manual developer step to integrate/generate final SQL
+  Team emphasized they must avoid creating new tags for every new rule (would bloat scheduling and management). Instead, reuse tags (daily, intraday, monthly, ELA) and attach new rules to existing tags where appropriate.
+
+• Automation vs manual intervention
+  Discussion: Currently at an early stage; initial POC will target simpler, matching patterns to automate generation and integration. Complex cases will require manual dev review. Over time, if the team can reliably accommodate generated SQL to existing templates, more automation can be introduced. Team agreed to proceed with POC for simpler matches and reconvene to refine approach for complex cases.
+
+Follow-ups, coordination and miscellaneous
+
+• Next meetings and coordination
+  Discussion: Team to reconnect with Rachna and others (NC, P3) to dive deeper into check types and templates. Samit and others will present more consolidated pattern documents and examples via email. A follow-up to validate Regi pipeline and finish SFTP mapping/test was planned.
+
+• General feedback
+  Several team members confirmed items look good. Some casual off-topic chatter occurred near meeting end (personal/familiar talk), not related to action items.
+
+📋Overview
+
+• Metadata sync issue fixed; reconfiguration required before resume ingestion can occur.
+• Jason to validate and send resume venue ingestion file for even environment after reconfiguration and attribute registration.
+• SFTP profile created; file mapping to be set up once confirmation received; Ayyappa to push test file. Test to be attempted today; mapping and evening test tomorrow.
+• Data flow build ready; test in even environment today/maximum by tomorrow.
+• Regi status pipeline onboarded but requires validation from team (to be confirmed in next meeting).
+• Rule description ambiguity: many rules use “today” incorrectly (daily ingestion) — must update descriptions to cumulative semantics (unique policy count till date). Update ~6–7 rule descriptions.
+• For policy count checks, change date filters to <= or cumulative logic instead of = current_date.
+• Some failing rules were caused by manual ingestion; remediation completed.
+• Multiple SQL templates/patterns exist across same check-types due to full-refresh vs load-up, different joins (SOR vs DQ results), and presence/absence of filters.
+• Proposed POC approach: auto-generate SQL for simple matching patterns; if matched, integrate (update JSON/SQL). If unmatched, generate SQL artifact and route to dev for manual integration.
+• Avoid creation of new scheduling tags for every new rule; reuse existing tags (daily, intraday, monthly, ELA).
+• Plan to consolidate and email the pattern examples and templates for review; follow-up meeting planned with Rachna, NC, P3.
+
+🎯Todo List
+
+• Samit:
+  • [ ] Reconfigure the metadata and update register feed attributes, confirm completion, ASAP (today / within next hour)
+  • [ ] Set up SFTP file mapping after confirmation on tech channel, deliver mapping config, by tomorrow morning
+  • [ ] Send consolidated pattern/template examples via email for review, by next meeting
+
+• Jason:
+  • [ ] Validate test file and send resume venue ingestion file for even environment after Samit reconfiguration, within next hour or as confirmed
+  • [ ] Try pulling test file from provided SFTP profile and confirm on tech channel, today
+
+• Ayyappa:
+  • [ ] Push one test file to the SFTP profile for ingestion/pull test, today
+
+• Sachin / ANSI:
+  • [ ] Update rule descriptions (approx. 6–7 rules) to standard wording: "Unique count of policy number today is greater than unique count of policy number yesterday" (where today = cumulative till date), by next meeting
+
+• NC / P3 / Rachna:
+  • [ ] Validate the new Regi pipeline onboarding and the stable status checks; provide validation sign-off or note issues, by next meeting
+  • [ ] Review the sent pattern/template examples and provide inputs on template consolidation strategy, asap / before reconvening
+
+• Dev Team (unnamed):
+  • [ ] Assess feasibility of auto-generated SQL artifacts for unmatched patterns; plan integration approach (commit to repo or use generated SQL), timeline to be provided after initial review
+  • [ ] For POC, implement auto-generation and matching logic for simple pattern cases; prototype and demo in follow-up session
+
+• All participants:
+  • [ ] Join follow-up discussion to finalize automation approach and validation of check-type templates; schedule/timing to be confirmed via calendar invite
+
+Notes: Please confirm SFTP pull test results on the tech channel today. Samit to schedule follow-up meeting with Rachna, NC, and P3 to dive deeper into check-type templates and finalize approach for the automation POC.
+
+Transcription
+
+00:00:00 - 00:01:02 Unknown Speaker:
+
+So, Sindhita, we have all the folks already joined apart from Nimble. So, you know, most of the process updates remains, you know, there was no major change compared to yesterday. So, I would like to discuss on the self-serve automation that we are trying to build right post the rolling is done from the user side. So we have some observation and we would like to share with you. So I thought of utilizing this DSU call itself for that. If you can bring up your screen. Okay. And so just hold on a second. Jason joined. Let me just wrap up with Jason and then we can discuss. So Jason. Samit, where we are with respect to the data ingestion for the resume venue? Is it like the sync issue has been sorted out, right?
+
+00:01:02 - 00:01:45 Unknown Speaker:
+
+Will we ingest the data for even? Yeah, yeah. In the evening, I will ask Jason to send. But before that, what happened is like since that is a metadata issue, sync issue got synced and everything was moved to world state again. So I need to reconfigure the entire thing. So yeah, I will inform him to send the data. Uh, register feed attributes. Uh, pending, like, still pending. I just need to update that and I need to check, uh, with the test file and I will confirm. Jason Okay, so Jason. Uh, so we will, you know, maybe we'll keep you posted with the next an hour or so. Uh, so, once that is ready, uh, you can just send a file for even environment. Okay, okay, that is number one.
+
+00:01:45 - 00:03:02 Unknown Speaker:
+
+Second with respect to the you know, uh, getting the second yes and give me a second, okay. So with respect to the data flow, the one that we are trying to implement, right? So that build is ready, we are going to test it out on the even environment so that would be also done. Most value today Max tomorrow isn't okay. And with respect to the, you know, registering the new pipeline for that Regi status when you state a stable, right? So that has been onboarded. But there are some, you know, validation that is required from your side. So maybe I'll, I'll meet you in next one, or is that fine if we can connect in next one? Uh, yes, that should be fine. Okay, okay, okay, some, some constant that I can't take the decision by my own.
+
+00:03:02 - 00:04:10 Unknown Speaker:
+
+So I thought of, you know, once you are available, I'll, I'll confirm and then I'll close that one. Anything else you would like to check for the Razy? Oh, no, not, not at this time. I think we're okay, okay, okay. And one more thing, the SFT profile that has been created, right? So if you want, we can. Like, you know, I have already saved you the profile along with the password. So if you want, I can set up the mapping and then, you know, once we send the file to the SFTP, you can try to pull it from your site. Oh, perfect. And just to confirm, that profile is an external profile? Code ways to you know, accept or not, just confirm that. If you are able to do that, then what? I'll do?
+
+00:04:10 - 00:05:00 Unknown Speaker:
+
+I'll set up a file mapping, okay between the systems and post that you can send the file. And then you can try to read that file from from that profile that I have given to you, okay, that sounds good, okay, so maybe, uh, just try it out today, give me a confirmation on that tech channel. Uh, if you confirm, then I can set up the mapping tomorrow morning and then we can test it out tomorrow evening. Okay, that sounds good. I'll ask Ayyappa to work with you. He has worked on that SFTP file creation. So he will just push one file to the SFTP and then you can try to pull it from there. Awesome, thank you. Yeah, thanks Jason. Any input that is required for insurance? I believe we are good, right?
+
+00:05:00 - 00:06:04 Unknown Speaker:
+
+We don't need to... One call out, the one that I was discussing with ANSI. So let me bring up to your and Rachna's notice. One of the failure that Karthik has highlighted, right? Even I feel like that is a valid one. The reason I would say, look, what this rules mostly speak about, right? The first rule, count of records per unique count per day should be written of yesterday, okay? This is not going to be the scenario every time. Why? The rule that we wanted to encode was that across all the data that is there, count of policy number today should be greater than count of policy number yesterday. Not specifically for daily ingestion of yesterday compared to daily ingestion of today. This description doesn't look good, right? But Sachin, I think... this we had already aligned on ANSI, right?
+
+00:06:04 - 00:07:00 Unknown Speaker:
+
+That these kind of descriptions had to be updated to that standard description I sent to you, and I have also. I am not sure if this one got missed. But like I remember, there were like 6 to 7 such rules which had a description like this. And I told to update all of them to like. Unique count of policy number today is greater than unique count of policy number yesterday, so when we are on mentioning it, today means cumulative policy count till today's date, right? Whatever is there in the article. So this is what NCI was mentioning. It's not just today's count, right? Not today's ingestion. So when we are looking for these ingestion means suppose if I'm standing on 6th of Feb, right? So I need to sum up all this unique policy count.
+
+00:07:02 - 00:08:08 Unknown Speaker:
+
+Greater than the unique count that we receive for today's ingestion. Is that correct? Is my understanding correct? Say if they are on 6th grade, then yesterday's count would be the cumulative count of unique policy numbers for across all ingestions before 6th grade. And then today's count would be including 6th grade. Yeah, So basically, like the requirements that were given, so that created a little confusion because it said the count of policy number. Today, not like till today for this scenario, right? There were eight, eight, one, suppose it is for yesterday and today. You receive make a small change, right? You have that filter condition equal to current date, something like that, so just make it like less than equal to, and then it should be fine. Check this one.
+
+00:08:08 - 00:09:17 Unknown Speaker:
+
+Basically, you know, I have observed this and this seems a bit weird to me, and that's that's I thought of, you know, raising this. Yeah, I initially thought it's a full refresh table, so it's like we are checking the counts yesterday. And then no, no, no, no, it's, it's, it's a load up and it's not a full request. And the second one, I believe, is failing because we've done manual ingestion for. From the remediation point of view, we are done, right? As in we don't need any other information from the dependencies or any other type of... Nothing, nothing. The lesson is also done. Everything has been sorted out from our side. It's just cutting it to resume is ingestion. Understood. Okay. Okay. Okay. Thanks. Thanks, Jason.
+
+00:09:17 - 00:10:12 Unknown Speaker:
+
+If you guys want, feel free to drop off and see if you can bring up the screen that we were discussing today. While, you know, trying to automate this system, right, to integrate a new role right to the existing one. We analyze few of the tables on CM11 which CSP model, CM11 iPod edit, and few of the Raze table that ANSI did it, and few other. Check type couldn't analyze that one, two use cases, which we have analyzed, right? So what we are observing is that if you see this column A, column B, C, D, or EF, right? These are the different SQL patterns that we are observing for a particular table. And that's with respect to different check type, or maybe a similar check type.
+
+00:10:12 - 00:11:08 Unknown Speaker:
+
+Also, now, when a user comes in, registered a role, right, a new role, we need some input. 20 template right here, you can see like five or six template over here. Consider column A as template one, column B as template two, column C as template two. Based on the SQL query, uh, whatever, you know, we have implemented as of date. So, in case I need to suppose this ResI user basin. This is already running 10 rows with this query, right? And then we try to accommodate 11th query right now. Which template that needs to follow? Whether it goes for a template A or B or C or D, we need some input for deciding which template that needs to. You know, select and then modify the existing query.
+
+00:11:08 - 00:11:54 Unknown Speaker:
+
+Do you have any clarity on this one, like, when should we go for this one, or this one, or this one? We can send these details to you over the email. Maybe a consolidated one, but in case you have any input. Because if you see the template B right, uh, this, uh, if you see this reservation right, fade key condition is there for, uh, user reservation, right? But if you go below and see, so for this one reason, uh, lazy user when you write, we are not applying any fade key condition over here. And then again, if you go to the user, Yeah, so such a one question here, I mean, uh, like, uh. That depends on whether the user has given a filter condition in the input or not, right?
+
+00:11:54 - 00:12:46 Unknown Speaker:
+
+So if there is no filter condition, then we will not go with the where clause, but if there is a filter condition, then we have to put the where clause. Okay, that we can do. Richna But apart from these, where clause also right? If you have, you know, just check this out, right? There is still lots of deviation within a single table itself with the queries itself, if you can see this. An example within the same check type, like, say, there is a threshold check, or same as in value check, any, any of the check type. So, like, what is the deviation across queries that you have observed and see, did we document that? Or, like, simple asking if it is a threshold type, right? What is the deviation between the threshold type?
+
+00:12:46 - 00:13:42 Unknown Speaker:
+
+Check between the different tables across different check type? Template would definitely be different because we are doing a different kind of calculation for each check type. But within the same check type, the deviation should not be that huge key. We are doing something entirely different in one and entirely different in the other. No, actually that one is the same screen only as you can see, because that is example is same actually if you can observe. Suppose if the filter condition right when you mentioned if is a straightforward, just if the filter criteria, if anything will apply. Just. We are applying the wear cloth condition, suppose if you compare with any other cases, right? We are taking a kind of some, maybe some stagnant check or something, so they are taking another inner joint.
+
+00:13:42 - 00:14:35 Unknown Speaker:
+
+So that is the extent of the wear cloth condition completely. So that we can separate as a second pattern. So like that way, each when we go into the check types, right, each check types, so it is dividing the pattern like that way. So that's what I'm saying, like in the stagnant one, because you have to compare like data set on two different days, right? And it's a full refresh table. That is why we are doing an inner join, so stagnant data checks will be like that whenever there is a full refresh table, so we will have to do the inner join. So that is a different template for stagnant data check altogether. But then the other one which you are comparing, I believe that is not a stagnant data check, right? Like it is.
+
+00:14:35 - 00:15:35 Unknown Speaker:
+
+So that's what I'm saying. Within the same type, if you are seeing a lot of deviations, let me know, then I will try to figure out what to do. But within different check types, it will definitely be different. I mean, that is something expected, because a stagnant data check works differently than a threshold check, right? I think you have done that. Stagnant check right. Yeah, yeah, yeah, yeah. So suppose, if we can, are you able to see my screen? Right? Yes, so we can say these are the common things we can observe, we can say. But when we compare with the actual logic on the SOR table when we are applying, so this is the difference we can observe. There are two, there is the inner join with the same SOR table in some places, in some places, there are direct inner join with the DQ depository.
+
+00:15:35 - 00:16:32 Unknown Speaker:
+
+OK, so that is the, you know, the difference. We have joined with DQ results, I think you are saying, right, some places we have joined with DQ. Result also. Okay, yeah, so the results. One is the same case that I'm saying, right, that it is a full refresh table, so why we had to use that DQ results? Because in a full refresh table? We do not have the previous day's data. To apply a date filter and just check the count, right? So that definitely is one template which is belonging to like stagnant checks for full refresh tables. And the same thing like stagnant checks for load up. End tables will have a different template. Because then we have the option to like, directly check it with basically putting a date filter and checking it.
+
+00:16:32 - 00:17:17 Unknown Speaker:
+
+So that's how you would find it right now. But now if you think of integrating both the cases then what we can do even for the case. Is where it slowed up. And we are checking it with a certain date filter, right? Suppose I am checking it on the current date for, like, what is the count today versus what was the count yesterday? So, again, it can still be made to fit the template which had the DQ results pull right. Because even if I am checking it today, I will store the data in DQ results. So instead of pulling it with a date filter again for the count yesterday, I can again hit the DQ results, right? So like this is the line of thought that we have to follow when we are seeing that there are deviations within the same template.
+
+00:17:17 - 00:18:00 Unknown Speaker:
+
+So right now, of course there are. Because we did not have like thought process of giving it a standard structural template while creating these rules till now. Right now is the first time we are thinking about it. So we have to think about like integrating these different different use cases. It's possible, I'm not saying it's always possible, but like, suppose in this stagnant data check example like I gave, so here it was possible to integrate. So wherever it's possible, there we will do it where it's not possible. Then we have to figure out another way, like to keep on those on those complex cases. I thought of, you know, just creating a fresh query out of it with the user input.
+
+00:18:00 - 00:19:00 Unknown Speaker:
+
+And then the dev would figure it out where they would need to plug in with the existing query, or they need to create a first set of query or use that one, the generated one. Uh, as in, like. There will be a manual step in between that Dev will create the key, and then the system would generate a SQL file, but then Dev need to integrate, suppose. Resy table, right? Stagnant check is already being placed, right? Somebody comes up with a new stagnant check, right? So if it is not fit with the existing template, then what the system would do, it would create a new SQL out of it. Okay. And it should send that SQL file to, or we will check the feasibility if it can make a commit to the kit.
+
+00:19:00 - 00:20:02 Unknown Speaker:
+
+And then with those new SQL, identify if I can you know plug in the existing SQL that is being there in the system or you need to go with the SQL generated by that system. So how will this new SQL be generated exactly? That we will figure it out based on the description whatever details that we are receiving from the user. But like this is the scenario of a complex. Rule, right? That it's not putting in any of the templates as per what user has given. Then, like, how exactly are we generating the code? Uh, without, like devs. Doing it manually? We have to define the pattern. Okay, so based on your you know input. So there will be a query generated will be there from our end, which will, which will take the you know, the text as a input.
+
+00:20:06 - 00:20:52 Unknown Speaker:
+
+Here, the problem is suppose for Wazy user, right? If I have four tags, right? One is running daily, one is running for intraday, one is monthly, and one is ELA. Right now, just because somebody comes and introduce a new role, I am not going to create a new tag or a new SQL for that, right? Aha, true, yes. At the end, if I start doing that, then end of the day, I would end up creating thousand types of... Okay, okay, I understood. You were just saying that if I had a new rule, you are thinking that where to fit it in the existing text, if it's on the same tables. Correct. Okay, okay, I was thinking about something else that if it's a complex rule, then how are you generating... No, no, no, no, not for the complex one.
+
+00:20:53 - 00:21:49 Unknown Speaker:
+
+Because... because it's not only SQL, even it, it would need to fit into the existing tags, right? So if it is a straight like you, you have given the stagnant template example, right? So that that will go. And just update the JSON object with a new rule ID, uh, modify the existing SQL, and then, you know, the same that can be used. If it is a daily check, right? The daily would be there already, right? Just test it out, right? We are not going to create another tag for a new rule, otherwise scheduling and all managing the rules would be difficult. Uh, so, let's, uh, let's do one thing right now. One more question here, like, since you said that? Once the query is generated, then devs will see that which template, uh, sorry, like which script it would fit, right?
+
+00:21:49 - 00:22:43 Unknown Speaker:
+
+Like whichever tags be. Automate this process, or this will just stay a manual step like every time. Right now, we are at very beginning stage of this. Right now. I'm not saying I'm just asking, like, for future. The way we have designed the this anomaly framework, right, even that has refined once we started working on it. So even this be very early stage to comment on that right now. The approach would be let it generate the SQL file and then we'll see means. If we can, you know, generate a template out of it, or we can accommodate it. And let's create the, as you stated right, let's try to fit the simpler one, where we are getting the, you know, matched pattern.
+
+00:22:43 - 00:24:00 Unknown Speaker:
+
+At least we can start with that POC, and then we will think about, you know, taking a consideration into the complex part or any kind of, you know, where the template is not getting fit. That may be in the announcements that we can take it about. Okay, okay. So let's do one thing. NC and P3, you know, I have some input, but let's go ahead with the check type in more details. And maybe tomorrow we can reconnect with Rachna on this. Yeah. On that automation part, once we will start generating those sequence and we will be confident that everything we can accommodate then we will automate. We thought of, you know, discussing with you just to, you know, showcase you the status that we are right now. So so we will try to come up with some more input on this one.
+
+00:24:00 - 00:26:57 Unknown Speaker:
+
+Sure, sure, such a thank you. Yeah, that's it from my side, and then on him, Yeah, thanks, it looks really good, yeah. Let's do one thing, not everyone, and see And see. And I'll be joining the Congress. Folks, you want to feel great or not, to join that call everyone. I sent it to you and see, I have planned Kundan, so I think I have planned Kundan. I can also skip. And yeah, okay, thank you, thank you. Thank you. Hey, do you have any money? He doesn't understand it. It's very complex. He doesn't understand it. He doesn't understand it. He doesn't understand it. He doesn't understand it. He doesn't understand it. He doesn't understand it. Did he tell you again? I don't know. I don't know. I don't know. I don't know.
+
+00:27:21 - 00:30:32 Unknown Speaker:
+
+My brother Prithvi is drinking sugar daily. He is drinking sugar daily. He is drinking sugar daily. He is drinking sugar daily. Sugar for everybody. You want me to get sugar, right? Foreign foreign. If you don't have that card, you can pay for it later. If you don't have that card, you can pay for it later. If you don't have that card, you can pay for it later. This laptop costs Rs. 60,000. It is excellent in configuration. It costs Rs. 1,000,000. My father used to come and play when he was 25 years old. He used to play very well. He used to play very well. He used to play very well. He used to play very well. He used to play very well. If your budget is 25 to 30 thousand, you can easily get very good laptops.
+
+00:30:32 - 00:35:17 Unknown Speaker:
+
+I can even send you the photo near my home. Many people are getting their laptops. See, I have seen one laptop, see simple. They will buy the product like a see all RAM, everything, they will buy it, and they will combine, that's all for that. Also, they will use the same manufacturing only. Hey dude! Bro, what are you doing? Bro, what are you doing? Bro, what are you doing? Bro, what are you doing? Bro, what are you doing? Bro, what are you doing? Bro, what are you doing? We changed the format last time. This time we will change the target format. Uh um oh oh oh oh. Nagarajas. Thank you.
+

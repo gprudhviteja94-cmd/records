@@ -1,0 +1,145 @@
+2026-05-29 Finalizing Template and Data Migration Strategies
+
+Creation Time: 2026/05/29 15:30
+
+
+📅About Meeting
+
+• Date & Time: 2026-05-29 15:30  
+• Location: Virtual Meeting  
+• Attendee: Anand, Rishi, Sachin, Prithvi, Rachna, Sameer (to be invited), others
+
+📒Meeting Outline
+
+Finalizing the Template and Deployment Readiness
+
+• Template Finalization Status  
+  Anand has not finalized the template yet. The team decided to discuss and finalize it during the call.  
+• SRE Sign-Off and Deployment Dependencies  
+  The SRE team has provided conditional sign-off. Remaining tasks include data migration to showcase existing rules and database table setup, which depends on providing data to the DBA team.  
+• UI and Description Changes  
+  Discussion on removing the "look back period" field from the duplicate check description to simplify the UI and maintain consistency with existing data. The rule description should be user-friendly and not necessarily include all input fields, as some inputs are displayed separately in the UI.  
+• Data Migration Constraints  
+  Data migration is a one-time process and must be accurate since rectifying data later will be difficult. Changes to the UI and description must be coordinated with the DBA and Arthur (expected back Tuesday) to implement necessary UI changes before redeployment.  
+• Timeline for UI Changes  
+  Arthur is expected to return on Tuesday and can likely complete the UI changes within a day. These changes are critical for data migration and deployment but do not affect the A4C, which is planned for next year.
+
+Mapping and Updating Rule Descriptions
+
+• Duplicate Check Type Review  
+  Prithvi filtered duplicate check types and found all existing rules can be mapped to the new template, though some descriptions require updating to fit a consistent structure.  
+• Description Content and Structure  
+  The new description should explicitly mention the variable names (e.g., CM11, RESI User ID) to clarify what fields must be unique. Descriptions should not contain column names but should reflect the inputs clearly.  
+• Alignment on Description Updates  
+  Sachin and the team agreed to update descriptions to include specific variable names and align all rules under a consistent format.  
+• Avoiding New Columns  
+  Instead of creating new columns for descriptions, existing description fields will be updated by replacing unspecified placeholders with actual variable names.  
+• Impact on Aggregation and Other Processes  
+  Sameer will be invited to assess any impact on aggregation processes that rely on descriptions. Threshold checks are separate and unaffected by this change.  
+• Template Usage for Configuration  
+  Prithvi will continue to use variable name and table name columns directly for configuration where descriptions lack detail, ensuring templates remain effective without relying solely on descriptions.  
+• Handling Unique Count Exceptions  
+  A unique count rule with a specific value (e.g., 21) is handled via a condition inside the template. This exception was discussed and confirmed as acceptable.
+
+📋Overview
+
+• Anand has yet to finalize the template; team agreed to finalize it during the meeting.  
+• SRE sign-off is conditional; remaining tasks include data migration and database table setup requiring DBA coordination.  
+• UI changes, especially removing the "look back period" field from duplicate check descriptions, are necessary for consistency and user-friendliness.  
+• Data migration is a critical one-time task; changes must be coordinated with Arthur, who will return Tuesday to implement UI changes before redeployment.  
+• All duplicate check rules can be mapped to the new template, but descriptions need updating to explicitly include variable names for clarity.  
+• Descriptions will be updated in place without adding new columns; unspecified placeholders will be replaced with actual variable names.  
+• Aggregation process impact will be reviewed with Sameer.  
+• Configuration templates will continue to use variable and table name columns directly where descriptions lack detail.  
+• Special cases like unique count rules with specific values are handled via template conditions.
+
+🎯Todo List
+
+• Anand:  
+  • [ ] Finalize the template based on discussion, ASAP  
+  • [ ] Share finalized template for review  
+
+• Arthur (upon return Tuesday):  
+  • [ ] Implement UI changes including removal of "look back period" field and other agreed modifications, within 1 day of return  
+
+• Rachna:  
+  • [ ] Review and update rule descriptions in the Lumi UH DQ repository to include variable names instead of unspecified placeholders, within 2 days  
+  • [ ] Coordinate with DBA team for data migration requirements  
+
+• Prithvi:  
+  • [ ] Continue using variable name and table name columns for configuration where descriptions lack detail  
+  • [ ] Filter and review duplicate check types for mapping accuracy  
+
+• Sachin:  
+  • [ ] Align with team on description update approach  
+  • [ ] Coordinate with Sameer to assess impact on aggregation processes  
+
+• Sameer:  
+  • [ ] Review potential impact of description changes on aggregation processes and provide feedback  
+
+• Team:  
+  • [ ] Prepare for data migration after UI changes and description updates are completed  
+  • [ ] Plan redeployment post data migration and UI updates
+
+Transcription
+
+00:00:03 - 00:01:18 Unknown Speaker:
+
+Hi everyone. Hi Rishi, sorry, I was speaking on Mute. Uh, so Anand I was. Uh. I would just like to check like, uh, did you get a chance to finalize the template? No, not really. Let's discuss that right on the call right now and finalize it. Uh, we were checking into a couple of other things. Actually, okay, because now I think, uh, from the deployment standpoint of view, now even we received the SRE sign up, right? I was working with the SR team. I think you have been copied to that email, right? Yeah, they have provided that conditional sign up. Now. Just couple of things have been left, one is this data migration to showcase that existing, uh, you know, rules that is, and second is the table setup in the database.
+
+00:01:19 - 00:02:58 Unknown Speaker:
+
+And that would be done once we provide these data to the DBA team. Okay, uh, so let me share my screen, I'll just log in. So this is with respect to the description. I think Sachin had a few queries. And even though the template that, you know, and uh, basically they have finalized. Even I did not get a chance to review it because I was on, you know, public holiday. It was for me yesterday and then I was working on some different parts of that. So maybe, uh, we can discuss on the same call originally if we go ahead with the description that we have received from your site. Right, like, like, if you see this for duplicate, check right record should be unique and suppose CM1111. Whatever, now if I go to this page, okay now?
+
+00:02:58 - 00:03:50 Unknown Speaker:
+
+Suppose if I add one, right? Suppose? You check duplicate, so even look back period is open even there for the duplicate. So such an if you can, you go back to that mail once, can you scroll down? I have given some inputs there about what other changes are needed in the form, so here, if you see in the duplicate, check check. I have suggested to remove the look back because it was okay. Then, uh, you are mentioning, like, once we make these changes, right, these, uh, these below changes, right? At least this would support. Yes, I mean, uh, yeah, I mean, uh, the opposite should also work. I mean, that's just a field that you can remove later. But right now also, you are not showing it in the description, right?
+
+00:03:50 - 00:04:53 Unknown Speaker:
+
+Like whatever is comfortable for you to implement. First, the first would be, look. Because, you know, we have to migrate the existing data, right? So the existing data should be with this format, basically right? And in order to support this format, we would need these changes, also the frontal changes. Otherwise, what would happen? Like, you know, if somebody is trying to update that field, right? Uh, they would be getting all together a different description, right? For an example, right? If I go close this, suppose, just take an example for this, suppose this, somebody wants to update this, right? So even for that, this rule, right? That is coming from that part, and if this field is there, right, look back, period. But I will not mention all of them in the rule description.
+
+00:04:53 - 00:05:53 Unknown Speaker:
+
+Like filter criteria, I might not mention in the rule description itself. If that's not doable, then what's the problem? If we look back, it's still in the input, but we are not showing it in the rule description and later we remove that thing. Look, I did not analyze it deep down, Rachna. Okay, but I feel there might be some issues, uh uh, with respect to this description which we were showcasing to the user. Okay, because, look again, like that part was showing this right. Allow null margin is the only input we are seeing at the bottom. But right now, that's what this was right. This was just based on. Uh, suppose there are columns like check frequency, right? More description may like doesn't make much sense, also like it's just a frequency.
+
+00:05:53 - 00:06:55 Unknown Speaker:
+
+So that's right, anyhow, right, anyhow. We are saving this data also in DB, so we are not waiting. But suppose, uh, you look back, period, UIP, right? And then they are not saying that user friendly, that's what I'm trying to convey you and and look at this. Data. Migration can be done once only right, and then post that, uh, it would be difficult again to, you know, re-rectify the data. Uh, no, but uh, my question is, even when you go with the modified request thing, so, uh, you will be showing all these fields to the uh, user? And exactly so, rule description is more of just showing them what the rule is right. Not exactly giving them 100 percent of the details of the input because that is being displayed separately anyway, and then they can make the changes here as well.
+
+00:06:55 - 00:08:05 Unknown Speaker:
+
+We can go ahead. I'm not denying, but my just point is that the way we are just doing those. Uh, you know, data modifications, that is quite easy over there, because those are. Everything is on our hand, right? But over here is right. It's all the DB team who plays the picture on the entry environment. So even a small change, right? That needs to go via lots of route. And that is not straight forward. I would say once Arthur would be back on Tuesday, right? We have to ask him first of all to make these changes. These four changes from UI side. And then anyhow, I have already modified the template on these bases. We can just review and if you, if you provide a sign up, I can start migrating the data.
+
+00:08:05 - 00:09:15 Unknown Speaker:
+
+While once after back, I would ask him to make these changes before we are proceeding to, like, redeployment. Okay, so I feel like he should be able to wrap up within a day. Okay, but he's only till Monday. He will be back on Tuesday. So, most probably we would be making these changes. The point of work, not the A4C. A4C, we can take it in the next year. But these are required to go through this because of the data migration. Okay. Now, let me ask, Pithvi, which check type is having the less number of record? Duplicate check. So bring up your screen and can you tell me is there any of the rule which you were not able to modify based on the input that Rachna has given? Yeah. You know filter it out based on the duplicate check type.
+
+00:09:25 - 00:10:38 Unknown Speaker:
+
+Is there any one? Yeah, yeah. So these all require a review with the input description. I could map only this one. Okay, and these are these descriptions are there. Maybe we need to. We can map them as well. Sorry, these are the existing descriptions. We can map them as well but we have to update those descriptions so that they will all fall under one particular category. No, but are there any cases which you feel cannot be mapped as per the template that we are giving, right? I think all of these can be mapped. Yeah, right now it can be mapped. But the descriptions from the description, we cannot map. For example, it has the field. So using this field, it will do it. If I don't have this information from the description, I will use it from this one.
+
+00:10:39 - 00:11:55 Unknown Speaker:
+
+The table name. So this works. This one works. But I thought maybe you are moving everything to the description. So maybe we have to re-review these. No, hold on. I need to invite Sameer also because he was taking the aggregation from this description only. So I need to understand, is there any impact on his process? But Sachin, that's for threshold checks, right? Oh my God, sorry. Exactly. Sorry, Prithvi, you can go ahead. Yeah, it was only for consulting. Okay. So, this one, okay, right now, Rachana, what I could say, we can switch to this one. No duplicate records should exist. Okay. Or it should be unique kind of description and update the existing entries also. So, the description will not have any column names or anything. It will be there as an input parameter inside the table name and the variable name.
+
+00:11:58 - 00:12:50 Unknown Speaker:
+
+So, Sachin, we need to align on this, right? Right now, like you were suggesting that we should have input of all the fields in the description versus like no fields in the description. Like if we don't have any field, right? Then it doesn't make sense to show that. Exactly. Exactly exactly, it should have that field, right? If it is specified, if it is specifying CM11, CM11 should be there. If it is specifying RESI User ID, it should specify RESI User ID should be unique. Okay, so if we have that in all those other places where it is not having, if we can get them also into the same structure, that is also fine. So the thing here is like even if your original description says no duplicate record should exist, right?
+
+00:12:50 - 00:13:43 Unknown Speaker:
+
+We have the other details in your table and variable name columns. So the new description has to be according to that, that no duplicate should exist or whatever it is that record should be unique at user ID comma update timestamp level. So that is how your new description should be. Exactly. I agree to that point. Yeah, if so, are we planning to update the descriptions? Yes, yes, yes, yes, yes, yes. Can you write one example over the map description instead of map description? You, okay, you are again creating new column. No man. New column is not required in the map description. You have already written the description correctly. Just in place of that unspecified, you have to replace it with variable name, variable name. Okay, should we add now? Check what is the column of that?
+
+00:13:43 - 00:14:40 Unknown Speaker:
+
+Yeah, copy that and then paste it at unspecified level. Yeah, it will be something like this, right? Then. Uh, yeah, if we are updating the description, so that will be a task, right. Such in, uh, yeah, yeah, I agree. Now we have aligned. Like, you know, the uh. You would need a couple of days to modify your end. And then I have one to update this description in the Lumi UH DQ repository. So that we would take those data and then dump it into the ASTB so that would be required. Now my question is, do you have any query with respect to any other check? Uh, one more thing regarding this, uh. Since. Prithvi has configured some of the templates based on extractions from the descriptions, right?
+
+00:14:40 - 00:15:30 Unknown Speaker:
+
+But, like in this example, he has not used the description because there was no detail in that description. So I would suggest to continue those templates as it is where they are picking the detail directly from the variable name column and table name column instead of extracting it from the description. Because that would be there, yeah, because because you get it right, that description is just to show the user that what exactly they are implementing. Otherwise, we should be taking like input fields as it is for our like configuration. No, no, he should be checking on those variables check, type, filter and all right, those would be there. Yeah, so this one unique count of record is equal to 21. Is there somewhat unique from all the descriptions right now?
+
+00:15:30 - 00:16:52 Unknown Speaker:
+
+Yeah, this one won't fit the template, this is a little different one. Okay, right now, it is mapped to the same check type because the query is similar. And we have put a condition inside the template itself to add this 21 thing based on the description. What is the suggestion you have provided? Basically because you have marked it as okay, right? Yeah, can you show the script once for this one how you are handling it? That was the additional check, was there, right? This inner query was there? Yeah, additional inner the last time, I'm sure. I think this is the one only where names fit, right? Yes. The criteria will come inside. Is this the one or the alternate one? This one, 001 only. Okay. I can show the generated HTML. I don't have it handy.
+

@@ -1,0 +1,366 @@
+2025-12-15 UAT Release Planning and Technical Integration
+
+Creation Time: 2025/12/15 19:12
+
+
+📅About Meeting
+
+• Date & Time: 2025-12-15 19:12 (Duration: ~22m 41s)
+• Location: No relevant content mentioned
+• Attendee: Ravinder (Speaker 1), Shiva (Speaker 2), UI/FE: Alok (mentioned), Farista/Farishtha, Manmeet, Ajay; QA: Vaishali (Speaker 7), Akanksha (mentioned), Shagandip/Shogun (mentioned); Backend/Platform: Satyam (Speaker 4), others referenced: Ashish, Srikant, Jagdish
+
+📒Meeting Outline
+
+UAT Release Plan and Scope
+
+• UAT Release date and scope
+  The first UAT release is planned for January 13. Scope limited to three tabs: RA Output, Rates per Quantity, and Tables. This is the first of four UAT releases; Production target is March 1.
+• Sprint focus and grooming
+  Today and tomorrow will be focused grooming on pending items and changes for the three tabs. Upcoming sprint work will be dedicated solely to these items to achieve end‑to‑end functionality.
+• Tight deadlines and expectations
+  Team to prioritize and stretch as needed to deliver a stable, working first impression for UAT. A detailed plan will be shared, and stories will list completed and pending work.
+
+Technical Integration and Branching Strategy
+
+• Login and auth integration
+  Role-based login and Earth Pass integration are in scope for this UAT. Confirm parity for UAT environment; identify any extra steps needed.
+• Branching and deployments
+  Create/cut a stable branch for UAT; deploy to Stage now. For the next two sprints, push only fixes/enhancements related to the three tabs to the UAT branch. Keep main development isolated.
+• Data and environment parity
+  Ensure integrations and APIs function in UAT. Confirm data availability or provide mock/stub data where necessary for UI verification.
+
+RA Output, Internal/External Stats, and UI Stories
+
+• RA Output status and changes
+  Rates per Quantity is mostly complete; RA Output needs changes. Current work will connect independent pieces end-to-end across the three tabs.
+• Internal Stats dropdown expansion
+  Concern raised that Internal Stats dropdown grew from 3 to ~12–13 values. Guidance: follow current agreed scope (original three); any new items will be separate stories and out of this release.
+• Internal Stats 1 vs 2 (and External)
+  Internal Stats 2 and External are subsets of Internal 1; backend data can be reused. UI will differ and requires separate stories. Aim to reuse components created for Stats 1; define at least five reusable integration points/components.
+
+Inputs Driving Pipelines and Master Data Impacts
+
+• Required inputs
+  Weight Loss, Lift Adjustment, and BioSIM inputs must be captured from UI to drive RA Output, rate build-up, and RPA. BioSIM follows existing process; no new backend implementation anticipated.
+• Scope confirmation
+  Weight Loss stories are already in progress. Clarify whether “Tables” UI includes custom/master data edits; backend requests sample JSON inputs for variations to align pipelines and master data.
+
+QA Readiness, Sign-off, and Testing Constraints
+
+• QA capacity and spillovers
+  Testing team lacks all tickets; spillovers are likely. Vaishali will be on leave; request to avoid overloading Akanksha. Stories to be shared to plan coverage.
+• UAT sign-off process
+  UAT users will sign off. Before Jan 13, internal thorough testing (manual + automation) is required; aim to deploy to UAT a few days early to allow QA cycles.
+• Coordination plan
+  Ravinder to map remaining work for three tabs, assign owners, and then sync with QA for testing plan and COT. Vaishali returns next Tuesday; interim coordination with Akanksha.
+
+Current Issues and Follow-ups
+
+• RPT ID/data availability for RA Output tab
+  UI dropdown values load, but tables don’t render due to RPT ID mismatch. Dummy data exists only for a specific RPT ID; testers are temporarily replacing the ID in the URL to validate UI rendering until proper data flow is available.
+• Release branch deployment regression
+  Post-deployment, search stopped working after 5 PM; likely branch/code mismatch in deployment. Needs verification of deployed branch/tag and included commits.
+• Meeting handoff
+  Team to move to automation demo session.
+
+📋Overview
+
+• UAT Release 1 fixed for Jan 13 with scope limited to RA Output, Rates per Quantity, and Tables; Production target Mar 1.
+• Upcoming grooming and sprint will exclusively target end‑to‑end completion of the three tabs, including role-based login and Earth Pass integration.
+• Create a stable UAT branch now; deploy to Stage; funnel only three-tab fixes/enhancements to that branch for the next two sprints.
+• Internal Stats scope will stick to original three items; new dropdown additions become separate stories. Internal 2/External reuse backend from Internal 1; UI needs separate, component-reuse-driven stories.
+• UI must capture Weight Loss, Lift Adjustment, and BioSIM inputs to drive backend processes; provide sample JSON inputs to align backend and master data updates.
+• QA: UAT users provide sign-off. Internal testing must be completed before Jan 13; plan to deploy to UAT a few days early for QA. Adjust workload due to tester availability; expect some spillovers.
+• Known issues: RPT ID dummy data workaround acknowledged; investigate search regression tied to release branch deployment.
+
+🎯Todo List
+
+• Ravinder:
+  • [ ] Share detailed plan for Jan 13 UAT Release 1, including completed/pending stories for the three tabs, by EOD after grooming.
+  • [ ] Schedule follow-up calls for detailed scoping, branching, and testing coordination this week.
+  • [ ] Map remaining work for three tabs, assign owners, and align with QA on COT and UAT test plan before Vaishali returns next Tuesday.
+
+• Shiva:
+  • [ ] Confirm role-based login and Earth Pass integration readiness for UAT; list any UAT-specific steps or gaps by next grooming session.
+  • [ ] Assist with cutting the UAT stable branch and verify Stage deployment integrity within 1 day.
+
+• Alok / UI Team (Farista, Manmeet, Ajay):
+  • [ ] Complete Rates per Quantity and pending RA Output UI changes; connect components end‑to‑end for the three tabs in current sprint.
+  • [ ] Limit Internal Stats scope to original three items; create separate story for “Internal Stats 2” UI with at least five reusable components identified, by tomorrow’s discussion.
+  • [ ] Provide sample JSON inputs for Weight Loss, Lift Adjustment, BioSIM variations to backend by grooming close.
+
+• Backend Team (Satyam + team):
+  • [ ] Validate that Internal 2 and External reuse data from Internal 1; confirm APIs/endpoints and any mapping needed by next sprint start.
+  • [ ] Align master data impacts; finalize schema/contract based on provided JSON samples; update related stories this week.
+
+• DevOps/Release (Shiva + Support):
+  • [ ] Cut UAT branch from stable commit; deploy to Stage; document branch/tag and deployment checklist today.
+  • [ ] Ensure only three-tab fixes flow into UAT branch over next two sprints; guard main from unrelated merges.
+
+• QA (Vaishali, Akanksha, Shagandip):
+  • [ ] Compile list of testing tickets needed; flag spillovers early and share affected stories today.
+  • [ ] Prepare UAT test plan, including manual and automation coverage for three tabs; target dry run on UAT a few days before Jan 13.
+  • [ ] Coordinate with Dev for dummy data/RPT ID handling; document test steps/workarounds until real data is available.
+
+• Investigations:
+  • [ ] Resolve search functionality regression post release-branch deployment; verify correct branch/code deployed and restore functionality within 24 hours.
+  • [ ] Confirm UAT environment parity for integrations and data prerequisites; list gaps and remediation plan before end of week.
+
+Transcription
+
+00:00:03 - 00:00:20 Speaker 1:
+
+So that onboarding process, all things like we had to do. He sent a message today morning. Okay. So I'm just going through the other, like he shared me one of some of the videos. Okay. How that will work. Okay. Going through those videos. So if you've got any idea, like I will do that. Otherwise, like we have to wait for time.
+
+00:00:21 - 00:00:22 Unknown Speaker:
+
+Okay.
+
+00:00:22 - 00:01:38 Speaker 1:
+
+Sure, sure, sure. Just an update, Shiva. Actually, we have a first release to, like we already planned and everything, timelines are scheduled now. 13th is the first release to UAT. We need to escalate a little bit and if any blockers are there, we need to get this also part of the first release, Shiva. But please let me know. January 13th, the first release of three tabs. I'll schedule a call with you and others and I'll share you the plan. But on January 13th, we need to make a first release to UIT for three tabs. RA output and rates per quantity and the tables tab. But I'll get the stories, all the stories, what we completed, what we're spending. Uh but we need to work hard uh not everything just three tabs here you got my point right just three times like there is a plan and they'll watch.
+
+00:01:43 - 00:01:47 Unknown Speaker:
+
+Okay. So, look, three taps.
+
+00:01:47 - 00:01:52 Speaker 1:
+
+We pretty much we completed rates for quantity and RA output we need to do.
+
+00:01:52 - 00:01:53 Unknown Speaker:
+
+See.
+
+00:01:53 - 00:01:58 Speaker 1:
+
+But RA output like some changes are there. Whatever we have done is that good or bad?
+
+00:01:58 - 00:01:58 Unknown Speaker:
+
+Yeah.
+
+00:01:58 - 00:03:03 Speaker 1:
+
+Yeah. Whatever the stories are, we today and tomorrow are grooming related to those three taps, the pending thing and the changes. And we can pick it up from this print and explain pretty much we need to wrap up those. Yeah, yeah, so far we are connecting independent things and, sorry, we are working on independent. But now now it's a time to connect all the dots and to make it end to end. Is working okay? But yeah, I am going to work today. Um, Friday until Friday. We were on that, busy getting slides and everything is done now. Um, and Farista and Manmeet are working on the stories. Uh, we're going to come today and tomorrow. Related to these three tabs, the pending things, we all need to consider those three tabs and get it done.
+
+00:03:03 - 00:03:18 Speaker 1:
+
+And sure, that is the login, and the Earth Pass integration is also part of this, the role based login. Okay, let's just collect, if anything pending Shiva, but if anything our side, we need to quickly wrap it up.
+
+00:03:18 - 00:03:26 Speaker 2:
+
+Okay, yeah.
+
+00:03:26 - 00:04:27 Speaker 1:
+
+Instead of going each and every one, any, um, you ping me right about that to point the story. I'm going to, I'm going to create that today. Sorry, I didn't get a chance on Friday, but I'll get that okay today. Yeah, anything else from anyone? Um, but tomorrow onwards, um. I'll make sure the current sprint, the coming sprint is all that's task related to those, the one which we're planning to release on 13th. I'll get those stories and we all need to work towards that. Make sure we need to complete, okay? These are the tight deadlines. I'm sure it's going to be a little bit stretch, but hopefully. Oh, if we release first, then, you know, always first impression is best, right? We'll, we'll, we'll get that, the release and make sure everything is included.
+
+00:04:27 - 00:05:13 Speaker 1:
+
+What we promised, uh, but. But we will split the task into it. Okay, um, no, no, not in production. Production is on March. First. Um, this is UAT, okay, three, we have four, four different releases to UAT. This is The First Feelings, which includes three tabs, including back-end. And uh, um, yeah, that's what. So yeah, yeah, and Shiva, when we're working, uh, that the same integration of integration should also work for UAT, right? Uh, we just need to make sure. Do we need to do any extra thing to do that? But um.
+
+00:05:13 - 00:05:15 Unknown Speaker:
+
+We need that, okay.
+
+00:05:18 - 00:05:37 Speaker 1:
+
+I have questions related to this detailed stats tab, Ravinder. Go ahead. Yeah, I think we have added many more values in the second drop-down internal stats one table. There were three now. I think around 12 or 13 drop-downs are there.
+
+00:05:38 - 00:05:38 Unknown Speaker:
+
+Okay.
+
+00:05:38 - 00:06:06 Speaker 1:
+
+Okay. Yeah, this is how you're telling based on Figma, right? No, if any changes are coming, they're going to add another story, Alok. Whatever you see currently, you just complete part of that. Okay, don't take the power week changes and the latest changes part of this story. Okay, they're going to create it, they're working on it. Okay, so only three times, which was there already. We will try to complete that one young part of this part of this story. Yes, okay.
+
+00:06:06 - 00:06:08 Unknown Speaker:
+
+Uh, hello.
+
+00:06:08 - 00:06:49 Speaker 1:
+
+We have to plan for the like, uh, this UT branch really start. So now it is all all the code is there, mainly main. So we have to check what is the like for these three tabs, we have to cut for those three, we have to plan alone for that. Even though the more code is there, that is also fine in UIT, but these three tabs need to work. We make sure we need to, we need to. Um, what, all the what and all the like enhancements are like fixes for those three branch mainly we'll push there, otherwise latest code we won't put there.
+
+00:06:49 - 00:06:50 Unknown Speaker:
+
+Okay, yeah.
+
+00:06:50 - 00:07:44 Speaker 1:
+
+That is, that is, that is a good plan. Yeah, let's cut, let's cut a stable code now, um, and deploy into stage. And going forward for next two sprint. We'll fix related to those and we'll make sure that the related to those three tabs and it goes to that branch. Okay, yeah, I'll. I'll schedule a call and we need to discuss a little more. Uh, I'll schedule a call. Um, because external we don't have, it is just for download, but, uh, for internal one. Yeah, do we need a separate story or is there one API is not enough for look?
+
+00:07:45 - 00:07:46 Unknown Speaker:
+
+We can see.
+
+00:07:47 - 00:08:32 Speaker 1:
+
+API side, I can manage. So that is another question. In internal stats 2, I can see the data is similar. Whatever is there in stats 1. Yeah, even external also, it is same actually. It is just a subset. Internal 2 is a subset of internal 1 actually. Yeah, there's nothing much actually. Those are for different parts as they created in Excel. So they wanted the same thing here too. So the data is going to be same. Only we need to build a separate task. Yeah, the data will also be the same. Because data is exactly the same. I don't have to write new. Only thing is, UI part will be different. UI, they have more work to do there.
+
+00:08:32 - 00:08:32 Unknown Speaker:
+
+Yes, sir.
+
+00:08:33 - 00:08:34 Speaker 1:
+
+So for UI.
+
+00:08:34 - 00:09:03 Speaker 3:
+
+We need a separate history. Yeah, we need a separate history. Details Uh, part two. Okay, okay, yeah, um, yeah, sure, um, but uh, at least five pointers should be there. Because, uh, we need to, uh you, to reutilize the components or whatever created for the, uh, this starts one, okay, but the integration and reutilization, uh, we need actually okay.
+
+00:09:03 - 00:09:04 Unknown Speaker:
+
+Okay.
+
+00:09:04 - 00:09:25 Speaker 1:
+
+So we'll discuss tomorrow, we'll discuss pending work and we can create detailed shop to separate story. Okay, we need to see what are the pending things on those three tabs first, from UI side as well.
+
+00:09:25 - 00:10:22 Speaker 4:
+
+Okay, here I just want to add, yeah, one more thing which is important. So we have to have input defined, whatever we are getting input from UI, because that will drive the pipeline process. Uh, so, yeah, input from input perspective, we have, uh, lift adjustment, this kind of backend. But yeah, weight loss and biosim, so this is important. Uh, so we should all the use study which are related with the weight loss, we have to have it and biosim. We are going ahead as of like existing process, so I'm for sure, like, won't be implementing new. But I don't see any change from front-end perspective. But still highlighting the facts like, we would need these. These three things are tables, weight loss, lift adjustment and BioSIM as an input, which will drive your RA output rate buildup and this RPA.
+
+00:10:22 - 00:10:28 Speaker 4:
+
+So from UI perspective, I'm for sure we are aligned on weight loss and left adjustment and bioSim.
+
+00:10:30 - 00:10:51 Speaker 1:
+
+The weight loss stories are coming. They're working, Satyam. Weight loss stories are working. So all the things which needed for those three tabs from UI and APS are also, the stories are getting created. And we're going to groom today and tomorrow. And we'll plan in the next print from Wednesday, the pending things. Yeah.
+
+00:10:53 - 00:11:23 Speaker 5:
+
+Yeah so the reason why i'm uh adding this uh this will modify this of master data.
+
+00:11:23 - 00:12:14 Unknown Speaker:
+
+So this UI for the table, is it in the scope or not? As of your content of change, that is not clear. And where in the tables is the custom tables? Custom tables mean, is that the same data? Is that the same data? For ui to control we just keep it in the connection okay.
+
+00:12:44 - 00:12:57 Speaker 5:
+
+I think. If we can get JSON input, sample JSON input, whatever these variations. So that will help us to align our backend.
+
+00:12:57 - 00:13:03 Unknown Speaker:
+
+So if someone can help us with that. We'll get it done first.
+
+00:13:31 - 00:13:33 Speaker 5:
+
+You can update the story and close it okay?
+
+00:14:05 - 00:15:56 Speaker 6:
+
+Yeah, it is deployed. See, the one thing is that I'm seeing some issues. Deployed there. I committed to release branch and I took help of Shiva and I committed there everything. Ashish was complaining that it was working till evening for the search part and after 5 o'clock it is not working. Maybe after deploying something what branch they are deploying that code is not present. Thank you there.
+
+00:15:56 - 00:16:32 Speaker 7:
+
+Sorry, uh. There is one update since we don't have all the testing tickets on our plate, so there are high chances of getting spillovers. Since Shogun is also not there. And from tomorrow I will be on leave, so I don't want to burden Akanksha that on the last day, she should be testing all the tickets. So, uh, since most of the tickets from Dev side we haven't received, so we would like. From the testing perspective, we won't spill overs for few tickets. We will be sharing the stories.
+
+00:16:34 - 00:16:35 Unknown Speaker:
+
+Okay.
+
+00:16:35 - 00:16:48 Speaker 7:
+
+Yeah, because I don't want to burden Akanksha. Secondly, regarding this UAT testing, I do have some queries. Firstly, who is going to give the UAT sign off? Is it us or UAT users?
+
+00:16:50 - 00:17:38 Speaker 1:
+
+UAT users will be testing. From 13th onwards, so until then we need to sign up for, um, we'll. We need a thorough testing, but we are going to, uh, we need to. We need something to finish. Actually. Uh, probably we. We're starting the remaining things. All all, uh, little changes at the enhancements of those three tabs, we, we worked on those, and, uh, those are, uh, there were changes on that Power week sessions and there were, uh, few changes. So we're getting those stories and which we are going to start from Witness Day. Okay, we'll see how much time we take by end of this week, by end of next week probably we're going to get. I'm hoping we're going to get end to end of those. And then we start deploying into the UAT.
+
+00:17:38 - 00:17:57 Speaker 1:
+
+And then you, Akansha and Shagandip all need to concentrate on those testing, that testing. Okay, before that, in January, make sure when you put rise defects and connect with the developers and have a working session. So 13th is our deadline for those three tabs to work and to end. Okay, sure.
+
+00:17:57 - 00:18:03 Speaker 7:
+
+Sure, sure, I would like to have a connect with you regarding the Cot testing, right? Yeah, yeah.
+
+00:18:03 - 00:18:32 Speaker 1:
+
+Yeah, so so I first I need to. Yeah, I'll start, I'll. I'm planning to come a second phase on with you because I need to sync up. Of the remaining work today, I'm going to work fully on that one. What is the remaining work on those three tabs and what are the stories? I'll do that mapping and. I'll get the complete work for the first time, sync up with the development team on who is going to work on what. And then I'll sync up a plan on the testing. Okay, probably. When are you coming back, Vaishali?
+
+00:18:33 - 00:18:34 Speaker 7:
+
+Tuesday.
+
+00:18:35 - 00:18:38 Speaker 1:
+
+Tuesday, right? No, Tuesday tomorrow, right? Tomorrow you're not here.
+
+00:18:38 - 00:18:40 Speaker 7:
+
+Next Tuesday. Oh, you'll take me one week. Okay.
+
+00:18:41 - 00:18:52 Speaker 1:
+
+In that case, yeah, I'll make a plan by the time you come back. But if anything else is needed, I'll work with Akansha. Just one more request.
+
+00:18:52 - 00:18:55 Speaker 7:
+
+Please, I don't want Akanksha to be burdened.
+
+00:18:58 - 00:19:11 Speaker 1:
+
+That's fine. I understand. We'll make a plan. No problem. I understand. But main testing is very important. So once we deploy, everything should work for the users.
+
+00:19:12 - 00:19:17 Speaker 7:
+
+I will come up with a plan for the UOT as well.
+
+00:19:17 - 00:19:31 Speaker 1:
+
+Yeah, that would be great. We'll try to deploy at least few days before into the UAT. And you guys can run automation and, uh, mainly manual testing. And then, to end, make sure everything is working as expected. Okay, okay.
+
+00:19:31 - 00:19:32 Speaker 8:
+
+Yeah, thank you.
+
+00:19:32 - 00:19:33 Speaker 1:
+
+Thank you, thank you.
+
+00:19:33 - 00:19:36 Speaker 8:
+
+Hi Ravinder.
+
+00:19:36 - 00:19:38 Speaker 1:
+
+Yeah, go ahead, yeah.
+
+00:19:38 - 00:19:51 Speaker 8:
+
+Like for the output RPT tab, uh, we are not getting the data for table. Like I have to change the RPT ID in the URL itself to get the table in UI.
+
+00:19:51 - 00:19:57 Speaker 1:
+
+Yeah, when you click the tab, which is not getting no.
+
+00:19:57 - 00:20:20 Speaker 8:
+
+No. Like. In the drop down, we are getting all the values of the drop down. But whenever I am selecting any drop down value, there is no table. Because of the RPT ID issue, like the RPT ID, which is mentioned in the network tab. It's different while on the while the which we are having on the API, it's different, so I need to change the RPT ID in the URL.
+
+00:20:20 - 00:20:39 Speaker 1:
+
+Okay, I don't know. Is that a UI issue? Is it some somehow, or what? I'm not sure what exactly is happening, but but let's, let's, let's complete this. Okay? And and can you write that? Can you write that with? I'm not sure who worked on RPT before, but uh, um, uh, Ajay, Uh, I'm not sure.
+
+00:20:46 - 00:21:30 Speaker 9:
+
+Data of output RPT on the current RPT. So Alok has already added some dummy data, but to a specific RPT ID, because it's just a dummy data. Oh, okay, okay, got it? So what? In order to check that RPT ID is not coming on the dashboard, right? So what? What usually we do is like, on the URL only where there is RPT ID mentioned, we just replace it one which has the dummy data. So that is what Akansha is referring to that she has to replace that RPT ID. She might not go through the process of RPT dashboard and then from there run details and everything. So that is what she is referring to. I understand. It is fine because the major part is where we test on the UI is coming right or not.
+
+00:21:30 - 00:21:31 Unknown Speaker:
+
+Correct.
+
+00:21:31 - 00:22:00 Speaker 1:
+
+So yeah, that makes sense. We have only mark data for one step. RPT ID, right Akansha? Yes, yes. Yeah. So so, yeah, these are the minor things, that's, that's fine, we can catch up all these in anything. Testing. Uh, okay, since we don't have a data, right? Um, yeah, yeah, that's fine, um, but let's reach out to team if we have any other things. Uh, okay.
+
+00:22:16 - 00:22:29 Speaker 2:
+
+Srikant, Farishtha, Andhra Sheen, everybody. Can I pull Aakansha? What is that meeting, Jagdish? Give me automation demo. Oh, yeah, yeah, yeah. Sorry. Yeah, we're coming. Yeah, okay.
+

@@ -1,0 +1,200 @@
+2026-06-02 Data Migration and Rule Management Challenges
+
+Creation Time: 2026/06/02 17:00
+
+
+📅About Meeting
+
+• Date & Time: 2026-06-02 17:00  
+• Location: Virtual Meeting  
+• Attendee: Anand, Rachna, Prithvi, Sachin, Preeti, Ayyappa, Alachana, IFA representative
+
+📒Meeting Outline
+
+Data Migration and Rule Management Challenges
+
+• Migrating Existing Data and Rule Display on UI  
+  The team discussed challenges in migrating approximately 300 existing data quality (DQ) rules into a new UI format. It was emphasized that relying solely on the auto-generated description field to represent rules is insufficient and can lead to missing validations. The consensus was to uniformly distribute rule conditions into structured filter criteria fields, similar to how inputs are captured in the UI forms, to maintain consistency and completeness.
+
+• Handling Rule Modification and Display Consistency  
+  While displaying existing rules on the UI is straightforward, modifying them poses challenges due to differences between old descriptions and new UI templates. A proposal was made to allow free-text input for modifications where structured templates do not fit, pending confirmation from the backend team (Arthur). The importance of maintaining a uniform backend format to support both display and modification was stressed to avoid managing multiple rule versions.
+
+• Future Enhancements and Dynamic SQL Generation  
+  The team considered future improvements such as using algorithms to dynamically identify modifiable fields and changes during rule updates. However, this is a longer-term goal, and immediate focus remains on finalizing the current migration approach.
+
+Standardization of Filter Criteria and Description Fields
+
+• Splitting Description into Filter Criteria and Additional Columns  
+  It was agreed that the description field is only one component of the input data. Other columns (e.g., allowed null rate for missing value checks) must also be incorporated into the filter criteria. The team plans to extract as much information as possible from descriptions into structured fields, ensuring all necessary data for query generation is available.
+
+• Avoiding PII Exposure and Using Automation Tools  
+  To assist with data extraction and standardization, leveraging AI tools like GitHub Copilot and ChatGPT was proposed, with caution to exclude personally identifiable information (PII) such as email IDs and business owner names. Only non-PII fields like description and filter criteria should be processed through these tools.
+
+• Adding Missing Filter Criteria from SQL Queries  
+  Some filter criteria used in SQL queries are not currently captured in the DQ input data. These missing criteria need to be added to the input data to ensure accurate query generation and future-proofing.
+
+Valid Value Check Template Simplification and Custom Checks
+
+• Reducing Template Complexity for Valid Value Checks  
+  The team agreed to limit valid value check templates to a simple array format where users input comma-separated valid values. More complex or infrequent valid value checks will be handled via custom checks with free-text input, avoiding the need to create numerous specialized templates.
+
+• Handling Complex Checks and SQL Generation  
+  For custom checks, a "complex" flag will be introduced on the approval page to bypass automatic SQL generation. This allows flexibility in handling complex or unique validation logic without overcomplicating the UI or backend.
+
+• UI Enhancements Needed  
+  Currently, the UI does not distinguish between custom and standard checks in the dropdown selection. Adding this distinction is necessary to implement the complex flag and improve user experience.
+
+Project Planning and Next Steps
+
+• Data Migration Timeline and Collaboration  
+  The team aims to finalize the filter criteria distribution and description standardization by the next day to facilitate a review with Rachna and Anand. Collaboration with IFA and the database team is planned to support the migration, including preparing a Request for Change (RFC) with 48-hour advance notice.
+
+• Ensuring No Impact on Existing Production Processes  
+  It was highlighted that existing production SQL queries do not currently use filter criteria fields directly. However, a thorough check will be performed to ensure that modifications do not impact ongoing processes.
+
+• Effort and Resource Allocation  
+  Ayyappa and Prithvi will work on refining the solution details. The team acknowledged the effort required but emphasized the importance of completing this migration to avoid future complications.
+
+📋Overview
+
+• Migrating existing DQ rules requires distributing conditions into structured filter criteria rather than relying on auto-generated descriptions.  
+• Displaying rules on UI is manageable; modification requires uniform backend formatting and possibly free-text inputs for unsupported cases.  
+• Future dynamic SQL generation enhancements are planned but not immediate.  
+• Description fields must be split into filter criteria and additional columns; missing criteria from SQL queries must be added.  
+• Use AI tools cautiously for data extraction, excluding PII.  
+• Valid value checks will use a simplified comma-separated template; complex cases handled via custom checks with a complex flag to bypass SQL generation.  
+• UI improvements needed to distinguish custom checks and support the complex flag.  
+• Data migration and standardization to be completed promptly with collaboration from IFA and database teams, ensuring no disruption to production.  
+
+🎯Todo List
+
+• Sachin:  
+  • [ ] Extract data from descriptions and move to filter criteria where possible; validate query generation, by next day.  
+  • [ ] Identify missing filter criteria from SQL queries and add to DQ input data, by next day.  
+  • [ ] Coordinate with product team for help on unmappable description data, ongoing.  
+
+• Prithvi & Ayyappa:  
+  • [ ] Refine solution details for filter criteria standardization and rule modification handling, by next day.  
+
+• Preeti:  
+  • [ ] Use GitHub Copilot for data extraction while ensuring no PII is submitted, ongoing.  
+
+• Anand & Rachna:  
+  • [ ] Review finalized filter criteria and description standardization; plan next steps post-review, within 2 days.  
+
+• UI Team:  
+  • [ ] Implement distinction between custom and standard checks in dropdown.  
+  • [ ] Add "complex" flag on approval page to bypass SQL generation for custom checks.  
+
+• DBA Team:  
+  • [ ] Prepare for RFC submission with 48-hour notice once migration plan is finalized.  
+
+• All:  
+  • [ ] Verify that modifications to filter criteria do not impact existing production SQL queries, ASAP.
+
+Transcription
+
+00:00:05 - 00:01:19 Unknown Speaker:
+
+Yeah, we can get started. Will Anand be joining Richna? Yeah, I did ask him to join. Let's wait for a couple of minutes. Yeah, he's here. Hi, Anand. Hi, everyone. Prithvi, you can go ahead. Yeah. Let me share my screen. So, Anand, just to give you a background, right, like, Rachna might have intimated you. Yeah, yeah. Right, this is, you know, the challenge with respect to, you know, migrating the existing data. And... you know, few of the conditions that has been placed by Prithvi when that seems valid. Because we can't design a system which would be just, you know, creating a SQL. Based out of the description, right? We need to uniformly distribute those condition on the filter criteria, wherever at least it is feasible, right? Otherwise, what would happen like if we rely on the description?
+
+00:01:20 - 00:02:13 Unknown Speaker:
+
+Then you might miss some checks also, right? Yeah, I think we already had the discussion previously also, right? So, in the description, we suspect the rules banana would become... Right, doesn't make a sense, right? So, that's what, you know, we were discussing the same with Rachna, but like, a few age cases, like, she thought of, like, she need to take a alignment. Sachin, I think there is some misunderstanding. I was saying the opposite, right? That we should not depend on the description. Like in the form, we are taking all these fields simply, so let's do the same. Exactly. And the description is anyway auto-generated, right? It's not like that the users are giving us that description, which would have made sense still that there could be something extra in it.
+
+00:02:13 - 00:03:24 Unknown Speaker:
+
+But since it's auto-generated, all the fields should be like 100% sufficient. To give you the required data because the description data is also coming from the source. What I would suggest is that the way we are taking the inputs in the UI forms right, similarly we need to split the old rules also across those fields in order to get that modification data in the standard input form template. I was discussing this with Alachana where you are getting some major set of certain rules if you are able to see some patterns. Create for them, but don't create it for everything, is what I would also say. Let's just see if there is any modification for a specific rule that comes up later on. Let's take it up manually still, because I think everything we can solve it for the UI itself, right?
+
+00:03:25 - 00:04:16 Unknown Speaker:
+
+Because you have made it so complicated, like we'll have 20 buckets of valid value checks, for example, right? But if there is no requirement, no modification is coming, then it's just a waste of time, right? No, I agree, Anand, but... The main challenge is if I have those 300 records which we are moving to the UI, the existing rule, and if we are not able to display it over the UI, then that would be a problem. Tomorrow somebody would claim, maybe from some team, they would say one of my rules is not getting displayed over there. See, one question I have is such that on the UI, you already just showcase these fields and description and all that, right? So there is no problem with that. It is the modify part where the problem comes, right?
+
+00:04:16 - 00:05:09 Unknown Speaker:
+
+Yes, yes. That's what I wanted to clarify first. In the display section, everything would work. There is no issue with that, right? Okay, so what we can do simply is also what I am thinking is for modifying such rules where we do not have a proper format, can't we display whatever is available and just give them a text, free form text box just to put down their comments over there for now at least. That is something I need to check with Arthur. Then he need to put a else condition. Right now he is forming everything. Look, Anyhow, for update, he need to read it from that column, right? Whatever backend would send it to him, he would display that over the UI. That's for sure, right? But once a user modifies something right, then that goes to the pattern which he has built.
+
+00:05:09 - 00:06:35 Unknown Speaker:
+
+I hope you're getting so. And then, like modified roles, the auto deployment, like that whole backend script running part, is also there, right? You can't build like 20 different patterns, right? I think that's a waste of time, honestly. I was just thinking, even if this is just like a safety net kind of thing. I think, Anand, it's a little mixed up. I think the different patterns was regarding the valid value check. Here, we are talking about everything overall. So like all the checks across all the checks, right? Like, how do we want to modify this repository data in order for people to like display things in the modification form? Like irrespective of the valid wrapping checks. Got it. We can publish all of that to .  Yes, yes, we can. I'm not denying that.
+
+00:06:35 - 00:07:21 Unknown Speaker:
+
+It would be sitting over there in your description table. When that, you know, UI would call that get API, right? That would display this description, whatever is there in the table, right? Even if it's AVC or null or whatever, right? The problem is when a user is trying to modify, just take an example, right? Now he's highlighting this dynamic identifier, should have 100% fill rate, right? Yeah. So this would be the description which would be shown to the user in the rule description. Now when he tried to modify this rule, right? Now the way we have decided a template over the UI, right? This description is going to change based on the template that we have created, right? And then user may find it out, oh man, the earlier description was different.
+
+00:07:21 - 00:08:13 Unknown Speaker:
+
+Now I am trying to modify it and it is getting changed to some different pattern altogether. That is one problem. Second problem is, if we won't be able to adjust his utility, If there are lots of differentiation between, like. First of all, he need to adjust with the new rules, right? Which should be onboarded with respect to the new template, right, that is one adjustment. And then again, he need to consider these description also because few of the example, right, which he has given. Like, if you see this one for valid value, length should be between 1 and 3. And that is something missing in your filter criteria, right? So he can't ignore this expected range from the description. So even description stand out to be a critical filter criteria for it. Yeah, exactly.
+
+00:08:13 - 00:09:31 Unknown Speaker:
+
+I can't ask him to create two different set of uh, application, right? Which would? One would be entertaining your new rule, and one would be entertaining your modifier, right? So that becomes, uh, again, active. So end of the day, we have to make these uh, uh description and all. A uniform to support the UI, it's not a UI requirement, it's basically a back-end requirement for generating those sequels. And uh. But what I was thinking of is, if let's just say we will go this via this route of LLN and everything right. I mean, this is just a future state. I'm not, I'm just saying, I'm just thinking, if let's just say we go via this algorithm and all those kind of stuff. And for every time when somebody hits modify rule, right, the exact mode gets passed to that algorithm.
+
+00:09:31 - 00:10:47 Unknown Speaker:
+
+And is there some way it populates, like, what all could change in that particular field, something like that, right? That is a future plan, but you would be asking me in next one month where we are with that dynamic SQL version. That's something we can improvise the tool as you have seen that Qtrak DQIM. Like another question, I had such a key if you try to solve for this using templates and all right. Let's just say, if I come to this check and I want to check, change the check all together, then what should we do? So that is something we have restricted, right, as we have discussed last time, like, you know, table, uh, and then the check type, uh. I would even suggest right now, just allow us a day or two, right?
+
+00:10:47 - 00:11:39 Unknown Speaker:
+
+We can refine these details for you. I can ask Ayyappa and Prithvi to work on it, let me come up with a solution for this, right? Some of the field that, you know, even Prithvi was suggesting, right? And that would sort out the issue. We just need to modify some description in the filter criteria, that's it, and we will keep the existing one and the proposed one. Just review that one and then we can pick a conclusion. Because, you know this, I'm. I'm waiting for these data to be finalized before making a data migration. Because, look, DBA team is going to support us only once for this okay post. That they are not going to mandate it. So that is the reason what we are trying to do, we are just, you know, trying to finalize it.
+
+00:11:39 - 00:13:01 Unknown Speaker:
+
+Considering all the aspect of this application so that it would support your sense of UI. And again, the piece of work that with is working on. It needs effort. Anyhow, this requires effort. I completely agree. But that is the last point that we can do it. The reason being, I have a question here. Since you are saying that you will try to segment these things into the filter criteria part, right? But going forward, this is not the input format that we are following. Filter criteria is there, but there are also some additional columns. So, do you suggest we do that split here also? No, we are going to consider everything, Rachna. Like this filter criteria, description is one of the components, I would say. It's not just... Correct. So, we will consider the new columns as well, right?
+
+00:13:01 - 00:13:54 Unknown Speaker:
+
+Yes. When you are splitting it across. Correct. Okay. So Sachin, instead of doing it manually, can we just leverage ChatGPT now that everyone has the access? We already have those standard templates, right? We can feed those templates and then we can ask to spread these descriptions. Yeah, he's using the GitHub. There's no PII in this description, so that should be fine. Yeah, yeah. Preeti, I hope you're anyhow using the GitHub co-pilot for this, right? Yeah, yeah. Yeah, so anyhow, please don't create the entire DQ repository because there is that email ID section, right? That is PIIS. Yeah, not only email ID. Even the table right business owner name is also there. Yeah, business owner knowing the table name. You should not be, you know?
+
+00:13:54 - 00:14:45 Unknown Speaker:
+
+Submitting this all together, these, uh, complete state over there, please make sure you are just passing on these, uh, description filter criteria, that's it, and come up with a standard help template. No, Sachin, first what I can do, wherever possible I can extract data from the description and I will move it to the filter criteria and I will see if the queries are being generated properly or not. No, look, for null, right, the one that you have highlighted, we really don't need a filter criteria for that. That is what, Sachin, if I have something like this, Again, I don't want to have one more pattern, so, for example, not in SCSC. So one more description. I think even if he puts it in the filter criteria, this is all on the back and right, it shouldn't make a difference.
+
+00:14:45 - 00:15:52 Unknown Speaker:
+
+And with respect to modifying the existing data, I I mean, I recommend modifying it now itself. Because if we are going to modify in the future and using the front end, then that is what we are discussing will be. Yeah, no, that's what, you know, that's what I convey to on and right. Like, this is something we need to do it. Otherwise, it would be very difficult to manage multiple template and all those, you know, sequence over there. We just just come up with that, you know, that filter criteria one by tomorrow and then we can discuss on this. I heard few more columns, what are those columns? So Prithvi if you see the front end right, if you just see the front end, so there are like a few columns where suppose I take example of missing value check, then it says like allowed null rate.
+
+00:15:52 - 00:16:43 Unknown Speaker:
+
+So whenever you have rules like, this, variable should not be null for more than five percent of the records, so there we are taking the input, five percent. So, like, instead of extracting it from the description, you can directly use that column instead. So these are the kind of columns. There are like two, three additional columns in each of the check types where we are. Like, extracting that info which would have been in the description instead in the previous format. And that can be directly pulled from those columns. Sachin, that was not clear. No, no, no. Anyhow, that would come to your description field also, right? So, we would be considering. Yeah, that would come to the description also. I'll explain it to him. Yeah, go ahead. We are not planning to use description anymore, right?
+
+00:16:43 - 00:17:41 Unknown Speaker:
+
+For any of the data inputs. No, man, you can't discard the description. You have to use the description field also. Description, filter criteria, variables name. I can use to find the template, okay, description part. But what filter criteria to apply, what validations, for example, some values of the percentage, plus or minus 5. Those inputs should be taken from the other page that we are storing. Sorry, there are other things if we check the variable name in all right, those things we are taking already. Sachin See, the only thing is right now, for many of the templates, I see this filter criteria is missing. Okay, so what I can do? First of all, I'll move as much as I can to the filter criteria. If you people. Yeah, go ahead. I have already told you, right?
+
+00:17:42 - 00:18:33 Unknown Speaker:
+
+Whatever is there in the description and you feel we can move it to the filter criteria, we can move it. Okay, fine. And where I cannot move, I would ask for help. Product team, they can help me like where we can put that information. Yeah, sure. And one more thing, I saw a few of the filter criteria. It's not there in the description, not there in the filter criteria. So those also we have to add it here so that queries would generate. You have something else in the code, not in the code I am talking about. In the SQL file. SQL query is there, right? Query has those filter criteria, but it's not there, it's not there in anywhere in the DQ input. Yeah, then we have to add it here, I believe, like earlier, there was no dependency, right?
+
+00:18:33 - 00:19:29 Unknown Speaker:
+
+So many times, like we just didn't force it here. If the filter criteria was like too big or like too complex. But going forward, like there is this dependency, then we have to add it here. Okay, okay, fine. Are we using these filter criteria in any of the SQL that is running in the production environment? No, Sachin. We are not using them. They will not use directly, but during generation of the query, they will use them when they are creating the query. No, no, no. You did not get my point. I was asking with respect to the existing rule which are running in the production in the Lumi, right? My question is, are we using those filter criteria in the wire clause? No, Sachin. Filter criteria not used. But I will cross it once again.
+
+00:19:30 - 00:20:27 Unknown Speaker:
+
+Yes, yes. So much observed, right? Not used. No, no. Just do a search in that workspace, right? In that Lumi data monitoring tool workspace, right? And just cross check. Because if we are planning to modify those, we should take into account that existing process should not get impacted with these modifications. Yeah, sure, okay. And if we try to wrap it up by tomorrow so that we can have a next review with Rachna and Anand, and then we need to plan it. Because even the database team need a RFC, so that would require 48 hours advanced notification for creating an RFC. But such a completing all templates would be difficult. I know, like, try to start with the, uh, you know? The number of rules, how many rules are there? 300 rules. 300, right? Nearly 300.
+
+00:20:27 - 00:21:16 Unknown Speaker:
+
+Take help from IFA, right? That's the reason I have included IFA also, right? We are not going to work alone, so include IFA over there also. So try to close it as soon as possible. Yeah, because without these data migration, right? Once you put the data in Copilot and the standard templates if you put, then your part is just validating. If it looks fine, right? If the data has been distributed across those columns properly, right? But but again, just call out with the as Rachna mentioned, don't put all those details as that contains PII record. Just put this description and the filter criteria which you want to leverage, that's it. Yeah, and if you want to put the whole Excel, you can put it along with the DQID. DQID is not PII.
+
+00:21:16 - 00:22:09 Unknown Speaker:
+
+That is something we have only generated, so it should be fine. Yeah, sure. Also, such an another thing I was saying I could not discuss earlier was regarding the valid value check, right? The last time we were discussing that there might be too many templates for that, so I discussed this with Anand also today. And we have come to the consensus that, uh, like, for a few of the templates, right? Like, I think one template we have already shared is that array. When that, uh, this value should be in kind of thing. And then they just do a comma separated, uh, input to that, like the users will put, say, one, comma two, comma three, like that. So that is the template that we are currently going with, and for other kinds of rules, I think we can just take that as an input in custom checks.
+
+00:22:09 - 00:23:01 Unknown Speaker:
+
+Why? Because, uh, first thing, uh, we have not received many of these like valid value checks in recent times. Like whatever is, there has been there since a long time, so it's not a frequent requirement. We don't want to build like 20 separate templates for something that's not even regular. So, one is that. So, that is something we need to incorporate in the UI, right? So, we have already incorporated this thing, right? So, the edited, I think it's not edited so far, but it has to be edited into that comma separated thing. No, I think it's up right now, right? Like, it's that array thing that enter comma separated values, like whatever valid values you think should be there for this variable. Okay, so that we already have, right, so we will continue with that.
+
+00:23:01 - 00:23:45 Unknown Speaker:
+
+And uh, if, uh. Like. If a user wants to put a different kind of valid value check, then they can just go with the custom check type. Like they can give us free text so that feature then can be built like for custom checks so they can input it there. Like, we don't want to basically within the within the valid value check, we don't want to build those 10 different types of input forms, right? It will get very confusing for a user, like, what are we even trying to ask? So for custom check, right? It's it's going to be like complex query, or it's again a simple query, just with a custom check. That's what you are mentioning, yeah, so for valid value check, even though like query wise, it would be fairly simple.
+
+00:23:45 - 00:24:35 Unknown Speaker:
+
+But just because we don't want to take input in 10 different ways, so it should be all right. Like the user can input that also in Custom Check only. It's any way a free text box, right? Such? And so, even whether they are putting a complex query or a simple one, if they don't find a like available format in these, they can put it there, okay, and then what is the expectation we need to generate the SQL out of that? Also, No, I think that we can take on a case-to-case basis. So for that, you know, maybe? On the approval page we need to enable a flag called complex, right, the one that we were discussing earlier. So while you are approving it, right, if you can just enable that as a complex uh, flag, right, uh.
+
+00:24:35 - 00:26:02 Unknown Speaker:
+
+We will bypass that request not to generate the SQL. That's such a thing to start off with. You can simply take it from the custom check itself, right? If it's a custom check, that automatically it's bypassed. So that is not there in UI right now, Anand. There is no flag from which I can identify whether it's a custom check or it's a normal check. Yeah, so in the drop down that you have, right, valid value check, duplicate check, whatever. That's the same I was mentioning to Rachna. Okay, that is something right now, not there in the U.S. Okay, okay, uh. I think we would be meeting in next four minutes, so let's connect in that screen planning call. Okay, should we just close this one as soon as possible, by today or next time tomorrow? Lunch? Yeah, sure, yeah, thank you, thank you. Thank you.
+

@@ -1,0 +1,294 @@
+2025-12-17 CL Verification Process and Automation Enhancements
+
+Creation Time: 2025/12/17 16:56
+
+
+📅About Meeting
+
+• Date & Time: 2025-12-17 16:56 (Duration: 3973 seconds)
+• Location: Remote (video/voice meeting; screen shared)
+• Attendee: Anish, Monica, Ramansh (mentioned), other team members / agents (unnamed); new joiner to support as needed
+
+📒Meeting Outline
+
+CL Verification process and purpose
+
+• What is CL verification CL (Change List) verification is the QA process of validating code changes submitted via CLs. After a CL is submitted (e.g., Monday), QA verifies it in the following build (e.g., Tuesday) to ensure the change did not break existing functionality and any linked bug fixes are actually resolved.
+• Primary goal The main objective is early detection of regressions caused by CLs so fixes or rollbacks can be performed before many dependent CLs pile up and make rollbacks complex.
+• Verification scope QA primarily verifies that existing functionality is not broken by the CL (regression checks / sanity), and confirms bug fixes referenced by CLs. New feature verification (feature flag behaviour, full feature testing) is handled by the new-feature team, not by CL verification.
+• When to test The team tests the latest build (the most recent certified build). CLs submitted between two certified builds (e.g., Jet C to Jet D) are extracted and considered; verification checks whether those CLs are live in the latest build and whether their intended fixes work without regressions.
+
+Builds, bill types, servers and components
+
+• Build categories and cadence
+
+    • Fish build: hourly
+    • Dog build: daily/weekly (weekly referenced)
+    • Certified build: weekly
+    • Release build: bi-weekly / promoted release Different bills (build types) have different generation frequencies and purposes.
+
+• Servers and components Web, Android, and iOS have distinct servers and components. Extraction and verification processes differ by platform; Android and iOS are similar to each other in some respects but still have platform-specific components. Web has its own server naming (Pinto server referenced).
+
+• Cross-platform CLs Backend CLs and mobile CLs can appear in the same dashboards. Web team flags CLs for mobile/backend that they cannot verify (marked as “behind the flag”) and forward those to the new-feature or mobile teams.
+
+Extraction of CLs and tooling
+
+• Current extraction approach Currently extraction is manual for web: QA provides previous and current certified build IDs (Jet C, Jet D) and runs scripts / tools to extract CLs submitted between those builds. Android has an automated script that uses APIs; the same endpoints could be re-used for web.
+
+• Data captured Extracted data written to a spreadsheet includes: CL ID, CL description, QA note (if present), linked bug IDs, CL status (live/not live in a build), submission timestamps, server/build mappings.
+
+• Dashboard and CL status The CL dashboard uses color indicators (green = live in build, red = not live). CL status and build URLs are available via the dashboard (Rapid referenced). CLs that are not live in the build (red) cannot be verified until they turn green.
+
+• CL description and QA note CLs may include a QA note describing what to verify. If QA note absent, the QA looks for linked bugs or CL description to determine verification scope. If no QA note and no linked bug, a CL may be marked NA (not applicable) and not verified.
+
+• Scripts / automation
+
+    • Android: scripts exist using APIs to extract CLs, and some test cases are automated (pre-submit, copycat, post-submit).
+    • Web: automation was intended but not fully implemented; manual work remains. The team discussed reusing Android endpoints/APIs to automate web CL extraction and populate spreadsheets.
+
+Verification workflow and reporting
+
+• Verification steps
+
+    • Extract CLs between two certified builds (previous and current).
+    • Check CL status (whether CL is live in the current build).
+    • Read CL description and QA note; open linked bug(s).
+    • Verify bug fix is present and functioning in the latest build and perform regression/sanity checks around impacted areas (exploratory testing for attachments, UI, dark theme where relevant).
+    • If CL is not live, add comments to the CL or bug noting inability to verify and wait for green build.
+    • If bug is not fixed, update bug and CL comments stating failure to verify.
+
+• Failure handling If a CL causes a regression or a suspicious “culprit CL” is identified, the CL may be rolled back or a P0 patch may be deployed. For P0 fixes: do focused sanity/high-priority regression tests and sign off for the P0 promotion; full regression is usually not performed for emergency fixes.
+
+• Status updates Verification status and notes are recorded in the bug system (not by changing CL status on the dashboard). QA posts “Working as intended” or failure details in the bug comment area and includes build references and screenshots where applicable.
+
+Data, history and enhancements
+
+• Historical data Historical extracts (spreadsheet history) for several years exist and were requested so agents can analyze patterns and feed automated decision logic.
+
+• Enhancement opportunities
+
+    • Automate web CL extraction using existing Android endpoints/APIs to reduce manual effort.
+    • Provide a date-based extraction (select yesterday/today) to yield CLs for that day-stretch instead of manually supplying build IDs.
+    • Filter CLs by presence of QA note or linked bugs to avoid unnecessary verification of NA CLs.
+    • Pull linked bug details and attachments into spreadsheet to reduce navigation overhead.
+    • Improve dashboard integration to flag which CLs require action by web QA vs. forwarded to other teams.
+
+Access and next steps
+
+• Access
+
+    • Request viewer/edit access to the shared spreadsheet and scripts (a viewer request was raised).
+    • Obtain API / dashboard access (Rapid, Pinto server links) from platform owners / partner group to support automation. Monica and others were referenced as contacts to provide links and access.
+
+• Documentation The team must document the current web CL verification process (how CLs are extracted, which URLs/APIs are used, and what fields are populated in spreadsheets). This will be the foundation to decide automation/enhancements.
+
+📋Overview
+
+• CL verification is a regression-focused process ensuring submitted CLs don’t break existing functionality and that linked bug fixes are validated; feature verification is handled by the new-feature team.
+• Builds are produced at different cadences (hourly, daily/weekly, weekly certified, bi-weekly release); verification uses latest certified builds.
+• Web extraction is currently partly manual; Android uses API scripts — reusing those APIs for web automation is feasible.
+• CLs must be checked for QA notes and linked bug IDs; if absent, CLs may be marked NA and skipped.
+• CL dashboard indicates whether a CL is live in a build (green) or not (red). Red CLs must wait to be verified.
+• When a CL is suspected to cause regression, early detection enables quick rollbacks or patches; P0 fixes get focused sanity testing only.
+• Team needs access to historical spreadsheets, scripts, and APIs (Rapid links and build URLs) to document the current process and implement automation.
+• Documentation of the web process (extraction endpoints, sheet columns, validation steps) is required as the first deliverable.
+
+🎯Todo List
+
+• Anish / Meeting organizer:
+
+    • [ ] Share links to the CL dashboard (Rapid) and build URLs with the group, including guidance on where CL status and QA notes appear. (ASAP / before next working day)
+    • [ ] Provide contact names (Monica, others) and confirm who can grant spreadsheet/script access. (ASAP)
+
+• Agent / QA documentation owner:
+
+    • [ ] Request and obtain viewer/edit access to the historical CL spreadsheet and extraction scripts; review existing scripts (Android) for reusable endpoints. (Due: 2025-12-18 11:30 IST)
+    • [ ] Document the current web CL verification process: extraction method (URLs/APIs), spreadsheet columns, CL->bug linking steps, dashboard checks, and verification checklist (what to verify in build). (Initial draft due: 2025-12-18 11:30 IST)
+    • [ ] Collect historical extract data (last 5+ years or available history) and summarize how CLs, bugs, and builds were correlated (for agent model training). (Due: 2025-12-19)
+
+• Engineering / Automation owner (to be identified; coordinate with Android script owners):
+
+    • [ ] Investigate reusing Android APIs/endpoints to automate web CL extraction and implement date-based extraction (select date range to return CLs between builds). Produce a proof-of-concept script. (Proposed due: 2025-12-22)
+    • [ ] Implement spreadsheet auto-population with CL ID, description, QA note, linked bug IDs, CL status (live/not live), and build ID. (Following POC; due: to be agreed)
+
+• QA Leads / New-feature team contact:
+
+    • [ ] Confirm expected scope for CL verification: which checks must web QA do vs. new-feature team responsibilities; define the “NA” criteria clearly. (Due: 2025-12-18)
+    • [ ] Provide access/contacts for APIs and verify whether backend/mobile CLs pulled into the dashboard should be flagged and routed automatically to the appropriate teams. (Due: 2025-12-19)
+
+• All attendees:
+
+    • [ ] Ping partner group to get required permissions/links; share any additional ideas for enhancements to the extraction and verification flow in the meeting channel. (Ongoing)
+
+Notes: Schedule follow-up/documentation work to start before 11:30 IST tomorrow as discussed.
+
+Transcription
+
+00:00:09 - 00:05:11 Unknown Speaker:
+
+Hey, hi Anish. One second, one second. The speaker problem is there. What is this charge? Payment you know i joined but nobody i could see ramansh but he's not speaking okay i can hear you can you hear me. So I'll tell you about CL verification today. So, CA verification is change list verification that refers to a process of changing any change list that meets the necessary requirement of the submission with a code. Like, if you will submit the CL on Monday, then QA will verify that CL on Tuesday. Okay. Okay. So, like, after the submission of the CL, QA will verify on the next day. Understood. Whenever a CL is submitted and we can see in which bill it was been, from which bill it has been deployed actually, okay?
+
+00:05:11 - 00:06:01 Unknown Speaker:
+
+In fish food, dog food, and as well as in release bill. In the same way, for web also, we have a problem. Pinto server. Pinto server, okay? The server number will be there actually. So from that particular bill, these changes will be reflected into that particular bill, okay? I'll share you my screen. I think when you connected with... Monica, she could have said already about that, right? Uh, yeah, I shared a lot of information with respect to bills, uh, especially the Android ones, uh, so, um, cider, and then a few of the tools, she told. Like, you will get bill IDs. And that would be compared with what they have received yesterday and what they need to get today. Okay, Excel sheet execution, lot of things. Yeah, yeah, she could have shared the sheet.
+
+00:06:01 - 00:06:52 Unknown Speaker:
+
+There is a code written how to extract the CLS as well. Right? Okay, yeah, that also, that also I got to know. But is it different for, uh, Web? Yes, for Web and Android, it is completely different. Actually. Okay, but Android and iOS looks like it's a similar. Only. What do you say? It's a different process again for that. Android and iOS also will have different components actually. Components and the process will be different. Okay? So iOS, Android and web will have complete different process actually. Okay. Maybe the process in the sense the CS will be changed, the change request and we will be updating on those things. But we need to know from which will it has been deployed and what are the changes that will be coming. Likewise, the process is same but the servers are different.
+
+00:06:52 - 00:07:55 Unknown Speaker:
+
+Servers are different actually. Okay, and components are different. Okay, so servers, you mean by, uh, for web okay, so for Android it will be like, uh, which would will okay, and release builds okay. There are different types of bills, so the fish will build in every hourly, the bill will get generated. Okay, okay, but coming to the dark foot, we'll have weekly ones, okay, daily bills will have. But there is a updated bill that will be a certified, bills that will be getting generated on every weekly. Okay, okay, and coming to the release bill, it will be the bi-weekly which will be getting promoted. Okay, but the bills will get generated, but there will be some difference between these bills. Actually. Okay, okay, so yeah, we can go through those things as well, okay?
+
+00:07:56 - 00:10:37 Unknown Speaker:
+
+But you just go through the process, how we get the CL verification we are doing, and how we will extract from what are on the comments, where are the comments that we are going to extract, that process you need to have an idea on that actually, okay? Sure, sure. Yeah, thank you Anish, yeah. Okay. Okay, I'll show you how we extract CLs in web. Like 16. Submitted in between jet C and jet D will come here. Okay. We need to set the difference between the winter when we need to get that bills, right? So that's the reason. So when you're working on various day, you need to give us the jet D and the previous days jet C. So it will extract the CS in between. That will be tested, or only the latest one for that?
+
+00:10:37 - 00:11:33 Unknown Speaker:
+
+No, the latest bill will be tested. But as I said, when we extract, so it will extract based on the Jet C, Jet C resins. So today's certified bill will be there, okay, from today's certified bill to yesterday's certified build Jet C. Okay, in between these two bills, whatever the CMS that have been submitted. So for suppose, next hour, you got one CL that will not come under Jet C. Okay, so when you are after Jet D or Jet D, if there is any CL that will go to the next next year's CL, actually okay. Verification So it will extract the seals that were being submitted in between Jet D and Jet C, so which are being submitted. Those changes will be reflected on the particular browser itself. Again, that change actually.
+
+00:11:33 - 00:13:03 Unknown Speaker:
+
+Okay, I'm going back to question, maybe I'm repeating my question, Sorry, yeah, no issues, no issues. So when you say CL request, okay? Between Jet C and Jet D, for example, there are 10 builds. Okay, so you would end up testing each and every CL that comes in, or okay, got it okay? So all these changes will be reflected in the latest latest build. Okay, so we are trying to get what are all the builds happened and related CLS in those builds? Only to test it in the latest build whether they are present properly or not. No, yeah, no. Because of that change change request, we need to verify, uh, if the change has been impacted anywhere in the application. Okay, regression functionalities related to the checklist. Okay.
+
+00:13:04 - 00:14:20 Unknown Speaker:
+
+So just like instead of verify the functionalities, the change request, we need to verify the existing functionalities as well. Okay. Got it? So is there any impact with the existing functionalities? Will be shown. Okay. So in that case, we cannot see the change request, but we will be verifying. We don't verify the change request. But we will be verifying. The existing functionalities are working as is, even after submitting the change request. Okay. Because we are not going to enable that flag and verifying that particular thing. Because that part will be done from new feature team. But as part of verification of CL we will be verifying the existing functionalities doesn't break because of the submission of the particular CL. Okay, okay. And if there is any, it has already been active and it is showing up, we will be verifying that functionalities.
+
+00:14:21 - 00:15:15 Unknown Speaker:
+
+Okay, okay, got it. Yeah. And Anish, what do you actually do in case of integration test? Do you do end-to-end complete testing or how do you? No, no, we won't do the end-to-end testing because as I said earlier, if. If it is impacting related to the snooze, whatever the snooze related test cases, we will be verifying. If there is any CL that is related to any bug fix. Suppose there is a bug that Ramesh has been reported. So the developer has been fixing it and deploying it. For deploying that, he needs to create a CL. So the CL came for us for review. I will verify that particular CL and go through the particular description of that particular CL, why that change is coming, okay?
+
+00:15:15 - 00:15:57 Unknown Speaker:
+
+So going through the description, I will come to know, okay, and even if they will be adding that bug, whatever the bug, the preparation has been fixed, okay? So I'll come to know that, okay, this change request is related to so-and-so bug fix. So I will verify that bug has been fixed on that particular build or not. If that bug has not been fixed, then I will update in the particular bug. As well, in the CL, uh, we'll add it saying that this because of this CL we have not. If this bug has not been fixed, okay, if it has been fixed, we'll update in the same box, saying that out of this CL, the bug has been fixed. And we will verify. We will also mention that in which bill it has been fixed as elements.
+
+00:15:57 - 00:17:09 Unknown Speaker:
+
+Okay, okay, I understand. Okay, got it, yeah. So if there is any change, we don't verify the change, actually. There is no breakage in the existing functionality or not. The change and all will be verified by the new major team actually. Okay, okay. And one more thing, they will be, in the description, they will be mentioning a QA note. Ah, yes, yeah, she told that. So, yeah, in the QA note, they will be mentioning the description of that particular CR, okay, what we need to verify. So, they have mentioned what they have mentioned here, if you go through here. Particular CL. So as an expert of this particular project, we will come to know, okay, this CL is related to so and so functionality. Like your QA note is there, right?
+
+00:17:09 - 00:18:00 Unknown Speaker:
+
+So, we have to go inside the bug and we have to verify it. I heard from her that, I forgot her name, sorry. So, Monica, there could be scenarios where they give, they will not provide the information only, QA will not. Yes, they don't provide the QA note. We need to go through that particular description somewhere in the description. Mentioned anything are just to the core saying that, yeah, what they have done. So, by looking into that also, we will come to know whether it is related to any future or not. Okay, okay, okay, so we have, yeah, even though they have not added that we will be. They will be adding the particular bug in the particular description. Actually, so here you can open that particular change request or CL, right?
+
+00:18:00 - 00:19:28 Unknown Speaker:
+
+So there is a bug, okay, we will go to that particular bug and verify what the bug is related to. Okay, okay. See the vertical split plane. So by going to the button, CL will come to know what the change request is related to actually. Okay. So the CL is related to button, overview button. Okay, so this is a new feature. So this is a feature people do. I'll show you what it is about. Is there right? They have highlighted they have done some changes here. Okay, so it is fixed. So, as per the query notes you can see in the bug, also, you can see overview button is correct. Be working and all. If you click on that, it is going. It is working as expected or not, they will be reading it and they will mention it is working as expected.
+
+00:19:28 - 00:20:27 Unknown Speaker:
+
+Uh, with respect to so and so Bill. And we have to check in dark theme, some exploratory we have to do within that. And if you get any book, okay, sometimes the CL is, uh, suspected culprit, CL also because of that CL, this book came okay. So they will roll back that CL one point over here. So why we do the CL verification as we are doing in the regression or something else? So, uh, so today we have raised a particular related to the CL, right? So after submitting the CL. Okay, if we find out as early, so if they can fix that immediately or they can roll back, okay. Otherwise, if you have found that particular bug after 10 days.
+
+00:20:28 - 00:21:20 Unknown Speaker:
+
+By the time there will be other CS code will be submitted and it will be difficult for them to roll back the particular CL because on top of it there will be other changes being made. So there will be regression issues that will be coming. The other reason we do this regression CL verification on the particular day itself. So that early catch can be done. So that is the intention of doing the CL verification actually. Anish, do you expect the agent to do this testing part also or just the information with respect to... So, initially, yes, that's what. Initially, what we need to do is we need to gather what we are doing. We need to get the process, okay? As part of agent, what are all the things that we need to cover?
+
+00:21:21 - 00:22:13 Unknown Speaker:
+
+What is the... Previously, what we have developed? Those things we need to analyze and we need to go through those process. Initially, what they are asking is, we need to get what exactly we are doing, what is the process they are following. So, extracting the CLs, right? Currently, we are giving that bill and these dates, right? Instead of that, if you give it on the day-wise, whether they can extract and give it in a single stretch. So, the agent can be dependent in any way, right? So, every day, what they are doing is, Extracting manually, we are manually, they are extracting manually. We are changing the bill. They need to catch the bill, get the bill of previous one and today's bill. Okay, and we enter that particular course. What exactly the course has to be?
+
+00:22:13 - 00:23:06 Unknown Speaker:
+
+Yes, it shows that if we just select the date, okay of yesterday and today, you should face the details and give the CMS over there. Okay, okay, which will reduce their time, right? Are looking for a front-end asset for this? Yeah, exactly, we can give it like some information. I don't know how they have to, what we need to develop and all those what we have. But initially, we need to gather this information, what exactly they have developed previously and what other. What are the enhancements? We can do it on top of it? Actually understood? Okay, okay, but the initial phase we are getting this information actually, yeah, so you need to gather with respect to web and your team. I mean, the tester should have a knowledge on code changes, right? Or by seeing the code.
+
+00:23:06 - 00:23:51 Unknown Speaker:
+
+So how do you estimate yourself? Okay, this requires a QA testing or not? How? If at all? If they have not mentioned it, okay, if it is not mentioned, then it is any. It will be like any. So if there is any CL, they will mention QA node as Na, okay, or nothing will be there, nothing will be there so that they will. They won't look into this, they just look into that as whether there is any bug attached to it, if there is no bug as well. Okay, if you can know, but for the 100 point, we are doing it, I don't know how web party they are doing it. Yeah, if there is a bug, we are verifying it, and if there is no QA note, we are doing behind the flag or any.
+
+00:23:51 - 00:24:52 Unknown Speaker:
+
+Okay, so the thing is if there is no bug attached to that particular. No check request and QA node has no QA, okay? They just don't verify the particular CL. So instead of them to mark, we can restrict the CLs to extract itself, okay? So the backup iteration is not required. It will be reduced in time actually, right? So they will go to the particular CLs, they have to review. Instead of opening gate whether there is a QA node and as well as the gate attached to the particular thing. That's what in the initial phase we need to write all these things. So in discussion we need to have how we can enhance and all those things we need to work on the top of it. So we have to check it from compose we have to attach.
+
+00:25:02 - 00:26:02 Unknown Speaker:
+
+So different types of attachments also we can do it right, okay, so it should upload correctly. All those things we need to verify in the new window, also, we have to verify in reply, also we have to verify anywhere we can get a bug. So here also we have to test. Like attachment is, there are no Silicon kind of test automations that you have for this all manual only. No, no, no, we have already these test cases already been automated in free submit and copy get, as well as post submit. Okay, okay, that's what again, what we're doing? It is an integration test. Okay, it is an integration test. Exactly, work that has been identified. First of all, they will report the work.
+
+00:26:03 - 00:27:41 Unknown Speaker:
+
+Along with that, they will analyze why this work has not been caught in the pre-submit or else in the copycat or pre-submit or post-submit. They analyze. If they think that these steps have not been covered over there, they will add those steps over there. If it is not feasible, We will mark it as that day, it was not reproving, that day it was reproving so the INS. People find some CL like culprit, CL, is this suspected? So they roll back that CL, then, like that happens, like, so they don't have that particular CL, we don't see that particular issue. Yes, and then they'll fix that particular bug in the next whole deployment and they not be. No, that will not deploy. Okay, that is, yeah, you will get deployed, yes, for Android. Part of you.
+
+00:27:41 - 00:29:07 Unknown Speaker:
+
+If there is any P0, okay, so if it has been promoted and you have found one. That build will only have that bug fix, right? Nothing else. We have to do regression also with that. For you to test the scenarios, only the bug fix would be there, not nothing else, right? Any other functionalities will not be there in that feature, right? If there is any p.We have done the complete regression on P0. Okay, and you found one particular point? Okay, they done the. In that case, we will just do that particular bug verification and sanity on the sanity test cases. Just like high priority test cases. And give the sign up to that particular P1. But the complete regression, they won't do it. And if the bug related areas, they will be playing around.
+
+00:29:07 - 00:30:49 Unknown Speaker:
+
+Do some sanity around that. Not the complete regression. From yesterday's to today, maybe I'm repeating, yesterday's to today, there might be four or five builds that are there. Okay. And you will take the latest build, which will have all those functionalities or each and everything. No, no, we'll take the latest build. Can you list out the tools that you use once again? Now I understood the functionality. The changes that they have done, okay. In the below, and along with that, we also see the CL description on that particular top. Okay, so where they are mentioning is there any QA node that if there is anything that we need to verify as part of QR, they will mention over there? And along with that, in the bugs left side, if there is any bug fix related to that particular CL, they will add that particular bug.
+
+00:30:49 - 00:32:14 Unknown Speaker:
+
+Or else, if there is any test. When we don't have any information related to that particular CL, we will just mark it as NA and we don't verify anything related to that particular CL. So why do you need to verify the code if they are saying about functionality that they are changing and they are expecting you to do the integration testing? So why do you want to see the code? Any reason for that? You don't need to go into that particular code what they have modified. Okay. We don't do that, but I'm saying we can see the code as well. I'm saying in the critique, these are all the informations we can see. This is what is called text sheet also, right? The complete text. Yeah, exactly.
+
+00:32:15 - 00:33:11 Unknown Speaker:
+
+Even the complete description, as part of when you extract to the sheet, we can see the description. Okay with the CL number and the bug list as well, so here in the columns. Okay, this is the description of the particular okay. And here you'll have QA node, as well as any bugs that have been, uh, added to that particular fix. Okay, those information we can see and the change request ID, so we will be extracting all those CS into a spreadsheet. I think you have gone through that spreadsheet and the code, how to extract it as well, right? No, I didn't get the code access. She showed me that she executes a code, sorry, script. I didn't see the whole script. If you can... Okay, you can go to the script as well.
+
+00:33:11 - 00:34:15 Unknown Speaker:
+
+You have that sheet as well, right? Yeah, she given me. I didn't get access to the live one, but I raised the request for viewer access. Yeah, you can ping him and... Okay. So, you can ping. You can give you the edit access as well. You can go through that particular code so that you can, there you'll have the components, how they are extracting. When you go to the particular code, you can understand all those things. The process, how it does. So this is the, now in web part, they're showing the, so can you go to that, how you are extracting the CLs as well? Yeah. And also you can see the CL status also. It is live or not. Today is 16, so it is live green.
+
+00:34:15 - 00:35:18 Unknown Speaker:
+
+Red means it is not live in that build and so we are checking 16 now today. Is red also means it is not live, CL is not live, so we reopen the bug and we just update the comment. Once the CL is live, you will verify the bug. Okay, okay with the screenshot, yeah, and I'll show you how to extract it. But uh, CL related, uh build, I mean, latest will have the change, right? So submitted the CL. It will take some time to reflect into the bills actually. But uh, that image can you go to that red color? Something you showed, right? So this is so, what does it mean? So 10th, that particular? Uh, where is the CLI number in this particular row? Yeah, CL number is here, one to show you it.
+
+00:35:18 - 00:37:23 Unknown Speaker:
+
+It is submitted on 17th, so it will not be live on 10th, right? 16th only. So it will be from, so it has been submitted on? 17th PST time. PST time. Okay. So it will be live on 17th PST. No, IST. Okay. No, this will show Indian time only. Here 16, you can see the second one. So they submitted on 16. We are getting 17. So at night, in today's build, it will be there. Because at 5.30, Pinto server build comes. Okay, at 5.30 AM. The red bills that we are seeing, it is 12. Actually okay, if at all, if any of the CLs that were there to be tested for us. But the build is in red, we'll simply say that, uh, it's not deployed and we are waiting for the green builder.
+
+00:37:23 - 00:40:25 Unknown Speaker:
+
+Yes, if you open and all are all are in red, then we cannot verify it, right? So you cannot do any of those skills, right? Latest one should always have green Build 16 P0. Okay. This is the current build and this is the previous build. Okay. So this is the URL. In the URL. There are many many methods but we usually prefer this from URL. From here also you can do. Okay, but we prefer this URL because and there is one big top server. Also, all three servers CL will be extracted here. Okay, all the three will be extracted. Yeah, all the three. What do you mean? We extracted backend CLs also we receive. Sometimes we receive iOS Android CLs also and we send them to verify. Like all the backend servers, CLs, frontend servers, CLs, all comes to us.
+
+00:40:44 - 00:43:59 Unknown Speaker:
+
+Send it to new feature team, the CLs, mostly. Yeah, those are also our team, but these people will not have those devices of the future testing what exactly need to test, right? So just bring that particular CL number to them so that they will review that particular CLs. And it will not come in their report, is it? It will get, but we will flag it as behind the flag because we don't test it, right? We are web team. Are no longer blocked when visiting the mobile browser. We only test web. We just do it as behind the flag. We inform it to a new feature team to look into it. Idea. Putting that link there and it will give all the CLs related to it, yes, all CLS will be extracted here.
+
+00:43:59 - 00:47:09 Unknown Speaker:
+
+Okay, so you got the C, it will be extracted in the web right from there. How do you extract to the sheet? Yeah, Regression and automation. So it is getting all the information, whereas for web, we are doing this manual work, little manual work. Yes, exactly. So there we have implemented that process, actually it was not implemented in web. Yeah, automatic. It's supposed to be done but we have not done that actually okay okay so just create link and automatically link will be created because there are many servers right just be sheet as well, which we can implement on one. So instead of that, I think that we can do it. And along with that, with the decay, we need to unless getting this particular dates, it should completely get those informations and give it all that.
+
+00:47:09 - 00:48:11 Unknown Speaker:
+
+And along with that, if there are any bugs, you're not getting those books attached to the portal as well. Actually, we only see the CL and QA nodes. That's it. Yeah, yeah, yeah. But even though if there are any bugs, instead of going to the particular CL and verifying the particular bug, before we can go ahead, if we want to verify that particular bug. Then in Android, there is a column. If you find that particular bug, again, we will directly come to know, is there any CL that has been received with respect to that particular bug or not. You cannot verify that right here. Which we need to reduce. Yeah, but uh, do we get, uh, access to those APIS? Is there any way that, uh, yeah, we can get it actually? That we need to, uh?
+
+00:48:11 - 00:49:54 Unknown Speaker:
+
+Instead of this web access? If we can get access to their web, yeah, yeah, yeah, we can get that actually. Actually. The CS will come in. So, the Android script that you have written, it's using APIs already and the same endpoints can be used for this also. Yeah, I think we need to look into that actually, from where they are extracting and we need to look into it actually. So, from where we are extracting, okay, can you give this link as well? Completely easy compared to Android, but even though we are not doing it, which we are supposed to do, can you bring it in the group itself? Because these meeting notes will... Any questions? No, right now I got an overview. Okay. So if you could share that Excel sheet of history. Okay.
+
+00:49:54 - 00:51:58 Unknown Speaker:
+
+So you might be having for last five, six years of data, right? How you handled it? Okay. Okay. That would be useful for my agent to feed that information and take a decision. That would be useful for me if you can share that. Select me and we'll let you know. With respect to the data, how you are property are shown, how you are extracting this one part. And can you bring me those quotes as well? What ideas you have? Yeah, yeah, right, right now, can you bring those quotes? Yeah, and also, uh, this one, the links to the build, link to the build, uh, information, okay? You can just reach out to them on the partner group again. So do you have access to these links? Yeah, I just checked this one rapid.
+
+00:52:03 - 00:53:52 Unknown Speaker:
+
+I'll go through that as well. Yeah, just ping that other one as well. Oh, is that okay? Let me see that. Yeah, I could see. But we have one more thing, right? Where you'll be getting that particular CL? This is rapid, huh? Yeah. Yeah, rapid, I got it. Can I share my screen? One more thing where you have tried to find this RC and RB, right? That's what we have done. And, uh, some colors you are showing, right, red color. That is for CL, CL, CL, this is the CL dashboard. Okay, you want to open the field? Side error? Oh yeah, send up some. See. Basically, one build is failed, you have to pick the latest one. Any CL, you can open any CL, change this and click on CL Status CL Status. On the top.
+
+00:53:52 - 00:57:38 Unknown Speaker:
+
+You have CL status. Click on the CL Status left side of down and search by CL Status. One second, there it is, there it is there itself. Come down, slowly come down. She likes me. QA notes for any of these. So what does it mean? Not a people for us, right? Yes. No, you have to click that. It will expand. Click anywhere. I have pinned one CL in the group. You can check. You can click on CL status. In which Bellet is live. But you need to mark that CL is verified somewhere in the system? Yes, in the bug we have to do. So Wednesday it is, right? You can search for ZD. Find ZD. So once you verify that, so where would you update the status that it is verified? In the bug.
+
+00:57:39 - 00:58:53 Unknown Speaker:
+
+In the bug. You can see the bug. Where? Above CA status. Where you click now. It is working as intended like that we just update. Okay, you will give an update here. Yes, yes. Understood. We will not change any status, just we will give the update. Okay, okay. And we have to do exploratory also around attachments. Sometimes we get a regression also because of this CL. So they roll back the CL and they do a patch. Then we have sanity and all like that. OK, that will again be new CL request, right? Yes, so even if some they are fixing it, also, that will be new CL. And your, and it has a new CL request. The procedure is going to be same, yeah, in that CL.
+
+00:58:53 - 00:59:56 Unknown Speaker:
+
+Also, there will be the node to verify this bug, like that same bug number they will give. Yeah, the different bug number, which we found a blocker or bug because of that note. So see. Initially they had a bug, they fixed it and delivered it. You found some issue and they have fixed it and they delivered it again. This time, new seal request, new bug number. Is it? Yeah, new bug number, right? So you don't worry about what happened to the old one. No, because it is it has been rolled back, right? Description, right in the particular one. Then they will mention that, uh, as part of this verification, we are observing it, right? Then we come to know what are the but that has been fixed. So we need to go through this chain actually when it is required.
+
+00:59:56 - 01:01:24 Unknown Speaker:
+
+That doesn't happen all the times, but when, when this is going to wait, when it is done, we will be everything. This work. And for critical, so there are open APIS is it? Uh, for critique? Yeah, we have actually okay, okay, and you told me, for this one, the what is that rapid? You have, yeah, if you have any open APIS. So that's created from, as we have discussed in the yesterday's morning, that you need to reach out to them in getting all those data access. And abs. Okay, home, Sorry. Yeah, that is with the mom C. And, uh, there are other guys, we have the monocle. They have mentioned one name, we have this description, right? Meaning description. Can you go through that? Actually? It doesn't remember exactly their names, actually. Description here.
+
+01:02:27 - 01:03:47 Unknown Speaker:
+
+But if you are talking about these, then I will check with them. Even though the web and Android, they are using different ways to get the info. End up, the tools are same, tools are same exactly, and the procedure to validate. Yeah, exactly, so I'm not denying on that the tools will be same and the process will be same. Okay, what they are doing it okay, but we need to get what are all the components where they are extracting? Okay, suppose when you are reaching into this product wise, when you are extracting the CLS, right? We should have this information, how they are extracting the URLs. And we need to get those things right somehow, that they are reaching out, okay, for that, we need this, so we need to correct, not more than that.
+
+01:03:47 - 01:04:55 Unknown Speaker:
+
+If you think it is not required, uh, it might be required, but only thing is, for me, it's too much. This machine discussion is not required where we can ask them, what are the you want to be using? How they are extracting, what is the process. They follow to extract the CLs actually, not more than that. That's fine. That's what I think. Yeah. Right? Yeah. That should be fine. Yeah. Yeah. Instead of CL, opening the CLN box and all those, this information is not required in this case. We just need how they are extracting and what is the process they are following. Those two outline is... schedule tomorrow at, Uh, before 11 30, because 11 30 we have all right. So the thing is, you just need to start documenting this actually.
+
+01:04:55 - 01:06:00 Unknown Speaker:
+
+Okay, yeah, I'll do it, yeah, so whatever you have discussed, so how we are doing and all those things. So based on that, once this, we streamline day by day so that we can come to the conclusion that what are all the things we can implement? Okay, yeah, yeah, got it. Yeah, okay, yeah, yeah, thank you so much. Thanks for all the info. Okay, thank you. He's going to join your team actually in some time, but currently he'll be supporting as and when needed. So yeah, you can get in touch with me if you need any information and even you can ping it in the group so they can provide those details with us. They cannot correct, but they can just provide those details. reaction.
+

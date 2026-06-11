@@ -1,0 +1,114 @@
+2026-06-10 Data Validation and UI Description Alignment Meeting
+
+Creation Time: 2026/06/10 16:16
+
+
+📅About Meeting
+
+• Date & Time: 2026-06-10 16:16
+
+• Location: Not specified
+
+• Attendee: Sachin, Ather, and other team members (names not fully specified)
+
+📒Meeting Outline
+
+Data Validation and Filter Conditions for Spend Amount and Margin
+
+• Numeric Value Enforcement for Spend Amount
+  The spend amount field should accept only numeric values. This validation needs to be implemented in the code to ensure non-numeric values are filtered out properly. The team discussed whether to handle this check via filter conditions or case-when statements, concluding that a filter condition is appropriate and consistent with existing validations.
+
+• Margin Field Handling and Filter Condition Implementation
+  Sachin is responsible for coding the margin figure extraction and validation. The margin field should also be updated in the new table columns, specifically the "allowed non-null margin" column, to ensure UI compatibility and proper display. The team emphasized that any updates to margin or spend amount should reflect correctly in the UI description fields.
+
+• Valid Value Checks and Description Updates
+  The meeting clarified that once non-numeric values are filtered out, the remaining values fall under valid value checks. The relevant code line (line 232) was referenced as an example of how valid value counts are handled. Descriptions related to these validations are changing and must be carefully updated to avoid confusion or loss of information.
+
+UI Description and Filter Condition Alignment
+
+• Handling 'In' and 'Not In' Filter Conditions in Descriptions
+  The team reviewed how filter conditions like "in" and "not in" are represented in UI descriptions. It was agreed that descriptions should explicitly append "not in" or "in" to the variable values to maintain clarity. For example, variables should be described as "values not in ..." or "values in ..." depending on the filter condition applied.
+
+• Updating and Sharing Descriptions
+  Sachin was asked to update the descriptions accordingly and share them with Ather via the development group chat, tagging him for visibility. Sample descriptions for records using these conditions should also be provided to ensure consistency.
+
+• Template and UI Integration
+  The team discussed how the updated descriptions will feed into the UI templates. The descriptions will be broken down by variable and updated once finalized, ensuring the UI reflects the latest validation logic and filter conditions.
+
+Next Steps and Review Process
+
+• Final Review and Submission
+  The team agreed to finalize the remaining description updates within the next half hour and send them to Rational for a final review before proceeding with implementation.
+
+• Update Query Best Practices
+  Emphasis was placed on ensuring that update queries include the relevant variables and allowed values to maintain data integrity and UI functionality. Sachin confirmed that this is already being handled, though not yet modeled fully.
+
+📋Overview
+
+• Spend amount and margin fields must accept only numeric values, enforced via filter conditions in the code.
+
+• Margin updates must reflect in the new table columns to support UI display.
+
+• Valid value checks are tied to filtering out non-numeric values; descriptions must be updated accordingly.
+
+• UI descriptions should clearly indicate "in" or "not in" filter conditions appended to variable values.
+
+• Updated descriptions will be shared with the development team and integrated into UI templates.
+
+• Final description updates to be completed and sent for review within 30 minutes.
+
+• Update queries must include all relevant variables and allowed values to ensure consistent data handling.
+
+🎯Todo List
+
+• Sachin:
+
+  • [ ] Implement numeric-only validation for spend amount and margin fields using filter conditions.
+  • [ ] Ensure margin values are updated in the new table columns ("allowed non-null margin") for UI compatibility.
+  • [ ] Update descriptions to append "in" or "not in" based on filter conditions.
+  • [ ] Share updated descriptions and sample records with Ather via the Dev group, tagging him for visibility.
+  • [ ] Complete all description updates within 30 minutes and send to Rational for final review.
+  • [ ] Verify update queries include all relevant variables and allowed values.
+
+• Ather:
+
+  • [ ] Review shared descriptions and provide feedback during final review phase.
+
+Transcription
+
+00:00:04 - 00:01:04 Unknown Speaker:
+
+Spend amount should only take, can you, you know, expand the... Should only take numeric values. Right, numeric values. So that would come, right? And then in the allowed margin, that would... But, Sachin, this thing, I think you had said that you will take margin figure out if this can be coded. So can we put that in the filter condition, the non-numeric, numeric? Is non-numeric to be placed in the filter condition? No, like somewhere we have to check it, right? How will we check it in the code, in the code in the sense so, like for all the other valid value checks? Like just now? We discussed for this length one right that the length part we can put in the where condition. So for this one also, like the code part has to work that way.
+
+00:01:04 - 00:02:01 Unknown Speaker:
+
+Right? Like we are checking for non-numeric like somewhere, either we are doing a filter condition or we are doing a case when statement to identify like non-numeric counts. Okay, uh, let us know like if we can put it on the internet, your content would work. No, no, but it's not the right, the right idea also to put them right now. How is this working right now? How are you checking the non-numeric thing? I'm checking from the description on No no in the port, in the port. Is it a filter condition, or is it a case when statement? What is it? It's a filter condition, right? So it's a filter condition, right? So same thing we can do now, right? In the code you are using it as a filter condition, then we can just keep it as a filter condition, right?
+
+00:02:01 - 00:03:01 Unknown Speaker:
+
+That is the same which I have suggested if you see the line number 232, right, you can see that count of records where value in, right? So this is anyhow that would come into the description, right? And then where last updated times and greater than that, that would go to the filter condition. Correct, correct. Yeah, okay, uh. So please make sure whatever you are pasting into this allowed non null margin or margin, right? That should update, uh, into those columns with respect to the new table that we have created. Otherwise, UI will not support it. We have seen the UI, right? And with me, at least you are aware with the interesting structure of the columns, right? So, when you are updating this description, please make sure when we would be updating into that, you know, is, right?
+
+00:03:02 - 00:03:55 Unknown Speaker:
+
+These should go to these allow null matching to that column. Although it would be there in your description. But that should go so that it would be displayed to the user over that allowed non-numeric. So that tomorrow some values, if they want to change it, it would reflect automatically in your description over there. These orange ones, right, the missing values. These are sorted out. No, no, I am just saying that these will actually fall under valid value, right, once we take the alphanumeric or non-numeric thing in filter condition. Then it becomes a valid value check, right? Like if you see, so that's what? 232, right? 232, if you see, I already marked it as 232 valid value, right? So similarly, they just need to update. So please make sure if we you understand, right?
+
+00:03:55 - 00:05:05 Unknown Speaker:
+
+Whatever you have highlighted as yellow, right? Those are all false under valid value check. Because your description are changing, description are getting changed, right? Good work, and that should we should not note down, otherwise again, you would forget. Okay, and can you show me a description where we have selected? Not in like in is there right? Not in search for the not in when there would be some filter, right? Because we are updating the UI and other need that search it. Yeah, so here, so. Yeah, so this would come as not in IEPA. Can you show this G column? Can you expand it? G column, can you expand it? Yeah, if you can see in the above. No, so this is not in, right? It's the opposite of this. It's the opposite of it, right?
+
+00:05:05 - 00:05:49 Unknown Speaker:
+
+So it is not in, right? What is the input description? Can you check the general description? You would only take values, right? No, no, no. We have aligned with the last time, right? There would be one would be coming up with in, okay? Wherever you find it as in, right? And wherever you are finding it is as not in value, so that would come as not in, which other would form from the Ui. Yeah, I think you can just append not in after this values, right? You just only take values not in and then your array continues. Yeah. Can you update it, Erpa? Not in. Value space not in. Okay, yeah. So similarly, wherever not in is there, just append not in, and wherever in is there, you should just keep it as in.
+
+00:05:49 - 00:06:38 Unknown Speaker:
+
+And can you copy this and ping it to Ather? Not in one? Yeah, copy this one and this, just ping it to Ather? Okay? Or maybe put into the Dev group and tag Ather. You would get it from there. Yeah, just tag at the rate, Ather. Can you also put on sample description for those records? One record? Yeah, yeah, that's what he is doing at the rate with B, make it as at the rate with b also. Yeah. Oh, found out the question. No, this is existing description, Sachin. Yeah, okay, yeah, this is existing one, just added it with a new one. Can you go back, go back to the template? The new description, yeah, this one. The variable ISD should not, should only take values not in like this, yeah. Okay.
+
+00:06:42 - 00:08:03 Unknown Speaker:
+
+Should only take values not in or in. That should be according to the filter condition, right? Whether it's allowed or not. Okay, uh, so you just need to make this change, right? When, yeah, somebody is selecting it, as in Okay, yeah, sorry, you were saying something, so I was just asking that. Once all these new descriptions are aligned for all the existing rules, right? How we are feeding it in the UI is based on, like the template, right? That you will break it like the variable. The way it has been given here. And then we just need to update the description once it has been finalized over here and whatever, right? Sure, okay, so, uh, close it out, whatever rest part is there in next half an hour and send it to Rational for the final review.
+
+00:08:03 - 00:08:47 Unknown Speaker:
+
+And then we'll go ahead and then update it. Okay, and guys, please make sure when you are creating that update query, please make sure that you are keeping that variable in the update statement, the allowed values or whatever you are updating. Right? So please make sure you are taking care of that, okay. You are already making that, just not in the model.
+

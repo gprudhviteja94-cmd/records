@@ -1,0 +1,136 @@
+2026-05-18 Exclusion Strategy and Cross-Team Coordination Meeting
+
+Creation Time: 2026/05/18 11:11
+
+
+📅About Meeting
+
+• Date & Time: 2026-05-18 11:11–11:20 (approx. 545 seconds)
+• Location: No relevant content mentioned
+• Attendee: Gary, Andrew, Prithvi (Prudhvi), Aparna, Anish, Pallavi, Ravi, Ramesh, Mahesh, Anjaneelu, Petro, CL Verify team, Live Device team, Test Execution team, SME team, QA team, Voice team, Automation team
+
+📒Meeting Outline
+
+Exclusion strategy and agent logic alignment
+
+• Mitigation plan for data exclusions
+  Change the voice query to explicitly exclude new features and confidential/NTK items so Prithvi’s team only sees allowed items; apply the same exclusion to UI results.
+• Agent logic documentation
+  Confirm that data reading is performed only by code/agents; prepare an email to Gary and Andrew explaining existing agent logic and where feature/NTK fields could be exposed, plus a 1.1 addendum if further control is needed.
+• Tags/filters discovery
+  SME to connect with Aparna and Prithvi to identify the tags/parameters/paths needed to implement exclude logic for CL and TRV across voice and Gmail.
+
+Test data and regression IDs
+
+• QA-provided safe IDs
+  QA to supply 5–10 regression TRV and CL test IDs (non-NTK, non-new-feature) for demos and development; usage will be restricted to these IDs both in backend and UI.
+• Scope clarification
+  Ensure test IDs exclude any NTK/new features; utilize for TRV and CL verification during development and demos.
+
+Gmail and Voice integration details
+
+• Gmail API example and request
+  Share the existing CL-verify Gmail API request/code via email, documenting current fields captured and asking what field/parameter to add to exclude new/confidential features.
+• Voice command specification
+  After identifying the exclusion field(s), define and share the exact exclusion parameters/command for Voice for both CL and TRV, mirroring the Gmail approach.
+
+Cross-team coordination and deliverables
+
+• Ownership and follow-ups
+  • Anish to check with Voice for both CL and TRV on available fields/tags to exclude “new feature” and “confidential/NTK.”
+  • Ravi to prepare a one-pager summarizing Gmail capture, CL coverage, and the Voice exclusion command once fields are known; also set up a shared folder for the Test Execution team.
+  • SME team to coordinate with Aparna and Prithvi on exclusion parameters.
+• RAG and dev status
+  Counts for chat are matched; Anish team inputs are incorporated into the RAG database; dev for web/chat/Gmail is indicated as done; next step is testing.
+• Testing readiness
+  Ramesh to lead testing for chat and Gmail ensuring Gmail stability and chat functionality; provide support artifacts from dev for smooth testing.
+
+Timeline and priorities
+
+• Deadlines and sequencing
+  • 29th is the final deadline for all items.
+  • Prithvi: pick up Voice immediately; finish chat testing/fixes today and tomorrow; focus on Voice for the next three days.
+  • Provide integrated code to Ravi once completed so Test Execution can integrate for Workspace.
+
+📋Overview
+
+• Voice and UI will exclude NTK/new-feature items via explicit filters; only permissible data will be visible to Prithvi’s team.
+• An email to Gary and Andrew will detail current agent logic, potential exposure points for feature/NTK fields, and mitigation (with a 1.1 addendum if needed).
+• SME will work with Aparna and Prithvi to identify the exact tags/paths/parameters for exclusions across CL and TRV.
+• QA will deliver 5–10 safe TRV/CL test IDs for demos and development, strictly excluding NTK/new features.
+• Gmail: share current CL-verify API request and request guidance on the exclusion field; Voice: define and share the final exclusion command once fields are known.
+• Chat dev is complete with counts matched and RAG updated; proceed to testing led by Ramesh; ensure Gmail remains stable.
+• Prithvi to prioritize Voice; integrated code to be handed off to Ravi for Test Execution integration; all work targeted to close by the 29th.
+
+🎯Todo List
+
+• Anish:
+  • [ ] Confirm with Voice team the exact fields/tags/paths to exclude “new feature” and “confidential/NTK” for both CL and TRV, time: ASAP; hard deadline: by Wednesday
+  • [ ] Provide exclusion parameter guidance to Ravi and SME once confirmed, time: immediately after confirmation
+
+• SME team:
+  • [ ] Connect with Aparna and Prithvi to identify tags/parameters for exclusions and validate feasibility, time: by Wednesday
+
+• QA team:
+  • [ ] Provide 5–10 regression TRV and CL test IDs (non-NTK, non-new-feature) for demos/dev, time: by Wednesday
+
+• Ravi:
+  • [ ] Send Gmail CL-verify API request/code and description of captured fields to stakeholders; ask what field to add for exclusions, time: today
+  • [ ] Create a one-pager: what Gmail captures for CL, Voice exclusion path/tags (once available), and command examples for Voice and TRV, time: by Wednesday
+  • [ ] Set up a shared folder for final artifacts so the Test Execution team can integrate for Workspace, time: after exclusions and tests pass; target by Wednesday
+  • [ ] Coordinate receipt of integrated code from dev and hand off to Test Execution, time: upon integration readiness
+
+• Prithvi:
+  • [ ] Finish chat testing and fixes, ensure counts alignment holds, time: today and tomorrow
+  • [ ] Pick up Voice immediately; implement and validate exclusion filters, time: next three days; overall deadline: by the 29th
+  • [ ] Provide integrated code to Ravi after all components are completed, time: upon completion
+
+• Ramesh:
+  • [ ] Lead testing for chat and Gmail; ensure Gmail does not regress and chat works as expected, time: start immediately after dev handoff; report status by Wednesday
+
+• Development team:
+  • [ ] Ensure RAG database and integrations for web/chat/Gmail are stable and provide necessary support to testing, time: ongoing until sign-off
+
+• Communications:
+  • [ ] Draft and send email to Gary and Andrew detailing existing agent logic, exposure points for feature/NTK, and mitigation plan (with 1.1 addendum if needed), owner: Ravi (with inputs from Anish/SME), time: by Wednesday
+
+• Test Execution team:
+  • [ ] Prepare to integrate once integrated code and folder are provided; coordinate with Ravi on timelines, time: post-handoff; target before the 29th
+
+• Overall milestone:
+  • [ ] Close all items by the 29th; interim checkpoint: latest by Wednesday for exclusions, IDs, one-pager, and initial testing status, owner: All relevant leads
+
+Transcription
+
+00:00:01 - 00:00:58 Unknown Speaker:
+
+Then the query for voice, we will change specifically to exclude those. So that whatever Prithvi and team sees are excluding those. That is the mitigation plan, but what I am trying to understand on top of it, whatever the reading is happening is only by code and agent only, right? It's not... No human is there, but by testing people might see, right? He might end up on... which we can use for regression and this and the IDs we cannot use. That kind of an existing logic and a mitigation plan is what Gary is requesting us. So we need to send a mail to Gary and Andrew explaining what is the existing agent logic and where the, if possible, where the feature or NTK will be exposed. And then in that 1.1 would be if at all needed.
+
+00:00:58 - 00:02:03 Unknown Speaker:
+
+Yeah, we need those tags or parameters where we can fix them. Yes, someone from the SME team has to connect to both Aparna and Prithvi. Okay, they walk through, figure out what is that and include that exclude statement. That is first. Second, the manual, the QA team has to send us some of the regression and TRV IDs which we can use for demo purpose. At least five, 10 of them, if they can share, we will restrict our usage UI way also only to those. ID's means test ID's. The DRV and CL ID's which we can use for testing. Okay. I don't mean the ones which are new feature or NTK, right? Without that. For TRV and CL verification. Whatever during development, we will not use the ones they are asking us not to touch.
+
+00:02:04 - 00:03:13 Unknown Speaker:
+
+But how long this customization will go? We have to have a... In the logic, we will add already. We will figure out how to exclude them. So that even on the UI, it doesn't come up. Okay. And this thing is there on the call today. I think I see the CL verify. You have API request what you have sent where you are giving the details, right? What is that code? Put that in an email and send. Yeah. Okay. Now this is for Gmail. We have to say this is what we are using for Gmail. Ask them in their field if I have to pull the request without what you are asking like new feature or confidentiality. What is that you? I have to add to this code?
+
+00:03:13 - 00:04:18 Unknown Speaker:
+
+Okay, to make it give me results which are, uh, not showing whatever it is supposed to show. Then we can say for voice, we are going to add this. Yeah, you'll get code plus this code after you find out what is the field where they can figure out, the manual thing figures out, and then we will say this is what we will append to not have these two. Okay? Anish, understand, so do you think, do we think you, do we have these kind of tanks or filters for NTK new features? Yeah, we need to connect with them and get that understanding from the voice team. Do you think we have? Yeah, if there are any with respect to that particular path, then we can exclude. Yeah, it all depends upon how they do actually.
+
+00:04:19 - 00:05:19 Unknown Speaker:
+
+Yeah, that's why I said connect to that team because we need to figure out how they're doing. I doubt Pallavi, these guys will have maybe automation team. Why is automation is ours only, right? Yeah, it's ours. Okay, Pallavi, got it. Let me, because, yeah, Petro might definitely ask for an update here because we need to respond. Get that on top first, get the Gmail thing. You can create a small one pager or something where you say this is what Gmail captures, which gives me all CLS. Then say for voice we will exclude, put the exclusion path or tag what we are excluding, and then say this will be the command for voice there. Maybe we have to do another connect. Ravi tell the same exact thing for Aparna because TRV also, she has to do this.
+
+00:05:19 - 00:06:41 Unknown Speaker:
+
+OK, same thing. What you are asking now for TRV to collect in Gmail, telling that all TRVs come? Then we say, what is the exclusion we have to do again? Anish? When you check with Voice, check for both CL and TRV OK, or what has to be used to exclude both new feature and confidential feature. Need to know feature and confidential feature. And then give the command for voice again for TRV. Ready? Okay. This is a follow-up. Once this takes care of voice. You will test and run the results with the accuracy percentage. Then Ravi, you will provide them a folder. After all this is done, where they can actually keep this so that test execution team can integrate that for workspace. Okay. Good. Mahesh, Anjaneelu I hope all these things whatever we are talking latest by Wednesday everything is closed from your end.
+
+00:06:53 - 00:07:58 Unknown Speaker:
+
+CL verification. So Prudhvi, we'll go to test execution team. Give me another five minutes. We'll go there. Prudhvi, chat is done. Yeah. We are able to match the counts and then we also incorporated data input given by the Anish team. Okay. So it is in the RAG database. That is what you are saying. Yeah. RAG is also complicated. Okay. For all three. Web and. Just want to make sure that the dev is done. That means immediately next is testing of this. Ramesh, you, whoever is testing, test them. Ramesh has to take care of that. Yes. And you can also provide him so that support and get the testing done for chat and Gmail both. Gmail should not break. Chat should work.
+
+00:08:14 - 00:08:56 Unknown Speaker:
+
+Also Prithvi like I have told 29th is the last day for everything but from your end you have to pick up voice today and tomorrow finish chat and testing and fixing of any issues. Okay sure. Next three days you should pick up voice. Okay yeah. And similarly you need to have one integrated code once everything is done you'll have to let Ravi know so that test execution team can pick up. Yeah, fine. You both can drop off. CL verify and live device team can drop off. We have the test execution team. Thank you.
+

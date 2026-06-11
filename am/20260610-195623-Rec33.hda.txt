@@ -1,0 +1,109 @@
+2026-06-10 Data Validation and Migration Strategy Discussion
+
+Creation Time: 2026/06/10 19:56
+
+
+📅About Meeting
+
+• Date & Time: 2026-06-10 19:56  
+• Location: Not specified  
+• Attendee: Sachin, Rachna, and others (names not fully specified)
+
+📒Meeting Outline
+
+Data Validation and Migration Strategy
+
+• Handling Complex and Non-Complex Variables  
+  The team discussed which variables should be marked as complex and which can be migrated without complexity. It was agreed that some variables initially marked as complex do not require migration as complex. Variables that are non-alphanumeric or have special conditions were scrutinized to decide their classification. The group emphasized not marking alphanumeric variables as complex unnecessarily.
+
+• Template Usage and Adaptation  
+  Concerns were raised about managing all variable types within a single template, especially when numeric and non-numeric variables require different handling. It was agreed that creating multiple templates is acceptable to handle different data types effectively. The numeric and non-numeric variables were discussed in detail, including how they should be represented in filter conditions.
+
+• Description and Allowed Values for Variables  
+  The importance of clear descriptions for variables was highlighted. For numeric variables, descriptions should specify that the variable should only take numeric values, and similarly for non-numeric variables. The allowed values column should reflect these constraints. The team agreed on a standardized way to write descriptions, avoiding unnecessary details and focusing on clarity.
+
+• Handling Percentage and Additional Checks  
+  Variables involving percentages or additional checks were agreed to be marked as complex, as they require special handling beyond standard templates.
+
+Review and Classification of Specific Variables
+
+• Reclassification of Complex Variables  
+  Several variables initially marked as complex were reviewed again. Some were identified as convertible to simpler checks such as threshold checks or duplicate record checks. For example, variables with values not between certain ranges were suggested to be changed to threshold check types.
+
+• Threshold Checks and Duplicate Records  
+  Variables with date ranges or binary values (0 and 1) were discussed to be converted into threshold checks or simple validation rules. Duplicate record checks were also reviewed and some were agreed to be converted to simpler validation.
+
+• Final Alignment on Complex Variables  
+  After review, the team aligned on which variables remain complex and which can be simplified. The final list of complex variables was confirmed, with some variables highlighted for further review or polishing before final approval.
+
+Project Timeline and Next Steps
+
+• Urgency and Timeline  
+  The team acknowledged that three days had already passed since the deadline of June 10, emphasizing the need to expedite the process. Once changes are placed in the development environment, validation must occur before deployment to the integration system (IS).
+
+• Communication and Sharing Updates  
+  It was agreed that the updated details and classifications should be shared with Rachna immediately to ensure alignment and facilitate quick progress.
+
+📋Overview
+
+• Variables initially marked as complex were reassessed; some were reclassified as non-complex or convertible to threshold or duplicate checks.
+• Numeric and non-numeric variables require separate templates for proper handling.
+• Clear and standardized descriptions for variables were agreed upon to improve clarity and consistency.
+• Variables involving percentages or additional checks remain complex.
+• Urgency to complete migration and validation was emphasized due to passed deadlines.
+• Updated classifications and notes will be shared with Rachna for further action.
+
+🎯Todo List
+
+• Sachin:  
+  • [ ] Share updated variable classifications and descriptions with Rachna by end of day (2026-06-10).  
+  • [ ] Update templates to separate numeric and non-numeric variables accordingly.  
+  • [ ] Review and polish variables suggested for conversion to threshold checks and simpler validations.  
+  • [ ] Place updated changes in the development environment for validation as soon as possible.
+
+• Rachna:  
+  • [ ] Review shared updates and provide feedback or approval for final migration steps.  
+  • [ ] Coordinate validation efforts once changes are deployed to the development environment.
+
+Transcription
+
+00:00:12 - 00:01:36 Unknown Speaker:
+
+Maybe so one of them, right? And then we should keep it. Yeah, yeah, one second, let me show the complex ones. Okay, complex one, remove it, right? We don't need to migrate the complex one. Man, No, not that this is okay, these are the one we are marking it as complex, right? Yeah, go to the description. Yeah, hold on. The first one looks good, and if there are a couple of variable, yeah, okay, yeah, that's fine. Second is fine. The distinct count of this should be equal to 21. This thing count ugly with Let's not decide the count of condition are violated. Where are you seeing this in the new description? Yeah, yeah, yeah, this is this. So not, it's there. Ah, this one is not alphanumeric, right? Why we are marking it as complex?
+
+00:01:36 - 00:02:44 Unknown Speaker:
+
+Yeah, this one is not alphanumeric. 215, right, that we can convert which one? 215. Tell me what? What should I do for this one? What is your plan for this? The way we are putting those, right, change the, I think, can you show me the one that we made it? For numeric, alphanumeric, for numeric, non-numeric, right, we converted few, right? No, no, Sachin, I want clarity on that. Let me show you how numeric looks like, the query looks like, okay? So, see this. No, you are going to get that into the description, right now, why you are trying to map it with your template? My worry is if they think that it will work for everything, see this non-numeric how they are actually. That is what I told you, right?
+
+00:02:44 - 00:04:08 Unknown Speaker:
+
+You would be getting some time to modify your existing code. But Sachin, how can we manage everything into one template if this type of things are coming there? See, Even... create another template, right? I did not restricted you to not create a template. Okay, okay, fine, fine, okay, okay. That's something we can change. That numeric, non-numeric one. Okay, now for this one second such. What should I put for non-numeric? No? There was a numeric we have converted, right? Can you show me the numeric one? Can you show me the numeric one? When? Numeric one? We have converted? One of them, right where it is? This is what, uh, non numeric would go into your filter condition. No man, numeric one, we have converted right now. How can you guys look?
+
+00:04:08 - 00:05:09 Unknown Speaker:
+
+If these are missing right at the last review time, right? I won't be able to help quickly. Numeric one, I think I have only told you, right how to update it. Yeah. Yeah. Yeah. Yeah. Yeah. Yeah. Yeah. Yeah. Yeah. We noted it. Right. And look, if we reach out to Vesna for these again and again. Yeah. Correct. Yeah. Can you go ahead? We updated. That is done. But descriptions I'm talking about. The description would be like, the valid value, right? What is the description that has been given for valid value? And no, these were being aligned, the variable should. Uh, right, can you? Can you show me? That is the reason I have asked him to write it down that time. No, no such in such in, he noted it. I updated it.
+
+00:05:09 - 00:06:17 Unknown Speaker:
+
+Valid value check, but description what should I put? I don't know. That's why I'm asking. That is the reason I was asking to write down the description when Rachna was there, right? The variable CM should only take take values and then allowed values would be numeric. Similarly, non-numeric variable should take only take only take values. In allowed values. It would be numeric, and for non-numeric, it would be non-numeric. Write down, I'll I'll give you an example. Yeah, uh, can you copy the G G column for two to eight G column, paste it there. Yeah, in the M or N, wherever you. Yeah, just put it over here. So the variable, this spanned amount should only take numeric values. Yeah, this has been there. This is the description that you have to put, and then this numeric values would come into your allowed null margin column.
+
+00:06:17 - 00:07:36 Unknown Speaker:
+
+No, no, this I mean, no, we put numeric only. No, you know, no need to write down that the way it has been written. That was correct. Numeric values. Right. So if it is non-numeric, just mark it as non-numeric. We have sorted it out again. We are raising the same question. For non-numeric, just mark it as non-numeric. Okay. So shall I share my note once again, Sachin? Yeah, go ahead. So please don't mark those as complex. Alpha numeric also same condition, right? Yes, yes, that would go into that allowed margin. Okay, for these, I will update it anyway. One more thing in this list, Sachin If you see this is there percentage? Is there? No. Then then mark it as uh uh complex, that will go as complex. If additional checks are there, then we won't be able to mark everything.
+
+00:07:36 - 00:09:16 Unknown Speaker:
+
+Right? Yeah, so now, yeah, except this all are going under green. Okay, yeah, yeah, yeah. Now I'm switching to the complex once again. Now we are left with only one complex, right? No, no, no no no no no no no no no no no no no no no no no, uh yeah, current this one first one, second one, third one. Yeah, this should be, uh okay. SBR is 800, right? And that is the reason. Okay, okay, okay, okay, okay, okay. I think this one can be done exactly. Just try it out. Okay, mark for your review and then try it out. This can be done. Yeah, just highlight it with some polish and then mark it out for your review. Same goes for line number 222 and even 223. Values are not in 0 and 1, right?
+
+00:09:16 - 00:10:40 Unknown Speaker:
+
+That's something we can mark it as also 0 and 1, which is being there, right? This current current date 1914. This can be a threshold check, right? Are not between 1904 and current date, correct? This should be changed to a threshold check type. We need to check with Rachna. Okay, yeah. Anyway, I will update it as complex. Yeah, yeah. But give a suggestion. We can mark it as a threshold check. Which one? 225. This big? Yeah. Modify to threshold. This is complex. The next one is complex. Then again complex. Now, no duplicate record exists, right? This we already... Right, not in... This can be converted, man. This can be converted. Even the second one can be converted. No duplicate records for that. This one we have already decided. Now current values, complex, as compared, next, next, next.
+
+00:10:41 - 00:11:38 Unknown Speaker:
+
+Not between 1 and 3, right? That can be changed, the second last one. And even the, yeah, both can be changed. Rest remains complex. The last two can be changed. Length of variable and this, right? Just change this one and then we should be good. Okay. Rest remains complex. Rest I am aligned to market as complex. I will share it. Anything else? That's it. Thank you so much. Please make sure you share these details to Rachna today. Yeah, I will share it. I am not denying you are not working. But sometime we need to come up with a plan where we can close this quickly. Because understand, 10th June is already done, right? Three days are already being passed. Once you place it on the dev environment, we have to validate, then only I'll pull it to the IS.
+
+00:11:38 - 00:11:48 Unknown Speaker:
+
+So that would take, again, our next big time, until and unless we complete it in . OK? Sure, sure, Sachin. Yeah. OK, then. Yeah. Thank you.
+

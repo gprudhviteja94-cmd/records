@@ -1,0 +1,225 @@
+2026-06-05 Data Security Compliance and UI Development Progress
+
+Creation Time: 2026/06/05 11:32
+
+
+📅About Meeting
+
+• Date & Time: 2026-06-05 11:32
+• Location: Not specified
+• Attendee: Sachin, Bhargav, Raj, Samir, Prithvi, Anand, Rachna, Kundal, Ayyappa, APA, and others involved in data and UI development teams
+
+📒Meeting Outline
+
+Data Security and Compliance in AI Initiatives
+
+• Handling Sensitive Financial Data
+  Sachin emphasized the importance of handling financial data with strict compliance. Bhargav was reminded not to expose any metadata, table names, or PII data from the E3 environment to external AI tools like OpenAI ChatGPT or GitHub code analytics. Only approved tables identified by business owners should be used in AI initiatives. Dummy tables or domain names should be used for LLM development instead of live production tables to avoid escalations.
+
+• Restrictions on SQL Queries for Sensitive Data
+  Sachin instructed that no "select *" queries should be run on sensitive tables to avoid fetching sensitive columns like credit card numbers (e.g., CM11 column in Response Account history). Bhargav was advised to consult Samir for clarity on sensitive data elements and to use only required columns in queries.
+
+• Data Ingestion and Approvals
+  Samir and Bhargav were tasked to continue their work on data ingestion for E2SB, with Samir to keep Sachin posted. Post-ingestion, approval is needed to get E2 sign-up and provide the key to Airpass for RFC creation scheduled for the upcoming Tuesday.
+
+UI and Backend Development for Rule Templates
+
+• Mapping Descriptions to Templates
+  Prithvi discussed progress on categorizing descriptions into four templates, with plans to create update scripts. The focus is on mapping existing rules to templates, marking unmapped ones as complex. Sachin requested a screen share to review the Excel mapping and transformation.
+
+• Data Storage and Cloud Synchronization
+  Sachin reminded the team that data placed on local desktops syncs automatically to the cloud, advising caution on what data is stored locally.
+
+• JSON Object Structure for UI Integration
+  Jason and Sachin discussed the JSON object format for business text columns. The UI will send a JSON object with keys like Q1, Q2, etc., representing different fields. Mandatory fields are to be marked in the UI to ensure form submission integrity. The backend will hydrate these objects and iterate over them for SQL syntax updates. Final confirmation on keys and testing payloads will precede UI implementation.
+
+• Future Enhancements for UI Validation
+  Sachin and team agreed to discuss with Rachna and Anand about marking required fields in the UI and aligning backend validations accordingly, as part of future enhancements.
+
+Environment Configuration and Cleanup
+
+• Review and Cleanup of Environment Variables and Context
+  Sachin reviewed the E3 environment context variables via Airflow, identifying unnecessary or redundant properties such as row limit AFC, table to delete, email flag, and frequency type. The team agreed to clean up unused variables to streamline the environment.
+
+• Specific Variable Checks and Deletions
+  Variables like 'frequency type' require confirmation with the responsible person before deletion. Some variables like 'record limit' are still needed for validation. The team will check code usage before removing variables like 'QTAC email recipient'.
+
+• Project Variable Management
+  Sachin instructed replacing 'use case data set ID DW' with 'platform data set ID DW' across the project for consistency. He also highlighted the need to refactor code related to environment-specific configurations and SQL paths to reduce complexity and bucket proliferation.
+
+• Pending Tasks and Coordination
+  Sachin plans to connect with Prithvi and the Lumi platform team to address configuration issues. Prithvi confirmed readiness of files for sharing and collaboration.
+
+Work Progress and Next Steps
+
+• Rule Application and Framework Testing
+  APA reported completion of two BQ rules applications and ongoing testing of framework changes in the E2 environment.
+
+• Table Creation and Migration
+  Starting Tuesday, new work will involve table creation and SQL migration in the E3 environment. Sachin advised increasing execution dates to accommodate pending tasks.
+
+• Communication and Escalation Management
+  Sachin addressed an escalation regarding emails sent to business folks during lower environment testing, emphasizing the need to avoid such escalations by following proper communication protocols.
+
+📋Overview
+
+• Emphasized strict data security and compliance for financial data in AI projects; only approved tables and dummy data to be used.
+• Clarified restrictions on SQL queries to avoid exposure of sensitive data elements.
+• Progress on mapping rule descriptions to templates; need to finalize update scripts and review mappings.
+• Defined JSON object structure for UI-backend integration with mandatory fields and iterative updates.
+• Identified and planned cleanup of redundant environment variables and project configuration inconsistencies.
+• Confirmed ongoing testing and upcoming tasks related to rule applications, table creation, and migrations.
+• Highlighted communication improvements to prevent unnecessary escalations during testing phases.
+
+🎯Todo List
+
+• Bhargav:
+  • [ ] Avoid using production E3 environment tables or metadata in AI tools until approval is received. (Immediate)
+  • [ ] Consult Samir to understand sensitive data elements and adjust SQL queries accordingly. (ASAP)
+
+• Samir:
+  • [ ] Complete data ingestion for E2SB and update Sachin upon completion. (By Monday)
+  • [ ] Obtain approval for E2 sign-up and provide key to Airpass for RFC creation. (Before Tuesday)
+
+• Prithvi:
+  • [ ] Finalize update scripts for mapping descriptions to templates and share Excel mapping for review. (Today)
+  • [ ] Collaborate with Sachin and Lumi platform team on configuration and deployment issues. (Ongoing)
+
+• Jason/Kundal:
+  • [ ] Confirm JSON object key names and test payloads for UI integration. (ASAP)
+  • [ ] Implement iteration over JSON object in update statements for business SQL syntax. (After key confirmation)
+
+• Rachna/Anand:
+  • [ ] Define required fields in the UI and coordinate with backend team for validation enforcement. (Future enhancement)
+
+• Environment/Dev Team:
+  • [ ] Review and clean up unused environment variables and context properties in E3 environment. (Today)
+  • [ ] Replace 'use case data set ID DW' with 'platform data set ID DW' across project configurations. (ASAP)
+  • [ ] Check usage of variables like 'frequency type' and 'QTAC email recipient' before deletion or refactoring. (ASAP)
+
+• APA:
+  • [ ] Continue testing framework changes in E2 environment. (Ongoing)
+  • [ ] Prepare for new table creation and SQL migration tasks starting Tuesday in E3 environment. (Starting Tuesday)
+
+Transcription
+
+00:00:24 - 00:01:58 Unknown Speaker:
+
+Hi Sachin. Good morning. Good morning. Just give me a second. I'm just closing first. Starting with you Bhargav, As per the yesterday's conversation, which we were having with Raj, let's wait for Monday. Uh, you know, call with interest once more time, okay? And then once we get further details, we need to start working on that part. Also. Okay, but just just to call out, as you have joined recently. Um, you know, the data that we were handling over here, right? Was all our financial data. Okay, so you might have heard from, you know, Raj, like he was asking onion to get that double for at least one table, right from the business compliance perspective, to use rules table. So until unless we get a confirmation.
+
+00:01:58 - 00:02:54 Unknown Speaker:
+
+Please make sure you are not placing any of the metadata or the table name in any of the open AI. Uh, you know, Chat, GPD, or even the GitHub code analytics, you are using that, okay, any, any PII data of the E3 environment, any, you know, sensitive data are as restrictive to a place or, you know, somewhere else which is not part of MX Network. Okay, because that would again, like he was mentioning, right? We are not going to get that enterprise level access for all the tables, right? So the business need to identify what are the tables that they are going to. You know, incorporate this with AI initiative. And that is something they need to get alignment from the table owners, who owns those tables. Only those approved tables will be used. Right.
+
+00:02:55 - 00:03:55 Unknown Speaker:
+
+Only those approved. So we did not receive any list as of now, right? So if you're creating that, you know, LLM, right? Then you have to use the domain name. Oh, okay. The way Andrix was doing, right? He was just placing those business contacts over a file, right? Similarly, when we are going to design it, we have to use those dummy tables on it. Don't use the E3 environment table, which are already production live. Otherwise, unnecessary escalation would arise. Once you run it right, and if there is a notification, it would go .  So please make sure you are not doing that. Another thing you might not be aware with, You are not supposed to access any of the sensitive data element in the E3 environment through a SQL query. Also, what is those sensitive data element?
+
+00:03:55 - 00:05:01 Unknown Speaker:
+
+Uh, connect with Samir, he would help you understand. Suppose there is a table called Response Account history, okay, and that is having CM11 column. CM11 is nothing but your credit card number. So that comes under sensitive data element. They used to mark it. If you see the metadata, you would be able to see that. So as you are handling controls, you might be running some SQL query, right? So please make sure you're not doing select star from any of the tables when you're doing a query. Because if you do a select star, that means that would fetch the CMX ingredients. Right, so avoid that statement and use only those elements which are required for your use. Do let me know in case you still have any questions. Once I get hold of that kind of thing, then I can have it all.
+
+00:05:04 - 00:06:23 Unknown Speaker:
+
+Thank you. So Sameer and Wargab, I'll have another separate connect with both of you. So you can continue the work and Sameer just keep me posted once the data ingestion for E2SB is done. Okay. And post that you need to get approval from to get E2 sign up. Okay, and uh, provide the key to sign up to Airpass so that he would create RFC for upcoming Tuesday. Sure, okay, uh. Once you post your updates on that Uh channel, right? Uh, post that you can feel free to drop and just make sure that you are updating. Prithvi, are you done with that change? Yeah, I categorized it under those four. For those four, I will create templates before the car. No, I am not bothered about right now the template.
+
+00:06:23 - 00:07:23 Unknown Speaker:
+
+Did you modify that data first of all, that is strips and part and the filter part? How many descriptions fit into those templates? I have listed them but I have not updated them. I will come up with the update scripts. I am not certain what exactly we are doing then. That was the ask only. Is there a difficulty in understanding English? No, no, Sachin. Yesterday, we were actually told to map them with the existing descriptions. So, only four new descriptions are going to come, right? Okay. So, only for those... Hold on. Those four anyhow is going to come to you. I have asked you. You can create four different templates for those new ones, right? That is okay. But primary work was whatever existing rules are there, right?
+
+00:07:24 - 00:09:02 Unknown Speaker:
+
+Is Resna did not ask you to map it to the template which is going to be made from the UI and whatever are not going to be mapped, we would mark those as complex. Yeah, that list is the complex. I have listed them separately. I have everything with me. Only I have not updated it. Can you share your screen? Can you show me? Yeah. Where is that map to? New filter criteria you are asking right? Yeah. I did that yesterday itself. Share your screen. Show me the Excel sheet. What is the transformation you have done? I would like to see that. And one more thing, whatever you are putting it into the this desktop, right? This all goes to the cloud. Okay? So please make sure, uh, to understand what you need to put over the desktop.
+
+00:09:02 - 00:10:54 Unknown Speaker:
+
+Just, uh, fyi, I really don't have a problem with that, right? But I'm just giving you a heads up. Yeah, whatever you put on the desktop of your system, right? Those all gets saved to the cloud by default. Filter criteria Proposed filter criteria needs. No, we continue Sachin. I will show you right away. Okay. Okay. Okay. You guys to modify that, Jason, did you start working on that? I started on that part, Sachin. Okay. So... Just want to confirm one more time, it will come as object like b1, b2, b3, b4, right? No, no, no, let me give you the JSON object. That was just to make that, you know, business team understand, right? That doesn't look like you and YouTube. Yes, correct. Right. Let me give you that JSON.
+
+00:10:54 - 00:12:05 Unknown Speaker:
+
+So, Arthur, let me see what you need to do. There will be a change from UI side also. I will confirm you this JSON object just give me some time. I have to change only the property name. Only this key you have to change. So right now on the UI you are sending that business text column right? So for that business text column you have to send it as a JSON object like this. And whatever parameter you are passing in that business text that would be part of Q1 right now. And then later on, when we would be modifying that template, which I was showing it to Anand yesterday. Right, yeah, regarding this, right? So once we get these new field, right, so these second, third, fourth, fifth would come into that Q2, Q3, Q3, Q5.
+
+00:12:05 - 00:12:55 Unknown Speaker:
+
+So, and just, uh, just give me some second, I'll confirm you this key. This doesn't look good because this is going to get saved in your database object, right? So that is number one that you have to save it. While you know creating that human task number one. And second, you have to iterate this object in the update statement, right. When you click on Modify, you have to iterate and pull from Q1 and paste it into that business SQL syntax. So one thing, you can just confirm this key and based on that kundal, you can just test with the payload and share with the updated payload. Okay, and with that updated payload. I'll implement in the UI so that we don't have to rewatch. Let's go by the testing in each phase and we can do that, we'll do that.
+
+00:12:57 - 00:13:52 Unknown Speaker:
+
+OK. I think that one thing is this one, right? This five properties. Anyone is .  I have  to check  for that. No, no. You don't  need to  check  it.  It will be done  from the UI  side. OK. OK, then. UI should  mark those fields as mandatory before submitting the form.  Because you would be, again, you have to  hydrate this object . Got it. We got it. So let me close this part and test it on local and then we'll move it to, you know, this program. Also, Sachin, one more thing with respect to this. We can just discuss with Rachna or Anand for the required fill in the UI. It is there, man. It is there. They have given business justification. This is what you have to do. Yeah, I doubt that.
+
+00:13:55 - 00:14:41 Unknown Speaker:
+
+I am asking about the required field in the UI currently. Currently we have five to ten fields for each of the missing. Type. Table, name and everything, right? But, uh, you will see, none of them are marked as required in the UI. So there should be something that we can. Exactly that's what I was asking. So which exact field would you need in the back end, and which build Rachna or Anand would require the user to just fill in. So we can mark some of the fields that this field should be required from the UI. Without this, we will not be able to submit the form. So that list will get it. Even from the back end side, we have to see that one. Because right now, we put in a lot of field management.
+
+00:14:41 - 00:17:30 Unknown Speaker:
+
+So maybe that will be not required. Exactly. So we can just come to one point where we can just check in. Yes, sir. We can do that. First, let's close this part and then... Exactly. That's a part of enhancement for the future. We can do it. Just let me create that object. Otherwise, again, you know, forget it. Okay, sir. Just one second. The PR was launched yesterday, so I'm just triggering an E3 deployment. No, no, it's normal. This is what they are mentioning business justification right. This would be an array. Not array, I think object. Yeah, it's object only man. June 4th. This is the one. Just add the answer. Key will be key and value will be opposite. It should not be array, it will be object. Okay. First of all, it will be a single object.
+
+00:17:31 - 00:19:15 Unknown Speaker:
+
+Better approach is not there. That's what I think. You want like this one, right? Like this one, Q1. Right? Push correct. It's a fixed question here right question we used to store this way only then do like this if you want like this quest code one okay and whatever answer is there put it. Correct. But I don't think it's better than what I was thinking. That seems to be better compared to me. While we will restore the key, the key doesn't mean anything to us. Because that is for the front end. And we won't do that hard-coding, that's why it's that way. Correct. Okay. Okay, then any question both of you? So in this, do we require all the five keys as of now? Right now, just make this mandatory rest for would be non-mandatory, that would go as null.
+
+00:19:15 - 00:20:22 Unknown Speaker:
+
+Okay, and once you implement, we have to pass all this five key from the UI. Yeah, yeah, yeah, let's finalize it, you have to pass this all five key. Got it? Okay? Give me a second, uh, let me wrap up with others and then. Just a second. Don't worry. I merged it. I merged it. I did. Yes, I do have but I don't use to do it because that is something not my responsibility. I told you, even Rajendra don't do that. If you ask Rajendra, Even he is not... because whatever job says, let them take that. Okay? So Kundalini, I think you guys are clear, right? Yes, and and please close this man. Uh, because I need, uh, the E3 deployment starting Monday, whatever is pending, please close it today.
+
+00:20:22 - 00:21:16 Unknown Speaker:
+
+We use that time, and then, uh, close that, uh, today. Hey Samir and Varga guys, you can feel free to drop up, you're done with your update, right? No need to wait on the call, man. Once you provide your update in the DSU, feel free to drop off. Until unless I need, I'll ask you guys to stay back, right? So you can... Okay, let me just wrap up with APA. APA, where are we with the changes? This is a basic thing that we discussed. There was an escalation mail from Anand, right? Last time. Why we are sending these emails for the lower environment testing to the business folks? Which email? There was an email from, you know, APA was doing that testing, right? And now, again, it went to the business folks.
+
+00:21:18 - 00:23:01 Unknown Speaker:
+
+This is a basic, right, this is basic thing that we should follow, right? One more thing, can you show me the context of E3 environment once? I know you guys must have met. Can you show me the context quickly? Even in the context. E3 context. No, not over here. You have to go to the airflow. From where we are setting the context. Okay, from the airflow. Yes. Just check our context, what is there. Some property they have introduced. Because I know, once I have allowed to add the property in the context, context we people have messed up the context also the way the code has been messed up now tell me. What is the requirement you see? These are one second. We have not added in the XCOM. XCOM is, you know, once you trigger the tag.
+
+00:23:01 - 00:24:27 Unknown Speaker:
+
+Okay, then click on, I got it. I got it. It's the latest. Incorporate a little bit. You can add in a little variables. Data inputs per chart. These are like, so here. Now tell me. Why didn't we remove this role limit of the AFC NC? Why this FDR role limit is there, frequency, why this trip book date is there, table to delete is there, right? Email flag is there. PNR create TS is there. Project variable is fine, right? That is something I have asked you to. Record limit is there, right? Why did we kept these variables in this place? Can we clean up IFR today itself? You can, just you can just keep this. So we have asked her to add it, now we can remove it. Uh, right, and see, now I hope we are not using this property, correct?
+
+00:24:27 - 00:25:48 Unknown Speaker:
+
+So so, remove that, remove the row limit. AFC Can you delete it right away? Select it? Yeah, we'll do it once below one also, and select it. Type now, Delete it. I don't think you would be able to delete it directly. Accent is there, you can do through a bulk, right? Record limit, who is using this record limit? 9 lakh something, I think Ayyappa was using, right? No, no, wait, wait. It was yours only, Ayyappa, right? Correct, yeah. In the MX2 regime, we used this one. So, do we need this one now? Yeah, essentially, it is needed, actually. We are loading from here only. Why can't we do it through the port, man? Tell me one reason why can't we do it through the port. Actually, you have to...
+
+00:25:48 - 00:27:01 Unknown Speaker:
+
+Actually, why he did, I remember, Sachin, just to validate the record count. Right, exactly. That is already been there in your query. If you go to the SQL query, it would be already been there. Say that again. That's the problem, right? Once we made it, we forget that we have to clean up these activities. Open this. I think it's gone left and right. Limit is alright. It's already there. Delete that. Hold on, hold on, hold on. You can do a bulk accent. Select the reverse limit AFC. Now action is there in the above. Can you click on actions? Click on actions. Don't delete. While you delete, search for other if you want to delete. No, no. First let him delete. Delete this one. Okay. Can you do it bit quickly? Now?
+
+00:27:01 - 00:28:12 Unknown Speaker:
+
+In JSON, Date is Maestro enabled, who did use this frequency type? Just a second No, no. Table to delete I think this table to delete is your property app, right? The second last, delete this property. We really don't need it. Can you just check what is the use of this? No, no, no. I don't know. I don't know. Just delete that one. Tripbook DT NC, it is yours one, right? Yes, that we are using. The PNR create timestamp and tripbook DT. Delete that one, but you have to change this in the code. Leave it, but take a note of this NC. PNR create TS, leave it. Triple State Can you take a note? Uh, okay, hold on. Uh, now row limit AFC Do we need this? Uh, check that one. Uh. Method tag trigger count zero.
+
+00:28:12 - 00:29:29 Unknown Speaker:
+
+Who did this? Maestro? Tag? Trigger count? Let it be something. I mean, I have to check this one. Okay, don't delete. Okay, and what about Maestro enabled? Uh, let it be false. This is. This one I don't know. Who is using this ingestion date? No, no, no. Don't delete it. Who is using this ingestion date? Can you copy that variable and check in the code base where it has been used? Check for this property. Global search. You don't see. You can remove it, go ahead and remove it. Frequency type Who is using this? Again? Check that property frequency type will be there. But somebody has forced it to weekly by using this. It might be with this guy, check with him once OK and see and see. Take a note. Frequency type need to be checked with the seven.
+
+00:29:29 - 00:30:50 Unknown Speaker:
+
+Okay, FDR who was working on FDR. Yeah, that is not needed. Click on FDR. Yeah, uh, what about ENV, who needs this? Uh, this would be the environment? Yeah, the environment. Don't delete this one email flag. Email flag. I don't think that is needed. Why we are keeping it. Can you check this email flag? Once not required, go ahead and delete it. Click on Actions, Delete it. So now, go to the Dev Group, Click Frequency type. Go to the Dev Group. Yeah, click frequency type. Add the red stubborn, do one thing that. Take a screenshot and restart highlight. No, no, no, no, screenshot would not work, only copy the frequency type. Paste it over here. I don't think even he have he ever requested to add this, right? So even seven is not required.
+
+00:30:51 - 00:32:28 Unknown Speaker:
+
+I don't think someone has asked to check this one. I'll still, you know, tag myself. I'll check with him. Can you go to the next? Go to the next property. Is my store enabled at Kundan? Tag at the red Kundan. That will be there, Sachin. Okay, because we have a dependency. No, no, not deleted. Yeah, onTab.DevLoop, remove that one. That would be there in that environment. This is something I'm aware of. Go back. PNR, create this. Make it to ANSI. ANSI is required. Just pass it from the variable. No need of putting it over here. Go ahead. Next. No, no. The trip book data. Again, ANSI. Those would be there. Okay, uh, in the above, just write down above variables need to be checked for the environment and these people are responsible to check it.
+
+00:32:28 - 00:34:12 Unknown Speaker:
+
+Now. Can you go to and show me that? Project variables one, Open the project variable, edit that project. No, no, no. Man, project variable key is there. Added this project variable. Why we are setting this? Man, why qtrak email recipient is being there? Man. DW DW again, environment is E3 again that composer SQL pass CSV limit who is using this limit only implemented this one. But this DW, DW that that need a code refactoring. But this QTAC email recipient we don't need, right this individual email id. No, no, no, you can delete it, we don't need. Make it empty or check for this variable. No, no, no. Leave this and tag to Ansi Ansi to check and confirm okay. So NC once we are checking it just check how many places we are using this Qt red email recipient in our code.
+
+00:34:13 - 00:35:04 Unknown Speaker:
+
+And how we can you know rectify this one in a better way. Next I will connect with you for the tables. Even we have to modify the tables. XCOM we are good. Now I will check with you. Now tell me your updates basically where you are. Yeah, Sachin, that one, yesterday Rachana has asked me to do the two more BQ rules application. So, that one is completed today. And, that yesterday, that one, right, I worked on, continuing working on the, that method changes, whatever you suggested changes in the framework, right. So, that one, I am going to do the testing in even environment, Sachin. Okay. Now, can you go to the input place? Yeah, number from today, we have targeted for the Quandro. In either environment, tables creation, such as the historical tables, these are adult activity.
+
+00:35:04 - 00:36:04 Unknown Speaker:
+
+Uh, so this should not, uh, you know, take much time for you. Your that migration should be done if you are not able to do those, uh, you know, SQL migration again. From Tuesday, you are going to get some new work right? And again, that would be pending in the i3 environment. Just increase your, uh, you know, executions date. That's what I'll tell you. Now, can you go to that config.json and show me one thing. Go to that config.json. Not this one. Any config.e1 or e2 or e3.json. Now, go up. Along with that change, replace this use case data ID DW. Right? Everywhere with platform data ID DW. This one. Remove this one, okay, and just use one. Data that is platform data set ID. DW. Can you search how many places this has been used?
+
+00:36:04 - 00:37:02 Unknown Speaker:
+
+This use case data set IDDW search in the project? So these many places? You just need to replace that with the one that I was asking to you, okay, would be straight replace, that's it. Yeah, platform, platform, data set. Or if you want to rename it, you can just mention it as data set ID also. But if you don't want to rename that one, just remove this use case data set ID. That is number one. Let me review Rest data, temp, DW and again and see, once you get some time, remove these DQ IDs from here and hold on. What is this insurance policy? Length Insurance CM 15. So that in the SQL query, instead of passing indirectly there. Okay, then I got it. Then pass this to from your Q drive config JSON instead of from here.
+
+00:37:05 - 00:38:09 Unknown Speaker:
+
+Okay. And even why we are having it all together, this AFC pain of elated trend SQL path, a different SQL path over here. Yeah, that is made at SQL. So, for this was a different use case, right? So, that's why it is created under that AFC folder inside the project bucket. And then that is even fine. But why did we kept this one? P now, P later. Just see, you have created one AFC pull for SQL path, right? Why I need this line number 18, 19? Again, he has created arrival a different one, right, a different one. Again, he has created a TLS. All together, a different bucket. So in this way, right, just imagine how many bucket would be created. Okay, so yes, use case one thing this equal name, right?
+
+00:38:09 - 00:39:25 Unknown Speaker:
+
+We are supposed to pass through our this one config, right? Why we are configuring here? I need to jump into a call with Lumi platform team. But take a look into this and Prithvi I will give you a call. Then I will add you to that call. Sachin i have that file ready okay i'll share it with you you can go i'll thank you i'll thank you. It's happening, brother. Why? You went to the village and got cold. What about Prudhvi? Prudhvi is doing well, brother. He is doing well. Prudhvi is also doing well, brother. Prudhvi is also doing well, brother. Prudhvi is also doing well, brother. Prudhvi is doing well, brother.
+

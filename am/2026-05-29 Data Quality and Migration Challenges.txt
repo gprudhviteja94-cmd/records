@@ -1,0 +1,142 @@
+2026-05-29 Data Quality and Migration Challenges
+
+Creation Time: 2026/05/29 15:57
+
+
+📅About Meeting
+
+• Date & Time: 2026-05-29 15:57
+• Location: Not specified
+• Attendee: Anup, Rajna, Sachin, Prithvi, Ayyappa, Udashna, Purna, Rajendra, and others involved in data migration and quality checks
+
+📒Meeting Outline
+
+Data Quality and Record Handling
+
+• Handling of Duplicate, Stagnant, and Missing Data  
+  The team agreed to provide only one sample record per standard description type to Rajna for review. Duplicate and stagnant data issues have been resolved, but missing values remain a problem and will be shared for further action. Duplicate records should not be sent, and stagnant records are mostly addressed except for some complex cases. The focus is on sharing valid value checks and ensuring no redundant data is sent.
+
+• Valid Value Checks and Input Template Limitations  
+  Discussion highlighted the complexity of valid value checks due to multiple data types and conditions (e.g., date ranges, string patterns, lengths). The current input template is simplistic and does not cover all possible validation combinations. Modifying the template to accommodate dynamic and complex validations would require significant changes, and a decision was made to revisit this after further analysis.
+
+Timeliness and Stagnant Data Checks
+
+• Clarification on Timeliness Check vs. Stagnant Data Check  
+  Timeliness checks are essentially a subset of stagnant data checks focusing on data freshness (e.g., data or model refresh within the last 45 days). Most stagnant data checks have been renamed or reclassified as timeliness checks except for about 10% that are complex and cannot be handled via UI forms. These complex checks will be managed through a control route and are excluded from the current UI dropdown options.
+
+• SQL Query and Check Type Implementation  
+  The team discussed the need for clear SQL query templates for timeliness checks. It was clarified that the timeliness check is present in the current system but may not be explicitly labeled as such in all repositories. Migration efforts will focus on the simpler timeliness checks, while complex stagnant checks remain out of scope for form-based input.
+
+Data Migration and Testing Concerns
+
+• Use of Production Data for Migration and Testing  
+  Strong concerns were raised about the current practice of not pulling data directly from the production environment for migration and testing. This has led to invalid or incomplete data being used, which risks embarrassing the team in front of product owners. The expectation is that migration should always use production data, and testing should validate with real-time data to avoid rework and delays.
+
+• Responsibility and Accountability  
+  Senior team members were reminded of their responsibility to ensure data quality and proper procedures. The reduction of deprecated DQIDs from 1300 to 900 was acknowledged, but basic validations and data sourcing must be improved. Feedback on data issues will be escalated through Purna to Rajendra, emphasizing the need for ownership and proactive communication.
+
+• Impact on Project Timeline and UI Modifications  
+  The delay caused by data issues affects the overall tool migration timeline. The team is cautious about making UI changes and prefers to ensure data correctness first. Concerns were raised about potential consequences if data does not reflect correctly in the UI after migration, stressing the importance of thorough validation and clear understanding of check types.
+
+• Communication Gaps and Expectations  
+  The meeting highlighted a lack of proactive communication, especially regarding the timeliness check use case and SQL requirements. Team members were encouraged to voice questions and concerns openly rather than remain silent. The need for clarity and collaboration was emphasized to avoid misunderstandings and ensure smooth progress.
+
+📋Overview
+
+• Only one sample record per standard description type will be shared; duplicates and stagnant data mostly resolved, missing values remain an issue.
+• Valid value checks are complex; current templates are simplistic and may require future modifications.
+• Timeliness checks are largely a renamed subset of stagnant data checks; complex stagnant checks remain outside UI input scope.
+• SQL queries for timeliness checks need clarification; migration will focus on simpler checks.
+• Production data must be used for migration and testing to ensure validity and avoid delays.
+• Senior team members must take ownership of data quality and proactive communication.
+• Data issues are causing project delays and risk UI inaccuracies post-migration.
+• Team encouraged to communicate openly about challenges and requirements.
+
+🎯Todo List
+
+• Rajna:  
+  • [ ] Review and validate the single sample records for each standard description type by Monday.
+
+• Sachin:  
+  • [ ] Share valid value check details and missing value issues with the team.  
+  • [ ] Clarify SQL query templates for timeliness checks.
+
+• Prithvi:  
+  • [ ] Provide input on timeliness check use case and SQL requirements.  
+  • [ ] Ensure production data is used for migration and testing.
+
+• Purna:  
+  • [ ] Cascade feedback regarding data quality and migration issues to Rajendra.
+
+• Data Migration Team (Prithvi, Ayyappa, others):  
+  • [ ] Pull production data for migration and testing immediately to avoid rework and delays.  
+  • [ ] Avoid using dev environment data for migration purposes.
+
+• Udashna:  
+  • [ ] Coordinate with the team to avoid UI modifications until data correctness is ensured.
+
+• All Team Members:  
+  • [ ] Maintain proactive communication regarding data quality, check types, and migration progress.
+
+Transcription
+
+00:00:00 - 00:00:58 Unknown Speaker:
+
+Yeah, products and data and then just save the list to Rajna so that she can review it on Monday. And just provide only one record for one kind of standard description that you are using. Yeah, only one. I will not share much to pull. Even though column names are different, I will try to get them as one. Right, it is just one sample record we need for each type, right? Yeah, I will do that also. Short don't send for duplicate, duplicate. It sorted out. Yes, okay, no need to stand for duplicate. And even for the stagnant one, right? Yeah, stagnant, or it was missing. Um, so we are good with the duplicate, missing value. No, no, missing value has an issue. Duplicate and stagnant is the issue. I'll share those. Sorry. Duplicate and stagnant are fixed.
+
+00:00:58 - 00:01:52 Unknown Speaker:
+
+Missing is only the problem. I'll share that one, and can you see, even if the stagnant one? I saw some records for it? Yeah, yeah, let me share it. Sorry, yeah, so you can send that. Also, just skip duplicates, rest everything. Yeah, I'll share one sample for each. Yeah, now can you show me the valid value? Also, let me check that one, because if we have sorted out, let's not spend lots of time on the same validation. Uh, okay, I will share the valid value check. Uh, yeah, okay, any any observation from your side that? Yeah, yeah, I just want to share this one? Yeah, yeah, one second, because of this one template, right, whatever they mentioned, right? So this is the one right template for valid value.
+
+00:01:52 - 00:02:46 Unknown Speaker:
+
+Given this one, the variable and should only take the values and allowed values. But instead of that one, what I am thinking is this one mostly, which should be containing this kind of values, because mostly in this one script, right? I saw mostly of the count. Operations are, yeah, actually, many of these would be based on the data type. So, if we have to modify that, we will have to modify the inputs as well. That's why I did not provide those kind of descriptions. Let's have a look at this. This one, Sachin, basically we will have to make some changes to the input template as well if we want to keep it like this. But I just provided the simplistic case that was possible. Because the problem here is like, if you just read through these descriptions, what is happening in some cases.
+
+00:02:46 - 00:03:41 Unknown Speaker:
+
+It's saying that if it is, say, date, then date should not be greater than this much, this much. Or it should have like this kind of values. And say, if it is string, then it should start with a certain value, or if it should be of a certain length. So there were like way too many combinations possible. That's why I did not create those combinations, because I don't know if we can, you know, create that kind of a dynamic form. Like, how many options can we even give the users? So what is the solution for this? Yeah, let me take this one back. Um, I'll let you know what to do with this. Okay, okay, yeah, okay. Then you need to send for missing value after the stagnant one, okay, duplicate, we are done, and then this one we will wait for Rajna's input.
+
+00:03:41 - 00:04:26 Unknown Speaker:
+
+One more thing is, now we are coming up with the new check time, right? That timeline is one correct. What is the SQL query we are expecting for that? What kind of sequence? It's actually just a segment of that stagnant data check, or you would already have the SQL query, the stagnant data check, right? Wherever we say that, uh, the refresh, like the data should have come in last 45 days, or the model should have refreshed in last 45 days, it's the same thing. That is the timeliness. Check wherever that data is expected to come on a certain date or in a certain, uh, like, time range. Right? That that is what time this check is. We have just like reworded that because there were a few other.
+
+00:04:32 - 00:05:21 Unknown Speaker:
+
+So I can see that stagnant has been renamed as stagnant data check, right? Not exactly renamed, Sachin. So basically, it's like 90% of the cases that were there in stagnant data check, those would now be stagnant data check. But there are almost like 10% cases which are still stagnant data check. Those are more of the complex cases. But we are not providing that in the drop-down, which is now in the UI, right? That was not part of that requirement. The check type on the UI, you don't see that stagnant check, right? That was not there in that, because because those 10 percent have complex checks, there are. There was no way to, like, ask for all those kind of approaches. But when we would be migrating those data, then until you know which check type, we have to showcase those data.
+
+00:05:21 - 00:06:47 Unknown Speaker:
+
+Then I think for now, it will be timeliness check only because, uh, those which are like specifically stagnant data check, those are very complex checks. Like, we cannot really make it into a form, so I think that will again, like, go into the control thing, most probably. No, it's not there. Then what about the timeliness one? Timeliness is there, right? Timeliness is there, right, in the current one? I don't think. Did we find that between the check type, this timeliness? I don't think. It was there or not? Can you go to the DQ repository? Can you just search with the different distinct check type? So, in a way, you can say that. It has been renamed because the only parts which are not renamed are complex checks and we are not inputting them from the UI.
+
+00:06:47 - 00:08:26 Unknown Speaker:
+
+You can consider it like a rename in just to simplify things. Okay, yeah, because because if you see it over here, right? We have stagnant on the timeliness, right, correct? Yeah, so out of those stagnant data check again, we have to filter out those timeliness. One right for migrating, because if you want to modify those checks. Uh, so, not exactly such a uh, can someone open that? Uh, I'll just clarify it right now. Excel. Say that the one that you're showing. Okay, yeah, I'm stopping. Yeah, you can share this, yeah, so here, uh, like majority of whatever you see here is now timeless. Check, except these row 29 to 34. These are the ones that I was talking about that. These are very complex checks and we cannot like input this via an intake form, and this will most probably go via the control route.
+
+00:08:26 - 00:09:48 Unknown Speaker:
+
+Like standard deviation and everything, all that statistical calculation, right? So, uh, this is not, uh, like, what to say, like? This will not be a part of timeliness check, but rest, everything will be a part of timeliness check. Wherever you are saying this, uh, latest suggestion should be between 45 days, 30 days, all that kind of rules, right? Basically, we really don't need to move these role to the forms. Yeah, correct, okay, okay, okay, okay. Okay, then, folks, just stay back. Thanks, Anup. Thanks, Rajna. Thank you. Hi, Prithvi and Ayyappa. Like, I'm not sure who was, you know, making these data, pulling it from where. But, you know, it's a bit surprising, right? We are migrating the data, and why don't we pull the production data? Right doesn't you feel like it's getting embarrassing in front of the product owner?
+
+00:09:57 - 00:10:58 Unknown Speaker:
+
+Exactly like, you know, I'm not sure, like, when these are basic things that we need to take care, right? You are, you are proposing them a solution. And the data that we have is not the valid records that we are presenting through the partners, right? So even they would understand, and I'm mentioning it to all of you, right? It would not go as my feedback. Because they have seen, uh, Sachin has, uh, you know, rectified you to go to the Indica repository tables and, uh, pull the actual record, right? They would be sharing this feedback for you individual guys. To Purna and then Purna would cascade this to Rajendra. Right. And we really know, right, at least from your standpoint of view, we have reduced the number of DQID from almost 1300 to 900 now.
+
+00:10:59 - 00:12:09 Unknown Speaker:
+
+So there is a deprecation of 400 DQID has already been deprecated. Look, it's nothing a loose for me guys. But these are basic homework that we need to do before even jumping into the UAT goals, right? Just ask yourself, man, like, you guys are already eight, nine, ten, eleven years of experience, right? And that is not something, you know, I am expecting from you guys. Like, because you are seniors, right? A fresher, like someone, he can do these mistakes. I'm. We are talking about data migration, data would not be migrated from the dev environment, right? Those are getting. Those are going to get migrated from the production only, right? And then why didn't we pull the data from production. While testing also, have you tested even a single time with real time data?
+
+00:12:12 - 00:13:21 Unknown Speaker:
+
+The testing is altogether a different story, but that is what I was, I have clearly mentioned out in our dev channel also, right, few days back, almost a month or so. Some time back, right? I am not seeing that basic validation being done for now guys. That is something we need to take care of this week. Just let me know if the feedback that I am sharing is incorrect. I am happy to take any feedback from you guys, right? Just let me know if my observation is not correct. I am ready to accept if there is a, you know, something that is being, I am passing you guys as incorrect, you know, data. Right? Sync the data, okay, sync the broad data to DevNQA. No, no, why would he do a sync? That requires, again, effort, right?
+
+00:13:21 - 00:14:07 Unknown Speaker:
+
+I really don't want that sync, right? Because he has other tasks to complete. My ask is pretty simple. When we are talking about data migration, it would be from production to production. So ideally we should have pulled the data from the production environment. Now I have given you a couple of days. Now those couple of days is going to get over in next couple of hours. Again we have to do a rework. And then this tool migration would get delayed due to this. Because this data migration is very crucial and that is the reason I am not accepting all the proposals from Udashna also like, SILUS TT okay not to modify that UI and then you know just migrate the data and launch the product.
+
+00:14:08 - 00:15:05 Unknown Speaker:
+
+What if there is a consequence like that data doesn't get reflected correctly in the UI, they would come back to us mentioning, hey man this is not correct right and then who would own that. Those are the reasons I am raising those concerns right. The you know the future, which you guys are not estimating, right? I'm already evaluating those all, all parameter and all, and then I talk to the product. Correct. This is a data issue from your side. We have already given you this template and it is not being displayed as the template. Right? Even the timeliness check was not there. I was pretty sure on that, right? And now when she reviewed it, then she said, okay, we need to remove this part and then we need to migrate this part.
+
+00:15:06 - 00:16:18 Unknown Speaker:
+
+So why these questions are not coming from you guys? And I'm a bit surprised. You have seen the timeliness check, but I did not hear from you, Prithvi. This is your use, yes, Prithvi. Okay, this is your use case which you have to drive and never heard from you. What would be the SQL template for this timeliness check and what exactly this timeliness check is all about? And now, when your template would start getting generated, you would end up mentioning him, and I did not build it for the timeliness check. And the background check is just a re-name of stagnant check. I would like to hear back from you guys. Silence is not the answer. It's not a class or examination. It's like your parents asking you some questions or your teachers asking you questions. So when this radium happens...
+

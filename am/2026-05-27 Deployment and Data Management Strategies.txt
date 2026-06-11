@@ -1,0 +1,184 @@
+2026-05-27 Deployment and Data Management Strategies
+
+Creation Time: 2026/05/27 18:03
+
+
+📅About Meeting
+
+• Date & Time: 2026-05-27 18:03
+• Location: Not specified
+• Attendee: Sachin, Clancy, Nirmal, Kundan, Sravan, ANSI, Athar, Vithvi, Srinuja, Bhargavi, Sindhuja, Ayyappa, Suman, Panisa, Rachna (mentioned)
+
+📒Meeting Outline
+
+Deployment and Environment Management
+
+• Email Notification on E3 Deployment  
+  It was emphasized that email notifications should only be sent when deploying to the E3 environment. The distribution list must be temporarily changed to the internal team during deployment validation and then reverted to the partner's email after validation. Sachin confirmed responsibility for this task.
+
+• Data Saving and Deployment Restrictions  
+  It was confirmed that no data is being saved to any tables during deployment. A3 environment deployment is to be avoided on the current day and Friday. UAT approval is mandatory before deploying changes to the ETH environment to prevent unauthorized RFC creation. Product team sign-off is required even for minor changes.
+
+Data Handling and UI Functionality
+
+• Data Transfer and Reuse in DAG Tasks  
+  Discussion on transferring data from cluster to DAG tasks concluded that data reuse is feasible and has been implemented. Future use cases will be planned, possibly extending calls to one hour for knowledge sharing.
+
+• UI Macro Integration and Status Filtering  
+  The UI macros have been integrated with renamed headers and classification values. Conditional checks are handled in backend code, allowing blank values without issues. Users must filter data by status (e.g., "open") manually, as hardcoding status filters is discouraged due to potential future changes. Pagination and component data passing challenges were noted, with possible use of context API for data flow.
+
+Data Transformation and Policy Setup
+
+• Transformation and Execution Policies  
+  Nirmal and Kundan were tasked to create transformation and execution policies for processing Excel sheets in the ACE Control Center. They are to connect and understand the policy concepts thoroughly.
+
+• DQ Table Changes and Impact  
+  Any changes to the DQ table should be communicated promptly. The current process involves fetching data and generating Excel sheets, with attention to data types (string, boolean, integer).
+
+Data Migration and SQL Optimization
+
+• Hold on Data Migration Due to Description Updates  
+  Data migration is paused because description updates are ongoing to support 50 use cases.
+
+• Handling IA Code Data Without Creating Tables  
+  It was discussed that the current table storing IA codes and non-MR IA codes is not uniform and lacks meaningful relationships. The recommendation is to remove filtering conditions from SQL queries and instead perform filtering in Python code using dictionaries and lists for better maintainability and performance.
+
+• Table Creation and Metadata Recommendations  
+  Instead of one mixed table, two separate tables should be created: one for MR IA codes and one for non-MR IA codes. Each table should include metadata columns such as created by, created timestamp, updated by, and updated timestamp to maintain data lineage. Soft delete is not required; hard deletes will be used.
+
+• SQL Query Optimization  
+  Developers are encouraged to optimize SQL queries by reducing joins to improve performance while ensuring results remain consistent.
+
+• Next Steps for Table Creation and Data Population  
+  Once tables are created, Suman should be informed. Initial records can be inserted for testing, with the remainder populated later. Script modifications will be needed to accommodate these changes.
+
+Meeting Wrap-up and Attendance
+
+• Some participants (ANSI, Athar, Vithvi, Srinuja, Bhargavi, Sindhuja, Ayyappa, Suman) were given the option to leave the call. Sravan shared his screen for further discussion.
+
+📋Overview
+
+• Email notifications for E3 deployments must be controlled via distribution list changes.
+• No data saving during deployment; UAT approval is mandatory for ETH environment deployments.
+• Data reuse in DAG tasks is implemented; future training sessions planned.
+• UI macros integrated; status filtering left to users to avoid hardcoding.
+• Transformation and execution policies to be developed by Nirmal and Kundan.
+• Data migration paused due to ongoing description updates.
+• IA code filtering to be handled in Python, not SQL; two separate tables recommended with metadata columns.
+• SQL queries to be optimized by reducing joins for better performance.
+• Coordination required for table creation and data population; script updates needed.
+
+🎯Todo List
+
+• Sachin:
+  • [ ] Manage email distribution list changes during E3 environment deployment, revert after validation (ASAP)
+  • [ ] Avoid A3 deployment on specified days (immediate)
+• Nirmal and Kundan:
+  • [ ] Create transformation and execution policies for ACE Control Center processing (by next meeting)
+  • [ ] Connect to understand policy concepts thoroughly (tomorrow)
+• Development Team (All Developers):
+  • [ ] Optimize SQL queries by reducing joins while maintaining result accuracy (ongoing)
+• Suman:
+  • [ ] Be informed once IA code tables are created and assist with initial data insertion (upon table creation)
+• Sravan:
+  • [ ] Share screen and assist with ongoing discussions and clarifications (ongoing)
+• Python Development Team:
+  • [ ] Implement IA code filtering logic in Python code instead of SQL (immediate)
+• Data Team:
+  • [ ] Create two separate tables for MR IA code and non-MR IA code with metadata columns (ASAP)
+  • [ ] Coordinate with Suman for data population and script modifications (after table creation)
+
+Transcription
+
+00:00:00 - 00:00:52 Unknown Speaker:
+
+It makes sure that when you are deploying it to the E3 environment, it makes sure that you are receiving that email only when you deploy it to the E3 environment. Okay, okay. So, once I validate, I can then change into the... Exactly. Exactly. Okay. Yeah, yeah. I will take care of that. That is number one. Second, are we saving data to any of the table or no? No, no, Sachin, No. Then then we are fine. So just make sure. Please keep a note that, uh, if you are deploying it to E3 by any chance today, make sure you are changing the distribution list to ourselves. So that we would be receiving that email and then roll it back once you validate it to the partner's email ID. Yeah, yeah, sure, okay.
+
+00:00:52 - 00:01:44 Unknown Speaker:
+
+So I.Upon it is noted down No A3 deployment tomorrow and even avoid it for the Friday. Yeah, okay. And team, one more thing, uh. We need to get a UAT approval before deploying our changes to the ETH environment, and that is something I have observed, that is something not being happening. So please keep a note that if you need, if there is a data issue, let me know in advance so that we can plan it out for A3 deployment. Just like the cases where ANSI is working, right? But if you really don't have a data issue, please make sure to get a sign up from the product team before deploying it to the ethereum environment. Because our IFRS should not be creating a RFC until unless we have a valid sign up in the ethereum environment.
+
+00:01:44 - 00:02:46 Unknown Speaker:
+
+Even for, even for a small change. Okay for the NC use case, okay? So, we plan for, you know, not to create any table, just to pull the data in output. That's something I was asking you, right, in the morning, and then you guys were telling that we won't be able to transfer the data from cluster to the DAG, right? That's what I was asking, right? Just transfer the data from the task, right, with respect to the task, and then just reuse it. No, that was, you know, the exploration part. Yeah, that's fine. Okay. That's fine. No worries. Anyhow, that has been implemented, right? Clancy, maybe we can plan for the use case that you did on upcoming Thursday. I may need to prolong that call to one hour, right, with respect to the learnings that we are doing.
+
+00:02:47 - 00:03:40 Unknown Speaker:
+
+Let me see if I... if I have that, you know, window, then I'll make it one hour call then going forward. Okay, uh, you have some query, can you just go ahead and clarify that one? Because you would be again going on lead from tomorrow, right? So let me share my screen. Yeah, is it visible? Yeah, okay, so the macro ones have integrated it, so we'll see it is still assigning. We have the columns coming from the table, I have removed the serial number and task, the IDs coming at the first column, the table. The headers have been renamed to the upper case, now these are the macros which has been integrated. So we'll have, we'll be having classification with these two values. Okay, then we have this action reason.
+
+00:03:48 - 00:04:36 Unknown Speaker:
+
+And the final impact with this value, justification, it's a pretext. Yeah. Exceptional. Yeah. And thing in this, the user has to keep the conditional check which is there. So currently in UI. That is something being, you know, we would be handling in the back end program variable. Okay. Okay. Whatever combination that is already being handled in the backend code, so don't worry. And even if they are leaving it as blank, right? We have value, you know, we have that latest and bundle in the backend, so you really don't need to worry about it. Got it one more thing with respect to this status, so currently what's happening? Whatever data we have in the UI for the current page, you're not able to figure it out.
+
+00:04:36 - 00:06:16 Unknown Speaker:
+
+Yeah, so one thing the user has to filter this out and then that is something we would groom them right? And then like, uh, in this case, the user can just filter with open. And then, uh. This is a pagination component and so this is the whole one component. And then, you know, go up, go up. Because this component is mapped with this. No, no, I understand that. That is something I understand. Data passing is a child component. I can easily pass it. And this is like a parent of parent, like a grandparent of this component. So I have to pass data maybe with context API or something. So that's one thing. I'll just look into that with the feasibility of this. But now I think we shouldn't be filtering on the status.
+
+00:06:16 - 00:07:27 Unknown Speaker:
+
+Hard coding in the code or in progress, let the user filter it out. Because tomorrow, if he has any option, okay, that's fine. But, you know, ideally, we should not be giving them a upfront option to even select those. Uh, in progress say that issue is still not being fixed, right? Yeah, So for now we have to just ask to upload when we open. The user can filter it from here and then they need to process those in progress also, right? Okay. Okay. Let's keep this document as it is. With the status coming for all the status. And once I'm back, we'll just figure that out because we have to check on the mapping and confirm it. One more thing. SIN is fine that we can read it from the context data. That's fine.
+
+00:07:27 - 00:08:30 Unknown Speaker:
+
+Leave it. So just share this exercise in that group and Nirmal and Kundan, right? As discussed, please create the transformation policy. And execution policy to start with your process. Basically it is to Nirmal and see, I have explained that concept to both Nirmal and Kunden. So once you have some time tomorrow, just connect with them to understand what that policies are all about. That is something we need to setting up in the ACE Control Center before processing this Excel sheet. Uh, if any changes happen to the DQ table, just look me in. I mean, uh, in the content part, on the edge part, why there would be a change in me like today? Okay, okay, I got it, I, I got your point. But you should not be getting impacted with that, right?
+
+00:08:30 - 00:09:50 Unknown Speaker:
+
+Because ideally, you are just fetching the data and creating a Excel sheet out of it, right? Excel sheet. How to find out like which one is string, which one is boolean, which one is integer? Take care, I'll keep you in it, that's fine. Okay, I got it, uh, now, seven, uh, uh. Regarding the data migration, so right now we have to hold it. The reason being there is a description update is going on in order to support 50 use case. Okay, I hope seven. I am audible to you. Yeah, yeah, yeah. So can you go ahead and just let me know the input that you had? Yeah, and someone with respect to the time, uh, Sravan is sharing your stream. I asked IPA not to create that table. Have you seen that data?
+
+00:09:50 - 00:10:55 Unknown Speaker:
+
+Let me share my screen, someone just give me, uh, two minutes, let me wrap up with someone first. Um, so if you have seen this email, uh, someone from Rachna, Rachna or Panisa. Sorry from Panisa. So if you've seen this one, right, what is happening, this is not a uniform data where we can create tables. So your first column is having 487 record, while the second column is having almost, you know, 600 record, right? And there is no relationship between these two columns, right? This is different, right? And even this is different, correct? Yes. So it's just about the IE code and then the non-MR IE code. Which is they are trying to check whether that exists in that. Uh, you know, mapping or not, basically the mapping that they are doing.
+
+00:10:55 - 00:11:52 Unknown Speaker:
+
+The first, this one is like a result type. I have, yeah. So my suggestion to you would be, so, where they are checking this non-MR IE code or IE code, right? Yes, what you need to do remove this filter condition from this query. Okay, Get the result out of the sequel store it into a Dictionary, okay, and then create a list of this values Right, I trade that list if the data matches with that list add it to that list. Otherwise remove it Okay, I need to check in the query Python code not in the big query. Okay, you have to do that in the Python code. This has been already been done by ANSI in one of the use cases. Not this IA code but she was using you know different all together.
+
+00:11:52 - 00:13:03 Unknown Speaker:
+
+So you can connect with her to understand what the ask is. Basically I am asking you to remove this. We really don't need this table. This should not be a table right. It's just to store IA code and all right. Yes. Okay. Because we won't be able to pass 500 of liner over this SQL query. Right, I have the same, the same thing is the another SQL also, and this two SQL, yeah, this one, right, even this one, yes. So remove this condition and then just get the raw list and filter it out with, you know that in the Python code. Anybody having any other fruitful suggestion? Do let me know, if anyone having any alternate solution. If that comes to my mind, actually, what they are doing, they have created this table.
+
+00:13:03 - 00:13:49 Unknown Speaker:
+
+Okay to just check these IA code and on non-MR IA code, okay, now what? This table? If you see this one, this table contains these two column only okay, MAIA code, non-MAIA code. But if you see the content over this table, the first column gets over. Around, you know, five and minus or something. 487, and the second continues till 700. And they doesn't have a mapping, basically, right? Like it's not that BQG is mapped to a or this to this. And even they don't have a unique idea, correct? So you will be having 700 column where one column would be having values, where second would not be having that much of values. Right? And even with that unique ID. So if you create these two with these two columns, just a table, right?
+
+00:13:49 - 00:14:44 Unknown Speaker:
+
+Ultimately, we can do it in the Python code itself, right? Like, I'll be just getting the raw data by eliminating this space from the query, right? And I'll store this to a dictionary object. And then I'll be having this list of MA code and MIA code, right? I'll re-hydrate, uh, iterate that, uh, iA code in that Python, and then whichever matches right, I'll filter out the data over there. So it's like a two two step hop. Such a right. Because Python when you are using Python, it will bring that data on your local, like whatever container you are running, and then filter out the data. Yes, in SQL, it will directly filter out on the big query itself. Just check the performance. If it is getting faster in SQL, we can do it by SQL also.
+
+00:14:44 - 00:15:37 Unknown Speaker:
+
+But I feel like, you know, comparing those much of data in the SQL, right? And even that. Look, the tables when we are creating a table, right? The tables would have some meaning, right? But here, I don't see a fruitfulness of this table getting created. Just to store a code, right? Even on your lululemon, right? You have passed lots of values, right, 15, 16 values, right? For an example, right? If we see the yesterday one, right? One of the peer that I have merged for you, correct the one that you have created. So this right. So if I go to this one, right, so even over here, if you see this one in your sequel, right? You're passing these many values right now. Why they did not made that over there?
+
+00:15:37 - 00:16:26 Unknown Speaker:
+
+The reason being it's the number is quite higher, right? So ultimately, they are asking me to create a table for these values. Okay, okay, oh, we are creating. Okay, I thought someone was providing that table to us. No, no, no, we are creating it. So what I am asking? Remove this condition all together from the SQL, get the raw data and filter with these values in the Python code processing. Just one thing these values are fixed. Or in future, it is going to grow, it may go, it may shrink, it missing, okay? Don't think of keeping it there, don't keep it in xform. I was thinking if it's constant, right? No, no, no, but IA code can change, right? Those codes can change, right? So don't try to keep it in the xform.
+
+00:16:26 - 00:17:24 Unknown Speaker:
+
+That would be a, you know, it will get overloaded, xform. Because the data is a lot. 700, around 700 data. I mean, the thing with this is 700 code. If you have to maintain in like a list or whatever, like you are hard coding it somewhere in Python, it's tough to maintain. Because, let's say you can do it in one statement, in a sequel. But for doing it in a Python, you have to scan through it. And then then go ahead and create a table. I, I agree to your point, he has created a table. And what I was telling you, you know, in whichever the tag you are using, right? But you know if that condition is for this one, right? Then create a IA code table altogether different, and then Mr.non-IA code are different.
+
+00:17:24 - 00:18:29 Unknown Speaker:
+
+People don't create a single table, then mixing both the content, right, then create one. Yes, non-MR IA code one table and MA IA code one more table. No, Sachin, one table is fine. We can, you know, introduce another column with the property, okay? No, no, no, no. When you are creating a table, table should have some meaning, right? Correct, I agree. Table should have some significance. It's not that, you know, yeah, right. So if this is, I can create a table called, Uh, you know, Mr.Underscore IA Underscore code, this would be one table which stores only IA code. So when in future you want to aggregate with this idea code. In future, you can just use this table and similarly create a table called non-MR.
+
+00:18:30 - 00:19:38 Unknown Speaker:
+
+Then it will be having only one column, you know, I think, like, ideally, if you think that, you know, this table has changes. I think we should add some metadata columns as well, like an update, timestamp, or like a delete flag, whatever, uh, soft delete flag. So that we maintain that, uh, lineage, right? It should be maintained. It becomes easier for. Next time I don't think they are allowing us. Okay, it will be all with heart delay. Okay, so make sure like one anyhow, you have to create one unique ID for this, right? So these are going to be a unique ID. Okay. So like one, two, three, four. Okay. And then just in front of this, this IE code would be there. So that would be one, that would be having 500 record and then similarly non-IL code.
+
+00:19:39 - 00:20:36 Unknown Speaker:
+
+Okay. Then search in two more colon you introduce, sorry, four more colon, created by, okay, created timestamp, updated by updated timestamp, okay. Let's enter this four more column just to you know Validate it who updated it and when it got updated and when it got created Okay Then you would now ask me whether it's enabled or disabled right? No need to enable disabled by default it's enabled only. Okay, just to track who has inserted the data Okay, when it got inserted, But if tomorrow I need to update this MRI, then you update it, right? The update timestamp only will change. And now, suppose, suppose, I wants to delete this record all together, right? You got the delete query, we run the delete query. But if I, as someone was mentioning, right?
+
+00:20:36 - 00:21:31 Unknown Speaker:
+
+If I need to keep up like there is no use of that update timestamp field, then right? If timestamp, update timestamp, both will have the same value every time. If you are not doing the soft delete, we really don't need those two fields anyhow. This will be constant file. OK, let it be like, you know, one column, two column, what sequence? Just create these two, code these two, you know, table, keep the name as same the way they have given it. It just that one change which I was asking you, it should be USCSMA. Non-MRIACode Create one table with this that would be containing only the IA code means non-MRIAcode, or vice versa. So you have to create couple of tables for that they have used same table, but for our in case, just create two table.
+
+00:21:31 - 00:22:30 Unknown Speaker:
+
+So one for MRIACoDe, one for non-MRIAcode. So your table should be U.S. CS underscore. MR IA code number one second, non-MR IA code. Okay, okay. And then just let Suman knows that. Once it is being created and you can just create, you know, four, five records for timing and rest, you can do it tomorrow. Then the script will also change the channel he has to modify. Let's not be in a situation the requirement which we are getting from the product team is final. We have to, as I told you, right? Even if you feel a feasibility that we we can optimize the sequel, go ahead and optimize the sequel. Just make sure the results remain same. And then just one, you know, because everyone is working on the SQL side.
+
+00:22:30 - 00:23:24 Unknown Speaker:
+
+I saw there are a lot of joints out there. Just try to optimize that one and reduce that joint. Performance-wise, it will be better. We'll get better performance. Yeah, that is something to ask with each and every developer. Okay, we'll talk about it later. So then you can go ahead. Athar, Pithvi, Srinuja, do you need Bhargavi in the call? I don't heard from Sindhuja. So, ANSI, Athar, Vithvi, Nirmal, Varga, Suman, you guys can feel free to drop off. Even Ayyappa and Kundan. No, Ayyappa, you need to stay back. Sravan, you can share your screen. Okay. So, starting to... Thank you.
+

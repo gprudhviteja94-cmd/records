@@ -1,0 +1,136 @@
+2026-05-26 Enhancing Automation Agents for Testing Frameworks
+
+Creation Time: 2026/05/26 16:56
+
+
+📅About Meeting
+
+• Date & Time: 2026-05-26 16:56  
+• Location: Not specified  
+• Attendee: Not specified  
+
+📒Meeting Outline
+
+Enhancing Automation Agents and Frameworks
+
+• Generalizing the Agent for Automation Suites  
+  The discussion focused on expanding the current agent capabilities to support automation testing across browsers, APIs, and other areas. The idea is to build an automation test agent that can generate test cases and scripts, reducing manual effort. Playwright was identified as a preferred technology for this purpose. The agent should initially provide a framework or skeleton code, covering approximately 80-90% of the work, which developers can then customize as needed.
+
+• Integration of Front-end and Back-end Requirements  
+  Unlike tools like Copilot that handle front-end and back-end separately, the proposed agent can take detailed user stories and requirements to generate comprehensive code and test cases for both ends simultaneously. This approach aims to speed up development by automating initial code generation and test creation, with manual review and adjustments afterward.
+
+Automation Script Generation and Challenges
+
+• Generating and Editing Automation Scripts  
+  The agent should be capable of both creating new automation scripts from scratch and editing existing ones. If automation scripts already exist for a particular screen or flow, the agent can modify them based on updated requirements. If not, it can generate new scripts by analyzing the front-end code and understanding page actions.
+
+• Understanding Application Flows and Test Data  
+  The agent can infer page flows by accessing front-end code and identifying user actions (e.g., form filling, button clicks). However, handling test data remains a challenge. Suggestions include providing the agent access to the database to fetch or create test data dynamically. Explicit input of test data in prompts is also necessary to guide the agent.
+
+• Context Awareness and Code Patterns  
+  The agent leverages existing code and scripts to understand patterns and generate consistent new code. It uses context such as routes, page structures, and previously written scripts to produce relevant automation flows.
+
+Implementation Strategy and Next Steps
+
+• Custom Agent for Playwright Automation  
+  Plans were made to create a dedicated Playwright automation test agent within the existing framework. This agent will be trained on the organization’s current Playwright scripts and coding standards to generate or update automation scripts effectively. It will be added as a custom agent in the system’s add-ons.
+
+• Trial and Validation  
+  The team agreed to test the agent’s capabilities practically rather than assuming limitations. Sharing existing automation test cases and running pilot tests will help evaluate the agent’s effectiveness. The Pulse AI UI example, generated via Figma screen extractor and EDAS, will be used as a test case to review the agent’s code generation and integration capabilities.
+
+• Collaboration and Delegation  
+  Gordon will coordinate with JKPR to work on the Playwright use case, ensuring proper delegation and progress tracking.
+
+📋Overview
+
+• The agent will be generalized to support automation testing for browser, API, and other flows using Playwright technology.  
+• It will generate initial code and test cases covering most of the work, requiring manual customization afterward.  
+• The agent can handle both new script creation and editing existing automation scripts based on context and code patterns.  
+• Test data management is recognized as a challenge; solutions include database access and explicit prompt inputs.  
+• A custom Playwright automation test agent will be developed and integrated into the current system.  
+• Practical trials using existing test cases and UI examples will validate the approach.  
+• Collaboration between team members, especially Gordon and JKPR, will drive the Playwright automation efforts.
+
+🎯Todo List
+
+• Gordon:  
+  • [ ] Coordinate with JKPR to work on the Playwright automation use case, ongoing.  
+  • [ ] Share existing automation test cases for agent evaluation, ASAP.  
+
+• Development Team:  
+  • [ ] Create a custom Playwright automation test agent based on existing organizational scripts and standards, timeline TBD.  
+  • [ ] Test the agent’s code generation and automation script capabilities using the Pulse AI UI example, by next review meeting.  
+
+• All Team Members:  
+  • [ ] Provide feedback and insights after trial runs of the automation test agent, ongoing.
+
+Transcription
+
+00:00:08 - 00:01:32 Unknown Speaker:
+
+How can we generalize this agent further, right? One thing I think what I was also thinking what Ashish was suggesting, right? How do I build automation suite in parallel? Okay, for the browser testing, is it? Yeah, yeah. Anything, API or anything, right? All automation, how do I do the testing? Automate test again like with this agent there should be one automation test agent also okay i got it then the list we can add that yeah you can use playwright so uh playwright technology yes. Yes, so the custom setup you are saying, right, becomes like each project one. Okay, so anyhow like when initially we set up like it will take the repost, right, so that means like it is like whoever is implementing this one, then it would be like it is as per that expectation, right, like the custom setup one.
+
+00:01:33 - 00:02:28 Unknown Speaker:
+
+Correct, correct, correct. But I mean, once it it has set up right it, it gives you the, let's say, a framework. You can then go through it and make some changes and more customize it for your requirement. That's what I'm saying. So this is, this is doing how this is almost doing 89 percent of the job. Few things it might understand that we need to set up, and that's why we if we, if we. I want, like, once I get the Valley user story, I want to show be sure that we are able to develop into it based on the requirements. That's that's what we have to do like in future. I don't like the idea is we don't call, we only prompt. Yeah, I mean, just, I mean to be truthful, like.
+
+00:02:29 - 00:03:26 Unknown Speaker:
+
+Again, it is like a trade-off process. So when the code is given by the agent, because it is end of the day behind the screen, once that code is given, then they will test it in local. For example, if it needs a minor change, instead of prompting, then again they will make that change. But I think it will fasten the things. No, no, I am not saying for, when they say don't try to code, I don't mean literally. I mean, initial skeleton and everything, yeah, copilot, like copilot only, but it should be more comprehensive and say it builds the test cases, it builds everything. Yes, got it. You just review and do the necessary changes. Correct. So this is, yeah, because in Copilot, like, it is individual chat where I go for front-end and back-end.
+
+00:03:26 - 00:04:29 Unknown Speaker:
+
+Here, it can take the requirement, and in the description, I can explain it in detail, like, this is what they have to do in front-end and in the back-end. Maybe one user story I will take. So today, once I, because today I didn't get time, but maybe I'll work with Jackie, and I'll get one user story which is already there on board. Or then I don't want you to do everything. The other thing I was talking about is about the automation suit. So how can we add that automation suit agent also? Like at least if it does 50% of the job, it will be helpful, right? Yeah, yeah. See, when it understands the flows that are present in the application, it can come up with its own automation scripts related to the flow.
+
+00:04:31 - 00:05:30 Unknown Speaker:
+
+See, actually when we say automation, it has become, so it has either for Selenium or Playwright, right? For example, when we take the framework, today I was speaking with that person like who Ashish was referring, right? Like for Playwright, they did some setup, right? So even there, I think like they are taking help from Copilot, but it is not like complete automation sort of thing, like where, but I have to check with that person how they integrated this Copilot. But your expectation is like, based on the prompts, it has to generate the script, right, like automation script. I am giving my requirements, right? You are giving the requirements, it is deciding what front end I have to change, what back end I have to change, what database changes I need, right? Current agents, whatever power I share.
+
+00:05:30 - 00:06:24 Unknown Speaker:
+
+Correct. Within the same step, for the requirement I have developed, I wanted to generate automation script. If not 100% right, at least even if it gives 50%, it's a win, right? Then you just modify those. But right now, you're doing everything from scratch. So if already that script is there, right, Srikant, it can edit. But if that script is not there, right, for example, for that screen, if that script is not there already, then it don't know the flow, right? Like, for example, what the script is doing, for example, okay? If the script is there, then it can edit that script because already it has that context and everything. You can define in the prompt, right, see, I have a dashboard, you can define what actions it needed, right for that. Agents.
+
+00:06:24 - 00:07:10 Unknown Speaker:
+
+So more than it actually understands your page, okay, more than seeing it in the friend. It has access to the code itself, that front-end code itself, so it can see what actions are being present in that file page. And in accordance to it, it will create a flow out of it, and that flow would be executed through automation. Okay, so we can come up with an agent. See only the difference between we are putting prompt and generating the UM, the scripts that are required. If we. If we do it through ADAS, what happens? It will have a context. Okay, what routes are there, what pages are there, how it is done for other pages, so how I should do it for a new page. It will have a context and then it is generated.
+
+00:07:10 - 00:07:59 Unknown Speaker:
+
+So the context is already well presented to it and it is easy to generate the next one. So that's how code generation works right. Code generation or any text generation using AI. So it uses the existing code or anything and it comes up with a pattern and generates its new code or new text. See actually not the code generation right. So here we want to test the screen flow okay. Like, for example, Uh, I fill the form, okay, then I have to click the validate button. When it will value, for example, just I'm saying, okay. So first it will validate, then if the validations are good, then it will click the submit. Okay, so this is the page flow now. Currently, as I know, normally what we do is we will record this one so that a developer who normally records this and gets the script okay today.
+
+00:07:59 - 00:08:41 Unknown Speaker:
+
+Previously, they used to write it manually, but as now, this record is there like recording process, where even Excel queue they they they record this particular page flow. Okay, then, uh, it will give the script and then the developer works on that script, like he runs that script, and uh, that's how it works. But I'm connecting the dots with this automation with with Agent, where it has the code. But I'm not sure like how it will understand the flow. Like, because no way we are giving the flow to iterate, but maybe we can give it right. But I see a challenge with respect to test data in this what you just said. Flow wise it is easy to understand for it. Test data would be a challenging thing.
+
+00:08:42 - 00:09:32 Unknown Speaker:
+
+Maybe we see usually login and all obviously have to provide okay use these credentials for login. Once login for example you are updating your profile. So if you tell it okay next profile so it knows what is the link to be used. So it will directly land on to that and and it can come up with a script based on how the structure of the front-end page is. I can try it, but I see a challenge with respect to test data. If we give access to the database also to it, okay, to understand, for example, you are creating a data and getting it, then creation, what it has used, getting also it can use the same thing to fetch it. Okay, so it can think in that direction. Again here, agent, What inputs you give it as an to it?
+
+00:09:32 - 00:10:35 Unknown Speaker:
+
+So you should say, use this test data, okay, understand the flow and then create sample flow or run all the card operations in that page. So like this, if you want, I can actually, yeah, sorry, yeah. See, two things are there as we can hear one whether our automation script is already there or not. Like, for example, as part of this particular activity, our scope is to create a new automation script. For example, for RRF, we have to start. Then, I think because there are some manual things that are needed, that is expected. Second assumption is whether the script is already there, then editing that script. Is it like new script or editing that script? Our expectation here. Both. Okay. So let me check at least once how Ashish's team does that one and then maybe I will get back some time for this one because...
+
+00:10:35 - 00:11:38 Unknown Speaker:
+
+Are they saying they used GitHub Copilot completely to generate or they used a required feature? He said like they had used this one like Copilot but not end-to-end to generate the script. Here and there, we use it. See, my what I am I am trying to see is just like how it is if I give requirements. It is developing the code, it is writing the test cases, it is reviewing my code, it is doing. For front-end, back-end, right on the same lines. Can it? Can it generate automation scripts for me. It will not be end-to-end, it will not be complete. Correct. Right? Can it save me time? Yes, it can. The only difference is, for example, on the existing code, we are doing this activity like, for example, for back-end apps engine.
+
+00:11:38 - 00:12:27 Unknown Speaker:
+
+So, it has that code to work upon. Similarly, if already that automation script is there, then it has that knowledge on the playwright script. Now if we are starting from the scratch, then these login things and all those things are there, right? So those things where we have to have them set up ready and then we can again compile it. Let's not assume anything, right? Why don't we ask the agent, give the prompt that if you are doing it from scratch, this is what is needed. So instead of doing it from the scratch, you ask for the setup questions, you will ask the things needed. It will do it. One more thing. Instead of doing it from the scratch, give what is there now with respect to playwright scripts. We have some dump somewhere, right?
+
+00:12:27 - 00:13:23 Unknown Speaker:
+
+For all different projects. Both options. I already have scripts. I will give that. And then it will make some changes or whatever it might. Let's say I don't have anything. I don't have automation at all. What I was actually saying is when we are defining the agent itself. So what I am planning now is I will update the Bootstrap to add one more agent in the list. That is Playwright Automation Test Case, so for me to customize that agent for Playwright, OK, so I can I can ask it to go through the understand existing Playwright scripts, how inside the organization we write. And in accordance to it, it can create its agent prompts that are required, and then it would be ready to generate any new Playwright scripts or updating it.
+
+00:13:23 - 00:14:00 Unknown Speaker:
+
+Any of these things it will be able to do. First of all, it will understand the existing structure, how it is done inside the arc and in accordance to it, it will create new ones also. Even if it is a different use case or updating the existing one also, it works for both. But creation of agent itself I am talking about. I will try to give some inputs to it as a playwright script. Okay, we inside our team or org we use this way. We create scripts like this. So please create an agent with respect to that. I will add that to the custom agent. Okay, what we are going to add it in the add-ons now. So I will add that into the custom agent.
+
+00:14:00 - 00:15:16 Unknown Speaker:
+
+Then anyone creating a new agent for playwright, it will use all those instructions and the new instructions that we are providing. Sir, I have a confusion, sir. But maybe I got this point, so maybe we will try once, sir, the power link and we will get some idea. Let us not assume what it can do, what it cannot do. Why don't we give it a try? Yeah, can I get some automation test cases for this? Sure, yeah. Yeah, if you can share, then I will cut to it. Sure. Srikant, you wanted to see the Pulse AI UI created? Yeah, see this is Pulse AI UI. So, I fetched using Figma screen extractor script. It downloaded the FIGMA screen files as a as an MD file. Select this and using this, it has generated the code using EDAS.
+
+00:15:16 - 00:16:30 Unknown Speaker:
+
+So code changes everything. It is in accordance with the existing code structure. Yeah, so, but back end is not developed because we have no clarity on what back end schema and then APIs. OK, but structure wise, everything is created. It requires few changes. I don't say 100% with respect to format, but screen wise, it is copied. Everything it created. Exactly what is there now? OK, this through firmware. So let's use this example and go over than your example tomorrow to like day after tomorrow to show OK, show OK. Yes, sir. Okay. Thank you. Keep me posted how this playwright runs. Gordon, you need to delegate things, okay? Sure, sir. I will work with JKPR because I'm always on him. I will work with JKPR. Yeah, for playwright use case, it includes me, no? Sure, you are correct. Okay, yeah. Okay, sure. Yeah.
+

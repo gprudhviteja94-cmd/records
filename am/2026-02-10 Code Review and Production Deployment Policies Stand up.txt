@@ -1,0 +1,267 @@
+2026-02-10 Code Review and Production Deployment Policies Stand up
+
+Creation Time: 2026/02/10 11:31
+
+
+📅About Meeting
+
+• Date & Time: 2026-02-10 11:31 (Duration: 1790 seconds)
+• Location: (not specified)
+• Attendee: Sachin, Sindhuja, Kundan, Ayapa, Sameer, Nirmal(?), Purna, Athar, Peppa, Razy, NC, Kundan, Raj, Ross, Rachna, others (some names inferred from conversation; list incomplete)
+
+📒Meeting Outline
+
+Repository & Git process enforcement / Branching policy
+
+• Branch protection and code review policy
+  Discussion focused on strict enforcement: no code should be moved to production without a code review. The lead will set up branch protection (possibly today) and enforce PR-based workflow. If violation observed, it will be escalated to Ross. Emphasis: get reviews before pushing to production; no direct commits to production environment.
+• Branching rules
+  Deployments should use main branch for production (E3). Develop branch should be used in lower environments (E2). Workflow options: commit from feature -> develop, or create a fork off develop and commit there. Only one feature branch should be used per task — avoid creating multiple feature branches. Keep your feature branch up-to-date with the chosen base (feature1 or fork from develop) before committing PRs.
+• Clean up of forks and task footprints
+  Everyone must delete any unnecessary forks and clean up task management footprints created for the DHCDO work. If anyone has issues with Git/GitHub, they should ask for help.
+
+Production deployment hygiene & environment usage
+
+• Branches for E2/E3
+  Use develop for lower env (E2) and main for production (E3). Ensure reviews are completed before merge to main.
+• Strict no-unreviewed code to production
+  Reiteration: code should not reach production without reviews. Any repeated violations will be escalated.
+• Timing & deliverables
+  Developers working on the insurance table have 3–4 days left to show development progress: at least have code in place by E2 for demonstration and then plan for E3.
+
+Data / Query issues and debugging
+
+• Missing records causing null/zero values
+  Discussion: three records not being returned cause zero/null results. Action: follow up to identify if queries or date selection logic need code changes. The reporter will check with the concerned person and confirm whether code changes are required for focus metrics or date-picking.
+• Date-related query changes & testing
+  Some date changes were requested, queries run, and shared. Further clarification will be sought about exact required changes.
+
+Repo restructuring & automation pipeline
+
+• Repo split
+  The insertion logic will remain in the old repo; reporting will be in the new repo. Most changes done, remaining work expected to be completed in ~1 hour. After that, create a different repo for an automation job and set up a new pipeline for it.
+• Pipeline creation
+  Reminder to create a new pipeline for the automation job; follow the branch and PR rules when pushing.
+
+Templates and SQL pattern analysis for DQ queries
+
+• Need for template analysis before implementation
+  The team must analyze which SQL template (union, union all, inner queries, etc.) applies to which DQ scenarios. The lead expects a mapping of scenarios -> template choice before implementation.
+• Current status
+  Team listed 2–3 templates so far; more templates exist and need review. The lead expects CLARITY — for a chosen table, state why template A vs B vs C should be used.
+• Action expectation and deadline
+  Team members (Kundan, NC, others) were reminded that analysis input has been overdue. They were given another 3–4 hours to analyze at least one table and prepare the scenario-to-template mapping. A call around 16:00–16:30 may be set for follow-up.
+• DQ rules repository
+  Use DQ rules descriptions from the DQ repo to decide how DQ IDs are grouped and whether union/union all is applicable (based on uniqueness and how DQ IDs are clubbed into DAGs).
+
+DQ results table change: add model_id
+
+• Change request
+  Add a model_id column (integer) to the DQ results table with default value 0. Existing rows should have model_id defaulted to 0. This handles cases where inserts don't provide model_id.
+• Migration & testing
+  Do not modify production directly. Test changes in lower environment first (E2) and ensure production (E3) is not impacted. Back up the table prior to applying schema changes if there is risk of data distortion.
+• Implementation scope
+  The change is considered minor (one-line change in logic) but requires updates in multiple scripts/places (due to unions and repeated SQL). Expected to be completed by EOD; ensure lower env verification before E3 deployment.
+• Data type & default
+  model_id should be integer with default 0.
+
+UI / Product demo: DQ rule management screens
+
+• Home / Review page demo (Athar)
+  Demonstration of a WIP UI: home page divided into three parts; review page lists DQ rules and allows searching by table name or use case. UI will display table name, use case, description, and has actions like "watcher" and "modify rule".
+• Componentization
+  Implemented a reusable popup component to reduce duplicate popups and centralize changes; integration still pending for conditional dropdowns and other fields.
+• Watcher / Register functionality
+  A watcher registration form will allow selecting distribution list, use case, and registrant. Removal of unnecessary close button in watcher UI was decided. Distribution list management will not be self-service: users must request product team to add lists — registration will capture selected existing lists only.
+• Deletion / sync constraints
+  Deletion of rules is not in scope currently (data persists in ACE and moves to Lumi via SFTP). Syncing DB state between ACE and Lumi will be handled in a future solution. Approval is required for rule creation; an approval workflow controls whether a new rule appears.
+• Pagination & other UI elements
+  Pagination implemented; remaining integration tasks for modify rule and conditional dropdowns still in progress. Team will not demo to product partners until feature is complete and tested.
+
+Task management & communications
+
+• Leave & WFH approvals
+  Work-from-home is not approved by default. For planned vacations (3–4 days), prior approval is required. Use the dedicated Slack channel for leave messages so Raj and others are aware.
+• Channel usage
+  Use the tech channel for development activities and RFC/discussions. Use tech-business channel for communication with product partners (Rachna). Ensure CC’ing both Sindhuja and the lead when sending mails; do not exclude either.
+• Attendance / channel membership
+  Verify that all necessary team members are in the channel; Nirmal may not be present in the tech channel — check and add missing folks.
+
+Miscellaneous progress updates
+
+• Repo changes & insertion/report split
+  Most work on repo split is done; remaining one hour of work was noted by a developer.
+• Bundle creation & formalization
+  Bundle creation/formalization and try functionality still pending. Create PRs and get them reviewed before merging.
+• Model-specific change
+  For CM11/CM11 CSP model score and related items, limited input was received; leads asked those owners to provide updates quickly.
+
+📋Overview
+
+• Code must never go to production without a code review — branch protection and PR workflow to be enforced.
+• Use develop branch for lower env (E2) and main for production (E3). Keep feature branches minimal (one per task) and up-to-date.
+• Clean up forks and unnecessary task footprints; ask for Git help if needed.
+• Investigate missing three records (cause of zero/null values) and clarify whether code change is needed for date handling and focus metrics.
+• Repo split complete for insertion vs reporting; automation job needs a new repo and pipeline creation.
+• Template analysis (union vs union all vs inner queries) is required before implementing SQL templating. Team must map scenarios to templates — deadline: within next 3–4 hours for at least one table; follow-up call around 16:00–16:30.
+• Add model_id (integer, default 0) to DQ results table; test in lower env, back up existing data if needed, then deploy to E3.
+• UI demo is WIP: reusable popup component created, watcher/register UI refined; deletion & DB sync out of scope for now.
+• Use designated Slack channels for leave and development discussions; CC both Sindhuja and the lead on relevant mails.
+
+🎯Todo List
+
+• Sachin / Lead:
+  • [ ] Set up branch protection rules (today), ensure PR workflow enforced, possibly enable protection initially without mandatory PR review to configure. (ASAP)
+  • [ ] Escalate any future unreviewed production pushes to Ross. (Ongoing)
+
+• Developer working on repo split:
+  • [ ] Complete remaining changes for insertion/report repo split and finish within 1 hour (deliver repo changes). (Today, within 1 hour)
+
+• Assigned dev (automation job):
+  • [ ] Create a new repo and pipeline for the automation job. Ensure branch/PR process is followed. (As soon as repo split work is complete)
+
+• Responsible dev (investigate missing records / date logic):
+  • [ ] Confirm with the relevant person why three records are missing and whether date selection or code changes are required for focus metrics. Share findings. (ASAP)
+
+• Kundan / NC / assigned analysts:
+  • [ ] Perform template analysis: pick one table (or Razy if applicable) and map scenarios to SQL templates (union/union all/inner queries). Provide reasoning: why template A vs B vs C for each scenario. (Within 3–4 hours; prepare for 16:00–16:30 follow-up)
+
+• DQ results table owner / DB engineer (Peppa / relevant dev):
+  • [ ] Add model_id column (integer, default 0) to DQ results table in lower environment. Test all inserts and reporting to ensure no impact. Back up table before applying change if risk exists. (Test in lower env today; plan E3 deployment after verification)
+  • [ ] Update all scripts/queries that reference DQ results to include model_id where required (multiple places due to unions). (By EOD)
+
+• UI dev (Athar):
+  • [ ] Complete integration for review page: conditional dropdowns, modify-rule integration, remove unnecessary close button on watcher popup, and finish other integration tasks. (Complete before product demo)
+  • [ ] Notify team when UI is fully ready so a demo can be scheduled with product partners (do not demo until complete). (TBD)
+
+• All team members:
+  • [ ] Delete unnecessary forks and clean up task management footprints created for DHCDO. (ASAP)
+  • [ ] If unsure about Git or GitHub workflows, request help from the lead. (ASAP)
+  • [ ] Use designated Slack channels for leave/approval/development communication; include Raj and relevant parties on leave notifications. (Ongoing)
+  • [ ] When sending emails related to approvals or WFH, CC both Sindhuja and the lead. (Ongoing)
+
+• CM11 / CSP owners:
+  • [ ] Provide missing input for CM11/CSP model queries and templates; ensure required items are delivered to the SQL/template analysis. (ASAP)
+
+Notes:
+• If any owner needs clarification on deadlines or deliverables, raise it immediately.
+• Follow test-first approach: always validate schema and query changes in lower environments prior to E3 deployment.
+
+Transcription
+
+00:00:19 - 00:01:37 Unknown Speaker:
+
+Happening as well. I will check with him. Like, for those three records, we are not getting records, that's why we are getting zero or null values. Yes, so after that, he also asked me to do some changes to the dates and also have run that queries and I have shared with him. Yeah, I will ask him what exactly we need like, do we need to change any code for any focus metric? Or like? I will ask him with respect to the dates, picking up the dates. Okay, okay, uh, next, uh, give me a second suggested. Did you incorporated those? Or you're still working? Uh? Most of them are done because the repo is now changed, so the insertion logic will be held in the old repo and the report part will be in the new repo.
+
+00:01:37 - 00:02:28 Unknown Speaker:
+
+Uh, I'll be completing that in one hour, okay? And then once you are done, then you have to work with a created a different repo for one of the automation job. That we are going to do it right. So please make sure that we are creating a new pipeline and one more thing going forward. This is a strict instruction to all of you not even a single piece of code should move to the products environment without a code review. Okay, if I observe the same, I'll escalate it to Ross. I have seen a lots of junk has been written and that has been moved to the production environment. Make sure you are getting it reviewed before pushing it to the production environment.
+
+00:02:28 - 00:03:49 Unknown Speaker:
+
+And as we are deploying the develop branch right for E3, uh, I make sure you are, you know, utilizing main branch instead of develop branch. Going forward. So that in case any review comment comes in, use the develop branch till E2 and then utilize the main. Either do a commit from feature branch to develop branch or create a fork out of develop branch and then commit it over there. Okay. I'll set up the branch protection tool today. Give me some time. Maybe I'll set up without PR review. The quote should not be moving to the production environment. Okay. One, okay? Rather than creating multiple features, No, no, who asked to create multiple feature plans? There would be only one feature branch? Don't create multiple feature plans, there would be only one feature branch that.
+
+00:03:49 - 00:04:40 Unknown Speaker:
+
+You need to make sure that when you are doing a commit, you need to take the, uh, you know, our latest code from the feature one, then post your change. Either do like that way, or create a fork out of tablet branch once you are creating a PR. Once review approved, then only it should get merged to the developer branch. And then whatever running in the production environment that should run from the main branch, on the lower environment, you can utilize the develop branch. And even I have highlighted you. You need to delete all of your folks that you have created for the DHCDO. The task management that is also messed up completely, so delete all your footprints that you have created for. If somebody is not sure how to work with Git, do let me know.
+
+00:04:40 - 00:05:39 Unknown Speaker:
+
+If somebody is having a problem using the GitHub, do let me know if you haven't worked it earlier. But the approach should be either, you know, you should not be creating a multiple branch. You know, I'll put those restrictions, but till now, whatever mess up has been done, clean it up as soon as possible. So, you are working for insurance table, right? So, you are left with 3 to 4 days only. So, please make sure your job is ready. At least we need to show some, you know, development in this print. So, at least your code should be there at least till E2 and then we can plan it out for E3 role in the next print. Sure, sir. Okay. And with respect to your work from home request, you have received the response from Raj.
+
+00:05:39 - 00:06:32 Unknown Speaker:
+
+Sindhuja, I will open you there. Please make sure when you are... writing a mail, just don't keep me in CC, you need to keep Sindhuja also there in the CC. This is for all of you. When you are sending a mail to us, it's just not like you are keeping Sindhuja, keeping me out, or keeping me is keeping Sindhuja out. That again takes lots of, you know again, to do a plus plus or some kind of stuff like that, right? So you are not allowed to do a work from home, first of all. And secondly, if you have a planned leave, if you have planned vacation for three or three to four days again, you need to get approval from us. Okay? Secondly, for you know, any kind of leave, right? A slack message or, you know, information.
+
+00:06:32 - 00:07:21 Unknown Speaker:
+
+Till now, it is fine, but as we have observed, the numbers are quite getting higher. Use this channel so that at least Raj would be aware with this. Okay, Raj is over here. So if somebody is taking a leave or something. Utilize this channel and any development activities that you are we are doing. You have to use this depth channel. And then this tech business channel for having a communication with the tech team, sorry, business partners, basically with Rachna. So this is for any leave communication, any approvals that you need from brass. Like, you know, if you are raising any high equity cash or something. You can use this channel, any development activities like this, we are using right RFC or any any discussion, you can use this channel. So please adhere to this going forward.
+
+00:07:21 - 00:09:00 Unknown Speaker:
+
+And I think over this channel, Nirmal is not there. The folks who are there, anyone who is missing after you are there and she's there, yeah, Ayapa is there, Sameer Kundan, you are there, right? Yeah, so every folks is there, so use this channel. Going forward, we are discussing. Yes, Sachin. It's ready? Okay, then let's have a review it. No, no, Sachin. It's big. No, no. Actually, we are going through the templates. So, we wanted to create templates. Yesterday, Kundan has given me an idea. Kundan has given us some time. But I am planning to come up with some templates instead of having a suffix and prefix SQLS, so we can come up with some templates because it's not one template. So there is a union, one place, and then union all is there, so two different templates we are actually right now.
+
+00:09:00 - 00:09:51 Unknown Speaker:
+
+I mean, we could see, and there would be few more as well. So we cannot directly straight away go and create and run SQL based on the input query for one use case, using prefix and suffix. That is the part I have asked last Friday to you and NC. That we have to analyze for which scenario we have to go with reunion, for which scenario we have to use union, all, for which scenario we have to use those inner queries or something like, So did we find out, first of all, that one? Yeah, we listed two, three templates for now, okay, and we have to go through the other templates as well. Okay, of queries are there, right? What my last Friday was? At least like, you know, and see, you're working on Razy, right?
+
+00:09:51 - 00:10:44 Unknown Speaker:
+
+Are we done with Razy? For which scenario? For Razy right? We are getting this template, for XYZ scenario, we are receiving this template. At least, you know, one table should be done, right. Then we need to talk to the product team and we can't get it delayed. You know, we were talking with them from last week, right? We just either such enough. Friday was the even Friday evening, you told, but Monday and Tuesday okay for me, Monday and Tuesday only. So I'll provide you the template list by your day. Yeah, today Tuesday is just started, I'm not even considering Tuesday. What may ask us when I the same question I have asked last Friday, right? Did we analyze on this scenario? We have to use the union, on which scenario? We, you know, the query is coming.
+
+00:10:44 - 00:11:46 Unknown Speaker:
+
+Look, you need to analyze the DQ rules that is there in the DQ repository based on the DQ rules description. This union in union all getting played into a picture. If they are clubbing those 10 uh DQ ID into one, uh, one dag, right? Yeah, what is the uniqueness of those 10 DQ IDs. And based on that, the template would get formed. So, I am expecting this input from you guys, first of all. I am not even looking for an implementation, creating a template and all. First of all, close this analysis. And I think I am waiting for this input from now last couple of weeks. I will be very honest. I am not asking you. You are doing it. But initially, Kundan, you remember, we started with you and CNA. Won't have a input till today.
+
+00:11:46 - 00:13:16 Unknown Speaker:
+
+Okay, you, you have shown me that these, these, these are the different, different different template are there, right? There are ten or seven of them. But post that call, right? I think when I'll tell you, I think I'll show you the meeting. Also, when we had that last week, you were only right. Discussion on 30th, right? Exactly what are the what are the template we are receiving, right, and based on that template, under which scenario? Over 10 days? And I'm still waiting for that input, I'll give you another three to four hours. Okay, take any of the simple table, whichever you are comfortable with. Don't tell me that for this table. We have four template. I need an answer why I need to go with template one, when I need to go for template two, when I need to go for template three.
+
+00:13:16 - 00:13:58 Unknown Speaker:
+
+If you are not able to figure it out, do let me know. Then we need to talk to the product team. Man, these, these, these are the different template. Now tell me under which scenario you are going for this or for that, right? And even if they don't have an answer for that, then I have an alternate solution for that. But first of all, clear me this picture and CNP3. By today, I'll set up a call around four. Spend in the next three to four hours to analyze any one of the table that you are comfortable with and see if you are comfortable with. Razy, go for the Razy with me. If you have started working for some different table, go for that. But I need that answer. Under this scenario, we are going for that.
+
+00:13:58 - 00:14:50 Unknown Speaker:
+
+Uh uh. SQL query the template are pretty common value. Okay, so what? I can, what I have observed, even if you go for the you also and see if you remember. I told you there is a you know, the pattern is there, it's not like, you know, that pattern. I'm not getting right that the answer that I'm looking for, right, I'm still not getting that answer correct. Ah, correct. So without getting that answer right. We can't just directly jump into that implementation right then, then you have to eliminate will be the later part, right? We cannot correct, we cannot take that to take you hardly a week or a spring implementation. This analysis is, and and why did I include four resources over there? Because I know CM11 is different, I did not receive any input from my account.
+
+00:14:50 - 00:16:22 Unknown Speaker:
+
+CM11 CSP model score, CM11, right? I asked for NC no input. Uh, and PP, I'm not aware with SQL query you are looking for right now, but whatever you are looking for now, although you have spent only one days, still see. If you can, you know, come up with an answer for that. Okay, so so let's not waste lots of time. So do let me know that and that answer, and then I'll I'll talk to you guys. Maybe around 4 30. Okay, okay, uh, okay. Again, you need to do a demo, so let's wait for you. I'll park you later. Uh uh. That analysis has been done right? For that model. Go ahead, go ahead, modify the table with include the model ID and how many steps are getting impacted? All the scripts, all the script, right?
+
+00:16:22 - 00:17:13 Unknown Speaker:
+
+So what? What is the effort required to make that? That's, that's the one line change. Uh, not basically one line. Uh, I was going through that one, so no worry, I will complete it. That's not a problem. It's a one-line thing, but multiple places. Because we have, you know, the union. Got my point. No, there are union, union distinctions are there. So everywhere I have to predict, so that's fine. I will, I will do that. Changes that that will not take. Okay, okay, then it's a reusable. Uh, we can say, you know, the same thing. Copy and paste is there, but, uh, there are lot of scripts. It will take some time by EOD it will be completed. Okay, but but please make sure that, uh, the production environment which is running that should not get impacted.
+
+00:17:13 - 00:18:11 Unknown Speaker:
+
+No, no, no, no, uh, you know, after deployment, everything will be fine. Okay, it's. It's not a major change, it's minor change. There is already one email communication that came from, Uh, that. Ruid Kandil Well, I have shown you yesterday, right? That was from our side. So I I don't want a second one because they are looping Purna now. Yeah, I.I will test the lower environment first. Okay, everything correct. Okay, okay. Then then you can work on that and please close it as soon as possible. Test it in the lower environment before you know, jumping into the production environment. And what is the data type of this? Model? ID for the DQR project? Model ID is integer. That data type is integer, then keep integer only. Keep default value as zero. Okay, default zero.
+
+00:18:11 - 00:19:20 Unknown Speaker:
+
+Let's put Okay, okay, fine, got your point? Okay, yeah. There will be existing data in the DQ results in our use case folder, right? So are we doing the migration also? No, now, right? That's fine, we already have it. Till the time you are, you know, making these changes Sideways can modify the table adding those, you know model ID to that column and marking those as default zero values. Peppa, you are already aware with the issues, right, that I am discussing, the description part. Oh, yeah. So I have asked you, right, last Friday, we have to add that model ID column over there and make it as a zero by default. So if you are not getting a data from the insert query, that should insert as a zero for that.
+
+00:19:21 - 00:20:12 Unknown Speaker:
+
+Don't do it right now in the production environment, first test it out in the lower environment and then do it on E3. Okay, so currently adding the UH, model ID column in the DQ results table, right? That is the planning. I will brief you on that part. Okay, so we'll connect after this, just connect with and then close that one. And then once you guys are done with that, uh uh, then you can, uh, work on the self-survival. Okay, sure, okay, not completed with that bundle creation, with the formalization. Correct. The next part that I have asked you, work on that, try functionality and all. And again, when you're doing a commit, create a PR, get it reviewed from me before committing it to the branch. Yeah, yeah, sure. Okay. Sindhuja, anything from your side?
+
+00:20:17 - 00:21:08 Unknown Speaker:
+
+No, Sachin. Okay, thank you. Athar, you can bring up your screen. Folks, if you want to stay, you can stay. If you want to drop off, you can drop off. It's your choice. Athar, you can, you know, bring up your screen. I think it's better everyone be on the call, Vandi, so that, you know, you will also come to know about this new walk. Yeah, if anyone has some suggestion, please let me know as well. Screen is visible, you can go ahead, yeah. So in the home page, we'll be having these three parts where the review particular has the existing page where we show the all the rules for the users. Okay, so in this tab, we'll be showing the existing feature what we have for Q Track and the register.
+
+00:21:08 - 00:22:11 Unknown Speaker:
+
+Updates will be showing initially, the option for the user to either select a table name or a use case name. Based on that, the drop down values will be coming up if the user has selected table name, that the table will be there. And it's like a type one. Same for the use case if the user selects the use case, then list of use case will be there, and even the user can type and search it. Let me just select one and then search it. So, based on that, all the table name, variable, and description rule will be shown. We have two columns, one for the watchers and then the modify rule. Because most of the table actions and most of the pages are using the same function as the DLS part.
+
+00:22:11 - 00:23:20 Unknown Speaker:
+
+We also have in the track existing page. But that is then I, I am aware with that. But, uh, this is something, you know, product team has asked us also last time. So you can have a reserve option, and then, you know, view option, though option functionality, but here you are going to get only single functionality that is a modified option. So that's it. I'll change it to a single button, like what we have. Yeah, that's what I asked. I'll update this, I'll just take this, I'll keep a button here. Okay? Instead of a double click, we'll do in a single click two to three things, right? So there I am still working on this. So this is not a fully finalized, I would say, since I just want to show the work in progress to the team.
+
+00:23:20 - 00:24:05 Unknown Speaker:
+
+So that's why I'm just giving a demo. So, like the alignment part and some of the pages, I'll just give you a review, like for that page. Still, the integration is done and need to be done. Okay, so basically I'm working on it and making the code a more usable. Initially, I just designed this so pop up, but later on we are using three to four pop-ups in this page. So I came up with a single component that can be used to as a pop-up and inside its content can be changed. Okay, so as am I progressing, I'm just making the code more reusable and handy. So later on, if we have any change in any pop-up, we can easily do that. Instead of changing in four to four, five, five files.
+
+00:24:05 - 00:24:56 Unknown Speaker:
+
+Okay, so some of the works are still in progress, but yeah, thanks for sharing that I'll take up. Then click on Watcher, Click on Watcher. Yes, remove this close button that is not required. Yeah, this close button I'll remove, because for every one we already have this close, so I'll remove it. So such an initially, we'll see, yeah, so in this for registered washer, there was a suggestion from Purna. I guess where? We have to register this distribution list, but later on you may to remove this one since we will not be able to register the distribution list, right? No, no, we won't be able to do it. So if they want to add their distribution list, then they have to request it to the product partner and then we will do it in the background.
+
+00:24:57 - 00:25:51 Unknown Speaker:
+
+So there will be only three fields, distribution list with the existing list, use case and the register. Yeah. So for now, I've kept those three only. It has the dummy data for now. Yeah, yeah. And later on, we'll have, we can do it. So I'll move this close button, okay? So the user can register the watcher here, and once that is registered, that can be viewed from here. Okay, call the serial name table use case name very well description for that. So, yeah, so here we are displaying the DK rules, right? All the things here right. For the table related information link in the separate page or here only this page. No, no, no, deletion is not allowed. Yeah, because some of the use cases we saw, right, the DQ rules are something retired.
+
+00:25:51 - 00:26:41 Unknown Speaker:
+
+He's mentioning Anand actually, so that would be that would be taken care, uh, manually. Right now the deletion part is not there. Uh, that is out of scope for timing because, uh, the data is not getting deleted in the looming is, remember, the data whichever is displaying this would be get stored in the ACE database. And from here, it would move through a SFTP file to the LUMI. And then in that LUmI. Actual rules would be residing, right? So right now this this is a request page, right, where you can add a new rule, right? And if that rules gets rejected, that would not get displayed over here. Okay, so that means syncing the DB between ACE and the Lumi. So for that, we will do a solution later on. Right now that is not in school.
+
+00:26:41 - 00:27:56 Unknown Speaker:
+
+Okay, sure, the approval based app, okay, so it's not like, you know, if you can't create a rule without approval, right? So how can you allow? Name, table, name and couple of fields will be coming in mode below. So for that I am doing the integration, basically, all these fields will be coming and the conditional base to drop down will be there. So for that, I have created the component, but similar integration has to be done in this component as well as the modify rule. Okay, so basically all this integration is still left, so I'll be completing those today. Pagination and everything has been added in this page, so for this page, this is the task which has been done. Okay, okay, okay, uh, just do let me know.
+
+00:27:56 - 00:29:18 Unknown Speaker:
+
+Uh, once your everything is ready, then only we would be going to demo it to the product partners. Not right? Yes, let's have a complete, uh, things from our side. And then which model ID, Okay, okay, introduce the model. Okay, fine, fine, got it. When DQ result table is there, right? So whatever existing data is there for that, you need to add or introduce a new column when you are introducing a new column. Value is zero, so it would update those existing data by zero. No, no, got it. And that is the reason I asked you to test it out in the lower environment first and then do it on A3. Secondly, if you have any, you know, if you feel like, you know, the data might get distorted here and there, then keep a backup of that table, first of all.
+
+00:29:18 - 00:29:42 Unknown Speaker:
+
+And then you can go and do that. And one more thing, did we made that cleanup activity, Ayyappa? Folks, please drop up, like, you know, it may take some time. Ayyappa and Kundan, you guys can stay back. You could answer the question to each other.
+

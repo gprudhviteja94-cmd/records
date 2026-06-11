@@ -1,0 +1,118 @@
+2026-05-25 Data Quality Template Standardization and SQL Query Optimization
+
+Creation Time: 2026/05/25 15:33
+
+
+📅About Meeting
+
+• Date & Time: 2026-05-25, 15:33  
+• Location: Virtual Meeting  
+• Attendee: Rachna, Sachin, Preeti, Prithvi, Arthur, Nirman, Vachana
+
+📒Meeting Outline
+
+Data Quality Rule Description Templates and SQL Query Standardization
+
+• Review of Description Templates  
+  Rachna shared the current status of description templates for data quality (DQ) checks, highlighting 29 distinct templates identified from existing rules. She explained the creation of standard description templates based on inputs from the intake form, excluding the threshold check which integrates with Ponto. The templates dynamically incorporate user inputs such as variable names and percentage thresholds for missing value checks. Rachna noted some wording changes from previous descriptions to improve clarity and usability for UI configuration.
+
+• Updating Existing Rule Descriptions  
+  Sachin raised concerns about regenerating descriptions for the existing thousand-plus rules. It was clarified that the system will provide users with options to view and modify descriptions, and that existing descriptions will be migrated to the new template format through simple queries. Arthur will estimate the time required for updating existing descriptions once the template is finalized. The team agreed that finalizing the template is a prerequisite before proceeding with bulk updates.
+
+• Duplicate Templates and SQL Query Differences  
+  The team discussed the presence of multiple templates for similar checks, specifically duplicate checks, where two templates exist with slightly different SQL queries but similar English descriptions. Prithvi demonstrated the differences in SQL logic between the two duplicate check templates, showing that one is essentially a negation of the other with additional conditional checks for multiple variables. The discussion focused on whether both templates are necessary or if one can cover both use cases by handling single or multiple variables via a CONCAT function.
+
+• Proposal to Minimize Templates  
+  It was proposed to test the CONCAT function with a single variable input to confirm if one template can replace the two. If successful, the redundant template will be removed to simplify maintenance. The team acknowledged that multiple developers over the years have contributed to the rule set, leading to variations in SQL queries even for similar requirements. The goal is to standardize and minimize the number of templates while ensuring all use cases are covered.
+
+• Next Steps for Review and Additional Check Types  
+  The team planned to finalize the duplicate check template by the next day for re-review. Following that, they will proceed with the missing value check template. Additionally, the valid value check was identified as another area with multiple similar scripts (around 13), which will also be reviewed for consolidation. The approach will be to compare scripts at the SQL level and reduce the number of templates to the minimum necessary.
+
+📋Overview
+
+• Rachna presented 29 distinct description templates with dynamic inputs for data quality checks, excluding threshold checks integrated with Ponto.  
+• Sachin emphasized the need to finalize templates before updating existing rule descriptions; Arthur will estimate update efforts.  
+• The team identified duplicate templates for the same check type with different SQL queries and discussed merging them to reduce redundancy.  
+• Testing of the CONCAT function with single variable input is planned to confirm if one template can replace two for duplicate checks.  
+• The team agreed to review and consolidate valid value check scripts after completing duplicate and missing value checks.  
+• The overall objective is to standardize templates and SQL queries to simplify maintenance and improve consistency.
+
+🎯Todo List
+
+• Rachna:  
+  • [ ] Finalize the duplicate check template after testing CONCAT function with single variable input, by 2026-05-26.  
+  • [ ] Prepare missing value check template for review following duplicate check finalization.  
+
+• Arthur:  
+  • [ ] Estimate time and effort required to update existing rule descriptions to the new template format, post template finalization.  
+
+• Prithvi:  
+  • [ ] Assist with testing the CONCAT function for single variable input in duplicate check template.  
+  • [ ] Support review and consolidation of valid value check scripts after duplicate and missing value checks are finalized.  
+
+• Team:  
+  • [ ] Conduct re-review of duplicate check template on 2026-05-26.  
+  • [ ] Plan and execute review of missing value and valid value check templates and scripts subsequently.
+
+Transcription
+
+00:00:10 - 00:01:51 Unknown Speaker:
+
+He is intimating me at 3.15, right? And he is getting stuck to you, right? You should have intimated me over the phone. Yeah. You guys need to be serious, Nirman. Has any arguments? Okay, let Vachana to talk and then we'll talk. No, no, I thought of... Hi Rachna. Hi Sachin, Hi Preeti. So Rachna, this is regarding again that same demo which Preeti is going to do for I think Preeti. You have picked up a different check type? Yeah, Can you just try to run it and then showcase the result? Rachna Yeah. Last time we did that valid value, right? So let me just share that before we start this. Let me invite Arthur also. I am just giving him a call. He was about to ask me whether I need or not. He is responding anyhow.
+
+00:01:51 - 00:04:03 Unknown Speaker:
+
+Just wait for couple of minutes. Thank you. Yes, so I think this is regarding the, uh, you know, the word formation that we are doing for the creating that right. Is my screen visible? Yes, okay, uh. So first of all, like this is what he had shared with me, right? Like all the various rules and like what kind of template he is using. So on this, I just tried to filter out like, what were the distinct templates? And I saw there were some. How many are these? 29? Yeah, 29 different templates I saw here. Uh, regarding this, I also want to discuss something, but I'll discuss that later, like after a third spot is done. So, for now, as per the inputs we are taking, I have created these like standard description templates I have not created.
+
+00:04:03 - 00:04:52 Unknown Speaker:
+
+Uh, the one for threshold check because that will be integrated with Ponto. So other than that. Like for missing value check, so basically, wherever you see this bracket. I have put the input that you are taking in the like intake form, right? So it will be something like this for missing value check. So suppose there is a variable CM11 if they have entered, the variable CM11 should not be null. For more than if they say zero percent, then it's zero percent of the total records, if it's five percent and five percent, so based on whatever input is there, that will be dynamic here, right? So, uh, like these are what I have taken, as per this thing that Rithvi has used now. Some of these won't match any of these descriptions.
+
+00:04:52 - 00:05:50 Unknown Speaker:
+
+Because, like, this didn't look very helpful to me, so I have changed the wording a little, uh, but I think this should still be doable. So maybe we can have a look and let us know if this can be configured in this way. And this I share with other for configuring on the UI, right? It should be like an easy thing to provide one column. Question when we need to update the existing route description. The way you are giving these scripts and template them, okay, why exactly? Sachin? Like, are we regenerating everything for existing ones? Also, we are not regenerating. But we have taken a reference from the existing description which is there in that DQ repository, right? So you know, the template is being created based on the existing description which is being there in the.
+
+00:05:52 - 00:07:22 Unknown Speaker:
+
+I understand that but if we go on like recreating all of this for existing ones we have some thousand something rules right? Understand, look understand we are providing user and modify option also correct? So your existing descriptions would also come into this format otherwise when they would make that update right? Ather would be providing this update right? I see, right, look these again. If we need, uh, I would leave it on him how much time he would require to make these changes. But if we are finalizing this template, then this needs to be updated on the existing rules, also the description. Okay. That's something we can take it up. We can work on that, But at least I need a finalized template, right? And then I can ask like this is the existing one, and then just, you know, keep the changes to the next one.
+
+00:07:22 - 00:08:07 Unknown Speaker:
+
+And that would be a simple query that we need to run over there and the same data we would be migrating to. The ACe got it. I think today I'll end this out, so let me check with it tomorrow and after. We are aligned and we can share how to go about it. Okay, and with me, I hope. Once the existing description also looks right and those gets updated, it should not take you much time to, you know, just, uh, raise up on the logic. Also, one more thing I want to discuss on the existing templates part. So here, let me just show in some cases, okay, what is happening is I see a lot of repetition, but I don't know why the templates are separate.
+
+00:08:08 - 00:09:00 Unknown Speaker:
+
+So, even though the English language, like the way description is written, might be tweaked a little, but it means the same thing. So, exactly, no. There is a difference in the SQL query, although the English description, even for duplicate right earlier, it was the single template. Then when I am asked, when did you created two different template for duplicate, then he has shown me that SQL query. So SQL query remains different for these two descriptions. And that was the reason he has to create those two different templates. Can you show me one sample? I am just wondering how these are different in the query. Prithvi, can you bring up your screen? I think the one that we were discussing, right? Yeah, where there is a mismatch, is that? Yeah, exactly. Why we have created two different entries for obligatory.
+
+00:09:03 - 00:11:19 Unknown Speaker:
+
+What is the sequence in the SQL? Duplicate, that is not the issue. I was actually telling something else. The mismatch was. Let me, hold on. First of all, explain why there is a couple of two different templates in the duplicate one. Let's show that to Rachna. Why did we create two different templates for duplicate check? The templates are available in front of you, right? Duplicate check one and... What is the difference between those two? I think this is the one we discussed last time. I can merge them together one as well. Also, right now, I don't have an example. For 002 duplicate, check 002 otherwise, so this user ID should be unique here, no duplicate record should exist. If you see this query and the 002 query this much, yeah, see this.
+
+00:11:19 - 00:12:45 Unknown Speaker:
+
+It's basically, you know, bring out at the same place so that we can compare it. Template 1, Template 2. Yeah, see, this is Template 2. This is what Prithvi I asked you to keep these things handy so that we can save time during the UIT. Yes, it's okay, there is a difference in the sequel. Uh, you can see, right? Yeah, I'm just trying to see why it's different. Uh, like, what exactly are we doing in the other one? First one is pretty simple, right? Like we are just taking that distinct count, second one, what are we doing exactly? So your actual value is count star, and second, what is the expected value here? It has been actual value has been hard coded. If you see that one right, then pass whatever.
+
+00:12:45 - 00:13:51 Unknown Speaker:
+
+This one second one here is zero, then failed null null from select DQ ID, and then current date, and then actual value, and then from. Okay, then it's just a negation of the same thing. At one place, we are checking hundred percent, second place, we are checking zero percent for null. First place, we are checking 100 percent for not null. Like, it's just a negative of the other one. No, the line number 21 till 33, right? This is the additional conditional check that you have put it. In the second template, select J Dot, so this part is additional compared to the previous one. So I think there are multiple variables in this one, right? We are checking on a combination. But if suppose we had only one variable, like in the first case, then then that would be the same as that template, so that's what I'm telling you.
+
+00:13:51 - 00:14:36 Unknown Speaker:
+
+So, when user comes in with the first requirement, right when they just need to negate with the for one of the column. It would match the first template and create the SQL query out of it. But if there is a certain, do we need two separate scripts for this, or we can just keep the second one? I mean, that would cover both the use cases, right? Because going forward it would be a bit difficult to maintain for your team. Also, like, if we have 15 to 16 different scripts, if we can, like, minimize them would be better. Yeah, so if you can confirm all the data input would be the same, okay, and confirm one template, I will remove the other template. You will never get the description in that format.
+
+00:14:36 - 00:15:29 Unknown Speaker:
+
+And we will, right, so that is our. What I am trying to say is like, in first case you had this variable, right? OK, whatever variable we had in the first case, in second case. What is happening? In this Concat function, instead of four variables going in, only one variable will go in, right? We need to do just testing if that Concat function will still work fine if we input only one variable, basically there is nothing to concatenate, it should give the same output. Yeah, if you confirm in one template this is enough, then, uh, I'll remove this one. This doesn't mean that if we never get the data in that format and we don't need that query to be generated in that format in future. Then I'll give you one right, right, uh right, uh, quickly.
+
+00:15:29 - 00:16:31 Unknown Speaker:
+
+So for that only, I'm just suggesting you to do this. One example test case that you do a concat on a single variable, right? So suppose you just do global ID, there is nothing after that. Is that still giving you the proper output? If that is the case, then we can get rid of the first template because then it's a repetition. Yeah, instead of four inputs, if we had only one input, will that still give the same kind of? Even if it is one it generates? Well, then I think we should be good with the second one, because first one is just the replica of this thing, right? And this is the reason, Rishna, we are doing UID. Because this was even with me. Remember, I raised this concern with him, Yeah, but he has given me, you know, the difference of this query and.
+
+00:16:32 - 00:17:16 Unknown Speaker:
+
+Right, right. So I understand this situation because what's happening is Tutankhamun has been in function for three to four years now. Now our team has changed a lot since then. So there are at least four to five people, four to five different people who have worked on these rules, right? So everyone has their own way of writing the code even for the same rule requirement. So that way you might be finding like differences in the SQL query even though it means the same thing or it has to give the same output. No, no, I completely agree and that is the reason I did not take a call on this and was waiting for this paradise moment. So, we will close it out this Duplicate One Pet Week and Richa Pippin is to, you know, go to, he is having a doctor appointment.
+
+00:17:16 - 00:18:36 Unknown Speaker:
+
+So, maybe we can plan for a next check type. So, tomorrow we should be ready with this Duplicate Check Type to have a re-review with you. The different type of input through the UI, number one. And second, maybe, OK, let's plan for a missing value. Yeah, also, since this thing has come to my notice recently only, like, there are similar kind of queries, right? I would suggest we do the valid value as well, because I see that also has some 13 different scripts. And some of them look very similar to me. Yeah, yeah, we'll do that. Let's move forward this way only that we check it on the script level, we compare these scripts and then we go ahead with the minimum possible numbers, right? Yeah, yeah, exactly. Okay. Thanks, Pithi. Pithi, you can take it or drop it. If you have an appointment, we can... Yeah, you can stay there. Thank you. disturbances.
+

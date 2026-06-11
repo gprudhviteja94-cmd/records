@@ -1,0 +1,134 @@
+2026-05-22 Clarification on Request Approval and Use Case Assignment
+
+Creation Time: 2026/05/22 15:40
+
+
+📅About Meeting
+
+• Date & Time: 2026-05-22 15:40  
+• Location: Not specified  
+• Attendee: Anand, Poonam, Rajendra, Rachna, Sachin, Prithvi, Nirmal, Ather, and others
+
+📒Meeting Outline
+
+Clarification on Request Approval and Use Case Assignment
+
+• The team discussed the difference between existing rights and the flexibility in creating structures.  
+• Anand and Poonam suggested that once a request is approved and identified as coming from a specific team, the output team should have the flexibility to assign it to a use case.  
+• If the use case is existing, it will be selected and approved; if it is new, the team can add a new use case.  
+• This approach was previously discussed last week with Rajendra and Poonam.
+
+Capturing Team Information for Business User Requests
+
+• Since business users submitting requests may be random or new team members, the team agreed on capturing at least the team name and team email to track the origin of requests.  
+• Use case details are not expected from business users as they may not understand the terminology.  
+• This will help in managing and monitoring requests effectively.
+
+UI and Metadata Issues Related to Data Quality Checks
+
+• Some columns are not propagating correctly from the UI; for example, DQID is created dynamically and is working fine.  
+• There was a discussion about a "var type name" and a filter criteria related to date filters, specifically for the valid value check.  
+• The metadata tables (NUBI metadata, DQResults, DQRepository) do not have certain details, and some columns may be skipped if not essential.  
+• Confirmation is awaited from Rachna on certain UI changes before proceeding with modifications.  
+• Cosmetic changes are still pending but will not block progress; the team is waiting for UAD sign-off to schedule an SRE review call.
+
+Deployment and Automation Updates
+
+• Ather’s automation part has been validated; he is no longer required to join future calls.  
+• Recent E2 deployment was based on an old deployment; dummy strings were removed post-deployment.  
+• Sachin made a date change in one entry and is running tests on the latest changes.  
+• The product team needs to validate all templates, especially those related to missing value checks, as descriptions and conditions may change.  
+• UI changes are expected, and adjustments will be made accordingly.
+
+SQL File Management and Output Handling
+
+• The generated SQL files and output folders are created and stored, but there was a reminder not to store these files in the Composer bucket.  
+• Only executable (.py) files should be kept in Composer; SQL and output files must be moved to the project use case folder.  
+• The current SQL file includes table-level checks and appends missing value checks; this file will be sent to Rachna and Anand for validation.  
+• Coordination is planned for Monday to continue work on the remaining templates.  
+• If Anand is unavailable for sign-off due to travel, Sachin can escalate to another team member for approval to avoid delays.
+
+Reporting and Final Deliverables
+
+• Confirmation was sought that the HTML report will run correctly when zipped and sent.  
+• The team agreed that the HTML report will function as expected.
+
+📋Overview
+
+• Flexibility to assign requests to existing or new use cases after approval was confirmed.  
+• Capturing team name and email is necessary to track business user requests effectively.  
+• UI propagation issues and metadata limitations were acknowledged; some columns may be skipped.  
+• Awaiting Rachna’s confirmation on UI changes before finalizing modifications.  
+• Automation validated; Ather can skip future calls.  
+• Deployment updates include removal of dummy strings and ongoing testing of templates.  
+• SQL files must be stored in project folders, not Composer; validation process with product team is ongoing.  
+• Coordination planned for Monday to finalize remaining templates and approvals.  
+• HTML report generation confirmed to work when zipped and shared.
+
+🎯Todo List
+
+• Rachna:  
+  • [ ] Confirm UI changes and provide sign-off for modifications (ASAP)  
+  • [ ] Validate the SQL files and output folder sent by Prithvi (Before Monday)  
+
+• Sachin:  
+  • [ ] Run tests on updated deployment and templates (Ongoing)  
+  • [ ] Coordinate with Anand and escalate for sign-off if Anand is unavailable by end of day (By Monday)  
+  • [ ] Move SQL and output files from Composer to project use case folder (ASAP)  
+
+• Prithvi:  
+  • [ ] Send SQL files and output folder to Rachna and Anand for validation (ASAP)  
+
+• Anand:  
+  • [ ] Review and approve SQL files and templates (By Monday)  
+
+• Team:  
+  • [ ] Prepare for SRE review call post UAD sign-off (Schedule after sign-off)  
+  • [ ] Continue validation of all templates with product team (Ongoing)
+
+Transcription
+
+00:00:14 - 00:01:09 Unknown Speaker:
+
+What is the difference between existing right? We can create that in a typical structure or kuch bhi karke hum karenge. That is number one. Second kya hai na. But Anand and Poonam were suggesting once you are approving a request, once you know that this comes from this team, the output team would be having the flexibility to assign it to a use case. So here it will be brought down to a use case. And if it is existing, then we will select existing and approve it. And if the new requirement is new, then we can give them that flexibility to add that new use case also. Right, right. Yeah, I think that works. Just one thing, this has been discussed when exactly? Last week, Rajendra and Poonam were there. Okay, okay, got it.
+
+00:01:09 - 00:01:54 Unknown Speaker:
+
+Okay, one more thing actually I was aligning with Anand earlier. We were thinking that since business users are coming right now, they are random people. Maybe someone new has joined in some team and they have come to put in these requests. We were thinking that we should at least get some info about the team. Use case we cannot because they won't understand what does a use case mean. But team name was something we were thinking of adding. So like the team email column, the first one is like team name, team email. So those two things at least will give us a view of which team it is right. Otherwise, there are so many teams, anyone will come and put anything and leave. We won't know.
+
+00:01:56 - 00:03:42 Unknown Speaker:
+
+Okay and can you bring back uh that screen okay so uh there are a few uh columns right which are not getting propagated from the ui yes uh dqid is fine we are going to create it dynamically. This is a var type name, right? This var type name, where is that? Excel? It is continuous etc. Yes, then what is this? Okay. Brother. We don't have this in NUBI metadata, right? No, we don't have this in DQResults, I think. No, we don't have this in DQResults. Sorry, DQRepository. In the tables metadata, like any table on which I am placing a check, we don't have this detail, right? No, no. Actually i think we can skip this column honestly. We need to add this.
+
+00:03:44 - 00:06:21 Unknown Speaker:
+
+Because what will happen if we ask them about the filter criteria and if they do not give us the date filter added to it, right? So how will we execute that date filter? We need to know the date filter variable on the backend. Okay. So this text box will come up here, right? Yeah, yeah, okay, yeah means I'm just asking you, uh, maybe authoric? Uh, message darling, and then just confirm us. Yeah, yeah, sure, sure. Uh. Filter where name okay. This was specific to one check, I think, uh, valid value check. Even I remember. Even I remember. Even I remember. One second, let me share my screen. So it's in which field? Um, I think it's in the last Excel. Can you go to that Excel? What's your last name? Then? Probably we removed it.
+
+00:06:21 - 00:07:37 Unknown Speaker:
+
+Uh, let me check this again, such, and I will check it in my files. I think we had removed it. Once you confirm me, then I will wait for these three values. Input Okay, so that once you get a confirmation, even you can modify it from, Uh, in the front end, right? Okay, I tagged both of you. Once Rachna confirms, we can make that required change. So these are, you know, still a minor change we can still move ahead. So Rachna, just call out, right? Once we receive that UAD sign-up, right? There is like cosmetic changes that is still being required, right? So we will work on that. But at least I need that sign-up so that I can set up a SRE call, review call. Uh, that is the reason I was chasing, uh, from Yeah, yeah, we should do that.
+
+00:07:37 - 00:09:37 Unknown Speaker:
+
+Yes, template still am I required in this call? No, no. Now if you want Ather and even now going forward, you can skip the call because your automation part has been validated. Right? So we are good, so going forward you can feel free not to join the call. Okay, so then just one request. Yesterday, the E2 deployment that you have done, that is the old deployment. After that, I did remove that dummy string. Okay. That was in mainly spelling. Okay. Let me trigger a first deployment. Yeah. Nirmal, I'll confirm you, right? Yeah, I'm sure. Yeah, sir. Yeah, Sachin, for one entry, I made a date change. So we can actually, Let me run the... Let's have a target, you know, the number of templates that you have built, everyone said, needs to be validated from the product team side.
+
+00:09:37 - 00:11:01 Unknown Speaker:
+
+Okay, so if, uh, missing value is having three template, all those three templates needs to be validated with a different condition if they want to validate it. Because anyhow, there would be description changes. Yeah, I already discussed that in the initial, uh, you know, once the call started. So let her, uh, finalize that template first, and then we can accommodate that change at your end. Yeah, I think for now that we can still validate and such, and I think it won't be required most probably, like we discussed, right, so UI may change currently, mostly, like, accordingly, I'll set it up. Yeah, yeah, yeah, okay, let me run it. So which is the one that you are running right now? We created. So let me run that hack.
+
+00:11:09 - 00:12:44 Unknown Speaker:
+
+So you can see the output here, the executed SQL similar to what we did yesterday. Same thing here as well. This is the generated SQL and we have two thread. And then the legacy SQL updated file. All that inside the output folder itself. That we created is added in the kubectl sum file. Richna, can you show the SQL file, Prithvi? Yeah, let's go to the SQL file. One more callout, Prithvi. Don't store these into the Composer. I think I have clearly called it out. Move everything to the project location. You should not be placing the files in the composer. Okay, but all other files are there only. No, no, I think I have called no, no. Those needs to be moved from the computer to the use case folder bucket Location connect with the app.
+
+00:12:44 - 00:14:11 Unknown Speaker:
+
+The reason being, if we have a weight the composer, it would go down. Only the Dot Executable file Dot PY files should be there in Composer. No other files should be placed in the Composer bucket. Yeah, I kept only the PY files and then the output folder also, I kept it there with them. So okay, no, so these SQL files just move these to the project use case location. Yeah, okay, okay. This is a first query, where is the previous query? Which was, which was being there? And it it's need to be appended over there. Yeah, but this is just the new one, right? Like? This is new one. We would like to see, like, you know, once, uh, final file where it's appended right, right. Yeah, correct this one. Okay, I got it.
+
+00:14:11 - 00:15:08 Unknown Speaker:
+
+Also, Sachin, just confirming that this is still like table level, right? Like all the other kinds of checks are also there in this SQL file and then this particular missing value check is appending to that. Yeah, correct. Like, Prithvi, you can send this file to Rachna, right? This file. Yeah, yeah. And let her validate and... Yeah, complete output folder and then jp.gp. Yeah, yeah, correct. Sure. Yeah, just add Anand also to the main ones you do. Sure, I'll do that. Yeah, thank you. Okay, let's connect on Monday so we can do this with the rest of the template on this Rational MP3. Right, right. Okay. Sachin, just in case like Anand is occupied and you don't get a response from him even after like 5, right? You let me know.
+
+00:15:09 - 00:17:09 Unknown Speaker:
+
+I will provide the sign of if that is an issue. So okay, okay. So let's not just wait for Anand, right? If he is not providing the sign up right? No due to his you know, uh, drive, right? Then you can provide, uh, just before logging up, right? You can just, yeah, that's what I'm saying. If he if he is not available till five or six, you can let me know. Yeah, yeah, okay, okay, thank you everyone. Bye, thank you, bye, thank you. It's over. It's over. Reddy? Yes, brother. Hello? Brother. Hello? The running will run, the html report will also run, right? The html report will also run, right? If we zip it and send it, the html report will also run, right? The html report will also run, right? Okay, okay. Oh, okay.
+

@@ -1,0 +1,221 @@
+2026-05-27 Bulk Processing, Automation, and Data Quality Discussions
+
+Creation Time: 2026/05/27 12:09
+
+
+📅About Meeting
+
+• Date & Time: 2026-05-27 12:09
+• Location: Not specified
+• Attendee: Sachin, Nirmal, Prithvi, Akhil, Ansi, Sajjan, and others
+
+📒Meeting Outline
+
+Bulk Processing and Local Build Issues
+
+• Bulk Excel Debugging and Task Reservation
+  Nirmal was debugging the bulk Excel part due to an issue while reserving tasks. The local build was failing initially but is now working end-to-end after upgrading to Esport version 4.2.0. The bulk processing is mostly complete except for the reporting part, which is also running end-to-end. Tasks were created on the environment for testing but not closed yet. Suggestions were made to leverage existing sensors to create tasks if needed.
+
+• Static Class Refactoring
+  Discussion on modifying static classes containing constants. It was advised to move nested static classes outside the package to avoid access issues, especially for non-static variables. This segregation was requested earlier but delayed. The importance of setting timelines to close pending work was emphasized.
+
+• Build and Dependency Issues
+  Sachin highlighted real issues with successful builds but missing dependencies causing errors. Nirmal was urged to close pending tasks today to focus on other use cases.
+
+Automation, UAT, and Description Mapping
+
+• Automation Presentation and UAT Preparation
+  Coordination between Nirmal and Prithvi was planned to run the missing value check automation with 13 templates during the presentation. Prithvi confirmed records are ready for UAT, with Nirmal to run jobs and demo.
+
+• Description Mapping Challenges
+  The rule description was being saved incorrectly in the database due to UI mapping issues. The description format needs to be modified to match the template requirements shared by Sachin, including variable names and conditions. Nirmal was asked to modify and deploy these changes by today, with a demo before logging off.
+
+• Communication and Follow-up on Requirements
+  Sachin expressed concern about lack of proactive communication from the PIPI-U side regarding missing information and updates, unlike other teams. He stressed the need for timely updates and collaboration.
+
+Data Quality Checks and Template Mapping
+
+• Missing Value Check Description Formatting
+  Sachin explained the need to migrate descriptions to a variable-based format for missing value checks, providing examples. He requested a review of existing descriptions against the new template and preparation of an Excel sheet with check type, existing description, template description, and proposed template for mapping feasibility.
+
+• Collaboration and Resource Allocation
+  Nirmal was advised to coordinate with PIPI and share workload with other resources to handle the volume of checks efficiently.
+
+Additional Tasks and Data Table Discussion
+
+• TDK Rules Update and New Table Creation
+  Nirmal is updating TDK rules descriptions and exploring a request to create a new table under the UCS folder for MA II and non-MA II codes. The table is intended to store codes without mapping logic, possibly used in SQL queries.
+
+• Table Usage and Query Optimization
+  Discussion revealed the table's limited utility and suggested removing the join in SQL queries and filtering data in Python code instead for efficiency. Sajjan and Ansi confirmed the table's role in filtering MRIA and non-MRIA codes and recommended analyzing the queries before proceeding.
+
+• Decision to Hold Table Creation
+  Due to unclear requirements and potential redundancy, it was decided to hold off on creating the table and discuss further with stakeholders.
+
+Deployment Updates and Production Support
+
+• CGTA MGM Completion and Partner Confirmation
+  CGTA MGM work is completed; partner confirmation and sign-off expected by end of the week.
+
+• E3 Deployment and Focus 5 Sharing
+  Sachin requested updates on E3 deployments for the week to share with Berta. Market-related stories and MGM, CGT, RPA tasks are completed.
+
+• Production Environment Changes
+  Enabling of certain features in production was confirmed, with plans to work on space modifications and production support tasks.
+
+• Content Change Discussion
+  Content changes are mostly done, with one pending discussion point.
+
+📋Overview
+
+• Bulk Excel debugging is nearly complete with end-to-end testing of task reservation and finalization.
+• Static class constants need segregation outside nested classes to avoid access issues; timeline adherence is critical.
+• Automation for missing value checks is ready for UAT with coordination between Nirmal and Prithvi.
+• Rule description mapping requires modification to match new templates; deployment targeted for today.
+• Communication gaps identified in PIPI-U team; emphasis on proactive updates.
+• Missing value check descriptions to be reviewed and mapped against templates; Excel sheet to be prepared by tomorrow.
+• New table creation for MA II codes is on hold pending further analysis; alternative query optimization suggested.
+• CGTA MGM and related deployments are progressing with partner sign-off pending.
+• Production support and space modifications are ongoing with some content changes completed.
+
+🎯Todo List
+
+• Nirmal:
+  
+  • [ ] Close all pending bulk Excel and task reservation issues today.
+  • [ ] Modify and deploy rule description mapping changes to A2 environment today.
+  • [ ] Coordinate with Prithvi to run missing value check automation UAT during presentation.
+  • [ ] Prepare an Excel sheet by tomorrow with columns: check type, existing description, template description, proposed template for missing value checks.
+  • [ ] Share updates on bulk action progress regularly with Sachin.
+  • [ ] Update TDK rules descriptions and continue work on pace use case.
+  • [ ] Explore and clarify requirements for new table creation; hold off creation until further discussion.
+  • [ ] Provide demo of description template and macro parts before logging off today.
+  • [ ] Work on space modifications and production support tasks as assigned.
+
+• Prithvi:
+  
+  • [ ] Ensure records are ready and assist Nirmal in running jobs for UAT.
+  • [ ] Support automation presentation and missing value check runs.
+
+• Sachin:
+  
+  • [ ] Follow up on E3 deployment updates and share Focus 5 information with Berta.
+  • [ ] Monitor progress on bulk Excel closure and description mapping.
+  • [ ] Provide final input on description templates and check types.
+  • [ ] Coordinate with Rachna for alternative solutions on unmapped descriptions.
+
+• Sajjan and Ansi:
+  
+  • [ ] Analyze SQL queries related to MA II and non-MA II codes and advise on query optimization.
+  • [ ] Confirm data filtering approach and assist in decision-making regarding table usage.
+
+Transcription
+
+00:00:07 - 00:02:57 Unknown Speaker:
+
+Thank you. My local build that one is failing so I was labeling that part and validating some part of the bulk. Bulk? Why bulk? It was like, just testing that. I'm not sure whether even you know able to explain exactly what exactly you are trying to do it. Yesterday, yesterday, I actually I had, uh, some little issue in my local, so I was trying to fix that. That is fine. Then what was the reason of bulk? Now? Why you are debugging that bulk? Part? Uh, one part. There was a issue while reserving the task, so I will be doing that part also. Okay, your local setup is ready now. Oh yeah, okay. Now, what is the Esport version that you have upgraded? Open 2.0, 4.2.0? Okay, now it's working end to end. Yeah, okay, uh, okay.
+
+00:02:57 - 00:04:07 Unknown Speaker:
+
+Environment. Let me ask on that and give me a second. So where you are left with that bulk Excel now? What are the components that have been left right now with you? I guess only the reporting part is there. And that part is running end-to-end? The reserved task, finalized task? Yeah. So that has been tested end-to-end, right? Yeah. I just created a couple of tasks that has to be created on the even environment to test that on even. So did you close those tasks? I haven't cheated, I just, uh, let's change some, uh, task status, but I need one. I need to create some task to test it. Okay, you can leverage that sensor by right and with that create those tasks. Okay, if the system is up, and what about that static class, which I have asked you to modify static class.
+
+00:04:08 - 00:05:28 Unknown Speaker:
+
+These are those constant things? Yes. Well, it will not cause an issue, but yeah, I'll segregate it right now. But why do I need a nested static class normally? I just want to import that one statement. I don't want to import multiple constants. In a shoddy cluster. But you are trying to, you know, scope it basically outside of the package, right, outside of the package, right. You have created that under directory, right? And you are trying to access it outside of, outside of that class, right? That is in your constant bundle, right? Yeah, And you are trying to access it outside. Actually, that is why I guess there was some class in that module. So the class is what's happening. That's why it is not able to find that class. Not for the starting issue.
+
+00:05:28 - 00:06:29 Unknown Speaker:
+
+Anyway, I had to get rid of this. I'll move them off it. Yeah, just move them outside, right? Because you won't be able to have a direct access to those instances, right of those classes, right? So if you're defining any non-static variable over there, then you won't be able to access it. Yeah, so just, you know, apply a logic before, you know, using a implemented entirely. Somehow, you know, that has missed from my first review, but when I have already asked you right to segregate that right, that should have been done yesterday only. Oh yeah, that is not a big change, but again, I'm not understanding why it hasn't been implemented. I know it's not a big change. But again, the question remains same why we are not setting up a timeline to close the, you know, the work that is in our pockets.
+
+00:06:31 - 00:07:23 Unknown Speaker:
+
+Actually, yesterday, Sachin, some real issue is happening. The build was getting successful, but the dependencies are not important. So, my entire intelligence is like, there are errors showing everywhere. Okay, got it. So, you know, Jai, just close it out today, Nirmal. Because I hope you have seen the number of tasks sitting in your bucket in the rally. Right, yeah, so please, please close this one. Uh, this needs to be closed today only so that you can focus working on the other use cases, right? We do have multiple other use cases which you need to close. Okay, yeah, and in case you face any difficulty, let me know immediately. Do one set, okay? And with respect to the automation which Pipi has built, right? I need. You need to present it today. You need to write the UAT.
+
+00:07:23 - 00:08:39 Unknown Speaker:
+
+So have a coordination with Prithvi and run that missing value check, which is having 13 template run it end to end during the presentation. And Prithvi. Do we have the records ready for today's UAT? Yes, Sachin, I created it. I will ask Nirmal to run the job, so when the data comes, then to do small modifications. After that, yeah, Nirmal can demo that. Why we are still doing those modifications? Is that not being finalized? No, the descriptions are not being stored in the right place, right? Okay. No, that has been... Hey, Akhil, did you modify that from the UI? Like, you know, sending the description from that UI page? The one that we have discussed last time, right? You are not sending the description in the correct parameters. Is that not being modified from the UI?
+
+00:08:41 - 00:09:44 Unknown Speaker:
+
+Can you repeat that again? The description was going into the wrong columns, right? And that is something we discussed last time, right? The rules that you are creating at the front end, correct? Yes. That is maps. Yeah, like that. Now, what is the challenge with them? Did you test it once with the UI? No, the descriptions. So what is it mapped to? Is it the business justification is mapped to the description, is it? No, no, no. The rule description is being mapped to the rule description. Whatever he is forming at the UI, that is getting saved to your rule description column on that table. But it is in his phone format, right? So, that description we need to modify to map to our template description. Not to R133. That is why I did buy a couple of days from Rachna, right?
+
+00:09:45 - 00:10:45 Unknown Speaker:
+
+Right now, you can go ahead and run with the previous format, but the requirement on the channel side is that. Um, let me share my screen. And I hope and pretty you both have seen this request, right? So other one thing that you go ahead and modify this, uh, from your side, okay, okay, P3 is not there, so this would be the formatting, right? Or you missed it yesterday, or you you were there when we were discussing this yesterday. So the rule description would be coming as the variable with variable name, right? Suppose the variable CM15 should not be null for more than then the allowed merging percentage of the total record, so this would be your rule description when you will be sending it? Yeah, I got this point.
+
+00:10:45 - 00:11:47 Unknown Speaker:
+
+And the record should be unique at variables label that is CM11, CM15. Level, or the last looming adjacent time set should lie between the look back period, which you know the person is sending it back. And same goes for the valid value the variable name CMP PINs should only take values and whatever allowed values we are passing. Okay, let me forward this. Then. What exactly we were doing if we don't have this email? I asked you right to work with the IFR. No, I was creating those requests of the 13 requests I created yesterday. So like, again, guys, like, you know, you need to justify. Is it a eight hours job that is being taken for? It's creating 13 requests with Free. That is what I was discussing with Nirmal, also, right?
+
+00:11:47 - 00:12:45 Unknown Speaker:
+
+But once he has that explanation of a score, I know that there was a issue with a score, right? So that's something I can understand. And post having a DSU yesterday, right? We were having a DSU at six, right? I just asked, I find you if I can still understand, like, Uh, is not aware with this requirement. But when I have asked you to, you know. Check those descriptions with the existing one, right, and modify it accordingly. Why didn't you come back to me and mention it to me? Hey, Sachin, I don't have that information now. This one, it's actually. So do you have that mail? That's what my question is. I don't see you over there in this email. I thought she was working on it. And she was displaying it in yesterday UAT.
+
+00:12:45 - 00:13:50 Unknown Speaker:
+
+It has been sent around 1.25 p.m. UAT was at 3.30 p.m. So how could you imagine that she would be working on it? I thought she will share it once she is ready with all the description. So if you haven't received it right, post my, uh, you know, ask, why didn't you ask me? Or to Rachna, then? But these descriptions such in it is in accordance with what is there now, right? I'm not asking you to map it with the current description. What may ask is, Didn't I ask you to work with I Upper yesterday? How many rules, right? How many rules for these check types can be mapped with these? Right? If I go to this, uh, and I don't know how you guys are working. This is getting out of hand now.
+
+00:13:50 - 00:14:46 Unknown Speaker:
+
+I said I would not waste your time. So, you know, as you'd be on leave starting tomorrow, can you just make sure that, you know, modify this one, deploy it till A2? That is number one. Okay, second, just keep me posted on the bulk action, right where you stand with that, okay? So we are now able to export the Excel with the data present in the table. The macro parts which you mentioned, with some pre-filled data for the drop down that I'm currently working on. So I'm targeting to close this description, template and the macro part today. Okay, and before like logging up, I will give you a demo of that and deploy these changes. Okay, and just to confirm the rule description, it's being saved in TA Quality Rule DS variable.
+
+00:14:49 - 00:15:53 Unknown Speaker:
+
+Okay, and justification will be going in bus underscore, just underscore TX. So this is already, this is already in place from UI, it's deployed in E1 with this template, I'll integrate and then deploy and I'll update you in the group. Maybe you can start testing after that. Thanks, Sathya. So, you know, this is what I am expecting, right? Whatever I have asked him yesterday, he is giving me the precise update, right? And exactly what he did yesterday and, you know, whatever ask I had, right? He has that update. And that is something being missing from, you know, at least from ANSI side, even that is clear. From Samir side also or Kundan side, right? But that is something being missing from PIPI-U side, NIMAL-U side. You are in the system from last six month, and especially for your case, right?
+
+00:15:53 - 00:17:31 Unknown Speaker:
+
+Your update remains same the way it was for the previous date. Doesn't have a data missing value check So if you, you are there in the call, right? Yeah, okay, so now, uh, what is the ask? Let me explain it to you right now. If you see this one, right? Uh, the missing value check, you can see like it is being only trans. Amount variable should not should not be null, right? Bonus amount variable should not be null, right? So instead of that, or CM15 should not be null. So instead of that, we need to migrate it to the variable, right? Basically, if I write it right, it would come as the variable suppose CM 15 should not be null. That's it, okay, this is one awesome, right? This is one right.
+
+00:17:31 - 00:18:38 Unknown Speaker:
+
+Second formation can be suppose, uh, like this, right? A customer with null values greater than one percent. So the variable, Uh, I don't think there would be a variable, or maybe, uh, it's a counter operation, actually. Yeah, yeah, then this is something we need to check with. Uh, because if I give CM15, the CM15 right should not be give me a second man, should not be null for more than allowed. So I don't think he has taken all those into this one, like 100 field rate, right? But I need, uh, you know, final input from you on these four. Check type. Okay, what is the existing uh, you know, uh, description is there over there? Uh? Take your repository. And how we can inform it with these statement whether it is possible or not.
+
+00:18:38 - 00:19:31 Unknown Speaker:
+
+And uh, how many records are there? So for missing value, you can see we have total input 100 records. Okay, I have given a limit of 100, so just check how many records are there, right? Uh, maybe I expect two to three hundred records should be there, so it is having 112, right? Similarly, we have other check type also, right? So just go and see if you can format it the way he has given it. Or we won't be able to do that, so just create a Excel sheet. I'm not asking you to do it today, but at least by tomorrow, post length, that should be ready. We are working tomorrow, right? Yeah, so then the high level context we need to map to the exactly, uh, that, uh, template, right? Whatever you're showing us, exactly.
+
+00:19:31 - 00:20:22 Unknown Speaker:
+
+Okay, if it is matching again, I need to prepare a separate column and with this name if it is not matching. And we need to check with Rachina for the alternative solution, correct? So basically, prepare a Excel sheet. Uh, with the check, uh, three columns, check, type, existing description, and then the description template, and the fourth one would be the proposed template. So whatever rules, we can map, map it, whatever is not feasible. We need to check with Rachna because once they confirm it back to us, we need to modify the DQ refugatory columns over there. All those descriptions. Because this is the thing you are going to get an input going forward from the UI itself. So user doesn't have a flexibility to change the wordings over there. Yes. We are trying to make it.
+
+00:20:23 - 00:21:14 Unknown Speaker:
+
+Yeah, sure. Understood. So just coordinate with Pippi. It should not be that you would be working on all the check type. Maybe if it is, you know, 300. You can work on 150 and let it be to work on best 150. And that is the reason I have included couple of resources for this work. Okay, okay, uh, and what else is in your bucket type? Yeah, uh, one is, uh. Shravan is asking me to update the TDK rules in description for the Lulu. And apparently I'm working with the pace use case which you shared yesterday, right? Uh, that one, I'm working updating them. Yeah, and I one more, I saw with someone he shared one mail. Actually, I think he need to create one table, I think so all that I'm exploring that part, I'm checking actually what he exactly needed.
+
+00:21:14 - 00:22:29 Unknown Speaker:
+
+That is. I only asked him, Uh, let me share my screen that is a pretty simple that you just need to create a table. That was from the NISA. Okay, still, 19 minute is the effect. So he would have said, you this USCS Mr.non-MR IA code, right? So create a table in the data under data. Okay, right, it should not be attemptable, so create it under Data under our UCS folder. And in that table, you would be having couple of columns, one would be this MA II code and another one would be non-MA II code. Okay, got it with these data, right? Create a CSV file or whatever, right? He wants to. Yeah, yeah, create. Oh man, okay, it's not a mapping, basically. So they are just saving it. No man, this is why, right?
+
+00:22:30 - 00:23:44 Unknown Speaker:
+
+Basically, they are pretty even we don't need a bomb in this table. We can just read it through a JSON object. Right? Yeah, Because there is no mapping with respect to write, this code is mapped to this, or this code is mapped to this. Because you can see this, this remains blank. Post this, this remains blank. Yeah, then here 63, 64, 65, 68, 7a7, whatever they have given. So basically, he can create a, you know, just a list, right? For one MA code and for another one is for non-MA IA code. Is Dwasan there using in any cold or just... He is using that over some SQL query, I feel. He might be using it over some SQL query. And I haven't seen that query, but it's more precisely he might be using it in that SQL query.
+
+00:23:47 - 00:24:46 Unknown Speaker:
+
+They might be coming. Yeah, Ansi. Ansi, go ahead. Yeah, let's change that query. Uh, so he's, uh, using it, and uh, he's doing some joining with that table, but we really don't need that table, right? That is not uniform. You have seen, right? There is no logic of mapping, right? So where is that query? Uh, I think three queries were there in that code. Python code, No. But if we have opened this Python code, right, this is in front of you. Uh, this code right you were talking about, so in this code, I don't see over here, right? This is one query, okay? So so you mean to say they are mapping it? Whether these are under this IA code or not, right? These existing analytics, yeah, but this is not the correct way.
+
+00:24:46 - 00:25:54 Unknown Speaker:
+
+This table doesn't make a sense of, you know, having a.So, he can just pull this without this filter, right? And then he can filter it out in the Python board itself with instead of this SQL, right. Yeah, that's May also he can do. Because this table, I don't feel there is a significance now, suppose this table just contains this data, right? So you 300 records can contains these records, right? While post that this column would be having data, this column doesn't have data, right? Do one thing and see that try without that. Uh, join and see how data is done right. Just just remove this join and then compare whether the data that we receive right. So it is a joining with this IA code, right? Whether that contains within this IA code or not.
+
+00:25:54 - 00:26:51 Unknown Speaker:
+
+If no, then this, the way we did it for AFC ANSI, right? The one that I have suggested you earlier. We really don't need this table. This table doesn't make a sense over there. Sachin, I am just trying to understand that here, like as per the query, they are trying to get. Only non-IMR code and also that should match with CM 15. And they are getting the tramp data based on this. And in Excel, I can see IMR code. What that is for, that one I did not understand. In Excel, You have... put two, two columns, right, like if you just they have given these two column, right. So when they are making a join, right. So basically they are fetching the MMA, this MRI code from this table, so whatever IA code is coming, right, it is basically mapped over here.
+
+00:26:51 - 00:27:48 Unknown Speaker:
+
+So whether it exists on that suppose this, this comes up with MAIA code of suppose BQG, right? So if it exists, then they would select that record, otherwise no. Suppose somebody enters X123, right? This is part of this MAIA code, so they would reject that piece of record from there. That's what being happening over here. What my suggestion is, instead of this joining right, just get the raw data right, you know, even be having all the MAIA code, right? So when you would be filtering it in the Python code, right, just apply that list. If it is making to that list, pick that data, otherwise just discard it. Before that, she has to analyze this one. I think on the query level also she can do that. Contents, not contents, those are our methods are there.
+
+00:27:50 - 00:28:37 Unknown Speaker:
+
+Contents would be, it would be used. It is more than a record. It is a very big record. It will be very slow. Sajjan, can you confirm here like you are looking only for non-MRIA code or like MRIA code? Both, both. There might be another query where they might be looking for that. So there are multiple queries are there. Here it is non-MR. So here they are checking for the non-MR. Okay, they are both trying to get both. But I think first we need to understand what they are trying to do here in SQL and we need to understand. Finally, what it's, leave it, I'll leave it. Uh, my system would get start in next 12 minutes, so um, leave it right now.
+
+00:28:37 - 00:29:38 Unknown Speaker:
+
+No need to create a table for this, I'll talk to someone on this, yeah, because we should not be creating that table blindly. Okay, what else is in your bucket? Uh, yeah, that is the one, and uh. CGTA MGM is done. Yeah, CGTA MGM is done actually. She is off right today. This end of the week she will give the sign up once the partners are confirmed on the MGM. What are the E3 deployment went this week? Yeah, I will update you. I will text you these things. We need to share this Focus 5 to the Berta, right? So what are the E3 release that happened this week? Yeah, I will consult it and I will share you. Okay, so just let me know as soon as possible. Okay, and so these stories. Market has completed.
+
+00:29:38 - 00:30:28 Unknown Speaker:
+
+Uh, if it is being done right, MGM, CGT, RPA, right? So market has completed. You would be having this space and then, uh, this one. Did you enable this one? Uh, not at such a.I will just do it and then inform me to JSon. This has been enabled in the production environment. Okay, yeah, you can work on this space modification and the production support that I have given. The one that you need to work with. Uh, with free on that. Okay, yes, it's correct. Uh, so, uh, a third drop down, right? Uh. You can also feel free to drop up even email. Uh, thank you, uh, and see, uh. So that content change is being done, right? Yes, I think that's done, but there was one I have to discuss.
+

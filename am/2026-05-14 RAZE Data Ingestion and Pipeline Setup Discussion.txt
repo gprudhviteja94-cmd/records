@@ -1,0 +1,294 @@
+2026-05-14 RAZE Data Ingestion and Pipeline Setup Discussion
+
+Creation Time: 2026/05/14 18:01
+
+
+📅About Meeting
+
+• Date & Time: 2026-05-14 18:01 (Duration: 2525 seconds)
+• Location: No relevant content mentioned
+• Attendee: Sachin, Sabin/Saven (Seven), Jason, Anand, Rosny, Rachna, Raj, Kundan, Singh, Suman, Sindhuja, Samir, Prithvi, Savitha, Apple (support), Andriksh
+
+📒Meeting Outline
+
+RAZE/Lumi data ingestion setup and access
+
+• Access prerequisites (NGVD/IIQ/Foundational)
+  Team to compile required NGVD/NGVD1 Foundational Reader and any additional SDA/IIQ group accesses for the new RAZE engineering space. Do not copy USCS accesses wholesale to avoid unintended costs/approvals. Sachin will raise requests today if possible so they don’t expire over weekend; otherwise Monday. Approvals route to Raj.
+
+• Service IDs and workspace behavior
+  New RAZE engineering space uses a separate RISI service ID with no current permissions; pipelines run with the workspace’s service ID automatically. Clarified that BigQuery issues were due to missing access; no need to explicitly select service account in pipeline config.
+
+• Federated Data Office selection and table naming prefix
+  Historically used US Consumer Services (USCS) MDO; using it prefixes tables with USCS in Lumi. For RAZE, team aligned to continue with USCS for now; behavior acceptable. Confirmed impact mostly on naming/prefixing.
+
+Pipeline creation, metadata, and batch ingestion
+
+• RAZE user tables: metadata sheet
+  Sabin to create metadata sheet for RAZE user table in the standard optimization format; metadata already downloaded. Use central car ID as before. Jason to provide/confirm table names.
+
+• Batch ingestion vs ODN
+  For RAZE pipelines, use Batch ingestion (not Derived/ODN), mirroring the last four tables. Start with dining_user, user_venue, and user; align on exact table names suggested by Jason.
+
+• Ownership and additional access for pipelines
+  Team to propose owner assignments and any elevated access needs for review in HDR; Sachin will confirm and request changes if needed.
+
+Attestation, SFTP configuration, and test files
+
+• Attestation follow-up
+  Rosny to chase the Lumi team to complete attestation; only after that can data needs be submitted.
+
+• SFTP profile and test data
+  After pipelines are set, Jason will prepare test files in the same structure as prior four pipelines. Sachin to share file names once SFTP profile is set up (target: tomorrow).
+
+Environment/platform issues impacting delivery
+
+• Build/deployment instability
+  Ongoing platform issues for 2–3 days causing failed deployments; human tasks not being created due to unsuccessful deployments. Local env issues (cookie retrieval) also failing; support tickets raised. This may delay the self-serve go-live planned for June 8; need business communication support (Sindhuja).
+
+• Runtime failures and SFTP reprocessing
+  A DAG attempted for 25 minutes without cluster creation; retry handled internally by Composer. Unexpectedly, SFTP file remained past 24h and was reprocessed, causing 4 failures (3 on CM11, 1 on video analytics; latter lacked an initialized workbasket). Additional safeguard proposed: append date to SFTP filenames and configure ACE to pick current-date files only (to be implemented later; track in action log).
+
+DT flow, table access mapping, and validations
+
+• DT flow table access inventory
+  Seven to extract exact source/target tables from the implemented DT flow (not just newly created tables) and list required SD/NGVD accesses for where data is read/inserted.
+
+• STS/owner checks
+  Verify STS presence and ownership; prior verification suggested none, but needs recheck in new space/service ID context.
+
+DQ rules, schedules, and query diagnostics
+
+• DAG scheduling vs model IDs
+  For DQIDs without model IDs, infer schedule from table-level DAG (e.g., monthly on the 10th). Ten DQAs under a table-level DAG follow that DAG’s schedule. Confirm load date/cron alignment with Anand’s earlier guidance.
+
+• CSP model score issues
+  Andriksh flagged CSP model score values; details shared with Anand. Further data investigation pending.
+
+• Rule failures (weekly vs monthly)
+  Some weekly rules failing while monthly pass; suspected due to table refresh recency for last week. Need to revalidate queries and data freshness.
+
+• Standard deviation method change
+  Differences observed between population vs sample standard deviation when moved to standard POP database; need side-by-side results and impact assessment.
+
+• Query execution and access
+  Run the exact SELECT (no create/replace) in E3 to validate results. If access to sensitive tables (e.g., CMS Transaction Identifier, GMS targets/identifier) is missing, seek help from Apple/Samir with sufficient privileges. Compare POP vs sample deviation outcomes and share with Rachna.
+
+BPMN/process adjustments
+
+• B45/B40 workbasket handling
+  Modify BPMN: fetch B45/B40 from ECMAT in the first bundle; loop over workbaskets to get tasks. If none available, stop process. Raj may request extraction of loops into subprocesses (email loop per workbasket as well). Sachin to review Monday.
+
+UI/API behavior and interim demos
+
+• UI add-role flow
+  Able to submit new requests successfully via API, but tasks not listed due to human task creation failing (deployment). Despite backend issues, partial UI/API flows can be demoed.
+
+Meetings and training
+
+• Follow-up calls
+  Technical deep-dive scheduled for 8:30 (Sachin-led). Team also had to join a GIGA/rally training session.
+
+• Jira training
+  Attendance is mandatory; team members to register.
+
+📋Overview
+
+• Access: Compile NGVD/Foundational/SDA/IIQ needs for new RAZE service ID; avoid copying USCS permissions; Sachin to raise and Raj to approve.
+• Pipelines: Proceed with Batch ingestion for RAZE user tables using Jason’s naming; metadata sheet to be delivered in optimization format.
+• Attestation/SFTP: Rosny to push attestation completion; Sachin to set SFTP profile and share file names for Jason’s test files.
+• Environment: Deployment/local issues may delay June 8 self-serve go-live; maintain incident tracking and inform business of risk.
+• SFTP reprocessing: Introduce date-appended filenames and ACE filter to avoid stale file reprocessing (post-priority).
+• DT flow access: Inventory exact source/target tables and required accesses based on implemented DT flow.
+• DQ schedules: DQIDs without model IDs inherit table-level DAG schedules; confirm cron/load date assumptions.
+• DQ failures: Investigate weekly rule failures; validate data freshness and queries in E3; compare POP vs sample std dev and share evidence with Rachna.
+• BPMN: Implement loop/subprocess adjustments for B45/B40 tasks and email notifications; review expected Monday.
+• UI/API: Add-role API works; human tasks not listing due to deployment—acceptable for interim demos.
+• Training: Jira training is mandatory; register.
+
+🎯Todo List
+
+• Sachin:
+  • [ ] Raise NGVD1 Foundational Reader and any additional SDA/IIQ access requests for the new RISI service ID; route to Raj for approval, today if possible, else Monday (before weekend expiry).
+  • [ ] Configure SFTP profile for RAZE pipelines and share exact test file names with Jason, by tomorrow.
+  • [ ] Track platform/deployment/local env incidents (timestamps, durations, stages) and coordinate business communication on potential June 8 delay, ongoing.
+  • [ ] Log enhancement items (e.g., SFTP date-appended filenames and ACE date filter) in an action tracker.
+  • [ ] Review BPMN changes with Raj on Monday and update team on required subprocess refactors.
+
+• Sabin/Saven (Seven):
+  • [ ] Create metadata sheet for RAZE user table in the standard optimization format, today.
+  • [ ] Build Batch ingestion pipelines for dining_user, user_venue, and user using Jason’s agreed table names; ensure correct workspace/service ID is used, start immediately.
+  • [ ] Extract DT flow’s actual source/target table list and compile required SD/NGVD/STS access details; share with Sachin, today.
+  • [ ] Revalidate failing weekly DQ rules: run SELECT-only queries in E3; compare POP vs sample std dev results; document differences and share with Rachna, with Apple’s support if access blocked.
+
+• Jason:
+  • [ ] Confirm/provide final table names for RAZE ingestion; align with USCS prefix behavior as acceptable, ASAP.
+  • [ ] Prepare test files matching prior structure; send after receiving SFTP file names from Sachin.
+
+• Rosny:
+  • [ ] Chase Lumi team to complete attestation required for data needs submission; update Sachin upon completion.
+
+• Apple (support):
+  • [ ] Assist Seven/Suman in running E3 environment queries against restricted tables (e.g., CMS Transaction Identifier, GMS targets/identifier) to validate DQ logic, ASAP.
+
+• Suman:
+  • [ ] Pair with Seven to execute and validate weekly DQ queries; confirm data freshness and align on any query modifications, ASAP.
+
+• Raj:
+  • [ ] Review and approve requested accesses for new RISI service ID when raised.
+  • [ ] Provide guidance on BPMN refactoring (loops to subprocesses) during Monday review.
+
+• Sindhuja:
+  • [ ] Prepare/coordinate stakeholder communication regarding potential June 8 self-serve go-live delay due to platform issues, pending updates from Sachin.
+
+• Anand:
+  • [ ] Confirm load date/cron expressions for non-model-ID tables align with table-level DAG schedules; close the loop with the team.
+
+• Samir:
+  • [ ] Attempt access/validation on CMS Transaction Identifier for latest data presence; support Seven’s investigation, ASAP.
+
+• Andriksh:
+  • [ ] Continue investigation on CSP model score anomalies with Anand; report findings and required data corrections.
+
+• Team (All):
+  • [ ] Register for mandatory Jira training, ASAP.
+  • [ ] Join 8:30 technical discussion call for detailed alignment on technical requirements and issues.
+
+Transcription
+
+00:00:10 - 00:01:06 Unknown Speaker:
+
+Just recheck with me again on that. Uh, and now you are clear with the DT flow, or, uh, which DD2 I am asking for? You are receiving your loyalty status, you are asking for which tables are you using? And yes, you have there. Yes, not only SD, any IIQ group also. Okay. So one basic access that we would be requiring is the uh, NGVD resist, uh NGVD one, right foundational reader, right? That is one we would be needing. Apart from that, check if any additional access is required, or if any SDA element is there, then help me with those IIQ. Because if I raise it today, that would go for the approval, and either I can raise it today. Otherwise I have to raise it on Monday. Because tomorrow, even if I raise it, that request will expire in the weekends.
+
+00:01:06 - 00:02:12 Unknown Speaker:
+
+Okay, so just. Collect those ST and the NGBD details and then ping it to me. Yes, Sachin. And the product team did not join. Sabin, I have asked you to create the metadata sheet for Razy user table. Is that being done? I'll work on it today, Sachin. I couldn't find time yesterday. Okay. You know what needs to be done, right? So you need to have it in the same format, right? One which we use for optimization. First of all, yeah, first of all, search the table. Uh, in the let me say my stream, yeah, I downloaded that metadata, you already downloaded that? Yeah, and uh, as Jason already joined, let me clarify that one. So even you don't need to wait for me to, you know, uh, start creating the pipeline for that.
+
+00:02:12 - 00:03:11 Unknown Speaker:
+
+So you need to use the same central car ID. Okay, uh, so Jason, I just need one, uh, input from you. If you see this federated Data office, okay, uh. Earlier, we used to select it as a U.S. consumer data office because we were part of USCS. And if you have observed when you are using this, USCS tables are getting appended with USCS under whatever table you are creating, right? So I would like to know. Which is the field which is applicable to RAZ? Yeah, I don't know that answer. Where can I find that? This is basically gives this MDO office who will be approving your data ingestion in Lumi. So as when we were working with Anand and team, right, we were selecting this US consumer services. So can we go ahead and use the same?
+
+00:03:12 - 00:04:15 Unknown Speaker:
+
+I think so, yes. Because look what would happen if you are using this US, basically why this federated office is required. If you are using this US consumer services, your table would be like this. And that is the reason yesterday I did not ask someone to start building that pipeline. So any of this table, if you see this one, as that has gone for the US consumer services, The table are, you know, prefixed with U.S. CS. Okay, okay, this is a ODL and that is the reason I think it was not being done. But if you go to any other tables, which is a Lumi first loyalty status, suppose I go to loyalty status. Especially for the ODL one, not for the Indian one. So you can see this U.S. CS gets appended over there, I think that's okay.
+
+00:04:15 - 00:05:21 Unknown Speaker:
+
+That's okay, right? Okay. Yeah, that's okay. Then seven, you know, right? We just need to create a batch pipeline, not the ODN. Batch ingestion. Yeah, batch ingestion. When you start new ingest pipeline data, so here select the batch, not the derived ODN. The way we did it for the last four tables, right? And whatever table name that Anand, sorry, Jason suggested, right? Use the same one. Where it is. I think we were on this one. Yeah, I remember. So, you can start with this dining user seven and then maybe user venue and ask someone to start with the user as well. So, okay. And help me with the additional, you know, additional owner access so that I'll review it during the HDR and then in case any changes required, I'll let you know guys.
+
+00:05:23 - 00:06:26 Unknown Speaker:
+
+I think someone had verified it yesterday. It does not have any STS, right? He is not understanding. Look, we were till now. Till this point of time, we were working on U.S. Consumer, where Raze Insurance Data Office all projects comes under UFCS. Now we have created all together a different, uh, Lumi engineering space for Raze, so now it is moved out from that U.S consumer, right? So for that engineering space, we have all together a different service ID. Let me turn this in. I think you guys are not getting this point down. But when I searching on Looney, it's not visible in a such table. No, man, then how your DD flow is working? This USCS is coming now. Oh no, no, you have to cross verify that as of now.
+
+00:06:38 - 00:07:29 Unknown Speaker:
+
+Okay, if I go ahead and check the accesses, so this service ID is having already all the accesses, all the required accesses like this. Okay, whatever access is basically required for the project. So this is leveraged for the U.S. Consumer space, which owned by Anand and Team. Okay, okay, and now even even the same RD ID was being used for the Raze as of date. Okay, but now, as we have all together a different engineering space from Raze. We have received a different service ID to manage those RISI services. So this is the RISI service ID. If you see over here, there would no access basically. It is blank. Not even the foundational data access. So we need to start adding those accesses based on our requirement.
+
+00:07:29 - 00:08:27 Unknown Speaker:
+
+I will not go ahead and just copy those access, which is there in the US consumer space. Because then we would start getting email from that respective IRQ group owner. They would be asking why you are using it, and then there might be cost behind those accesses when you are consuming their services. So basically, whatever access just required, just check that and then give it to me and I'll raise that access. And then it will go to Raj for the approval. One question is, where do we specify the service ID? Where do we actually use those? Service ID while defining the ingestion pipeline. When your tag is running, right? The tag is getting that service ID only. You are not able to run the BigQuery due to that access issue, right?
+
+00:08:28 - 00:09:25 Unknown Speaker:
+
+But while defining the ingestion pipeline, do I need to define anywhere that the service account should be used? That is taken to where? When you are running it onto that workspace, right? It, uh, automatically pitch that service ID. Okay, okay, because Razy would be having all together a different space. I'll help you with that with you guys. Okay, okay. So Singh, I don't see Rachna or Anand as of now. Uh, Jason, anything you would like to check on the attestation part. Rosny already confirmed, right? Like, she would be chasing the Lume team to get it up, you know, get the test station done. Once she would be able to do that, then only I'll be able to submit that data needs. That sounds good. Is there anything else that I need to do to help with testing these pipelines?
+
+00:09:26 - 00:10:09 Unknown Speaker:
+
+No, once we were able to set up this pipeline, then I'll be able to let you know to send the file. You can prepare the file the way we did it for the rest of the four pipelines, right? Yeah, okay. Just have that same structure. I'll just give you the file name, right? But once I'm able to set up the SFTP profile, maybe tomorrow I'll give you the file names. Okay. For these tables. Awesome. Thank you. And I'm just waiting for these pipelines to be created so that based on those pipeline details, right, because table name may be, as I was mentioning it to you, right, like US engine or something. Based on that, I'll set up that configuration. Perfect. So maybe by tomorrow, you already, uh, uh, we can give you that uh file name.
+
+00:10:09 - 00:11:02 Unknown Speaker:
+
+Okay, cool, okay, uh, anything else from your site? JASoN Nope, that's it. Okay. Thanks Jason. Thanks very much. Uh, rest of the team, do you have any, uh things to discuss? Any challenges? Any blockers like Kundan? He did not join, but I am aware with his part. Uh, man, now I need to pull you to that call. Uh, can you show me where are the data? Is there? That build is still failing. Okay, and there is a platform issue which is going on. Can you set your screen and just show me the data? Let me invite you to that call. Okay, I'll ask you to present that. UI. Okay, the changes are deployed in even such, and I have shared you over the group also to Can you?
+
+00:11:02 - 00:12:28 Unknown Speaker:
+
+Uh, I know that has been said, but that is not working right now. Even your human tasks might not be getting created because, uh, the deployment was failing. So I don't think that even that. I just need to view for which table or for which use case the data is there. I'm certain I've shared you. And so for table R42 Register update, DQ check well, are getting loaded, not the use case. One right use case is also getting loaded. Great deployment of fail. Okay, in this case, we have this toolage for the use case, right? Nice if I'll show this, this is coming from database, right? No, I agree. But why myself and Kundan is laughing because that build has been failing from morning. It is not working at my end. Okay.
+
+00:12:28 - 00:13:35 Unknown Speaker:
+
+So it is good that it is working at your end. So please join us. Check in maybe in Chrome once. Okay. Now click on table. Click on table. Do we have any data with respect to any table? Yes. Okay. R42. Anyhow, just join that call. This role description is not coming. That's not mapped. It's not coming in the API. Though we have given the justification in the table. Right now I am not bothered. Can you click on add role? Yes. Can you submit a new request? Can you try to submit a new request? Is it working or it is failing? Oh, we are able to submit it, it shows successful with the AP. But, uh, when we are trying to see the go ahead and and do that, give anything, just now, submit it.
+
+00:13:35 - 00:14:55 Unknown Speaker:
+
+So the task is completed. Okay, okay, but can you go now? Can you have that? Up to a page here? It is not getting listed. Yeah, because the task is not getting created. The reason being human test is failing because the deployment was unsuccessful. So you won't be. But. But this is good that at least we would be able to show them this. Uh, one, yeah, and also, uh, I am facing a blockers. The E1. Sorry, the local is not up, okay, so the outgoing is local is failing this API to get the cookies and all is failing. Okay, one day, one day. So people have already raised in support. So this is an ongoing support. Ongoing issues. Because this is impacting our created this, uh, zero task, sorry rally task. And you will see how that.
+
+00:14:55 - 00:15:55 Unknown Speaker:
+
+For six hours keeping a track of this, not only six hours, we have to note down the stage, dates, number of hours it has been down. Uh, this is just for you, you know, notification that you know. There are deployment issue which is going on from last two to three days. And this is impacting the build progress, which we are doing for the self-serve. As we have communicated them that this process would go live right on 8th of June, there might be a delay, so would need your help when you know, communicating this to the business. Sindhuja If you are able to hear us. Anyone else having any other question? Because I already had a connect with all of you. And, you know, I already spoke to Suman in seven also in the beginning of the call.
+
+00:15:55 - 00:17:03 Unknown Speaker:
+
+Anyone having any other challenge? It is such a one question. Now we need to ask to Anand. Actually, uh. Regarding the load data, he confirmed the group chart like, uh, CSP model IDs expressions was there, and we need to use the load date like that one. So, other than model ID set, normal tables, right? So, that one also we need to consider as a cron expression same data and not just we need a confirmation. For that you mentioned that as the DAGs are already scheduled as per the basis of table level, right? Like as we discussed, you need to check that whether that is the case is actually asking or not. If that is the case, then they need to consider, Yeah, yeah, that's okay. Any other question? Just, uh, one second, uh, seven, before I move it to you.
+
+00:17:03 - 00:17:57 Unknown Speaker:
+
+And if I have modified your VPMN, okay, let me tell you there would be a slight change, which I'm expecting from Raj. Uh, I haven't done it intentionally. Now, you should be getting this B45 and B40 from ECMAT, the very first bundle itself. Catch the task for all the workbasket. There might be chances that you might not get even a single task for all the workbasket. In that case, we just need to stop the process. But if the record count is higher, we would be getting the task details for all the tasks. So, here it is a loop. And I am pretty sure that Raj would ask me to break down this to a sub-process. Right, so that might be a change, so this would be calling a sub process. Okay, that might be once again.
+
+00:17:57 - 00:19:03 Unknown Speaker:
+
+When you are sending the email, this would be again on our loop. Suppose you have received the task details for four workbasket, so you have to send the mail to code B40 or B45. So this is again going to be a new loop. And even this, he may ask to break down to a sub process. That would be the my name, that's it. Okay, so I'll review it Monday and then I'll let you know till that time you can start going on this question yesterday. But some of the rules started failing. Okay, uh. Although those are validated, check the logs, not the logs. Like the rules are running. The actual value. The actual results are failing. Now. Check the logs. Once. Is the query that, uh, you were expecting is that remains same?
+
+00:19:03 - 00:20:16 Unknown Speaker:
+
+Yeah, that query is the same. If query remains the same. Thing happens to me. Sachin The because we have changed yesterday, what we have taken input from that, you know, we have modified and we did. Yes, I have seen one conditional change that you are checking for one month and 12 months also, right? Yeah, one monthly is working fine, the for the weekly no. This is one, this condition, this condition, yes, this one, right. So here, uh, I have an observation. This was something I know. We had this distance yesterday, right? Interval of one month, right, and then again an interval of 12 months. What is actually happening over here did? We tested it on the lower environment? So this is like completed 12 months, so current month minus one month will be the completed month like April, and then we are subtracting 12 months.
+
+00:20:16 - 00:21:20 Unknown Speaker:
+
+So it was just like April 25 onwards. Okay, but at the same time we have that, uh, okay, for the weekly, it's, uh, weekly. One is the failing the rules. Actually, before I have feeling like a two and yesterday you can't fail for, uh, just. I'm checking if there is any changes in standards. Can you guys do one thing? Uh, I hope we have that one uh, method, right where we can run these. Execute this query, right? Uh, I have some, uh, spend some time with seven and so on. Uh, execute this query with that tag, with that particular tag, not create or replace, just select Star. Okay, but is there any? Uh, is there any PI data here, even if you have the PI data, so what is the problem? Even if it is having PI data?
+
+00:21:20 - 00:22:04 Unknown Speaker:
+
+What is the problem? No, no, if no PI data means just we need to execute a directly SQL query in the E3 environment. Only select stuff. Something they might not, they might not be having the access to all these tables, right? You can check if you can access, right? Yeah, sure, I will check that. You need to check whether you have access to this GMS targets and identifier or not, so if you have access, help them to run this query in the E3 environment. And then, if any modification equals is required, uh, seven instrument, go ahead and do that. And then I just, uh, share with them. Because we have now used this standard pop database, and also, right, it was different from the one uh, which we were using earlier, so this might have also created some issues.
+
+00:22:04 - 00:22:55 Unknown Speaker:
+
+Yeah, if you use the sample deviation, maybe, yeah, exactly. They asked me because you show him, like, I guess I was there in call yesterday. So I I know they have only asked this to use this one, right? So even before speaking to them. But I would request you first of all, uh, run this query. Uh, I have pulled the query from the logs itself. Uh. Just see if you have the access to run it. If you're not having the access, then just replace this query in the AP environment. Okay, and run it and then see what is the result. And then just check the difference between standard aviation and then this will pop up. And then, based on the result of deviation, it's like a if you have near to the zero or higher lesser values, it should be failing.
+
+00:22:55 - 00:23:45 Unknown Speaker:
+
+Session for the sample deviation between, like in 0.2. Also, it will for it should be passed, but not in the population. I got it, but this is the ask that they have did it right, so what I'm asking? You run it with the pop as well as with the sample. Okay, check that, check the difference and then share the result to Rachna over the mail. Because without, uh, checking the result, we won't be able to, uh, these, uh, YouTube only social. That's why I didn't start that one, because I didn't get the update on the new task in this way. That is fine, that is fine. You can go ahead and take help from my Apple. Apple will help you to run these query. Okay, he would be having the access.
+
+00:23:45 - 00:24:49 Unknown Speaker:
+
+Okay, I see like on in the joint, Hey Sergeant, hi everyone, hey hi Anand, Okay, uh, any other questions? Seven, and so on. Before I, uh, stop, yeah, go ahead, go ahead. I'm sharing the screen. Actually. Okay, go ahead, go ahead. Actually, I'm checking for the table name. I'm getting this one. For the USCS only, I'm getting all this. Can you go to your DT flow? What was the query that I have given to you to implement this one? This is the table that we have only created, right? I don't need that for this table. Can you go to your DT flow? Or else, can you check the query which was being implemented in this DT flow? You want to check inside the queries on the table names? Yes, yes, yes.
+
+00:24:51 - 00:25:47 Unknown Speaker:
+
+Before usually we will check like that, right? So that's why I'm checking. No, no, no. This DT flow has been created using some different tables, right? Like this table, right? So I need what access these tables require. What SD, what NGVD access these tables require. Give me those details. Yeah, sure. Where we would be inserting the data. Yeah. Oh, okay, yeah, okay, uh. Just on that production issue, uh, I have raised that concern with the SFT team. Also. UH did not receive any uh uh response as of now. I'll wait for today, otherwise I'll create an incident tomorrow. So ideally, what look that dag failure when I was into conversation with Kundan? We have seen it has tried, uh, for 25 minutes, okay. But this cluster did not get created.
+
+00:25:49 - 00:26:41 Unknown Speaker:
+
+Even if that failed, we did not have that mechanism of re-trigger because that cluster PSN is already being done from internal Composure side. It is already doing that retry. And again, save point and SFTP was not required because in SFTP, once you consume the file, it moves from outbox to send and then within 24 hours, file will get flushed. So there are a couple of environment failure. One is that Lumi, my cluster did not create it, and second is that SFD web files still remain, because that ODL, the composure flow which Kundan is running, right, that runs at 10 a.m. ISTS, and then this ACE, we are running at 3.30 p.m. So even if you check the interval, right, if I paste a file today at 10 a.m., right, and my ACE is running tomorrow at 3.30 p.m.,
+
+00:26:41 - 00:27:32 Unknown Speaker:
+
+right, ideally that file should be there, Because... at 10 a.m next day, right, 24 hours would be completed. Yeah, but still, somehow that file was there in SFT, and when it is, just picked up that file and then reprocess it, okay. And there were four failures, three on that CM11 and one on that video analytics for video analytics. The task did not get created as that workbasket is still not being already. Okay, we are good with that. It's just that it has been created for these cheat record. Yeah. So, additional check that I have asked once we have some bandwidth that going forward we will be appending the date to the file which we have placed into the SMT. And there will be an additional check on the ASET that it will be picking up the file with current date on it.
+
+00:27:32 - 00:28:20 Unknown Speaker:
+
+Yeah. Got it. That sounds good. Yeah. Yeah. So that implementation, we will take it later because right now is always the priority, but we will keep an eye on those products. Sachin, I think let's maintain like an accentuate or something with all these small, small items, right? So that we do not forget everything. Yeah, yeah, yeah. Yeah, yeah, I'll do that. I'll do that. Okay. So that was on that production issue. The rest of the folks, can you start giving your updates for a couple of minutes? Actually, Sachin, we again have to jump to another call as well, like that GIGA rally kind of meeting is there right now, training, right? So it's fine, I think. Is there anything on top priority, something you want to discuss or something? Otherwise, it's fine.
+
+00:28:20 - 00:29:16 Unknown Speaker:
+
+Yeah, I would like to think, like, which you have asked to update that load date, right? Yeah, yeah. I just want to quickly share. So, as you mentioned, suppose you take this DAG, this is a table-level DAG which was scheduled on every month 10th. So, suppose we have 10 DQAs falling under this table-level DAG. So, these 10 DQAs should be scheduled as per this DAG. Exactly, for every 10th of the month. Yeah, because the way I'm asking this, like, if you see here, these DQIDs, we are having a model ID, but like, if you see in the bar, which is in the color, highlighted in this color, it does not have a model ID. So in this case, we'll search for the DQID, and we'll check the DAG, and when it got scheduled, and we will do that.
+
+00:29:17 - 00:30:29 Unknown Speaker:
+
+Exactly, yeah. Also, I think Andriksh connected with you regarding that I think CSP model score values are not coming correctly, right? Yes, I have connected and have shared the details with Andriksh Anand. So, I think he said that he wanted to investigate something on the data and maybe he will connect with you. Okay, sure. Okay, Anand. Thank you. Thank you. Sindhuji, before we just close the call, Anand, if you want to drop off. Sindhuji, do we need to attend those live classes for Jira also? Is that mandatory? Yes, sir. Okay, I did not register yet. Let me do that then. Anyone else having any questions? From my side, no. Sir, when you guys are good. Yeah, yeah. It's just that, you know, you just need to trigger one tag, that's it seven, so that should not take much time.
+
+00:30:29 - 00:31:12 Unknown Speaker:
+
+You just need to pass your SQL file to that tag, that's it. Yeah, no, I I mean, I know the issue could be that the table does not have the latest data because it's failing for the last week only. Oh, I just wanted to confirm that. How did you identify that? Because the actual value, like there's. There are three rules, there are six rules, three rules are based on a different table, and those three rules are failing. Where the actual value is compounded for last week and the expected value is for past 12 weeks, right? So first 12 weeks value is loading, only the last week value is coming as zero. Okay, then then let's have a, you know, revalidation, because even Suman is having that same issue, right?
+
+00:31:13 - 00:34:54 Unknown Speaker:
+
+So, because that worked like the first time when I shared the results originally, I did not change any query or anything she had already signed and signed off on it. So I want to make sure that the table refresh schedule, like whichever tables I'm dependent on. What is the table name? What is the table name? CMS Transaction Identifier. Not sure if I have access to that one. Yeah, because I don't have. I tried it and nobody would be having. Because I have already told you, right, to get the access, it is very difficult. Oh man, should I apply a limit, then just do a max. Samir, can you try at your end? Okay. It is the person who is having max access. Now it is not running at my end. In the production.
+
+00:34:56 - 00:35:59 Unknown Speaker:
+
+Don't try to access any PII data. You are trying to, okay, find the distinct. Uh. So it would be having even yesterday's data, right? Uh okay, uh, so seven it is of today's state data. Is there? It is there. You can see this one, right? Yeah, I can see I.I don't know what's going wrong. Then that is the reason I'm asking you take the help from my Okay. Then only you'll be able to identify, because you will be able to change the query. Uh, through that composer only. There is no alternate uh that we can do it, but data is there. You have seen it, right? I just cancelled the query, it has come up with that last date. Anyhow, I'm going to connect with you at 8.30, right?
+
+00:35:59 - 00:39:34 Unknown Speaker:
+
+So, in case that issue persists, we can continue over that call itself. Okay. Thank you, guys. Thank you. What is this 8.30 call? Do you have time now or should I connect later? You were asking, is that what is 8.30 call? Who were asking, sir? I was asking, yeah. Okay. Hi, Prithvi. Samir is asking, actually, a technical, I think, scheduled by Sachin. Yeah, it's technical discussion. Any requirements or anything happening, he wanted to do a team understanding. Yeah. Yeah, yeah, correct, correct. Yes, yes. Okay, fine. I'm dropping, okay? Thank you. Thank you so much. Yeah, thank you. Hi, Savitha. I'm Prithvi here. Yeah, how are you? Thank you.
+

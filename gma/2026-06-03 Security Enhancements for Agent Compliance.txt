@@ -1,0 +1,145 @@
+2026-06-03 Security Enhancements for Agent Compliance
+
+Creation Time: 2026/06/03 14:02
+
+
+📅About Meeting
+
+• Date & Time: 2026-06-03 14:02  
+• Location: Virtual Meeting  
+• Attendee: Ravi, Joshua, Karun, Arjun, Madhu, and others
+
+📒Meeting Outline
+
+Security Enhancements for TDD and UH Agent
+
+• Google Security Recommendations Overview  
+  The team discussed required updates to the Test Design Document (TDD) and the UH agent to comply with Google's security recommendations. Key security controls include using the Orcus agent framework, which requires no additional implementation as it already supports detailed audit logging.
+
+• Principle of Least Privilege  
+  Agents must operate with the minimum necessary permissions. This is already in place and only needs to be explicitly declared in the documentation.
+
+• Robust Prompt Injection Defenses  
+  The team reviewed general strategies to defend against prompt injection attacks. Each agent must describe in its TDD how it mitigates prompt injection, although there are no Google-specific test cases. This is mandatory for approval.
+
+• Mandatory Security Assurance Testing  
+  Agents will be onboarded to Google's Code Rare platform for security assurance testing. This process has been initiated for the CL verification and test execution agents.
+
+• Emergency Stop Mechanism (Kill Switch)  
+  A critical feature to immediately halt all agent activities and sub-agents if something goes wrong. This hard stop should terminate ongoing tasks and bring agents offline. It must be included in all agents' TDDs.
+
+• Rate Limiting and Throttling  
+  Implementation of a circuit breaker and token bucket algorithm is required to control agent request rates. Teams are advised to incorporate these mechanisms into their agents.
+
+• Human in the Loop  
+  Google recommends having human oversight in agent operations. While some agents currently lack this, teams are encouraged to explore ways to include human in the loop for security compliance.
+
+• Continuous Monitoring  
+  Agents should implement continuous monitoring or propose solutions if not currently in place. This is part of the security policy requirements.
+
+• Launch and Security Review Process  
+  The NSEC AI team has been engaged to initiate launch and security reviews for all agents.
+
+Discussion on Specific Agent Scenarios
+
+• Control Limitations in Self-Healing Agents  
+  Some agents, such as those triggered by TFA without direct user interaction, currently lack control mechanisms like emergency stop or human in the loop. The team agreed to explore possible solutions for these cases.
+
+• Integration and Individual Adoption Concerns  
+  For agents accessed via test execution master agents, existing controls suffice. However, if agents are adopted individually, additional security features like emergency stop and human in the loop must be implemented.
+
+• Prompt Injection Defense in Integrated Agents  
+  Agents integrated with others must still document their own prompt injection defenses in their TDDs to ensure comprehensive security coverage.
+
+• Documentation and Formatting  
+  Teams were reminded to update their TDDs carefully, maintaining format and font consistency while incorporating the new security points.
+
+📋Overview
+
+• The Orcus framework is confirmed as the base agent framework with built-in audit logging.  
+• Principle of least privilege is already implemented and requires formal declaration.  
+• Prompt injection defenses must be documented and implemented by all agents.  
+• Security assurance testing via Code Rare is mandatory and underway.  
+• Emergency stop mechanism is a hard kill switch to be included in all agents.  
+• Rate limiting and throttling mechanisms need to be implemented using circuit breaker and token bucket algorithms.  
+• Human in the loop is a required security feature; teams must explore implementation options.  
+• Continuous monitoring must be implemented or planned for all agents.  
+• Special attention is needed for agents without direct control or human interaction, such as self-healing agents.  
+• All updates must be reflected in the TDDs with proper formatting.  
+• The NSEC AI team is engaged for launch and security reviews.
+
+🎯Todo List
+
+• All Agent Teams:  
+  • [ ] Update TDDs to include security recommendations: prompt injection defenses, emergency stop mechanism, rate limiting/throttling, human in the loop, and continuous monitoring. Ensure formatting consistency. (ASAP)  
+  • [ ] Declare adherence to the principle of least privilege in documentation. (ASAP)  
+
+• Ravi & Security Leads:  
+  • [ ] Share detailed prompt injection defense steps with all teams. (Immediate)  
+  • [ ] Coordinate onboarding of agents to Code Rare for security assurance testing. (Ongoing)  
+  • [ ] Explore solutions for implementing human in the loop and emergency stop in self-healing agents without direct control. (Next meeting)  
+
+• Joshua & Madhu:  
+  • [ ] Investigate possible methods to incorporate human in the loop and emergency stop mechanisms in self-healing agents. (Next meeting)  
+
+• NSEC AI Team:  
+  • [ ] Conduct launch and security reviews for all agents as initiated. (Ongoing)
+
+Transcription
+
+00:00:01 - 00:00:19 Unknown Speaker:
+
+Sir, we are getting a bit of an echo. Let's see what they are saying. Sir, we are getting a bit of an echo. Sir, we are getting a bit of an echo. Sir, we are getting a bit of an echo. Sir, we are getting a bit of an echo. Sir, we are getting a bit of an echo. Sir, we are getting a bit of an echo. Sir, we are getting a bit of an echo. Sir, we are getting a bit of an echo. Sir, we are getting a bit of an echo. Sir, we are getting a bit of an echo. Sir, we are getting a bit of an echo. Sir, we are getting a bit of an echo. Sir, we are getting a bit of an echo. Sir, we are getting a bit of an echo.
+
+00:00:19 - 00:01:37 Unknown Speaker:
+
+Sir, we are getting a bit of an echo. Sir, we are getting a bit of an echo. Sir, we are getting a bit of an echo. Sir, we are getting a bit of an echo. Sir, We are getting a bit so hi, everybody. Uh, in TDD, we have to make few changes as per the security recommendation from Google. Okay, uh, we have to add a few points inside the TDD and then implement it in the UH agent as well. Okay, these are the security controls we should have in our agent, as per the Google I list. I will talk about it first. One is a agent framework that we will use. Orcus. We don't have to do anything here, it will be implemented as we say, the LGTM, this is fine, you can put it as yes.
+
+00:01:37 - 00:02:52 Unknown Speaker:
+
+Available. Principle of least privilege for agent identity we have, we have to declare it. Agent will operate with the absolute minimum necessary permission and avoid running with the user's full privilege. That we have to declare it and make sure we are following it. This is second point, robust prompt injection defenses. I talk about it. There are few steps which we can include in the agent for the prompt injection defenses. Mandatory security assurance testing The agent will be onboarded to Code Rare for security assurance. This is one application in Google where we have to onboard the agent and then the security team will test it. Okay, that we will do after the orchestra department, that we can declare it, yes, we will do it. Okay, emergency stop mechanism, I'll explain. We have to include this in the TDD.
+
+00:02:52 - 00:04:01 Unknown Speaker:
+
+I'll explain how. So these two points I'll explain. Rate limiting and throttling. This is also one point we have to mention in the agent. I'll explain how we are doing it. I have prepared it for test execution. Rest of the TDDs we have to update. Respective PUC will update. Launch and security review to go and initiate it and the NSEC AI team will be engaged. That I have already initiated for the CL verification and test execution. You can mention it. You can declare it. We will do it for all of the agents. This is also you can put it as yes. Detailed audit logging. Here we don't have to do anything. In Orcus it's already implemented. Orcus framework will do the detailed logging. You don't have to do anything. Just declare it. Yes, we will do it.
+
+00:04:03 - 00:05:12 Unknown Speaker:
+
+Human in the loop. All agents are using human in the loop. You just have to mention how your agent is using the human in the loop for your agent. You have to explain it, I have explained it on test execution, okay, continuous monitoring this, I have explained it for a test execution. You have to explain if there is any continuous monitoring, if not, then implement it. You have to come up with the solution, how you are going to do the continuous monitoring for your agent. Okay, these are few points as per the security policy we have to include. Now I will talk about this recommendation. Prompt injection These are the few steps. Uh, I'll share it. You can go through it and make sure we follow these. Okay, prompt injection we have to follow for all the agent.
+
+00:05:14 - 00:06:19 Unknown Speaker:
+
+These are the few steps we have to mention in your TDD. This is mandatory. Emergency stop mechanism, we have to include this in your agent. Use these steps. What emergency stop mechanism is, if there is something go wrong, there should be one kill switch. Where we can stop all the agent, and then all the sub agent for that particular agent. For test execution, it will stop all the sub agent which it is using for other agents. It should stop their agent, so stop all execution and go offline. If you put it in the chat, it should, it should stop, terminate all sub agents, any ongoing tasks will be stopped, everything will be stopped. This is the kill switch for our agent, this we have to mention. Then there is one more point that is rate limiting and throttling.
+
+00:06:19 - 00:07:17 Unknown Speaker:
+
+We have to put one circuit breaker and we have to put one algorithm for the token bucket. This both thing you can implement in your agent, how you will do it, I have mentioned it, try to include it in your agent. Okay, these are the three things we have to include in our agent as per the security guideline. If anybody has any question, uh, yes, so one question, this uh, emergency stop, right? So is it, uh, like we just stop the execution of the event, or like, we just stop it? It's a hard stop, and we're not like, it's like, Uh, we have, we have pulled the plug. That kind of stop is, it's a kill switch. Everything should be stopped after this message Okay, and all other agents can use same message, okay, stop.
+
+00:07:17 - 00:08:29 Unknown Speaker:
+
+All of the which can go offline. That we can, you know, define as a kill switch when we are presenting it to the Google for the same thing emergency stop mechanism. Currently our agent is being triggered by TFA. We don't have any chat space or anywhere to interact with the self healing separately. So in this case, is there any thing that we have to do? Any suggestions or recommendations? You have some control over your agent, right? Or no control at all? Currently, no. We have not. Implemented in the system. It's a continuous flow that happens. Then in that case, test execution will be using your agent directly, right? Yeah. Then you can skip it or let me find out some way how you can implement it. Yeah, okay. Because you don't have the direct control then it's a different situation.
+
+00:08:30 - 00:10:05 Unknown Speaker:
+
+Yeah. Yeah. Yes, Karun, Joshua. If it is used by the test execution master agent, that's fine. But what if it is adopted individually? What if a defector has adopted it individually? We have not decided it yet. But what if they use it individually, then we have to implement it. Ravi for hours. Like, we don't have human the loop thing, so we can keep it as no right human in the loop. Yes, we need one human in the loop in the Uh. As for the security recommendation, but your case is we have not implemented it. Then we will talk about it as these three points, the self feeling and your point. We'll talk about it and we'll see how we can include it. Because Human in the Loop is the one kind of security recommendation from the Google, we have to implement it.
+
+00:10:05 - 00:11:29 Unknown Speaker:
+
+JOSHUA Yeah. Explore it if you can include in any way, because that will be one pointer for the security team. Okay, explore it if you can, include D1 in the loop and try to hide it. Yes. Anybody else? Arjun? Yes. So for the defense against graph injection, right, Ravi? So if all the items have combination defense as well, when we integrate it, ours will have it as well. Obviously, we'll make ours as well, but since we have allowing access to individual sub-agents through test execution as well? Yes sir, in your case if everybody has executed the prompt injection that's fine but it has to be in the TDD at the time of the approval that's why I have added it here. You should explain what are you doing for mitigating the prompt injection in your design.
+
+00:11:30 - 00:12:47 Unknown Speaker:
+
+That should be mentioned in every TTT. Anything which user should not know and that should be stopped. Prompt injection is like I am asking some random question and agent is giving us the answer which agent should not give that is the prompt injection. That we are like looking against. Like there are few test cases like, Aha, I know from top of my head, like standard HM. Prompt injection defenses, like, is there like Google specific test cases that are like, No, we don't have any such test cases. You have to, in general, you have to implement the prompt injection. What are you doing it? What are you doing to stop it? Okay, we have to mention here I have added general points only.
+
+00:12:48 - 00:14:14 Unknown Speaker:
+
+Okay, it's not specific to any agent its general point how we stop the prompt injection Okay, You can go through it and implement it in your agent. Two uh points, I have added, Uh, we have to add in your TDD same way. Create a link first of all here. Equity recommendation, then prompt injections, emergency stop trade limiting. Okay, these three points you have to explain, and then in the end you have to create this. This table where you will mention if it is available or not. These are the guidelines are from the Google, we have to tell them specifically if it is available in our agent. Okay, uh, another thing regarding the privilege of least access, like security. So that one, like, isn't it? Don't? We already have, like, we have this one, right?
+
+00:14:15 - 00:15:37 Unknown Speaker:
+
+You just have to declare it, we are doing it. There is no specific change you have to make. We have to tell them yes, we are following your security guidelines, and we have to declare it anyway. We are not using any unnecessary permission, right? Having access to their particular level. So anyway, we are, we are following it. Simply go ahead and say, yes. That's why I have not mentioned these things. In the security recommendation. I have added only only points which we have to explain, which you have to, you know, incorporate in our agent. Okay, Anybody? Any question? So, you were in the loop for Joshua. One thing we have to explore. And self-healing, they don't have any direct control. So, yeah, that is the second thing. We can discuss about it, Madhu and Joshua.
+
+00:15:37 - 00:16:15 Unknown Speaker:
+
+Okay. You also explore. You also explore. I'll see what we get. Okay yeah but yeah but for other things please go ahead and update your td make sure you don't mess with the format font size everything should be perfect okay nothing else we can close the call. Okay.
+

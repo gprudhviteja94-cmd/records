@@ -1,0 +1,241 @@
+2026-06-04 Business Justification Data Handling and Deployment Coordination
+
+Creation Time: 2026/06/04 18:03
+
+
+📅About Meeting
+
+• Date & Time: 2026-06-04 18:03
+• Location: Virtual Meeting
+• Attendee: Anand, Sachin, Rachna, Ansi, Arthash, Samir, Suman, Bhargav, Kumaran, and others
+
+📒Meeting Outline
+
+Business Justification Data Handling and DBA Team Coordination
+
+• Business Justification Column Update  
+  There was a misunderstanding with the DBA team regarding the handling of business justification data. Instead of creating five new columns for additional business justification fields, the DBA team renamed the existing "Business Justification Text" column to store these five fields as a JSON object. The team discussed whether this approach is feasible and agreed that while ideally separate columns would be better, storing all five fields as a JSON object is acceptable if the backend code can process it correctly.
+
+• Concerns on Future Editing and Usage  
+  Concerns were raised about co-editing the nested JSON data in the future and whether the business justification fields would be used for filtering or processing. It was clarified that these fields are mainly descriptive and not typically used in filtering or rules processing.
+
+• Mandatory Fields and UI Enforcement  
+  The five new business justification questions will be mandatory from the UI perspective, but the backend will not enforce mandatory constraints. The first question corresponds to the original business justification text. For the initial launch, only the first question will be populated, with the remaining fields blank until made mandatory in future phases.
+
+• Next Steps and Code Modifications  
+  Minor code modifications are needed to handle the JSON structure properly and ensure mandatory enforcement at the UI level. The team agreed to proceed with the current JSON implementation.
+
+Deployment Updates and Scheduling
+
+• T3 Deployment and Escalation Emails  
+  From the current day, individual escalation emails for new tasks will be replaced by consolidated emails. The team discussed scheduling the consolidated escalation email dispatch around 10:00 to 11:00 AM with 15-minute intervals for different batches.
+
+• Ether Deployment and SFTP Upload Requirement  
+  Deployment for Ether was completed. The SFTP upload requirement from the Rage user is pending due to environment access issues but the code is ready. Testing and bulk action functionality will proceed once access is granted.
+
+• UMDL and Bulk Update Progress  
+  Ansi is working on SQL queries for the first 10 DQ roles and clarifications with Rachna. Bulk update checks and ARX reinstallation are in progress.
+
+• UI Enhancements and API Integration  
+  Arthash reported successful E2 deployment and is testing API integration for bulk processing. Lumi APN issues were resolved with the platform team.
+
+• Historical Process and Code Optimization  
+  Samir is working on enhancing the historical process to handle multiple DQ IDs and adding start/end date columns to the threshold table. Parallel processing optimizations are being explored to improve performance.
+
+• Rule Type Standardization and Template Usage  
+  The team decided to use a standard script template for each rule type linked to UI form inputs. Rules that do not fit templates will display free text descriptions.
+
+• QTrak Project Updates  
+  Modifications to the QTrak framework and SQL files are underway. Additional columns are being added to the QTrak threshold history table.
+
+• Data Migration and Pipeline Setup  
+  Anand is cleaning up files in the composure bucket to improve data accumulation speed. Two pipelines have been set up and submitted, awaiting transition completion.
+
+• E3 Environment Testing and Deployment  
+  TLS validation is complete, and sign-off for E3 tables has been received. Deployment is planned for Tuesday following RFC approval. The team emphasized the need for 48 hours advance notification for E3 deployments.
+
+Data and Query Review
+
+• Seastone Feed Key Usage and Table Verification  
+  The team reviewed the usage of Seastone feed keys and creation time fields in queries. It was noted that these keys are not used in filters currently but will be checked across 10 key tables to confirm no dependency remains. Ayyappa and Suman are tasked with cross-checking table usage and query references.
+
+• Lumi Tables Column Drop and Verification  
+  Some columns were dropped from Lumi tables, but these are not used in current processes. Confirmation is pending but no immediate impact is expected.
+
+General Updates and Coordination
+
+• RFC and Deployment Challenges  
+  Challenges with limited deployment windows and RFC approvals were discussed. The team requested extended RFC windows to facilitate smoother deployments, especially for the upcoming self-serve deployment.
+
+• Rally Updates and Query Clarifications  
+  Team members were reminded to update Rally with progress. A follow-up discussion on UMDL queries was scheduled.
+
+• Miscellaneous and Informal Interactions  
+  Some informal conversations and personal interactions occurred towards the end of the meeting, unrelated to project topics.
+
+📋Overview
+
+• The DBA team implemented business justification fields as a JSON object in an existing column, which is acceptable with backend code adjustments.
+• Business justification fields will be mandatory from the UI, with the first question corresponding to the original justification text.
+• Deployment schedules for T3 and E3 were discussed, with emphasis on consolidated emails and advance RFC notifications.
+• Progress updates were shared on Ether deployment, SFTP upload, UMDL queries, UI enhancements, API integration, and historical process optimization.
+• Standardization of rule templates and QTrak framework modifications are in progress.
+• Data migration and pipeline setups are ongoing to improve system performance.
+• Verification of Seastone feed key usage and Lumi table columns is underway to ensure no obsolete dependencies.
+• Deployment challenges due to limited windows were acknowledged, with requests for extended RFC approvals.
+• Team coordination continues with reminders for Rally updates and query clarifications.
+
+🎯Todo List
+
+• Anand:  
+  • [ ] Coordinate with DBA team to finalize JSON handling for business justification fields.  
+  • [ ] Schedule consolidated escalation email dispatch around 10:00-11:00 AM with 15-minute intervals.  
+  • [ ] Continue cleanup of composure bucket files and coordinate data migration pipelines.  
+  • [ ] Follow up on RFC approval for E3 deployment and communicate with Manju if needed.
+
+• Sachin:  
+  • [ ] Implement UI code modifications to enforce mandatory business justification fields.  
+  • [ ] Fix current failures related to mandatory fields in JSON structure.  
+  • [ ] Coordinate testing and deployment readiness for business justification enhancements.
+
+• Ansi:  
+  • [ ] Clarify SQL query requirements for first 10 DQ roles with Rachna.  
+  • [ ] Progress bulk update checks and ARX reinstallation.  
+  • [ ] Follow up on UMDL query discussions.
+
+• Arthash:  
+  • [ ] Continue testing API integration for bulk processing and UI enhancements.  
+  • [ ] Coordinate with platform team on Lumi APN fixes and environment testing.
+
+• Samir:  
+  • [ ] Complete historical process code modifications to support multiple DQ IDs and date ranges.  
+  • [ ] Optimize parallel processing for threshold checks.  
+  • [ ] Review and test changes in E3 environment post-deployment.
+
+• Suman & Ayyappa:  
+  • [ ] Cross-check all 10 key tables for usage of Seastone feed keys and creation time fields in queries.  
+  • [ ] Confirm no obsolete dependencies remain and report findings.
+
+• Team:  
+  • [ ] Update Rally with current progress and status.  
+  • [ ] Provide 48 hours advance notification for any E3 environment deployments.  
+  • [ ] Prepare for upcoming RFC submissions and deployment schedules.
+
+Transcription
+
+00:00:00 - 00:00:55 Unknown Speaker:
+
+So on that part, Anand, what happened? You know, it was a misunderstanding between the DBA team. If you remember, we have business justification box in the very first page, also, right? And then we requested them to add those additional five field into that. Uh, yeah, text right? Yeah, so what they did? Uh, instead of creating a new column to store those five record, right? Uh, they have renamed the existing business justification column. And then, uh, expecting everything should be going under that, as in JSOn object as a key value pair, so so, is that going to work, or we need a two different column altogether? Ideally, it would be better if they're different itself. But ultimately, see, uh, how you process it in the back, it depends on your code, right?
+
+00:00:55 - 00:01:47 Unknown Speaker:
+
+Like, even if it comes through one JSOn, all five of them, and you are able to park them and get it to us, I think that's also fine by us. One concern Sachin, while co-editing it in future, if you are planning to co-edit that, based on that particular property, that will be built up because it will be nested. Yeah. Why nested? Because you are using the data. One JSON inside that five columns will be there. But business estimation do you think that it will be utilized in any? I? I don't feel right. Those are not like a filter, values or something where you'll be using in clause right, it's just a para, right? Why they have submitted that request? Yeah, it's not even the rule description, right?
+
+00:01:47 - 00:03:10 Unknown Speaker:
+
+Even I can understand rule description if you are trying to figure out some rules based on certain description, right? So it's just a business estimation. Why did I create this rule. Do you see any case where we would need that information for processing or anything? I think, let me say this would give you a better context. Look, these are the additional business justification which we are going to add in, you know, the next phase, right? Which is being proposed for the future announcement, right? So what DBA team suggest? Instead of, you know, as we are expecting, these many numbers of liners for this business justification? Maybe, you know, 2000, that's what we have proposed them, almost 2000 for all those five columns, like, basically, I asked for these five columns, right?
+
+00:03:10 - 00:04:03 Unknown Speaker:
+
+So their suggestion was instead of keeping it into a column line, they just asked to make it as a JSON object. Now, what is happening? They did not created a new all together column and mark it as a, you know, a new column for that what they did. We have a business justification column in the very initial page. Also, right? I think I need to log in. Oh, that is business justification text. Oh yeah, yeah, business justification text. So what? Uh, what? They are trying to add that business justification text along with these five? So now the question is, I don't think like, you know, this is anyhow going to be, you know, uh? Test in future for any QRI filtration or any DQID filtration, right? That is something Anand was asking to you.
+
+00:04:14 - 00:05:06 Unknown Speaker:
+
+Postgres instance has powerful JSON functions. So even if you want to query it out, it should not be that big of a task. It should not be that difficult. Yeah, that's what I mentioned. But I just need business alignment before moving ahead with the change. I have already given my alignment and they have already created that. That modification was already being done. So they have already made that as a JSON object. Okay. Just question to Rachna. Do you think that there would be any impact? Sorry, Sachin. I was just sending out one mail. I thought you were discussing with Anand. Can you just repeat once? Look, we have a business justification column in the very first page, right? Where the user is providing a business justification.
+
+00:05:06 - 00:06:04 Unknown Speaker:
+
+And this is... uh, the new enhancement which has been requested to be made in the upcoming PI. Right, right, so these five questionnaire, right? So it was from the DBFP team. They suggested to keep it. Into a JSON object, the reasoning user may fill four, five liners, or, you know, 10 liners, right? Which is going to be a bulk of data right now for these five columns, right? Instead of creating all together a different column with a business justification, test, what they did? We were already having one column, right, called Business Justification Text, right? So they made that to a JSON object. And expecting that, you know everything with respect to business justification. Yes, yes, yes, yes, I don't think so. Yeah, so so we changed the format in the older one, we did not have it.
+
+00:06:05 - 00:07:00 Unknown Speaker:
+
+No, no, that's not. I think you're getting confused. Basically, what we're now doing is key when we're getting it through UI, right? We have a separate piece for business justification. So that DB at the back end, yeah, such is just asking you, do you need like five different columns for these five different texts? Or can like DB? DB's time is to make just like one JSon this can be like nested five different texts, so I was just mentioning. Typically, it shouldn't be all right. It's not used regularly. I mean, it's mostly like a one-time thing. Okay. So, now, Anand, we would be having six columns. Okay? Six key, basically. Six key in that JSON object. One would be business justification text. Okay? Which you have to suffice your first page. I think that is not required in Sachin, right?
+
+00:07:00 - 00:08:19 Unknown Speaker:
+
+That first page will not. Yeah, because we are in detail, getting all that information from the second page now, right? Uh, let me then make it as, uh, as question number one, question two, question three, question four, question five. Right now, question one would go under that text. And then, right, so right now, what you're saying? But what I'm asking is if somebody puts in business justification in the first page, right, then it is a lot like it's just extra effort. No, those five would not come, only question one would come. Rest would remain, uh, blank, until unless we make it as a mandatory one, right? Come again. I didn't get that part, so right now, this would be your JSOn string. Okay, yeah, twice for the first one.
+
+00:08:19 - 00:09:16 Unknown Speaker:
+
+Right now we are going to store in the question number one, okay, okay, as that business, just to be on text and we'll, uh, launch the portal. Right? Once this change has been incorporated, then, uh, when somebody is going to modify, right then? Or the new request would come with these questionnaires, that's it. So, uh, you need to make this change. Okay? Is it mandatory? Yeah, it's a mandatory. Going forward, it, it's going to be mandatory. All fives are mandatory. You have to pass that, right? Yeah, but yes, question here is, I mean, such an Abijo uplaunch, right? That will only have Q1, right, only right, right, right, that would be only having Q1. Yeah, but will it fail then? If we try to send some requests right right now, it is failing.
+
+00:09:16 - 00:10:22 Unknown Speaker:
+
+We are fixing that, AnanD So we'll, we'll make that fix. I think you didn't get the question I'm saying of all five columns, you have made it mandatory. You are saying the column gets mandatory, not the image. Exactly. Whatever you want to make is mandatory. There will be no mandatory clause from the backend, it will be from the UI. Anand, regarding this business justification, I just have one concern. What if the users end up filling just this one part of it, right? That's where, Rachna, that is the flexibility that we are going to... Each of that will be mandatory, right? Like, no, no. Okay, sure. Got it, got it. I think it was a miss from DBS side. I think they did not understand the requirement TLE. So we need to make that slight code modification.
+
+00:10:23 - 00:11:22 Unknown Speaker:
+
+That's fine, Sachin. I will, you know, conflict that. Okay, thanks. And Anand, regarding the T3 deployment, I would like to know, like, now you're not going to get individual escalation email. That is something from today onwards, whichever. Whatever previous task is pending, that would still send those communication if it is in open status or reserve status. Yeah, but the task that those have been created from today. You are not going to get those individual escalation email now in order to set you on that consolidated one. I would like to know the timing or exactly when you would like to schedule it. Like 10 a.m, 11 a.m, okay, then then I'll schedule B48, 10 and maybe 15 minute interval B45. Yeah, yeah, okay, yeah, that should be right. Yeah, thank you. Uh, normal.
+
+00:11:22 - 00:12:18 Unknown Speaker:
+
+You can go ahead with the update because that was the change of yours which went live today. V. 3. So, yeah, I did, uh so. I was busy with the Ether deployment, and then I was working on the, uh. New requirement for the SFTP upload from the Rage user. When you table, I was not able to deploy it. I did not have access to the environment yet, but yeah, I did the course, okay, uh, so, namely that environment. I was having a conversation with the Lumi team that would take time. So if your code piece is done right, you can move to that bulk action part, you can test that functionally a.s. ANSI has moved to UMDL, right? So you can pick it up. ANSI, can you go ahead? Hi, Tim.
+
+00:12:18 - 00:13:26 Unknown Speaker:
+
+So today I was working on the UMDL, the SQL query preparation for the first 10 DQ roles. I have some clarifications in that I have not written down. I will clarify that with Rachna today on that. And also on the bulk update, the new check which led us, there was a general head who worked on that. And yeah, the ARX reinstallment is already in motion. Okay. That's my update. Fantastic. Thanks, Ansi. Arthash. Hi, team. So I was working on the UI enhancement, which was increased and the E2 deployment was success. Yesterday was testing that, too. There were a couple of things which we found out. Which team is looking into that? But from that, I am testing the Apes integration for the bulk processing. The UI is done, so I was testing the flow and will be integrating the APes for that end-to-end flow.
+
+00:13:26 - 00:14:24 Unknown Speaker:
+
+Anyway, that's all from my side. Uh, so, just one update on in the Lumi APN, All right, that has been sorted out yesterday. Uh, so we fixed that with our platform team. Uh, so maybe once and then fix this part, right? Which is failing right now. Uh, I would request you to go through, you know, have a round of testing in the environment, so that once you provide, uh, you know, heads up, we can start deploying it on the environment. Starting next week. Okay, yeah, thank you. Um, Samir, Samir, you need to go on unmute. Uh, sorry, it is taking a little time to unmute it. Sorry, so uh. Currently, I'm working on the historical process of one row.
+
+00:14:24 - 00:15:07 Unknown Speaker:
+
+So in the morning I have shown like the progress with like section like where, where we can see how the data is actually calculating the range and based on the range. Like, uh, how the data is actually getting. So since, like, it is an even right like, like. We see that, uh, few of the data is getting as null because because of lack of data in the given, but like, few of the data. We are getting the data like, uh, values for the UH, for the particular time range which we are actually trying to run the process. And uh, such in a like, like, we thought to have some changes in the code, so, uh, based on basically like, uh. Adding the two columns like history, start date and end date.
+
+00:15:07 - 00:16:00 Unknown Speaker:
+
+Like so that in the threshold table, so that like, we can know that, uh, which, from which range to which range you will get those values. So, and also like, we thought to have a list of for DQids as an input instead of a single DQId. So currently I'm testing that. But like, individually, if you are passing an individual dick ID and we are able to get the results for that particular time range. Uh, so I'll review the process tomorrow for the environment, and we have a planned deployment for E3 on upcoming Monday. So once done, then we would be able to validate on E3. Yeah, so I worked with Shamir in this one-row modification, code modification.
+
+00:16:01 - 00:17:04 Unknown Speaker:
+
+So where we are like, I've changed the part of code, so instead of giving single DQID, we have merged with the list and also how to pass all the DQIDs at once to get the result. And I'm also working on how to optimize, like we discussed earlier, How to optimize this contra code? Instead of going for the series? Whether we can? I'm like, uh, like, uh. Parallel processing, like create candidate UH methods to club some of the UH methods threshold methods to check whether the particular UH can actually test parallely on different thresholds. So I'm working on that code, yes, So Anand, on this part, what I have asked Bhargav is that right now there is a straight if-else condition, right? If it is picking up the world barrier, it's not going to the next one.
+
+00:17:04 - 00:17:50 Unknown Speaker:
+
+Although the trend would be towards that one, right? So I have asked him instead of that particular condition, let's try out feasibility. Where it would be picking up the, you know, the best algo out of those, the one that we have given out there. Yeah, yeah, sure, yeah, I mean, ideally, it's it is a rank according to that itself. But yeah, I mean, definitely. If you're seeing cases where two of the conditions are meeting right, or three of the conditions are meeting and it's just picking up the first one, I think definitely it's a good thing to check. Yeah, yeah, we observed that, I think Samir was having some data. I think we have discussed right earlier, right? And that is the reason that's good. Yeah, okay, thank you.
+
+00:17:50 - 00:18:44 Unknown Speaker:
+
+Um, quickly, we had a discussion on, and so, uh, Arishna, do you need to? Uh, do you like to ask any other details? Or because he would be still working on that? Yeah, no, I think we have got such a okay. So Anand, just one quick fallout here. So like we discussed a few methods and then ultimately we thought that let's do one standard script template for each of the rule types, right? Because going forward, we will be taking like standard UI form input for one check type, right? Yeah, so we will just, uh. We'll link it to the closest template that Prudhvi has built. Like amongst all the templates that he has for that check type, and for all the remaining rules, like, which are slightly different templates in terms of code.
+
+00:18:44 - 00:19:40 Unknown Speaker:
+
+So for those like in the modification request, it will show up as free text, the rule description will show up as free text. Because that we cannot fit back to the UI, right? Like all of them, we cannot. Yeah, yeah, so he's working on that thing right now, so I'm working on the morning. This one regarding the GCS Bucket SQL file model for the QTRAK project. So that part I have raised Peer, so I have some comments on that from the Peer. So I'm just modifying the UH, QTrak framework file methods. Actually, so that is in progress. Yeah, and uh, apart from that, for control, I got a request from Samir Uh. To creating the two more columns in the Q Track threshold history table so that one even is completed. E2 is currently in progress.
+
+00:19:43 - 00:20:49 Unknown Speaker:
+
+Yeah, that's all about such on this one. ANAND Actually, there were lots of files which is in composure bucket, right? So I'm just trying to clean up those files. Because now as we have multiple use cases, that is making those composite to, you know, impact. His accumulation speed, right? So as we have bandwidth with IAPA, I'm just utilizing the same, while he is supporting 50 on that data migration also. So I was working, uh, on the easy ending pipelines, so the two pipelines are set up and submitted, and even, uh, just waiting for that transition to be successfully done. I'll coordinate with JSON on that. Okay, and if you're not receiving any input from JSON. Then we have that backlog right where we are trying to move that to the database. You can continue working on that.
+
+00:20:49 - 00:21:59 Unknown Speaker:
+
+Yeah, yeah, okay, thank you, uh, Suman. Actually, the TLS part, the YouTube validation is done at, UH. Screenshot and output to the Rachana. Rachana giving the sign up for E3 for the tables. And time for tomorrow. Because I don't have the RFC. I need to be testing E3. No. So we receive the sign up on E2? Yes. The deployment would go on Tuesday then. Do we have RFC on Monday? Uh, no such thing. RFC is not available Mondays. Uh, then leverage the sign up that Rachna is provided for that, and then create RFC for upcoming Tuesday. Yeah, sure, okay. And uh. Just to reiterate to all of you, once you are done with your process, or if you feel that you know you, you are going to close your initiative.
+
+00:21:59 - 00:22:52 Unknown Speaker:
+
+Please make sure to get a sign up from the product partners. Uh, to move it to the E3 environment, we need at least 48 hours advanced notification to move anything to the A3. Okay, okay, and uh, sir, anyhow? Raj acknowledged that RFC, right, which we have asked for the Manjus approval. But just, uh, check with him. Uh, I'll, I'll, you know, I'll keep you posted before logging up. If it is not being approved, then just check with us to get it approved from Manju. Okay, so on, and that's as I was mentioning over that, uh uh, slack, right, uh. The problem with the is right as multiple deployment gets failed and we hardly get two to three hours of window for this. Yeah, yeah, that extended RFC, right, correct, correct. Yeah, yeah, that's, that's a good idea.
+
+00:22:52 - 00:23:41 Unknown Speaker:
+
+I mean, that's the ideal case if that happens. No, no, that that, uh, that used to be approved very rarely, okay? But I have conveyed the challenges. Because as we are going to deploy this self-serve from upcoming week, right? I I need that window, right, those complete one week window so that there should not be any challenge that I can't deploy. Post 5 p.m. All seven. Yeah, because the biggest challenge is that we get that support once the on-site people arrives from the east, right, even even yesterday. Who has been sorted by them, right? So, and once they sorted out, right, we should have that RFC to deploy it. Yeah, okay, because again, on E3PI, we write, we may need multiple change of something, right? So again those deployment would be required.
+
+00:23:41 - 00:25:05 Unknown Speaker:
+
+Okay, I think, uh, those are the major updates from the team. Anything else you want to check. I remember we are not using Seastone feed key because we are using those creation time. As far as I remember, these are not present in any of the filter conditions. I'm not sure. It's only for the specific tables that I mentioned in the email, not for all tables. I mean, it will eventually happen for all tables also because once the migration happens for all tables, that will happen for sure. Let me loop in Ayyappa to cross-check that. First, at least for now, go ahead and check all the table occurrences in all your repo. I think there are 10 tables or something. 10 tables are occurring or not.
+
+00:25:06 - 00:26:06 Unknown Speaker:
+
+If those 10 tables are there in any script, just check that from that table, is the system feed your last update time being pulled or not. Okay. So, Ayyappa, I'm tagging you along with Suman. So just, you know, check, you know, the number of tables that divide between yourself and just confirm us. Yeah, sure, seven I, I looked in you over there. So just take the progress from someone's side during his working hours. Yeah, sorry, I missed it. There were, you know, few columns that has getting dropped off from the Lumi tables. Okay, okay, we are not using those table as far as my analysis. And even, like, you know, Kundal confirms. But still, let's cross check that one, uh, before, you know, making a confusion. So I just looked in Iraq.
+
+00:26:06 - 00:27:16 Unknown Speaker:
+
+They need to just verify that. But I am pretty sure that, you know, we are generating yes, but anyhow, you guys can, you know, that is, we are reading from the Maestro notification. So we really don't have a dependency. But still still cross check that one. Okay, yeah, the concern, I think is more around the queries, not not regarding your framework. Yeah, yeah, in the SQL query, yeah, yeah, just cross check like any other query using those keys. Then we have to eliminate that. Yeah, yeah, sure, okay, then. Uh, nothing from my side. Anyone having anything else to discuss? Yeah, uh, this last thing. Team, please update the uh, this uh rally. Uh, originally. You can just stay back. Uh, we can discuss on UMDL the query that Ansi is having. Okay, sure, yeah, thank you team.
+
+00:27:16 - 00:35:09 Unknown Speaker:
+
+Oh, and see you again. Thank you. What happened? I don't know when you will be coming back. When? In the afternoon. I will meet you then. How are you? How are you? Last night, Kumaran told me that if you two become husband and sister-in-law, you won't be able to get 10,000 rupees. Why is there no sound in the background? Don't ask, it's Kumaran. Why can't I sleep? What's the time now? It's 9 o'clock. It's 9 o'clock, right? Tell me, brother. Tell me, brother. Brother, tell me one more time. I don't know. I don't know. I don't know. I don't know. I don't know. And it will stream it to unboxing wireless charging? Wireless? I'll charge it to you in the morning. I'll be back. Thank you sir. Take it. Take it. Take it.
+
+00:35:17 - 00:36:59 Unknown Speaker:
+
+What are you doing? I am going to the toilet. I am going to the toilet. You kiss like the. I don't know. I don't know. I don't know. I don't know. My phone is not even on. I'm trying to find my phone.
+

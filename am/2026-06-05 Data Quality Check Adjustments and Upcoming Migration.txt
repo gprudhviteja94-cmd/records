@@ -1,0 +1,124 @@
+2026-06-05 Data Quality Check Adjustments and Upcoming Migration
+
+Creation Time: 2026/06/05 15:43
+
+
+📅About Meeting
+
+• Date & Time: 2026-06-05 15:43  
+• Location: Not specified  
+• Attendee: Not specified  
+
+📒Meeting Outline
+
+Data Quality Check Conditions and Adjustments
+
+• Condition on Account Credit Variable  
+  The discussion focused on the condition for the "account credit" variable, which should not have values between 300 and 850. The current implementation uses an array, but it was suggested to use a range instead. The issue arises because the condition is written as "not between" which is causing problems. It was agreed to ask Arthur to update this condition accordingly.
+
+• Handling of Filter Conditions and Check Types  
+  There was clarification that some suggestions were not related to filter conditions. The team decided to keep certain checks marked as complex for now, especially those involving threshold checks and missing values. For example, Walmart Plus values should not be zero on any day, but this check will be skipped for now.
+
+• Duplicate Checks  
+  The "count of duplicate CM 15" was discussed and agreed to be categorized under duplicate checks. Some changes to check types were needed to reflect this correctly.
+
+• Boolean Value Checks  
+  Checks involving boolean values (true/false) were reviewed. It was clarified that these should only accept true or false values, despite some negative statements in the descriptions.
+
+• Handling of Null and Missing Values  
+  Several checks related to null values and missing data were reviewed. It was noted that some checks expect less than 0.5% missing values, and others require zero percent nulls. Some descriptions and check types need updating to reflect these expectations accurately.
+
+• Future Date and Threshold Checks  
+  Checks involving future dates and threshold values were marked as complex and deferred for further discussion. These include conditions like "future date less than zero" and length-based validations.
+
+• Review of Remaining Complex Checks  
+  After filtering and adjustments, 59 checks remain marked as complex, reduced from 96. The team plans to address the remaining complex checks in the following week.
+
+Documentation and Description Updates
+
+• Updating Descriptions and Check Types  
+  It was noted that no new descriptions were proposed during the meeting. Some existing descriptions need to be updated to match the variable names and check expectations, such as changing "100% filled" to "zero percent null date" where applicable.
+
+• Check Type Changes  
+  Two to three DQ IDs had their check types updated to fit different categories. These changes will be reflected in the documentation.
+
+Next Steps and Closing Remarks
+
+• Data Migration Plan  
+  The team plans to start data migration next week. The remaining complex checks will be addressed concurrently.
+
+• Acknowledgment of Urgency and Attendance  
+  Appreciation was expressed for a team member who joined despite not feeling well, emphasizing the urgency of the task.
+
+• Open Communication  
+  Team members were encouraged to reach out with any queries as they work through the updates.
+
+📋Overview
+
+• The "account credit" variable condition needs to be changed from array to range with a "not between" logic fixed.  
+• Certain checks involving missing values and thresholds remain complex and deferred for further discussion.  
+• Duplicate checks and boolean value validations were clarified and categorized properly.  
+• Null and missing value expectations require updates in descriptions and check types.  
+• Future date and length-based checks are complex and postponed.  
+• Remaining complex checks reduced to 59, with plans to resolve them next week.  
+• Documentation needs updates to descriptions and check types for accuracy.  
+• Data migration is scheduled to begin next week alongside resolving complex checks.  
+• Team members encouraged to communicate any issues promptly.
+
+🎯Todo List
+
+• Arthur:  
+  • [ ] Update the "account credit" variable condition to use range with correct "not between" logic.  
+• Sachin:  
+  • [ ] Leave complex checks involving future dates and length validations for now.  
+• Team Lead / Documentation Owner:  
+  • [ ] Update descriptions for checks, especially those involving null percentages and variable names.  
+  • [ ] Update check types for 2-3 DQ IDs as identified.  
+• Data Migration Team:  
+  • [ ] Begin data migration next week.  
+  • [ ] Work on resolving the remaining 37 complex checks during next week.  
+• All Team Members:  
+  • [ ] Communicate any queries or issues during implementation and updates.
+
+Transcription
+
+00:00:04 - 00:02:17 Unknown Speaker:
+
+I got it. This one you're talking, right? Yeah. If you see here, variable account credit wala hai, toh usme condition hai ki this value should not be between 300 and 850. Abhi jase hum array de rahe hain, array ki jagah agar hum range dete hain. You can write down the variables should be between 300 and, uh, not between here, so that's what creating the problem. Yeah, I see, actually was also suggesting one thing, but what he was saying is not the filter condition actually. Um, okay, uh, I'll ask Arthur to do this. So this is very right and so it is not a complex one. Then, right? It would be so, not between the eight. Yes, okay, I'll ask her to make this change. Again, it will go into that, right? So, not in new, right?
+
+00:02:19 - 00:04:29 Unknown Speaker:
+
+So not be together the right so not in particular Should not take values is also fine. Ah, so not take values Okay So this is again, okay So this is again that would be you know goes as that yeah. I'm not changing it again. Not numeric. We are marking it as complex as of now, right? So let it be. Let's discuss this on Monday we can we can decide it as of now I'm keeping it as complex right now it would fit it right I'll mark it as okay yeah this is complex. If you want, I can... I think this is a threshold check. And it is coming in the missing values. What is it? Walmart Plus should not be zero on any day. Okay. Oh man, so many records are there.
+
+00:04:40 - 00:06:15 Unknown Speaker:
+
+You can skip the Walmart one. Yes, I will remove this one. What about this one? Count of duplicate CM 15. This will fit in the duplicate one, right? This should fit. No duplicates, basically. Yes, correct. But we will have to change the check type. Yes, this will come in the duplicate check. Actually some of these are no very old no numeric anyhow we are going to discuss so leave it uh not unique advantage valid one. This is a good duplicate check, right? And it's okay. Not true or false? You can take this, right? You can put it in the array. True, false. Okay. Should only take a... Should not... True or false. Act value should not true. No, no, you should only take true or false. It's just written as a negative statement.
+
+00:06:16 - 00:10:09 Unknown Speaker:
+
+It looks like that. Okay, so it should only take values and then this is true or false, correct? Yes, correct. This is same also, right? Not in word false, just I'm marking it as well. Yeah, expected again, not in. Uh, that is okay, right? Yeah, not in again. That is same. Okay, yeah, less than zero. Um, less than zero. Yeah, not in again. This would be okay. Yeah, this true false again. Okay, yeah, again, this is okay. Have a future date less than zero. Leave it complex future date less than zero future date. I'm not able to go. Did you joined? Yeah, I was there. Yeah, I'm seeing value in well. Last updated These are additional check rich now this should not. Okay. Yeah, sorry, can you tell again? Yeah, here they have written this where clause right?
+
+00:10:09 - 00:12:21 Unknown Speaker:
+
+Exactly. Yes, okay, I'm marking it as okay. Yes. Oh man. How many reports are still being there? Records with null values, right? So few DQ. And he has been, you know, uh, check type has been changed. Uh okay, so yeah, just asking, would you just? Additionally, Yes, Yes, yeah, yeah. We would be updating status expected in dining last month. This Alpha DT should not be null greater than current date. Again, I have to leave it, even DS also, I have to leave it. Expected Null less than 0.5 percent missing values. Okay, you might not see few description, right? This would again expect less than for null accounts. Yeah, this will also affect in valid value more than zero. Okay, then you have written it right, then, I don't know why did you still marked it as complex?
+
+00:12:21 - 00:14:06 Unknown Speaker:
+
+Then if you're able to convert this. Future date I have to leave. Future date. Value should be within 1, 2, 3. This is threshold, right? Leave this one also, Sachin. This is based on length of it, basically. Okay. Okay. Length should vary between again length I have to leave it, right? Yeah. No record should values as future. Future date we are leaving. Yeah, values are less than zero percent, so this would fit right. Yeah, should not be more than, Yeah, this is again, okay, this, I'll leave it right. Some of Walmart should not be zero negative on any day. Now, let me see how many we are left with. Complex first of all, I have to select all. So we are left with 59S complex right now and these are 100% filled it.
+
+00:14:36 - 00:15:42 Unknown Speaker:
+
+37 we reduced to, and that are mostly these one. Okay, I'll send this updated one. So, uh, just one heads up. I did not propose a new description for all, for any example. If I show you suppose for this one, right? Uh, where 100 field rate is there? Okay, this SC number should be changed, right? Based on that variable, whatever the variable would be, that is number one. Okay, or even if you see all record, okay, let me do one thing now I'll show you. Uh and few uh. Just check that actual uh check type if it is getting changed, right? So you just need to request a upper to change it right so here if you can see I am marked it as okay Okay, but no description has been added over there, right?
+
+00:15:42 - 00:16:37 Unknown Speaker:
+
+So for this one, right? No duplicate record. Okay, Not let me check for the missing value because we Missing Values are. Basically, these are going to get fit in your template. That's what the verdict is. Okay, the way you have written, not in right, but I don't know the description as well. No, no, no description. Slide would be changed, right? Like this one, right? SC should have zero percent null date. Right here, you have written 100, filled it, so that's something we need to change. It. Okay, here, if you see this this one right? Zero percent null date. The variable name should not be more than one percent of it, right? So few of them I have updated, I did not updated a few of them, so in case you have doubt, to let me know, okay.
+
+00:16:37 - 00:17:42 Unknown Speaker:
+
+And, uh, there are two to three. One where we have updated the check type of those DQ ID, also that is getting fit into a different check type altogether. So we have to update the check type for those maybe two or three, not more than that. Okay, you might be having, uh, you know, previous it compare with this next set, you would be able to get it. Okay. Uh, thanks. I think we should be good to close this. Okay, and I'll start, uh, doing the data migration in the next week. And then, um, whatever complex has been remaining, right, those 37 one, right? Um, so that is, uh, we will try to sort out in the next week also. Okay, great, sure, thank you. Yeah, thanks, thanks for your time, yeah. Yeah, yeah.
+
+00:17:45 - 00:18:03 Unknown Speaker:
+
+She was not feeling well, but still I asked her to join because this is urgent, right? Yeah, yeah. Okay. Okay, then just work on it and then do let me know in case you have any query. Okay. Thank you guys.
+

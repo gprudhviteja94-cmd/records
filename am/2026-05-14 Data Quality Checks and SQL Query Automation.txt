@@ -1,0 +1,164 @@
+2026-05-14 Data Quality Checks and SQL Query Automation
+
+Creation Time: 2026/05/14 20:30
+
+
+📅About Meeting
+
+• Date & Time: 2026-05-14 20:30 (Duration: 1969 seconds)
+• Location: Virtual meeting (WebEx)
+• Attendee: Sachin, Aipa, Prithvi, Suchin, Arjun, Samir (offline), and others
+
+📒Meeting Outline
+
+Data Quality Checks and SQL Query Automation
+
+• Discussion on IAQ and Sensitive Data Elements  
+  The team clarified that SC10 refers to a service establishment number, which is not a sensitive data element (SDA). There was no IAQ group related to SC10 or S8, confirming that SC10 is similar to S8 in this context. The SQL data flow and table names were reviewed and shared with IAQ teams, with no need to share specific field names to avoid data distortion.
+
+• Data Insertion and Update Queries for DQ IDs  
+  Aipa confirmed the ability to insert data directly into the event using insert queries. A specific update query was shared to update the status date for a DQID so that the DAG process picks it up. The team discussed testing valid value checks by running queries on the DQ repository table filtered by valid value check types. It was clarified that entries already exist for some checks, and the update query is used to refresh the date for processing.
+
+• SQL Generation Process and Output Management  
+  The SQL generation flow was demonstrated: the system reads the repository table for records with yesterday's date, generates SQL queries, and stores them in a timestamped folder under the "QTrak Automation Output SQL" directory. It was noted that multiple folders are created daily to preserve historical results for auditing and review. The team discussed the absence of direct Git integration for committing SQL files due to access restrictions and considered email delivery as the current method for sharing generated SQL.
+
+• Logging and Validation of Generated SQL  
+  It was acknowledged that generated SQL is not currently printed in logs, making validation difficult. The presenter agreed to format and print SQL queries in logs for easier review. The output SQL files are passed as results to subsequent tasks like report generation.
+
+• Configuration and Support for Various Check Types  
+  The team reviewed the configuration for supported check types. Currently, only duplicate check and missing value check are fully configured and tested. Valid value check support was pending configuration but was agreed to be added immediately for testing purposes. Adding new check types requires deployment, which is time-constrained. The team agreed to upload the updated configuration directly to expedite testing.
+
+• Change Management and Communication Protocol  
+  It was emphasized that any future changes or new requests must be formally documented via change requests and user stories to manage scope and timelines effectively. All communications and approvals should be done over email to maintain records. Rally will be used to track user stories and changes.
+
+• Access and Support Coordination  
+  Attendees exchanged ADS IDs and discussed access requests. It was agreed that the cloud support team (Apple) will be the single point of contact for deployment and environment issues to streamline support.
+
+• Issue Troubleshooting and Next Steps  
+  The team identified a problem where the SQL generation process did not pick up newly added DQIDs due to incomplete or incorrect file uploads. The presenter planned to re-upload the complete folder and share the fix once resolved. The importance of dynamic value handling during runtime was reiterated to avoid hard-coded values.
+
+• Meeting Closure  
+  No further questions were raised. The team agreed to close the call and invited any additional thoughts to be shared for planning in the next week.
+
+📋Overview
+
+• SC10 is a non-sensitive service establishment number; no IAQ group exists for SC10 or S8.
+• Insert and update queries for DQIDs are used to trigger DAG processing for data quality checks.
+• SQL queries are generated daily and stored in timestamped folders; currently shared via email, no Git integration yet.
+• Generated SQL is not logged but will be formatted and printed for easier validation.
+• Configuration supports duplicate and missing value checks; valid value check configuration to be added immediately.
+• Change requests must be formally documented and tracked via email and Rally to manage scope.
+• Cloud support team is the single point of contact for deployment and environment issues.
+• Issue with SQL generation not picking new DQIDs due to incomplete uploads is being addressed.
+• Meeting ended with agreement to share fixes and plan further discussions next week.
+
+🎯Todo List
+
+• Sachin:  
+  • [ ] Add valid value check configuration and upload updated files for immediate testing (ASAP)  
+  • [ ] Share fix and confirmation once SQL generation picks up new DQIDs correctly (ASAP)  
+  • [ ] Format and print generated SQL queries in logs for easier validation (Next deployment)  
+  • [ ] Coordinate with Apple cloud support for deployment and environment issues (Ongoing)  
+
+• All Team Members:  
+  • [ ] Document any future change requests via email and create corresponding user stories in Rally (Ongoing)  
+  • [ ] Avoid performing delete operations directly on the environment; use override files instead (Immediate)
+
+Transcription
+
+00:00:11 - 00:02:05 Unknown Speaker:
+
+You just have to get used to it. That's what it is. You see where you're at. You see where you're going. What is the IAQ for SC10? I don't see any SC10 related. SC10 not good. I am mentioning that I am not finding any IAQ group with respect to S8. There is no S8 and then because I feel the SC10 is also like a S8. No, no, no, I got it. It is service establishment number, so that is not a sensitive data element. Okay, okay. Then there is no SDA. We got the code right, the SQL, what I have, DT flow for the SQL. I have gone through that one and I have shared the two table names with the IAQs. Okay. You don't want any field names, right, like a.they will distort.
+
+00:02:05 - 00:03:51 Unknown Speaker:
+
+It ended on industry code No, no, those fields are not required. Okay, uh, did all of our joined? Where is Samir? And then, I mean, I can see offline who else is missing, and then again, I can see offline. Okay, we can get started because we are already three minutes over. Aipa, will you be able to insert the data to the event directly? To insert query or you need an ad for that? Even direct insertion is possible. Okay. Serious game. You might have created one data for Prithvi's initiative, right? Any table specific one? You might have received one request from Prithvi, right? To insert the data, correct? Right do you have that query handy uh one second i have it shall i share it with you ipad hey this is the query okay.
+
+00:04:00 - 00:06:04 Unknown Speaker:
+
+So that is to update, you can take one DQOD and update the date as a status date. So that the DAG will pick it. My DAG would pick that and process that. Don't insert the data that he has shared. Can you share your screen? This is for which check time? No. You shared anywhere, Prajvi? Yeah, yeah. I shared on DQID. Sachin, you can give him the DQID that you wanted to update. Okay, where did you share this? Where did you share? Over the Slack. Sorry, over the WebEx. I'll share it directly. Okay. Yeah, I appreciate it. And this one right, you should. Yeah, you received it. Okay, I don't know for me. Maybe network issue. Yeah, okay, yeah, I saw this one where class conditionals, I saw that. Ah okay, this one right. Yeah, okay.
+
+00:06:04 - 00:07:14 Unknown Speaker:
+
+The DQID let the search and then execute. So, valid value checks are ready, Pithvi? Yes, Arjun. Yeah. Okay. So, can you show me that inset query that Pithvi has given? Now, can you just run a query to the DQ repository table with a filter condition of valid value check? No, no. You wanted to test it for a particular DQ ID, right? So, you can say which DQ ID. He will update the data as yesterday program would pick that particular DQID and will generate the query. Yes, so we really just don't need to specify the DQID, right? So all the DQID is present in the database. You wanted to run it? Yeah, that is also fine. You can say condition would change where condition. First of all, first of all, show me the insert query that shared to you.
+
+00:07:14 - 00:08:17 Unknown Speaker:
+
+He is already sharing the screen. This is the one update query. Why? The update query? This should be an insert query, right? No, no, there is already an entry, so we are reusing it. If you want, yeah, you can insert, also. I don't have insert query. Yeah, just checking here. Yeah, I have. I found this one such in one second. Yeah, this is the valid value checker, so this would pick up the data from. Yeah, from the DK repository table, it will pick up. Actually, you will have to insert it and also date, also you have to mention it as yesterday's date. He can modify, that's fine. Uh, so just run that insert query once, and then we will might be, you know, picking up one of the DQ ID to update the date, run this insert query first, or the data is already there for these data.
+
+00:08:17 - 00:09:51 Unknown Speaker:
+
+Yeah, this one already there. I think I have more this data missing value check and valid value check. Right? Yeah, data is there, that's what I'm saying. But such if you wanted to test a particular insert and then verify that. So now hold on, guys can let me complete. Uh, can you run a query? Uh, I need, uh uh, build up and decent with valid value check. Okay, so run that query in the Decorator project test table, not the degree project table. Yeah, I understand, but once again, can you do it quickly? We are already 10 minutes. Yeah, such in these are the variety value check DQids, so so I'm pick up in any of the thing one DQid such in anything you want to specific value, you want to see that data.
+
+00:09:51 - 00:11:17 Unknown Speaker:
+
+Or my bad was speaking on mute. Pick up any of the DQ ID and then just run the update query. The below update query is already there. Right? So just run that one. Yeah, yeah, so I'm pick up in this DQ ID. Yeah, yeah, that's fine. Just just pick up that. Uh, DQ ID. Yeah, sure, run it. Yeah, uh, now you can go ahead and then let's run that. So this was, guys in the continuation of the last one, right? Uh, where, uh, we were showcasing the sequel generation, right? So let's run the tag. This is a world file for another, let me delete this so that man quickly avoid deleting the files. On the environment. You would be flagged u.s. Only the folder I created on the entity. But yeah, I'll provide it.
+
+00:11:17 - 00:12:29 Unknown Speaker:
+
+Uh, I asked all of you, right? You should not be doing. This activity is dedicated to do that. I won't be able to back you up if something. Because if you're deleting something on the environment they used to keep track of your ads ID. You can override that file but don't operate with a delete operation. You can place the same file that would override over there in that environment, but don't perform any delete operation over there. I'm running it now. Okay, let's go through the flow. Uh, show me where it is picking up that. Uh, yeah, that, uh, yep. Particular DQ, IDX, yeah. Initialize BigQuery initializes the correction and reads the data and generates the SQL, so first it goes to the table and reads the repository table. If the date column is yesterday's date, that created date is there, right?
+
+00:12:29 - 00:13:28 Unknown Speaker:
+
+If it is yesterday's date. It will be called that records and generates the SQLS and puts the output folder here inside this. Yeah, this is the QTrak Automation Output SQL folder. Inside that. With the date timestamp, it will create a folder and it will append. It will put all the output files inside that. So I'm running it, let it gets executed. I'll show you the go to the SQL, sorry, the logs for the read input data go to the logs. Can you show me which exact DQID it has picked? It didn't pick the no man, it did not pick up that value, which it was supposed to pick up. No, no, actually, there are records that I created as well, not only that totally three records. Before that discussion, I was testing two.
+
+00:13:28 - 00:15:01 Unknown Speaker:
+
+So this is the third one that you add, but it has, it has executed for all three. So where is the one that we have added? Yeah, this is the one you added? Okay, yeah, I mean to say, if whatever we added that one updated. Yes, yes, yes, yes, okay. Can you save that over the Slack or this Velox? Yeah, okay, okay. Now let's move to the next part. Can you go back? Post, read, write? Can we check the next? Bundle? Logs? Generate SQL? Can you show me that? Generate SQL Event log? Now? Click on there. Yeah, generate SQl, click on that Logs. So where is the SQL? You are not printing it? No SQL? I have not put it in the logs. Okay, yeah, that's fine, that's fine, we don't need to find the SQL.
+
+00:15:01 - 00:16:21 Unknown Speaker:
+
+Yeah, but, you know, ideally, we should do it. I'm doing it, but I'm passing it as an output to the next task. So you can see. This query is generated here, it is there, but it is then one line, because the same information would be passed to the next one. In the report generation. Only this this query will be used, but query is generated already in the output SQL folder. Then, ideally, we should print in such a way, because, you know, suppose you want to validate right? Without logs, it would be difficult for us to validate that SQL, right, whether it has created the correct SQL or not. Okay, I will do one thing I print it in a formatted way. Actually, I am passing this information as a result in a map, the QID and the I know.
+
+00:16:21 - 00:17:26 Unknown Speaker:
+
+I know that is the change that I have asked you to do it, right. But, uh, keep a note that let's print those sequel also. Where is the sequence stored? Yeah, right now. After generating, it will get generated in your folder. Okay, so I'll show you the folder. This is the output folder inside this. With the timestamp it will get, it will create the SQL files. So if someone has to review, they will have to download this folder from File system. And then what we are going to do? We would be sending this over an email, over an email, okay, it would come to us only okay. We don't have a provision directly to commit it into the Git, because for Git you need those access just like our ads ID, right?
+
+00:17:26 - 00:18:23 Unknown Speaker:
+
+Then we need to create a bot ID, which should be having the access to Git right to commit the file over there. Which again requires a you know interaction with some you know partners team to get it done. So we haven't done that part as of now. So maybe apart from storing it over this bucket, we would be sending that over an email also. Okay, okay, I mean, if you can figure out the configuration, that would be much more easier to maintain as well as audit. Because, like, it will be created just like a PR, so that the reviewer can, uh, you know, review it, and if it's validated, they can merge it themselves. We can do that in the next phase, maybe when we would be, you know, optimizing this one so we can do that.
+
+00:18:23 - 00:19:13 Unknown Speaker:
+
+And, uh, can you click on SQL? Why we are creating this SQL folder again under that? Uh, no, okay, maybe I can remove one more. But this is the output folder with the timestamp. Okay, it has a scale folder with all the scales every so, every time you are creating a folder when your process is running. Yeah. So for for example, if I'm running it now with the current timestamp, it will create a folder, and if I rerun it with the current again, one more folder gets created under Output Scale folder. So the daily basis, what we receive, it will be timestamp. I mean, so, so basically your path remains same till this. QTrak Automation Output SQL it just that it would create a new file and a SQL folder, right?
+
+00:19:13 - 00:20:06 Unknown Speaker:
+
+Yes, yeah, now till here it is same, okay? Under this, with the timestamp, it will create a new folder like this. If one more time, if I execute, one more folder will come and it will pick. Whatever the query, uh, entries there in the database with yesterday's time timestamp. It will pick all those entries and generate the queries. Shall I read a bit? You will understand. One more folder. I got it. Like whenever you are executing, it is basically, you know, creating that one. So for a result purpose, we need this. I'm just considering from the memory standpoint of view. Anyhow, we are not going to get bunch of records per day, maybe one or two. It's okay right now. It's just that result one, right?
+
+00:20:06 - 00:21:24 Unknown Speaker:
+
+Even if you overwrite them, then if you want to review the yesterday one, that would be lost, right? It would be difficult to track, right? It would be difficult to track. Okay, then leave it as it is. So, why we have four results instead of three? So, totally three I told, right? So in duplicate check one i created it okay in missing value you added one i added one not missing value we did for valid value we did it for valid value and again why there is additional two. These SQLs are not required, right? No, this is required. This is the SQL that is modified with the new SQL. Okay, let me show you that. I got it. I got it. But why didn't you create that value-value folder then? Actually, I didn't test it.
+
+00:21:24 - 00:22:19 Unknown Speaker:
+
+I don't know what. Maybe... it's not configured to process those. What exactly we need to configure? I'm thinking that allowed check types are there, right? I think I added only those two, for I have not added the all three, all remaining four, I have not added, so only three, I two, I added. I think for testing, that's why it's not generating, but otherwise duplicate check and missing value check. It is, uh, it has added. Those are, those are static value. Those have been, you know, you are testing it from last couple of weeks, right? This is what we supposed to do a demo, right? When we are going for a UAT, right? And if it's not working in with the dynamic value, then we won't be able to showcase them.
+
+00:22:19 - 00:23:15 Unknown Speaker:
+
+These, uh, static one, which you have already did it. No, it should work. Such a nice, just a configuration only. Maybe can we add one for threshold, uh, or one more type? I asked you right to start with valid value, and you have confirmed, right that that is going to work. Where is the configuration missing? Can you show me that, please? So, yeah, these are the three things I'm aware. Yeah, okay, if I add that, uh, valid value check also, it will come. So that was the ask quickly, right? Today only, right? I have asked you to this one actually for testing. I added, Uh, we are going to support the few only. So that's why, uh, I made this configuration even you agreed, but I have not put this. If I add that configuration also, it will work.
+
+00:23:15 - 00:24:09 Unknown Speaker:
+
+It should not be a big change. I, I was actually testing it. Whether these migrations are working fine or not, you can give any of these three, it should work. If I want to add one more check type, I can put one more check type here. But again, you need deployment, right? We don't have that much of time to its way. Yeah, but, uh, I can directly upload this such in it that is only this. Is that fine. If that is okay, let's try it out, let's go ahead, add the valid value check and let's run it again. But Sachin, I have to upload it for quicker. Yeah, yeah, go ahead and upload it for timing. You can do it, but ideally, you know, going forward. Please take help from my app.
+
+00:24:09 - 00:26:14 Unknown Speaker:
+
+Yeah, sure, not doing that, man. Even I am sending those files to Apple. Okay, because I need a single point of contact, this is cloud. Try to understand, Yeah, okay, so I can reach out to Apple if something is wrong over there in that cloud. It's not a radio noise. Uh, seven, your issue got fixed? Uh, yeah, I think, uh, so probably discuss later with you. Such and so. On the call, we had discussed about one particular filter, but that was never, uh, given by them in the code. They had just discussed the business users, so I had implemented that. But that is causing the records to be filtered down, so that's what I'm guessing. Okay, and you know, going forward, if any changes is required, right? Ask for a change request.
+
+00:26:14 - 00:27:09 Unknown Speaker:
+
+Okay, okay, so that you can buy a time during these, you know, because right now we did not plan any changes on this one, right? And. If they are coming up with different requests, we might end up not completing the task. And you have seen their verdict. We are consuming lots of time to basically complete that user story. So if we have changed requests and all, we can just let them know, man, you have come back on such and such date with these changed requests. And that took this much of time. Yeah. That's my bad, I should have actually got down. The contact and written communication, it was only discussed on call. So yeah, yeah, let's put everything over the email, and again, post email, let's create a user story. For that.
+
+00:27:09 - 00:30:48 Unknown Speaker:
+
+We would not be taking a.We will be capturing that over the rally also. And I'm raising. Can you give me your ADS ID? Just tell me. I'll type it. S. S. J-A-W-A-N-D-H. J-A-W-A. N. N. D. D. I think you have pinged me. What is your IDSRD? Can you bring me? Yes, KO TS 35 Right? Oh, sorry, I mean, no problem anyhow. I'm I'm not able to, you know, do that. I'll give you both U and seven on access. Uh, the IU request. Raise it by yourself, okay. Did it work? Sachin, I have to check that, Sachin. I don't want anyone to stop. But it works. I mean, only the configuration only. No, man. I don't know. Like, we were struggling on this with 3. Let's get this fixed. As soon as possible. Yeah, yeah, not the screenshot.
+
+00:30:48 - 00:31:35 Unknown Speaker:
+
+We need this to be the dynamic. Understand? You would not be getting our hard-coded values during the run time, right? Those all would be, uh, getting placed, uh, in a real time, right? User can put anything right, and this is very initial, all right with the existing data. So if it is not working with, you know, the setup data that is there in the database, then there's a problem. So take this one and let me know once it is being sorted out. Yeah, sure, sure. I'll share it right away. But it generates queries. Yeah. It has not picked that. If it picks, then it should generate the queries. Where is the problem able to identify? Share me the fix that you are going to apply once it is working. Sure, sure, such an.
+
+00:31:35 - 00:32:39 Unknown Speaker:
+
+Yeah, I'm guessing that file that I uploaded, that file that I uploaded, right? Instead of downloading one file, I would have uploaded the complete folder itself. So I'll retry that. Okay, let you know, yeah. Anyone having any other question? Okay. If no, let's close the call and then in case anybody having any other thought process, do let me know. We can plan it for the next week. Okay. Thank you. Thank you, guys. Thank you.
+

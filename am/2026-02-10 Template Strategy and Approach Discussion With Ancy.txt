@@ -1,0 +1,123 @@
+2026-02-10 Template Strategy and Approach Discussion With Ancy
+
+Creation Time: 2026/02/10 11:20
+
+
+📅About Meeting
+
+• Date & Time: 2026-02-10 11:20 (Duration: 573 seconds)
+• Location: [insert location]
+• Attendee: [insert names]
+
+📒Meeting Outline
+
+Template strategy and approach
+
+• Need for analysis before coding  
+  The group agreed that extensive analysis of HTLS and existing SPL/SQL patterns is necessary before writing code. Coding is considered straightforward and quick compared with the design work; the priority is to identify and define templates that cover the variety of real-world cases.
+
+• Create multiple base templates with placeholders  
+  Instead of using simple prefix/suffix insertion, the preferred approach is to create stable base templates containing placeholders. A script would populate those placeholders at runtime. Templates act as stable contracts that won't change across formats (JSON, SPL, etc.), enabling generation scripts to reuse templates across use cases.
+
+• Multiple templates to cover pattern variety  
+  There are many different SQL/SPL patterns (null checks, valid-value checks, ICB scripts, other domain-specific checks). Three to four templates are likely insufficient; templates should match the number of distinct patterns discovered. The team should research and catalog patterns from existing scripts to determine required templates.
+
+• Union / Union All / Union Order considerations  
+  Union and Union All were discussed as recurring constructs; Union Order (union with ordering or specific union variants) is also in use. Templates must explicitly account for union-related variants so the generated code handles those correctly.
+
+• Avoid one-off solutions  
+  A quick hack (prefix + suffix + insert query) would be trivial to implement but undesirable because it doesn't generalize. The team agreed to avoid building solutions targeting only one template or one table. The goal is a generalized generator that supports multiple templates and patterns.
+
+Research and cataloging of existing scripts
+
+• Review existing SPLs and SQL scripts  
+  Each team member (speaker and attendees) should go through the available SPL and SQL scripts to identify differences and recurring patterns. This includes looking at manual scripts, automation POCs, ICB scripts, and other types of checks used in source systems.
+
+• List differences and pattern types  
+  Deliverable: a list of differences and the pattern types found (e.g., null-value checks, valid-value checks, count checks, union variations). This list will drive the number and shape of templates to create.
+
+• Collaboration on template creation  
+  The speaker will prepare templates and expects others to perform the same research. The team will meet again to review collected patterns and finalize template designs before coding.
+
+Tools, prototyping and code generation
+
+• Use of automation tools (GitHub Copilot, etc.)  
+  The team may use code generation tools (e.g., GitHub Copilot) to produce code once requirements are solid. Proper, well-documented template requirements will improve generated code quality.
+
+• Existing manual scripts and POCs  
+  There are manual scripts and an automation POC already developed by the speaker. These exist but were not accepted for production deployment (not 100% deployable per Sachin). These artifacts should be reviewed as reference material but not directly adopted without generalization.
+
+• Timing and coordination for coding  
+  Coding can be scheduled after template finalization. The group agreed to take the time necessary for analysis and not rush into coding. If asked to begin coding prematurely, members should request more time to finalize templates.
+
+Next steps and meetings
+
+• Collect templates/patterns list  
+  Team members should independently review scripts and bring a compiled list of distinct patterns and representative samples. The speaker will also provide templates and SQL query patterns by the end of the day.
+
+• Follow-up meeting  
+  After collecting pattern lists, the team will reconvene to finalize templates and then proceed to implementation.
+
+📋Overview
+
+• The core need is analysis of HTLS and existing SPL/SQL scripts before coding.
+• Use stable base templates with placeholders rather than simple prefix/suffix hacks.
+• Multiple templates are required — number should match distinct SQL/SPL patterns found (null checks, valid-value checks, ICB patterns, union variants, etc.).
+• Union, Union All, and Union Order variants must be accounted for in templates.
+• Review existing manual scripts and POC artifacts for reference; they are not production-ready as-is.
+• Use code-generation tools after templates and requirements are finalized.
+• Team to compile a list of patterns and samples; speaker to provide templates and SQL patterns by end of day; follow-up meeting to finalize.
+
+🎯Todo List
+
+• Speaker (owner):
+  
+  • [ ] Provide initial set of base templates and SQL query pattern examples, deadline: end of day (2026-02-10).
+  • [ ] Share manual scripts and POC references for team review, time: ASAP.
+
+• All team members (owners):
+  
+  • [ ] Review existing SPL and SQL scripts, collect representative samples and list distinct patterns (null checks, valid-value checks, counts, ICB scripts, union variants), deadline: before next meeting (suggest within 2–3 business days).
+  • [ ] Compile and share a consolidated list of pattern types and example scripts, time: prior to template finalization meeting.
+
+• Assigned (to be decided; placeholder for coding lead):
+  
+  • [ ] After templates are finalized, implement generator scripts that populate placeholders for each template, time: to be scheduled after template sign-off.
+  • [ ] Ensure generator handles Union / Union All / Union Order variants and other discovered patterns, time: implementation phase.
+
+(If any attendee names, explicit locations, or concrete deadlines need to be inserted, please provide them so the summary can be updated.)
+
+Transcription
+
+00:00:05 - 00:00:55 Unknown Speaker:
+
+And see, see, I mean, before we jumping into the code, my suggestion is we have to do a lot of analysis on the HTLS. We need to come up with multiple templates more than jumping into the coding. See, coding can be done, it's not a big deal, we can do that. I would say, see yesterday one particular sample he has taken, right? That sample is okay. One sample we got. Similarly, you look out for other samples where there is a difference from this to the other one. The templates, if you can get that, even I am doing that research, you also do the same research. And my plan is to come up with a template. See, prefix or suffix, this won't work in all the times. So what we will do, we will create one template.
+
+00:00:55 - 00:01:54 Unknown Speaker:
+
+The template, we will put some placeholders. So our script will go and put the data in those placeholders. Okay, okay. But this template which you are mentioning that will act as a base template. We will create multiple templates based on the use case. If it is only one format always, no problem. What if we have two, three formats? Then we need to have two, three templates. At the run time, Our program will go through those templates, and I mean, it will understand the use case. And then if you choose one of the template and put the code there. Okay, so this prefix suffix is not an option. I don't want to comment at that point of time. Okay, so let it be a template, because the template will not change, even if you take for JSon, that JSon and then the SPL.
+
+00:01:55 - 00:03:11 Unknown Speaker:
+
+Templates won't change. It would be like union. So we can come up with some script for that template. I'll come up with the templates. Okay, okay. Okay. Got it. So we have different multiple patterns if you see the sequels. So for them, I think 3-4 templates won't be enough. How many different patterns are there? That many templates has to be created, right? How many do you think that would be there? I have now just like, taken two, three scripts. And based on the null value check and the other valid value check that that many templates will be there. But if you see the. ICB scripts and other scripts like many different types are there. See. Everyone is going through that different types of check such in a source like Hariyappa myself to check for each check click.
+
+00:03:11 - 00:04:11 Unknown Speaker:
+
+No, no. See. Null value check count there are 5 to 6 checks are there, right? Yes, yes. Okay. So, that is fine. Those templates, uh, I'm talking about the SQL templates, so Union option, you told us, we went through the Union thing, that is good. We can create a new one and select columns won't change much, so we will put that columns. So that is okay. For a new script, let's not do that, no new script, I mean, new SQL together, that's a final one, let's do that in the end. Our goal now is to. Append to the existing one. Okay. So union is one thing. Do you see anything else other than union in your scales? I think union and union order is also used somewhere. Union order? Yeah, union order is also used.
+
+00:04:11 - 00:05:04 Unknown Speaker:
+
+So those two things are important. You understand? See, more than coming up with a solution directly, let's not jump onto the script. The script is okay. We can generate in a week or two weeks, but our, our knowledge or our thinking should be how many such changes are there? So when we are working on something that is uncertain, it will give us a proper output. So I would request you to go through the SPLs once again and tell me, Okay, these are the differences I found with Week and then. I mean plan for you. We can work on the script all together. Don't jump on to the coding. That's my suggestion. I mean, even if Sachin asks, I'm going to tell the same thing that we need time because it's not something that we can jump on to that.
+
+00:05:07 - 00:06:29 Unknown Speaker:
+
+Okay. So yesterday this Kundal had connected with us, right? And he asked to know that please try in the local. Which connects the prefix and suffix and then put the query in between, and it will close it. That is not the end, right? Okay, if that is done, it will be just one hour work. I'll do it and close it, but I don't know, I don't want to do that. When we write something, it should be generalized report, you cannot write it for one particular template, you go through the templates. You told me, Union, all, Union, Union, all. I want you to list all that. If you don't mind, then we will work together. You don't worry about markets, only that table. I did so. Yeah, maybe I'll look into. Yeah, yeah, even I'm going through.
+
+00:06:29 - 00:07:40 Unknown Speaker:
+
+You also go through. That is important. Script pockets. Okay, see, we have a GitHub Copilot code somewhere, we can create the code if we give proper requirements to it. Okay, okay, okay, so you take time. Okay, even if he tells you to do some coding, you tell I need. Okay, it's not like one code. Okay, let's connect in three minutes. We have a call, right? Yeah, yeah. Okay. Okay, thank you. And you had sent one code, right? That is related to that POC which you are doing or was it for this one? No, I see. To be frank, I developed both this manual script. What you are working now? And I developed even the Automation Gen, a use case also I created, but Sachin is saying you cannot use any because it is not 100 percent deployable.
+
+00:07:40 - 00:09:05 Unknown Speaker:
+
+Okay, so there is, uh, that manual one? Uh, okay, yeah, manual one is there. But before that, I wanted to give you that, but I don't want to you to jump into that. How many years experience you have? You create the templates, by end of the day, I'll give you the code, also this SQL query pattern. Okay. We will connect. Again we will connect. You come up with that list please. That is only that is important if you ask me. Then we will sit together and we will finalize it. is okay we can create a query.
+

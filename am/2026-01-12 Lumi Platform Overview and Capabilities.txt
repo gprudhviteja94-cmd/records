@@ -1,0 +1,317 @@
+2026-01-12 Lumi Platform Overview and Capabilities
+
+Creation Time: 2026/01/12 08:58
+
+
+📅About Meeting
+
+• Date & Time: 2026-01-12 08:58 (Duration: 3657 seconds)  
+• Location: Lumi Portal / Demo environment (virtual)  
+• Attendee: Not specified (assumed Lumi team, product owners, data engineers, data stewards, and trainees)
+
+📒Meeting Outline
+
+Lumi platform overview and motivation
+
+• Platform history & rationale  
+  The team reviewed why Lumi was created: the legacy on-prem platform (Cornerstone) served well but required modernization. Lumi was developed as a next-generation, cloud-native big data ecosystem emphasizing modularity, scalability, autonomy, and self-serve capabilities to meet evolving business and technical needs.
+
+• Core design principles  
+  Modularity and scalability as core principles; unified DAO movement framework for ingesting data from multiple internal and external sources; focus on automation for ingestion and transformation; built-in governance and compliance to support enterprise requirements.
+
+• Value proposition  
+  Lumi empowers users with self-serve ingestion and automated transformation, easier governance, and faster delivery of analytics/ML capabilities. It intends to reduce manual handoffs and speed migration from on-prem systems.
+
+Lumi core capabilities and functions
+
+• Data movement  
+  Covers ingestion, metadata management, and historical data migration. Unified DAO movement framework standardizes how data moves into Lumi.
+
+• Data transformation  
+  Lumi offers products (HyperDrive, SchemaFactory, LumiData Transformation (DT) tool) to normalize and prepare data. The platform supports low-code/no-code ETL, enabling users to create their own pipelines and reduce dependency on developers.
+
+• Analytics  
+  Integration with BigQuery for large-scale processing and analytics; portal links to analytics tools (BigQuery, Aida, Envision) open in new tabs for seamless workflows.
+
+• AI / ML  
+  Lumi supports building dashboards and training ML models for complex queries and pattern detection; provides tools to operationalize models and surface insights for decision-making.
+
+• Portal & UX  
+  Lumi Portal is the single point of entry: onboarding, search, activity tracking, user personalization, and user management. Portal includes Lumi Academy (training), support (Slack/email/Lumi ambassadors), and links to documentation (Confluence/Square page).
+
+Access, onboarding, and portal navigation
+
+• Access process  
+  Users visit lumi.exp.com, review and agree to the Lumi Usage Policy, then request access/entitlements. Requests require a clear business description and are typically approved within 2–24 hours.
+
+• Portal navigation  
+  Home screen top bar navigation with categories/subcategories; Projects → My Projects to view project creations; direct links to external tools; Activity section acts as notifications; unified search provides access to tables, variables, docs, attributes, ownership, security and related metadata.
+
+• Support & learning  
+  Lumi Academy for self-paced learning and office hours; contact via Slack channel #Lumi-Engage, email (lumi@aexp.com), and Confluence FAQ pages.
+
+Lumi Usage Policy (overview, scope, roles)
+
+• Purpose of usage policy  
+  Defines frameworks, processes, operating principles for onboarding and platform use for valid business purposes; delineates roles/responsibilities; prescribes guidelines for project spaces, monitoring, change management and introducing new functionalities.
+
+• Why it matters  
+  Emphasizes data protection, adherence to American Express management policies and tech standards, and clear expectations for roles to maintain data security and platform stability.
+
+• Scope  
+  Policy covers: data ingestion, data security (masking, protection), access & privileges, project space enablement, data lifecycle management (E-79 and E-08 referenced), BI tool usage, data sharing/transfers, data quality, and change management.
+
+• Roles & responsibilities  
+  • Application Owner (EAM-30): manage source applications and data flows into Lumi, understand business & technical aspects.  
+  • Data Ingestion Owner: ensure feeds/tables comply with policy and IDL guidelines; manage changes to ingestion.  
+  • EAM 7E Activated Data Steward: own critical data elements (CDEs), define data meaning, lineage, and maintain quality.
+
+• Acknowledgement & compliance  
+  Users must read and sign the usage policy via the portal. Policy is accessible in the Useful Links section of Lumi Portal after login.
+
+Lumi data governance/process flow
+
+• Nine core governance modules (Circle of Truth)  
+  1. Data ingestion (requesting, gating, approval, ownership)  
+  2. Data security (masking, protection)  
+  3. Access management (permissions)  
+  4. Data quality (roles, CDE remediation)  
+  5. Data consumption (analytics & BI)  
+  6. Usage monitoring (audit & policy alignment)  
+  7. Data sharing (secure transfers, compliance)  
+  8. Data lifecycle management (creation → deletion)  
+  9. Change management (track/manage changes)
+
+• Auditability  
+  Usage monitoring and audit logs are part of compliance and operational oversight.
+
+Data Transformation product (Lumi DT) and migration accelerators
+
+• DT product overview & mission  
+  LumiDT is an in-house low-code/no-code data transformation tool allowing users without programming background to design ETL pipelines. Mission: simplify transformation via self-serve UI, accelerators, and cloud-native scalability.
+
+• Key features  
+  • Supports 140+ functions and custom functions.  
+  • Drag-and-drop UI; flow creation and editing without coding.  
+  • Migration accelerators and validators to import existing flows.  
+  • Collaborative development (versioning, compare, merge).  
+  • Integrations with data ingestion, data quality, security, and governance.
+
+• Architecture & execution flow  
+  • Flow created in UI and stored as JSON for two-way compatibility.  
+  • Validation and optimization recommendations via validators.  
+  • Translator converts flows to BigQuery SQL.  
+  • Execution orchestrated by GCP Airflow on Google Cloud Platform.
+
+• Access & pre-reqs  
+  Users need access to a GCP project (request DT team for permissions) and Lumi portal access to use DT.
+
+Magellan Accelerator and migration from Cornerstone
+
+• Context  
+  Magellan is an on-prem drag-and-drop transformation tool used on Cornerstone. Migrating Magellan maps to Lumi by rewriting would be time-consuming.
+
+• Magellan Accelerator  
+  Utility to import Magellan maps into LumiDT to accelerate migration. Steps: Lumi Portal → Data Transformation → Select project → Import Flow → provide details → Save → rendered Lumi flow.
+
+• Limitations / manual touchpoints  
+  Accelerators speed migration but manual intervention may be required for data typecasting, automated UDF onboarding, and handling complex ODL scenarios.
+
+Demo: Data Transformation Canvas (DD Canvas)
+
+• Portal flow and UI demo  
+  Walkthrough of Lumi home → Manage Data → Transform Data → Dashboard with tiles: Create New Flow, Import Flow (Magellan), Explore Flows, Parameters.
+
+• Flow creation process  
+  • Flow registration: provide name and description.  
+  • Canvas: drag & drop sources from left panel, left-to-right flow building.  
+  • Versioning: initial version (0.1), branching to edit after submit/publish; submitted flows are immutable without branching.  
+  • Common operations: select project (e.g., AXP LumiD), select sources, add Join step (configure join type and expression, validate), add Transformation step (e.g., concatenation), save steps.
+
+• Validation & save  
+  Validates expressions; flow elements can be named and saved. The demo shows join configuration (left outer join on column cm11), validation succeeded, followed by adding a transformation step.
+
+📋Overview
+
+• Lumi was presented as the cloud-native successor to Cornerstone with automation, governance, and self-serve capabilities.
+• Core functions covered: data movement, transformation, analytics (BigQuery), AI/ML support, and the Lumi Portal.
+• Access requires reviewing and signing Lumi Usage Policy; requests for access need clear business justification and typical approval in 2–24 hours.
+• Lumi Portal provides unified search, activity tracking, project management, direct tool links, and learning/support resources.
+• Lumi Usage Policy is central: defines scope (ingestion, security, access, lifecycle, sharing, quality, change), roles (Application Owner, Data Ingestion Owner, Data Steward), and mandatory acknowledgement.
+• LumiDT provides low/no-code ETL, JSON-backed flows, translator to BigQuery SQL, and GCP Airflow execution.
+• Magellan Accelerator assists migration of on-prem Magellan maps into LumiDT but may require manual adjustments post-import.
+• Demo showcased DT canvas: creating flows, joining sources, validation, versioning, and transformation steps.
+
+🎯Todo List
+
+• Lumi Portal / Infrastructure Team:
+  • [ ] Ensure Lumi usage policy link is present in Useful Links and accessible to all new users, time: immediate (ASAP).
+  • [ ] Monitor access request SLA and confirm typical 2–24 hour approval window is met, time: ongoing.
+
+• DT / GCP Access Team:
+  • [ ] Grant GCP project access for users who requested DT permissions (owner to confirm list of pending requests), time: within 24 hours, deliverable: access granted and confirmation to requesters.
+  • [ ] Provide a short checklist for required entitlements and steps to request access via the portal, time: 3 business days, deliverable: checklist document (portal and Confluence).
+
+• Migration / Magellan Accelerator Team:
+  • [ ] Run pilot migrations for a prioritized set of Magellan maps and report findings (including manual touchpoints), time: 2 weeks, owner: Magellan Accelerator lead, deliverable: pilot migration report with list of required manual fixes.
+  • [ ] Document common post-import fixes (typecasting, UDF onboarding) and create how-to guides, time: 3 weeks, owner: Migration docs owner, deliverable: Confluence guide.
+
+• Data Governance / Stewardship Team:
+  • [ ] Prepare an annotated roles & responsibilities sheet (Application Owner, Data Ingestion Owner, EAM 7E Steward) for distribution during onboarding, time: 1 week, deliverable: roles matrix.
+  • [ ] Schedule Lumi Usage Policy review session and Q&A (Lumi Academy office hours), time: within 2 weeks, owner: Governance lead, deliverable: session and recording.
+
+• Training / Support:
+  • [ ] Publish short LumiDT quickstart video or step-by-step guide demonstrating: create flow, join, transformation, validate, save, publish, time: 2 weeks, owner: Lumi Academy, deliverable: video + quickstart doc.
+  • [ ] Promote support channels (Slack #Lumi-Engage, lumi@aexp.com) and Confluence FAQs in the portal banner, time: immediate, owner: Support lead.
+
+• Demo follow-up (presenter / product owner):
+  • [ ] Share sample flow JSON for the demo (Join Demo and Transformation Demo steps) for users to import and experiment with, time: 5 business days, deliverable: downloadable JSON and import instructions.
+
+No other items were explicitly assigned during the meeting transcript.
+
+Transcription
+
+00:00:02 - 00:01:03 Unknown Speaker:
+
+What is Lumi? Hello there. Let's explore this next generation big data ecosystem, Lumi. But before we dive in, let's take a step back in time. Imagine this. We were navigating our journey with a data platform that had served us well. However, recognizing the evolving needs of our business and technology advancements, it has become clear that there are areas for enhancement and new opportunities to explore. Thus, we decided it was time for a transformation. Work began on a new platform, Lumi. Lumi was designed with modularity and scalability as its core principles. With Lumi, data ingestion and transformation can be automated, allowing users to set up their own DAO pipelines. In Lumi, data can be brought in from multiple sources, both internal and external, through a unified DAO movement framework.
+
+00:01:04 - 00:02:08 Unknown Speaker:
+
+The data is then transformed and made easier to work with by using products like HyperDrive and SchemaFactory. But what makes Lumi stand out? Well, it's the autonomy it gives you. With features like self-serve data ingestion and automated data transformation, you're in the driver's seat, managing your data pipelines independently. This, coupled with easy governance and compliance, makes Lumi a game changer. Let's dive into Lumi together and redefine Lumi functions and capabilities. Now, Let's take a tour on the Lumi functions and capabilities since it's packed with goodness. First off, there is data movement. This is about getting data from point A to point B, including ingesting data, managing metadata, and migrating historical data. Next up is the data transformation capability. This is like being a translator for data, altering it to fit the needs of other applications and systems.
+
+00:02:09 - 00:03:07 Unknown Speaker:
+
+The analytics capability is about making sense of large volumes of data. This is achieved through tools like Google's BigQuery, which enables the processing and analysis of massive data sets. Now, Lumi brings the power of artificial intelligence and machine learning function. Within this platform, you can create dashboards and even machine learning models for complex queries. This can help you spot patterns. Or generate insights for decision making. Within the portal function, you can personalize your Lumi homepage and manage users via the portal interface. And there you have it. Whether you're interested in data ingestion, metadata, or data analytics, Lumi has a capability to help you do it. That wraps up our functions and capabilities of Lumi Video. In summary, Lumi represents a new generation of big data ecosystems.
+
+00:03:08 - 00:05:28 Unknown Speaker:
+
+From automating data ingestion and transformation to providing a unified framework for data movement, Lumi empowers you with autonomy in managing your data pipelines. Do you recall the key functions and capabilities that Lumi offers? You should be thinking about data movement, data transformation, analytics, artificial intelligence and machine learning, and Lumi Portal. Its user-centric features coupled with powerful analytics tools, like BigQuery, make it a standout solution in today's data-driven landscape. By the end of this video, you are now able to understand what Lumi is, describe Lumi platform, its purpose, the core capabilities, and key functions. Stay tuned for the next video, Getting Started with Lumi, where we'll delve into the Lumi portal and all it has to offer. Until then, happy exploring! Hello there. Welcome to our Getting Started with Lumi video.
+
+00:05:28 - 00:06:29 Unknown Speaker:
+
+In this session, we will guide you on how to access Lumi, provide a walkthrough of the portal, and give you a glimpse into Lumi's usage policy. Access to Lumi Now let's dive into Lumi via the portal, which will be your single point of access for all the capabilities that Lumi has to offer. It provides a self-guided onboarding journey and offers robust search mechanisms, activity tracking, and various capabilities for capturing, curating, and consuming data. To start using the platform, type Lumi.exp.com in your web browser. As part of your onboarding process, you are required to review and agree to the Lumi usage policy before requesting access. Once you have done that, You can proceed to raise and request access and eek entitlements directly in the Lumi Portal. It is important to note that when requesting access, the business description must be clear.
+
+00:06:30 - 00:07:34 Unknown Speaker:
+
+When submitted, it can take 2 to 24 hours for approval. Lumi Portal Navigation Now you are good to go. On Lumi's home screen, you'll find a top bar that's your navigation key. It's equipped with categories and subcategories. Guiding you precisely to your destination. For instance, click on projects and then view my project to see all your project creations. Lumi also provides direct links to powerful tools like BigQuery, Aida, or Envision. These apps open in new tabs ensuring an uninterrupted Lumi experience. Don't forget to check out our activity section in Lumi's homepage. It's your personalized notification center keeping you updated on your pending activities. Need help or training? Lumi Academy has got you covered. Consider it your learning hub with various paths to explore. And for additional support, our contact us banner is always at your disposal.
+
+00:07:34 - 00:08:38 Unknown Speaker:
+
+Reach out via Slack or email. But the strongest capability that Lumi supports is its unified search tool. Once you click on it, In the search bar, simply type in your keyword and dive into a world of tables, variables, and documents. Click on a table and get a wealth of information, attributes, SDEs, business and technical details, ownership, security info, and related variables. The more you use Lumi, the better experience you will get. What is usage policy? Lumi is more than just about capabilities. It's also about responsible usage. The Lumi usage policy is our guiding principle. It outlines the do's and don'ts for using the platform, ensuring compliance with company policies, tech standards, and global regulations. This policy helps you navigate the Lumi platform securely and effectively. But don't worry, we'll delve deeper into this later in our Lumi's usage policy videos.
+
+00:08:41 - 00:09:42 Unknown Speaker:
+
+So, why adopt Lumi? Imagine high-performing, real-time, versatile data platform that supports you while offering robust training and support resources. It is time to start wrapping up this video. Let's revisit what you have learned. Accessing Lume is simple. You just need the necessary access permission and EEC entitlements before logging in. Once done that, the intuitive portal opens up a world of capabilities for you. However, it's crucial to adhere to the Lumi usage policy to ensure secure and responsible use at Lumi. But wait, don't go yet. There's more. If you need help navigating Lumi, we've got your back. Schedule time through the Lumi portal for extra assistance with Lumi Academy office hours. Join our Slack support channel by using hashtag Lumi-Engage to ask questions and get assistance. Questions or feedback? Email Lumi ambassadors team lumi at aexp.com.
+
+00:09:43 - 00:14:31 Unknown Speaker:
+
+Navigate to the Confluence page to access frequently asked questions and answers. Learn more about the vision of Lumi and how it will drive business value for Amex via the Square page. By the end of this video, you are now able to outline the steps to access Lumi via the portal. Understand how Lumi portal works. Identify Lumi's usage policy to ensure compliance and responsible usage. Lumi is more than a platform. It's your partner in navigating and utilizing data. So, come join us on the journey to a more empowered data experience. Welcome to the usage policy introduction video. We are excited to walk you through our usage policy, a guide to proper data management on our platform. During this session, you will be guided through an overview of the Lumi usage policy, its scope, and the roles and responsibilities.
+
+00:14:32 - 00:15:40 Unknown Speaker:
+
+Let's get into it. Lumi usage policy overview. Let's begin with an integral part of our operations. The Lumi usage policy outlines the frameworks, processes, and operating principles necessary for onboarding onto the Lumi platform for valid business purposes. Additionally, our Lumi usage policy perform multiple key functions. It lays out the frameworks and guidelines to onboard the platform for a valid business purpose by the federated teams. It delineates clear roles and responsibilities for data ingestion, security, consumption, And management. It sets forth guidelines for analytical and production project spaces. It incorporates provisions for user activity monitoring. It defines change management protocols. It is important to note that the Lumi Usage Policy serves as a dynamic framework, while it does not adapt. With each new functionality released, it sets forth guidelines on how these new functionalities should be introduced, ensuring it remains relevant to the foundational Lumi platform capabilities.
+
+00:15:41 - 00:16:35 Unknown Speaker:
+
+The policy outlines the do's and don'ts for the user community, providing consistent guidance. Let's now explore the reasons why this policy is crucial for our users. At Annex, we really care about keeping data safe. This policy spells out exactly what's expected. So, to make sure we're all on the same page with this big priority, It's super important for you to understand your role, what you're responsible for, and what the stakeholders expect from you. Keep data safe and sound by using the right access management practices. Use your workspace wisely to do your job. Stay to the rules, meaning the American Express management policies and technology standards. As a user, you're not just signing up for responsibilities. You're also getting benefits from the Lumi usage policy. Here's what you're getting.
+
+00:16:35 - 00:17:24 Unknown Speaker:
+
+One go-to document that bundles up all the processes and standards you need to know. A framework of what to do and what not to do on the Lumi platform. A clear breakdown of what is what, for both you and the folks you're working with. A full set of guidelines on how to use data without stepping over any lines. Don't forget, sticking to the Lumi usage policy keeps our data safe and our platform running smoothly. Let's also apply the rules to hit our business targets. Let me use this policy scope. Now that you've got the hang of your usage policy duties and perks, let's check out the areas that fall within the user's responsibilities and scope. First off, we have data ingestion. This provides guidelines for the proper collection and import of data into the system.
+
+00:17:25 - 00:18:22 Unknown Speaker:
+
+Then, there is data security. Which includes measures to protect data from unauthorized access and breaches. Next up, we have data access, privileges, and management. In here, it is defined who has access to data and at what level. As for the project space enablement, it ensures that project spaces are set up efficiently for users. Then we move on to data lifecycle management, which manages the flow of data throughout its life, from creation to deletion. According to E-79 and E-08 guidelines. We also use business intelligence tools. These help us to analyze data and gain insight for a valid business purpose. Now, data sharing and transfers is another important area. This lays out the rules for sharing and transferring data between parties. Also, there is data quality, which maintains the accuracy and integrity of data.
+
+00:18:22 - 00:19:18 Unknown Speaker:
+
+And lastly, change management, which outlines the... procedures for handling changes to the system or data. And that's it for the scope of LUMI usage policy. It covers all these areas to ensure that you are making the most of your data, keeping it secure, and managing effectively. Roles and Responsibilities Time to uncover the distinct roles and responsibilities that owners have in the LUMI usage policy framework. As an application owner, you play a key role in managing data sources. Your job, based on the EAM-30 guidelines, is to look after the source applications, handle the flow of data to Lumi, and have a good grasp of both business and tech aspects. Next up, let's discuss the role of a data ingestion owner. Your job is to make sure the feeds and tables in Lumi follow the usage policy and IDL guidelines.
+
+00:19:19 - 00:20:10 Unknown Speaker:
+
+You're also in charge of managing how data comes into Lumi, along with handling any changes to the data. Next on our list is the role of the EAM 7E Activated Data Steward. This role is crucial to keeping data in good shape. You're responsible for handling critical data elements throughout our organization. This means defining what the data means, tracking where it comes from, and making sure the quality of the CDE stays high. Each role is key to using and governing data in our organization. Following the Lumi usage policy helps us use our data responsibly for valid business needs. In line with other AXP AIM policies and tech standards. Before we wrap up, let's take a moment to review what you are now able to. Understand the importance and benefits of the Lumi usage policy.
+
+00:20:11 - 00:21:41 Unknown Speaker:
+
+Outline the main aspects of the Lumi usage policy. And identify your role and responsibilities. And there you have it. You are now fully equipped to dive into the Lumi Usage Policy. Feel free to rewatch this video or check out our resources like Lumi Academy. Continue your exploration and really look forward to your participation in our Getting Started with Lumi Usage Policy video. Welcome to the Getting Started with Lumi Usage Policy course. This video is all about mastering the usage policy. We'll cover everything from understanding its data process flow to accessing the usage policy via the Lumi portal to ensure compliance. During this learning session, we will guide you through Lumi's data process flow, how to access usage policy via the Lumi portal, and the process of reading and signing the usage policy.
+
+00:21:42 - 00:22:46 Unknown Speaker:
+
+Dive in to become a Lumi pro. Lumi data process flow. We will start by understanding the Lumi data process flow with governance. Let us look at the detailed platform governance circle of truth. This is what shapes Lumi platform governance frameworks and guardrails for enabling growth. While mitigating operational risks across each of the nine core modules. Starting from data ingestion, data security, Access management, data quality, data consumption, usage, monitoring, data sharing, data life cycle management, and change management. All of the points on the circle are outlined in the policy and have references to other relevant American Express management and type policies. First, we have data ingestion. Here you'll find options for requesting ingestion, which then goes through gating, approval and ownership assignments. This ensures only authorized data is ingested following proper protocols.
+
+00:22:48 - 00:23:52 Unknown Speaker:
+
+Moving on to the second module, we have data security. This is where we focus on securing and masking data to protect sensitive information and maintain privacy standards. The third module involves access management. It's crucial to have the right levels of access to different data sets. And this is where permissions are managed. Following that, Module 4 covers data quality. It includes setting data quality roles, applying CDE-specific roles, and remediation of data quality issues. High data quality is vital for accurate analysis and decision making. Module 5 is data consumption. Here, you can delve into analytics use or advanced analytics BI. Ensuring data is used effectively to drive business insights. Now, on to the sixth module, usage monitoring. This is about monitoring the usage of data and creating usage policies that align with Amex standards. Next is data sharing module.
+
+00:23:52 - 00:24:58 Unknown Speaker:
+
+In here data is shared securely within the organization, maintaining compliance with governance standards. The eighth module introduces data lifecycle management. Whichever sees the data throughout its entire lifecycle. And finally, the last core module is data change management. This ensures that any changes to the data are tracked and managed properly. Read and sign Lumi usage policy. Next, we'll provide a demonstration on how to access the Lumi usage policy via the Lumi portal. To access the Lumi usage policy, head over to the Lumi portal by typing in your web browser. Lumi.exp. Com If you are a new user coming into the Lumi portal for the first time. Once you review it, you can agree to it and then request access to everything Lumi offers. You'll start by acknowledging the policy, but where can you access the usage policy once accepted it.
+
+00:25:01 - 00:25:46 Unknown Speaker:
+
+Go to the end of the page. And in the Useful Links section, click on Lumi Usage Policy. This will open the usage policy document in a new tab so you can review it as many times as you wish. This wraps up our guide on the Lumi Usage Policy. Remember, good data management helps you use your data fully and stay within rules and standards. We're now at an important part of the course where you've learned about Lumi's guidelines. We encourage you to read the Lumi Usage Policy. It will help you understand what the policy is, what's important, and how it relates to the new data platform on the cloud network. The document explains user roles and responsibilities, and how we keep a safe and smooth running environment for everyone.
+
+00:25:46 - 00:29:47 Unknown Speaker:
+
+Upon completing your review of the policy, we ask that you sign it to confirm your understanding and agreement. We greatly value your compliance and comprehension. By the end of this video, you are now able to understand the Lumi data process flow, access the usage policy via the Lumi portal, acknowledge its policies, and utilize audit logs for effective data management. Read, comprehend, and sign the Lumi usage policy to ensure effective use of the Lumi platform. Don't forget, mastering the Lumi usage policy is key. Together, let's redefine the way we work. Welcome to our session on the data transformation overview. We're going to explore how to use this powerful tool to transform data. During this video, we will guide you through LumiData transformation overview, its mission, features, architecture, and user flow. Now, let us get started.
+
+00:36:53 - 00:38:02 Unknown Speaker:
+
+Data Transformation Overview Data Transformation Tool is our in-house product, which provides an intuitive user interface to define transformation logic without prior knowledge of programming languages. As we move away from Cornerstone, our on-prem data warehouse, to Lumi, our global cloud-based platform, we need a tool to create data transformation jobs. Data Transformation Tool meets this need by offering. Low-code, no-code flexibility to design ETL pipelines effortlessly and supporting 140 plus functions to help you transform and manage data effectively. Our mission is to simplify the data transformation journey by providing a self-serve, user-friendly, and efficient solution for all users. DT is developed on modern cloud technologies which are scalable and integrated with enterprise offerings. To achieve our mission, we have focused on. Platform agnostic design. Accelerated migration via DT accelerator, which is a tool to import existing Magellan flows on LumiDT, instead of recreating them from scratch.
+
+00:38:02 - 00:39:18 Unknown Speaker:
+
+And user-friendly drag-and-drop interface. LumiData transformation features and architecture. DT provides a range of features to meet user needs. Extensive ETL functionality, DT supports 140 plus functions to create transformation flows effortlessly. Users can also define custom functions to meet specific requirements. Low-code environment for all user levels, with a user-centric design. It provides in-house accelerators for migration validators and optimizer for users. Unified integration, DT has integration with a variety of solutions including data ingestion, data quality, data security, and data governance, delivering an end-to-end unified experience. Collaborative development, the tool allows users to create versions and compare and merge individual flows, promoting collaborative development. Now, let's take a look at LumiDT architecture. Flow creation on UI. Users can design their ETL flows directly through the DTUI which allows users to either create flows from scratch or import existing flows from tools like Magellan, SQL Jobs, or PySpark scripts using accelerators.
+
+00:39:19 - 00:40:25 Unknown Speaker:
+
+Flow config. All ETL flows are stored in JSON format, ensuring two-way compatibility, and this JSON helps in rendering the flow on UI. Optimization and validation. Once flow configs are created, Optimization recommendations are provided if any. Flows are also validated using the flow validator, ensuring they meet execution standards. Translation to BigQuery SQL. The validated flows are translated into BigQuery SQL using the translator utility, making them ready for execution on Google Cloud Platform. Execution via GCP. Flows are executed using GCP Airflow, allowing users to orchestrate flows efficiently and seamlessly. Next, let us walk through how you can start your journey and gain access to DT tool. Getting started. Access to GCP project. Before accessing the DT tool, users must have access to a GCP project space. To enable this access, users can reach out to the DT team for the required permissions.
+
+00:40:26 - 00:43:43 Unknown Speaker:
+
+Visit Lumi portal. Once project access is enabled, users can log into the Lumi portal at lumi.eexp.com. Navigate to DT tool. From Lumi portal, go to the DT tool and this screen will load. From the project drop-down menu, select the relevant GCP project. Users will see options to create flows. This allows users to create flows from scratch. Import flows. This allows users to import existing flows from Magellan. Explore Flows. This allows users to explore the existing flows on DT. Parameters. This allows to view existing parameters or create new ones. Users can choose the relevant option and proceed forward. By the end of this video, you have now gained a high-level understanding of DT Tool, how is it useful, its key features, and how to gain access to the tool. Welcome to our session on the Magellan Accelerator.
+
+00:43:44 - 00:45:50 Unknown Speaker:
+
+We are going to explore how to use this powerful tool to migrate the existing Magellan maps to Lumi and save a ton of your time. You will gain an understanding of your role within Lumi and how to be prepared for your learning journey. Now, let us get started. Introduction to the Magellan Accelerator. Magellan is an in-house build data transformation tool based on Cornerstone which is being used by the developers, analysts, and business users to create or execute complex data grouping, aggregates, or unions through its interactive, drag, and drop user interface. Magellan is an in-house build data transformation tool based on Cornerstone which is being used by the developers, analysts, and business users to create or execute complex data grouping, aggregates, or unions through its interactive, drag, and drop user interface.
+
+00:46:05 - 00:47:41 Unknown Speaker:
+
+Moving away from Cornerstone On-Prem Data Warehouse to Lumi, we also need to migrate the existing data transformation jobs which were running on Cornerstone. Now. Magellan is one such tool, which was being used in the On-Prem setup to migrate these jobs. One way is to rewrite the entire logic on Lumi, but this is very time consuming now. To accelerate this process and enhance the user experience, we have developed a utility called Magellan Accelerator to fasten this process by many folds. Getting started with the Magellan Accelerator. Step 1. Go to the LumiPort and Data Transformation tab. Select your project, and click on the Import Flow tile. Step 3. Enter the following details displayed below, and click on the Save button. For a few seconds for the Lumi specific flow to render on the UI.
+
+00:47:41 - 00:50:44 Unknown Speaker:
+
+Post that, flows can be maintained from the UI directly. Manual touchpoints post acceleration. Accelerators will fast track the transformation, however given the complexity of current ODL system, there are scenarios where manual intervention is required. Manual intervention is required when handling data typecasting or during automated UDF onboarding. By the end of this video, you are now able to use the Magellan accelerator and migrate the existing Magellan maps to Lumi. So, today we are here to have a demo of the DD Canvas. This is in continuation with the series of the data transformation overview journey and the DD accelerator part. So, let us now begin with the demo of data transformation canvas. So, as you see here, I am on the home page for Lumi. As I click on manage data, I get the option of transform data here.
+
+00:50:46 - 00:51:39 Unknown Speaker:
+
+And once I click on transform data, I get the option of viewing the dashboard. As I can view the dashboard, so the canvas for the transformation gives the users an ability to create videos as well as import existing flows and then further edit them. So as we see here, this is the landing page or the dashboard or data transformation capability of the data. So here you see there are four tiles on the left side. You have the option to select the project. So I just move on to AXP LumiD. Now herein you can see there are four tiles. First one is to create a new flow wherein a user wants to create a new flow from scratch. Next is to import an existing flow from Magellan and then further edit it.
+
+00:51:40 - 00:53:25 Unknown Speaker:
+
+Then the third option is to explore flows, which is the thing about editing the existing flows which are there on this data task function utility. The last one is about creating parameters and also viewing the existing parameters which are associated with different flows in this particular utility. Now, for the purpose of this demo, I'll start from the scratch by creating a new flow. So I'll just move on in this first step. The first step is the flow registration part where I need to give flow name and a brief flow description, which is nothing but a broad description of what this flow actually connotes or signifies. So I just say that this flow has been created for. This redirects me to the canvas. And the reason we call this is to become more intuitive once I start working on this.
+
+00:53:26 - 00:54:12 Unknown Speaker:
+
+But the reason is that we provide drag and drop facilities wherein the user can just come in, select the sources, and drag and drop those sources on this canvas and see the whole flow building. From left towards the right in this entire screen. So, as you see here on the top left part, you see the project name which we have selected. So, as I selected AX below me on the last screen, this represents that. Flow name is the same thing which I gave myself on the flow registration screen back from this stage. Version represents on which particular version I am working as of now, since this is the very first version. Where I have started creating. This is being represented by 0.1.
+
+00:54:12 - 00:55:04 Unknown Speaker:
+
+And this progresses and S1 publishes a particular flow to different environments and then branches a particular flow to create new versions in order to work upon those. So a particular flow can be edited or worked upon only until it is not submitted. Once the flow is submitted, it can no more be edited upon. And in order to edit a flow, After submitting it, the user needs to create a branch, which is from here, create a branch option. I'll go into detail for what all of these options mean. But before that, let me start with the creation of a flow, which is a very first step. As you see here on the left-hand panel, you see four buttons. First is to go on the home screen, which will redirect me to the previous screen, where I could see four different tiles.
+
+00:55:04 - 00:56:13 Unknown Speaker:
+
+Another is to see the existing flows. So here if I click on this, this will give me a list of all the flows which exist on the ASP.Login project. Next is about the sources. So this lists all the sources which I can use to create my data transformation. So I'll start with this. Let me select these tables. I'll work on these two. So the flow where I will work on is, first I'll join these two tables. After joining, I'll create a very simple transformation of concatenating two different columns from these tables or from the join step, and then there will be the output step. So let me start with this. I just first use WwW Cares or the Analytics 01. So maybe I can use this one when I've already selected these sources.
+
+00:56:13 - 00:58:40 Unknown Speaker:
+
+So you see I've already selected www.gasauthentic01 and www.gasauthentic02. Now I'll just put a simple join on these two sources. So let me name this as join them step. And then I go to save and next. Herein, maybe I'll use a left outer join. On this table. So here is my table 01 and I am now joining this on table 02. And to put the on condition, I click on this pencil icon which helps me edit or give me the expression I need. So let's say I type cm11. This gives me cm11 in this table. So I'll be basing this join on cm11. This is another table and if I click on validate, this validates the join expression for me. Yeah, so you see this expression has been successful. 24-26-26-26-26-26-26-26-26-26. What mail? What is your email address?
+
+00:58:41 - 00:59:27 Unknown Speaker:
+
+My email address is 2,015. Your email address is 2,015. My email address is 2,015. My email address is 2,015. My email address is 2,015. My email address is 2,015. My email address is 2,015. My email address is 2,015. My email address is 2,015. My email address is 2,015. My email address is 2,015. My email address is 2,015. My email address is 2,015. My email address is 2,015. My email address is 2,015. My email address is 2,015. My email address is 2,015. My email address is 2,015. My email address is 2,015. My email address is 2,015. My email address is 2,015. My email address is 2,015. My email address is 2,015. My email address is 2,015. My email gives a join step for me, as you can see, this is a join step, which has been named as Join Demo step.
+
+00:59:27 - 00:59:55 Unknown Speaker:
+
+Now, uh, the next step which I would do is to create a transformation step out of this join. Let's say I click on Transformation and name this as Transformation demo step, and then click on Save. And next, let's say, click on this and open this up.
+

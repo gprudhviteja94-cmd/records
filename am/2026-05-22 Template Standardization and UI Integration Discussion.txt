@@ -1,0 +1,244 @@
+2026-05-22 Template Standardization and UI Integration Discussion
+
+Creation Time: 2026/05/22 12:14
+
+
+📅About Meeting
+
+• Date & Time: 2026-05-22 12:14
+• Location: Not specified
+• Attendee: Rachana and other team members (names not specified)
+
+📒Meeting Outline
+
+Template Configuration and Standardization
+
+• Unique Set of Templates  
+  The discussion focused on understanding the unique set of templates used for various data quality checks, such as missing value checks, stagnant checks, duplicate checks, and valid value checks. It was clarified that although multiple rules exist under a single check (e.g., 20 rules under missing value check), these correspond to one template. The need was expressed to obtain a standard, unique set of templates with their corresponding template numbers and descriptions for easier reference and usage.
+
+• Template Number and Description Mapping  
+  The team reviewed how template numbers map to multiple descriptions. For example, stagnant 1 maps to four different descriptions, but these descriptions are essentially similar or variations of the same rule. Clarification was given on how certain terms like "00" and "similar" are handled distinctly in the descriptions and variable conditions.
+
+• Total Number of Templates  
+  The total number of templates was estimated to be around 35 to 40, distributed across different checks: stagnant (3 templates), duplicate (2 templates), missing value (14 templates), and valid value check (13 templates). The missing value check has the largest number of templates.
+
+Integration with User Interface (UI)
+
+• Challenges with Description Combinations in UI  
+  Concerns were raised about the complexity of handling many description combinations in the UI, as the UI may not support creating so many variations easily.
+
+• Proposed UI Solutions  
+  Suggestions included providing a dropdown or semantic search box for users to select from predefined descriptions mapped to templates. Users could then edit the description if needed. This approach aims to balance flexibility and standardization.
+
+• Auto-Generated Descriptions and User Input  
+  It was noted that currently, descriptions are auto-generated based on input fields, which may cause issues if users enter incomplete or inconsistent information. To address this, the team discussed separating description content from input parameters and moving some description details into filter criteria or other UI input fields.
+
+Streamlining Description Usage and Backend-Frontend Sync
+
+• Reducing Dependency on Descriptions  
+  The team considered minimizing the use of descriptions in the backend configuration by extracting key parameters (e.g., column names, conditions) directly from input fields rather than relying on parsing descriptions.
+
+• Moving Description Data to Variables  
+  It was proposed to move data currently embedded in descriptions into dedicated variables or filter criteria fields, which would simplify both backend processing and frontend UI design.
+
+• Backend and Frontend Alignment  
+  The current backend configuration includes descriptions that the frontend does not fully utilize, as the frontend collects parameters separately. The plan is to align backend and frontend by reducing description usage and relying more on structured input fields.
+
+• Next Steps for Implementation  
+  The team agreed to review which templates require changes to move data out of descriptions and into variables. The changes are expected to be manageable and will be communicated as needed.
+
+📋Overview
+
+• The team clarified the need for a unique, standard set of templates with template numbers and mapped descriptions for all data quality checks.
+• It was confirmed that multiple rules under one check correspond to one template, with some templates mapping to multiple similar descriptions.
+• The total number of templates is approximately 35 to 40, with missing value checks having the most templates.
+• Challenges in integrating many description combinations into the UI were discussed, with solutions proposed such as dropdowns or semantic search for description selection and editing.
+• The team plans to reduce reliance on auto-generated descriptions by moving key parameters into structured input fields and filter criteria, improving backend-frontend synchronization.
+• Implementation of these changes will be reviewed and executed, with communication on any exceptions or special cases.
+
+🎯Todo List
+
+• Rachana:
+  
+  • [ ] Obtain and share the unique standard set of templates with template numbers and mapped descriptions.
+  • [ ] Brainstorm and propose how to merge template descriptions with the UI design, considering dropdown or semantic search options for description selection.
+  • [ ] Review which templates require moving data from descriptions to variables or filter criteria and coordinate with backend team.
+  • [ ] Communicate any templates that cannot be adjusted and require special handling.
+
+• Backend Team:
+  
+  • [ ] Modify template configurations to extract key parameters from input fields instead of descriptions where possible.
+  • [ ] Align backend processing with frontend input structure to reduce description dependency.
+  • [ ] Share updated template-description mapping Excel or document with Rachana for reference and UI integration.
+  • [ ] Provide feedback on any limitations or exceptions encountered during implementation.
+
+Transcription
+
+00:00:00 - 00:00:27 Unknown Speaker:
+
+I'm trying to understand since you have configured the code with these descriptions, right, I need the unique set of templates that you have used. So suppose, uh, for missing value check, uh, there would be like, maybe 20 rules that are running on missing value check, right? So it's like transamount variable should not be null, then some other variable should not be null. But at the end it's one template, right? I can pick any one of them and proceed with that.
+
+00:00:27 - 00:00:47 Unknown Speaker:
+
+Yeah. So that's what I need, like the standard set that you have used, so just a unique standard set if I could get, which, uh, compli- like, which is corresponding to all the templates that you have created, like the team has created. Okay, understood. So the template and descriptions being covered under that template?
+
+00:00:49 - 00:01:06 Unknown Speaker:
+
+Uh, template, uh, I don't need as of now, but we are just— No, template number I mean. —justifying what are all the you need descriptions that you have used for configuration. Yeah, the template number and the description that is mapped to that. Yeah, yeah, yeah, yeah. I think that would be helpful, yes.
+
+00:01:07 - 00:01:20 Unknown Speaker:
+
+Uh, okay, that is— Okay, you have template number here. Yeah, yeah, template number, yes. So if I—if I just, uh, filter out, can you filter out some other template number here? Yeah. So let me take another simple one.
+
+00:01:20 - 00:01:42 Unknown Speaker:
+
+stagnant, I'll take it. Yeah. So if you see, stagnant 3 has only one, uh, description that is being mapped, whereas stagnant 1 is be-being mapped to three different descriptions. One— Yeah, now this is where I am confused. Your, uh, stagnant 1 is mapped to all these, right?
+
+00:01:42 - 00:01:56 Unknown Speaker:
+
+But these are like a little different kind of rules. No, no. Uh, only this one, uh, stagnant 1 is mapped to only these four descriptions. If you observe this, it's the same only. It's the same only.
+
+00:01:56 - 00:02:11 Unknown Speaker:
+
+Which of these customers are this now? Little different. Here it is 00. How are you—how are you inferring similar and 00 from this? Uh, in this description it says, right, percentage customers with similar values or 00 values.
+
+00:02:12 - 00:02:28 Unknown Speaker:
+
+Yeah, I—actually this one alone I updated before the call, okay? So only this one. So don't get confused. Um, only this one. Let me—so I'm using 00 are similar here.
+
+00:02:29 - 00:02:48 Unknown Speaker:
+
+Either 00 are similar. If something comes as 00, then I'll go and update it as 00 in the var condition. And similar comes, then I'll go and update it as similar condition in the input query. Okay. Okay, so I'm using, uh, 00 are similar.
+
+00:02:51 - 00:03:04 Unknown Speaker:
+
+Reported. Okay. So if I am saying threshold is— If it works, then I can—yeah, I can check this one. So if you see here threshold, this 30 days— How many total templates can you tell me that? Yeah, yeah.
+
+00:03:05 - 00:03:06 Unknown Speaker:
+
+Uh, sorry, Rachana.
+
+00:03:08 - 00:03:19 Unknown Speaker:
+
+How many total templates are there, my sir? Uh, for stagnant there are three. Uh, for missing—sorry, two. It was three actually. I changed it to two now.
+
+00:03:19 - 00:03:30 Unknown Speaker:
+
+Okay. Okay, okay. Duplicate, uh, there are, uh, two. And missing value you have 14. Oh, so many.
+
+00:03:30 - 00:03:37 Unknown Speaker:
+
+Yeah, there are actually. There are. And then one more is there, right? That is valid value check. 13 are there.
+
+00:03:37 - 00:03:51 Unknown Speaker:
+
+Yeah. The biggest one is the threshold. Anyway, um, we are not, uh— So the overall number would be somewhere around 35 to 40, right? Uh, right. 30, 35.
+
+00:03:51 - 00:04:10 Unknown Speaker:
+
+Yeah. I—I see this Excel only would help you. Uh, I mean, I can share you one more that is the description and the template will map to it, okay? Uh, but this one also would help you to understand what parameters are you using. If I'm using it, what are we using it from the input description?
+
+00:04:13 - 00:04:25 Unknown Speaker:
+
+Right. Can you once show me, uh, yeah, the missing value once, like the different kinds that are there in missing value? Just filter on check type here. Okay.
+
+00:04:30 - 00:04:44 Unknown Speaker:
+
+Totally you have 112 records. Missing value is the biggest one. Yeah, I'm not concerned with that. Okay. Uh, so basically, uh, here suppose it says 100% fill weight.
+
+00:04:44 - 00:04:55 Unknown Speaker:
+
+So you are taking the variable from variable name and giving it a 100% fill weight. No, in this one, if you see the description part, user description, I'm not taking anything here.
+
+00:04:58 - 00:05:07 Unknown Speaker:
+
+Oh, okay. If you tell me, okay, tomorrow I might have 50% fill weight, then I will, uh, even, uh, consider that, uh, parameter also.
+
+00:05:10 - 00:05:27 Unknown Speaker:
+
+Reported. Okay. So I have to modify my template to— Yeah, just my only concern here is since there are so many templates within one check, right? And we are trying to link this with the UI that we are developing.
+
+00:05:28 - 00:05:34 Unknown Speaker:
+
+In the UI, I don't think we can create, like, so many combinations for description.
+
+00:05:35 - 00:05:51 Unknown Speaker:
+
+Oh, okay. Okay, but yeah, this is helpful. Let me once brainstorm on this, like, how can we merge it with the UI? I'll get my— Maybe we can do one more thing in the front end, uh, Rachana. So we have a template and the description matching, right?
+
+00:05:51 - 00:06:03 Unknown Speaker:
+
+So the 35 records, I can share it with you. So when you are choosing, you can choose from one of the descriptions. When you choose it, after choosing it, you can even edit the description.
+
+00:06:07 - 00:06:14 Unknown Speaker:
+
+So you are saying we can give them a dropdown? Yeah, a dropdown. For the user check? Exactly. For the description?
+
+00:06:14 - 00:06:15 Unknown Speaker:
+
+Yeah.
+
+00:06:16 - 00:06:37 Unknown Speaker:
+
+Okay. Even if it is a not dropdown, it is a semantic search box we can give. And if they say 100%, then it will display all the description. The thing is, like, our description part is auto-generated based on what inputs they have given in the fields above, right? That is the issue.
+
+00:06:38 - 00:06:57 Unknown Speaker:
+
+Uh, that's what. We can remove that. Let that be a simply description that is from the front end. See, to make sure— I don't know that's from a problem. Because then again, like, people will start entering random stuff, and if they don't provide all the relevant fields, then we won't be able to execute it, right?
+
+00:06:59 - 00:07:01 Unknown Speaker:
+
+Okay. So only—okay, we can do one more thing.
+
+00:07:03 - 00:07:20 Unknown Speaker:
+
+We can ask—we can create a description. See, for example, this one: count of records where column name is null. Okay? So when they choose this one, we can ask user to put that column name there.
+
+00:07:24 - 00:07:35 Unknown Speaker:
+
+Policy number is null. Yeah, that we are already doing, right? Column name we are asking separately, then null margin we are asking separately. Okay, let me look into this. I will try to figure it out.
+
+00:07:36 - 00:07:46 Unknown Speaker:
+
+I was also wondering, like, since you are not using the description in all cases, right? You have this description usage no in some of these. Yes.
+
+00:07:47 - 00:07:58 Unknown Speaker:
+
+Let me check into the yes ones and see if, like, we can integrate it somehow. Okay, okay. Let me look into this. If you can move these things. Thank you.
+
+00:07:58 - 00:08:12 Unknown Speaker:
+
+Okay, one last thing, Rachana. You can even think about moving a few of these columns inside the filter criteria. Okay? Number of records. Condition in filter criteria, we put this is null.
+
+00:08:12 - 00:08:29 Unknown Speaker:
+
+Then that also—this we don't need the description at all. So let the description be—so we can think in that direction also. Remove the data from the description and move to one of the front end. We are currently moving filtering. So if you have seen the UI forms, right?
+
+00:08:30 - 00:09:00 Unknown Speaker:
+
+As of now, we were not considering description as an input. I mean, the back end and front end were not exactly in sync because we were mostly working with the front end till now. So as per my understanding, the description was not in picture because we were asking for each of the fields separately, right? Like, even if I say that this should not be null in more than 5% of the cases, not null also we are taking separately, then 5% also we are taking separately.
+
+00:09:00 - 00:09:24 Unknown Speaker:
+
+So that's how we were configuring the UI so far. But then, like, the back end has been configured a little differently with this description thing. No, see, one thing I can do, Rachana. Wherever possible, for example, number of records where this is null, something is null, I can take the input from the column name. That is, var name is there, right?
+
+00:09:24 - 00:09:42 Unknown Speaker:
+
+I can take this. So for example, this one, I can remove that extracting it from the description. I will only have the issues where there is no— We have to do that actually. Yeah, I think we'll have to do that. But let me get back on which all cases need this kind of change.
+
+00:09:42 - 00:09:55 Unknown Speaker:
+
+Mostly we will have to because right now we are taking all these fields in the description, like, individually. So we can actually do that. I'll do that one. That is not a big change. I'll do that.
+
+00:09:55 - 00:10:02 Unknown Speaker:
+
+And wherever it is not possible, I will let you know. Maybe you can think about moving that data to one of the variables inside the other parameters.
+
+00:10:04 - 00:10:09 Unknown Speaker:
+
+Right, right. Correct. Okay. That's fine then. Okay, let me look into this.
+
+00:10:09 - 00:10:12 Unknown Speaker:
+
+Yeah, thank you so much. Thank you. Okay, bye. Bye.
+

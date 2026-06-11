@@ -1,0 +1,232 @@
+2026-05-25 Access Issues and ADAS Bootstrap Application Overview
+
+Creation Time: 2026/05/25 16:04
+
+
+📅About Meeting
+
+• Date & Time: 2026-05-25 16:04  
+• Location: Virtual / Online  
+• Attendee: Pawan, Sikath, Kishore (mentioned), and others
+
+📒Meeting Outline
+
+Access Issues and Resolution Process
+
+• Access Renewal for Copilot  
+  Several team members reported issues with Copilot access, which had been working until recently but appears to have expired. It was advised to check emails for renewal notifications and to raise new access requests via the platform owner, noting that approval might take time. The access is related to Windows group permissions rather than application-level access. Proper justification is required when requesting access renewal.
+
+• Communication and Scheduling  
+  Due to delayed responses from some team members (e.g., Kishore), calls may be rescheduled to ensure participation and clarity on access issues.
+
+Introduction and Overview of the ADAS Bootstrap Application
+
+• Purpose and Functionality  
+  The ADAS system is a custom-built bootstrap application designed to generate 16 specialized agents that automate end-to-end development tasks, including front-end, back-end, integration, testing, and code review. It supports both new application development and enhancements to existing projects by creating memory files that store project context, coding patterns, and architecture decisions.
+
+• Agent Types and Roles  
+  The 16 agents are categorized into four types: analytical agents, front-end agents, back-end agents, and infrastructure agents. An orchestrator agent coordinates interactions among these agents, managing tasks such as connecting front-end to back-end APIs and reviewing code for adherence to standards.
+
+• Memory and Context Management  
+  The system maintains several markdown files (context.md, patterns.md, lessons.md, decisions.md, components.md) that act as memory for the agents. These files store API endpoints, coding patterns, bug fixes, architectural decisions, and component usage to ensure consistent code generation and learning from past issues.
+
+Implementation Details and Workflow
+
+• Bootstrap Setup and Repository Structure  
+  The bootstrap application exists as a separate repository containing commands to generate agents and extract context from existing projects. It supports both greenfield projects and enhancements by analyzing existing codebases to create memory files automatically.
+
+• Code Generation and Collaboration  
+  Generated agents work locally within the project folder (under a .github directory) and do not automatically push code changes or create pull requests. Multiple developers can collaborate by sharing the agent repository, allowing the system to learn from collective inputs and maintain consistent coding standards.
+
+• Wave-Based Development Approach  
+  Code generation is structured in sequential "waves" to manage dependencies and testing effectively. For example, wave 1 creates skeletons, wave 2 handles routing and connectivity, wave 3 develops UI code, wave 4 generates test cases, and wave 5 performs self-review to ensure compliance with coding standards and test coverage.
+
+• Customization and Extensibility  
+  Users can create custom agents tailored to specific use cases, such as a Figma agent that converts Figma designs into code components. The system supports different LLMs (Large Language Models) optimized for various tasks, e.g., Codex for code generation and Claude Sonnet for analytical tasks, reducing token usage and improving efficiency.
+
+Practical Demonstration and Next Steps
+
+• Live Demo and Setup Assistance  
+  Plans were made to demonstrate the system live using a real user story and wireframe once access issues are resolved. The setup process and code generation typically take about one to one and a half hours.
+
+• Integration with Current Projects  
+  The system has been tested with projects like Pulse AI and RRF, with code available in branches for review and further development. Figma screens can be used as input to generate matching front-end code, with backend integration pending schema availability.
+
+• Continuous Improvement and Bug Handling  
+  The agents learn from bug fixes and code review feedback, updating the memory files to avoid repeating mistakes. This ensures consistent quality and reduces redundant work across the development team.
+
+📋Overview
+
+• Copilot access renewal requires raising new requests with proper justification; approval may take time.  
+• ADAS bootstrap application automates full-stack development by generating 16 specialized agents coordinated by an orchestrator.  
+• Agents maintain project context and learn from patterns, decisions, and lessons to improve code generation quality.  
+• Code generation follows a wave-based sequential approach to manage dependencies and testing.  
+• The system supports customization with additional agents and uses different LLMs optimized for specific tasks.  
+• Collaboration is enabled by sharing the agent repository, allowing multiple developers to contribute and maintain consistency.  
+• Live demonstrations and practical setups are planned to onboard team members and integrate with ongoing projects.  
+• Memory files are continuously updated to incorporate bug fixes and architectural decisions, enhancing future code generation.
+
+🎯Todo List
+
+• Pawan:  
+  • [ ] Raise new Copilot access request with proper justification, monitor email for approval (ASAP)  
+  • [ ] Prepare and share Figma screens for RRF project to enable code generation (by next meeting)  
+  • [ ] Participate in live demo setup and test Pulse AI agent code generation locally (within 1-2 days)  
+
+• Sikath:  
+  • [ ] Assist Pawan with bootstrap application setup and local environment configuration (next meeting)  
+  • [ ] Coordinate scheduling of follow-up meeting for live demo and hands-on session (ASAP)  
+
+• Kishore:  
+  • [ ] Respond to access and scheduling communications to avoid delays (ongoing)  
+
+• Development Team:  
+  • [ ] Commit agent memory files and code changes to shared GitHub repository to maintain consistency (ongoing)  
+  • [ ] Provide feedback on generated code and update patterns and lessons as needed (ongoing)
+
+Transcription
+
+00:00:13 - 00:03:53 Unknown Speaker:
+
+Current access. Wait, it will take time. Can I go to any active access class? Go to Google Groups. Go to Google Groups. Yeah, here in the filter search for Copilot. Copilot. Yeah, see you don't have that. So, you should have... But it was working till last Friday. Maybe it got expired. You would have got an email. Search for your email and search for Copilot. Let's see. Read your emails. Can I edit that now? Yeah, raise access again. It will take a day. Yes, don't even read your emails or what. From morning to 3 people contacted me. Same issue. Not application, Windows. It's new access. Go to raise new access. Not application, it's a Windows group. Go back. Platform, select platform. Yeah, maybe I can help. Copy that same one from the mail. That will be it.
+
+00:04:03 - 00:06:17 Unknown Speaker:
+
+Actually, this one, for the platform owner access, it is taking time. Otherwise, it would be done by our approvers only, right? For platform approvers, sometimes they are taking time. Yeah, till October only you can keep. Proper justification. Just co-pilot access won't help, right? Why you need, you need to inform. Okay. My presentation, why this will happen. You guys wait till it expires. You got an email? Yeah, yeah. Kishore is not responding. So I'll reschedule this call. Okay, yeah, shall I? Okay, shall I present it to you? So basically, uh, this is a bootstrap application, okay for us to create the agents to do our job. So in our case, we are doing development of creation of code for both front-end and back-end, and the integration between them and the schema database connection.
+
+00:06:17 - 00:07:13 Unknown Speaker:
+
+So end-to-end coding, we are achieving the development using the Agentic system. Okay, so, for example, there is an use case for us to do a new development. It has both front-end, back-end and their connectivity, and then testing and cool reviews, so all end-to-end functionalities. You take. Any project, it will have that, so our goal is to create agents, to do those each job. Okay, so what we have done is this Bootstrap application will create 16 agents. Okay, I will show those agents that are it is going to create. So this. Ados is a Bootstrap application. It generates agents, so 16 agents that are related for our use case. Based on the input that you provide, if you have the agent doesn't need, then it is. Avoid that and only focus. What is this ADAS system?
+
+00:07:13 - 00:08:01 Unknown Speaker:
+
+Is this something like it's directly available, which is something we built? What is this ADAS system? It's built, it was built by me. What I did, uh, so basically, I was creating custom agents for my use case, uh, when I'm doing development in, uh, for our project RPT, so I have created custom agents. And I was doing the development, so what I was doing is I was giving context to the custom agent. And it is creating memory out of it. And when I tell a new use case has come, when I get a new story, I take that information and I provide it to it. It will have the context, the code patterns it will have, and what endpoints we have, what are the skeletons, front-end use cases that we have, everything.
+
+00:08:01 - 00:08:48 Unknown Speaker:
+
+It has created one scaffold information that will be useful for future generation of the code. So when I was thinking, Okay, why don't we have it for both the front end as well? I was doing it for the back end, and both front end and back end both. I created two agents and I was doing development for both. And I was seeing some use cases where some development is an enhancement to the existing one. And few places. We create a new application from the scratch, so I wanted it to make it as a deliverable for anyone. So I was discussing with Sreeni as well on this. So what I did? Okay, I want it to be more generic system so that anyone can build reagents for their system.
+
+00:08:48 - 00:09:41 Unknown Speaker:
+
+And they can work on those agents, they can use those agents to generate the code. So that's when I have created this, but I had to say something, Um, LLM has recommended me. This is a good name for it for you to use it, so I am using some name for that. Okay, okay, so basically it's a bootstrap, so this creates the agents, and those agents will work for our project. Okay, okay, so so maybe give example of how this agent, this will create. Yeah, sure, so first I'll switch to 16 agents. That I was saying, okay. So basically, I categorize those four agents into four different types. One does the analytical part. So orchestrator orchestrates the coordination between the agents. So you have a front-end agent, back-end agent.
+
+00:09:41 - 00:10:33 Unknown Speaker:
+
+So if you need some coordination, for example, you wanted to connect front-end with the back-end API. So you need a coordination between those APIs. Then orchestrator would pitch in and it will do the job. So any discussion we do with our agentic process, so, so, once using the Bootstrap, we create agents, and Bootstrap application is no more required. So we all be working with Orchestrator for up, so for your project, if you have created orchestrator and your agents, so you would be working with the orchestrator. You don't need to worry about what Bootstrap does, so, once created, it will be there for us all. The custom agents would be there for us. Okay, so orchestrator would coordinate between the agents, one connects with other one and generates a coordination and review, so what it generates is it.
+
+00:10:33 - 00:11:28 Unknown Speaker:
+
+So, once orchestrator generates the code, in the end, it reviews whether it is following the coding pattern or not. I'll talk about these pattern files, okay? Context MD MD. There are different files that we create for our for any Agentic application, Agentic code base, sorry agents that we are creating. We will have some reference files, so context will keep the context of the application. Patterns will write down the patterns that are being followed in the present code. For example, how? If we have using GraphQL? Okay, it notes down? Okay, this current application uses GraphQL, and if you it is using GraphQL, what are the coding standards? They are following it, how the back end and front end connectivity is enabled, so it creates some information out of what is present already.
+
+00:11:28 - 00:12:21 Unknown Speaker:
+
+If it is an existing application, if it is not an existing application, you are bootstrapping it for the first time, then it is a green field. It will, based on your inputs, it will try to create those memory files with us within the agentic process. It keeps that context with it, and it will use it in the future code generation. I'll explain these files again. So basically you have analytical agents, frontend agents to generate code related to frontend. One generates the code, another is wiring up with the backend. And once code is created, you have to write test cases also. So for that you have a test frontend agent separately created. So when you divide the task between the, I mean, if you see this, It end up generating code for the front-end and writing the test coverage.
+
+00:12:21 - 00:13:15 Unknown Speaker:
+
+But when I divide the task, it will be more accurate since the context is limited to that agent, so the code generation would be more accurate and it will be more properly developed. You don't need multiple iterations of the code changes. So similarly for back-end, also back-end routes services, middleware like RBAC, permissions, security, address. Okay, and then the backend schema. In our use case, we are using MonGODB, so it doesn't have to be MonGODB any DB, basically. So it really it connects that schema with the backend APIS and coordinates. Uh, I mean, how this API is going to connect to the backend DB and gets the data out of it. And infrastructure agent like CACD, usually any project will have CACD and containerization, so in our we are using all those.
+
+00:13:16 - 00:14:10 Unknown Speaker:
+
+So I have put these, but right now not completely provided context to it. Okay, I have to work more on this infrastructure side based on what we are using. So when we ask it to generate a code, it should generate. With respect to what cloud infrastructure we are using, what is the deployment methodology we are using? So there is no multiple iterations required. You have the context with it, so if you use that context and it generates the code according to it, so okay, once the agents are generated. Oh, sorry, any notes on this one? So this one, like, uh, from implementation point of view, just for my understanding, so this one have. Do. We need to create a repo like for example for RPT? If we have to do right, then, uh, so for example in RPT?
+
+00:14:10 - 00:15:02 Unknown Speaker:
+
+I have two repos, one for back end and one for front end, for example, then how it will start like in those two repos? Do I need to add, as you said, right, like this context. Md file, and these files do we need to add in each repo or like? So, basically, I have agents created, okay, so these agents are present inside. I said, right, 16 agents. Okay, all those agents would get created based on during the setup itself. So, I set the bootstrap application. So this bootstrap application will be separate repo, right? Yeah, it is separate repo. So I created my add-ons. I have not pushed it anywhere. So once I push this, so when I say add-ons setup, it will ask some information. I could have showed if it is working, but yeah.
+
+00:15:02 - 00:15:48 Unknown Speaker:
+
+So this one will be a separate repo and inside that repo. Yeah, I have all the bootstrap commands to it, how to generate those 16 agents. How to get the context out of existing application So I have given clear instructions for that bootstrap agent, so it will go. So, if it is an enhancement to the existing one, it will ask you can give the path for the existing application, then it will take the path. You don't need to explain, okay, this is a book project is doing this. You don't have to explain what patterns being used, none of those things are required if you provide it to it. It understands the complete code and creates patterns out of it and understand what is the front-end technology being used, back-end technology used, database being used and gets the context out of the existing code itself.
+
+00:15:49 - 00:16:41 Unknown Speaker:
+
+So, if you see this was generated last week, this code was there from long time right, for us actual API servers and actual app service, this is there from long time for us. So, when I set it up, what I did, I wanted to demo it, that's why I reset up this one. So it created all the 16 agents and each one with its instructions. And then memory files. I'll talk about those memory files. Okay, and skills okay, so for each agent, what skill? Okay? For example, you are connecting front end to the back end, how do you connect? What is the parameters that you use to connect that connectivity? Enable that connectivity. So, this one will it raise a PR or like within our local folder that code changes will come, right?
+
+00:16:41 - 00:17:27 Unknown Speaker:
+
+Like in API service. No, this is inside GitHub folder, right? So, it will not create any, it will not come under pull request itself. So, your code would be there, but this one would work on top of what is there in your code. So, it is outside. I can test it in my local. You can test it locally and it will not push anything related to this. So, once you do the bootstrap. Your agents get generated inside that project folder itself under .GitHub folder so you can see all those custom agents created here, so all the 16 custom agents. So these are all the files used by these agents, each file folder. I'll explain what each does in the next slides, so so these 16 agents are created. So, for example, you are setting up and you are working it.
+
+00:17:27 - 00:18:16 Unknown Speaker:
+
+And like you, there might be 10 developers working in our project. So everyone can give prompts and they will work. And from each person it will learn. Okay, team members are using these patterns, okay? So what we can do is we can commit this into GitHub, one repository for this project alone. Okay, four or five developers working, everyone works on it, right? So it learns from the inputs that you are providing. For example, it generated some code. You are saying no, no, not this way, I want it this way. Only our project uses this way, then it generates and it will store that information. Also. Okay, this projects expect the output to be in this format only. So I will keep this as a memory and in future generation of the code, I will make sure my this same mistake is not repeated.
+
+00:18:16 - 00:19:05 Unknown Speaker:
+
+So the same GitHub folder if I, if you give it to me and I run it locally, the mistake that it has done with your. It will not do it for me because it already solved the problem and we are all working together. So everyone commits the code, this GitHub repository. If you commit this agent code, I check out that and I use that. So no repetition of work. Everyone would be on the same context. What APS we are using, and then what front end we have, components we have, what are the back end components we have. How this connection is enabled, this context. Everyone doesn't have to create it for their project, it is created and kept it for everyone, so they can simply use it and start coding in it.
+
+00:19:05 - 00:19:56 Unknown Speaker:
+
+Or one person itself is an employee, I mean, he is expert in front end, one person can code it. You don't need multiple developers to do the development here, and it runs in a wipe coding manner, no prompts required. If you simply say, implement wave one, I'll explain that wave thing. So far this agenting process is clear right. This total 16 agents it creates and there would be a scenario you want some more custom agents also for your use case. It lets you to create those agents as well when you are sitting it up. So in my use case what we did I have created Figma agent also. So what Figma agent does is it gets the code from the Figma website and creates a pages document. That only will be fed to the orchestrator for generation of the code.
+
+00:19:56 - 00:20:47 Unknown Speaker:
+
+Okay, it understand, okay. These are the components to be created this. This requires back-end enablement, this requires to be connected to back-end to get the data it understands from the screens. It has fetched it from the FIGMA. So you can create custom agents also, so these are 16 agents that for any use it is applicable, you can have more agents for your age case also. Yeah, okay, so okay, this wave implementation, so what? So the problem is if if we have all the things together, if you do, for example, in agentic manner. If you are going parallelly for you wanted to generate a test cases for a front-end code or back-end code, you cannot run it parallelly. Once your code is generated, then you can generate test code test cases for it.
+
+00:20:47 - 00:21:43 Unknown Speaker:
+
+So that's why I have created Wave kind of thing, so in a sequence manner, sequence one, sequence two, so in one, it creates skeletons in two. It creates routes for the front end and back end connectivity, and third is where it generates a code for UI. Okay, it is like a front end connectivity with the back end and gets the data, everything the connectivity wise, it takes care of it. And fourth one, it generates test cases. Finally, it will review itself. What was the task given to me as part of wave 1? Has it been implemented successfully? Have I followed all coding standards? Test case coverage I have followed? Everything it checks, then it finishes the work. So in wave 5, it does it. So each one would take time. The wave 1 would take some time.
+
+00:21:44 - 00:22:28 Unknown Speaker:
+
+And wave 1 is done, then it will ask you, I created this much code and this is the... components that I have created for front end and back end. Are we good to go with this wave? 2? Every time it will ask you a prompt if you say yes, go ahead and it will go and create, or you can even say no, no. I wanted to add few more components, it is possible you can add it, so this is it's basically doing it in steps. Okay, like I thought of giving it as an some example, like a foundation framing is a wave one. It creates a skeleton and then the internal connectivity, how one is connected to the other, the connectivity it will enable and then the interior design is where it creates,
+
+00:22:28 - 00:23:38 Unknown Speaker:
+
+like any building you are constructing, if you take that analogy, any building you are constructing, how you follow the structure, the construction of that. So similarly, in each way, it follows one-one, it takes up the one-one task and it closes that. So this is web-based complete uh work, okay, and as I said, this is the agents and you can have custom agents also. I was talking about, yeah, this is good. Uh, maybe let's like, tomorrow, once you have access, right, maybe let's, uh, stick it to RF, let's, let's do like. You can download a local version of that repo. And then, uh, let's give a given like example, like in any user story that we are currently developing, like any wireframe or something. And then let's see, uh, at real time, that will help.
+
+00:23:38 - 00:24:32 Unknown Speaker:
+
+Yeah, yes, and such. In this, this is completely created using the Figma screens. Okay, um, it fetched the Figma screen as a code, and it has fed that to the Agentic system and it generated the code. If we get backend schemas, then I can even integrate with the backend APIs. If the schemas are defined properly, then we can create APIs out of it and enable the connection between them. So complete, I mean, right now only the frontend is developed. It is exactly matching with what is there in the Figma. Okay, so I created this and I ran it locally, Pulse AI. Okay, yeah, RRF also can be developed. I actually did the RRF in the beginning only. I created the code but I removed it because they said RRF is being done by somebody else.
+
+00:24:32 - 00:25:34 Unknown Speaker:
+
+Already development is in progress. So that's why I didn't pick that RRF. Yeah. And this is, okay. If we have other meeting then I can stop but this is important. So this is basically, this is memory. Okay, when I say agents, I'm creating it, it's not okay. It works on itself, right? It needs some memory based on what project you are working, so for that it has, it needs to keep some memory with it. So that you don't have to provide that context to it every time, okay, so context I created this is to provide all the routes and endpoints that we have, what components we have, GraphQL schemas that we have so all that information would be stored here context empty, Patterns So basically you've created it, generated some code. You told No, no, not this way.
+
+00:25:34 - 00:26:17 Unknown Speaker:
+
+I want in this format, make sure you don't do this mistake next time. Then it creates it as a pattern, okay, the user or a developer wants it in this format, so I always should be generating in that format. I don't have to repeat my task. So it creates a pattern out of it and stores it. Okay, and lessons is somewhat. This is actually very good. If we have bugs in production, we have bugs, we can, we are fixing those bugs. You have got that issue and the agent has fixed it, and one time it is okay, second time what it does is if same bug is being repeated. Then it understood, Okay, there is a lesson learned this bug is keep coming, there could be a scenario in other places also.
+
+00:26:17 - 00:27:10 Unknown Speaker:
+
+So, when I am generating code for this project in future, I will make sure that the same bug is not coming there in that new code that I am generating. So this one, I did used it in few of our use cases. Okay, and decisions. So, for example, I say, Okay, this is the pattern to be followed and architecture to be followed. Then it it understood, Okay, you are using a UI, and the backend connectivity is enabled through GraphQL. So it understood some pattern out of it or architecture out of it. So it considered as a decision from the project perspective and keeps a memory out of that. Okay, and component, you say, so, shared components, and how each component is being used, where it is being used.
+
+00:27:10 - 00:28:09 Unknown Speaker:
+
+So all this information creates it from the project and stores it, and it will use it in future. If we wanted to understand what components are present, what is the usage count of each? So it creates a file out of it, so all those files we see, it's stored inside that project folder structure itself. See context, see context. It has stored all the API, endpoints, database schemas, key libraries. So, it stores this information, creates it from the project and stores it. And the decisions. So, for it to generate these decisions, I have even given the code commits that are there in GitHub. Like, our developers are committing, right? So, I asked it to go through those code commits and create a pattern out of it, okay? If somebody has made changes, And approved by it, then it is a pattern.
+
+00:28:09 - 00:29:13 Unknown Speaker:
+
+It is a decision that is okay. We can consider this. This is an acceptable change. And we will have it as a memory. So that the same thing would be generated in future also. And any lessons it has learned. Patterns. Different coding patterns that we use. So all that it creates it and keeps it. So this is the implementation plan for Pulse AI that I have created, so what are the main components? It created a Wavewise Plan implementation plan for it, and it will generate the code in accordance this MD plan. So this is the implementation plan it has created, and same plan would be used throughout the generation of that code. And this one, when you said memory, right? That means all these MD files are acting like a memory to it.
+
+00:29:13 - 00:30:07 Unknown Speaker:
+
+And these MD files gets updated repeatedly, like whenever there is a bug. Exactly. It's a bug. So, it updates a pattern, any code changes that was done. And it is a repetitive bug. Then it will understand, okay, lessons learned. This is a lesson learned. So, I have to make sure this issue is not repeating next time. So, Agent will update itself, like, yes. So it keeps a count how many times this issue is coming. And based on that, it will keep it as a pattern inside it, it will. Okay, so I mean, in local, it will. It will update that MD file. Yes, later we have to check in that MD file, right? Yes, yes, okay. So once I give this folder structure to you, you can also generate Pulse agent code locally with the same patterns, similar code only it will get generated.
+
+00:30:07 - 00:30:53 Unknown Speaker:
+
+So, for example, if I run it and you run it, there could be even the code format issues also. I will have one format and you will have one format. So these issues also we can solve it, we don't need. I mean, not. Multiple people can write in different way, right? When project is following one structure, we should follow that same structure, even in new developer also. So this one, like for example, if we have to take it to a different application, right? Yeah. Then again, we have to run that bootstrap and then it takes that existing project, like whatever project references we are giving. Yes. Then on top of those projects, it will run, right? And then these files will be different. Yeah. So when you run the bootstrap setup, right?
+
+00:30:53 - 00:31:48 Unknown Speaker:
+
+So it will prompt you, is it a new application? Is it an enhancement to the existing one? Okay. If you see, A new application? It will ask you, Do you have any similar projects that in your company or your project or something? Okay, then you choose that, you choose that. Yes, I have that, and I attached it to the workspace. Then it will take that and it will find what is the structure being followed there, and same structure only. It will create the memory out of it, and it will use it to generate the new code. So is it using co-pilot to generate the code? Co-pilot only. And one more thing with respect to LLM also, not all LLMs are talented in all types of work. If you see Claude Sonnet is good in analytical data.
+
+00:31:48 - 00:32:51 Unknown Speaker:
+
+So analysis wise it does very nicely. Whereas Codex, it generates very nice code. For each 16 agents, what I did, I have told what LLM to use. Okay. So, not all the agents will use same LLM. So, that I have mentioned it in here. What each one does. See here, GPT 5.3 codex, if you use it for code generation, for analytical purpose, clots on it. Again, code 5.3, even the infrastructure agent 5.3. So, you can have customized, or sorry, You can have instance customized to choose a particular LLM always, it doesn't have to use same LLM for all the use cases. And this way, we are reducing the number of tokens to the for the GitHub copilot, also we don't need to use much tokens. Not only in generating the code.
+
+00:32:51 - 00:33:54 Unknown Speaker:
+
+When getting the context, it doesn't have to go through the complete code and come up with the context. You have already context created for the project. It will use that context and it will start with it. It doesn't need to redo everything and keep that memory. It will be more fast because the context is already there. This is, this is how we generate. So, setup, I said, right, add a setup and orchestrator. You have to provide what you wanted to do. And once everything is done, then you can validate if things are developed properly according to the expectation or not. You can validate that, and then you can. If you see some issues, you can regenerate it, or you can continue with the development of next task. So, few commands for the bootstrap application I have given.
+
+00:33:57 - 00:34:45 Unknown Speaker:
+
+Then, yeah. So, maybe once I work with Pawan and RRF, we will give advice. Yeah, yeah, sure. I will help you to do the setup in your system itself. I can also do it, not a problem, but anything is fine. Yeah, you wanted to do it, you do it. Or I can set it up and give it to you. That is also fine. Yeah, let's try with other use case. Let's, like, tomorrow when I set up the meeting, you can show the use case pulse agent live, right? How much time does it take? No, it takes, like, one hour, one and a half hour. But at least setup part I can show, Sikath. Oh, generating the code, it takes one hour? Yeah, yeah, it does the end-to-end coding, right? So, it does it in wave manner.
+
+00:34:47 - 00:36:06 Unknown Speaker:
+
+Okay, okay. One one of all it takes. Uh, okay, maybe I can generate the code and I can, uh yeah, before and show the show the overall flow. Yeah, yeah, sure, okay, like, whatever you, the flow you talked over in the presentation. Just go through that steps, uh, from the Github, right? So that this is what it has done, like, wave one, wave two, like that. Yeah, yeah, sure, sure. I did for pulse agent T. Can I get something from the RRF? I already committed the code and kept it in my branch also. Anything is fine. I can resend it also. Yeah. Yeah. Okay. Yeah. RRF, if you can share a few Figma strings, no? I'll generate the code tonight and I'll keep it ready. Sure. Okay. Thanks. Let's see. I approved your request, Pawan.
+
+00:36:06 - 00:36:57 Unknown Speaker:
+
+I think platform owner will take some time. Once you have got it, you'll have the access. Make sure you read your emails. These things are important unnecessarily. We use access. Okay, sure, getting access again takes time. Okay, yeah, sure, yeah. Okay, thank you. Yeah, thank you sir. Thanks. Automation.
+

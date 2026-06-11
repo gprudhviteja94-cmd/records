@@ -1,0 +1,184 @@
+2026-05-26 Scheduling and Coordination of Data Migration and DQ Rules Execution
+
+Creation Time: 2026/05/26 15:28
+
+
+📅About Meeting
+
+• Date & Time: 2026-05-26 15:28  
+• Location: Virtual call  
+• Attendee: Anand, Raj, Sindhuja, Prithvi, Rachna, Sachin, Sameer, Nirmal, Ayyappa
+
+📒Meeting Outline
+
+Scheduling and Coordination of Calls
+
+• Rescheduling conflict with iteration demo  
+  The call with Raj conflicted with the iteration demo. Sindhuja was requested to move the call to start at 6 pm to allow wrapping up within half an hour. This rescheduling was necessary due to a public holiday and Anand being sick the previous day.
+
+• Clarification of EI initiative requirements  
+  Raj wanted to understand the requirements for the upcoming EI initiative in the next PI. He had only attended one prior call and sought clarity on the areas involved, as Pune or Rath had not joined subsequent calls.
+
+Data Migration and Environment Setup for DQ Artifacts
+
+• Data migration to Lumi and environment challenges  
+  With the self-sub-UI, data is migrating to Lumi, and the platform will run in the production environment. There is a need to create a Lumi ingestion pipeline for the DQ artifacts table. However, updating or creating SQL files for new rules ideally should happen in the dev environment, but there are challenges in fetching the warehouse data and mapping production profiles to test profiles.
+
+• Profiles and environment mapping issues  
+  Production profiles in SFP cannot be mapped to test profiles in Lumi, making it impossible to create certain mappings in the test environment. A workaround suggested is to store results in a test table and, after UAT sign-off, dump data into the DQ repository. However, this approach limits scope for code changes.
+
+• RFC and UAT challenges  
+  Raising RFCs requires details of the E2 environment, which is complicated by the tool being in an early feature stage with uncertain accuracy. Disturbing the production environment is a concern, so feasibility checks are ongoing.
+
+DQ Rules Migration and Execution
+
+• Creation of entries for all check types  
+  Entries were created for four DQ check types: duplicate check, threshold check, value check, and missing value check. The table used is a clone of the DQ Artifacts table from SFT, ensuring schema consistency.
+
+• Threshold check exclusion  
+  Threshold check will be excluded from the next run as it will be handled via control, allowing focus on the other three check types.
+
+• Execution and output generation  
+  The DAG was successfully executed, generating output SQL files and updating the Qtrat config JSON file. The legacy SQLs were modified and appended accordingly.
+
+Handling of Rule Descriptions and Templates
+
+• Standardizing rule descriptions  
+  Sachin suggested converting existing rules into a standard rule description format. Although there are around 100-200 rules (excluding threshold checks), some rules are complex and may not fit the standard format.
+
+• Challenges with custom and complex checks  
+  For rules that do not fit the standard format, a free-text description approach may be used in the update requests. The UI will display the role description, but some complex checks may require special handling.
+
+• Template segregation and pattern matching  
+  The system uses pattern matching via regular expressions in Python code to assign templates based on keywords in the rule descriptions. For example, missing value checks are filtered and matched to one of 13 templates.
+
+• Handling percentage values and parameters  
+  Percentage values and other parameters are extracted from the description using hardcoded positions in the code to generate the appropriate queries.
+
+• Need for uniform descriptions  
+  Uniform rule descriptions are critical for accurate template assignment and query generation. New rules will follow the standard format via forms, but legacy rules require analysis to determine fit.
+
+Testing and Validation Plan
+
+• Analysis and segregation of rules  
+  Ayyappa will analyze the rules to identify which fit the standard templates and which do not. Based on this, decisions will be made on how to handle exceptions.
+
+• Running all templates for missing value checks  
+  All 13 templates for missing value checks will be run and results shared with Rachna and Anand for validation. The goal is to reduce the number of templates if possible.
+
+• Focus on key check types  
+  The immediate focus is on valid value, missing value, and duplicate checks, excluding threshold checks for now.
+
+• Testing of duplicate check changes  
+  Although duplicate checks were aligned previously, they still require thorough testing due to recent changes.
+
+• Scheduling UAT and demo  
+  UAT is tentatively planned for Friday after code adjustments by Prithvi. The next two days’ demos will be canceled to allow preparation.
+
+📋Overview
+
+• The call with Raj was rescheduled to avoid conflict with the iteration demo and to clarify EI initiative requirements.  
+• Data migration to Lumi and environment profile mapping pose challenges; a solution involving test tables and production dumps is being explored.  
+• DQ rules for four check types were created and executed successfully, with threshold checks excluded from the next run.  
+• Standardizing rule descriptions is underway, but complex and custom checks require special handling and free-text options.  
+• Template assignment uses pattern matching on rule descriptions, with parameters extracted for query generation.  
+• Ayyappa will analyze legacy rules to determine template fit; all missing value templates will be tested and validated.  
+• Focus remains on valid, missing, and duplicate checks; threshold checks are deferred.  
+• Thorough testing of duplicate checks and scheduling of UAT on Friday were planned.
+
+🎯Todo List
+
+• Sindhuja:  
+  • [ ] Reschedule call with Raj to 6 pm on 2026-05-26.
+
+• Ayyappa:  
+  • [ ] Analyze legacy DQ rules to segregate those fitting standard templates vs. complex/custom ones, by 2026-05-28.
+
+• Prithvi:  
+  • [ ] Adjust code based on analysis for DQ rules, estimated 1-2 days.  
+  • [ ] Prepare for UAT scheduled on Friday, 2026-05-29.
+
+• Sachin:  
+  • [ ] Conduct thorough testing of duplicate check changes before finalizing.
+
+• Team (Rachna, Anand, Sachin):  
+  • [ ] Run all 13 missing value check templates and share results for validation by 2026-05-27.  
+  • [ ] Validate and reduce number of templates if possible.
+
+• Anand / Team:  
+  • [ ] Check feasibility of creating Lumi ingestion pipeline and environment mapping solutions; update on progress.
+
+Transcription
+
+00:00:00 - 00:03:58 Unknown Speaker:
+
+How's it going?  .  . Oh. Thank you. Our call with Raj is actually conflicting with the iteration demo as well, I think. I'll ask Sindhuja to move it, start from 6pm, so I think we would be able to wrap up within half an hour. Actually, there was a public holiday yesterday and as you were also sick out, right? So Raj just asked me to reschedule it for today's date. Okay, okay. And basically, he would like to know the requirement from the EI initiative that we are going to start in the next PI. He would like to understand because he was there in one of the calls only, right? There was no subsequent call, right? Because either Pune or Rath could have joined. So I think he would like to know those areas. That's it.
+
+00:03:59 - 00:05:21 Unknown Speaker:
+
+Sure, sure. We can discuss. And one thing, Anand, what I have observed when I was doing analysis, now suppose with the self-sub-UI, the data is getting migrated to the Lumi, right? And now your platform would be running in the production environment, correct? So now we need to create a, you know, loamy first ingestion pipeline. For the DQ artifacts table, because once the rules gets onboarded to that DQ artifacts, right with the auto person. And if I'm just trying to, you know, create a SQL file out of it, or, you know, update the altogether the DQ depository. Or all right with respect to the new rules. So it is directly on the production environment, right? But ideally we should do that in the dev environment, right? I think I need to check whether we would be able to fetch the warehouse.
+
+00:05:39 - 00:07:10 Unknown Speaker:
+
+You got it, right? AS's production is mapping the SFP, right? Correct. So the file mapping can only be done with the local production profile. It can't be done with the test profile. Okay, so that's how it happens. I was thinking that if I run something in SFP, it can go anywhere, right? There are two different profiles in SFT, test environment and production environment. I will not be able to map the production profile of the case with the test profile of Lumi. I won't be able to create that mapping. Once I get that data right, if I add it to my use case project of production, Sir, basically, let me explain directly. We can do that, we can what we can do. We can store the result in the degree, the test table right.
+
+00:07:10 - 00:08:25 Unknown Speaker:
+
+And once we get the sign up, then we can, uh, you know, directly dump that to the DQ repository. But. That is true, but the only thing with that is that your code whatever you are creating right, there is no scope for changes in it. Yes, exactly. The scope for changes needs to come from the lower end back. And then again, how we are going to get the UAT sign up and all in the E2 right, for which we need RFC. To raise RFC, we need the details of the E2 environment etc. The problem over there is that I told you the concern. Sure, proper, because this is a very initial feature of the tool, right? And we really don't know how much accurate it is right. So we start, uh, you know, disturbing the production environment.
+
+00:08:51 - 00:10:38 Unknown Speaker:
+
+I'll check the feasibility, but my SFTP case, I, you know, I'm, I'm with the test environment profile in the person. This is one solution for sure uh creating the address house table but before proceeding let me see let me see means i'll let you know okay uh if you can go ahead. Sure, let me share my screen. And let me try to pull Sameer also, he was having some question on control. First of all, when the query and so the you know, DQ rules that we are going to migrate. Yeah, okay, so I now I created entries, uh, for different check type, all four check types. Okay, that we are targeting, so with, uh, that is duplicate check, threshold check, value, value check and missing value check, so all we targeted. Just one quick question, right?
+
+00:10:38 - 00:11:27 Unknown Speaker:
+
+Is this the same format in which the SFT is sending the data? Yes, Anand. It's a clone table of that, the table which is there in the right. This is the clone table of DQ Artifacts. We will then manipulate it here and post the data in the DQ Repository. Okay, okay. I was just thinking that the starting point should always be the same schema of Artifacts which is coming from SFT. Yeah, yeah. That is so. And then it is pointing to yesterday's date. Okay. So since we are running it today, so all these records should be picked and processed. So I'm going to the DAB and start. One call out. You can eliminate the threshold check from the next run. We really don't need that threshold. That would go via control.
+
+00:11:28 - 00:12:26 Unknown Speaker:
+
+So you can focus on rest of the four check type. Yeah. Okay. Okay, now I'm triggering the that until the time this results gets generated. With respect to the input that question you have provided, right? So I'll ask a part to, you know. Identify the number of record that we need to modify in the with respect to districts and all right in the D. K. Repository. We'll do that and then we'll populate those data to this dev environment and based on that, Prithvi may need to twist his code a bit. And maybe that will take a day or two and then next UAT maybe we can schedule it on Friday. So I'll cancel the next two days. Okay. One thing I just wanted to align with you also here.
+
+00:12:26 - 00:13:23 Unknown Speaker:
+
+So what Sachin is suggesting that we make all the existing rules also in the standard rule description format, right? But then it's like more than 1000 rules and then we'll have... It's not 1000, Rachna. It's not 1000. We are not going to touch the threshold check type, right? So this is hardly 100 or 200 rules. Okay, okay. I think that should be okay. But still, I was just wondering, some of the checks won't fit that. Then what do we do with those? Like, how will we show them in the update request? Like, custom checks are there then. Or some checks which have slightly more complicated setup than the standard rule description that we are going for. That is a challenge. In the update part. Correct. That is the problem that I was, you know, letting you know correct.
+
+00:13:50 - 00:14:55 Unknown Speaker:
+
+So update ke time pe. You will pull it from where I did not get that. But then it will just show the role description, right? It won't say like, alag alag in case ha. I think that should work, but but again, when we are, I think yeh kar sakte hai. We can just directly take that. There is a problem. Let him complete the demo and then I will let you know the problem. Okay, sure. Okay, so I ran the DAG. It got executed successfully, all the tasks. And it created the output folder. Okay. This is the updated Plutarch config JSON file. Sorry Prithvi, this is which check type I missed that. We are covering all check types. This duplicate missing value and valid value check. Three different checks we are covering in this.
+
+00:14:59 - 00:16:08 Unknown Speaker:
+
+Right, so valid and duplicate we have discussed over the last two connects, right? Yes. That's what I was trying to understand. Missing value check. Missing value. Actually, what happened on Sunday night, I created entries for all check types so that I wanted to execute and see if it is working for all the check types. So, that is why that is why it is working. So, this it has created the output SQL files and then the Qtrat config JSON is updated. And it has modified the existing legacy SQLs and appended the SQL inside. One question with me. So, from what I know, there are some 13 templates for missing value check and all that. Yeah. Like, where exactly are you dealing with that template segregation? Like, which one should execute? Okay. That is again the description.
+
+00:16:08 - 00:18:44 Unknown Speaker:
+
+So, since we are focusing on missing value. Yeah, filter it with missing value. What I was asking to you is that just filter it out with missing value and just display those reports. Only in the query. Write down a check type of missing value. Yeah, Thank you. Yes, so the description, what are those? 9031. Yeah, count of records should be plus or minus 20. What is the second one then? This one actually failed, but this one, this is failing because the description was not found. So, you can see this one. So this is this would fit any, like any of the one kind of template amongst those 13, right? So, uh, that step, like where you are deciding which template to use. I was just trying to understand that it failed to generate the record for this one.
+
+00:18:44 - 00:19:36 Unknown Speaker:
+
+It will fail if none of them. How we are deciding that which template to pick when we are seeing this description, so that part rechna is being handled in the code to a regular expression. We can, we can go. And, you know, explain you that piece of code if you want to understand that it has been written in Python code with those logic and all. So what exactly are you detecting in the description that is allowing you to choose that? You know, this is what we should use. I just want to see that part where you are extracting something from the description and then you are deciding that you should go with this template. Because we found this in the description, yeah, it's basically a description, we do a pattern.
+
+00:19:36 - 00:21:05 Unknown Speaker:
+
+Okay, let me show you the sample one for you. I will be just back and see. Sir, session. I think we will just be right back. Yeah, so something like this. Let me now take this. Yeah, missing value. So, like this, patterns would be created, okay, so if somewhere it finds accounts, okay, values are values present. If it stays, this is our okay. So, if any string matching with one of the pattern, then the 002 UH template will get assigned to it. Okay, okay. It's basically like you are detecting certain words from the description, right? Yes, yes. And if there is some kind of percentage in that, how are you fetching that percentage and then using it in the subsequent science? Yeah, so what happens is if there is a percentage, it can read it from the description itself, where exactly it comes.
+
+00:21:05 - 00:21:59 Unknown Speaker:
+
+It will have an expectation. So if it should present in that place, like you are showing a study rate, that percentage value wanted to keep it as a parameter in the description. So something. It will find it in that place only if it doesn't present there, then it will not be able to generate a scale for that particular request. So it expects. In one place, it is hardcoded where it is looking, it's a hardcoded where we are doing, and it will find it from there and generates the query. Okay? Some examples also have a count of distinct cards. These are the reasons why I told that we need that uniform description otherwise this is a code of faith. Yeah, no no I get it like for the new ones obviously we will keep it standard.
+
+00:21:59 - 00:22:51 Unknown Speaker:
+
+I mean that anyway we are taking via a form right. But for the old ones we will have to see. The only challenge I am able to think of is the thing is many of the rules are a little complicated. They don't fit that like simplistic format that we are going for at this stage. So I think Ayyappa can go with his analysis like once he has looked into these rules we can see like how many can be segmented and how many can't be right. If the majority of them can fit in, then it's all well and good, like few of them remain for them. We can keep that free text thing right, that simply, like the whole description, is showing up, and then maybe they can modify and submit their request.
+
+00:22:51 - 00:23:44 Unknown Speaker:
+
+But for the rest, if we are able to segment it into these patterns, then we should be good. Yeah, exactly so, because, you know, ultimately we have to showcase them. Even though modify one right and right right UI, you would be submitting that request, even somebody wants to modify that one. Then that plays into our role, right, where that role formation gets generated from the UI. Yeah, in that case, we have to figure out a solution for this. Lately, uh, first of all, talk to, Uh, and I'll ask you to work with him to segregate those. That's why I am trying to buy those next couple of days and then we can move on Friday. Sure, such, and we can do that, yeah, Okay. So for three missing values, as we have just generated one, right, we will continue with unity.
+
+00:23:44 - 00:24:31 Unknown Speaker:
+
+Let's target and, you know, close all these check types, right? Yeah. And let's validate with Rachna and Anand, like, whether all these templates, 10 templates, whether we need these 13 templates or we can reduce it the way we reduced the duplicate one yesterday, right? So let's not run only one or two use case. Please make sure you run every 13 check type and all the 13 template for the machine values tomorrow. And then share the result to rationale to validate. And then let's see if C has any observation. Yeah, if you can reduce some template, let's reduce that. I am aligned on that. Like once, we have run each of the templates at least once, right? And we have an output set that we can compare against.
+
+00:24:31 - 00:25:28 Unknown Speaker:
+
+When we are reducing the number of templates, that would be helpful and your focus would be. Valid value meshing, value stagnant and the duplicate, duplicate. We can mark it as done, or we are left with three, then valid value meshing and then the stagnant. Ignore the threshold right now. So Sachin, even on the duplicate one, like the way we aligned yesterday, that still needs to undergo one stage of testing, right? Because there are certain changes in that. Yeah, yeah. We can do that testing recently. Sure, sure. Thank you. Look, this is an automation, right? And mostly generated through the tools, right? So even we need a thorough testing before making this complete. Right. Okay. Yeah. Okay. Thanks, Prithvi. Thanks, Nirmal. You guys can feel free to drop off. Sameer, you can go ahead. And do you have any meeting or we can continue for next 10 minutes?
+

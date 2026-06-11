@@ -1,0 +1,714 @@
+2026-05-26 Lumi Migration and Self-Migration Process Discussion
+
+Creation Time: 2026/05/26 20:01
+
+
+📅About Meeting
+
+• Date & Time: 2026-05-26 20:01  
+• Location: Virtual Meeting (WebEx)  
+• Attendee: Table owners of SOA tables opting for self-migration, tech teams supporting these tables, Lumi platform team, and other stakeholders  
+
+📒Meeting Outline
+
+Lumi Migration Overview and Self-Migration Process
+
+• Context and Objective  
+  The meeting focused on the migration of SOA tables from Cornerstone to Lumi, specifically for tables opting for self-migration. Cornerstone is scheduled for decommission by the end of the year, necessitating migration of all data and use cases to Lumi. Two migration approaches exist: Ascend (central team-led) and Self-Migrate (table owners lead migration). Approximately 340 tables have chosen Self-Migrate.
+
+• Current vs. Target Data Flow  
+  Currently, data sources ingest into Cornerstone, which replicates data to Lumi. The target state is direct ingestion from sources into Lumi, eliminating Cornerstone replication. Self-Migrate owners are responsible for setting up direct Lumi ingestion pipelines.
+
+• Self-Migrate Workflow  
+  The migration process is divided into six key phases:  
+  1. Setup Preparation: Ensure tables are replicated from Cornerstone to Lumi to enable validation. Confirm Lumi capability readiness for each table; a readiness list will be shared post-meeting.  
+  2. Pipeline Build: Table owners must create Lumi-first feeds, including metadata setup and validation on the Lumi portal, configuring file transfer protocols, and performing sample ingestions in environments E1, E2, and E3.  
+  3. Cut Over Preparation: Confirm no downstream dependencies on Cornerstone tables, and metadata on Cornerstone remains unchanged during Lumi setup. Metadata changes on Cornerstone will be frozen after June 30.  
+  4. Data Validation: Use the DVT tool to compare data between replicated and Lumi-first tables over five days to ensure 100% data match.  
+  5. Cut Over Execution: Submit an incident with business and technical owner approvals to initiate cut over. The platform team will execute the cut over, disabling Cornerstone replication.  
+  6. Post Cut Over: Seven days after cut over, the Cornerstone table is soft decommissioned (inaccessible, ingestion stopped). Thirty days later, data deletion from Cornerstone occurs.
+
+• Roles and Responsibilities  
+  • Table owners are responsible for pipeline setup, metadata validations, and raising incidents for cut over.  
+  • Platform team supports capability readiness, cut over execution, and incident handling via EDPRM with standard SLAs.  
+  • Owners must ensure no downstream dependencies before cut over but can start pipeline setup even if not cut over ready.
+
+• Recommendations and Timeline  
+  Owners are encouraged to start pipeline setup immediately, aiming to complete E1 and E2 environment setups by next month to avoid last-minute delays. Waiting until the September 30 deadline is discouraged due to the complexity and time required.
+
+Q&A and Clarifications
+
+• Derived Tables and Use Case Queries  
+  Questions about derived tables ingested via ODL (Output Data Layer) and code deployment differences (SPT vs. Gradle) were raised. The session clarified it focuses on SOR (Source of Record) tables directly ingested from source systems, not use case outputs. Offline discussions were suggested for use case-specific queries.
+
+• Cut Over Process Details  
+  Cut over involves switching clone tables (with _clone suffix) to main tables and disabling Cornerstone replication. Cornerstone tables remain accessible for seven days post cut over before soft decommissioning. Cut over is performed simultaneously across environments E1, E2, and E3 with a single incident request.
+
+• Metadata Changes and Synchronization  
+  Metadata between Cornerstone and Lumi must remain synchronized during migration to avoid cut over failures. Schema changes on Cornerstone are restricted and require approvals. Differences in timestamp column data types between platforms were noted but not expected to cause issues if Lumi metadata matches replicated tables.
+
+• Handling Decommissioned Columns  
+  Columns marked as "is published = false" in Cornerstone (not physically deleted) still appear in replicated tables. The recommendation is to align Lumi tables with replicated tables for smooth cut over. Offline discussions were proposed for specific cases involving column removal and downstream impact.
+
+• Cut Over SLAs  
+  The cut over execution itself takes approximately 1-2 hours. The overall timeline from raising the incident to execution depends on queue and readiness but typically aims for completion within a week. Multiple cut overs are often handled in a single call.
+
+• Downstream Dependency Management  
+  Table owners must verify and communicate downstream dependencies before cut over. The platform team performs sanity checks on cut over requests to confirm no active downstream usage. A central tracker is maintained for dependencies and migration plans.
+
+• Approval Requirements for Cut Over  
+  Business and technical owner approvals must be attached to the cut over incident request.
+
+• No Exceptions for Post Cut Over Cornerstone Table Retention  
+  The process does not allow exceptions to keep Cornerstone tables active after cut over to avoid data inconsistencies and confusion.
+
+• Upcoming Automation for Decommissioning  
+  A decommission utility will be introduced around mid-June to automate Cornerstone table soft decommissioning seven days after cut over.
+
+• Next Steps Communication  
+  The platform team will share the presentation deck and send outreach emails to table owners requesting planned migration dates. Business teams are requested to coordinate with their PU partners to confirm migration timelines.
+
+📋Overview
+
+• Cornerstone will be decommissioned by year-end; migration to Lumi is mandatory.  
+• Self-Migration requires table owners to set up Lumi ingestion pipelines, validate metadata, and perform data validation before cut over.  
+• Cut over disables Cornerstone replication and switches data ingestion to Lumi directly; followed by soft decommissioning of Cornerstone tables.  
+• Metadata synchronization between Cornerstone and Lumi is critical to avoid cut over issues.  
+• Owners must ensure no downstream dependencies before cut over; platform team verifies this during incident review.  
+• Cut over execution takes 1-2 hours and is performed simultaneously across all environments with a single request.  
+• Business and technical approvals are mandatory for cut over requests.  
+• Automation for Cornerstone decommissioning post cut over will be implemented by mid-June.  
+• Early pipeline setup is strongly recommended to avoid last-minute delays.  
+• Offline discussions will address specific use case and metadata column issues.  
+• Communication and coordination with business units for migration timelines will be initiated soon.
+
+🎯Todo List
+
+• All Table Owners:  
+  • [ ] Begin Lumi pipeline setup immediately, aiming to complete E1 and E2 environment setups by next month.  
+  • [ ] Validate metadata on Lumi portal and ensure synchronization with Cornerstone metadata.  
+  • [ ] Use DVT tool to perform data validation between replicated and Lumi-first tables for at least five days.  
+  • [ ] Confirm no downstream dependencies exist before submitting cut over incident.  
+  • [ ] Obtain and attach business and technical owner approvals when raising cut over incident.
+
+• Platform Team:  
+  • [ ] Share Lumi capability readiness list and presentation deck with all table owners.  
+  • [ ] Send outreach communication to table owners requesting planned Lumi migration dates.  
+  • [ ] Review cut over incidents for downstream dependencies and metadata consistency.  
+  • [ ] Execute cut over across all environments within 1-2 hours upon approval.  
+  • [ ] Implement automated Cornerstone soft decommissioning utility by mid-June.  
+  • [ ] Provide support via EDPRM incident management for pipeline setup and ingestion issues.
+
+• Specific Table Owners with Metadata Column Issues:  
+  • [ ] Coordinate offline with Sparsh and Mahang to resolve column decommissioning and metadata alignment challenges.
+
+Transcription
+
+00:00:03 - 00:00:09 Unknown Speaker:
+
+Hi all, thanks for joining. We'll just wait for the next 3 to 4 minutes, and then we'll get started.
+
+00:00:49 - 00:00:53 Unknown Speaker:
+
+ప్రశ్న. మూడో దగ్గరే చదవాలి అవుతుంది.
+
+00:00:56 - 00:00:57 Unknown Speaker:
+
+తాళం వేసుకోండి.
+
+00:01:41 - 00:01:45 Unknown Speaker:
+
+Hello, hi all. To all the people who are joining right now, so we'll just start at 8:05.
+
+00:03:49 - 00:04:03 Unknown Speaker:
+
+Okay, we shall get started. So hello everyone. Uh, just before we start, right, can I get a show of hands on how many on the call right now are actually, uh, table owners or part of the tech teams for those tables?
+
+00:04:07 - 00:04:08 Unknown Speaker:
+
+If I can just get a show of hands.
+
+00:04:13 - 00:04:21 Unknown Speaker:
+
+Okay, thanks, Mayank. Uh, do we have other folks as well? Can you just give a thumbs up or maybe just raise your hand?
+
+00:04:29 - 00:04:39 Unknown Speaker:
+
+Okay, never mind. So I see more people joining right now. Okay, let's just wait one more minute, and we'll start at 8:07.
+
+00:05:26 - 00:05:27 Unknown Speaker:
+
+Okay, we'll get started.
+
+00:05:28 - 00:05:58 Unknown Speaker:
+
+So hello everyone. So this session we've kept today to discuss about SOA tables that have opted for self-migration to Lumi. So, uh, everybody who was sent an invite for this session was either an owner of the SOA tables that have opted for self-migration or a part of the tech teams which have which are which have helped to set up those tables, and a part of that, the use of that table owners, the ITech team.
+
+00:05:58 - 00:06:25 Unknown Speaker:
+
+So I'll quickly get started. So before I go on Lumi migration of, you know, the specific set of tables that we're talking about, I'll just quickly take a minute to talk about that as all of you would be aware that Cornerstone would be decommissioned by the end of this year. So we need to make sure that all use cases, unit users, and data is migrated to Lumi. So we are focusing on data in this session, and specifically within data, we are focusing on self-migration.
+
+00:06:25 - 00:06:52 Unknown Speaker:
+
+So there can be different re uh, migration techniques or plans which table owners could have opted for. So one of them is Ascend, where a central team is migrating all the tables at scale on behalf of the owners. And then there is Self-Migrate, which will be covered in this session, where the table owners opted that they would themselves get their tables moved to Lumi. And there are approximately there are around 340 such tables that have opted for self-migrating.
+
+00:06:53 - 00:07:18 Unknown Speaker:
+
+So quickly moving on to the next slide. Yeah. So when we are saying an SOA table migration to Lumi, right, what do we exactly mean by that? So currently, you know, the stage where we are right now, all the sources ingest data onto Cornerstone, as you can see on the left side over here. And from Cornerstone, that data is getting replicated to Lumi.
+
+00:07:18 - 00:07:33 Unknown Speaker:
+
+That is most where most of the tables sit right now. But the eventual POA stage or the stage where we want to be at is where all the sources ingest data directly to Lumi, as you can see on the right, and Cornerstone is cut over from this process.
+
+00:07:35 - 00:07:51 Unknown Speaker:
+
+So for this process, Self-Migrate, for specifically Self-Migrate, the table owners have taken the responsibility that they will be doing this process themselves, and they will be migrating their tables, uh, you know, to direct Lumi first feeds and not, uh, and cut over the replicated feeds.
+
+00:07:53 - 00:08:17 Unknown Speaker:
+
+Okay, I'll go over to the next slide. So I will just cover the very high workflow of Self-Migrate tables over here. I know some of you might have some doubts, you know, regarding the self what falls under Self-Migrate or some other specific doubts that you might have, which is particular to the process. We'll come to your questions, but I just want to give a high-level workflow first.
+
+00:08:17 - 00:08:41 Unknown Speaker:
+
+Once we have gone through the high-level process buckets, then we can, you know, open up for your questions. So if you can see over here, we have divided the entire process into six broad buckets. The first one is setup preparation. So in order to set up your Lumi first feed, you need to ensure that your current table on Cornerstone is getting replicated to Lumi.
+
+00:08:41 - 00:09:03 Unknown Speaker:
+
+So this is essential for you to be able to do your validations, uh, between the Lumi first feed and whatever is getting replicated from Cornerstone to Lumi so that you are 100% sure that whatever table you set up is 100% match of what was being what was coming on Cornerstone. Apart from that, obviously, there is capability readiness.
+
+00:09:03 - 00:09:31 Unknown Speaker:
+
+So all the tables, the three approximately 340 tables which sit under Self-Migrate, so all of your tables should obviously be supported by Lumi capabilities for you guys to set those tables up on, uh, Lumi. So we have we already have a list of every table's Lumi readiness or, you know, if there is some capability which will be developed is not yet developed, but will be developed in the next one to two months. So we have that mapped for every table.
+
+00:09:31 - 00:09:48 Unknown Speaker:
+
+So we will share that after this, uh, session as well so that you guys are aware that, you know, the capabilities on Lumi are ready for you to start migrating or start setting up your feeds to Lumi. So the second step which comes in this process is pipeline build.
+
+00:09:48 - 00:10:12 Unknown Speaker:
+
+So since you guys have opted for Self-Migration, you need to ensure that you are setting up your Lumi first tables that will act as the first, uh, you know, setup that would be required from your end. So within, uh, pipeline creation, you need to ensure that you set up your metadata and perform the metadata validations on the Lumi portal.
+
+00:10:12 - 00:10:38 Unknown Speaker:
+
+So on Lumi portal, there is a race recommender which would run which would give you recommendations on your business metadata and technical metadata. So all these metadata-related validations you need to perform on the metadata portal on Lumi. You need to ensure that whatever your file transfer protocol exists today, you set it up on Lumi. You need to do sample ingestions in E1 and E2. You need to do sample ingestions in E3 as well.
+
+00:10:38 - 00:11:07 Unknown Speaker:
+
+You need to basically set up your entire feed on Lumi so that it is ready to accept data from the source directly. Once you have set up your table on Lumi, then you need to proceed with the third, fourth, and fifth step, which is cut over. So even before you move to cut over, right, so what do we mean by cut over? So cut over means that your table which is getting replicated from Cornerstone to Lumi, that replication will stop.
+
+00:11:07 - 00:11:29 Unknown Speaker:
+
+Your table will get directly ingested from source to Lumi. And your historical data which was present in the replicated table will also be preserved in and, you know, it the POA table or the future state of the table would be one table which would have the historical data as well as well as the new data that will be ingested going forward. So this is what we mean by cut over.
+
+00:11:29 - 00:11:55 Unknown Speaker:
+
+So to be ready for cut over, you need to first make sure that there is no downstream dependency on Cornerstone for that table because once you are cutting it over, there will be no ingestions happening on Cornerstone for that table. Neither will we be copying data from Lumi to Cornerstone for SOA tables. So there will be no option for Egress as well. So before you submit for cut over, you need to make sure that there is no downstream dependency on Cornerstone for that table.
+
+00:11:57 - 00:12:25 Unknown Speaker:
+
+Also, you need to ensure that while you were setting up your pipeline on Lumi and, uh, doing your sample ingestions, there were no metadata changes made on Cornerstone to that table. So we as a platform on Cornerstone have already restricted metadata changes for tables. And however, there are a few table schema changes which are still allowed on Cornerstone for SOA tables specifically. They will also be frozen post 30th June.
+
+00:12:25 - 00:12:34 Unknown Speaker:
+
+But yeah, if you are already setting up your pipeline before 30th June, you need to make sure that you do not make changes to your Cornerstone metadata while you're setting up your Lumi metadata.
+
+00:12:35 - 00:12:58 Unknown Speaker:
+
+Once this is done, then you need to validate the data between the replicated table and the Lumi first table. So there's a DVT tool which is you can use to compare your data between the replicated and the Lumi first feed. And you can run this for five days to make sure that your data is matching 100% without any issues or concerns.
+
+00:12:59 - 00:13:27 Unknown Speaker:
+
+Once this is done, then you will be ready for cutting over, and you will have to raise an incident for the same. On the incident, you will have to attach your business and tech owners' approval, highlighting that you are ready for cut over. Once that incident is received, then the platform team will proceed with the cut over execution. And once the cut over is done, the replication on Lumi from Cornerstone will also be disabled.
+
+00:13:30 - 00:13:58 Unknown Speaker:
+
+Post all of this is done, seven days post your cut over, your table would be soft decommissioned from Cornerstone. This means that the table will become inaccessible on Cornerstone, and ingestions will be stopped on Cornerstone. 30 days from this decommission, the data would also get deleted from Cornerstone. So this is a high-level workflow of self of how the Self-Migrate process will work. I will come back to your questions in case you have any.
+
+00:13:58 - 00:14:19 Unknown Speaker:
+
+I'll just quickly cover one more slide where I'll let you know where all the responsibility sits with you and where all we as a platform can help you out. So we have divided the entire journey into four phases. As you could see in the previous slide, there is setup ready, setup execution, cut over ready, cut over complete. So for setup ready, you need to make sure that your table is replicated to Lumi.
+
+00:14:20 - 00:14:44 Unknown Speaker:
+
+Obviously, there's a in case there is a capability constraint, right, then, you know, we as the platform team can, uh, let you know about it, or we can help you out over there in expediting that. For second part, setup execution. So you need to set up your pipelines on Lumi portal yourself. Since you've opted for Self-Migrate, you need to do the metadata validations, registration, everything yourself on Lumi first portal.
+
+00:14:46 - 00:15:02 Unknown Speaker:
+
+In case you face any issues with that, in case you face any issues with ingestions, with registration, you will have to create an incident via EDPRM, which is the standard procedure on Lumi. Any issue any issues or queries are will be handled as part of those incidents with the standard SLAs.
+
+00:15:04 - 00:15:32 Unknown Speaker:
+
+Then for cut over, you need to as I mentioned on the previous slide, you need to make sure there is no downstream dependency, and you need to share attach your approvals in that cut over incident. As the plat the cut over execution will be performed, obviously, by the platform team who will execute that cut over. And once it is cut over, the as I mentioned, post seven days, the date the table would get decommissioned on Cornerstone, and 30 days post that, data would be deleted.
+
+00:15:33 - 00:15:48 Unknown Speaker:
+
+Now, I want to emphasize on the two bullet points which I have mentioned at the bottom over here, that it the owners of the table that are submitting the cut over request, they need to ensure that there is no downstream dependency on their tables.
+
+00:15:50 - 00:16:14 Unknown Speaker:
+
+But at the same time, that should not be a blocker for you to complete the first two steps. So for cut over, there is a downstream dependency, and you cannot cut over until the downstream use cases have migrated to Lumi. However, you can start setting up your pipeline on Lumi. You can start your, uh, metadata registration and ingestions in E1 and E2 on Lumi.
+
+00:16:15 - 00:16:37 Unknown Speaker:
+
+And that should not be stopped because, you know, you're not cut over ready yet. So, you know, we had sent out a communication to all of you guys asking what will be your dates for migrating to Lumi. And we saw a lot of you had chosen 30th September as the date, as it was the last date which you could select in that form which we had shared.
+
+00:16:37 - 00:17:02 Unknown Speaker:
+
+But I would like to call out that, you know, if you're thinking that you will be able to complete the migration, you know, closer to that date, and you can select 30th September, that could be a very, uh, alarming stage where you wouldn't want to be in the future since these things will take time. Setting up the pipeline on Lumi portal will take time. And that is something which you have opted to do yourself, right? You've opted to create the table yourself on Lumi.
+
+00:17:02 - 00:17:24 Unknown Speaker:
+
+So ensure that you start with the process, you know, with a lot of time in hand. And I would suggest if you've not already started setting up your pipelines on Lumi, I would suggest you start doing that. And I would suggest you have your pipeline set up on Lumi, uh, at least in E1 and E2, you know, by the next month so that once you are cut over ready, you just have to complete the last step.
+
+00:17:26 - 00:17:51 Unknown Speaker:
+
+So this is something which I would really like to emphasize on because I'm not sure how many of you have started with the pipeline creation step, but I'm aware that the number is very less, right? So a lot of you have not even started with setting up your pipelines or, you know, getting your, uh, metadata set up on Lumi. So please make sure that you complete the first two steps, even if cut over is immediately at a later stage, but at least have your feed ready.
+
+00:17:53 - 00:18:03 Unknown Speaker:
+
+Okay, this was a high-level overview I had for you guys. Now, I would open it up for questions. Any questions which anybody has, please raise your hands and shoot away.
+
+00:18:12 - 00:18:13 Unknown Speaker:
+
+Hey. Hello. Hi.
+
+00:18:15 - 00:18:20 Unknown Speaker:
+
+I'm Anurag. I'm from Arena team. And we we are working on a Self-Migratory use case.
+
+00:18:22 - 00:18:44 Unknown Speaker:
+
+So, um, there were four tables which were primarily ingested or replicated from Cornerstone to Lumi as part of our use case. And, um, now they have created, uh, Lumi product team has created clone tables for all those, and those will be ingested via ODL ingestion in Lumi.
+
+00:18:46 - 00:18:57 Unknown Speaker:
+
+So yeah, Anurag. So sorry to cut you, right? I I can take up your question answer, but you were talking about derived tables. So you're talking about a Self-Migrate use case which had some derived tables, right? ODL or use case tables.
+
+00:18:57 - 00:19:03 Unknown Speaker:
+
+So in Cornerstone, those were SOR enabled, but in Lumi, we are enabling those via ODL.
+
+00:19:06 - 00:19:19 Unknown Speaker:
+
+Okay. So you're saying on Cornerstone, they were registered as SOR, but on Lumi, you registered them as ODLs. Right. Okay. And like, what were you saying, uh, after that, that you enabled replication?
+
+00:19:19 - 00:19:43 Unknown Speaker:
+
+So now, uh, so we now we are working on our code migration as well. So in Cornerstone, our code was packaged using SPT, and we were able to generate JAR files via Jenkins, like, when the deployment happens. Now, in Lumi, we are using Gradle because it does not support SPT. We are using Gradle.
+
+00:19:44 - 00:19:54 Unknown Speaker:
+
+We are able to deploy the JAR files as well, uh, like, using GitHub Actions. But we are facing issue where multiple JAR files are being created.
+
+00:19:58 - 00:20:23 Unknown Speaker:
+
+Okay. So again, what what I'm trying to understand over here is yours is more of a query related to a Self-Migrate use case, right, with the table attached to that use case, right? This session is more on SOR tables which are coming, like, being ingested directly from a source system like C360, etc., not from a use case output at ODL transformation output. But I get your question.
+
+00:20:23 - 00:20:47 Unknown Speaker:
+
+Maybe you can reach out to me offline, and, you know, maybe we can try to understand that better because I would also like to understand that SOR/ODL thing, difference between Cornerstone and Lumi, how did that happen? But we can take that up offline, right? But this session is more towards SOR tables which are source-first tables directly getting ingested to Lumi or Cornerstone. So this this does not involve any project space, right? Right.
+
+00:20:47 - 00:20:49 Unknown Speaker:
+
+Right. Correct. Okay. Okay. Yep.
+
+00:20:49 - 00:20:50 Unknown Speaker:
+
+That makes sense.
+
+00:20:51 - 00:20:57 Unknown Speaker:
+
+Okay. Thank you. Okay. Hi, Mohammad. This is Krishna from the VRM.
+
+00:20:57 - 00:21:24 Unknown Speaker:
+
+We are we are we have to migrate around 60-plus tables from the, uh, Cornerstone to the Lumi. Okay. Um, we are in process of metadata setup. I want to, uh, make, uh, make one thing clear. Like, um, cut over means are we doing it in two phases, like, uh, clone to ma like, whatever the table, Lumi first table, that we are we will be creating with underscore clone, right?
+
+00:21:24 - 00:21:36 Unknown Speaker:
+
+Uh, it will be suffixed with the main table. And this clone to, uh, main table, um, there will be a change, right? The main table, uh, um, and, uh, and the Cornerstone decommission.
+
+00:21:36 - 00:22:01 Unknown Speaker:
+
+So will, um but when I check with one of, uh, folk from the cut over team, like, Nikita Kasum said, uh, cut over means you will change the, uh, clone table, uh, to the original table, uh, and but the Cornerstone, um, will stay as it is, uh, where till we give the, um, confirmations to your team. Is it the right? So yeah, Krishna on that, right?
+
+00:22:02 - 00:22:28 Unknown Speaker:
+
+So as you mentioned, right, cut over will have one step where clone starts pointing to your replicated table, right, with the metadata that you set up as Lumi first table. The Cornerstone cut over, right? So for SOR tables, right, once you submit for cut over, the Cornerstone replication pipeline will also be disabled, as I had it over here in the previous slide. Let me go back. Yeah.
+
+00:22:28 - 00:22:42 Unknown Speaker:
+
+If you can see over here, the replication will also be disabled. And the table will be available on Cornerstone for seven days, but without active ingestions, and post seven days, that table will be soft decommissioned.
+
+00:22:45 - 00:23:02 Unknown Speaker:
+
+Soft decommission means whoever having already access to the table, uh, what will happen? No, no. So soft decommission means that table will become inaccessible for everyone. We will not delete the data. We will, uh, you know, make the table inaccessible.
+
+00:23:02 - 00:23:09 Unknown Speaker:
+
+We will stop the ingestions. And 30 days post our soft decommission, we will initiate the data deletion activity as well.
+
+00:23:11 - 00:23:22 Unknown Speaker:
+
+Okay. Then, uh, cut over means there are two processes. One is clone to main as well as the Cornerstone decommission. It is not, um, you will not, uh Yeah. Yeah.
+
+00:23:22 - 00:23:43 Unknown Speaker:
+
+Cornerstone decommission, again, is, like, will happen seven days post cut over. So once cut over is done, we will automatically start with the decommission seven days post that. Okay. Then this cut over, we we have to do E1, E2, then E3, right? Gradually, we have to, uh, like, for each environment to you, uh, we can raise the ticket, and the cut over team can take care, right?
+
+00:23:44 - 00:24:06 Unknown Speaker:
+
+Uh, so, uh, Sparsh yeah, Sparsh, are you there on the call? Cut over will happen on E3, uh, first, right, or on E1, E2 first? It will happen on E1, E2, E3, but we take those requests at the same time, finally, or itself, Krishna. You don't have to raise it at every stage. At every stage, you can just do your testing in E1 that the data is coming correctly, E2 same, E3 same.
+
+00:24:06 - 00:24:13 Unknown Speaker:
+
+And once you're sure that you're good to cut over, just raise a ticket, and we will cut it over in all three environments.
+
+00:24:14 - 00:24:20 Unknown Speaker:
+
+Okay. Mm-hmm. Okay. Then, um, it is a single request for all the environment.
+
+00:24:21 - 00:24:27 Unknown Speaker:
+
+That's correct. You just need to write one request for us, and we'll cut it over in all three environments. That's already there with us.
+
+00:24:29 - 00:24:30 Unknown Speaker:
+
+Okay.
+
+00:24:32 - 00:24:32 Unknown Speaker:
+
+Okay.
+
+00:24:34 - 00:24:38 Unknown Speaker:
+
+And I have one Yeah. Sorry. Yeah. Go ahead. Go ahead.
+
+00:24:39 - 00:24:57 Unknown Speaker:
+
+One another, uh, scenario. Like, you were, uh, discussing about the Cornerstone metadata changes, right? Like, let's say I I'm replicating the table. When I'm replicating the table, I understand there was one, uh, small change in the metadata, like, uh, schema change. I'm adding or removing any column.
+
+00:24:57 - 00:25:21 Unknown Speaker:
+
+Is it okay to do that, or will it create any issues in your cut over process because Lumi first table will have more columns? Yeah. You should yeah, yeah. You should not be doing that, right, once you start with the, uh I mean, your metadata between Lumi and Cornerstone should be in sync, right, because that will create, uh, discrepancies between the two platforms, right?
+
+00:25:21 - 00:25:51 Unknown Speaker:
+
+And that is why we have put up an exception process also on Cornerstone that you anyway cannot make a change on Cornerstone without your BAND 60 approvals, the TLT approvals. So that process we've brought it into place for this very reason that, uh, there are no changes on Cornerstone while the table or use case is getting migrated to Lumi. Mm-hmm. Okay. And this rip, uh, when we were comparing the replicated table schema with the Cornerstone table schema, mostly we see the difference in the timestamp column.
+
+00:25:51 - 00:26:12 Unknown Speaker:
+
+Okay. In Cornerstone, it is maintained as timestamp, but in the, uh, replicated tables, we are uh, it is, uh, data type is, uh, date time. Okay. So now we are, uh, whatever the clone tables we are creating, right, we are, uh, our data type is, uh, is in sync with replicated table. So I want to call out that.
+
+00:26:12 - 00:26:14 Unknown Speaker:
+
+I think I hope it will not create any issues.
+
+00:26:16 - 00:26:26 Unknown Speaker:
+
+Yeah. I don't think so. Sparsh, uh, this this should not Approach that you create a metadata in sync with the replicated table. That's actually the best approach. So go ahead with that.
+
+00:26:27 - 00:26:27 Unknown Speaker:
+
+Okay.
+
+00:26:28 - 00:26:30 Unknown Speaker:
+
+Yeah. Thank you.
+
+00:26:31 - 00:26:33 Unknown Speaker:
+
+Okay. Thanks, Krishna.
+
+00:26:34 - 00:26:53 Unknown Speaker:
+
+Okay. Hi, Sahil. I had a couple of questions. Uh, so first, related to the DBT validation report, so this report, uh, will the platform team help the Self-Migrating team in creating this report, or will the Self-Migrate team themselves have to create it? So Self-Migrate team will have to create it themselves.
+
+00:26:56 - 00:27:07 Unknown Speaker:
+
+I if, for example, they do not have a project space because, um, many of these SOR teams do not have, then, uh, I'm as per my understanding, a project space would be required to create this DBT report, right?
+
+00:27:10 - 00:27:26 Unknown Speaker:
+
+Uh, let me look it up. Uh, yeah. Uh, hey, uh, this is Yashaswi, right? Uh, so we can, uh, expo uh, so basically, platform team, in this case, end team will expose a tool for you. Uh, and you can trigger that tool and get a report generated.
+
+00:27:26 - 00:27:34 Unknown Speaker:
+
+And you will report, you know, receive that report over an email as well. You don't need a project space for it. That will happen in the central warehouse itself.
+
+00:27:35 - 00:27:45 Unknown Speaker:
+
+You need only need your project spaces in case you want to do some custom processing. In your case, I'm understanding that's not the case, right? You just you are only asking about validation, correct? That's right. Only for validation.
+
+00:27:45 - 00:27:47 Unknown Speaker:
+
+You don't need a project space.
+
+00:27:48 - 00:27:57 Unknown Speaker:
+
+Okay. Understood. Uh, and for the custom uh, the cut over execution, you will have to raise an INC from the EDPRM, uh, portal, right, uh, for the platform team?
+
+00:27:59 - 00:28:00 Unknown Speaker:
+
+Right. Correct, Yashaswi.
+
+00:28:02 - 00:28:03 Unknown Speaker:
+
+Oh. Thank you.
+
+00:28:06 - 00:28:32 Unknown Speaker:
+
+Okay. Uh, I don't see any other hands raised, but feel free to ask any questions if anybody has. So well, uh, I have one question regarding the migration. Uh, so, uh, you said, right, the metadata should match between Cornerstone and Lumi. So we have a few columns in Cornerstone, uh, for which we have done the is published flag as zero, you know, right?
+
+00:28:33 - 00:28:39 Unknown Speaker:
+
+Uh, so how how can we set up that in Lumi, Sahil?
+
+00:28:41 - 00:28:56 Unknown Speaker:
+
+Okay. So you're saying that on Cornerstone, you have a few columns which you have basically decommissioned, just the columns. So how would you, you know, like, do you need to create those columns on Lumi or not, right? That is the question. Yeah.
+
+00:28:56 - 00:29:06 Unknown Speaker:
+
+Hmm. So, uh, in this case, Sparsh, would would they require to create those columns which are decommissioned on Cornerstone, or they can skip that entirely?
+
+00:29:07 - 00:29:17 Unknown Speaker:
+
+If I understand, decommissioned Cornerstone, that means they are not getting hydrated also, right? In the hydration table, those columns are missing. In the replicated table, right? Yeah, yeah. Replicated table, the columns are not there, right?
+
+00:29:18 - 00:29:18 Unknown Speaker:
+
+Uh, Mahang?
+
+00:29:21 - 00:29:24 Unknown Speaker:
+
+Uh, I'm not sure. Just let me check.
+
+00:29:40 - 00:29:48 Unknown Speaker:
+
+I mean, you can check, Mahang. I'll just complete the whole with the flow. I see I see it written metadata defined in the portal.
+
+00:29:51 - 00:29:59 Unknown Speaker:
+
+Then Those columns are there? Okay. Yeah. In Cornerstone, we just do is published as false. But I think, uh, still they exist in cloak, right?
+
+00:29:59 - 00:30:07 Unknown Speaker:
+
+We basically did it to, uh, you know, column deletion is a, uh, schema-breaking change. And to avoid that, we just put that flag as false.
+
+00:30:11 - 00:30:11 Unknown Speaker:
+
+Got that.
+
+00:30:14 - 00:30:24 Unknown Speaker:
+
+Okay. So, Mahang, you're saying on Lumi, you are you you are seeing those, uh, columns in the replicated table? Yeah. I see them. Okay.
+
+00:30:24 - 00:30:25 Unknown Speaker:
+
+Okay.
+
+00:30:27 - 00:30:37 Unknown Speaker:
+
+Yeah. Mahang, I would say the best way would be if we can get these columns first removed. Since it's a deletion of columns, it should not be a challenge.
+
+00:30:38 - 00:30:43 Unknown Speaker:
+
+You're not asking for any particular data rows related, right, the whole columns to be removed.
+
+00:30:45 - 00:31:07 Unknown Speaker:
+
+In Cornerstone, you are saying, right? And then, uh Yeah, yeah. Correct. Cornerstone and Lumi. I mean, basically, the thing is what we have to do achieve finally is we have to achieve a similar metadata between replicated table and the clone table or the Lumi first table that you guys are going to create to ensure that the cut over process is smooth.
+
+00:31:08 - 00:31:30 Unknown Speaker:
+
+Because the cut over tool that has been provided to us by MDM, it can break if there are metadata inconsistencies. That's what I'm trying to suggest here, that let's avoid those. So if we can get the hydrated table, uh, up to the latest change that you want. If you don't want these columns, get those removed. Because I guess in Lumi first, you don't want to create those columns, right?
+
+00:31:31 - 00:31:32 Unknown Speaker:
+
+That's what I'm understanding.
+
+00:31:33 - 00:31:42 Unknown Speaker:
+
+Yeah. So let's Hmm. Go ahead. Even deleting them in Cornerstone would, uh, again, uh, require a DCU to be performed, right?
+
+00:31:44 - 00:31:57 Unknown Speaker:
+
+This will impact the downstream. So is there any other way? Uh, I mean Yeah. So maybe may yeah, maybe, Mahang, you can just ping me, right? We can take this offline.
+
+00:31:57 - 00:32:05 Unknown Speaker:
+
+You know how to go about this scenario. And yeah, you can just ping me after this session. Sure, sure. Thank you. Yeah.
+
+00:32:06 - 00:32:12 Unknown Speaker:
+
+Yes, so it happens if it's offline. We can discuss if we have to stop it in hydration or not. Yeah. Yeah, yeah. Sure, Sparsh.
+
+00:32:14 - 00:32:33 Unknown Speaker:
+
+Okay. Uh, do we have any anybody else? Ma'am, I have one question. Like, uh, what any SLAs you are having, let's say, if I'm raising cut over request today, like, how how, uh, when you will complete it, any SLAs for that? Yeah.
+
+00:32:33 - 00:32:39 Unknown Speaker:
+
+Sparsh, maybe you can talk about the SLAs you have currently, and I'll I'll add, you know, I'll add to it.
+
+00:32:42 - 00:32:47 Unknown Speaker:
+
+Um, sorry. I just asked to repeat your question, Krishna. Uh, SLA of? Uh Cut over. Cut over.
+
+00:32:48 - 00:32:58 Unknown Speaker:
+
+Yeah. Cut over. Like, we have raised the request, so when the process will get completed, cut over, like, uh, for yeah, for one table, example.
+
+00:32:59 - 00:33:14 Unknown Speaker:
+
+Any SLAs you are having? Yeah. So, Krishna, um, cut over is, like, I would say a basic deployment act, like, sort of same SLA. So I would say two hour one to two hour process, the whole team gets together and ensures some, uh, you know, your pipelines are moved in all environments. We do some sanitary checks.
+
+00:33:15 - 00:33:43 Unknown Speaker:
+
+So it's like a one to two hour process, uh, if I go with the exact number. Now, depend if I talk about the whole window, that when you raise the ticket and when it gets picked up, I believe it will be better if we are much closer to that date, then we can see, because it will depend on multiple factors, that how many tables are in queue, is your dependency all removed to cut over. I guess all that will come into picture. We try to do, like, in one week, we try to have only one cut over call. In that, we do multiple cut overs, definitely.
+
+00:33:43 - 00:33:53 Unknown Speaker:
+
+But yeah, overall, I would just give an idea. When you're much closer to the date, we'll get to know. But yeah, overall, the process is small. It's just one to two hours. Yeah.
+
+00:33:53 - 00:33:55 Unknown Speaker:
+
+I hope that answers. Okay.
+
+00:33:58 - 00:34:02 Unknown Speaker:
+
+Okay. I see, Sayyam. You've raised your hand. Hey, hey, guys. Yeah.
+
+00:34:02 - 00:34:19 Unknown Speaker:
+
+I just wanted to check on this, like, how our Self-Migrate teams will be aware of this dependency of their tables on different use cases. So is the handled as part of this INC when they create this INC? Yeah. Yeah, Sayyam. So two things here, right?
+
+00:34:19 - 00:34:43 Unknown Speaker:
+
+One is we will ask the teams themselves to, you know, ensure that if there is any downstream to, you know, send out, uh, impact form communication that let them know. Second thing is that we, you know, when I say we, like, platform team, me, my team would be doing a sanity check on those incidents to make sure that there is no downstream usage active on those tables.
+
+00:34:43 - 00:34:52 Unknown Speaker:
+
+And if it is, we will go back to the, uh, table owner, letting them know that, you know, this is this is the usage for this table, which still has a dependency.
+
+00:34:54 - 00:35:06 Unknown Speaker:
+
+Okay. And I think we are also, uh, lacking this as part of our central tracker, right, Sahil? Hmm. Right, right, Sayyam. All the dependencies and their migration plan.
+
+00:35:07 - 00:35:14 Unknown Speaker:
+
+Sorry. What was your last line? All the dependencies and their migration plan we are tracking in our central. Right, right. Yeah, yeah.
+
+00:35:14 - 00:35:39 Unknown Speaker:
+
+Correct, correct, correct. Got it. Okay. And just one more question based on that query that we had, that if the columns are deleted in Cornerstone, but they are still present in Lumi replicated table, so I think isn't that handled as part of DCU event, and they both look at all those things automatically? Right, right, right.
+
+00:35:39 - 00:35:56 Unknown Speaker:
+
+If they would have deleted the column, right, Sayyam, it would have been taken care of. But what the particular team did was they did not delete that column. So Cornerstone has an option to give is published equal to zero at a column level also. That makes the column, like, not visible. So they did that rather than deleting the column.
+
+00:35:57 - 00:36:02 Unknown Speaker:
+
+That is why it is present on the replicated table. Got it. Got it, sir. Thank you. Yeah.
+
+00:36:03 - 00:36:03 Unknown Speaker:
+
+Okay.
+
+00:36:05 - 00:36:21 Unknown Speaker:
+
+Okay. Any any other questions? Anyone? Um, when, um, like, whenever we are raising the cut over request, right, are you expecting any artifacts from us, like, um, business users' approval or, um, product owners' approval, anything? Yeah, yeah.
+
+00:36:22 - 00:36:31 Unknown Speaker:
+
+We yeah, yeah. We require the business and tech owners' approval, uh, for cut over. You need to attach that approval email on that incident.
+
+00:36:34 - 00:36:39 Unknown Speaker:
+
+Hmm. Business and tech. Yeah. Okay. Hmm.
+
+00:36:39 - 00:36:51 Unknown Speaker:
+
+And as you said, cut over is not a different phase. Whenever you are, uh, changing the clone to main, automatically, Cornerstone decommission will happen within seven days. Seven days. Yeah. Seven days post that.
+
+00:36:51 - 00:36:52 Unknown Speaker:
+
+Hmm. Okay.
+
+00:36:58 - 00:37:21 Unknown Speaker:
+
+Is there any exceptions? I'm just asking, like, let's say, I can move the clone table to main table, but I don't want my, uh, Cornerstone to decommission. Uh, any any exceptions we can get for that? So yeah. So, Krishna, if I'm understanding correctly, you're saying that, uh, you want to cut over that, like, you want the ingestions happening on Lumi.
+
+00:37:21 - 00:37:30 Unknown Speaker:
+
+You don't want the ingestions to happen on Cornerstone, or you want the table, like, ingestions to stop on Cornerstone, but table to sit on Cornerstone?
+
+00:37:35 - 00:37:56 Unknown Speaker:
+
+Actually, to clone to, uh, main table, there is two processes, right? Clone to main, change, and, uh, then post, uh, seven days, we will do the Cornerstone decommission. I want the first part to happen. The second part, if I need an exception, I think I can work. Yeah.
+
+00:37:56 - 00:38:25 Unknown Speaker:
+
+So as of now, we are not, you know, giving any exceptions because we don't want a situation where we have tables sitting on both platforms and then, you know, people using them on both platforms or the data coming back saying that, you know, why is data on Cornerstone so and so and why is data on Lumi so and so, right? So that is why we have, you know, built out this process. And this is true for Ascend as well, you know, that post a cut over, seven days post that, the table will get soft decommission.
+
+00:38:25 - 00:38:48 Unknown Speaker:
+
+So this is true for all sorts of tables, not just Self-Migrate, even for Ascend. This is what will happen. Uh, yeah. We are not giving exceptions because we don't want, uh, you know, tables to keep piling up on Cornerstone till the end. And, you know, somebody might end up, uh, using them or escalating at a later stage that, why is this table still present in Cornerstone?
+
+00:38:51 - 00:38:52 Unknown Speaker:
+
+Okay. Okay.
+
+00:38:54 - 00:38:54 Unknown Speaker:
+
+Yeah.
+
+00:38:56 - 00:39:13 Unknown Speaker:
+
+And, uh, you know, just to call out and, you know, let you know, so till now, this was, uh, you know, not followed for Self-Migrate, that, you know, post seven days, the decommission was automatically triggered, uh, you know, because currently, the decommission is done manually by raising the ticket and all, right?
+
+00:39:14 - 00:39:42 Unknown Speaker:
+
+But we have a decommission utility which will be rolled out in the next month, you know, which will, uh, integrate with Ascend and the Self-Migrate table that as soon as cut over is done, seven days post that, the decommission will automatically trigger. So that will be into place somewhere around mid of June or, you know, uh, somewhere around that place. So that is why till now, you know, this might not have happened very diligently, uh, that you were you might have been able to cut over without decommissioning the Cornerstone table.
+
+00:39:42 - 00:39:49 Unknown Speaker:
+
+But as I mentioned, right, post June or post mid of June, uh, this this will be picked up automatically.
+
+00:39:52 - 00:39:52 Unknown Speaker:
+
+Okay.
+
+00:39:53 - 00:39:54 Unknown Speaker:
+
+Yeah.
+
+00:39:56 - 00:39:59 Unknown Speaker:
+
+Okay. Uh, do we have any any other questions?
+
+00:40:06 - 00:40:10 Unknown Speaker:
+
+Okay. Uh, yeah. Was someone saying something?
+
+00:40:14 - 00:40:40 Unknown Speaker:
+
+Okay. Uh, what, uh, you know, as next steps, what we will do, so we will share this deck with, you know, all of you. Also, we will be sending out a communication or an outreach program to these to the owners of these 330 approximate tables, asking them to give us their planned dates for, you know, cutting over to Lumi or migrating to Lumi.
+
+00:40:41 - 00:41:07 Unknown Speaker:
+
+So as part of that, we would, uh, you know, uh, require so all of you who are from the business teams to, you know, make sure that you share the dates with us and all of the folks from Lumi enablement teams. Uh, we will keep you in loop in that email. So once we send that email out, if you could just ask your PU partners to confirm us the dates by when they are planning to migrate to Lumi, uh, that would be really helpful.
+
+00:41:11 - 00:41:13 Unknown Speaker:
+
+Okay. Uh, that is all for this session.
+
+00:41:15 - 00:41:31 Unknown Speaker:
+
+Feel free to reach out to me or, uh, I will share the DL over the WebEx chat for my team. So feel free to reach out to me or the DL, and in case you have any questions regarding Self-Migration.
+
+00:41:34 - 00:41:38 Unknown Speaker:
+
+Thank you. Thank you. Bye. Thanks, everyone. Bye.
+

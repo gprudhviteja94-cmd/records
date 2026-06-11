@@ -1,0 +1,305 @@
+2026-06-04 Dynamic Thresholding and Data Quality Metrics Discussion
+
+Creation Time: 2026/06/04 19:32
+
+
+📅About Meeting
+
+• Date & Time: 2026-06-04, 19:32 (Duration: 56 minutes 30 seconds)
+• Location: Virtual meeting
+• Attendee: Sachin, Sameer, Nirmal, Suman, Bhargav, Varga, Rajendra, P3 members, and others
+
+📒Meeting Outline
+
+Quantra Data Quality Metrics and Threshold Calculation
+
+• Overview of Quantra Metrics
+  The team discussed the four types of metrics Quantra handles: onboard metrics, monthly algorithm metrics, daily checks, and monthly checks. Onboard metrics calculate thresholds for newly onboarded DQID rules using one year of historical data. Monthly metrics revise thresholds for existing rules. Daily and monthly checks validate if current data values fall within calculated thresholds, raising anomalies if not.
+
+• Onboard Metric Process and Code Walkthrough
+  Sameer demonstrated the DAG code for onboard metrics, explaining how Quantra reads data from the Quadro SQL file to identify new rules (status false) for threshold calculation. The process ignores existing rules with pre-calculated thresholds (status true). The team reviewed how filter criteria are formatted dynamically to avoid SQL syntax errors, especially for edge cases in specific tables like CM11 and CM13. Custom methods adjust the filter clauses based on table-specific requirements.
+
+• Focus Metrics and Aggregation Methods
+  The discussion covered how different focus metrics (count, mean, median) are selected based on rule descriptions and data characteristics. Examples were shown illustrating why certain metrics like count or mean are chosen for specific DQIDs. The aggregation involves calculating statistical measures such as mean, standard deviation, skewness, covariance, and autocorrelation functions (ACF7, ACF30) using SQL functions on time series data.
+
+• Dynamic Threshold Calculation and Suppression of False Alerts
+  The team emphasized replacing static threshold values with dynamic thresholds calculated via algorithms like Holt-Winters, EWMA, and ARIMA. This approach helps suppress false alerts by accounting for seasonal trends and data variability. For example, credit card bill amounts fluctuate seasonally, and the system adapts thresholds accordingly to avoid unnecessary alerts. The current success rate of false alert suppression is 76%.
+
+• Challenges and Future Improvements
+  Concerns were raised about potentially suppressing true alerts due to dynamic thresholding. The team acknowledged this risk and is working on improvements to avoid missing valid alerts. The process includes monthly recalculations to adapt to changing data trends. The current algorithm selection uses sequential if-else logic, which is planned to be optimized.
+
+Team Roles, Knowledge Sharing, and Resource Grooming
+
+• Knowledge Transfer and Code Familiarity
+  The meeting stressed the importance of all team members understanding the Quantra system, its business logic, and codebase to handle tasks independently. Participants were encouraged to ask questions freely and review the code thoroughly. Examples and detailed explanations were requested to aid comprehension.
+
+• Resource Allocation and Skill Development
+  Plans were discussed to groom Suman on Java and data monitoring tasks to support on-site operations. The team aims to distribute workload efficiently, especially for urgent requests from stakeholders like Rachna and Rajendra. Emphasis was placed on cross-training and utilizing team members’ expertise in Snowflake, AI, and data validation.
+
+• Session Feedback and Future Meetings
+  Participants found the session helpful for brainstorming and knowledge sharing beyond daily stand-ups. The meeting frequency and timing were chosen to maximize participation. The team agreed to continue such sessions for updates, demos, and collaborative problem-solving.
+
+📋Overview
+
+• Quantra calculates dynamic thresholds for data quality rules using historical data and time series algorithms to reduce false alerts.
+• Onboard metrics focus on new rules, while monthly and daily checks validate ongoing data quality.
+• Custom SQL formatting methods handle data discrepancies and edge cases to ensure query execution without syntax errors.
+• Different focus metrics (count, mean, median) and statistical aggregations are applied based on rule characteristics.
+• The system currently suppresses 76% of false alerts but is working on improvements to avoid missing true alerts.
+• Team members are encouraged to understand the system deeply, review code, and ask questions.
+• Resource grooming is underway to support workload distribution and future requirements.
+• Regular knowledge-sharing sessions are valued and will continue.
+
+🎯Todo List
+
+• Sachin / Sameer / Varga:
+  • [ ] Prepare detailed documentation with examples of filter criteria formatting, focus metrics, and threshold calculations for next session. (Next meeting)
+  • [ ] Showcase profile metric processing and results in upcoming call. (Next meeting)
+  • [ ] Optimize algorithm selection logic to replace sequential if-else with a more efficient approach. (Ongoing)
+
+• Team Leads (Rajendra / Manju / Others):
+  • [ ] Approve RFC for deployment scheduled on June 8th. (By June 7th)
+  • [ ] Complete validation of last five months’ data for monthly checks and one month for daily checks to finalize Quantra launch. (Ongoing)
+
+• Suman / Nirmal:
+  • [ ] Continue skill development on Java and data monitoring tools with guidance from senior members. (Ongoing)
+  • [ ] Support on-site operations and urgent requests from stakeholders. (Ongoing)
+
+• All Team Members:
+  • [ ] Review Quantra codebase and business logic; raise any access issues or questions promptly. (Immediate)
+  • [ ] Participate actively in upcoming knowledge-sharing sessions and demos. (Ongoing)
+
+Transcription
+
+00:00:00 - 00:00:51 Unknown Speaker:
+
+For your review and approval. We need to get the approval from Rachna, not from you. The RFC, Sachin, you're talking about? Oh, okay, see, he has... That one is like a ward document. That ward document, Sachin. Okay. I asked him to create that one. Sachin, RFC, shall I create for Monday, Sachin? Yeah. Can we create now? Like, yeah, I think it is showing no conflict, actually, if I put the date 8th date, it's showing no conflicts. Go ahead and go ahead and do that. Okay, sir, I think this is regarding control, right? So if you have something other than that, you can feel free to drop off. Like, you know, I'll give you a heads up when we would be having any UI. Uh, you know, presentation where you wants to serve a team.
+
+00:00:51 - 00:02:21 Unknown Speaker:
+
+Then I'll ask you to join this call, otherwise you can feel free to, you know, not to join this call. Okay, so I'm quickly sharing my screen and, uh, yes, sir, Hey Nirmal, how did we miss this properties, man? It was there in development. I thought the status PR we did must come develop to main. Okay, do one thing we do have RFC for tomorrow. Okay, uh, so just, uh, create a Pr. Uh, so that and get it approved today, paste it on a studio. Okay, okay, uh, and get it approved so that, uh. We will, you know, make that deployment tomorrow. We have RF super tomorrow. Okay. Okay. Anybody who did not attend last, last to last week, you know, overview. Yeah. So I'm just giving a quick overview of what Cointreau will do.
+
+00:02:21 - 00:03:16 Unknown Speaker:
+
+No, no, hold on, hold on, hold on Samir, that's the question. I think Suman was there, sorry, Seven was there. I feel Bhagav is aware with that, and even I feel, uh, is going to be that. And and see, you were there in that call, right? It's only someone who is not aware with it and might be nimel nimel. You are aware with that process, no, Okay. We can skip this part, Sameer. Let's jump to the code. Like, you know, someone can, you know, just give that overview to someone. And then I'll provide that information to Nirman. Let's not reiterate. If somebody is missing, then we won't be able to do anything. Yeah. So, first I'm just giving, like, what are the types of metrics we are doing. So, like, presently in Quantra, we are doing onboard metrics.
+
+00:03:17 - 00:04:07 Unknown Speaker:
+
+Where like if there is any new DQID rule was given to the artifacts table, we will do one year of data, historical data and we calculate the threshold. And we have a monthly algorithm metric like where we do like if already ungooded metric is there, right? Like on every month basis, what we will do is like we will do the revision of thresholds. So, and there are other two checks also is there like one is daily check and one is monthly check. What here we will do is like we will calculate the latest value, we will get the latest value and we will check the threshold like whether the value is in the calculated threshold or not. If it is not there, then we will raise an anomaly like in the database showing that this particular DQID is an anomaly data, having an anomaly data.
+
+00:04:08 - 00:05:05 Unknown Speaker:
+
+So, these are the four things we are doing in Quantra and we have a separate DAGs for each. So, currently what I am demonstrating is like going through what is like onboard metric. So, for the onboard metric, this is the DAG code like where we have a DAG, right? So, Quantra artifact process is the DAG name. And this is the code for that, so here, if you see here, the code is actually starting. The start process is just like whether it is getting started or not. Like we just had a print statement over there. But the real what is actually going in this? Like Quantor read Artifact Test, where we have a method called Quantor read Artifacts. So what it will do is like it will read the data from the Quadro SQL file, so what?
+
+00:05:05 - 00:06:03 Unknown Speaker:
+
+This Quadro SQL file will actually retrieve the data? Like, what could write? What kind of data it will extract is like if you go to the Quadro Artifacts.sql file if you see here. So whenever a DQId got on go net it, the status will be defaulted false, so that's why what it is trying to extract the data is like. So whatever the status, uh, declared, is having status equal to cause. Retrieve all the records So once we retrieve all the records, what, what means? Go to that table and execute that, you know what is true and false, right? Explain that part, because that is the base table from where we used to pick up the data. So these are basically new rules, right? Which is getting onboarded through the self serve, right, so when it gets onboarded right.
+
+00:06:03 - 00:06:59 Unknown Speaker:
+
+Those would be the new rules that are going to get onboarded to our repository for which we are going to calculate the threshold. Okay, so it's basically whatever DQ ID which is already being present, right? For those threshold have been already being calculated. All the aggregation has been done, right? So we are just ignoring those records and only picking up those rules, which has been, uh, onboarded to that self-serve UI. Yeah, any questions, anybody, if it, if you have any on this, so just to clarify. The new rules will be the ones which will be entered by business users on the UI side and which will be accepted by the product owners. Once that is done, only then the rules will be entered. So, yeah, correct, correct. So look, we have 900 rules existing right now, right?
+
+00:06:59 - 00:07:54 Unknown Speaker:
+
+So for that, we are calculating this onboard metric once a year, okay, once a year. Suppose it ran on first of Jan, okay. So whatever rules would be there, based on the previous trend, it has created, those, it basically get onboarded right now. Suppose you get some rules in between in month of February, March, right? Then we are just picking up those value, not the complete set value. So that's what this piece of artifact is doing over there. So explain like this, I mean, right, people don't need this, you know? They all are well versed with Python, right? And make them understand the business logic behind that. Go ahead. So so, this is the artifacts table. And as Sachin mentioned, so if you see here, these are the DQ already, which is already unloaded.
+
+00:07:54 - 00:08:44 Unknown Speaker:
+
+So that's why the status is, it is as true if it is a new law unbooted, what we'll do is like the status will be false by default. So those records will be we have, like the onboard metric process, those records we will consider, and what we will do is like, we need to format the data. Like, suppose, if you see here this filter criteria, this is actually not like in the SQL format type like suppose. This filter criteria should be placed exactly after the where condition. So if you if you put the same it won't execute, you will get a syntax error. So what we have done is like we have created a Qt track it is like under Qt track it is we have created a data format like as SQL, Contra SQL.
+
+00:08:44 - 00:09:32 Unknown Speaker:
+
+So this method what it will do I will quickly show you for one. So it will read suppose what here from the address table for this DQID it will read entire all the record like all the column values. Suppose this 10th is like one record right. So it will read use case, table name, Where name and everything likewise. So if you once we get the record, it will like. Based on the suppose for the filter criteria, I will explain, uh, suppose for a particular table, uh, CM 11 table. We have a filter criteria and filter criteria should be modified in a such a way. Where, like the contra, SQL should understand, like, should, that should be fit for the syntax without any syntax error. So for that, what I have done is like, once we got the record, I will, uh.
+
+00:09:32 - 00:10:19 Unknown Speaker:
+
+For the filter criteria, I have created a method where it will check for the based on the table name. So here if you see, we have number of tables like CM11, CM13. Risk for Aircon history, so for each table name we have a separate format. Uh, we are getting a separate format. Like, uh, some we are having, like, where, uh, model ID is equal to some model ID, and which should be particularly the code should be something, or like, the product should be something like that. Like in some cases, there is multiple, uh, products it is expecting for that particular idea, so a particular model. Like, suppose there is a model ID, one, two, three, four, and that should also be considering. A product ID should be in multiple and product IDs something like that.
+
+00:10:19 - 00:11:09 Unknown Speaker:
+
+So likewise, like, I have segregated based on the table name, and I have, uh, I have written a code where it will generate a formatted, uh, where? Class for us. So if you go to this method, for if you put the record once, we have got any record. If that particular record is type of like the table name is CM11, so then it will go to this method and in this method it will check. Like, I have observed, like, you know, we have what we have observed is like, for that CM11 table. We are getting two types of, uh, two types of filter conditions, so that's why we have aggregated it. If if there is a where in the where clause, like already written in this filter criteria, we are actually removing it and we are actually, uh, uh, passing this.
+
+00:11:09 - 00:11:56 Unknown Speaker:
+
+Like, based on this pattern. And what we are doing is like, we are appending and between each and every condition, and we are adding codes if there is any missing codes. Likewise, if there is no where glass over there, like it is by default, they are actually delimiter like using, and as a delimiter over there, so that's why we have a based on the delimiter? We are passing it and we are adding again, we are adding codes and we are framing that filter partition. Right, like idea. So once we formatted each and every record, right, what will happen? We will get all the filter formatted records over here. So, once we got what we will do is like we are passing this formatted records to the query called this one. Let me show you.
+
+00:11:56 - 00:12:50 Unknown Speaker:
+
+This invoke on word matrix is here. So, invoke on word matrix if you see I am for the like for your understanding I am just showing. So, what it will do it will call this on word matrix by passing all the arguments which are already formatted by our Qt live Qt Pantra Utils framework like file. Okay, so once we got formatted and we pass that to this on-board metric, we will receive the values over here. These are all the input values which is required for this on-board metric. So in this on-board metric, we have two types of files, like two files, SQL files in the control. One is on-board metric and one is profile metric. So what on-board metric will do is like, Based on our record, or like, based on our data, it will identify which is the.
+
+00:12:50 - 00:13:50 Unknown Speaker:
+
+What is the primary method for this, and what are the other param Json or like? Or what is the let me show you? So, if you see here, based on the primary method, this is the value for param JSon value Json value. So what it will do for this? For particular record, this data will be actually having four like different types. Like whether it will be seasonal data or non seasonal data, or like highly skewed data, or like not skewed data or sequence data, something like that. So based on that data, we are we are deciding, okay, for this data. This is the primary method, so that SQL samir where we are calculating that primary method. Yeah, this one's actually already. No, no, no, the SQL where we are calculating the standard deviation and all the SQL query is there, right?
+
+00:13:50 - 00:15:05 Unknown Speaker:
+
+Okay, this one? Yeah. So can you run it? Can you run it? Or did you executed it somewhere? Those are the important business logic. And then if we miss that, then they would not understand why. It is going to halt Winters or or it is going to that Arima Plus or something. Yeah. I'll just fetch it through the logs if it is there. No, no, Sachin. That won't be in the logs. Only call method will be in the logs. And I have asked you to save this query in that GCP itself, correct? It's going a little too fast for me, but from what I'm following, initially you showed that there are some custom functions written to format the query based on the table name that we are receiving as an input.
+
+00:15:09 - 00:16:07 Unknown Speaker:
+
+Like restricting only certain tables, no where there is a data discrepancy. It's not about all the tables, it's with respect to the existing data, right? There are certain, you know, challenges with those tables where these formation is required. 7. Actually, if the filter criteria, right, if the data is inaccurate, right, something end condition is not there, right? So in that situation, we are creating this custom method to frame the query, actually to execute the onboard metric. So like that one each table. Yeah, yeah, I got it, and and that is what I was expecting from Samir, Samir. So when you are giving that code over you, right? You should show those examples, otherwise, you know, the question would? I am understanding API is understanding, right? But somebody knew, like seven or normal, right?
+
+00:16:07 - 00:16:51 Unknown Speaker:
+
+They would not understand what exactly going on. You should showcase, uh, one of the example for that, right? This is data, this is what I have formatted, and then look, this is how we are calculating. Yeah, so if you, if you're able to see my screen, uh, so no. This is the final variable. No, no, hold on, this is the final value which you have calculated. So Raven is one step behind of it. Can you pull one of the record where we are formatting the data? Oh, okay, so formatting the data? Okay, those are, you know, written pieces which is missing. Sorry, the flow. I can review the code later on as well, but it's just no, no, it's it's very, you know, basic thing.
+
+00:16:51 - 00:18:07 Unknown Speaker:
+
+Uh, I think he should have considered when he is presenting it, right, even the first part, which he has presented, he missed. Why we are taking true or false, right, so that is valid. No worries, we can, you know, connect for next week also, that's fine, even if we are going slow. My intention is each one of you should understand the system. Even if you have silly question, please ask those silly questions. So I think a first step, any question like how we are getting those data and all, anybody having any questions on that? Because, look, we have tried few resources and then they struggle to understand the system, right? So pose this code overview I need. Each one of you should be, you know, familiar with what one true about and what one true is exactly doing so if you see here.
+
+00:18:07 - 00:19:01 Unknown Speaker:
+
+So for this particular IDQ rule, so we have a filter condition like where modern ID in this one and run it equal to this one. So as per the business. So we are already giving the time frame, like for the onboard metric, we are considering already the time frame like last one year. So for this filter criteria, we don't need run date equal to max rendered. So if you see here, if you go to the same UH, after process or after our UH code was run. This filter criteria will be modified as like this, appending with the end and model ID in this one, so that like this will be the uh, this filter criteria won't generate any syntax error. For our contrast, okay, okay, so this is all based on our previous uh, whatever.
+
+00:19:01 - 00:19:54 Unknown Speaker:
+
+It's a discrepancy, right, right? Look, it's the data discrepancy, even which Prithvi is facing right now. Right? Where we are trying to migrate the data, it's because of the existing data. The way they have written the description, right, or the filter criteria, right, those are not accurate. And in order to because you need those in the where clauses, right, when you would be running those query. And if it is not well mapped right, then that would create a syntax error for SQL, right? And that's why we are formatting it. That's it. Okay, it's nothing with respect to the business logic, it's just the data handling part. Okay, so this will only handle whatever cases that we have currently on edge cases. Correct only the edge cases. But let's say, if you are onboarding a new table, no, no.
+
+00:19:54 - 00:20:51 Unknown Speaker:
+
+In future, we are not going to struggle with these issues because now we are going to frame it from the front end, right? Which is creating those roles and filter criteria. So going forward, once that UI got launched, we are not going to face such challenges. OK, OK, OK, this is just to address the current issue. OK, current data issue. OK, OK, yeah, correct. Then custom methods will go away from here. Yeah, so can't we just iterate this out and store it like one time itself? Why do we need to process it every time? No, it is not every time, right? Like whatever functions you have written for formatting the SQL, this will be executed only once or will it be executed every six months or every year? Once.
+
+00:20:53 - 00:21:48 Unknown Speaker:
+
+So once we have formatted like this, this data will come as an input for this onboard metric. So as I mentioned, this is a single variant, so if you see here we have a table and we have a, we are actually fine. Like calculating the threshold based on a single column, so variable name is CM11, so for CM9 is one of the column name in this particular table. And these, whatever the algorithms we are, uh, we are picked for the single variant to calculate the thresholds. All are like time series based algorithms. So for that we need time series of column, right? Like, so for that we are picking a run date as our time series column. So that like, uh, it will have all the time series of data, like, so we have the uh.
+
+00:21:48 - 00:22:43 Unknown Speaker:
+
+Once we have a inserted data like the rendering, have that date, where on that particular run date, what is the CM level of? Like, what is the count of that CM level? We can calculate, right? So. If you see here, we have based on the focus metric. So here if you see what is the focus metric that we want to calculate for that single variant is like count. So if you go here, we have a count. So if it is a count, we are counting. Hold on. Now, again, why it is count? Why the focus metric is count? Can you go back to that screen? The sequence screen. Can you run that artifacts table? Why the focus metric is count? If you see the rule description right, go to the Rule Description No, no from the DQ result, right.
+
+00:22:43 - 00:23:54 Unknown Speaker:
+
+You are, you would be DQ, DQ repository, you would be putting it from the DQ repository. Yes, I mean, why you are missing these steps, man? Bharat, Bhargav, I hope you are clear with these steps or even you are not aware what is going on. Yes, sir. I am bit aware from these steps. Okay. So, if you go to this description, right, So you can see here they are picking the count, because it's if you see this one, right, it's a percentage of value of score. This right should be this to this, okay? So basically they are calculating, can you display few other example where we are calculating the average? And all right, the focus, different focus, metric and semi? Receive these, right? So when you are presenting it next time, right, this sequel, right?
+
+00:23:54 - 00:25:23 Unknown Speaker:
+
+You should be able to do it quite fast. Do we have that data? Yeah, like, I can, or hold on, or hold on. Open that initiative page which I have created. Oh, no, no, it could not be there. Do you have that link I have already created? Like, Yes, yeah, yeah, so that one. If you have that Excel, show that Excel. Man, this is not readable, man. Can you change the color? Just a second. Yeah, I think you hope you are able to see in our future. It's visible, but it's pretty, you know? Can you increase the fund? Yeah, I will increase the part. Yeah, can you go back all our count? Won't we have any other one which we can showcase them? It is why it is me.
+
+00:25:23 - 00:26:06 Unknown Speaker:
+
+Yeah, so so if you see these example, uh, stubborn and team, right, can you go up and show one of the account? One? First filter with count, and then we can see the mean and median, right? Why this focus metric is being selected? So if you see this count right, you can see the difference, the percentage of values for score this motion. And it should be within this range, right? So it is basically calculating a range of data, that is the reason the Focus aggregation matrix, we have selected it as count. If you see the mean one, right? It is calculating the average of account balance and product of this one should expect within the range. So it comes as an mean, we are trying to calculate the mean out of it.
+
+00:26:06 - 00:27:11 Unknown Speaker:
+
+Similarly, there would be a median, or, you know, some, there might be a chances of some also. Okay, uh, any questions on this? Anybody having No. So this will be like, uh, they will be providing the description itself for yes, so what do you like? What is the focus metric? Should be? Yeah, correct, okay, so this would be coming from the that description where you are calculating these, uh, focus metric. Okay, now go back. So here we will like, once you, once you, once you get the focus metric, right? Now we are calculating their aggregation basically. So now can you run that query and if you have run it can you show the result. So now based on that right there is a SQL you know functions basically we are calculating using to define that aggregation.
+
+00:27:12 - 00:28:03 Unknown Speaker:
+
+For that particular variable everything would be calculated mean the standard deviation the skewness the covariance type and then the acf or the acf 30. ACF 7 is for 7 days, ACF 30 is for 30 days. Any questions on this? This is purely based on the SQL function if you see that the SQL 30 has written. Right? If you say it is calculating covariance, the very last line, right? Or, uh, the ACF, and all right, standard aviation in the line number six, right? So those are purely through the SQL functions that we have used to calculate these. Uh, you know, values for that particular DQID, for that table right now, that you might be wondering how these values are coming. So for this particular model ID, right? Whatever data would be there for last.
+
+00:28:03 - 00:28:57 Unknown Speaker:
+
+Suppose if you're running this process for one day, or if you're running it for one month, right? It is going to that CSP model score 11 table for that particular model ID. Suppose it's the 30 days variance for 30 days variance. It is calculating the data mean Standard Aviation Skewness covariance type, or HD7, or AFC 30. Any questions on this? So this is across the board for all the tables. Yes, yeah, yeah, yeah. What about some of the tables which are not getting updated like on a daily basis? Let's say they they get updated on weekly basis? No, so if if it is not getting updated on a daily basis, there would be no run for those. Uh, dqid on a daily basis. Okay, okay, if daily.
+
+00:28:57 - 00:29:54 Unknown Speaker:
+
+If daily ingestion is not there, then it doesn't make a sense to calculate this mean and standard deviation for those tables. Right? If it is getting, if it is getting down every month, then that would falls under those monthly run, not under the weekly run. Okay, okay, so the sequence will change accordingly, right? Like the covariance, let's say if it's a weekly load, then it should be calculating for the previous completed week, not the last seven days. The covariance are all right. Yes, yes, it should. Yeah, okay. So now, once this data get calculated, this is projecting you the threshold for that one, which was earlier a static value, which was being, you know, provided by the user. And then it comes into this platform, right? If it is called winters, right?
+
+00:29:54 - 00:30:49 Unknown Speaker:
+
+You have calculated the ACF, right, so if it is greater than 0.3. So this was something I was talking in the DSU today, right? If you see this one is if else, if else, if else condition is there, right? So if my AFC 7 comes as greater than 0.3, right? It straight away picked up all vendors and will ignore the rest of the checks for AFC 30 or covariance or, you know, skewness or the primary method as mean median. Okay, this is something I have asked Varga to optimize instead of this if else, if else, if else. Whichever would be the... know the best picked up that should picked up that particular algorithm for that something. Got it right. Any, any question, no such a question, okay, so you can go ahead, wait to the next step.
+
+00:30:49 - 00:31:55 Unknown Speaker:
+
+Yeah, so, like, once we pick that based on the data and based on the values, we will pick a primary method for each DQ ID of like each record. In that fact, so once we, uh, once we identify the primary method. What we will do is like in the DQ repository table, because we are going to update, like, insert that details in this uh using insert statement uh to this contour table. Wonder how DQ repository? So this data will look something like this. It is basically, if you have observed the existing role, right, or the SQL, right. Can you open one of the SQL? Uh, samir, any one of the random SQL from SQL file in the data monitoring tool in the data monitoring. I I thought, like, you have some questions?
+
+00:31:55 - 00:33:21 Unknown Speaker:
+
+No, no, okay, open any sequence. So look, actual value between minus 10 and 10, right? So this is a hard-coded value which has been passed in the sequel. So the primary goal of this contra is nothing to make it dynamic based on the data trend that we are observing, maybe for a daily basis or for a monthly basis. Got it right, or is somebody is having still query on this? So these are existing role which is running in the data monitoring tool. Now. What exact objective we are trying to achieve with this? Now? Let me share my stream, do let me know once you guys are able to view my stream. Do we have any recent failure? So the threshold range that was provided was like static, right? Static, right. This one, right?
+
+00:33:21 - 00:34:32 Unknown Speaker:
+
+Take an example of this one. No, not this one. This is not correct. I need to check the threshold one. There was no failure. Yeah, this one, just take an example of this one. So these value which you guys are saying, right? These are threshold check on a daily basis for the CM11, right? Or let's check the number of. Is this this? Blah, blah, blah, whatever, right? That should fall within less than thousand, right? And it's a hard-coded value which has been provided by the user. What we are trying to achieve over here, we are calculating the data based on those different covariant type. And all right. So this range may not be thousand, it can be 500 based on the current trend. Okay, right, or maybe suppose 2000, okay, so what it would do?
+
+00:34:32 - 00:35:25 Unknown Speaker:
+
+This is going to suppress this alert to the user, even the user is not going to get this alert. Suppose just for an example, your credit card bill, right? I'll give you a very, you know, simple example. Your credit card bills comes as thousand rupees, dollar, thousand, thousand dollar. In the month of Jan, okay, maybe 500 in the month of Feb. And it might be some festive season, right in the month of March, or maybe April, right? Where your credit card bill goes to two thousand dollars or five thousand dollars, right? So that is a seasonal trend, it's a festive. So the expectation of the spend was higher, right? So even if the spend was five thousand dollar, right? We are not going to send the alert to the user.
+
+00:35:25 - 00:36:27 Unknown Speaker:
+
+That is something we are expecting based on your previous purchase, the purchase that you have made last year. With that, these alert is not going to be recorded in the system and we are going to, you know, optimize that one, right? So it's kind of a false alert which is getting triggered to the user. Let me know if you guys understand what I am telling, or is there a query, then I may give you a different example altogether. Should I understand like, you know, you got it? What exactly I'm trying to say or... Can I just pick somebody? This is one of the table that I have created, right? The different focus metric which I was talking about, right? Right, so these data quality comes under the fault window. This is something we are trying to optimize.
+
+00:36:27 - 00:37:23 Unknown Speaker:
+
+The AFL's condition, right? It should not be only always will go to all windows, it may go to EMW, right? So this is before Quanto what they were expecting now now. Very classical example, I would say this one, right, this one, so they're expecting a count of zero, right? But when this is data on May 2026, okay, this is a very classical example, which I was just giving it to you. User have. The business team has sent that. We are always having a count of expected values as zero. But when we have analyzed the trend, it can between lag between this to this 7 to 30. So even if I, uh, you know, the actual values comes as 25, right? I'm not going to send an alert for this to the user. Got it right?
+
+00:37:23 - 00:38:17 Unknown Speaker:
+
+So we are suppressing that. So this is where we will be, like implementing the multivariate, it's not multivariate, it's a univariate. Only. What I am trying to say? So we are like trying to include the external variable, right? So that this cannot be like a fixed threshold. Yes, threshold. Exactly right now. This is static expected threshold before control, this is a static value which they have provided to us. Okay, but when we have analyzed the trend of those data, we find out for the month of May, when you're spent and go between 7 to 30. Okay, yes, right, so so. Even if the actual values when you run that role, right, when the actual value may comes as 29, also right. So if it is static value, you would suddenly get an alert, right?
+
+00:38:17 - 00:39:05 Unknown Speaker:
+
+These are left. Yeah, so with this quantro, when we calculated, oh man, you can have 29, uh, for this month, right? So this alert would not be triggered to the user. Yes, yes. So that is what we are trying to achieve through the one two that is the main motor here. Also, again, you can see the mean they are expecting between minus 10 to 10, but when we calculate it, it can be between 47 to 52. Right, so, even if the lie is between around 50 51, right? These alert would not go to the user because this alert again, understand, these are expensive, right? They need to do the analysis, take the action on the DQIM portal, right, rectify the data, or, you know, analyze the trends, and all right.
+
+00:39:05 - 00:40:02 Unknown Speaker:
+
+That is the problem that we are trying to solve the problem with that control and we have a 76 percent success rate. So, we were able to suppress 76% of pellet to this quantum. Okay. So, that is the objective of this quantum. Now, we still have few minutes. Anybody having any other question? I have a call at 8.30. Sameer, anything else that you want to display? Or we covered up everything? So I will finally showcase this like the profile metric once. Uh, okay, maybe maybe we can take it in the next call, because we are now sort of time. Uh, yeah, okay, whatever it is like, I will, uh. For the next call, I will pick two result, two DQ IDs. And uh, how the filter code was turned.
+
+00:40:02 - 00:41:08 Unknown Speaker:
+
+And how these values are action, what values we again we got, and how the like, what primary methods it is picking. Yeah, what other? What is your time? And, uh? Take a screenshot and then prepare a document and I'll showcase that along with the procurement. Okay, questions guys, if anybody have any question, because if no question, then I would understand, right? It's clear to everybody. And then if there is a bug, right? I should not be searching for Samir or Varga, right, even individual. You guys can, you know, fix that code like you can go through the code, right? There is no risk, right? Just let me know. If you don't have access, you can go through the code. But at least on overall business perspective, what we are trying to achieve, you should be clear and what exactly code is doing right.
+
+00:41:08 - 00:42:05 Unknown Speaker:
+
+There might be here and there minute doubt, but at least you should have that confidence to handle this product. Have we verified, like, uh, some of the sample rules with the actual stakeholders as well. Yeah, yeah, that is what I was displaying, right? Which I have, I was showcasing it to you, right? Okay, yeah, it is not full phase live right now because this is in, uh, you know, we are still doing a more validation right now. The task is we are validating last five months data and last one month data. Also, five months for the monthly check and one month data for the daily check. To make it full-fledged live. So that what would happen, then the threshold check would be run through the Quantro. Those are not going to run through the data monitoring tool.
+
+00:42:05 - 00:42:59 Unknown Speaker:
+
+We would eliminate threshold from the data monitoring tool. It would start running from this Quantro mechanism. We just need to integrate one last part, that is sending this email alert. That is being pending. So once the data validation is done, we would launch this product. It's live in E3, but we are not sending that communication to partners right now, it's running on a daily basis on E3 right now. So that sign up is awaited from the business team. Okay, okay, yeah. I mean, I understand that we are trying to suppress the false alerts that are going out currently through control. But what I'm trying to understand is what if those were actually, like, the correct alerts. Like, let's say the variance changed over the past month or so, which was not expected.
+
+00:42:59 - 00:43:46 Unknown Speaker:
+
+And because somebody did not take an action on it, that alert was actually, you know, it was a valid alert, but somebody just couldn't take an action on it. Would it change the data trends in control? Like, because we are doing a mean checks for like 30 days or seven days or whatever. Would it change the trends? And then we are actually missing out on true alerts. In future, no, that's why, like, we are doing it on monthly basis, right? Even if it no, no, hold on, hold on what he was asking, that's that is something I was, uh, making a servant to you, right? Like, that is the part I'm asking Varga to work on, right? Because I can't keep on. You know, calculating mean for that particular variable, right?
+
+00:43:46 - 00:44:34 Unknown Speaker:
+
+There might be a chance, as you mentioned, right? It might be a true alert which we are suppressing, correct, right? So that part, that improvement, that is the second phase, which, uh, started working on it, because we should not be suppressing, suppressing the true alert. Also, that is, that's something we need to achieve. It. Okay, okay, okay, because, yeah, maybe next time when I see some examples, probably things will be more clear. Um, coming from a third person point of view currently, so I'm not, you know, fully aware of how the things have worked out. Yeah, yeah, maybe maybe on upcoming week we can have that demo. And like, uh, you know, uh, semi, just a feedback, right? Uh, be prepared with the you know details, right?
+
+00:44:34 - 00:45:59 Unknown Speaker:
+
+And uh, you are explaining, but you know, missing the core part, and then with that, uh, yeah, you know, right. That would help somebody to understand. Otherwise, you know, they would not able to map it. Basically, that would be the difficulty. Yes, yes, okay, and you are more, you are more closer to code compared to me, right? Yeah, implementation and all you and Varga. Okay, yeah, overall, just, uh, take care of that. Okay, yeah and see normal. Uh, P3 someone. Do you guys have any question? Because I did not heard anything from you guys? So for you guys who have, uh, you know, Nirmal and Suman, let me just give you a brief overview. Okay, so that you should not spend time again with, Uh. You understand the SQL which Sameer was showing, right?
+
+00:46:00 - 00:47:02 Unknown Speaker:
+
+It was being hardcoded in that SQL query, right? These expected values are hardcoded, right? If I open any of the SQL query, right? Whatever SQL it is in present. Open any random SQL value, right? SQL. You would get this static value everywhere. Look. Not here. If it is a threshold, they are calculating the threshold, so for few cases, it not be there. This is minus 10 to 10, is it always minus 10 to 10? No, right, uh, no such in, uh that, uh. Script is model ID to model ID, it will be varying, yeah, but each ID to DK also, it will change. Yeah, yeah, correct. I'm just trying to pull some other examples. So that instead of just, you know, that hardcoded 10 to 10, it's everywhere, most of the where it's minus 10 to 10 only.
+
+00:47:02 - 00:48:01 Unknown Speaker:
+
+Yeah, here, look, see, it is being hardcoded 0.2, right? Yes, if it is less than 2.2, right, it would be passed, otherwise you will mark it as fail, right? So this is a another classical example where they're calculating, they're hard coding the threshold value. So what we are trying to do through the control is that instead of these hard-coded values, we are trying to calculate this dynamically. And that is when using these different algorithm called Hall Winters, EMWA, Mean SD and Mean Median and Arima Plus. These algorithms, I would not explain. Go through the Google and then understand what these algorithms work. I will explain you what is skewness and all. One of the examples that I was giving, the seasonal trend of your credit card consumption. That can fall under skewness.
+
+00:48:01 - 00:48:53 Unknown Speaker:
+
+The graph can be like this, can be like this. Mean, median, you go and guys know. Class, right? Uh, 60 is the percentage where you marked a student as first division, right? So in that class, suppose, uh, there are 10 student out of those 10 student, uh, eight student. Got more than 60 percent, right? So your graph, your median would come around 50 60 percent, right? But there might be a class where, you know, the trend might be no downer side, people might receive 40 50 percent, right? So that could go into a different direction, right? So if you search the skewness right, just do a Google right, you would get those all graphs and all. Just click on images. So it would be like, this, right? It?
+
+00:48:53 - 00:49:39 Unknown Speaker:
+
+It can go as a negative skew, it can go as a positive skew, right? So this is a pretty good example. You can see this symmetric mean median, right, which I was calculating, so this mean median can vary classes to classes, so that's what the data calculation is also being done. Okay, and based on that we are picking up these algorithm, but these algorithm right now is into a sequential order first this, then this, then this, then this right, and then this. So this is something we are trying to optimize it, but right now, that's how it works. And once this gives you value, we would analyze, right? How many, uh, you know, rules we can suppress with a false alert. That is it, nothing, you know, nothing scientific.
+
+00:49:39 - 00:50:55 Unknown Speaker:
+
+On this one, it's all maths, okay, and being an engineer, we understand that's what's, that's it and all. Okay, any other question? NML and someone, Okay, okay, I hope now you understand the gist of it or you have anybody on this also. Yes, I'm clear at this point. Yeah, okay, okay. And then just give me a feedback like, Do we need this session? Is it? You feel like these are fruitful session? Then we will continue otherwise, you know, like if you feel like we don't need them, then at least this time around, I can see the good participation last couple of time, right? There were no one basically, right? So just let me know if I just can just call so that you know. If you guys have done something different, you can showcase to the team so they can adapt to those changes, right?
+
+00:50:55 - 00:51:39 Unknown Speaker:
+
+Number one second, make this session as a you know, informatic to share the knowledge, and I would use this platform. If something, you know, different is going on within the team, then I'll cascade it to all the members so that they would be aware. Like, you know, specialist seven for you, right? You know, you are the single point of contact for Rajendra, right? So he may reach out to you anytime. Because he used to have urgent connect with Manju, right? And then if he is seeking for some details, right? It should not be that, you know the information hasn't been passed, right? And then, as you are in the system now, from two to three months, right? Rajendra would be having an expectation that you know each and everything.
+
+00:51:39 - 00:52:31 Unknown Speaker:
+
+Yes, yes, So in case you have any query, just reach out to me because you have to provide those information to him when you would be having a connect with Manju. Yeah. The sessions are definitely helpful for me. I think we all connect regularly on like scrum meetings or daily stand-up updates, but we never get time to just sit together and explore what other team members are doing. Any brainstorming sort of session? So I think we can use this as a brainstorming platform as well, if anybody has any new ideas or somebody has worked on something. Yeah, exactly, and intentionally. I did not kept it on Friday because I don't want, you know, Friday. Like India team, right? They would be logging up bit early, right?
+
+00:52:31 - 00:53:31 Unknown Speaker:
+
+And not again from Monday till Wednesday, because those are peak, peak days where you would be working, right? And that is was the only reason it is being on the first. Just let me know if somebody finds it difficult to join, but make sure you join these. And um, and you know, we are going to explore lots of things on AI. And, uh, the top snowflake, right? So we would replace this system so that we'll see that if somebody has an expertise, then we can utilize his skills over there. Vargav, did you work on Snowflake? No sir. Okay. Okay. I have worked on Snowflake. Oh, okay. Then I know that you do have that expertise. I was searching somebody else. And that is the reason I asked Jason and I to even to we can pick up that initiative from our side to work on that.
+
+00:53:31 - 00:54:34 Unknown Speaker:
+
+Sure. That one and then Maria DV is also there, right? There are a lot of DV related works also being there. And Suman, you have the Java expertise when you did your engineering and see you can start grooming Suman on Java. Okay, let him start giving him some small pieces of work. So that, like yesterday, right, where I have to stretch for those department, right? We can embrace women help over there, like for Ace, right? We don't have any person. Like, you know, Sravan is coming again from data engineering part, right? So just grooms women so that he would be able to support us with his related stuff during late hours. Okay, okay, maybe start giving him some small, small work, okay? And then then we can see you or Nirmal, whoever is.
+
+00:54:34 - 00:55:32 Unknown Speaker:
+
+Uh, you know, if you feel like, uh, normally, if you have bandwidth, you can go ahead. And she's already, you know, guiding him on that, uh, data monitoring and all right. So, as I can see that you have picked up is quite, uh, good, normal, you can zoom in on that. I don't hear the voice from Nirmal and Pippi. Are you guys there? Okay. No, actually my laptop was unmuted. Please tell me. I understood, Katie. Okay, I initially had a discussion with Shamir also. I recollected the discussion that time. Look, Because why these? .. why this information being passed? It's not that we are going to get work on that data monitoring tool or the SQL queries creation. All the self serve all the time, right? There might be a time comes right where we might have bulk of requirement from Racy, right?
+
+00:55:32 - 00:56:20 Unknown Speaker:
+
+There might be a chance where we might receive a bulk of requirement from Quanto. Right? So I need each one of you to know those products so that when I need four developers, right? Now, at least on the east side, it was only Kundan who was working. Now I have to couple up more resources and see if Nirmal can work on those, right? So that was the plan. So I need to groom Suman so that he can help from the on-site part and anyhow, like Sravan at least can help him on the overall perspective. So that was the agenda to, you know, make, understand each one use case that we are working on. i need to jump to a different call okay so let's connect tomorrow then thank you guys thank you
+

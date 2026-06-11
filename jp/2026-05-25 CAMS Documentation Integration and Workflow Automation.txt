@@ -1,0 +1,318 @@
+2026-05-25 CAMS Documentation Integration and Workflow Automation
+
+Creation Time: 2026/05/25 15:41
+
+
+📅About Meeting
+
+• Date & Time: 2026-05-25 15:41  
+• Location: Virtual / WPI Collaboration  
+• Attendee: Vitrag, Mithra, Lenin, Avitha, and other WPI team members  
+
+📒Meeting Outline
+
+CAMS Documentation and Symlink Usage
+
+• Symlink Integration  
+  The team uses a symlink approach to integrate the CAMS documentation repository into multiple repos. This allows all agents and tools to access shared context and updates seamlessly without duplicating files. The symlink is a one-time setup per environment and automatically reflects updates across repos.
+
+• Credential Management and Access  
+  Credential stores are maintained for accessing various services like WPI APIs, Jira, Confluence, and Bitbucket. These credentials include service account profiles and user-specific SIDs stored securely in OS keychains. Git credentials are also leveraged for push/pull operations, with "remember me" functionality ensuring smooth authentication.
+
+Deployment and SRE GKP Agent
+
+• Deployment Helper Skill  
+  A helper skill simplifies deployments by checking branch existence and providing build options specific to DSP ITC. It triggers builds via the Joe's API, streamlining release team workflows by reducing repetitive manual steps.
+
+• SRE GKP Agent for Debugging  
+  The SRE GKP agent manages cluster environment details and can fetch logs or perform analysis on specified clusters and applications. It automates debugging by identifying configuration issues or missing properties, reducing manual troubleshooting effort.
+
+• Environment and Application Metadata  
+  Metadata files define WPI environments, clusters, and applications with short names for easy reference. These are auto-generated to maintain consistency and support agent operations.
+
+Agent Configuration and Workflow Automation
+
+• Project-Specific Standards and Safety Rules  
+  Agents require project-specific configurations such as resource naming conventions, config map usage, and safety rules for handling ambiguous situations. Workflows define step-by-step processes for tasks like modifying config maps and restarting applications, with options to persist changes centrally to avoid overwrites during deployments.
+
+• Platform Architect Agent and Subskills  
+  The platform architect agent integrates three subskills: PR Reviewer, Impact Analyzer, and Dependency Builder. Together, they provide comprehensive reports on PR changes, their impact on the ecosystem, and dependency relationships.
+
+PR Reviewer Skill and Workflow
+
+• PR Review Process  
+  The PR Reviewer skill fetches PR metadata from Bitbucket, checks out the source branch locally, and performs diffs against the target branch. It applies CAMS coding standards, verifies test coverage, and generates detailed reports highlighting issues and recommendations.
+
+• Branch Management and Updates  
+  The agent ensures the local repo is updated by pulling the latest changes from the remote branches before analysis. It handles cases where branches may not exist locally by fetching them as needed.
+
+• Posting Review Comments  
+  Review comments are generated locally and can be optionally posted directly on Bitbucket PRs using configured Bitbucket API tokens. Credentials for these operations are managed securely via the ID Anywhere Auth skill, which does not store passwords in checked-in files.
+
+Dependency Graph and Impact Analysis
+
+• Static Code Analysis and Dependency Mapping  
+  Using Copilot, the team has created dependency graphs for WPI repos showing API calls and event flows. These graphs help visualize the blast radius of changes, identifying all impacted components and enabling better regression testing scope definition.
+
+• UI for Dependency Visualization  
+  A React-based UI allows users to explore high-level and detailed dependency graphs, including API relationships and eFire event flows. This aids in understanding the impact of code changes across the microservice ecosystem.
+
+• Future Enhancements  
+  Plans include enriching static analysis with telemetry data and extending impact analysis to upstream dependencies beyond the WPI ecosystem.
+
+Skills Management and Collaboration
+
+• Skill Repository and Reusability  
+  Skills are maintained in a common repository (CAMS documentation repo) and shared via symlinks to avoid duplication. Teams are encouraged to identify reusable skills, modify them as needed for their specific context (e.g., TSP, ITC), or rewrite where necessary.
+
+• Local Development and QA Enablement  
+  Some skills, such as the Admin Center Data Sync skill, are developed locally to automate frequent manual tasks. Challenges include managing credentials and environment setup for QA teams, with ongoing efforts to automate these processes.
+
+• PR Standards Learner Skill  
+  This skill helps update coding standards by analyzing peer review comments and incorporating new rules automatically, ensuring standards evolve with team practices.
+
+Security and Best Practices
+
+• Credential Handling and Guardrails  
+  Emphasis on secure credential management to prevent incidents like the Pocket OS production data loss. Production environments do not use password-based access, and credentials are never stored in checked-in skill files.
+
+• Avoiding Plain Text Exposure  
+  Concerns raised about tools like Cloud Code exposing user IDs and passwords in plain text on consoles, highlighting the need for secure handling.
+
+General Discussion and Recommendations
+
+• Reducing Manual Repetitive Tasks  
+  The session emphasized automating mundane tasks using Copilot and skills to increase productivity and reduce defects.
+
+• Repository Structure and Symlink Use  
+  For TSP and ITC, aggregated workspaces might reduce the need for symlinks, but symlinks remain valuable for managing multiple repos and sharing common configurations.
+
+• Community Collaboration  
+  Encouragement to share relevant skills across teams and maintain a common repository for easier access and updates.
+
+• Human in the Loop  
+  Despite automation, human oversight remains critical to validate agent outputs and avoid false positives.
+
+• Acknowledgments  
+  Recognition of significant contributions from a few active team members driving the development and sharing of skills.
+
+📋Overview
+
+• Symlinks provide an efficient way to share CAMS documentation across repos, reflecting updates automatically.
+• Credential management uses secure profiles and OS keychains to access APIs and services without exposing sensitive data.
+• Deployment and SRE agents automate build triggers, log fetching, and debugging tasks, improving operational efficiency.
+• Metadata files for environments and applications are auto-generated to maintain consistency.
+• Platform Architect agent combines PR review, impact analysis, and dependency building to provide comprehensive change insights.
+• PR Reviewer skill performs local diffs, applies coding standards, and can post comments on Bitbucket PRs with secure authentication.
+• Dependency graphs visualize API and event relationships, aiding impact analysis and regression testing.
+• Skills are maintained centrally and reused or adapted across projects to maximize efficiency.
+• Security best practices are emphasized to prevent credential leaks and production mishaps.
+• Automation reduces manual repetitive work but retains human validation to ensure quality.
+• Collaboration and knowledge sharing across WPI teams are encouraged for continuous improvement.
+
+🎯Todo List
+
+• Vitrag / WPI Team:  
+  • [ ] Continue refining and expanding skills repository for broader reuse across TSP, ITC, and GSH projects.  
+  • [ ] Automate environment setup and credential management for QA teams to enable independent skill usage.  
+  • [ ] Enhance dependency graph with upstream dependency analysis and telemetry integration.  
+  • [ ] Document and share best practices for secure credential handling and agent usage.  
+
+• All Team Members:  
+  • [ ] Explore CAMS documentation repo, identify relevant skills, and test integration in local environments.  
+  • [ ] Provide feedback on skill usability and suggest improvements or new automation opportunities.  
+  • [ ] Adopt PR Reviewer and Platform Architect agent workflows to improve code review efficiency.  
+
+• Mithra / Security Lead:  
+  • [ ] Review credential storage and access mechanisms to ensure compliance with security standards.  
+  • [ ] Monitor for potential risks related to credential exposure in tools like Cloud Code.  
+
+• QA Team:  
+  • [ ] Collaborate with developers to integrate automated data sync skills and reduce manual intervention.  
+
+• Repository Maintainers:  
+  • [ ] Maintain symlink setups and ensure updates propagate correctly across repos.  
+  • [ ] Facilitate common workspace setups for TSP and ITC to reduce complexity where possible.
+
+Transcription
+
+00:00:00 - 00:01:19 Unknown Speaker:
+
+We are part of a repo called CAMS documentation within WPI. What we do is we create a symlink of that into our repos. So for example, I will show you one example in here. Right, so this is what we do. Symlink, the CAMS documentation, GitHub over here. And now this guy gets all the context. I don't know if it will reflect directly. Yeah, so it does so. All the agents would get reflected, even in your uh specific repos, right? And uh, yeah, so let's so. Now we have that NCP setup for Bitbucket, as well as the confluence from it's not uh NCP, we are directly using our. Like it is developed within our WPI framework itself. It is not using an MCP. How does it directly access those? So we have all of these credential stores that we already have created.
+
+00:01:19 - 00:02:16 Unknown Speaker:
+
+So there we store the username, password. Profiles for different FIDs, all of that. So depending on what kind of access you want, let's say you want to access some WPI API, it uses the service account profile to get the token and fetch it. If you want to use Jira or Confluence for some data, then it will do the fetch using your own SID and password through your OS keychain. That you can also fetch it from your git, right? I mean generally when it comes to git we store, I mean remember that when you are pulling or doing some operation and whenever you do remember me, right? So it's already there in your git profile. Those things are there but it is not just that we like pulling is part of it but we also have pushing of comments and all.
+
+00:02:16 - 00:03:09 Unknown Speaker:
+
+I got it because you are also accessing for some analysis. Some of the FID details. Yeah, yeah, so for this case, jewels access. So now you could see. For what it does is for the applications that I've said it to deploy, asked it to deploy. It will check whether the branch exists and then it will give me the options. What kind of QA3 deployment do I want to make once I select it here. And these are all the build options that you have. So you would have your own specific build options within DSP ITC, right? Those you can define it over here and just ask it to use those as an option directly. Whatever you provide, it will pass that as an argument to the Joe's API and trigger your builds.
+
+00:03:10 - 00:04:08 Unknown Speaker:
+
+Okay, This is just a helper kind of skill. That, like the release teams that do the deployments, they don't want to. Just go and click on jewels again and again, use RO again and again. Just specify what you want to deploy here, and that should be straightforward from there. So yeah, this is one of the skills. Then we do have SRE GKP agent again. I don't know the specifics of how much GKP is being used, but for GKP as well. We have defined whatever clusters, URLs, logins, like environment details, all of that into this agent. So that when I just say what's wrong with so and so app in QA3 Cluster one, it can just log into the cluster.
+
+00:04:08 - 00:05:10 Unknown Speaker:
+
+Do the fetch the logs for that, or do the analysis and just give me the final answer, saying so and so, property is missing, or so and so being is not being able to configure, whatever the cause of the issue is. So basically just handing it over for the debugging purposes. And then you have to just sort of just go and fix, to not sit and identify what went wrong, right? So for. This one what we have done is we have created this WPI environments MD file It would be WPI talks WPI Applications is one and WPI environment. So this is where we have defined all of the environment metadata, what each cluster means, Where all we deploy. Now, it depends on the context of your application, where all you want to deploy.
+
+00:05:10 - 00:06:05 Unknown Speaker:
+
+And then you would have all of the like F cluster QS, XQA3. All of that is defined here. Similarly, we have WPI applications, wherein we list down all of the applications that we have with their short name. So that we can talk to it in a day-to-day, like we talk with our peers, right? We just say HTTP, not always, we say access transaction data provider, that way, right? So all of those contexts. But that it can generate on its own, right? I mean, ideally, yeah, it is generated by itself. Yeah, it is not. Uh, not that. I've written it down and I've just told it this is how it should be, and it has generated everything on its own right. So, yeah, and then there is this.
+
+00:06:05 - 00:07:08 Unknown Speaker:
+
+So in this, what we need to specify for the scales is how you have created. Like, there are standards for everything, but your specific project would have your specific standards, right? For example, how your resources are named, how your config maps are used, what details are in which config map. All of those context you need to push it into your agent details, or whatever the context you want to set it with. And then you have to specify sort of safety rules, how to resolve ambiguity, how to sort of figure out or ask questions in case there is just no solution to what it is going on in a loop. All of those and then you have to define the workflow. What all steps need to be taken for doing so and so steps.
+
+00:07:08 - 00:08:33 Unknown Speaker:
+
+For example, when I say that, let's say I come here, SREGKT, I say in QA3, change the config to add ISO disabled clients. Or back office transformation Config to with line ABC. In QA3, right, something like that. If I say to it, uh, like this, like this, right? If I say to it, uh. To do this. What it will do is login into my QA3 cluster, it will find out the application that is using this. I have not specified it, but I could just say in BoIC, right? So it will find out BoIC. The config map that BoIC uses. It will modify that config map. Restart BoIC for you. Wait until the restart is completed. Then it will ask whether you want to persist it into your Cams assembly, your central config so that the change is made.
+
+00:08:33 - 00:09:51 Unknown Speaker:
+
+But you don't want it to get lost with the next deployment, right? So all of that is done by this agent within itself, so I can run it, but it will take a while so I can let's say, let's just see. Meanwhile, I can also talk about the main agent that we have that is the platform Architect agent, right? So this is the latest one that we've had. What it does is it uses three sub skills one is a PR reviewer skill, then there is an impact analyzer skill and a dependency builder skill, right? Each? What each of this skill does is builds. A comprehensive report of whatever changes your PR has made in in context of your overall ecosystem, right? So, uh, for example, uh, let's say I've, uh, so I'll.
+
+00:09:51 - 00:11:14 Unknown Speaker:
+
+I'll talk about each skill, uh, individually. First is PR. If you can pause, right? I think this is too much of information, guys. If you have any query and question, don't wait for, uh, with that to finish everything, raise your hand and ask the relevant questions. One question, right? So in production, right? If we say sometimes we have to update the URL or something, right and we don't update, so are we going to, like, in future, use this. If there is a patch fix, urgent fix that we want to make, then this comes into play. But even for production also, the intelligence is built into it that it will ask for a jet login, not a regular login that we do. One more thing for everyone. GAMP's architecture and repo structure is very very different.
+
+00:11:15 - 00:12:19 Unknown Speaker:
+
+The whole goal is if the drug has already generated so many different scales of the agents. Some of them might be right away reusable for you. So the whole idea is, once this session is over, from this repo camps documentation, you check it out, find it out which are the all relevant skills. And for sure, since the DHP or ITC architecture is little different, so on the same page, right? I mean, the SRA skills on ITC, it may be very, very different. So, based on some of the skills which may be very specific to WPI, you take those skills and modify which is up to what exactly you need on your repos. So, The overall idea is one is getting the kind of awareness that potentially what are the different all skills can be used.
+
+00:12:19 - 00:13:22 Unknown Speaker:
+
+I am not saying that you guys, some of you are not already doing it. But you might be getting some different kind of skills and then identify the skills which are right away usable. Some skills with some modification, it is going to be reusable, there will be some skills wherein it might require kind of rewrite altogether. So that is the end goal and lastly it will be impossible every time you have to copy paste. So the symlink approach is really good wherein you create the skill repository once and any kind of artefact that you are currently working in it is just repointing to common set of skills. So related to this agent and skill, so actually for ITC, I have created one agent, but in my local I am currently using it.
+
+00:13:22 - 00:14:23 Unknown Speaker:
+
+So we have this like very common Admin Center data Sync issue and QA used to come to us frequently for the data sync. So we have to manually check that which data is missing. For that. I have created this skill. Yeah, this is a good one. Actually the point was I wanted to give it to QA so that they shouldn't come to us but they don't have the code base and also I wanted to make it independent. First of all this is a wrong statement. The moment Sri Sivananda came, The first thing that he did was he made every repo public. Uh, read, so for everyone, every repo is available unless someone has gone back and marked the repo explicitly as private. Yeah, but I'm not saying about that.
+
+00:14:23 - 00:15:08 Unknown Speaker:
+
+Like, for example, to fetch the data from your local, you need the JKS file, you need the credentials and all that. We have it in our like, as a developer, we have it in our local, but maybe the QA people don't. I mean see not everything is going to be solved in one shot. So the first step is you have something in your local and in general I don't want anyone to keep something anything in the local. So there is a common repo which is created DSP at us. So when you are creating any kind of skills you can go there and you can put it in the feature branch so that you are not losing you know if you have already done something in your local. Then it will be step by step.
+
+00:15:08 - 00:16:09 Unknown Speaker:
+
+I mean, nowadays, right? Setting up the JKS file, retrieving it, it is all doable. So once you have framed the problem statement correctly, definitely, we can automate it, wherein you don't need to do the manual setup. Having said that, we have a very important guest speaker over here. I don't want to take away time just discussing on IDC1. So with Right Back to you, you were discussing? So this, uh, the query that we had put in that got some progress. So what we said was incubate, we change the context. One so with adding planned ABC in cluster one. So it logged in for Boica, identified the config map that it uses specifically POIC users, and then identified the property that I might be talking about. Right. I did not specify the exact property name, but it still just tried to find it out.
+
+00:16:09 - 00:17:20 Unknown Speaker:
+
+This is Eve property and then it says it will append ABC to the list. I'm not going to do that, but it is what it does. And once we apply this, it will also ask me if I want to persist it into a CAMS assembly. Right. So that future changes don't report it back. So this way you can avoid those issues where some config patches were done but then somebody overwrites it with a new deployment and so on. So coming back to, uh, the platform architect agent, right? So first skill that is the PR viewer skill, what it does is per bit bucket PR that I give it. It will take a diff of whatever the target branch is against that and look at it from a Cam standards perspective.
+
+00:17:20 - 00:18:18 Unknown Speaker:
+
+So what we have also done is create a specific. So when it comes to Git Def, right, is it making the API call from API, it is fetching the def? Or it does the local checkout, and then it finds out what is the local checkout? Why API should also work, right? API also works, but for the overall working of the agent, we need the local checkout. Because it needs to look at the overall impact from an API perspective, like, you could have affected some data service which is used by an API X, right? We need to trace it, so does it, does it do, does it, I mean, so any time it has to check out, does it do the remit, remote fetch and then remote pull? I mean, no, the only challenge, you know?
+
+00:18:18 - 00:19:07 Unknown Speaker:
+
+So then there could be a problem, right? Let's say if there is a branch which is already existing in my local and remote might have some more data, some more. You know, when Rahul was working on it, so I initially created the remote branch, I pushed some data and Rahul has taken over and he made many other changes. In my local. Now I am doing the peer review, so what would happen? In this scenario? It may pick up only the changes from my local, which might be outdated from the remote. Now, that won't be the case. It will always take a pull from your whatever the branch you say it will. It has the repo cache, it will check out whatever branch you are using and then take a pull from the latest data only.
+
+00:19:07 - 00:20:13 Unknown Speaker:
+
+Yes, okay, so with that, for this, I mean, the script is there. Or it is like, in general, by giving the context or creating the skill it will be to get. It will use whatever is locally installed directly. No, I mean every time it will go and we'll get features I mean data and then you release data to compare it right always it will get no So what it does is from your PR link. I'll just show I just did one few reviews, Just know, Let's say this one, what I say to it review. The PR link repo is already cloned. It will fetch the PR details using the bit bucket skill okay, it will fetch the metadata for the UH PR. From that, it will identify what is the source branch, what is the target branch.
+
+00:20:13 - 00:21:13 Unknown Speaker:
+
+It will then check out the source branch in in your locally cloned repo and run a diff against it on the target branch, right? It will check the javadiff, testfilediff and then it will run all of the skills on top of this diff. One is the PR reviewer skill that checks against your java instructions, java test instructions, all of those compilations. So you would already be aware of the CAMS standards. So all of those gets applied directly on your diff. It will generate a report for whatever the changes that you have made. That is part one, even before it, right? I my question just around the checkout, right? So one times it will find, okay, this particular feature branch is not there. Whatever you have given to the view, it right, it will go and will get put right.
+
+00:21:13 - 00:21:59 Unknown Speaker:
+
+Or check out the branch. Next time. When you will say, okay, review it again, right, maybe immediately, it will do the same thing, right? Okay, branch is already there. Next step is get the latest folder, right? Yes, it will always do this right, and then at the same time, it will also pull the, I mean, the release branch. Because there might be some changes already have been done, right? Yes, so to doing these two steps, I mean, we just need to mention these steps in the skill or in the instructions. That okay, so agent will understand what I need to do. Or there is a script, like a script will run behind the peer review, there is no script, it is all done by the LLN. And you have to specify what exactly the workflow you want to do.
+
+00:21:59 - 00:23:14 Unknown Speaker:
+
+Okay, so, yeah, okay, coming back so this. This is where you can also define whatever standards you want to define for your specific projects. And get the agent to refer to this while applying, while reviewing the PRs, right? Once this is done, the second part kicks in. That is the impact analysis for that. What we have done is for all the repos within camps we have done. Uh, we have run the co-pilot to do an analysis and create a dependency graph out of each repo. Right? Uh, how those documents look like is over here. Say, let's say just access adapter, right? So for access adapter, so and so. APIS are present within access adapter, and these APIS within access adapter calls so and so APIS downstream. Okay, so it has the structure of your microservice end to end, right?
+
+00:23:14 - 00:24:26 Unknown Speaker:
+
+So first level who created? I mean, did the co-pilot itself created, or I created it for the first repo that I want to wanted to do? Define the JSON and then ask Copilot to confirm to this JSON and create it for all of the records, so you defined one skeleton or template for the copilot. Okay, so it will then have, let's say, acknowledge payment agreements is the API it requires to call so and so APIS downstream. All of this gets mapped all together into a wider dependency graph. It has like we have created a UI as well for it. I can show that as well. So UI will give you the high level one and when you double click then it... gets into the individual dependency graph that you have created yes it will give you so.
+
+00:24:54 - 00:25:49 Unknown Speaker:
+
+This is the graph viewer that we have. For example, let's come to Access Adapter. Who all is calling Access Adapter? Who all gets called via Access Adapter? All of that gets tracked over here. I have the view of all the APIs that Access Adapter has. All the eFire events for those who know eFiles. The eFire events that Access Adapter processes. All of that gets captured here. So, for example, let's say Submit Payments. Now if I click on the API, Submit Payments calls UX Controller. That's it for, uh, this flow. There is no upstream because the upstream does not belong to WPI, right? So if I now click on end to end trace, it will show me. But when I go to Service Telemetry, I see, uh, the opposite. Also.
+
+00:25:49 - 00:26:41 Unknown Speaker:
+
+Yeah, it is there because it is getting tracked like it is getting logged from there. But this is a static analysis of the code base, so it doesn't know no, but on top of the on top of this static analysis, why it cannot further? Go back and get some more detailed details from your service telemetry so that you start enriching more and more information. Yes, it can. This is just the first one, then then it is going to be beneficial. I mean, just that, this. That tomorrow if you are making any changes in the access adapter, you know which are the all parties that you need to modify. Yes. Right now the blast radius is limited to WPI ecosystem as part of the RLSS. Yes. But there are many other consumers which are using.
+
+00:26:41 - 00:27:50 Unknown Speaker:
+
+So you exactly know what is my overall blast radius. Yes. That is in plan but not implemented yet. Let's co-pilot to it. Ah, next iteration will be that we want to do that, so downstreams we have captured, but upstreams we have not yet done it. So if you look at it the end-to-end trace, right, it shows Submit Payments, Call UX Controller, Submit Payments. And then all of the jumbled up arrows indicate what all apis. Did you have to provide when preparing this UI representation? Did you have to specify the things like, what year is it? D3? Is it D3 JAT? Not D3. It is something else. I don't even know because it is also created by Copilot. Yeah, okay. This is all good with React. Tomorrow when it is not working, then debugging is going to be nightmare.
+
+00:27:52 - 00:28:52 Unknown Speaker:
+
+So this is the view that we get. Even for eFire, let's say extract trigger v2. If I see eFire graph trace, I see all of the eFire events, what all APIs those events individually use, all of that. So this helps. Track down unintended issues caused by your peer. Let's say you want to make a change for X but that same flow is used by Y. You would assume that only X gets impacted but in the end you would find out in production that Y also got impacted. To avoid those issues, this will help catch those kind of problems earlier in the review cycle. That is the idea behind this dependency and impact graph analysis, right? So let me show you one example of the review comment that it generates.
+
+00:28:52 - 00:29:56 Unknown Speaker:
+
+Okay, so first, this part is camps for standards, and these are. These are the issues that it has found from the code diffs, right? It gives you the recommendation, all of that test coverage also, it checks. If all of the conditions get tracked, the edge cases, the true or false conditions, all of that coverage wise is good. Then there is dependency graph updates because this PR did not have any new API coming in or any other modifications made apart from the code flow. There is no dependency graph update, but blast radius analysis wise, it will place down. What all changes and what all impacts it is causing. So if you look at the changes, all eFire expat events, it just gives you that information directly. All the eFire events that use this bit of code, right?
+
+00:29:57 - 00:31:13 Unknown Speaker:
+
+So you get a gist of what you are impacting and you can also get the recommended regression scope, this. This is just um, right now from a WPI perspective. But we intend to build it out for a PR level testing scope, which can be leveraged by the QA team to directly identify what needs to be tested for. This, right? And then the final, uh, recommendation from the architect agent, so will give you the overall why and what of your pair, right? So, yeah, any questions? Did it give you the same feedback? What? What I had given you? Not the same? But it is saying, Uh, if it becomes a parallel screen, then it will be a problem. It's the same same lines. Are these comments basically added directly on the PR by the agent, is it?
+
+00:31:14 - 00:32:16 Unknown Speaker:
+
+Or is it created that way? Your local PR review created those comments. Yeah, but he's showing from the Bitbucket URL. Bitbucket, yes. So it's created with that, is it? No, I'll come to that. Is the statement correct with rec? When you ran the local PR review, it went and it added comment? No. Because PR Genie is right now not doing it. It is not that way. So, adding the comment is an additional ask you have to make. By default, it will just generate the report. If you want, you can just say post it as a comment and it will do that. But it's your local PR review date, with the additional parameter Yes, so over here it's a PRs description part. I think so, see here. So the date created this file, right?
+
+00:32:16 - 00:33:40 Unknown Speaker:
+
+This is the overall report of your PR. I just say, post this as a comment on the PR and that it will do. So the intention is when your agent is doing PR review, and if you feel that the review that agent has done it is correct, then you are letting your agent to post it. Yes, you really don't want wherein, you know, due to whatever reason, if agent found some false positive and you really want to post it. So still, there is a human in the loop. It is your decision whether you want to post it as part of, Uh, on the PR itself, whether it makes sense. Mithra, do we also have like Bitbucket API token configured somewhere like in order to make this comment? Okay, so that is already part of those particular repos or in a common place?
+
+00:33:41 - 00:34:47 Unknown Speaker:
+
+It is part of CAMS documentation repo, but not part of the Bitbucket. Can you show us the file wherein you have written your user ID and password? It is not written anywhere. That is the... So there is this id anywhere auth skill that has been created. It will create profiles for you. One would be your FID based profile, one would be your own default profile that your SID uses for Confluence or Jira access and so on. So your Bitbucket skill, your Jira skill, All of those have a reference to this skill as a supplementary skill. Is this skill file checked in? Yes, sir. I will highly recommend them not to check in this kind of skills file. No, but this doesn't have any credentials in it. It is just having the credentials are in local.
+
+00:34:48 - 00:35:57 Unknown Speaker:
+
+The real risk. I don't know. See, at the same time, we have to be very very clear on the guardrails that how we are putting it. You guys are all aware of what really happened with the Pocket OS, right? Somehow, I mean, the Pocket OS, it was not the co-pilot, it was Mythos. No, it went, yeah, yeah, I think it was bypass. So with the similar kind of stuff, right, I mean you might have some details for your local environment, dev environment or production environment. The intention of user was to re-select, clean the entire QA or UAT database and create the new one. What it ended up doing was, Accidentally, the co-pilot, or the mythos, right? It picked up the file, which was for production, it dropped the entire production database, it drops the entire backup.
+
+00:35:57 - 00:37:03 Unknown Speaker:
+
+There is a famous article, if anyone really search for Pocket OS, and you will get that article on the net. I don't know, uh, at what point it can misfire in in that sense. So this ID, anywhere kill that we have, it only has non Prod configured, it can only have non ProD, because anyway, in Prod we don't have a ID password based. I was surprised when Cloud Code when I asked Cloud Code to do similar kind of PR review. It was, it did print. I'm taking the latest kit directly from the API using your user ID and my password. And I beg to cloud code, please moving onwards, don't type my user ID and password on console. I might have some bylookers or, you know, someone walking by.
+
+00:37:03 - 00:38:10 Unknown Speaker:
+
+They might see it because, I mean, it will fire command and it will wait. So from somewhere, so I asked from where are you really picking up those things, so it clearly mentioned that I am directly picking up your user id and password from your git profile. So it went into git profile, from there it took the user id and password, decrypted it and it was using it as a plain text. Okay, today's session is not about discouraging. Today's session is more about... Avitha, did you have anything else that you want to cover? Just one more thing that we had is this PR standards learner. So this is helpful where things that are not covered in your skill files and your... markdown files. For coding standards, right? You could ask a co-pilot to use this skill.
+
+00:38:10 - 00:39:33 Unknown Speaker:
+
+And review all the comments that are left that have been left by others on the peer and update your coding standards accordingly, right? So, for example, let's say variable naming standards, somebody posted a comment in one of your peers. But then you would have to update it centrally in this manually. So this skill does it for you. That's pretty much. After introducing these all PR review commands, right, or fixing it, I mean, is the life cycle of reviewing a PR and getting it merged has decreased? Is there still PR? In my experience, yes because whatever the review comments that this PR reviewer architect gives, right? Those once you implement, there is very little left for the other reviewers to look at and it makes it quicker, honestly. Okay, yeah, that is good. Where is this agent?
+
+00:39:34 - 00:40:54 Unknown Speaker:
+
+Which repo? AMS documentation. How these agents are created? For that there is a hack. You have your slash create agent and you can specify what exactly the agent has to do. It will give you a whole for it, then you have to just keep on iterating and modifying the agent accordingly, that is it. In general also if when you create the skins file vs code it has automatically it can generate with some bare minimum context it can generate your entire skins file. Yes. That's all I had. We have more scales and more agents, but can't cover it all. I have a quick question, So you showed the Symlink command, right? Is that a one-time thing to do every time the system restarts? No, that is a one-time ticket. Can I take on this one?
+
+00:40:54 - 00:42:00 Unknown Speaker:
+
+So, yeah, Probably for TSP or ITC you would not require this assembling kind of stuff. I mean CAMS has 70 or 80 number of repo. Typically in TSP and ITC rate what you will typically do is you have some aggregator and within the same work space you kind of check out all the related projects. So, the symlink stuff right, I mean unless today you are working on TSP tomorrow on ITC and day after next day you are working on uplift UI, probably I mean these are the only three combination and GSH is the fourth combination. For these kind of four combination, probably you don't require this symlink stuff, because you have some aggregated workspace, just copy it, the entire .Github. So the idea is instead of copying right, with symlink we can have it committed in one place.
+
+00:42:00 - 00:43:13 Unknown Speaker:
+
+For example, we have the developers repo. So you can commit it there and just take pull of that every time someone updates it. So copy pasting manually and then create the symlink. But still you have got to check out latest from once you once you take a pull in your main repo, it automatically gets applied to all the symlinks. Where to keep all this dot to get up files. So the symlinks solve that issue. Yes. Good point, Lenin. Thank you, Vitrak. Thank you so much for spending time. And immediate feedback. Really, really good work on. I am pretty sure the others are also contributing within the WPA family. But I could literally see. When you are showing us all these skills, the significant contribution is coming from you. That I could read. Most of.
+
+00:43:13 - 00:44:16 Unknown Speaker:
+
+Like Majorly, there are 3 or 4 people that are actively working on it. Yeah, one has to be that, James, one has to be that guy, the H2H guy, what is his name? Or I am wrong, this, no, no, no. No, no, nobody from H2H, it is all WPI. Yeah, all of the nodes of the team. Yeah. Okay, so thanks, thanks, thanks again for taking our time. What I would recommend, right? You guys, you have it. Try it out once more in your local. And if you are really struggling on any, any step, etcetera, just sitting nearby. So take, take help if you you are facing any problem. The core message over here is on your day-to-day basis to identify which are the redundant manual tasks that you are doing.
+
+00:44:16 - 00:45:11 Unknown Speaker:
+
+And how can you really automate this stuff with the uses of Copilot? I mean, when, when doing the PR review and multiple other things, you might be repeating the same thing or five or ten times. However, doing the 11th PR review, you might miss some of this step. With this kind of automation, with the copilot, etc. Uh, the typical mundane task, it is taken care by, uh, the co-pilot. And then you are just looking at, uh. And at the same time, I, I don't want, uh, the extra vigilancy that you are having in terms of reviewing PR. That still has to be there. There will always be some human in the loop, uh, but, but, uh, maximize. I mean, at the end of the day, I want everyone to be become more productive, uh, more disciplined.
+
+00:45:11 - 00:46:18 Unknown Speaker:
+
+In terms of the effectiveness of the code that you are generating and the effectiveness of you as a peer reviewer on the code. And with the gradually if you start adopting this kind of model, ultimately you are minimizing the number of defects that can potentially be introduced in the lower region to production. So, ultimately it is going to save your time significantly. I mean, shall we start putting the relevant ones for TSP, ITC in one place, in one rep only? I think TSP and ITC would require a very very similar, I mean... Or maybe like a common place only for everyone to know. I mean, we can more, let's more on, I mean, irrespective of TSP, ITC and GSH, it is going to be very very similar skill.
+
+00:46:19 - 00:47:23 Unknown Speaker:
+
+What really is differentiating between the WPI and ITC is your CI-CD pipeline is different. Yeah, not the Joule's one. I am primarily referring to the Java specific ones. And also in terms of the way Vitrag had set up for each repo, you know, in your big bucket repo description. Here in case of TSP, ITC and GACH, Rather than the incoming and outgoing APIs, it is more of how you have defined the relationship between different Bitbucket reports. So typically you first do the parent build followed by data or the vendor. So step one is defining that kind of overall graph. So, that next time onwards whenever you are making any code change, it knows what is the, I mean what are the things that I have to analyze in terms of the blast radius.
+
+00:47:24 - 00:48:30 Unknown Speaker:
+
+So, if I am making a code change in let us say in TSP data, how your PR can, I mean your co-pilot can identify that my major consumer of the data is service followed by web followed by hub processor or something. So, when I am doing the PR review analysis, Step by step I am looking at every different place. So the agent is that if you are borrowing it from Vitra, it requires relearning and resetting the overall context because the project structure and how your local work space and other things. Are being used it is little different and potentially one time how you can really make the initial statement that Purva had made right as part of my local build, it has to borrow the JKS file from somewhere and the other stuff right, so how it can really help in setting up those things.
+
+00:48:54 - 00:49:51 Unknown Speaker:
+
+Okay, guys, we are 30 minutes over the regular timing. Thanks, thanks everyone. I hope this this session this is giving you some more input in terms of. Many of. You might be using the co-pilot in the similar fashion already, or I don't know if someone might be using even more extensively. But what Vitrag has really shown is, how do you really apply some structured pattern in terms of various skills? Try to maximize on the knowledge that Vitrag has shared. And, uh, thanks, Fitra, thanks again. Yeah, with that, uh, ending to the decision. Yeah, thank you.
+

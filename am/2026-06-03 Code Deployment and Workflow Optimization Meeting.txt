@@ -1,0 +1,188 @@
+2026-06-03 Code Deployment and Workflow Optimization Meeting
+
+Creation Time: 2026/06/03 12:02
+
+
+📅About Meeting
+
+• Date & Time: 2026-06-03 12:02  
+• Location: Virtual Meeting  
+• Attendee: Nirmal, Samir, Prithvi, Varga, Sachin, Rajendra, Manju, Aryan, and others  
+
+📒Meeting Outline
+
+Code Deployment and Testing Workflow
+
+• Codebase Migration and Verification  
+  The team discussed moving the current code base to the main branch specifically for the escalation email feature. After migration, verification is required to ensure that processes B40 and B45 are running correctly. The goal is to complete this verification and closure within one to two hours.
+
+• Lumi and Data Transfer Implementation  
+  The next task involves working on the Lumi part and the Data Transfer (DT) flow using the common utility created. The requirement is to pull all details from the Loyalty Status table, generate a CSV or Excel file, and upload it to the SFTP server. Passwords should not be stored on the report until admin access is enabled. The implementation should be straightforward and completed within an hour.
+
+• Environment and Storage Guidelines  
+  Access to the Google Cloud Storage (GCS) environment will be granted soon, but no buckets or tables should be created without prior confirmation. Files must be stored in the project space, not the composer space, to avoid confusion. The team was reminded to clarify any doubts regarding project space vs. composer space with Answers.
+
+• Data Format and File Generation  
+  The data is a full refresh daily, so a simple "select *" query suffices without altering columns. There was a discussion about file formats: although JSON was initially considered to avoid CSV parsing issues, the team agreed that CSV or Excel formats are acceptable. The Airflow get operator can be used to generate CSV files directly from queries without additional coding.
+
+Task Management and Coordination
+
+• Code Commit and Task Handover  
+  It was emphasized that code should be committed timely, especially when team members go on leave, to enable smooth handover. For historical data processing, tasks should be split logically—either by months or by daily vs. monthly data—and assigned accordingly to avoid conflicts. Separate tags should be maintained for monthly and daily processing.
+
+• Documentation and Reporting  
+  Results from data processing should be documented in Excel sheets initially. Updates to the conference page should only occur after product team sign-off to avoid premature publishing of rough work.
+
+• Access Request Follow-up  
+  A pending access request to the Lumi portal was discussed. The request has been pending approval with Manju since Monday. Immediate action was advised to notify Rajendra to expedite approval and avoid escalation to higher management.
+
+Reporting and Template Updates
+
+• Filter Criteria and Template Regeneration  
+  Reports for three different object types have been created, focusing on filter criteria involving descriptions. Once approved, these criteria will be incorporated into update templates, and email bodies will be regenerated accordingly. Collaboration with the agent to validate filter criteria is ongoing.
+
+• Use of GitHub Copilot and Verification  
+  Some reports were generated using GitHub Copilot and have been verified for accuracy. Further validation and discussions are planned to finalize these reports.
+
+Migration from Composer to Use Case Bucket
+
+• Progress and Expectations  
+  The migration of SQL scripts and jobs from the composer bucket to the use case bucket is underway but slower than expected. The team was reminded that this task should not take more than a couple of days and should be completed by Friday. The migration involves changing file locations without altering core logic.
+
+• Testing and Deployment Planning  
+  Testing is required before deployment, and an RFC must be raised. The plan is to deploy jobs for dates already processed and then proceed with the remaining jobs. Saturday, Sunday, and Monday jobs can be excluded temporarily.
+
+• Performance and Accountability Feedback  
+  Feedback was given regarding the pace of work and the need for team members to improve speed and ownership. The cleanup and migration activities are critical and should not be delayed. The team was encouraged to avoid creating backlogs and to actively complete tasks.
+
+📋Overview
+
+• Codebase migration to main branch and verification of B40 and B45 processes are prioritized for quick closure.
+• Implementation of data extraction from Loyalty Status table and upload to SFTP is to be completed promptly, with strict environment usage guidelines.
+• Clear task handover and splitting of historical data processing tasks are essential for efficiency.
+• Pending access requests must be escalated immediately to avoid delays.
+• Reporting templates and filter criteria are under review, with updates to follow post-approval.
+• Migration from composer to use case bucket must be completed by Friday, focusing on changing file locations without modifying core logic.
+• Team performance and accountability were highlighted as areas for improvement.
+
+🎯Todo List
+
+• Nirmal:  
+  • [ ] Move code base to main branch and verify B40 and B45 processes within 1-2 hours (ASAP)  
+  • [ ] Provide repo for Lumi and DT flow implementation for CSV/Excel generation and SFTP upload (ASAP)  
+  • [ ] Coordinate with Answers to clarify project space vs. composer space usage (ASAP)  
+  • [ ] Complete migration of jobs from composer to use case bucket by Friday  
+
+• Samir:  
+  • [ ] Commit code for historical data and onboard metric procedures; split tasks for monthly and daily data processing (ASAP)  
+  • [ ] Document processing results in Excel and await product team sign-off before updating conference page (Ongoing)  
+  • [ ] Follow up on Lumi access request approval with Rajendra and Manju immediately (Today)  
+
+• Varga:  
+  • [ ] Handle daily data processing tasks as assigned by Samir (Ongoing)  
+
+• Sachin:  
+  • [ ] Assist with testing and validation of historical data processing code (Ongoing)  
+
+• Prithvi:  
+  • [ ] Continue rule modification and support migration activities (Ongoing)  
+  • [ ] Complete migration of jobs from composer to use case bucket by Friday  
+
+• Rajendra:  
+  • [ ] Expedite approval of Lumi portal access request pending with Manju (Immediate)  
+
+• All Team Members:  
+  • [ ] Avoid creating new buckets or tables in GCS without prior approval (Ongoing)  
+  • [ ] Use Airflow get operator for CSV generation to minimize coding effort (Ongoing)  
+  • [ ] Complete migration and cleanup activities to free composer space by Friday (Urgent)
+
+Transcription
+
+00:00:22 - 00:02:20 Unknown Speaker:
+
+Uh, the table, I was, uh, mentioning it to you, right? At least, uh, create this one, right? Uh, flow and testing. We can do it tomorrow. Just do a select start from this table. Okay, number one, move your code base to the main branch for that escalation email. Okay? And then, uh. Once you are done with that, uh uh. You have to verify a couple of things. One is that whether B40 is still running well or not, and the next one is B45. Once you are done with that, right, uh, try to close it in next one hour, okay, one hour or max two hours. Post that move to the Lumi part and the DT flow which you have, or the composer flow, the common utility that you have created.
+
+00:02:20 - 00:03:13 Unknown Speaker:
+
+Just give me that repo, I'll I'll create a clone repo for that. But over there, the requirement is you need to pull all the details from loyalty Status table, create a CSV file and then upload to the SFTP for time being. Uh, over the uh. Don't keep the password and the on the report till the time this admin access get enabled. Okay, but at least complete that implementation. And that is a copy paste again. That should not take you more than an hour. Any questions? Ah, no questions. Uh, that time will be, will be in the GCS, right? Yeah, that would be in GCS only, right? Okay? But as I stated, once you get the access, you are not supposed to create any bucket, any table on that environment until you get the confirmation from myself.
+
+00:03:13 - 00:04:27 Unknown Speaker:
+
+And the files. Don't put the files in the composer space, you have to keep those files in the uh, this uh. Project space. Okay, uh, project space. You mean, uh, the new report that will be creating, like, uh, the bucket man, why you guys are still having confusion with the project space and the composer space? Connect with answers. He would let you know, Okay, okay. I mean, you know, there are two are there, one is project and one is our own space, right? So project. Yeah, okay. So all the files we are restoring in our space, right? Not in that department. And, uh, you should be able to pull the file from the table, you should be able to create a tag. Yeah, uh. It would only fail when you would be uploading into the asset, that's it.
+
+00:04:27 - 00:05:28 Unknown Speaker:
+
+UH. Data means last test data, or the entire data. It is a full refresh table, so you can just do a select star so every day it won't repress. So you are going to get a fresh data. Okay, and don't change any columns or anything anyway, just confirming. No, just one thing while we are pulling the data right, If you remember, we found the discrepancy, like if you are using the CSV, it will be comma separated, then it will break the flow. Because we are sending it to this Ace site, right? So use the JSON format. We we don't need that, so that would be consumed by the razer team. So just create a Excel file and then upload it to the SFTP, that's it Excel, whatever you want, just create it.
+
+00:05:28 - 00:07:29 Unknown Speaker:
+
+Okay, even if you're comfortable with CSV, I'm okay with that, CSV also okay, and I'm giving you the composer URL. But as I mentioned, you should not be doing any activity which would again corrupt the environment. You know, this one, this get operator, right? Airflow get operator is the right. That provides you option to generate the CSV from the query. You don't need to write anything. No code, nothing. Just simply pass the delimiter type. And you know what kind of file format you want, so no need to, you know, perform any operation over there, just call that way. Okay, all right, thank you. Let me maximize. I think you might be getting this one right now, able to see my screen. Yeah, if I go to cloud storage for this one, right right?
+
+00:07:29 - 00:09:16 Unknown Speaker:
+
+So under this one, this is your storage area. Which I was telling, right? It is blank right now. So whatever you are going to create, just get a confirmation from me before creating it. Okay. No, no, no. He would get that access tomorrow. Okay. The air flow. Yeah. It is going to the air flow. No, search composure. Then you go. Composure is set up right, then you can go to it. Did not work last time, right? So that's the reason I went to this path. Uh, there is no environment is set up so you are not seeing any, you know, the airflow. Okay, let me let me talk to Aryan, then he's not online, let me talk to them, and then, okay. So for this one, uh, Nirmal, I'll create, Okay, this is your.
+
+00:09:16 - 00:10:19 Unknown Speaker:
+
+Uh, give me the actual url. Okay, now, do you have any query? Nirmal? Just confirm me. Right now, I do not have let me go through the requirements and all the those things. Now, it's a straight forward requirement, right? Yeah, yeah, I get it. Give me some time, I'll connect you after the lunch, okay, take care. Uh, Samir, Um, now, uh, when you are on leave, right? You should have handed handed over the task to Varga now. He was not having any, you know, fruitful work yesterday. I know you are working right but is that code is not ready as of now? Sachin, code is ready Sachin. So I have created the procedures for the historical data and for the onboard metric, I have changed the table names and the respect to code changer.
+
+00:10:19 - 00:11:08 Unknown Speaker:
+
+I have done and I have created the tags for both creating procedures and as well as to print this historical data. So let's go. So like after this call we just had a call before this call actually we had a connect and we have discussed on that and we like after this call we have come and we are testing it. So that once I have raised the PR like we will have the standard code handy. Okay. Because like if I commit it one by one right like what will happen like when we raise the PR it will have multiple commits. So that's why just like once it was tested at least for basic scenario. No, as you were on leave yesterday, right? Whatever you have done, you should have committed it.
+
+00:11:08 - 00:12:02 Unknown Speaker:
+
+And then, you know, pocket, to work up so that he would have carried it forward yesterday. Okay, got it. And now, when you guys are working, right, split those six months into, you know, two spaces. One should be, you know, one guy should be doing the analysis for Jan and Feb, and then you can do for March, April and month of May, or else alternatively, no. Alternatively, you can do one more thing. You can pick up the monthly one and then give the daily one to Varga, right? So he would transform first of May to 31st of May. But just be in a sink. And ideally, there should be two different tag, one for monthly, one for daily, so that you know there should not be any conflict when you are running those tags.
+
+00:12:02 - 00:12:54 Unknown Speaker:
+
+Yeah, so maybe give the daily one to Varga, monthly one to yourself. And then whatever results are there, right? Document it on a Excel sheet. And then we can the conference page only we will update like we have that production running or not. No, no, no. Don't update in Conference until we get a sign up from the product team. Keep it in Excel. Right now. Once we get the sign up, then we would put it over the result, over that conference page. Conference page is not for your rough work, right? So once it has been finalized, then you can put it over that conference. Got it okay, any question? BARGAvit SAMIR Uh, for me, session, session. My Lumi access is still in pending, so it hasn't been. Yeah, I will check. Uh, yeah.
+
+00:12:58 - 00:14:15 Unknown Speaker:
+
+In the IIQ, we need to check that part. Wherever you have raised rights, there is a check. It is still showing that it has been submitted successfully, but it is still showing the request that it needs to be approved. Then go to the IIQ with whom it is pending. We need to reach out to that person. From Rajendra, it has been approved. Can you share your stream to whom it is pending with? Yeah. It is not Manju, right? It is with Manju, yes. Oh, man. You should have told to Rajendra yesterday only. No. Can you do an immediate message to Rajendra? What is the IIT request number? Can you go to that IIT request number? Do it right away. Okay, sir. I'll send it. Okay, because it is with Manju and if it was on from Monday, man, can you check your IAQ request?
+
+00:14:15 - 00:15:28 Unknown Speaker:
+
+Go to IAQ. Is the request being still pending? Hold on, hold on, hold on. It would appear, it would appear. Wait for a second. Just, it was a miss from our side. Like, you know, if some request is going to Manju, right? Immediately mention this to Rajendra. Because... if it bounced, it would goes to Manju's leader, who is BP boss, like it's EVP, okay, so there would be unnecessary escalation on that. And what Raj used to do? He used to consultate all the requests that went to Manju. And then he used to message him now with all those requests so that he can approve it. Now, where is your access? Track my request? Click on Track my Request. I just wanted to see if it, um, it should not have bounced. Oh man, waiting for two days.
+
+00:15:28 - 00:16:27 Unknown Speaker:
+
+When did you raise this request? On the same day on Monday? Oh no, I raised it on on Monday, that is Monday, right? Can you do one? Copy this request ID, Copy this request ID, request ID is there, right? Uh, right, down to Rajan. I have raised a IIQ request to get the access on the Lumi portal, and the request is pending with Manju for Monday. Can you write it down immediately? Yes, yes, I will send it now. Okay, just just, uh, to let him know, right? So that no, not email, he may email again. He might, uh, miss to take the email on on Slack. Just just give him one to one versus. And explicitly called it out that it is pending from Monday. Okay, okay, because if it doesn't approve it today, right?
+
+00:16:27 - 00:17:30 Unknown Speaker:
+
+Uh, then it would go to the next level. So Manju's boss, Okay, and that would create a problem there. Okay, okay, thanks for attending. Thanks Amir. Uh, you guys can drop up. Uh, are we done with that? Mapping? Yeah, I have created a report for three different object types. Um, what could be what? We can keep it in the Filter criteria column for all the descriptions, wherever we are using descriptions, right? So those only I have come up with what filter criteria to be created, and few places. Uh, um, I mean, it's not possible, but, uh, I, I created something. I will get it confirmed with, uh, that is okay. If she says no, then we have to come up with another plan. But most of them, we can have them in the criteria.
+
+00:17:31 - 00:18:19 Unknown Speaker:
+
+And next to my task is, once she approves that, descriptions, moving to field of creativity with what we are moving. If she approves that, then I have to put that into the update, those templates according to that. Yeah, yeah. Regenerate the bodies. Yeah, that's something I'm going to give you some time. I know. If there is a change, then that would impact your existing process. So why we are left with the third, last one? Is it with the FCom. Even that, I generated a report for him before this call, in the call only. For him also, he's doing it from yesterday already. It's very difficult. So I created a report for him as well. I just shared with him. So let him go through that and see if that is making sense or not.
+
+00:18:20 - 00:19:13 Unknown Speaker:
+
+I generated using GitHub Copilot only. But for mine, I verified and it looks good. Even for this sunset should be good only. So let him verify this. Have a connect, guys like, you know why we are waiting for each other, right? No, no. We connected in the morning two times, we connected, okay, okay, okay. Then I connected with him, We had a discussion. Yeah, look, APPA is there to just support you with me, right? But ultimately you have to drive this to closure. Yeah, yeah, sure, sure, such a number. I.That's why I created for valid value check also. Yeah, let him help me in understanding the filter criteria that is created by the agent. And anyway, it's in an Excel sheet only. So you can go through that and compile if that looks good or not.
+
+00:19:13 - 00:20:31 Unknown Speaker:
+
+Then I'll start generating, updating the templates accordingly. Okay. Okay. And how many sequels have been migrated from Composure to the use case bucket? We have now two to three days, right? So again, I don't want this three days to be wasted, right? Just we are identifying. Your role modification pace was done, right? And then this SFT is being done, right? So you really don't have much work, right? Existing MGM, CGT, RPA is done. Again on this rule modification, bulk of work is already being carried by Prithvi, right? So just identifying and keeping it into a bucket again, you are creating a backlog then, right? The ask is not just to identify, even to act on those. I need like by Monday or Tuesday, right? When you are going to get a new work.
+
+00:20:31 - 00:21:18 Unknown Speaker:
+
+Before that, the cleanup activities would be done so that my composer would get some spaces. So just don't tell me that I have identified. I need the result for that. Yeah, yeah, but we need to do the any testing for you need to also write, and we need to raise an RFC also for that one. Yeah, so so at least start with the process, right? Yeah, at least start with the process. And on E3 also, you just need to route it to DQ Result test, once it runs right, you just need to read out it back. Yeah, yeah. What I'm thinking is if we. Uh, suppose if I plan for, uh, 10th tax or execution right in production, so till before, uh, dates, right? Uh, I need to do the I listen very carefully.
+
+00:21:18 - 00:22:08 Unknown Speaker:
+
+Now we are on third, right? You can pick up the tag from third first to third, correct? If you're making a plan to move it tomorrow, right? To the E3, right? All those three, all those diagrams which are scheduled to run from first to three, those are already being ran, right? Then you can go for a deployment tomorrow. Yeah, yeah. So that's what I'm thinking. Yeah, because already completed on if I pick up, it will be easy. Sure. Look, these are, you know, that's what I'm observing with all of you, right? The feedback that I was sharing, right? Why somebody stand out as a performer for the PEI? Why not rest of the guy, right? Because there are multiple observations that we are, you know, keeping a track of it, and based on that, we are sharing that feedback to you guys.
+
+00:22:08 - 00:22:52 Unknown Speaker:
+
+So please make sure that once you are in the system from last one and a half year, right? You should come up to a speed, right? I? I should not be pushing you to, you know, make this cleanup activity. These are already running, right? You just need to change the location, that's it. You really don't need to make any changes in the core logic. Right right now. You are reading those files from the composer bucket, you just need to read it from the use case bucket. What is the major changes? Tell me, is there a core logic being changed? The answer is no, right, then, then, why? Why? There is a again, we spend one day in just analysis, right? That's something I really don't understand.
+
+00:22:52 - 00:23:46 Unknown Speaker:
+
+It's just the file which is being picked up right from the composer, I am just asking you to pick it up from the use case bucket. Okay, so, ideally, ideally, I would tell all those files should be done in couple of days, not more than a couple of days. We should be good to, you know, move everything by this Friday, right? I'm just taking a precautions. That's the reason I am asking you to, you know, whichever has been ran, move those. And then, you know, uh, suppose it's not even right. You're doing the testing for the first time, whatever use case ANSI built recently, right? Or even you have built those RPA, yeah, those are already getting executed. When I I, I'm not sure like, Uh, what is the challenge over there, right?
+
+00:23:46 - 00:24:48 Unknown Speaker:
+
+Even the RPA is getting read from the use case. Perfect. Is that not the case? Tell me, No, no, it's reading from that one. Then then what is the problem of moving all the sequence file from the composer to the use case bucket? Yeah, I will do this one then, then, then, you know. Wrap up all these moments by this Friday. Okay, yes, if you want, just just for the Saturday, Sunday and Monday gig, use and job. You can leave those three days jobs, Saturday, Sunday and Monday one, but rest all jobs should be moved to the use case bucket. Okay. Make that change by Friday, I think. Oh, yeah. Sure. Yeah. I've got Nirmal and Prithvi, you guys can feel free to drop off. And see, on your query with respect to that bulk, sorry, batch processing. Batch processing is nothing but. It's just like, you know, the job...
+

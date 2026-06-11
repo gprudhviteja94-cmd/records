@@ -1,0 +1,889 @@
+2026-05-28 AI ఏజెంటిక్ డెవలప్‌మెంట్ మరియు ఆర్కెస్ట్రేషన్ చర్చ
+
+Creation Time: 2026/05/28 21:00
+
+
+📅మీటింగ్ గురించి
+
+• తేదీ & సమయం: 2026-05-28 21:00 (వ్యవధి: 3425 సెకన్లు)  
+• స్థలం: వర్చువల్ మీటింగ్  
+• హాజరైనవారు: Srikant, Pawan, Kishore, Damir, Govardhan, Isha (అనుకుంటున్నారు), Vinod, Dinesh, Ritu, Madan, Ram, Rajan, మరియు ఇతరులు
+
+📒మీటింగ్ అవుట్‌లైన్
+
+AI Agentic Development and Orchestration Framework
+
+• AI Factory మరియు Agentic Development పరిచయం  
+  Lalita టిమ్ వారి AI Factory ప్రాజెక్టును పరిచయం చేసింది, ఇందులో agentic processes ని డెవలప్‌మెంట్ టాస్కుల కోసం సృష్టించడం జరుగుతుంది. ఈ AI ఆధారిత agentic సొల్యూషన్స్ ప్రొడక్షన్ ఎన్విరాన్‌మెంట్స్‌లో అమలు చేయాలంటే AARB (Architecture Approval Review Board) ఆమోదం అవసరమని చర్చ జరిగింది. GitHub Copilot వంటి అన్ని AI కోడ్ జనరేషన్ టూల్స్ కి AARB ఆమోదం కావాలా అనే విషయంలో కొంత గందరగోళం ఉంది. ప్రస్తుత AI VLC orchestrator డెవలప్‌మెంట్ ఎన్విరాన్‌మెంట్ కోసం మాత్రమే ఉద్దేశించబడిందని, జనరేట్ చేసిన కంటెంట్లు ప్రొడక్షన్‌కు వెళ్ళడం వల్ల AARB ఆమోదం అవసరం లేకపోవచ్చు అని స్పష్టత ఇచ్చారు. మరింత స్పష్టత కోసం ఎదురు చూస్తున్నారు.
+
+• Agentic Use Cases డెమోన్స్ట్రేషన్  
+  Pawan agentic ఫ్లోల వర్కింగ్ ఉదాహరణలను పంచుకున్నాడు, అందులో ఒక నిజమైన use case గా dropdown UI ఎలిమెంట్ single-select నుండి multi-select కి మార్చబడింది. ఆజెంట్ UI మరియు బ్యాక్‌ఎండ్ మార్పుల్ని, MongoDB స్కీమా సర్దుబాటు సహా, పూర్తి ఆటోమేషన్ తో హ్యాండిల్ చేసింది. ఈ ఉదాహరణను టీంకి చూపించనున్నారు.
+
+• Agent సృష్టి మరియు కాన్ఫిగరేషన్  
+  Pawan అభివృద్ధి చేసిన bootstrap అప్లికేషన్ వివిధ డెవలప్‌మెంట్ కార్యకలాపాలకు (ఫ్రంట్‌ఎండ్, బ్యాక్‌ఎండ్, టెస్టింగ్, DevOps) సుమారు 16 మంది జనరిక్ ఏజెంట్లను సృష్టిస్తుంది. UI కోడ్ జనరేషన్ కోసం Figma ఇంటిగ్రేషన్ వంటి ప్రత్యేక అవసరాలకు కస్టమ్ ఏజెంట్లను కూడా జత చేయవచ్చు. orchestrator ఈ ఏజెంట్లను ఫౌండేషన్ క్రియేషన్, అంతర్గత కనెక్టివిటీ, ఫ్రంట్‌ఎండ్ డెవలప్‌మెంట్, బ్యాక్‌ఎండ్ డెవలప్‌మెంట్, టెస్టింగ్ వంటి అనేక దశల్లో సమన్వయం చేస్తుంది. కోడ్ స్టాండర్డ్స్ కోసం quality gates నిర్వహిస్తుంది.
+
+• కాంటెక్స్ట్ అవేర్‌నెస్ మరియు మెమరీ  
+  సిస్టమ్ ప్రతి ఏజెంట్ కోసం యూజర్ ప్రాంప్ట్‌లు మరియు ప్రాజెక్ట్ స్పెసిఫిక్ వివరాల ఆధారంగా మెమరీ/కాంటెక్స్ట్‌ను నిర్మిస్తుంది. ఇది ఏజెంట్లు వ్యక్తిగత డెవలపర్ కోడింగ్ స్టైల్స్‌కు అనుగుణంగా మారడానికి, ప్రాజెక్టులకు మళ్లీ ఉపయోగించుకునేలా అనుమతిస్తుంది. ఇది ఇతర ప్రాంతాలలోని ప్రాక్టీసుల నుండి ప్రేరేపితమై ఉంది, అక్కడ ఏజెంట్లు ఉన్న కోడ్‌బేసెస్ నుండి నేర్చుకుని సुसంగతిని కొనసాగిస్తాయి.
+
+• ఇంటిగ్రేషన్ మరియు విస్తరణ ప్రణాళికలు  
+  కొత్త యూజర్లను డాక్యుమెంటేషన్ మరియు ట్రైనింగ్ తో ఆన్‌బోర్డ్ చేయడానికి ప్లాన్లు చర్చించబడ్డాయి, అలాగే Optomarex పెద్ద టీంకు పరిష్కారాన్ని ప్రదర్శించాలనుకున్నారు. సంస్థలో అనేక ప్రాజెక్టులు, టీమ్స్ ఉపయోగించుకునే జెనరిక్, ప్లగ్‌ఐనబుల్ ఫ్రేమ్‌వర్క్ సృష్టించడానికి యత్నిస్తున్నారు. Sapiens మరియు CPM టీమ్స్ తో సమన్వయం కలిగి బెస్ట్ ప్రాక్టీసులను క‌లిపి యూనిఫైడ్ ఫ్రేమ్‌వర్క్ నిర్మాణం జరగనుంది.
+
+Development Process and Best Practices
+
+• వర్క్‌ఫ్లో మరియు ప్లానింగ్ మెరుగుదలలు  
+  ప్రస్తుత వాటర్‌ఫాల్ మోడల్ (ప్లాన్ → డెవలప్ → డిజైన్ → టెస్ట్) చర్చించబడింది. క్వాలిటీ మరియు సమర్థత పెంచేందుకు Test-Driven Development (TDD) మరియు ఆటోమేషన్ టెస్టింగ్‌ను అన్వేషించాలనే సలహా ఇచ్చారు. orchestrator వరుసగా వర్క్‌ఫ్లోని అందిస్తుంది, ప్రతి దశ ముందు మానవ సమీక్ష మరియు ఆమోదానికి ఆప్షన్ కల్పిస్తుంది, తద్వారా ప్రాంప్ట్స్ మార్పులు చేసుకోవచ్చు.
+
+• అవసరాల వివరాలు మరియు ఇన్‌పుట్ క్వాలిటీ  
+  ప్రొడక్ట్ ఓనర్స్ నుండి స్పష్టమైన మరియు వివరమైన అవసరాలు AI ఆధారిత డెవలప్‌మెంట్ విజయానికి కీలకం అని గమనించారు. comprehensive acceptance criteria మరియు technical notes ఇవ్వడానికి ప్రొడక్ట్ ఓనర్స్‌కు మెరుగైన కోచింగ్ అవసరమని గుర్తించారు. Rally, Jira వంటి టూల్స్ లో డీటెయిల్డ్ యూజర్ స్టోరీలు మరియు టాస్కులు నిర్వహణ గురించి చర్చించారు, అలాంటి ప్లాట్‌ఫారమ్స్ లో AI ఫంక్షనాలిటీలను ఇంటిగ్రేట్ చేయాలని సూచించారు.
+
+• AI టూల్స్ ఖర్చులు మరియు వాడుక పరిమితులు  
+  Codex, GitHub Copilot వంటి AI టూల్స్ పెరుగుతున్న ఖర్చులు, లైసెన్స్ తొలగింపు, రోజువారీ వాడుక పరిమితుల గురించి ఆందోళన వ్యక్తం చేశారు. ఇవి డెవలపర్ ఉత్పాదకత మరియు టూల్ అంగీకారంపై ప్రభావం చూపుతున్నాయి.
+
+Vulnerability Management and CPM Integration
+
+• AI DLC Orchestrator for Vulnerability Remediation  
+  Damir CPM (Critical Patch Management) కోసం రూపొందించిన AI DLC orchestrator ను ప్రదర్శించాడు, ఇది సెక్యూరిటీ లోపాలను గుర్తించి, రీమిడియేషన్ స్ట్రాటజీలను ప్లాన్ చేసి, ఆటోమేటిక్ గా కోడ్ రిపాజిటరీలను అప్డేట్ చేస్తుంది. ఆర్చిస్ట్రేటర్ ఆడిట్ కోసం ట్రయల్ ట్రైల్ వదిలి, ASaM స్కిల్స్ ను కోడ్ క్వాలిటీ మరియు సెక్యూరిటీ స్టాండర్డ్స్ కోసం బేస్‌లైన్ గా ఉపయోగిస్తుంది. ఇది agentic development framework కు సమానమైన విధానం కానీ సెక్యూరిటీపై దృష్టి కేంద్రీకరించింది.
+
+• బెస్ట్ ప్రాక్టీసెస్ మరియు స్కిల్ డెవలప్మెంట్  
+  కోడింగ్ స్టాండర్డ్స్, డిజైన్ నిర్ణయాలు, సెక్యూరిటీ మార్గదర్శకాలను AI స్కిల్స్ లో చేర్చడం ద్వారా పునరావృత తప్పిదాలను నివారించడానికి చర్చించారు. orchestrator క్వాలిటీ అష్యూరెన్స్ కోసం హ్యూమన్-ఇన్-ది-లూప్ ఇంటర్వెన్షన్స్ ను మద్దతు ఇస్తుంది.
+
+సహకారం మరియు తదుపరి దశలు
+
+• క్రాస్-టీం సమన్వయం మరియు యూనిఫైడ్ ఫ్రేమ్‌వర్క్ అభివృద్ధి  
+  참석ులు agentic development, CPM, position side నుండి వేరువేరు use cases ను సమీకరించి generic, శక్తివంతమైన, ప్లగ్‌అనబుల్ AI development framework నిర్మించడం అవసరం అని ఒప్పుకున్నారు. Ritu, Madan, Ram, Rajan సహా కీలక భాగస్వాములు పాల్గొనే ఒక గంట పాటు ఫాలో-అప్ మీటింగ్ నిర్వహించాలని ప్రతిపాదించారు, ఇంటిగ్రేషన్ వ్యూహాలు మరియు మిస్ అయిన అంశాలను చర్చించడానికి.
+
+• డాక్యుమెంటేషన్ మరియు ఆన్‌బోర్డింగ్  
+  కొత్త యూజర్లు మరియు టీమ్స్ సులభంగా సంతృప్తి చెందేందుకు పూర్తి డాక్యుమెంటేషన్, ఆన్‌బోర్డింగ్ గైడ్స్, ట్రైనింగ్ సెషన్ల అవసరం ఉంది.
+
+• Human in the Loop మరియు ఇన్క్రిమెంటల్ వేవ్స్  
+  ప్రతి వేవ్ వద్ద మానవ ధృవీకరణకు ఆప్షన్ ఉండాలి, తద్వారా దశలవారీగా మెరుగుదలలు మరియు లోపాల సరిదిద్దుబాటు సాధ్యమవుతుంది.
+
+• అవసర ఇన్‌పుట్లు మెరుగుపర్చడం మరియు హల్యూసినేషన్స్ తగ్గించడం  
+  Rally యూజర్ స్టోరీల మాదిరిగా సంపదైన, వివరమైన ఇన్‌పుట్‌లు ఇస్తే AI ఏజెంట్ల హల్యూసినేషన్స్ మరియు అనవసర మార్పులు తగ్గి అవుట్‌పుట్ నాణ్యత మెరుగుపడుతుంది.
+
+📋సారాంశం
+
+• AI Factory agentic development ప్రొడక్షన్ కు AARB ఆమోదం అవసరం; ప్రస్తుత orchestrator డెవలప్‌మెంట్ కోసం మాత్రమే.  
+• మల్టీ-సెలెక్ట్ dropdown UI/bakend మార్పును agent ఆటోమేటిక్ గా చూపించారు.  
+• Bootstrap అప్లికేషన్ అనేక జనరిక్, కస్టమ్ ఏజెంట్లను phased waves లో orchestrator ద్వారా సమన్వయం చేస్తుంది.  
+• ఏజెంట్లు మెమరీ/కాంటెక్స్ట్ ద్వారా డెవలపర్ స్టైల్స్ కు అనుగుణంగా మారతాయి, ప్రాజెక్టులలో పునర్వినియోగం కల్పిస్తాయి.  
+• యూజర్లను ఆన్‌బోర్డ్ చేయడం, ప్రాసెస్ డాక్యుమెంటేషన్, పెద్ద టీమ్స్‌కు పరిచయం చేయడం ప్లాన్లు.  
+• వాటర్‌ఫాల్ మోడల్ నుండి TDD, ఆటోమేషన్ టెస్టింగ్ వైపుకు మార్పు చర్చ.  
+• ప్రొడక్ట్ ఓనర్స్ నుండి స్పష్టమైన అవసరాలు, Rally/Jira ఇంటిగ్రేషన్ పై దృష్టి.  
+• AI టూల్స్ వాడుక పరిమితులు, లైసెన్సింగ్ కారణంగా ఉత్పాదకతపై ప్రభావం.  
+• Damir CPM AI orchestrator ద్వారా ఆటోమేటిక్ వల్నరబిలిటీ రిమిడియేషన్, audit trails తో.  
+• క్రాస్-టీం సహకారం ద్వారా generic AI development framework నిర్మాణం.  
+• కీలక భాగస్వాములతో ఫాలో-అప్ మీటింగ్ ప్రతిపాదన.  
+• హ్యూమన్-ఇన్-ది-లూప్ checkpoints మరియు సంపదైన ఇన్‌పుట్లు AI అవుట్‌పుట్ మెరుగుపరుస్తాయి.
+
+🎯టుడూ లిస్ట్
+
+• Pawan:  
+  • [ ] Agentic ఫ్లో డీటెయిల్డ్ డెమో, మల్టీ-సెలెక్ట్ dropdown use case తో తయారుచేసి పంచుకోవడం.  
+  • [ ] Agent సృష్టి మరియు orchestrator వాడుకకు స్టెప్-బై-స్టెప్ సెటప్, వాక్‌థ్రూ ఇవ్వడం.  
+  • [ ] Damir, Govardhan తో కలిసి బెస్ట్ ప్రాక్టీసెస్ గుర్తించి frameworks ఐక్యపరచడం.  
+  • [ ] హ్యూమన్-ఇన్-ది-లూప్ వేవ్ కన్ఫర్మేషన్స్, వర్క్‌ఫ్లో మెరుగుదలలపై అన్వేషణ.
+
+• Damir:  
+  • [ ] CPM AI DLC orchestrator డీటెయిల్డ్ డెమో ప్రదర్శించి బెస్ట్ ప్రాక్టీసెస్ పంచుకోవడం.  
+  • [ ] Pawan, Govardhan తో సమన్వయం చేసి CPM, agentic development frameworks ఐక్యపరచడం.  
+  • [ ] ఫాలో-అప్ మీటింగ్‌లో భాగస్వామ్యం అవ్వడం.
+
+• Govardhan:  
+  • [ ] RRF ప్రాజెక్టులో AI orchestrator వాడి ఫీడ్‌బ్యాక్ ఇవ్వడం.  
+  • [ ] generic framework అభివృద్ధికి గ్యాప్‌లు, మెరుగుదలలు గుర్తించడం.  
+  • [ ] ఫాలో-అప్ మీటింగ్ షెడ్యూల్ చేసి అన్ని స్టేక్‌హోల్డర్స్‌ను ఏర్పాటు చేయడం.
+
+• Kishore:  
+  • [ ] కీలక భాగస్వాముల (Ritu, Madan, Ram, Rajan సహా)తో ఫాలో-అప్ ఒక గంట మీటింగ్ ఏర్పాట్లు చేయడం.  
+  • [ ] ప్రైసింగ్, ప్రెసిషన్ టీమ్స్‌తో కలిసి ఆన్‌బోర్డింగ్, framework అంగీకారం మద్దతు ఇవ్వడం.  
+  • [ ] ప్రొడక్ట్ ఓనర్స్‌కు వివరమైన అవసరాలు, acceptance criteria ఇవ్వడంలో కోచ్ చేయడం.  
+  • [ ] Rally, Jira లో AI ఫంక్షనాలిటీల ఇంటిగ్రేషన్ అన్వేషించడం.
+
+• అన్ని టీం సభ్యులు:  
+  • [ ] ప్రస్తుత agentic development, CPM orchestrator డెమోల సమీక్ష చేసి ఫీడ్‌బ్యాక్ ఇవ్వడం.  
+  • [ ] AI ఆధారిత డెవలప్‌మెంట్ కోసం డీటెయిల్డ్ use cases, అవసరాలు సిద్ధం చేయడం.  
+  • [ ] రాబోయే డీటెయిల్డ్ ప్లానింగ్, ఇంటిగ్రేషన్ మీటింగ్స్‌లో పాల్గొనడం.
+
+• మీటింగ్ ఆర్గనైజర్ (Govardhan లేదా Kishore):  
+  • [ ] డీటెయిల్డ్ ఫాలో-అప్ మీటింగ్ షెడ్యూల్ చేసి సెటప్ చేయడం (తదుపరి రోజు, 7-8 IST ప్రతిపాదించారు).  
+  • [ ] సంబంధిత స్టేక్‌హోల్డర్స్‌ను ఆహ్వానించి use case consolidation, framework integration, roadmap planning అంశాలను అజెండాలో చేర్చడం.
+
+Transcription
+
+00:00:02 - 00:00:03 Unknown Speaker:
+
+İyi, hayırlı günler.
+
+00:00:08 - 00:00:09 Unknown Speaker:
+
+Hayırlı günler. Hayırlı günler.
+
+00:00:12 - 00:00:14 Unknown Speaker:
+
+İyi, iyi günler. Hayırlı günler.
+
+00:00:16 - 00:00:17 Unknown Speaker:
+
+Hayırlı günler. Hayırlı günler, hayırlı günler.
+
+00:00:56 - 00:00:59 Unknown Speaker:
+
+İyiyiz. Hayırlı günler.
+
+00:01:04 - 00:01:04 Unknown Speaker:
+
+Hayırlı günler. Sorry guys.
+
+00:01:06 - 00:01:07 Unknown Speaker:
+
+Good to be back.
+
+00:01:12 - 00:01:12 Unknown Speaker:
+
+How are you?
+
+00:01:14 - 00:01:14 Unknown Speaker:
+
+Yeah, doing good.
+
+00:01:16 - 00:01:25 Unknown Speaker:
+
+Just waiting for the long weekend. I mean, I have Monday PTO, so for me it's a long weekend.
+
+00:01:26 - 00:01:29 Unknown Speaker:
+
+It's always nice to have some long weekends.
+
+00:01:30 - 00:01:45 Unknown Speaker:
+
+Even Ireland has a holiday, I believe, right? Monday are some, I'm not sure, like I heard in the— Yeah, yeah, Monday Ireland holiday. That's why I also took off. Okay. So there'll not be much business disruptions and all, so that's why.
+
+00:01:47 - 00:01:51 Unknown Speaker:
+
+That's a good time to take. The Tuesday we have holiday, so I'll get four days.
+
+00:02:08 - 00:02:30 Unknown Speaker:
+
+Check with Isha if he's able to join. He said he accepted, so he might be jumping it. So today there was one meeting from Lalita's team. So they did something similar, they called AI Factory. So using AI Factory, they developed something similar on the similar lines, like through agentic process.
+
+00:02:31 - 00:02:46 Unknown Speaker:
+
+It'll be interesting to see that. We asked for that link of the AI Factory. Have you—have you—anyone have anyone attended yet? Yeah. I haven't attended, but I think Ankur has given, right, the sticker?
+
+00:02:46 - 00:02:54 Unknown Speaker:
+
+Correct, correct, correct. Yeah, yeah. I've gone through that description and all those details, but the recording completely I haven't gone through.
+
+00:02:58 - 00:03:08 Unknown Speaker:
+
+So do we have the examples ready to—like what we want to show? Yeah, on my end. Yeah, please.
+
+00:03:10 - 00:03:27 Unknown Speaker:
+
+On my end, yes. I do have examples, working examples. Yeah. So today what I learned in that meeting is we have to go for AARB approval for this also, like for these agentic developments also. That's where I was confused.
+
+00:03:27 - 00:03:29 Unknown Speaker:
+
+Like everybody is using GitHub Copilot.
+
+00:03:30 - 00:03:46 Unknown Speaker:
+
+Because in the presentation they mentioned they want to—like they're waiting for—they have to start this AARB process. So they have developed a non-prod, but to do this in prod they need AARB approval.
+
+00:03:48 - 00:04:12 Unknown Speaker:
+
+What is great with these AI VLC orchestrator that I'm going to present, it's not going to go into production. It's meant to be for developers in development area only. But the content it generates, we are going to move that into production, right?
+
+00:04:12 - 00:04:32 Unknown Speaker:
+
+So that was my assumption too, but I need to get more information on that, like why do we need AARB approval. If that is the case, then every code we are generating, like we need AARB approval, like GitHub Copilot and everything. So that's where I'm confused too. Need to check.
+
+00:04:33 - 00:05:03 Unknown Speaker:
+
+So that's exactly where my next question is going. So if I use Codex to generate code, does that need the AARB approval? On top of that, yeah. Yeah, yeah. I mean, how we present our idea—maybe that one right this weekend—because in the agent factory, maybe I think it is something like—again, I'm not sure, not particular to this one—like if they represent it like something we can create multiple agents and again, business agents, right?
+
+00:05:03 - 00:05:31 Unknown Speaker:
+
+Like for example, not our developer assistant, right? Instead of that, if they are saying if they can create business agents, then I think it might take that AARB approval, but not for this Copilot sort of thing, but yeah. Yeah, need to understand more details. Yeah, on top of that, for example, I'm not using United AI Studio at all.
+
+00:05:32 - 00:05:46 Unknown Speaker:
+
+I'm not using their LLMs at all, so it's not going even there. So it's not touching the infrastructure at all on their end. It's going through Codex infrastructure.
+
+00:05:48 - 00:05:55 Unknown Speaker:
+
+So yes. So probably when you get more information, please share. It will be interesting to learn about it.
+
+00:05:56 - 00:06:26 Unknown Speaker:
+
+Actually, for this one, for this session, I read one use case, but that is a simple one only, Srikant. Like we got a new requirement where previously in a checkbox, like in a dropdown, we used to have only one value, but they asked us to make it multi-select. Like where in the dropdown they can select multiple values and it has to be stored in the backend. So that change I tried with this agent, like the one which Pawan created, right?
+
+00:06:26 - 00:06:38 Unknown Speaker:
+
+And so that example I have now, Srikant. Okay. So it did all DB work, API, everything, or UI and everything, or only? Yeah, UI plus backend.
+
+00:06:39 - 00:06:56 Unknown Speaker:
+
+And MangoDB, I think anyhow it was WireCare only, so it hasn't made any changes further. It understood like it is a WireCare column. So it gave that in DB it is already WireCare column, so you can make it comma separated. So that description it has given. Okay, okay.
+
+00:06:58 - 00:07:07 Unknown Speaker:
+
+Oh, so values were already there. Instead of one select, we had to make multi-select. That was the requirement. That was, yes, yes. Yeah, let's showcase that as well.
+
+00:07:07 - 00:07:23 Unknown Speaker:
+
+That would be good. So we'll start with that agentic flow. Pawan, we can talk about that, and then we'll quickly demo that, and then we'll go into what Damir has set up for vulnerability.
+
+00:07:26 - 00:07:44 Unknown Speaker:
+
+It will happen soon. Yeah, vulnerability. So it's almost full AI VLC orchestrator with multiple agents already implemented, including vulnerability. Yes. Real-time example, you mentioned you had vulnerability one, right?
+
+00:07:46 - 00:07:52 Unknown Speaker:
+
+That is correct. I have other examples, including code generation as well, so. Oh, okay. Great. Yeah, we can.
+
+00:07:52 - 00:08:00 Unknown Speaker:
+
+Yeah, we can. Yeah, yeah. So we'll see how much time we have, but we'll adjust accordingly.
+
+00:08:02 - 00:08:28 Unknown Speaker:
+
+Yeah. One more topic, maybe not for today, but the one which we are currently trying, right, Srikant? So that one maybe we have to have some onboarding, or maybe if a new person has to use this one, maybe the steps we have to create, Srikant. And this should be like one-time activity, like where, for example, for my project, I will run these—I will run these EDAs, right?
+
+00:08:28 - 00:08:58 Unknown Speaker:
+
+And then once the agents are created, I should check in them, and subsequently, until they are updates, we should be good to use them rather than creating them every time. Yeah, yeah. First, we need to ensure like multiple cases it's working, and then we'll engage, we'll showcase to the team, create documentation, ask them to use it and all, right? So first we have to be confident before we get it to the team, right? Correct.
+
+00:08:58 - 00:09:17 Unknown Speaker:
+
+Yeah, yes. And we have plans, Isha and I have plans to take it to that showcase to the overall Optomarex also. So once it works, we have seen it like working, we can take it to the team. Yeah. Expand it.
+
+00:09:18 - 00:09:18 Unknown Speaker:
+
+Yes.
+
+00:09:23 - 00:09:25 Unknown Speaker:
+
+So Isha said he'll be here in like five minutes.
+
+00:09:28 - 00:09:33 Unknown Speaker:
+
+Again, I haven't gone through in detail, but you have given that link, right, Srikant? Awesome. LLM one.
+
+00:09:35 - 00:09:57 Unknown Speaker:
+
+So again, it is too far to plan that one, but maybe whatever pilot which Pawan had tried, right? So maybe it should—like we should plan to push it to that Awesome LLM. I mean, so for example, to push it, they might have some criteria or maybe some checklist, right?
+
+00:09:58 - 00:10:15 Unknown Speaker:
+
+So where someone, if someone needs that one, they can download it from there, right? So maybe that template or maybe that sort of—if those details are there, then maybe we can tune it according to that one. Yeah, yeah, sure. Yeah.
+
+00:10:24 - 00:10:38 Unknown Speaker:
+
+Let's see. So Damir also had done for CPM, right? Let's see if we can take the best of it and then create a generic one, both of them, and then see, expand it. Let's see what Isha has to say.
+
+00:10:45 - 00:10:54 Unknown Speaker:
+
+So for Pawan's one, only one thing is like maybe—so we are creating 11 or some agents, right, Pawan? So maybe. 13 now. Yeah, 65. Yeah, yeah.
+
+00:10:54 - 00:11:24 Unknown Speaker:
+
+So maybe initially we should not give those many, I believe. Only we should give options to the—so initially it is giving that option, right? Like if you want to do it an enhancement or maybe new requirement, right? Similarly, that agents also maybe we should give it to the NDOs because currently like four to five are major ones, right? Like for example, backend agent, frontend agent, maybe test agent, DevOps agent.
+
+00:11:24 - 00:11:42 Unknown Speaker:
+
+Like six, I am seeing. The more number of agents, right, it looks good on this one. I mean, like it looks good like it has too many features, but maybe we should give option to the NDOs to select that one, like what are all needed for them. Yeah, we talked about it.
+
+00:11:44 - 00:11:47 Unknown Speaker:
+
+It should be optional. You can choose and select what you want.
+
+00:11:48 - 00:11:50 Unknown Speaker:
+
+We discussed it in detail.
+
+00:12:00 - 00:12:10 Unknown Speaker:
+
+It's better to have all those because anyway, any project should have frontend and backend. I mean, there could be scenarios where that doesn't need a frontend agent.
+
+00:12:11 - 00:12:34 Unknown Speaker:
+
+But otherwise, many of the agents that are—I mean, created are being created or generic ones only. So any project should have those agents. Yeah. When creation of those agents, it's not going to consume anything for us. I mean, it's not going to cost us anything.
+
+00:12:35 - 00:12:57 Unknown Speaker:
+
+So it'll get created even in future if we're adding a frontend. That time it'll have a context of what is being created in the backend components. Everything it'll have a context of it. Otherwise, later if you want to add it, again, it's an extra task, right? And it is not consuming any resources even creation of those agents.
+
+00:12:59 - 00:12:59 Unknown Speaker:
+
+Okay.
+
+00:13:05 - 00:13:08 Unknown Speaker:
+
+Yeah, we'll see what is best. We'll do it. Yeah.
+
+00:13:11 - 00:13:11 Unknown Speaker:
+
+Sure.
+
+00:13:16 - 00:13:41 Unknown Speaker:
+
+I do have a few more questions I am thinking about understanding the developer context. So basically, I code in one way and you code in one way. So based on user's prompts, it understands what type of code that user expects and what format he expects.
+
+00:13:42 - 00:14:11 Unknown Speaker:
+
+So that context, it'll create it as a memory, one file, and that can be utilized in any of the projects throughout the—for example, Actual Hub you are creating it, same you can export it into the other agentic development system, and same thing you can reuse that same context. So this way, one user who is expert in frontend or expert in backend, how he behaves, what type of code he expects, how he writes that code.
+
+00:14:12 - 00:14:16 Unknown Speaker:
+
+So this, it'll understand it from the prompts and create a memory out of it.
+
+00:14:22 - 00:14:49 Unknown Speaker:
+
+Yeah. And if you see in China, a few developers are actually what they are doing. Instead of their coding, they're asking the agents to go and look into the other people's code and see how they have coded it. In according to that, you make changes in my application as well. So because their other team members are performing well, so they want even their code to be in the same context.
+
+00:14:50 - 00:15:01 Unknown Speaker:
+
+So it has become a big news there. So similar to that one only here as well. So you are copying one person's development skills throughout your project.
+
+00:15:30 - 00:15:43 Unknown Speaker:
+
+వీడి మేనేజర్. వీడికి వీడు మేనేజర్. వీడు సీనియర్ మేనేజర్. శ్రీకాంత్ గాడికి రిపోర్టింగ్ కానీ వీడి కింద వీడు, వీడి కింద వీడు, వీడి బాస్ గోవర్ధన్.
+
+00:15:50 - 00:15:51 Unknown Speaker:
+
+అంత బిజీ వాడు అసలు.
+
+00:15:53 - 00:15:54 Unknown Speaker:
+
+ఎప్పుడు బిజీ, బిజీ, బిజీ.
+
+00:16:11 - 00:16:14 Unknown Speaker:
+
+జైను త్రాత్తినాల మల్లా ఫిజ్వాల స్వైబ్రియాల.
+
+00:16:16 - 00:16:18 Unknown Speaker:
+
+ఆర్ దిస్ కంపల్సరీ? ఓకే, సార్.
+
+00:16:29 - 00:16:48 Unknown Speaker:
+
+యా, నాట్ ఇన్ దిస్ కాంటెక్స్ట్, బట్ ఐ రైట్ వన్ దిస్ న్యూస్ లైక్ వేర్ దిస్ ఏఐ కాస్ట్ ఇస్ ఇంక్రీసింగ్ టూ మచ్. మైక్రోసాఫ్ట్ హాస్ యాక్చువల్లీ రిమూవ్డ్ క్లౌడ్ కోడ్ లైసెన్సెస్ ఫర్ ఎవరీ వన్. దేర్ కంపెనీ.
+
+00:16:49 - 00:17:06 Unknown Speaker:
+
+ఐ థింక్ ఈవెన్ వి హావ్ రెస్ట్రిక్షన్స్ నౌ, రైట్? లైక్ ద గిట్ హబ్ కో పైలట్ ఇస్ రిమూవ్డ్. ప్రీవియస్లీ ఇన్ ఎక్సెల్ అండ్ మైక్రోస్, లైక్ ఆల్ మైక్రోసాఫ్ట్ టూల్స్, వి హాడ్ కో పైలట్. నౌ దే హావ్ రిమూవ్డ్ ఇట్. ఐ డోంట్ సీ దట్ ఇన్ ద ఎక్సెల్ ఎనీమోర్.
+
+00:17:08 - 00:17:33 Unknown Speaker:
+
+యూజువల్లీ ఐ రన్ ఆఫ్ మై ఫైవ్ అవర్ అలోకేషన్ బై 11:00 AM in the morning in Codex, and then it gives me a message. You can start reusing Codex in five hours. Like come back like 4:00 PM and then continue using Codex. You can check the status. కాస్ట్ ఎఫెక్టివ్ కాదని చెప్పారు.
+
+00:17:34 - 00:17:44 Unknown Speaker:
+
+లైక్ స్లాష్ స్టేటస్, అండ్ ఇట్ విల్ గివ్ యు హౌ మచ్ యు హావ్ యూస్డ్. కరెక్ట్. బట్ ఐ యూజువల్లీ బర్న్ దోస్. థీమ్ అది నీట్నెస్. Until 11:00 AM in the morning.
+
+00:17:46 - 00:17:51 Unknown Speaker:
+
+అండ్ దెన్ ఇట్ బ్లాక్స్. దెన్ యు కంప్లీట్లీ బ్లాక్. ఫ్రోజెన్ until 4:00 PM.
+
+00:17:53 - 00:18:09 Unknown Speaker:
+
+దట్స్ వాట్ దట్ ఆర్టికల్ సెడ్. లైక్ విత్ హ్యూమన్, యు ఆల్వేస్ హాడ్ కాంటెక్స్ట్, అండ్ ఈవెన్ ఇఫ్ వన్ పర్సన్ ఇస్ గాన్. లైక్ నౌ, ఇఫ్ మై యూసేజ్ ఇస్ బ్లాక్డ్, నాట్ టిల్ నెక్స్ట్ డే ఐ కాంట్ డూ ఎనీథింగ్. ఓకే, గైస్. సారీ.
+
+00:18:09 - 00:18:09 Unknown Speaker:
+
+థాంక్యూ.
+
+00:18:12 - 00:18:14 Unknown Speaker:
+
+మై రికార్డ్ దిస్ ఓవర్ అండ్.
+
+00:18:16 - 00:18:29 Unknown Speaker:
+
+నో ప్రాబ్లం. సో వితౌట్ ఎనీ వేస్టింగ్ ఎనీ ఫర్దర్ టైం, పవన్, ఓవర్ టు యు. వై డోంట్ యు స్టార్ట్ షేరింగ్ అండ్ టాకింగ్ అబౌట్ ద ఏజెంట్ ప్రాసెస్ యు డెవలప్డ్? షూర్, శ్రీకాంత్. యా, థాంక్యూ.
+
+00:18:29 - 00:18:32 Unknown Speaker:
+
+ఐ యామ్ కిషోర్. లెట్ మీ షేర్ మై స్క్రీన్.
+
+00:18:34 - 00:18:49 Unknown Speaker:
+
+యా, ప్లీజ్ లెట్ మీ నో ఫీడ్బ్యాక్. యా, ఇట్ ఇస్. ఓకే. సో ఓకే, ద ప్రాజెక్ట్ ఇస్ ఓకే. ఇస్ అబౌట్ క్రియేషన్ ఆఫ్ క్రియేటింగ్ ఏజెంట్స్ యూసింగ్ ఏ బ్రూట్ స్టాప్ అప్లికేషన్.
+
+00:18:49 - 00:19:12 Unknown Speaker:
+
+సో ఇన్స్టెడ్, వి ఆర్ గివింగ్ కాంటెక్స్ట్ టు ద ఏజెంట్, ద గిట్ హబ్ కో పైలట్ ఏజెంట్, ఎవరీ టైం. సో వి హావ్ కమ్ అప్ విత్ ఆన్ ఏజెంటిక్ వే ఆఫ్ డూయింగ్ ద డెవలప్మెంట్. సో ఇన్ దిస్, వాట్ హాపెన్స్ ఇస్, దేర్ ఇస్ ఆన్ బూట్ స్ట్రాప్ అప్లికేషన్ దట్ వి క్రియేటెడ్. యూసింగ్ ద బూట్ స్ట్రాప్ యాప్, వి కెన్ క్రియేట్ సం ఏజెంట్స్ దట్ ఆర్ డిఫాల్ట్ ఫర్ ఎనీ ప్రాజెక్ట్.
+
+00:19:13 - 00:19:43 Unknown Speaker:
+
+యూజువల్లీ, దేర్ వుడ్ బి లైక్ ఏ ఫ్రంట్ ఎండ్ ఏజెంట్, ఫ్రంట్ ఎండ్ డెవలప్మెంట్, బ్యాక్ ఎండ్ డెవలప్మెంట్, ఫ్రంట్ ఎండ్ టెస్టింగ్, బ్యాక్ ఎండ్ టెస్టింగ్. సో దేర్ ఆర్ 13 డిఫరెంట్ డెవలప్మెంట్ యాక్టివిటీస్ వుడ్ బి దేర్ ఇన్ ఎనీ ఆఫ్ ద ప్రాజెక్ట్. సో కన్సిడరింగ్ దట్, ఐ హావ్ క్రియేటెడ్ ఏ బూట్ స్ట్రాప్ ఏజెంట్ దట్ క్రియేట్స్ దోస్. సో టోటల్లీ, ఐ క్రియేటెడ్ నియర్లీ 16 ఏజెంట్ ఐ ఫౌండ్ దట్ ఆర్ రెలవెంట్ ఫర్ ఎనీ ఆఫ్ ద ప్రాజెక్ట్స్ ఇన్ ద ఆప్టమ్ ఆర్ ఎనీ కంపెనీ. ఓకే?
+
+00:19:43 - 00:20:09 Unknown Speaker:
+
+సో సో ఈ సో ఆల్ దిస్ 16 యాక్టివిటీస్, 16 ఏజెంట్స్ వుడ్ బి గెట్ క్రియేటెడ్. ఓకే? అండ్ దేర్ కుడ్ బి ఏ సినారియో వేర్ దేర్ ఇస్ ఆన్ ఎక్స్ట్రా ఏజెంట్ యు వాంటెడ్ టు యాడ్ ఇట్. ఫర్ ఎగ్జాంపుల్, ఇన్ మై యూస్ కేస్, వాట్ హాపెన్డ్? ఫిగ్మా, ఇట్ హాస్ టు రీడ్ డేటా ఫ్రమ్ ద ఫిగ్మా అండ్ క్రియేట్ ఆన్ ఫ్రంట్ ఎండ్ అండ్ ఆల్సో బ్యాక్ ఎండ్ ఏపీఐ.
+
+00:20:09 - 00:20:23 Unknown Speaker:
+
+సో ఇన్ మై యూస్ కేస్, ఐ హాడ్ ఆన్ ఎక్స్ట్రా కస్టమ్ ఏజెంట్. ఈవెన్ దట్ ఇస్ పాసిబుల్ ఇన్ ద బూట్ స్ట్రాప్. యు కెన్ సే, ఐ వాంట్ టు యాడ్ వన్ మోర్ ఏజెంట్, అండ్ ఇట్ డస్ దిస్ వన్. సో ఇట్ క్రియేట్స్ దట్ ఏజెంట్ ఆల్సో. సో బేసికల్లీ, అడాస్ ఇస్ ఆన్ బూట్ స్ట్రాప్ ఏజెంట్.
+
+00:20:23 - 00:20:51 Unknown Speaker:
+
+ఇట్ క్రియేట్స్ ఏజెంట్స్ అండ్ సం లిస్ట్ ఆఫ్ ఏజెంట్స్ అండ్ ఆల్సో కస్టమ్ ఏజెంట్స్. యు కెన్ క్రియేట్ కస్టమ్ ఏజెంట్స్. సో ఐ విల్ టెల్ యు, ఐ మీన్, వాట్ ఇస్ ద అడ్వాంటేజెస్ ఆఫ్ అడ్వాంటేజ్ ఆఫ్ హావింగ్ ఏ ఏజెంట్ ఇన్స్టెడ్ ఆఫ్ గివింగ్ ఇట్ త్రూ కో పైలట్. గిట్ హబ్ కో పైలట్ ప్రాంప్ట్స్ యు కెన్ గివ్, అండ్ యు కెన్ డూ దట్ అస్ వెల్. బట్ ఇఫ్ ఐ డోంట్ డూ దట్ త్రూ దిస్ వన్, ఐ హావ్ టు ప్రొవైడ్ ద కాంటెక్స్ట్ టు ద ఏజెంట్ వెన్ ఐ యామ్ రైటింగ్ సంథింగ్ అండ్ గివ్ దట్ టు యు.
+
+00:20:52 - 00:21:06 Unknown Speaker:
+
+ఇట్ హాస్ టు గో అండ్ అండర్స్టాండ్ వాట్ ఇస్ దేర్ నౌ అండ్ క్రియేట్ ఏ కాంటెక్స్ట్ అవుట్ ఆఫ్ ఇట్ అండ్ దెన్ జనరేట్ ద కోడ్. సో వేర్ యాస్ దిస్ వన్, ఇట్ క్రియేట్స్ మెమరీస్ ఫర్ ఈచ్ ఏజెంట్. ఇట్ కమ్స్ అప్ విత్ ఏ మెమరీస్. ఓకే? లెట్ మీ.
+
+00:21:07 - 00:21:24 Unknown Speaker:
+
+సో. ఏ పవన్, లైక్ ఇన్ ద ఇంట్రెస్ట్ ఆఫ్ టైం, యా, ఐ థింక్ వి లైక్ అండర్స్టాండ్ ద బెనిఫిట్స్ అండ్ లైక్ లెట్స్ గెట్ ఇంటు స్పెసిఫిక్స్. ఓకే? సో ఓకే, ఇట్ వాట్ హాపెన్స్ ఇస్, ఇట్ ఫస్ట్ క్రియేట్స్ 16 ఏజెంట్స్. ఓకే?
+
+00:21:25 - 00:21:45 Unknown Speaker:
+
+16, 13 టు 16 ఏజెంట్స్. సో ప్యూర్ అనలిటికల్ ఏజెంట్స్, దే ఆర్, దే ఆర్ నాట్ జనరేటింగ్ ఎనీ కోడ్, బట్ దే మేనేజెస్ ద టాస్క్ ఎండ్ టు ఎండ్. సో ఆర్కెస్ట్రేటర్ ఇస్ ద కీ ఏజెంట్ దట్ కోఆర్డినేట్స్ విత్ ద డెవలప్మెంట్ ఆఫ్ బ్యాక్ ఎండ్ డెవలప్మెంట్, ఫ్రంట్ ఎండ్ డెవలప్మెంట్. ఓకే? అండ్ ఇఫ్ దేర్ ఇస్ ఎనీ ఇన్ఫ్రాస్ట్రక్చర్ రిలేటెడ్, ఇట్ విల్ కోఆర్డినేట్ విత్ ఆల్ దోస్ ఏజెంట్స్.
+
+00:21:46 - 00:22:11 Unknown Speaker:
+
+సో ఈచ్ వన్ హాస్ ఇట్స్ ఓన్ యూసేజ్. బ్యాక్ ఎండ్ రౌట్స్ గెట్స్, ఇట్ క్రియేట్స్ ద రౌట్స్. బ్యాక్ ఎండ్ ఏజెంట్ రౌట్స్, ఏజెంట్ విల్ క్రియేట్ రౌట్స్ రిలేటెడ్ కోడ్ అండ్ సర్వీసెస్, మిడిల్ వే స్కీమా. ఆల్ దోస్, ఈచ్ వన్ విల్ డు ఇట్స్ ఓన్ జాబ్ విత్ రెస్పెక్ట్ టు బ్యాక్ ఎండ్ ఏజెంట్స్ అండ్ సిమిలర్లీ ఫ్రంట్ ఎండ్ అండ్ ఇన్ఫ్రాస్ట్రక్చర్. యాస్, వి నో, లైక్ సిఎస్ఐడి కంటైనరైజేషన్, ఎనీ కీ వాల్యూస్ స్టోర్.
+
+00:22:12 - 00:22:33 Unknown Speaker:
+
+ఐ మీన్, కీ స్టోర్ దట్ వి ఆర్ డూయింగ్, ఐఏసి వి యూస్ ఇట్. సో ఆర్కెస్ట్రేటర్ ఇస్ ద కీ వన్ దట్ కోఆర్డినేట్స్ విత్ ఇఫ్ ఏ టాస్క్ ఇస్ గివెన్ టు ఇట్, ఇట్ కోఆర్డినేట్స్ విత్ ఆల్ దిస్ ఏజెంట్స్ దట్ ఆర్ దేర్. సో వన్స్ కోడ్ ఇస్ జనరేటెడ్, ఇట్ రివ్యూస్ దట్ బికాజ్ దేర్ ఇస్ ఏ క్వాలిటీ గేట్. సో ఇట్ మేక్ షూర్ దట్ ఇట్ ఇస్ ఫాలోయింగ్ ఆల్ ద స్టాండర్డ్స్ దట్ ఆర్ రిక్వైర్డ్. యా, యా, యా, గాట్ ఇట్.
+
+00:22:33 - 00:22:44 Unknown Speaker:
+
+ఐ ఐ ఐ అండర్స్టాండ్ వాట్ యు ఆర్ ట్రయింగ్ టు సే హియర్. ఆ సో లెట్స్ మూవ్ ఫార్వర్డ్. యా, సో దోస్ ఆర్ ద ఏజెంట్స్. అండ్ దెన్ వేవ్ వేస్. ఓకే?
+
+00:22:44 - 00:22:59 Unknown Speaker:
+
+వన్స్ ఏజెంట్స్ ఆర్ క్రియేటెడ్, వెన్ వి ఆస్క్ ఆర్కెస్ట్రేటర్ టు డు ద డెవలప్మెంట్, ఇట్ డస్ ఇట్ ఇన్ మల్టిపుల్ వేవ్స్. సో ఐ డిఫైన్డ్ ఫైవ్ డిఫరెంట్ వేవ్స్. సో వన్ వేవ్, బేసికల్లీ, ఇట్ క్రియేట్స్ ద స్కెలిటన్. ఓకే? ఫౌండేషన్.
+
+00:23:00 - 00:23:26 Unknown Speaker:
+
+లైక్, ఇఫ్ యు టేక్ కన్స్ట్రక్షన్ అనాలజీ, యు విల్ హావ్ ఏ ఫౌండేషన్ అండ్ ఫ్రేమింగ్. అండ్ దెన్ ద ఇంటర్నల్ కనెక్టివిటీ బిట్వీన్ బ్యాక్ ఎండ్ అండ్ ఫ్రంట్ ఎండ్ అండ్ ద ఇంటీరియర్ డిజైన్. దట్స్ వేర్ ద ఫ్రంట్ ఎండ్ పేజెస్ గెట్స్ డెవలప్డ్ కంప్లీట్లీ. అండ్ ఫైనల్లీ, ఇట్ డస్ ద టెస్టింగ్. టెస్ట్ కేసెస్ గెట్స్ ఇన్వర్క్డ్ అండ్ ఇట్ రైట్స్ ద టెస్టింగ్ టెస్ట్ కేసెస్ అండ్ వెరిఫైస్ ఇఫ్ ఎవ్రీథింగ్ ఇస్ డెవలప్డ్ అకార్డ్ విత్ రెస్పెక్ట్ టు ద ఇన్పుట్ గివెన్ ఆర్ నాట్.
+
+00:23:26 - 00:23:33 Unknown Speaker:
+
+సో ఇట్ డస్ ఇట్ ఇన్ ఎనీ యూస్ కేస్ యు ప్రొవైడ్. ఇట్ డస్ దిస్ ఇన్ ఫైవ్ డిఫరెంట్ ఫేజెస్ అండ్ దెన్ ప్రొవైడ్ ఆన్ అవుట్పుట్.
+
+00:23:35 - 00:23:50 Unknown Speaker:
+
+ఓకే? సో యాస్, ఐ సెడ్, ఇట్ హాస్ ఏజెంట్స్. ఏజెంట్స్ విల్ హావ్, విల్ బి ప్రొవైడెడ్ విత్ సం ఇన్ఫర్మేషన్. ఓకే? సో ఆ ఐ కెన్ షో ద కోడ్ ఇట్ సెల్ఫ్, ఇఫ్ దట్ ఇస్ ఓకే.
+
+00:23:58 - 00:24:22 Unknown Speaker:
+
+సో పవన్, ఇఫ్ యు, ఇఫ్ యు హావ్ దట్ సెటప్, లైక్ ద స్టెప్ బై స్టెప్ సెటప్, టాక్ త్రూ దట్ అండ్ దెన్ గెట్ టు దిస్ ప్రెసెంటేషన్ వేర్ రిక్వైర్డ్. లైక్, ఫర్ ఎగ్జాంపుల్, ఇఫ్ యు ఆర్ ద లెసన్స్ డాట్ ఎండి అండ్ ద కాంటెక్స్ట్ డాట్ ఎండి, వాట్ ఎవర్ యు ఆర్ షోయింగ్ ఆన్ దట్ స్క్రీన్, రైట్? వేర్ ఇస్ దట్ క్రియేటెడ్? యా, యా. సో ఐ థింక్, పవన్, ఐ సీ వాట్ యు ఆర్ కమింగ్.
+
+00:24:22 - 00:24:47 Unknown Speaker:
+
+ఐ థింక్, బేసికల్లీ, యు ఆర్ ట్రయింగ్ టు బిల్డ్ ఆన్ ఏఐ డిఎల్సి, రైట్, ఇన్ దిస్ ప్రాసెస్. యా, ద క్వశ్చన్ విచ్ ఐ హావ్ ఇస్, దిస్ ఏఐ డిఎల్సి ఇస్ బీయింగ్, ఇస్ దిస్ కాంటెక్స్ట్ స్పెసిఫిక్ ఆర్ ఇస్ దిస్ జనరిక్? సో వెన్ ఐ సే కాంటెక్స్ట్ స్పెసిఫిక్ అండ్ జనరిక్, ఐ సీ దేర్ ఆర్ లాట్ ఆఫ్ ఏఐ డిఎల్సి మోడల్స్ ఆర్ ఫ్రేమ్ వర్క్స్ బీయింగ్ డిజైన్డ్ అండ్ డెవలప్డ్ బై డిఫరెంట్ టీమ్స్.
+
+00:24:48 - 00:25:07 Unknown Speaker:
+
+ఐ థింక్ వి హావ్ వన్ విచ్ ఇస్ ఆల్రెడీ బీయింగ్ డెమోడ్ అట్ ఆన్ ఎంటర్ప్రైజ్ లెవెల్. దెన్ వి హావ్ వన్ విచ్ ఇస్ బీయింగ్ డెవలప్డ్ బై బాస్కీస్ టీం అండ్ సో ఆన్ అండ్ సో ఫోర్త్. నౌ, హౌ హాస్ దిస్ డిఫరెంట్ టు ఆల్ దోస్ మోడల్స్ విచ్ యు ఆర్ టాకింగ్ అబౌట్? ఓకే? సో ఫస్ట్ అఫ్ ఆల్, దీస్ ఆర్ నాట్ కస్టమ్ ఏజెంట్స్.
+
+00:25:07 - 00:25:32 Unknown Speaker:
+
+దీస్ ఆర్ జనరిక్ ఏజెంట్స్ దట్ ఆర్ క్రియేటెడ్. దీస్ ఆర్ జనరిక్ ఫర్ ఎనీ ఆఫ్ ద ప్రాజెక్ట్స్ ఇన్సైడ్ ద కంపెనీ. సో యు కెన్ కాన్ఫిగర్ ఇట్ ఫర్ యువర్ ప్రాజెక్ట్, ఎనీ ఆఫ్ ద ప్రాజెక్ట్స్. సో రైట్ నౌ, యా, సో దట్స్ వేర్ ఐ యామ్ కమింగ్ టు సో హౌ డిఫరెంట్ ఇస్ దిస్ టు ద ఏఐ మోడల్స్ ఆర్ ఏఐ డిఎల్సి ఫ్రేమ్ వర్క్స్ బీయింగ్ బిల్ట్ బై అదర్ టీమ్స్? ఆర్ ఇస్ దిస్ ఇన్ సినర్జీ టు దెమ్ ఆర్ ఇస్ దిస్ డిఫరెంట్ టు దెమ్?
+
+00:25:32 - 00:25:36 Unknown Speaker:
+
+వాట్ ఇస్ బీయింగ్ బిల్ట్? ఎగ్జాంపుల్, ఐ విల్ టెల్ యు.
+
+00:25:40 - 00:25:44 Unknown Speaker:
+
+ఓకే? ఐ డోంట్ నో ఇఫ్ యు గైస్ ఆర్ పార్ట్ ఆఫ్ ది టెక్ చాట్ టుడే.
+
+00:25:46 - 00:26:08 Unknown Speaker:
+
+నో, కిషోర్. సో ఐ నో దేర్ ఆర్ సం సిమిలర్ సెటప్స్. ఐ హావెంట్ గాట్ ఏ ఛాన్స్ టు గెట్ ఇంటు ది డీటెయిల్స్, బట్ ఐ కెన్ లైక్ టాక్ త్రూ ఇన్ టర్మ్స్ ఆఫ్ బిజినెస్ కేస్, రైట్? సో వాట్ దిస్ ఇస్ డూయింగ్ ఇస్, యు ఆల్రెడీ హావ్ ఏ రెపో. లెట్స్ సే, లెట్స్ సే యాక్చువల్ హబ్, రైట్?
+
+00:26:08 - 00:26:22 Unknown Speaker:
+
+సో ఇట్ ఇస్ ఫస్ట్ స్కానింగ్ త్రూ ఆల్ దట్ రెపో అండ్ క్రియేటింగ్ ద కాంటెక్స్ట్, ద డెవలప్మెంట్ పాటర్న్స్, ద లాజిక్, ఎవ్రీథింగ్ ఫ్రమ్ ఎగ్జిస్టింగ్ రెపో. ఓకే? సో ఇట్స్ అండర్స్టూడ్. గుడ్ పాయింట్. దట్స్ వాట్ ఐ వాస్ ఆస్కింగ్.
+
+00:26:22 - 00:26:29 Unknown Speaker:
+
+సో దిస్ ఇస్ ఏ జనరిక్ సొల్యూషన్, బట్ కస్టమైజెస్ యువర్. కరెక్ట్.
+
+00:26:30 - 00:26:45 Unknown Speaker:
+
+యువర్ కస్టమైజెస్ ఆర్ సెట్స్ ద కాంటెక్స్ట్. రైట్? సో ఎర్లీ ఎన్ఫ్ సో దట్ ఇట్ కెన్ బి యూస్డ్. అండ్ దట్ కాంటెక్స్ట్ ఇస్ యూస్డ్ వెన్ ఎవర్ యు గో అహెడ్ అండ్ దెన్ డు ద డెవలప్మెంట్స్ అండ్ ప్రాంప్ట్స్ ఇట్. సో దట్ ఇట్ బిల్స్ దట్ గార్డ్రింగ్స్.
+
+00:26:45 - 00:27:00 Unknown Speaker:
+
+కరెక్ట్? ఇఫ్ యు సీ హియర్, రైట్? వన్స్ ఫస్ట్, ద ఇనిషియల్లీ, యు గివ్ దట్ ప్రాంప్ట్, దట్ అడాస్ సెటప్. నౌ, ఇట్ ఇస్ ఆస్కింగ్ లైక్, వాట్ డు యు వాంట్ టు డు? లైక్, వెదర్ యు వాంట్ ఏ ఫుల్ ఏజెంట్ టీం ఆర్ యు వాంట్ ఏ కస్టమ్ ఏజెంట్ టీం?
+
+00:27:00 - 00:27:09 Unknown Speaker:
+
+ఓకే? అండ్ దెన్ ఇట్ ఆస్క్ యు ఆన్ వాట్ రెపో. లైక్, దిస్. యా, మే బి గో త్రూ దోస్ 13 స్టెప్స్, పవన్. గైస్, ఐ నో దిస్.
+
+00:27:09 - 00:27:18 Unknown Speaker:
+
+ఐ యామ్ ఆసమ్, పవన్. దిస్ ఇస్ రియల్లీ గుడ్ లుకింగ్, రైట్? బికాజ్ ఐ డు అండర్స్టాండ్ వాట్ యు ఆర్ కమింగ్ టు అండ్ వేర్ ఐ వాంట్ టు గో త్రూ ఇన్ డీటెయిల్ ఆఫ్ దిస్ స్పెసిఫిక్లీ.
+
+00:27:20 - 00:27:36 Unknown Speaker:
+
+శ్రీ అండ్ పవన్, వేర్ ఐ వుడ్ లైక్ టు హావ్ అట్లీస్ట్ ఆన్ హాఫ్ ఆన్ అవర్ టు వన్ అవర్ సెషన్ విత్ అస్. మైట్ బి సెట్ అప్ సంథింగ్ ఫర్ టుమారో. యా, ఓకే? బికాజ్ ఐ సీ, దిస్ ఇస్ ఆన్ ఎక్సలెంట్ వర్క్, టు బి హానెస్ట్. ఐ సీ వాట్ యు ఆర్ డూయింగ్.
+
+00:27:37 - 00:27:46 Unknown Speaker:
+
+సో ఇస్ దిస్ ద ఫ్రేమ్ వర్క్ విచ్ వాస్ యూస్డ్ టు బిల్డ్ ద డివైస్ ఫ్రమ్? యా, ప్లీజ్. యా, ద స్క్రీన్ షాట్. యా, మే బి యు కెన్ షో దట్, పవన్. లైక్, యు హావ్ దట్ ఎగ్జాంపుల్ హ్యాండ్లీ, రైట్?
+
+00:27:46 - 00:27:49 Unknown Speaker:
+
+యా, సో పల్సియర్ పల్సిఐ.
+
+00:27:56 - 00:28:15 Unknown Speaker:
+
+సారీ, ఐ యామ్ జంపింగ్ త్రూ, బట్ ఐ హావ్ గాట్ ద కాంటెక్స్ట్ వాట్ యు ఆర్ కమింగ్ వైస్. అండ్ దిస్ ఇస్ ఆన్ ఎక్సలెంట్ వర్క్, టు బి హానెస్ట్. యా, థాంక్యూ. సో దిస్ ఇస్ ద పల్సిఐ టాబ్ దట్ వి హావ్ ఇన్ యాక్చువల్ హబ్. సో యూసింగ్ ద ఫిగ్మా, ఐ క్రియేటెడ్ ఏ కస్టమ్ ఏజెంట్ దట్ రీడ్స్ ద కోడ్ ఫ్రమ్ ద ఫిగ్మా.
+
+00:28:15 - 00:28:33 Unknown Speaker:
+
+అండ్ దట్ వుడ్ బి ఫెడ్ టు ద వేవ్ ఫ్లో. ఐ వాస్ షోయింగ్ దట్ వేవ్ ఫ్లో, రైట్? దట్ వుడ్ బి ఫెడ్ టు దట్. అండ్ ఇట్ డస్ ద ఎండ్ టు ఎండ్ డెవలప్మెంట్. అండ్ వన్స్ ఇట్ ఇస్ డెవలప్డ్, ఇట్ విల్ ఆల్సో రీవెరిఫై ఇఫ్ ఇట్ హాస్ క్రియేటెడ్ ఇన్ అకార్డెన్స్ టు ద వాట్ వాస్ గివెన్ అస్ ఆన్ ఇన్పుట్ టు ద అస్ ఆన్ ఫిగ్మా కోడ్.
+
+00:28:34 - 00:28:48 Unknown Speaker:
+
+సో ఇట్ వెరిఫైస్ అండ్ ఇట్ జనరేటెడ్ ఇట్. ఆ, ఇట్ ఫెచ్. సో స్క్రిప్ట్ ఐ హావ్ రిటన్ టు ఫెచ్ ద డేటా. ఆఫ్టర్ దట్, ఇట్ ఇట్ టుక్ ద డేటా అండ్ ఫెడ్ త్రూ దట్ ఏజెంటిక్ ప్రాసెస్. అండ్ ఇట్ జనరేటెడ్ దిస్ అవుట్పుట్.
+
+00:28:49 - 00:29:11 Unknown Speaker:
+
+సో ఇట్ జనరేటెడ్ ద యుఐ. యా, కంప్లీట్ యుఐ. సో ఆబ్వియస్లీ, దిస్ వుడ్, ఇఫ్ దిస్ వుడ్ నీడ్ ఇన్ఫర్మేషన్ టు గో అండ్ కమ్యూనికేట్ ఇట్ డేటాబేస్ ఆర్ క్రియేట్ ఏ న్యూ డేటాబేస్ కాలమ్స్ ఆర్ అప్డేట్ ఏ న్యూ కాలమ్, ఎక్సెట్రా, ఎక్సెట్రా. బ్యాక్ ఎండ్ ఇస్ ఆల్సో దేర్, బట్ వి హావ్ నాట్ ప్రొవైడెడ్ ఎనీ అదర్ స్కీమా టు ఇట్. యా, మే బి గోర్ దెన్ యు వర్ టాకింగ్ అబౌట్ దిస్.
+
+00:29:11 - 00:29:24 Unknown Speaker:
+
+సో వాట్ వి డిడ్, కిషోర్, లైక్, వి టు టు టెస్ట్ దిస్. వి యూస్ దిస్ సెటప్ ఆన్ ది ఆర్ఆర్ఎఫ్. ఓకే? అండ్ గోర్ దెన్ హాస్ ఆన్ ఎగ్జాంపుల్ ఫర్ ద రియల్, లైక్, ద రియల్ యూస్ కేస్. వి హాడ్ వన్ ఆఫ్ ది స్మాల్ యూసర్ స్టోరీస్.
+
+00:29:24 - 00:29:43 Unknown Speaker:
+
+హి ట్రైడ్ ఇట్ విత్ దట్. మే బి యు కెన్ షేర్ దట్, గోర్ దెన్. యా, సో వై ఐ యామ్ షేరింగ్ ఇట్? ఐ థింక్ మై క్వశ్చన్ వుడ్ బి, హౌ డిడ్ వి ఇన్పుట్ దట్ ఇన్ రిక్వైర్మెంట్స్ హియర్? ఇంటూ బికాజ్ దిస్ ఫిగ్మా అలోన్ విల్ బి ఫ్రమ్ ఏ యుఐ పర్స్పెక్టివ్.
+
+00:29:43 - 00:29:47 Unknown Speaker:
+
+బట్ వాట్ కాలమ్, వాట్ డేటా కాలమ్స్, విచ్ టేబుల్స్? నో.
+
+00:29:48 - 00:29:59 Unknown Speaker:
+
+సో యా, గో అహెడ్. సారీ. ఇట్ డౌన్లోడ్స్ దట్ కోడ్ అస్ ఏ ఫిగ్మా స్క్రీన్ అస్ ఏ కోడ్. ఓకే? ఆ ఫిగ్మా బిహైండ్ ది సీన్స్, ఇట్స్ అగైన్ ఏ కోడ్, రైట్?
+
+00:29:59 - 00:30:08 Unknown Speaker:
+
+ఫిగ్మా అస్ వెల్. సో ఇట్ డౌన్లోడ్స్ దట్ కోడ్. అండ్ దట్ విల్ బి యూస్డ్ టు జనరేట్ ద. ఆ, ఐ మీన్, ఇట్స్ నాట్ ఏజెంటిక్. దట్ ఇస్ బేసిక్ ఏజెంట్ ఇట్ సెల్ఫ్ విల్ డు ఇట్ రైట్ నౌ.
+
+00:30:08 - 00:30:31 Unknown Speaker:
+
+ఇఫ్ యు ప్రొవైడ్ ద ఫిగ్మా కోడ్ టు ఇట్, ఇట్ విల్ క్రియేట్ ఏ రియాక్ట్ కోడ్ అవుట్ ఆఫ్ ఇట్. ఇఫ్ వి ప్రొవైడ్ ప్రాపర్ యాక్షన్స్ ఇన్సైడ్ ద కోడ్, ఆబ్వియస్లీ, ఆ వెన్ ద ఫిగ్మా స్క్రీన్స్ ఆర్ బీయింగ్ క్రియేటెడ్ బై ద డెవలపర్స్, దే విల్ మేక్ షూర్ దోస్ యాక్షన్స్ ఆర్ ప్రెసెంట్ దేర్. అండ్ సేమ్ యాక్షన్స్, ఇట్ విల్ పర్ఫార్మ్ ఇట్ హియర్ అస్ వెల్. ఇఫ్ దే హావ్ డన్ ఇట్ 100%, ఇట్ విల్ డు ద డాక్యుమెంట్. యా, ఓకే.
+
+00:30:33 - 00:30:43 Unknown Speaker:
+
+యా, సో ఐ టుక్ ఏ లెట్ మీ షేర్ మై స్క్రీన్. మై స్క్రీన్ ఇస్ కమింగ్ అప్ రైట్, కిషోర్? యా, యా, యా. యా, యా, యా. సో దిస్ ఇస్ ఏ స్మాల్ ఎగ్జాంపుల్.
+
+00:30:43 - 00:31:11 Unknown Speaker:
+
+లెట్ మీ షేర్ మై స్క్రీన్ ఫస్ట్. లైక్, ద సో వి హావ్ ఏ స్మాల్, ఆ లైక్, రిక్వైర్మెంట్ వేర్ ఇనిషియల్లీ ఇన్ ఏ డ్రాప్ డౌన్, వి హావ్ ఓన్లీ వన్ వాల్యూ దట్ కెన్ బి సెలెక్టెడ్. ద రిక్వైర్మెంట్ ఇస్ లైక్, వి హావ్ టు మేక్ ఇట్ మల్టిపుల్ సెలెక్షన్స్ ఆన్ దట్ చెక్ డ్రాప్ డౌన్. సో దిస్ ఇస్ ద ఆర్కెస్ట్రేటర్ ఇస్ ద ఏజెంట్, లైక్, విచ్ పవన్ హాస్ ప్రీవియస్లీ మెన్షన్, రైట్? యా, సో దిస్ ఇస్ ద రిక్వైర్మెంట్, విచ్ ఐ హాడ్ గివెన్ టు ఇట్.
+
+00:31:11 - 00:31:38 Unknown Speaker:
+
+ఇట్ కెన్ బి మచ్ మోర్ ఇన్ డీటెయిల్, బట్ యాస్, ఏ శాంపిల్ ఐ హాడ్ గివెన్ దిస్ వన్. దట్ యాస్, ఏ యూసర్, ఐ వాంట్ టు సెలెక్ట్ మల్టిపుల్ వాల్యూస్ ఫర్ దిస్ ఇస్ ద ఫీల్డ్ నేమ్ అండ్ స్క్రీన్ నేమ్ అండ్ యాక్సెప్టెన్స్ క్రైటీరియా ఐ హాడ్ గివెన్ అండ్ టెక్నికల్ నోట్స్ లైక్ మేక్ చేంజెస్ ఇన్ యుఐ కోడ్. సో దిస్ వాస్ ద బ్రీఫ్ డిస్క్రిప్షన్ ఐ హాడ్ గివెన్ టు ద ఏజెంట్. ఉమ్, అండ్ ఇట్ హాస్ క్రియేటెడ్ దిస్ టు డు లిస్ట్. లైక్, ఫర్ ఎగ్జాంపుల్, ఆ ఫస్ట్ యుఐ అగైన్ యాస్ ఇన్ ద సేమ్ లైన్స్, లైక్ యుఐ బ్యాక్ ఎండ్, దెన్ అప్డేట్ యుఐ.
+
+00:31:38 - 00:32:02 Unknown Speaker:
+
+సో దీస్ ఆర్ ద వన్. అండ్ ఇట్ హాస్ గివెన్ ఇట్స్ అనాలసిస్ హియర్, లైక్ బిఫోర్ హ్యాండ్. ఆ, సో ఫర్ ఎగ్జాంపుల్, వాట్ ఎవర్ యుఐ చేంజెస్ ఆర్ నీడెడ్, ఆ దోస్ థింగ్స్. అండ్ బ్యాక్ ఎండ్ చేంజెస్, లైక్ మే బి అట్ ఎంటిటీ లెవెల్, స్టోర్ యాస్ కామా సపరేటెడ్ వాల్యూస్. ఉమ్, దెన్ అగైన్, ఇట్ హాస్ మే బి యాస్, ఇట్ ఇస్ నాట్ దట్ మచ్ బిగ్గర్ ఎక్విప్మెంట్, బట్ ఇట్ హాస్ అండర్ గాన్, లైక్ టిల్ ద డిబి లెవెల్.
+
+00:32:03 - 00:32:19 Unknown Speaker:
+
+ఆహా, అండ్ ఇట్ హాస్ గివెన్ ద చేంజెస్ సమ్మరీ. ఆహా, లైక్ వాట్ ఎవర్ బ్యాక్ ఎండ్ చేంజెస్ ఆర్ డన్ అండ్ డిజైన్ డెసిషన్స్, ఇట్ హాస్ గివెన్, లైక్ మాంగో డిబి. సో వి యూస్ మాంగో డిబి. అండ్ దేర్ ఇస్ వన్ ఆ డౌన్ స్ట్రీమ్ ఏపీ, లైక్ విచ్ విచ్ ఇస్ ఇంపాక్టెడ్. సో ఇట్ హాస్ కార్డ్ దట్ వన్.
+
+00:32:19 - 00:32:28 Unknown Speaker:
+
+దట్స్ దేర్ ఇస్ సిఎంటి ఏపీ, విచ్ నీడ్స్ దిస్ బ్యాక్ వర్డ్ కంపాటిబిలిటీ. సో దీస్ వర్ ద పాయింట్స్, విచ్ ఇట్ హాస్ గివెన్. అండ్ మే బి ఇన్ ద స్క్రీన్, ఐ విల్ షో యు.
+
+00:32:31 - 00:32:54 Unknown Speaker:
+
+సో ఇనిషియల్లీ, బిట్ ద ప్లానింగ్, ఇట్ గివ్ యు ద అవుట్పుట్, లైక్ ప్లాన్ డాట్ ఎండ్. అండ్ ఫ్రమ్ దట్ ప్లాన్ డాట్ ఎండ్, ఇట్ ఆస్క్ యు టు టేక్ డిజైన్ డిసిషన్స్. అండ్ బేస్డ్ ఆన్ ద డిజైన్ డిసిషన్స్, ఇట్ హెల్ప్స్ యు. సో దేర్ ఇస్ హ్యూమన్ లుక్ టు వెరిఫై ఆల్ దిస్ ఇండికేటెడ్ స్టెప్స్ టు సే, ఓకే, యామ్ ఐ గుడ్ టు ప్రొసీడ్ నెక్స్ట్ స్టెప్, నెక్స్ట్ స్టెప్, నెక్స్ట్ స్టెప్ ఇన్ ద వర్క్ ఫ్లో? ఆ యా, ఇట్ లైక్, ఇట్ ఆస్క్, లైక్ కీప్, లైక్ దట్ వన్.
+
+00:32:54 - 00:33:11 Unknown Speaker:
+
+సో నాట్ లైక్ స్టెప్ బై స్టెప్. సో ఇట్ ఇట్ జనరేట్స్ ఇన్ ఏ సీక్వెన్స్, లైక్ హియర్, ఈచ్ స్టెప్. సో సంవేర్, ఇట్ జనరేట్స్ ఏ సీక్వెన్స్. లెట్స్ సే, ఇట్ డస్ ఇట్ కీప్ ఎగ్జిక్యూటింగ్, ఆర్ డస్ ఇట్ ప్రాంప్ట్ యూసర్ టు అండ్ ఇస్ టు కన్ఫర్మ్ దట్, ఓకే, ఐ యామ్ గుడ్ విత్ ద చేంజెస్ ఐ హావ్ రివ్యూడ్. ఇట్ లుక్స్ గుడ్.
+
+00:33:11 - 00:33:12 Unknown Speaker:
+
+కెన్ ఐ ప్రొసీడ్ టు స్టెప్ టు?
+
+00:33:14 - 00:33:30 Unknown Speaker:
+
+ఆ సో నో, నో, కిషోర్, ఐ థింక్ లైక్ ఇట్ ఇస్ ఇన్ ఏ సీక్వెన్స్. ఇట్ గోస్ లైక్ దిస్. అండ్ అట్ ద ఎండ్, లైక్ ఇఫ్ వి ఆర్ నాట్ ఓకే విత్ దిస్ వన్, దెన్ అగైన్, వి కెన్ రీప్రాంప్ట్, లైక్ బేస్డ్ ఆన్. సో వి ఆర్ రీస్టార్టింగ్, రైట్? కెన్ వి ఇన్స్టెడ్ ఆఫ్ దట్, ఇస్ దట్ ఏ పాసిబిలిటీ ఇన్ ద వర్క్ ఫ్లో యాక్షన్స్?
+
+00:33:31 - 00:33:42 Unknown Speaker:
+
+దట్ బికాజ్ నాట్ ఆల్ ది టైమ్స్. ఫర్ ఎగ్జాంపుల్, ఇట్ ఇస్ సేయింగ్, ఓకే, ఐ విల్ క్రియేట్ ఏ కామా సెపరేటెడ్ వాల్యూ, రైట్? ఇన్స్టెడ్ ఆఫ్ దట్, ఇఫ్ ఐ డోంట్ వాంట్ ఏ కామా సెపరేటెడ్ వాల్యూ, బట్ ఐ వాంట్ దట్ టు బి మ్యూచువల్ గోస్.
+
+00:33:44 - 00:33:57 Unknown Speaker:
+
+ఓకే, రైట్? బికాజ్ ఎవరీ టైం, ఇట్ కెనాట్ బి ద సేమ్. సో లిస్ట్, రైట్? ఇట్ కెన్ డిఫర్, ఆర్ ఇట్ కెన్ ప్రాంప్ట్ యు ఇన్ ఏ వే, వేర్ యాస్ ఐ డోంట్. ఐ వాంట్ లైక్ టు డూ ఇట్ ఇన్ ఏ డిఫరెంట్ వే, ఆర్ మోర్ ఆప్టిమైజ్డ్ వే, రైట్?
+
+00:33:57 - 00:34:19 Unknown Speaker:
+
+కరెక్ట్. పవన్, డజంట్ ఇట్, డజంట్ ఇట్, లైక్ అట్ ఎండ్ ఆఫ్ ఈచ్ వే, డజంట్ ఇట్ ఆస్క్ ఫర్ హ్యూమన్ ఇంటర్వెన్షన్? సో మే బి దట్ డిఫరెన్స్ ఇస్, ఇట్ కీప్స్ ద కాంటెక్స్ట్ ఆఫ్ ది ఎగ్జిస్టింగ్ ప్రాజెక్ట్. సో ఇఫ్ యు సీ ద ప్రాంప్ట్ గివెన్ బై గోర్ధన్, ఇస్ వెరీ స్మాల్. ఓకే, ఇట్ హాస్, హి హాస్ నాట్ ప్రొవైడెడ్ ద పేజ్ డీటెయిల్స్, ఎనీ ఆఫ్ దోస్ డీటెయిల్స్.
+
+00:34:19 - 00:34:44 Unknown Speaker:
+
+బట్ ఇట్ అండర్స్టూడ్ దట్, ఓకే, ఫ్రమ్ ద కాంపోనెంట్స్, యుఐ కాంపోనెంట్స్, వాట్ ఆర్ ద కాంపోనెంట్స్ ప్రెసెంట్స్ ఇన్సైడ్ ద అప్లికేషన్. ఇట్ క్రియేటెడ్ ఏ కాంటెక్స్ట్ ఎండి ఫైల్స్, రైట్? ఫర్ ద వెన్ ఇట్ ఇస్ క్రియేటింగ్ ద ఏజెంటిక్ ఫ్లో, దోస్ ఫైల్స్. దట్ ఇస్ గ్రేట్ అండర్స్టాండ్. బట్ కిషోర్ పాయింట్ ఇస్ వాలిడ్, దట్ ఇట్ షుడ్ గివ్ ప్రొవైడ్ ద ప్లాన్ బిఫోర్, దెన్ అప్రూవర్ అప్డేట్ ఇట్.
+
+00:34:44 - 00:35:01 Unknown Speaker:
+
+ఓకే, అండ్ దెన్ ఇట్ షుడ్ ప్రొసీడ్. ఎక్సలెంట్. బట్ దిస్ ఇస్ ఏ గ్రేట్ స్టార్ట్, వినోద్ గారు. ఐ థింక్, ఆ ఇఫ్ వి ఆల్రెడీ హావ్ దిస్, ఐ యామ్ నాట్ షూర్ టు బి రియల్లీ ఇంప్రూవ్డ్, శ్రీకాంత్, రైట్? ఆ బికాజ్ దిస్ ఇస్ వాట్ వి వాంట్ టు అచీవ్ అస్ పార్ట్ ఆఫ్ ది ప్రాసెస్.
+
+00:35:01 - 00:35:25 Unknown Speaker:
+
+అండ్ వి వాట్ వి వాంట్ టు డు ఇస్, వి వాంట్ టు మూవ్, ఇంప్రోవైజ్ దిస్ మోర్ అండ్ మోర్, సో దట్ ఇట్ గెట్స్ అడాప్టెడ్. ఆర్ ఆర్, ఇట్ షుడ్ బికమ్, లైక్, వాట్ ఆర్ ది ఏజెంట్స్, విచ్ వి ఆర్ జనరేటింగ్? దే షుడ్ గెట్, లెట్స్ సే, ఫర్ ఆర్ఆర్ఎఫ్, విచ్ వి జనరేటెడ్, ఆల్ ది ఏజెంట్స్, విచ్ వి గాట్ జనరేటెడ్, దే షుడ్ గెట్ ఆటో చెక్ ఇన్. బేసికల్లీ, నెక్స్ట్ టైం, ఐ డోంట్ హావ్ టు క్రియేట్ దిస్ వే. ఏజెంట్స్, దోస్ ఏజెంట్స్ షుడ్ బి అవైలబుల్.
+
+00:35:26 - 00:35:47 Unknown Speaker:
+
+యా, యా, ఇట్స్ వన్ టైం ప్రాసెస్. ఇట్స్ ఏ వన్ టైం, ఇట్స్ ఏ వన్ టైం ప్రాసెస్, విచ్ యు డు ఫర్ ఎగ్జిక్యూటింగ్. ఐ థింక్, ది సెకండ్ ఆస్పెక్ట్, విచ్ ఐ నో యు పింగ్ మీ ఆల్రెడీ, ఇఫ్ ఐ యామ్ కరెక్ట్, ఇస్, వి ఆర్ మోర్. దిస్ ఇస్ వాటర్ ఫాల్ మోడల్, వేర్ ఐ డు ఏ ప్లాన్, డెవలప్, డిజైన్, టెస్ట్. కెన్ వి మూవ్ టు ఏ టిడి మోడల్, వేర్ ఐ డు ఏ ప్లాన్, ఐ క్రియేట్ టెస్ట్ కేసెస్, అండ్ దెన్ ప్రొసీడ్ ఆన్ డెవలప్మెంట్?
+
+00:35:51 - 00:36:13 Unknown Speaker:
+
+యా, ద పవన్, దట్ ఇస్ సంథింగ్ వి డిస్కస్, దట్ వి నీడ్ టు ఎక్స్ప్లోర్ ఆన్ టిడి, లైక్ టిడి, ఆల్సో ద ఆటోమేషన్ టెస్ట్, టెస్టింగ్, అండ్ ఆల్ దోస్ ఏరియాస్. యా, యా, ఓకే, షూర్, షూర్. యా, యా, ఐ విల్ ఫోకస్ ఆన్ ఇట్. బట్ దిస్ ఇస్ రియల్లీ గ్రేట్ టీమ్. ఐ రియల్లీ అప్రిషియేట్ దిస్, వాట్ యు గైస్ హావ్ డన్.
+
+00:36:14 - 00:36:34 Unknown Speaker:
+
+అండ్ దిస్ ఇస్ సంథింగ్, విచ్ విల్ గాట్ సంబడీ ఇన్ ద సేపియన్ టీమ్ టు హెల్ప్ అస్ బిల్డ్ దిస్ ఏజెంట్స్ అండ్ స్పెసిఫిక్. సో వాట్ ఐ వుడ్ లైక్ టు డు అని దినక్, సారీ, పవన్, గోర్ధన్, శ్రీ, నెక్స్ట్ కాల్ వెన్ వి సెట్ ఇట్ అప్, ఐ వుడ్ లైక్ టు హావ్ ఏ డీటెయిల్ కాల్ ఫర్ వన్ అవర్.
+
+00:36:35 - 00:36:59 Unknown Speaker:
+
+ఇఫ్ వాట్ ఐ వుడ్ ఆల్సో లైక్ టు డు ఇస్, ఐ వుడ్ లైక్ టు ఇన్వైట్ శ్రీ, రితు, మదన్, రామ్, అండ్ రాజన్ ఇంటు ద కాన్వర్సేషన్. ఓకే, ఓకే. ద రీసన్ ఇస్, ఐ సీ దిస్ అస్ ఏ హ్యూజ్ పొటెన్షియల్ టు గెట్ ప్లగ్డ్ ఇంటు ద సిస్టం ఆఫ్ ఆల్ ది టీమ్స్, వేర్ దే కెన్ స్టార్ట్ యూసింగ్ దిస్ ప్రెసెంట్ ఫార్వర్డ్.
+
+00:36:59 - 00:37:25 Unknown Speaker:
+
+ఐ థింక్ వాట్ ఎవర్ యు హావ్ బిల్ట్ ఇస్ ఏ ఇమీడియట్ ఫ్రేమ్ వర్క్, విచ్ కెన్ బి జస్ట్ ప్లగ్డ్ ఇంటు ఎనీ ఆఫ్ ది సిస్టమ్స్ అండ్ స్టార్ట్ బిల్డింగ్ ది ఏజెంట్స్ అండ్ వర్క్ ఆన్. బట్ మీన్ వైల్, ఐ ఆల్సో వుడ్ లైక్ టు అండర్స్టాండ్ ఫ్రమ్ ద పర్స్పెక్టివ్ ఆఫ్ వాట్ ఆల్ రితు అండ్ టీమ్ హావ్ డన్ ఆన్ ద పొజిషన్ సైడ్, అండ్ సీ హౌ ఆల్ దోస్ స్పెసిఫిసిటీస్ కెన్ బి ఇంకాపరేటెడ్ ఇంటు దిస్, ఇంటు దిస్, వాట్ పవర్ హాస్ డెవలప్డ్.
+
+00:37:26 - 00:37:42 Unknown Speaker:
+
+యా, ఆన్ ద సిమిలర్ లైన్స్, దమీర్ హాస్ డన్ సంథింగ్ స్పెసిఫిక్ టు సిపిఎం. ఓకే, సో యా, దట్స్ వాట్ ఐ టోల్డ్ దట్ టు, లైక్, విల్ సీ వాట్ ఇస్ ద బెస్ట్ ఆఫ్. కెన్ యు గైస్ కోఆర్డినేట్? కెన్ యు గైస్ కోఆర్డినేట్? దమీర్, పవన్, గోర్ధన్, యు గైస్ కోఆర్డినేట్?
+
+00:37:42 - 00:38:05 Unknown Speaker:
+
+అండ్ కెన్ యు ఐడెంటిఫై వాట్ ఆల్ ద బెస్ట్ ఫ్రమ్ ఈచ్ ఆఫ్ యువర్ ఆస్పెక్ట్స్ ఇస్? అండ్ లెట్స్ హావ్ వన్ ఫ్రేమ్ వర్క్ బిల్ట్, రైట్? విచ్ కెన్ బి యూస్డ్. వన్ మోర్ ఆస్పెక్ట్ హియర్ ఇస్, వాట్ గోవర్ధన్ డిడ్ ఇస్, గోవర్ధన్ హాస్ ప్రొవైడెడ్ దట్ ఆర్కెస్ట్రేటర్ ఆన్ ఇన్పుట్, రైట్? సో వి నీడ్ టు సీ వెదర్ దట్ హాస్ టు బి ఏ టైప్ ఆన్ ఇన్పుట్, ఆర్ ఇస్ దిస్ ఆన్ ఇన్పుట్, విచ్ కెన్ బి పుల్డ్ ఫ్రమ్ ర్యాలీ ఆర్ ఏ జీరా.
+
+00:38:07 - 00:38:20 Unknown Speaker:
+
+దమీర్ హాస్, మే బి లెట్స్ ఫైవ్ టెన్ మినిట్స్, లెట్స్ వాట్ దమీర్ డిడ్. యా, గుడ్, లైక్, ఇట్స్ ఏ సిమిలర్, సిమిలర్ టు వాట్ యు ఆర్ ఆస్కింగ్. దమీర్, కెన్ యు లైక్? అబ్సల్యూట్లీ. థాంక్స్ ఫర్ ది ఛాన్స్ టు ప్రెసెంట్.
+
+00:38:21 - 00:38:45 Unknown Speaker:
+
+దిస్ ఇస్ ఏఐ డిఎల్సి ఆర్కెస్ట్రేటర్. ఇన్ గ్రీన్, ఇట్స్ వాట్ ఇస్ కరెంట్లీ ఇంప్లిమెంటెడ్ అండ్ యూస్డ్. అండ్ ఇన్ ఆరెంజ్, ఇట్స్ వాట్ ఇస్ ప్లాన్డ్ టు బి బిల్ట్. బేసికల్లీ, ఏఐఎల్ డిసి రిసైడ్స్ ఆన్ ఆర్కెస్ట్రేటర్. ఇట్ గెట్స్ ది ఇన్పుట్ ఫ్రమ్ ది, కరెంట్లీ ఫ్రమ్ ద ప్రాంప్ట్ ఆర్ ఫైల్స్.
+
+00:38:45 - 00:39:03 Unknown Speaker:
+
+బట్ ది గోల్ ఇస్ టు గెట్ ఇట్ ఫ్రమ్ ది రియల్ యూసర్ స్టోరీ. ద ఆర్కిటెక్చర్ ఇస్ బేస్డ్ ఆన్, ఆన్ అండ్ అరౌండ్ ద కోడ్ ఎక్స్. ఇట్స్ యూసింగ్ ది ఎం సిపి. ఇట్స్ గెట్టింగ్ టు కోడ్ ఎక్స్, సిఎల్ఐ. అండ్ బేసికల్లీ, దట్స్ ది ఓన్లీ డిపెండెన్సీ ఇట్ హాస్.
+
+00:39:03 - 00:39:27 Unknown Speaker:
+
+సో ఆన్ టాప్ ఆఫ్ దట్, ఏజెంట్స్ ఎస్ డికే ఆర్కిటెక్చర్ ఇస్ బీయింగ్ యూస్డ్. దిస్ ఆర్కిటెక్చర్ ఇస్ ఎగ్జాక్ట్లీ సేమ్ దట్ క్లౌడ్ కోడ్ ఇస్ యూసింగ్. సో బేసికల్లీ, దిస్ ఇస్ ప్రూవెన్ ఆర్కిటెక్చర్. సో ఫార్, వాట్ ఇట్ కంటైన్స్, ది ఆర్కెస్ట్రేటర్ ఇస్ ద, ఆర్ ప్రాజెక్ట్ మేనేజర్, ఏజెంట్ ఇస్ ద మెయిన్ ఏజెంట్ ఆర్కెస్ట్రేటింగ్ అదర్ ఏజెంట్స్.
+
+00:39:28 - 00:39:51 Unknown Speaker:
+
+సో కరెంట్లీ, వి హావ్ బ్యాక్ ఎండ్ డెవలపర్ ఏజెంట్, వాలిడిటీ రిమిడేషన్ ఏజెంట్, కోడ్ రివ్యూ ఏజెంట్, టెస్టర్ ఏజెంట్. దట్ ఇస్ పాసిబుల్ టు డెమో. హౌ ఇట్ వర్క్స్, లెట్ మీ జంప్ క్విక్లీ ఇంటు ది, ఇంటు ది కోడ్, ఇంటు ది కోడ్ ఎక్స్. బేసికల్లీ, ఎవ్రీథింగ్ ఇస్ బేస్డ్ అరౌండ్ ది స్కిల్స్.
+
+00:39:51 - 00:40:01 Unknown Speaker:
+
+అండ్ ఆల్ దోస్ స్కిల్స్, ఐ యూటిలైజ్ ఆసమ్ స్కిల్స్ అస్ ఏ బేస్ లైన్ టు ఫర్దర్ డెవలప్ అండ్ మేక్ స్కిల్స్ బెటర్.
+
+00:40:02 - 00:40:31 Unknown Speaker:
+
+హౌ ఇట్ వర్క్స్, బేసికల్లీ, లెట్ మీ డెమోస్ట్రేట్ ఆన్ కేస్, ఆన్ రిసాల్వింగ్ వర్నబిలిటీ, సెక్యూరిటీ వర్నబిలిటీస్. దే ఆర్ రిపోర్టెడ్ విత్ ఇన్ ద సిస్టం. ప్రీవియస్లీ, టు కవర్స్, సమ్ టైమ్స్ ఈవెన్ మోర్ టు రిసాల్వ్ ఆల్ ఆఫ్ దిస్. రైట్ నౌ, యు కెన్ రన్ ఏ కమాండ్ టు ఎంప్లాయ్, టు ఎంప్లాయ్ ద ప్రాజెక్ట్ మేనేజర్ దట్ విల్ ఆర్కెస్ట్రేట్ ఎవ్రీథింగ్. హోమ్, ఇట్స్ డన్.
+
+00:40:32 - 00:40:52 Unknown Speaker:
+
+సో అస్ యు గో, ఇట్ లీవ్స్ ఏ ట్రైల్, థింకింగ్ ట్రైల్. సో బేసికల్లీ, ఇట్ వెంట్ టు ది అజూర్, ఇడెంటిఫై ది ఆల్ వర్నబిలిటీస్. ఇట్ మేడ్ ఏ స్ట్రాటజీ. ఓకే, వర్నబిలిటీస్ డీటెయిల్ స్ట్రాటజీ ఫర్ ఈచ్ వన్.
+
+00:40:52 - 00:41:18 Unknown Speaker:
+
+అండ్ బేసికల్లీ, ఇట్ కేమ్ అప్ విత్ ఏ ప్రాజెక్ట్ ప్లాన్ అండ్ ఏ బ్యాచ్ ప్లాన్, రిజల్టింగ్ ఇన్ ది అవుట్పుట్ దట్ ఇస్, దట్ ఇస్ బీయింగ్ ప్రొడ్యూస్డ్. యాక్చువల్లీ, ఇట్స్ చేంజింగ్ ద కోడ్. సో ఇఫ్ యు గో టు గిట్ హబ్, యు విల్ సీ దట్ పామ్ డాట్ ఎక్స్ఎంఎల్ అండ్ టార్గెట్ జావా హాస్ బీన్ అప్డేటెడ్. అండ్ యు కెన్ సీ ఎగ్జాక్ట్లీ వాట్ చేంజ్ ఇట్ డిడ్.
+
+00:41:18 - 00:41:37 Unknown Speaker:
+
+సో బేసికల్లీ, స్టెప్ వన్, ఇట్ గోస్ టు అజూర్, ఇట్ గెట్స్ ద లేటెస్ట్ ఇమేజ్, వాట్ నాట్. ఇట్ డస్ ఇంటెలిజెన్స్. ఆన్ టాప్ ఆఫ్ దట్, ఇట్ లీవ్స్ ఆల్ థింకింగ్ ట్రైల్. సో యు కెన్ ఆల్వేస్ గో బ్యాక్ అండ్ ట్రై, ట్రై టు అండర్స్టాండ్ వై ఇట్ డిడ్ సంథింగ్. యా, ఓకే, సారీ, దాని జస్ట్ టు జంప్ ఇట్ టు ఇట్.
+
+00:41:39 - 00:42:08 Unknown Speaker:
+
+యు ఆర్ యూసింగ్ ద స్కిల్స్ ఫ్రమ్ ది ఆసమ్ స్కిల్స్, రైట్? నౌ, దోస్ స్కిల్స్ ఆర్ వెరీ స్పెసిఫిక్ ఆర్ జనరేట్ టు సే, ఓకే, హౌ ఆర్ వాట్ కైండ్ ఆఫ్ బెస్ట్ ప్రాక్టీస్ ఆర్ టెక్స్ట్ యాక్చువల్లీ. బట్ దెన్, ఐ థింక్, దెన్ యు నీడ్ టు ఆల్సో హావ్ దోస్ గాండరీస్, విచ్ ఆర్ వెరీ స్పెసిఫిక్ ఫర్, బికాజ్ దేర్ ఆర్ గోయింగ్ టు బి సర్టెన్ పాటర్న్స్ ఆర్ సర్టెన్ డిజైన్ డెసిషన్స్, విచ్ యు ఆర్ టేకెన్ ఇంటు బిల్డింగ్ సిపిఎం.
+
+00:42:08 - 00:42:25 Unknown Speaker:
+
+హౌ డిడ్ యు గెట్ దెమ్ ఇంకాపరేటెడ్ ఇంటూ? ఆర్ దిస్ స్కిల్స్? యా, అబ్సల్యూట్లీ. యు స్టార్ట్ ఆఫ్ విత్ ద బేస్ లైన్ ఆసమ్ స్కిల్స్, అండ్ దెన్ యు డెవలప్ ఆన్ టాప్ ఆఫ్ ఇట్. సో బేసికల్లీ, యు పుట్ ఎవ్రీథింగ్ దట్ యు డోంట్ వాంట్ టు రిపీట్, యు ఇంకాపరేట్ ఇన్ స్కిల్స్.
+
+00:42:25 - 00:42:51 Unknown Speaker:
+
+సో కోడింగ్ స్టాండర్డ్స్, లొకేషన్స్, ద స్ట్రాటజీస్ దట్ యు వాంట్ టు ఎంప్లాయ్, దే ఆర్ కైండ్ ఆఫ్ స్పెసిఫిక్ ఫర్, ఫర్, ఫర్ ది అప్లికేషన్ ఎన్విరాన్మెంట్ దట్ వి ఆర్ రిసైడింగ్ ఇన్. సో బీసైడ్స్, బీసైడ్స్ రన్నింగ్ ది ఆర్కెస్ట్రేటర్, యు కెన్ జస్ట్ పుట్ ద ప్రాంప్ట్ అండ్, అండ్ హావ్ ఆర్కెస్ట్రేటర్ టు రన్ ఎవ్రీథింగ్ ఫర్ యు.
+
+00:42:52 - 00:43:15 Unknown Speaker:
+
+బీసైడ్స్ రిసాల్వింగ్ ది వర్నబిలిటీస్, అగైన్, యు జస్ట్. సారీ, వేరే వాస్, వేరే వాస్ గోయింగ్. దమీర్ ఇస్ హౌ, హౌ, సో వాట్ ఎవర్, లెట్స్ సే, పవన్ డిస్ డెమోన్స్ట్రేటెడ్ రైట్ నౌ. సో వాట్ యు ఆర్ డెమోన్స్ట్రేటింగ్ రైట్ నౌ, ఐ థింక్ దే ఆర్ ఆన్ ఏ సిమిలర్ లైన్స్, సిమిలర్ వేస్ ఆఫ్ వాట్ వి ఆర్ ట్రయింగ్ టు డు.
+
+00:43:17 - 00:43:42 Unknown Speaker:
+
+బట్ ది డిఫరెన్సెస్, వాట్ ఆర్ దోస్ డిఫరెన్సెస్, విచ్ వి సీ? వాట్ ఆర్ ద సిమిలారిటీస్? ఐ కెన్ సీ లాట్ ఆఫ్ సిమిలారిటీస్ ఇన్ బోత్ దిస్ అప్రోచెస్, రైట్? వాట్ ఆర్ ద బెస్ట్ ప్రాక్టీసెస్, విచ్ యు హావ్, అండ్ వాట్ కి ఇస్ గాట్? బికాజ్ ఐ నో వాట్ ద బెస్ట్ ప్రాక్టీస్, విచ్ ఐ కెన్ సీ ఫ్రమ్ యువర్ సైడ్ ఇస్, వి ఆర్ యూసింగ్ ద బేస్ కామన్ ఆసమ్ స్కిల్స్, విచ్ సెట్ సెటిల్ స్టాండర్డ్స్ అబౌట్ హౌ వి రైట్ ద కోడ్, హౌ వి రైట్ స్ట్రింగ్ ప్రాక్టీస్, లైక్ టైప్ స్క్రిప్ట్, ఎక్సెట్రా, ఎక్సెట్రా.
+
+00:43:43 - 00:44:10 Unknown Speaker:
+
+అండ్ ఫ్రమ్ వాట్ ఐ అండర్స్టాండ్ ఫ్రమ్ వాట్ దినక్ గారు హాస్ డన్, పవన్ హాస్ డన్ ఇస్, వేర్ ఇట్ గెట్స్ ద కాంటెక్స్ట్ ఆఫ్ యువర్ కరెంట్ రిపాజిటరీ అండ్ సీ హౌ దట్ రిపాజిటరీ ఇస్ దేర్, అండ్ ఇన్సర్ట్స్ దట్ కాంటెక్స్ట్ ఇన్ ప్లేస్, ఆర్ దోస్ ఏజెంట్స్ ఇన్ ప్లేస్, విచ్ కెన్ బి. వీడు రాసాడు, ఇదన్నీ. ఐ థింక్ ఫ్రంట్ ఎండ్ కూడా ఎలా ఉండాలి, డేటా ఉంటది, సిఎంఏ ఉంటది, జావాస్క్రిప్ట్ ఎలా ఉంటది. వీడు రాసాడు, గుడ్ కాన్సెప్ట్. ఇది కస్టమైజ్ చేసే ప్రాజెక్ట్.
+
+00:44:10 - 00:44:19 Unknown Speaker:
+
+హౌ టు ఇమర్జ్ దెమ్ టు అడాస్? అక్కడ కాదు కదా. కమ్ టు ద విజన్, వాట్ యు సెడ్, రైట్? ప్రాజెక్ట్ లో నుంచి గెట్ చేసుకోవాలి. ప్రాజెక్ట్ లో నుంచి గెట్ రెడీ అస్ ఏ ఇన్ఫర్మేషన్.
+
+00:44:19 - 00:44:44 Unknown Speaker:
+
+ఇట్ హాస్ ఏ బిగ్ మార్క్. ఇట్ హాస్ ఏ డీటెయిల్ మార్క్. నౌ, వాట్ అడిషనల్ డీటెయిల్స్ డు ఐ నీడ్ టు ఎన్షూర్ టు ఎంటర్ అస్ పార్ట్ ఆఫ్ మై ఇన్పుట్స్? సో దట్ ద ప్రాసెస్ ఆర్కెస్ట్రేషన్ ఇస్ ఏబుల్ టు ఎగ్జిక్యూట్ ఈచ్ స్టెప్ బై స్టెప్, ఈచ్ వేవ్ ఆఫ్, ఇన్ వేవ్ ఆఫ్ పవన్ స్పేస్, ఇస్ ఈచ్ వేవ్స్ టు జనరేట్ అస్ ద రిక్వైర్డ్ అవుట్పుట్ అండ్ గెట్ వాలిడేటెడ్. సో ఐ థింక్ దిస్ ఇస్ ఆన్ ఎక్సలెంట్ వర్క్, విచ్ యు హావ్ డన్.
+
+00:44:46 - 00:45:11 Unknown Speaker:
+
+అబ్సల్యూట్లీ, థాంక్యూ ఫర్ డూయింగ్ దట్. దిస్, దిస్, వెన్ వి కమ్ టు ద బెస్ట్ ప్రాక్టీసెస్, ఐ థింక్ ఎనీ ఏజెంట్ నీడ్స్, లెట్స్ సే, మోర్ డీటెయిల్డ్ స్పెక్స్ దెన్ వాట్ ర్యాలీ ప్రొవైడ్స్. ర్యాలీ షుడ్ బి జస్ట్ ద స్టార్టింగ్ పాయింట్, అండ్ ఎవ్రీథింగ్ ఎల్స్ షుడ్ స్టిల్ గెట్ ది ఇన్పుట్ ఫ్రమ్ ది ఏజెంట్, ఫ్రమ్ ది డెవలపర్.
+
+00:45:12 - 00:45:41 Unknown Speaker:
+
+ఫర్ ఎగ్జాంపుల్, ఇన్ దిస్ బ్యాక్ ఎండ్ క్రియేషన్ కోడ్, ఇట్ విల్ జనరేట్ ద కోడ్, బట్ ఐ వాస్ ప్రిటీ స్పెసిఫిక్ అబౌట్ వాట్ ఐ వాంట్, ఇన్ వాట్ రెపో ఐ వాంట్ టు ఇంప్లిమెంట్ ఇట్, వాట్ ఆర్ ద సింగల్ స్టేట్మెంట్స్, అండ్ సో ఆన్. ఇట్ జనరేట్స్ ఎవ్రీథింగ్ అట్ ది ఎండ్. సో ఫర్ ఎగ్జాంపుల్, ఇఫ్ ఐ రన్ దిస్ వన్, ఇట్ విల్ జనరేట్ ఆల్ ఆఫ్ దిస్ జావా క్లాసెస్, అండ్ ఇట్స్ అబ్సల్యూట్లీ టు ద స్పాట్.
+
+00:45:41 - 00:46:04 Unknown Speaker:
+
+సో బేసికల్లీ, ఆఫ్టర్ బీయింగ్ మోర్ స్పెసిఫిక్, మీనింగ్ లెస్, లెస్ జంకింగ్. ఐ థింక్ ఇట్స్ వెరీ కరెక్ట్, రైట్? లైక్, హౌ స్పెసిఫిక్ డు వి వాంట్ అస్? హౌ డు వి, హౌ డు వి గైడ్ ది, లెట్స్ సే, ఆన్ ఇంజనీర్, ఆర్ హౌ డు వి ప్రొవైడ్ దట్ ఇన్పుట్? సో ఇఫ్, లెట్స్ సే, దేర్ ఇస్ ఏ స్టోరీ, సో ఇట్ కుడ్ బి ఇన్ ర్యాలీ, ఇట్ కుడ్ బి ఇన్ సంవేర్ ఇన్ నోట్స్.
+
+00:46:04 - 00:46:32 Unknown Speaker:
+
+సో దీస్ ఆర్ ఇన్పుట్, రైట్? దిస్ ఇన్పుట్ కెన్ బి టేకెన్ ఫ్రమ్ ఏ ర్యాలీస్ టాస్క్ నోట్స్, ఆర్ దిస్ కుడ్ బి పార్ట్ ఆఫ్ యువర్ టాస్క్, విచ్ యు క్రియేట్, వేర్ యు ప్రొవైడ్, దిస్ ఇస్ వాట్ ఐ వుడ్ లైక్ టు యాడ్, సో దట్ యు డోంట్ హావ్ టు యాడ్ ఇట్ ఇన్ యువర్ కోడ్, బట్ దట్ ఇస్ ఇన్ఫర్మేషన్ ఇస్ అవైలబుల్ ఇన్ ర్యాలీ. సో ఐ యామ్ జస్ట్ త్రోయింగ్ ఐడియాస్ హియర్, విచ్ ఐ డోంట్ వాంట్ టు, బట్ ఐ లాంగ్ స్టోరీ షార్ట్ ఇస్, ఐ థింక్ దిస్ ఎక్సలెంట్, విచ్ ఐ సీ, విచ్ ఇస్ కమింగ్ అవుట్ ఆఫ్ వాట్ యు గైస్ హావ్ డన్ సో ఫార్.
+
+00:46:32 - 00:46:39 Unknown Speaker:
+
+అండ్ దిస్ ఇస్ ఎగ్జాక్ట్లీ వేర్ ఐ వాంట్ అస్ టు గో బ్యాక్ అండ్ సే, దిస్ ఇస్ వాట్ వి వాంట్ టు డూ, దిస్ ఇస్ హౌ వి వాంట్ టు ట్రై ఇట్.
+
+00:46:40 - 00:46:58 Unknown Speaker:
+
+సో టు టేక్ అవేస్ ఫ్రమ్ మై సైడ్, గైస్, ఐ సారీ, ఐ హావ్ టు జంప్ టు అనదర్ కాల్. ఐ వాంట్ టు బి లేట్ దేర్, బట్ ఐ వాస్ ఆల్సో లేట్ హియర్, అండ్ మై కాల్స్ ఆర్ గెట్టింగ్ డిలేడ్. బట్ ఐ సీ, ఐ థింక్ నెక్స్ట్ స్టెప్స్, లెట్స్ సెట్ అప్ ఏ కాల్ ఫర్ వన్ అవర్ విత్ ఆల్ ద కీప్ స్టేక్ హోల్డర్స్, విచ్ ఐ టాక్డ్ అబౌట్.
+
+00:46:58 - 00:47:24 Unknown Speaker:
+
+లెట్స్ గెట్ దెమ్ ఇన్ అండ్ డిస్కస్ అబౌట్ ఇట్ అండ్ సీ వాట్ ఆర్ ద బెస్ట్ వర్డ్, బెస్ట్ ఆఫ్ దిస్ టు వర్డ్స్ టు టేక్ అకౌంట్, బెస్ట్ ఆఫ్ దిస్ త్రీ వర్డ్స్ టు పవన్, దామిర్, గోవర్ధన్, ఐ మీన్ టు ఇంటిగ్రేట్ బోత్ ది సొల్యూషన్స్ ఇంటు ఏ. అండ్ సీ హౌ వి కెన్ బ్రింగ్ ద బెస్ట్ ఆఫ్ బోత్ టు కొలాబరేటివ్ బిట్, రైట్?
+
+00:47:24 - 00:47:54 Unknown Speaker:
+
+సో మైట్ బి దట్ కుడ్ బి ద ఫస్ట్ కాల్, విచ్ వి హావ్, అండ్ దెన్ వి కెన్ హావ్ ఏ ఫాలో అప్ కాల్ విత్ ఆల్ అదర్ స్వీట్. అండ్ దెన్ వి కెన్ డిసైడ్, ఓకే, దిస్ ఇస్ వాట్ వి వుడ్ లైక్ టు బిల్డ్, అండ్ లెట్ ఎవ్రీబడీ కాంట్రిబ్యూట్ టు మేక్ దట్ వేవ్, విచ్, విచ్ వి కెన్ కాల్ ఇట్ అస్ ఏడిఎల్సి కోడ్ ఎక్స్, ఆర్ ఏడిఎల్సి, ఏడిఎల్సి అండర్ రైటర్ ప్రైసింగ్ నెట్వర్క్ సొల్యూషన్స్, వాట్ ఎవర్ యు వాంట్ టు కాల్, అండ్ సీ హౌ వి కెన్ ప్లగ్ ఇన్.
+
+00:47:54 - 00:48:20 Unknown Speaker:
+
+బికాజ్ వన్ ఆఫ్ ది కీప్ థింగ్స్, విచ్ ఐ సీ మిస్సింగ్ ఇన్ దిస్ బిట్ ఇస్, ఆల్ దిస్ విల్ బి రియల్లీ గుడ్ ఇఫ్ మై ఇన్పుట్, దట్ ఇస్ ఏ ర్యాలీ స్టోరీ, ఇస్ ఎక్సలెంట్ ఎనర్జీ, రైట్? అండ్ విచ్ ఇస్ ఏ మిస్సింగ్ బిట్ అబౌట్, ఐ థింక్ దట్ ఇస్ సంథింగ్, విచ్ యు విల్ గెట్ ఇట్ ఫ్రమ్ పొజిషన్ ఆన్ హౌ దే ఆర్ హెల్పింగ్ ద పొజిషన్ టీం టు జనరేట్ ఈవెన్ ద స్టోరీస్ ఆర్ ద యూసర్స్, యూసర్ స్టోరీస్. సో లెట్స్ క్లబ్ ఆల్ దిస్ త్రీ టుగెదర్, స్వీట్. మైట్ బి దెన్ కెన్ వి హావ్ ఏ ఫాలో అప్ కాల్ నెక్స్ట్ వీక్, రథర్ టుమారో.
+
+00:48:20 - 00:48:49 Unknown Speaker:
+
+ఐ వుడ్ సజెస్ట్, కెన్ యు హావ్ ఏ కాల్ బిట్వీన్ దిస్ పీపుల్ ఫస్ట్, దామిర్, పవన్, అండ్ గోవర్ధన్, అండ్ గెట్ దట్ ఐడియాస్ అవుట్, అండ్ క్లబ్ నెక్స్ట్ దెమ్ టు వన్, అండ్ దెన్ విత్ ద పొజిషన్ టీం టు క్లబ్ దేర్ పర్స్పెక్టివ్ ఇంటు వన్. అండ్ దెన్ వి కెన్ హావ్ ఏ ఫైనల్ కాల్ ఆన్ దట్, స్వీట్. యా, ఓకే, యా, షూర్. యా, ఆసమ్, గైస్, దిస్ ఇస్ రియల్లీ గ్రేట్, గుడ్ వర్క్, అండ్ ఐ థింక్ వి ఆర్ ఇన్ ద రైట్ ట్రాక్, అండ్ ఇన్ ద రైట్ పేస్.
+
+00:48:49 - 00:49:15 Unknown Speaker:
+
+వన్ మోర్ థింగ్, విచ్ ఐ వుడ్ యాడ్, మైట్ బి టు దామిర్, ఆర్ టు పవన్, ఇస్ ఆల్సో లుక్ అట్ వాట్ ఏఐ డిఎల్సి ఇస్ బీయింగ్ బిల్ట్ బై అట్ ఆన్ ఎంటర్ప్రైజ్ లెవెల్, ఆర్ అట్ ఆన్, లెట్స్ సే, బాస్ పీస్ లెవెల్ విత్ ఆన్ ఆర్ ఎక్స్, అండ్ సీ హౌ డిఫరెంట్ ఇస్ దట్, ఆర్ హౌ ఇన్సింక్ ఇస్ దట్, అండ్ హౌ వాట్ ఇస్ దట్ వి ఆర్ మిస్సింగ్, ఆర్ వాట్ ఇస్ దట్ దే ఆర్ మిస్సింగ్, ఆర్ వి ఆన్ ఫాస్ట్ ఫ్రాక్ట్ దెన్ దెమ్, ఎక్సెట్రా, రైట్?
+
+00:49:15 - 00:49:29 Unknown Speaker:
+
+జస్ట్ టు హావ్ ఏ కంపారిజన్ టు కాల్ అవుట్, ఓకే, వాట్ వి డిడ్, అండ్ హౌ ఆర్ వి డూయింగ్, రైట్? యా, షూర్. యా, ఓకే, ఆసమ్, గైస్, థాంక్యూ. థాంక్యూ, గ్రేట్ జాబ్, గ్రేట్ జాబ్, గైస్. థాంక్యూ.
+
+00:49:31 - 00:49:54 Unknown Speaker:
+
+సో గోవర్ధన్, కెన్ యు సెట్ అప్ ఏ మీటింగ్ టుమారో? లెట్స్ డిస్కస్ బోత్ ద కేసెస్ అండ్ కమ్ టు ఏ కామన్ అప్రోచ్. లెట్స్ సీ వాట్ డు వి హావ్ ఇన్ దమ్యూజన్స్ కేస్, అండ్ వాట్ ఇస్ మిస్సింగ్ ఇన్ పవన్స్ కేస్, అండ్ ఇఫ్ ఆల్ ఆఫ్ దట్ ఇస్ ఆల్రెడీ కవర్డ్, ఆర్ ఎనీథింగ్ వి నీడ్ టు యాడ్.
+
+00:49:55 - 00:50:18 Unknown Speaker:
+
+లైక్, ఐ యామ్ షూర్, ద టిడి ఇస్ సంథింగ్ వి హావ్ టు గో విత్, దట్ ఇస్ సంథింగ్ వి నీడ్ టు యాడ్, బట్ అట్ దిస్ టైం, లెట్స్ జస్ట్ డిస్కస్ ద యూస్ కేసెస్, లెట్స్ మేక్ నోట్స్, లైక్ వాట్ నీడ్స్ టు బి డన్, అండ్ దెన్ వన్స్ వి హావ్ దట్ అప్రోచ్, లైక్ కిషోర్ ఇస్ సజెస్టింగ్. సో కిషోర్ హైర్డ్ ఏ సిపిఎంట్ రిసోర్స్ స్పెసిఫికల్లీ ఫర్ దిస్, ఓకే?
+
+00:50:18 - 00:50:33 Unknown Speaker:
+
+అండ్ షి ఇస్ వర్కింగ్ విత్ సం ఆఫ్ ద ప్రైసింగ్ ప్రిసిషన్స్ టీం టు హెల్ప్ దెమ్ గెట్ ఇంటు దిస్ జర్నీ. సో సం లైక్ వన్ ఆఫ్ ది స్క్రమ్ టీం, ఐ హర్డ్ దే ఆర్ వెలాస్ టీం వెంట్ ఫ్రమ్ లైక్ వెంట్ లైక్ 10x ఆర్ సంథింగ్.
+
+00:50:34 - 00:50:52 Unknown Speaker:
+
+ఇట్స్ ఏ స్మాల్ టీం, ఓకే? బట్ దే ఆర్ లైక్ ఫ్రమ్ వాట్ ఐ అండర్స్టాండ్, ఇట్స్ లైక్ ఎండ్ టు ఎండ్. దే ఆర్ ఆల్సో కోచింగ్ ప్రొడక్ట్ ఓనర్స్ టు ప్రొవైడ్ ద ర్యాలీ, ద యూస్ స్టోరీ ఇన్ ఏ సర్టెన్ ఫార్మాట్, దెన్ దట్ ఇస్ ఫెడ్ టు ద ఏఐ ఏజెంట్స్ అండ్ ఆల్ దట్, రైట్? ఐ డోంట్ నో మచ్ మోర్ డీటెయిల్స్ ఆఫ్ ఇట్.
+
+00:50:52 - 00:51:06 Unknown Speaker:
+
+సో ఫస్ట్, లెట్స్ కన్సాలిడేట్ అవర్ యూస్ కేసెస్, దెన్ విల్ సెట్ అప్ ఏ మీట్ విత్ దెమ్ అండ్ అండర్స్టాండ్ వాట్ దే ఆర్ డూయింగ్, వాట్ వి హావ్ మోర్, ఆర్ వాట్ ఇస్ మిస్సింగ్ ఇన్ దేర్స్, అండ్ వి విల్ కన్సాలిడేట్ వన్ అప్రోచ్ ఫర్ ద హోల్ టీం.
+
+00:51:07 - 00:51:37 Unknown Speaker:
+
+సో ద ఎండ్ గోల్, లైక్ వాట్ కిషోర్ ఇస్ మెన్షనింగ్, వన్స్ వి హావ్ దిస్, ఇట్ షుడ్ బి సో మచ్ జనరిక్ అండ్ పవర్ఫుల్, దట్ ఎనీ టీం విత్ ఇన్ ద ఆర్గనైజేషన్ షుడ్ బి ఏబుల్ టు ప్లగ్ ఇట్ ఇన్ అండ్ స్టార్ట్ యూసింగ్ ఇట్. దట్స్ అవర్ ఎండ్ గోల్. లైక్ ఎనీ ప్రాజెక్ట్, ఎనీథింగ్, జస్ట్ లైక్ హౌ వి యూస్ ఫర్ ఆర్ఆర్ఎఫ్, గోవర్ధన్, యు జస్ట్ టుక్ ఇట్ విత్ ఇన్ హాఫ్ ఆన్ అవర్, యు వర్ ఏబుల్ టు యూస్ ఇట్ ఇన్ ఆర్ఆర్ఎఫ్, ఆన్ ఏ సిమిలర్ లైన్స్. సో హౌ కెన్ వి మేక్ మోర్ జనరిక్?
+
+00:51:37 - 00:51:37 Unknown Speaker:
+
+ఎస్.
+
+00:51:39 - 00:51:44 Unknown Speaker:
+
+సో లెట్స్ మీట్ టుమారో, మే బి ఫర్ వన్ అవర్. లెట్ మీ సీ వాట్ టైం.
+
+00:51:47 - 00:51:57 Unknown Speaker:
+
+సెవెన్ టు ఎయిట్ ఐఎస్ టి? ఎస్. యా, లెట్స్ డు దట్. ఓన్లీ వన్ థింగ్, యా, సారీ.
+
+00:51:59 - 00:52:03 Unknown Speaker:
+
+జస్ట్ టు సే వన్ సెంటెన్స్ దట్ ఐ వాంటెడ్ టు సే టు కిషోర్.
+
+00:52:04 - 00:52:31 Unknown Speaker:
+
+బేసికల్లీ, ర్యాలీ ఇట్స్ నాట్ డిస్క్రిప్టివ్ ఎనఫ్ టు కీక్ ఆఫ్ ఎవ్రీథింగ్. ఇఫ్ వి ఆర్ ఏబుల్ టు, ది ఐడియా ఇస్, ఇఫ్ వి ఆర్ ఏబుల్ టు గివ్ డెవలపర్ ఆర్ ఇంజనీర్స్ సం స్పేస్ ఇన్సైడ్ ఆఫ్ ర్యాలీ టు పుట్ మోర్ డీటెయిల్స్, దెన్ వి ఆర్ వే బెటర్ ఆఫ్, అండ్ దట్ కుడ్ బి సెంట్రల్స్ పాయింట్, యు నో, టు స్టార్ట్ ఆఫ్ ఎనీ ఏఐ డిఎల్సి.
+
+00:52:32 - 00:52:56 Unknown Speaker:
+
+నో, నో, నో, దట్స్ లైక్, సీ, దిస్ ఇస్ ద గ్యాప్ వి హావ్ అక్రాస్ ఎవ్రీథింగ్. లైక్, వి ఆర్ లెట్టింగ్ ప్రొడక్ట్ ఓనర్స్ గో ఈజీలీ. లైక్, దే ఆర్ సపోజ్డ్ టు డూ దట్ జాబ్. దే ఆర్ సపోజ్డ్ టు ప్రొవైడ్ ద రిక్వైర్మెంట్స్ క్లియర్, క్లియర్, మే బి టెక్నికల్ వర్కింగ్ విత్ అస్, ఆర్ వెదర్ ఇట్స్ బిజినెస్ ఆర్ ఫంక్షనల్ రిక్వైర్మెంట్స్, రైట్? సో అక్రాస్ ది బోర్డ్, దిస్ ఇస్ ద ప్రాబ్లం.
+
+00:52:56 - 00:53:23 Unknown Speaker:
+
+సో వి, లైక్, హౌ వి ఆర్ గెట్టింగ్ అప్ స్కిల్, వి ఆర్ లెర్నింగ్ థింగ్స్, వి షుడ్ కోచ్ ప్రొడక్ట్ ఓనర్స్ ఆల్సో టు గివ్ అస్ దోస్ రిక్వైర్మెంట్స్. అండ్ వన్ అదర్ డిస్కషన్ ఐ యామ్ హియరింగ్ ఇస్, లైక్, జీరా హాస్ లాట్ ఆఫ్ దిస్ ఇన్బిల్ట్ ఏఐ ఫంక్షనాలిటీస్, ఓకే? సో దేర్ ఇస్ ఏ లార్జర్ డిస్కషన్ అట్ ది ఆర్ లెవెల్, వెదర్ టు మూవ్ టు జీరా. ఇప్పుడు వద్దన్నా, బోత్ థింగ్స్ ఆర్ కమింగ్.
+
+00:53:23 - 00:53:35 Unknown Speaker:
+
+యా, ఐ అండర్స్టాండ్, కరెంట్లీ, ర్యాలీ యూస్ స్టోరీస్ డజంట్ హావ్ మచ్ డీటెయిల్స్, బట్ దట్ నీడ్స్ టు చేంజ్, అండ్ దట్ ఐ డోంట్ ఎక్స్పెక్ట్ అవర్ డెవలపర్స్ టు డూ దట్, బట్ ద ప్రొడక్ట్ ఓనర్స్ షుడ్ డూ దట్.
+
+00:53:37 - 00:54:05 Unknown Speaker:
+
+యా, వన్ థింగ్ ఇస్, యా, యా, సో యాక్చువల్లీ, ఎక్స్పెక్టేషన్ ఫ్రమ్ కిషోర్స్ పాయింట్ ఆఫ్ వ్యూ ఇస్, ఇఫ్ యు ఆర్ లైక్, ఫర్ ఎగ్జాంపుల్, నాట్ ఓన్లీ యాక్సెప్టెన్స్ క్రైటీరియా, సో డెవలపర్ విల్ యాడ్ టాస్క్, రైట్? దమీర్, సో ఇన్ టాస్క్, వి రైట్ సం నోట్స్, రైట్? లైక్, యాస్, యు ఆర్ ఎక్స్ప్లెయినింగ్ దట్ టెక్నికల్ డిస్క్రిప్షన్. సో హిస్ పాయింట్ ఇస్, లైక్, ఐ మీన్, యాస్, హి వాస్ సేయింగ్, రైట్? ఇట్ ఇస్ నాట్ లైక్, వి హావ్ టు ఎగ్జాక్ట్లీ ఫాలో దట్ వన్, బట్ ఇన్ ర్యాలీ, వి కెన్ పుట్ ఇట్ యాస్ మచ్ యాస్ మెనీ డీటెయిల్స్ వి కెన్.
+
+00:54:05 - 00:54:33 Unknown Speaker:
+
+సో ఫ్రమ్ దేర్, యా, యా, ఇట్ ఇస్ ఏ స్టార్టింగ్ పాయింట్, ప్లస్ ఫిగ్మా, ఇఫ్ వి హావ్ ఫిగ్మా. ఆ, సో, సో, యా, దట్స్ వై. ఫర్ ఎగ్జాంపుల్, శ్రీకాంత్, వి హావ్ ఫైవ్, సిక్స్ డిఫరెంట్ రెపోస్, ఇఫ్ నాట్ ఈవెన్ మోర్ ఇన్ సిపిఎం. సో సాఫ్ట్వేర్ ఇంజనీర్ నీడ్ టు నీడ్ టు డైరెక్ట్, యు నో, ఐ వాంట్ ఇన్ దిస్, యూస్ దిస్, దిస్ ఇన్ దిస్ రెపో, ఫర్ ఎగ్జాంపుల్. జస్ట్, జస్ట్ ద బేసిక్ ఇన్ఫర్మేషన్, ఆర్, యు నో, డోంట్, డోంట్ హల్యూసినేట్ ట్రయింగ్ టు ఫైండ్ సీక్వెల్ స్టేట్మెంట్.
+
+00:54:33 - 00:54:50 Unknown Speaker:
+
+ఐ విల్ గివ్ యు సీక్వెల్ స్టేట్మెంట్ ఇఫ్ ఐ వాంట్. ఫర్ ఎగ్జాంపుల్, జస్ట్ ఏ స్మాల్ డైరెక్షనల్ థింగ్స్ దట్ హెల్ప్ అలాట్, యు నో, అజెంటెక్ ఏఐ, యు నో, టు అకాంప్లిష్ గోల్స్ వితౌట్ టూ మచ్ ఇంటరాక్షన్. ద ప్రాబ్లం ఇస్, టూ మచ్ ఇంటరాక్షన్, ఇట్ జస్ట్ టేక్స్ టైం, ఇట్ కిల్స్ ఇట్.
+
+00:54:53 - 00:55:21 Unknown Speaker:
+
+యా, అబ్సల్యూట్లీ, లైక్, ద మోర్ ఇన్ఫర్మేషన్ అండ్ మోర్ స్పెసిఫిక్ ఇన్ఫర్మేషన్ వి ప్రొవైడ్, దట్స్ బెటర్ వన్. అండ్ దెన్, సెకండ్, ద హ్యూమన్ ఇన్ ద లూప్, రైట్? వై వి, లైక్, వై వి ఆర్ సేయింగ్, లైక్, అట్ ఈచ్ స్టెప్, వి షుడ్ రివ్యూ ఇట్. ఫస్ట్, ఆల్వేస్ ప్లాన్, సీ ద ప్లాన్, అండ్ దెన్ ఎగ్జిక్యూట్, రైట్? అట్లీస్ట్, ప్రొవైడ్ ద ప్లాన్ ఇన్ టర్మ్స్ ఆఫ్ డెవలప్మెంట్, వాట్ ఇట్ వాంట్స్ టు డు ఏ సమ్మరీ, అండ్ దెన్ ఎగ్జిక్యూట్.
+
+00:55:21 - 00:55:44 Unknown Speaker:
+
+ఇట్ మే, ఇట్ మే యాడ్ సం అడిషనల్ టైం, బట్ దట్స్ వర్త్ ఇట్, రైట్? ఇన్స్టెడ్ ఆఫ్ ఇట్ హల్ల్యూసినేటింగ్ అండ్ డూయింగ్ సం అన్ వాంటెడ్ చేంజెస్. దట్స్ ఎగ్జాక్ట్లీ వాట్ ఐ డింట్ హావ్ ఛాన్స్ టు డెమోస్ట్రేట్. మై అప్రోచ్ హాస్ ఎగ్జాక్ట్లీ. సినారియో, ఇట్ హాస్, ఇట్ గివ్స్ యు ప్లాన్, అండ్ ఇట్ స్టాప్స్, అండ్ దెన్ గో త్రూ ద ప్లాన్, అండ్ యు కెన్ రన్ ఇట్, రైట్?
+
+00:55:44 - 00:56:07 Unknown Speaker:
+
+లెట్, లెట్, దట్స్ వాట్ ఐ విల్ డూ టుమారో, రైట్? విల్, విల్ సీ, విల్ డిస్కస్ ఆల్ దిస్ థింగ్స్, వాట్ ఇస్ మిస్సింగ్, వాట్ ఇస్ నాట్ దేర్. విల్ టేక్ వన్ థింగ్ ఇస్ క్లియర్, వి వాంట్, వాంట్ ఏ జనరిక్ అప్రోచ్, విచ్ కుడ్ బి, విచ్ ఇస్ ప్లగ్గబుల్ టు ఎనీ, ఎనీ ఆఫ్ ది ప్రాజెక్ట్. సో వి హావ్ ఏ ఇనిషియల్ ఫ్రేమ్ వర్క్ బిల్ట్ బై పవన్. లెట్స్ సీ హౌ వి కెన్ ఎన్హాన్స్ దట్ ఫర్దర్.
+
+00:56:07 - 00:56:11 Unknown Speaker:
+
+లెట్స్ సీ వాట్ ఇస్ బెస్ట్ ఫ్రమ్ బోత్ వర్డ్స్, అండ్, అండ్ ఇంక్లూడ్ ఇన్ దట్, ఓకే?
+
+00:56:12 - 00:56:38 Unknown Speaker:
+
+ఓన్లీ వన్ లాస్ట్ థింగ్, యా, యా. సో పవన్, లైక్, యాస్, ద వన్, ద లాస్ట్ పాయింట్, విచ్ యు ఆర్ డిస్కసింగ్, రైట్? లైక్, హ్యూమన్ ఇన్ ద లూప్, లైక్, మే బి దట్ వేవ్ వన్, వేవ్ టు, జస్ట్ వి కెన్ స్టాప్ ఫర్ దట్ కన్ఫర్మేషన్, లైక్, గోయింగ్ టు ద సెకండ్ వేవ్, థర్డ్ వేవ్. సో ఇఫ్ ఇట్ ఇస్ పాసిబుల్, మే బి యు కెన్ గివ్ ఏ ట్రై ఫర్ దట్ వన్. షూర్, ఐ విల్ డూ దట్, యా.
+
+00:56:39 - 00:56:55 Unknown Speaker:
+
+అండ్ యా, యా, శ్రీకాంత్ సార్, నో, నో, ఐ, ఐ, ఐ, ఐ జస్ట్ వాంటెడ్ టు ఎండ్ దేర్. ఐ థింక్ వి ఆల్రెడీ డిస్కస్డ్ ఎవ్రీథింగ్. సో లెట్స్ మీట్ టుమారో, అండ్ లెట్స్ పుట్ ఏ స్పెసిఫిక్ ప్లాన్ టు ఇట్. షూర్, సార్, యా. ఓకే, యా.
+
+00:56:56 - 00:56:57 Unknown Speaker:
+
+థాంక్యూ, థాంక్యూ.
+
+00:57:00 - 00:57:04 Unknown Speaker:
+
+అన్నయ్య, కాసేపు అండి, బిఫోర్ ప్లానింగ్ ఓ టీం అన్నాడు, చూసారా?
+

@@ -1,0 +1,225 @@
+2026-05-21 Data Quality Management and Improvement Strategies
+
+Creation Time: 2026/05/21 15:29
+
+
+📅About Meeting
+
+• Date & Time: 2026-05-21 15:29  
+• Location: Virtual Meeting  
+• Attendee: Sachin, Anand, Rachna, Prithvi, Nirmal, Anya Vichna, and others
+
+📒Meeting Outline
+
+Data Quality Task Management and Email Escalation
+
+• Issue with Open Testing Tasks  
+  The team discussed the presence of multiple open tasks in the lower environment created for testing purposes. These tasks were not closed earlier, causing unnecessary escalations and email notifications. It was agreed that these duplicate and test records would be closed promptly to avoid confusion.
+
+• Email Notification Configuration  
+  The current setup sends emails from the normal environment, which is not ideal. A new build is being developed to ensure that emails related to testing tasks do not go to the main email ID, preventing unnecessary escalations. Kundan is assigned to handle co-deployment for this fix.
+
+• Credential and Access Issues  
+  There was a brief discussion about credentials (A2) required to close tasks, confirming that the same credentials apply for task closure.
+
+Rule Modification and Approval Workflow Enhancements
+
+• Mapping and UI Changes  
+  Changes were made to the Actions page and Approve widget page to correct field mappings and improve rule description handling. The front-end will be updated based on the finalized template shared by Sachin.
+
+• Standardizing Rule Descriptions  
+  The team discussed the challenge of standardizing Data Quality (DQ) rule descriptions, as existing descriptions are varied and free-text based. Moving forward, a standardized template will be used for new rules, but existing ones will be maintained as is. Rachna emphasized considering the current Decoder project tree definitions to avoid issues.
+
+• Disabling Fields During Rule Modification  
+  Three fields—table name, variable, and check type—have been disabled for editing when modifying a rule to maintain data integrity.
+
+• Approval Page Tabs for New and Updated Rules  
+  Two separate tabs were added to the approval page: one for new rule requests and another for rule update requests. This separation aligns with different BPMN workflows and improves clarity.
+
+• Tracking Changes in Rule Updates  
+  Currently, only the latest data is shown without historical comparison. The team discussed the need to track and display previous and updated values for better change assessment. This would require backend changes and is planned for the backlog.
+
+UI Enhancements and User Guidance
+
+• Info Icons for Form Fields  
+  To assist business users unfamiliar with QTRAG terminology, the team proposed adding info icons with hover descriptions for each input field on the UI form. Rachna will create a backlog item for this enhancement, and content descriptions will be provided for implementation.
+
+• Handling Change Requests and Communication  
+  Anand shared a list of change requests via email, which will be continuously updated. The team agreed to add new requests to this list and enhance the product iteratively after the initial launch.
+
+SQL Generation and Data Quality Rule Execution
+
+• SQL Query Generation and Legacy Updates  
+  The process for generating SQL queries for DQ rules was demonstrated. The system updates legacy SQL files and the QTRAK config JSON with new DQ IDs. Multiple SQL files are generated per rule, and duplicates are avoided by appending entries.
+
+• Testing and Promotion to Production  
+  Currently, SQL generation is done without executing or storing results in test tables. The team discussed the need for a process to promote changes from development to production environments safely, considering environment restrictions on data writing.
+
+• Variable and Description Usage in Rules  
+  The system uses variable names and filter criteria primarily, with descriptions used to identify templates and capture specific inputs like percentage thresholds. Sachin requested a list of standardized descriptions and templates used so far to align UI and backend configurations.
+
+• Data Quality Repository Queries  
+  A query was run on the DQ repository to fetch missing value checks and validate descriptions. It was noted that some entries lack proper input parameters, which will be addressed in future discussions.
+
+Deployment and Testing Updates
+
+• Deployment Status  
+  Nirmal reported deployment failures initially but confirmed successful re-trigger and deployment. Testing is planned post-deployment.
+
+• Process Triggering and Context Data  
+  The team discussed the need for flexibility in passing context data to trigger processes and create tasks dynamically.
+
+📋Overview
+
+• Testing tasks in the lower environment were causing duplicate escalations; these will be closed and email notifications adjusted to prevent future issues.  
+• UI and backend changes were made to improve rule modification workflows, including disabling key fields and adding separate approval tabs.  
+• Standardization of rule descriptions is planned for new rules; existing varied descriptions will be maintained initially.  
+• A backlog item was created to add info icons with descriptions to UI form fields to aid business users.  
+• SQL generation for DQ rules is automated, updating legacy SQL and config files, but execution and data storage in test environments are pending.  
+• Promotion of changes across environments requires a new process to handle data writing restrictions.  
+• Deployment issues were resolved, and testing will proceed.  
+• Communication on change requests will be maintained via shared emails and updated lists.
+
+🎯Todo List
+
+• Sachin:  
+  • [ ] Share the list of standardized DQ rule descriptions and templates used so far with Rachna. (ASAP)  
+  • [ ] Provide queries and data samples from the DQ repository for missing value checks and other rule types. (ASAP)  
+
+• Rachna:  
+  • [ ] Create backlog item for adding info icons with hover descriptions on UI form fields. (ASAP)  
+  • [ ] Coordinate with content team to prepare descriptions for each form field. (Ongoing)  
+  • [ ] Ensure front-end changes align with the finalized rule description templates. (Ongoing)  
+
+• Kundan:  
+  • [ ] Handle co-deployment to disable email notifications from the testing environment to the main email ID. (ASAP)  
+
+• Nirmal:  
+  • [ ] Complete testing of the recent deployment and confirm stability. (ASAP)  
+  • [ ] Trigger processes and validate context data handling post-deployment. (ASAP)  
+
+• Anand:  
+  • [ ] Maintain and update the shared list of change requests via email. (Ongoing)  
+  • [ ] Discuss with Sachin and team the feasibility of tracking previous and updated rule values for approval workflows. (Next meeting)  
+
+• All:  
+  • [ ] Review the current SQL generation and legacy update process; prepare for discussion on promotion strategy across environments. (Next meeting)
+
+Transcription
+
+00:00:04 - 00:01:49 Unknown Speaker:
+
+Let me save my stream. Ideally, the configuration which he has done right, that was incorrect. Now look, he will create a problem, right? It is going to the B40s. Testing curve, how can we add those people, right? Although I... I had closed this basket, but... Now again I see, I am launching it and I am seeing that there are more. So this filter is done on the basis of the status, right? Yes, sir. So these many records are there, right? And all these are currently... Total 37. Can you start closing few of them from your side? Do you have the credential? A2 credential, right? It's same, right? Yes, correct. Just make it underscore A2. Yeah i have the connection but he is not joining right now i'm not sure if he is joining.
+
+00:01:55 - 00:03:20 Unknown Speaker:
+
+OK, 4.30, I won't be able to do it. OK, Anya Vichna is joining. OK, we can continue. First of all, uh, you know regarding this email, right? So I have added the issue, okay, so the task which is being there in the lower environment, which has been created for testing purpose, right? Those remained open, so I'm just closing all of them. So that would be done in next 5 to 10 minutes. So are there more such cases, more escalations than the ones we know of? Because we are not tagged in this. Even once me and Anand are not getting the mails. Yes, yes, you have not been tagged. So even show how many have gone. Oh my God, that's a lot. Okay, one by one can we see which are those cases? These are duplicate records, basically.
+
+00:03:20 - 00:04:17 Unknown Speaker:
+
+These are duplicate records. This is a duplicate year, which is not there. So, I will make sure to... I am closing it anyway. It will be done. But, I mean, can't we disable it in this environment? Because, we have created something for testing in the future. And then, if that also goes in... No, no, no. That part, I have already asked Kundan to take care. So, he will do co-deployment. Okay, meanwhile, I am closing it for the, you know, safety purpose. But yeah, like, in future. Also, this should not be connected to the main email ID. Yeah, yeah, correct, correct. That has been taken care of the new build that we are doing right where? Uh. So, these emails will be stopped and even if the task is open from here, the email will never go.
+
+00:04:18 - 00:05:28 Unknown Speaker:
+
+Right, that's how it should be. What's the point of sending it from the normal environment? Yes, correct. Sir, can you open the fifth one? We are getting somewhere. Basically, it mentions that it's not an in progress. Something is happening. I know about it. So, I have to reduce it to A.Like you can, we will reduce where right? You can see this. Initially, we had 37 or something. Let me stop sharing and you can close it with the demo. Okay, let me know once my screen is good, yeah, it's up. So the changes which were done just basically in the Actions page and in the Approve widget page, so I'll start with the modify actions. So a couple of fields were not properly mapped, so that mapping has been done. And also in the packet for the rule description.
+
+00:05:28 - 00:06:22 Unknown Speaker:
+
+Currently, we are passing this for data strength. Okay, once the template will be shared, we'll change accordingly. SACHIN This way, one route I have, like a route description. Once I share the updated template key what is to be displayed here, then same thing will be configured in the backend. Yes, yes, yes, that would be done. Okay, first of all, that would be done from the front end side, because back end doesn't play a role. Okay, content, who is creating that form right now that you are seeing on the UI? So once you confirm as the format, accordingly, we would need that change from the content side, and then same would go and persist in the database. You got it, yeah, and just one call out. Rachna.
+
+00:06:22 - 00:07:33 Unknown Speaker:
+
+Please do consider the existing way, the way, you know, the definition has been there in the Decoder project tree, the way it has been right now. Right? Because if we are not doing that, then there would be a problem. Uh, are you referring to the DQ role description section, or what? Yes, yes, yes, so like, what? What exactly is your, uh? Relation with current ones versus how we configure the new ones? Relation is the automation which Pithway is building. Current ones are written in random ways because we have so many different use cases. All of them come up with their own way of finding the description. It's very varying so I am not sure what you want to standardize there. Then how we are going to form the template, original template we are forming for the new ones, for old ones.
+
+00:07:33 - 00:08:45 Unknown Speaker:
+
+Actually, because those all, like, are written in different ways, right? Because, suppose, same change, same check. Month over month ratio should not vary more than five percent. Now they can write it in like 10 different forms in English, right? That's what we have been pushing till now, but going forward we can standardize it because we are taking input in a standard format. But till now, it was like, just free text, right? Whatever, uh, whatever kind of DQ check description they can give in the Excel and that we were using. I got your point. But right now, the point is whatever is existing. Based on that, the template are getting created right. And now if I have a requirement to change it. Okay, we will showcase that one. Yeah, let us try to update and then maybe we can.
+
+00:08:46 - 00:10:35 Unknown Speaker:
+
+Okay. And as we had discussed yesterday, these three fields should be disabled when the user is modifying a rule. So that changes has also been implemented. The user can't change the value of table name, variable, and check type. Let me update this blocking period and then add a rule. And update. Okay, let me reload, and I think it's no good. Token has expired and you just refresh it. So this rule has been updated and in the approve reject page, we have added, uh, two tabs, one basically for the new rule and the other is the rule updated request. So the latest change one, which I have updated it, I'll be sure based on that, we can just approve on the check. So I have made the look back change and frequency change, so that's there.
+
+00:10:35 - 00:11:26 Unknown Speaker:
+
+One question, other, Uh. It will only show the latest data, it will not show what was there earlier. Like, can I, can I differentiate the concept? Years have been changed. Like with specific parts. No, currently you can't, because so we are updating the values for the specific. We don't have any mapping or some APIS or backend where we are keeping a trace of the fields that has been changed. So basically, that is giving the all the key and values, the updated values in the API. Would it be possible to, just, uh, show like both the earlier version and the new version, so that you can at least match me? What has changed? We don't think so as of now. We have the visibility, but if we have to do it, we need a back and change also for that.
+
+00:11:26 - 00:12:36 Unknown Speaker:
+
+Okay, Sure. Let me check this with Anand also once most probably we will be requiring it because if someone has requested some change and we do not have a reference of what was there earlier, it would be a little difficult for us to judge what has been changed here. So in that case, back-end is not required. Okay, this is this is coming from the human task, right? Exactly. So once we update, we we send the updated values in the payroll, right? And we are fetching the process list. From here. We are not keeping a track of the older value anyway. So yeah, correct, correct. So maybe in that case, we have to create a keys in that human task, with the new key, which should be capturing a string object. Only the updated value, which our use has updated.
+
+00:12:36 - 00:13:33 Unknown Speaker:
+
+Yes, yeah, and and I agree, uh, to a test point direction. This would need a back and change. So maybe we can, uh, you know, keep this into the backlog. And once you come back right, we will be announcing this in the next. Uh, okay, okay, words, yeah and same uh. The new rules which are created will be listed in this new request app so that flow remains same. Okay, that is right, and these changes are deployed anyway. So if you want to add anything or you want me to show any other features, No. And here there is another reason for, you know, creating two different tab for new rule request and update request. Those are two different BPMNs, right? So it would be that is fine, it's better only that we are getting it separately.
+
+00:13:33 - 00:14:23 Unknown Speaker:
+
+That is good. Okay, yeah, okay, oh. So this was all about the, you know, mapping that we would like to see, and then I was using a little join here. I'm just saying, actually, like, we also showed this version to Poonna, like not the latest, but one time me and Adan shared it with Poonna. So he was also giving some suggestion regarding like, where we are taking the input from users, right, that form part. So for each of the fields, we want to add an info icon. Basically, because these users are basically business users and they don't know much about QTRAG, right? So when they land on this page where they are trying to place a new new TQ, check. So for every field that we are asking of them.
+
+00:14:23 - 00:15:15 Unknown Speaker:
+
+Like, there should be an info icon, if they hover on that, like, suppose, here we have look back, period, right? It's not very clear for a layman, so there if we have an info icon and they hover over it. It should show the description of what is to be filled here, so that also we'll have to add let's create a backlog. REChNa Because even we, yeah, I will do that. I am just trying to ask you, that is doable, right? Everything is, the only thing is you have to share the description for each one. With respect to each field. We will be adding. Sure, sure, okay, then I'll add that there was a email right now right where Anand has shared the list of change request, right, right. So we can just keep on adding over there.
+
+00:15:15 - 00:17:30 Unknown Speaker:
+
+And then once we launch the initial version, we can enhance this product in the next page. Sure, sure, we'll do that. Okay, thanks. Uh, now, uh, can you share your screen? And, uh, let's demo your part? So this one is with respect to the sequel creation, with respect to the description, right? Which we were talking about. Yeah, so we would walk you through a few of the use cases, uh, and see, like, if you have any artificial. So right now, what happens? Once we create these roles, right? This gets into the HTTP. Once you approve it, right? Suppose you approve four roles today that this even required. Changes have been completed. Can you also drop a note on mail? So we have a record of, like you made changes at this point in time.
+
+00:17:30 - 00:18:31 Unknown Speaker:
+
+Yeah, yeah, on that escalation email, right? No, no, that is not required. That goes to the partners. So just, uh, just to our team, you can drop just to keep a record of that. We made the scenes during this time. Okay, anyhow, I have looked in, uh, you and Anand, right? I'll revert back to that. Yeah, sure, you can mention that the issue has been fixed, but no need to provide entire description. And like, what was fixed to the partners? Yeah, okay, okay. Did Prithvi join back? Yes. Sorry, some network issues. I have a problem. Yeah, can you go ahead? So, Rishna, what I was telling, suppose you approve four roles today, right? That goes to the Lumi warehouse tomorrow, right? Very correct, yeah. And then we would be able to view that in Lumi tomorrow.
+
+00:18:33 - 00:19:59 Unknown Speaker:
+
+Uh, that would be creating us equal out of it, so if we would be demoing. Yeah, sure, okay, let me share my screen. And what is the check type we are targeting today? Uh, it's, uh, it was having only a couple of records, right? Yeah, I'm missing value check I'm doing. Ok. Let me name frequency. First of all do a query and let Rachna know what is the description over there. Yeah. So these are the records that we received for yesterday. Totally 19 records, okay, so Sachin? These are all the like what test records that we have been closing during this call. That's what, yeah, yeah, yeah, correct? So if you see this one, right? Data quality rule is like, you know, first name variables should have valid value, right?
+
+00:19:59 - 00:20:51 Unknown Speaker:
+
+These are the existing one or the company variables should not be null. Okay, but these are the ones that we have entered as of now, right to test it out. Yes, yes. So based on this right now, that automation has been built, and once you come back with certain solution, right, then, uh, we will make that. My doubt here is this this is being generated by the UI form itself, right? Like this description, yes, No, right now what he has did, you know, the UI part, even he has updated this old script for timing because we are not ready to write what would be the template that you are going to provide. So, this is a replica of particular project right now. Oh, okay. So the way it has been written, can you trigger a query?
+
+00:20:51 - 00:21:46 Unknown Speaker:
+
+It does not look like one to me, Sachin. Like this first rule, right? First name variable should have valid values. Usually we do define what valid values are in the description itself. Tell me from where you took this description. No, I updated it. The actual current descriptions, they are not, They are being... we got them null, right? No, so, even if you. Then it should be either a replica of DQ repository or the way it is getting saved from the self-serve UI, either of them, right? We should not be placing anything by ourselves. So can you update one of the values from the way it has been there in the DQ repository? Yeah, yeah. Missing value check. Uh, it works such an only valid value check I given wantedly to save it. He failed to generate that.
+
+00:21:47 - 00:23:29 Unknown Speaker:
+
+So, can you pull one of the missing values ID where it has been written like company name should not be null. Missing value check your sign. Yes, yes. Okay, existing entries sir. Yes, existing entries in the TQ repository. Yeah, can you pull one of the missing value check from the DQ repository? Write a query quickly. I have it. Yeah, can you run the query, uh, directly with me on the DQ repository? Okay, fine. Write down where the check type is missing value, not the description, man. Apply a filter of check type. No, we are looking for that. That's why, no, that's fine, less for the missing value, and if you have the DQID handy, then you can filter it with TQID also. Yeah, that's why I thought of putting description like should not be null, Yeah, it is there, like CM15 should not be null.
+
+00:23:29 - 00:25:36 Unknown Speaker:
+
+Yeah, I think missing values would be like this, that's fine. Yeah, okay, now go ahead and run it. Or missing value, at least we can analyze for missing value. Now that data, if you see both missing value and valid value check is there. Duplicate checks. Run it only for the missing value. No, it picks everything regardless of the type. Okay. Let me run it. Yeah, this is the DAB. And open one of the DQID and open its SQL query the existing one. Yeah, and they are actually conveying only such a.I can show you the SQL generated SQL itself, they, I mean, it is not a complex SQL, right? So we can read it, the SQL itself and we can find. But it is generated out. It executed. I am going to output folder.
+
+00:25:38 - 00:27:08 Unknown Speaker:
+
+With the current timestamp, there is a folder. It has updated Qtrak config JSON and then the legacy SQLs that got updated with the new query and the new queries in a separate folder for each chip. Okay, so I can show you didn't show the query that was generated. Yeah I'll open the legacy spl So if you see it has appended in the end Okay, this is the appended spl With the new dqid number. So right now it is there 36, then new one will be generated with 7. Okay, so it has updated three different scales. If there are two entries for the same scale, it will append two entries in that it will not create duplicate or it will not override. Okay, so this is the QTrak Config JSON, so we update this one as well with the new DQ ID that we generated.
+
+00:27:08 - 00:28:46 Unknown Speaker:
+
+So here, uh, one second, yeah, which one is the new one in this? Yeah, I have not created a diff of it, but I will show you that. These are the new DQIDs. 9023. Okay. Yeah. Got it. So, three tasks it does. One is updating the legacy SQL, generating the SQL. These are the SQL files that got generated. Right. Just for information only. And it will also update the QTRAC JSON file. You can configures and, uh, you did a small report. But to see if, and right now are these being run and results are being stored in some test table. Or we are just generating the SQL no, as of now, we are just generating it rich. Now. The next part, which is being, you know, to promote the things, right?
+
+00:28:46 - 00:29:39 Unknown Speaker:
+
+So because this would be running in the production environment, right? So we would need to see the feasibility for inserting the data because we don't want to write the or update the existing DQID directly to the production environment without testing, right? And when it is running in the production environment, you won't be able to write the data to the dev or test environment from there. That is something not feasible. Okay. Because I hope you got my point right. If it is in the PRT one, you won't be able to write the data to the Dev environment. So that is again. We need to see if we can create a composer to which we can, you know, send a file to GCP and from there we can just write down it to the dev environment.
+
+00:29:39 - 00:30:49 Unknown Speaker:
+
+And from there, it should be a promotion of that from one environment to the other. Okay about it? Yeah, sure, I think so far this looks fine. So that was the pointer, right? Like the description that you have seen right now, which is based on the existing rule. The way it is in the just one question, you are picking the variable and the condition from description itself, like. When it says create date should not be null. So you are picking create date from description instead of variable name. Is it? No. We actually take both variable name and also the description and filter criteria. So three parameters will take it and will create. So description variable name you will take from the variable name only. Yes, yes, yeah. Variable name, and then filter criteria you will take from filter criteria.
+
+00:30:49 - 00:31:39 Unknown Speaker:
+
+Yes. Then what exactly are you picking from? The description column description so see, not every column names will get it from there. Descriptions only to find the template that one will use will get. And one more use is. There are few places where plus or minus five percentage some inputs, we are passing it through the description, so those. So since you have standardized these, put, we write like, for the code. Can you send me a list of all the standard descriptions you are using so far? Yeah, that would be better, each of those descriptions with your template, right, right, those would be whatever, 10, 15, a standard description. Just share that sample with me, I will have a look and then we can accordingly configure for UI also. Oh yeah, that would solve the problem.
+
+00:31:39 - 00:32:30 Unknown Speaker:
+
+Yeah, that would be easy. Also, you don't have to make any changes. Yeah, because otherwise there is no way. If I directly look at the DQ repository, it's a mix of everything, but it seems like you have picked certain descriptions and attached it with your template, somehow. Yeah and one more thing. So you can share those with me. Sure sure I will share it and one more thing is few places there is no proper input parameters in the variable name okay and filter criteria is not properly mentioned few places for the few of the. Variable name is also not mentioned. Yeah few of the TQIDs let me show you. We thought of discussing Sachin was saying we will discuss with Anand any day or not. To jump to another call. Okay.
+
+00:32:30 - 00:33:27 Unknown Speaker:
+
+Can we connect again after DSU over this? We can discuss this there. Yeah. No problem. We will discuss. Okay. Yeah. You can just keep the file handy and just send it to me in the meantime. The description file, right? And what you are discussing right now that we can discuss after DSU. Yeah. Sure. Sure. Yeah. I have it there. Sure. Okay. Fine. No problem. Thank you. Yeah. Yeah. Thank you everyone. Bye. I have already asked you those reporting and all, right? That is something we can take it into an enhancement feature and then we can define that report and then present it to the product team. I'm not sure what is the hurry from your side to place everything in the UAT. That was something not the requirement being placed from the product team, right?
+
+00:33:27 - 00:34:49 Unknown Speaker:
+
+So we can keep that feature, right? And then we can advance it. I thought actually, see, when they are asking whether it is properly generating, I need something, right? That's why I'm going to that. I got your point. We discussed this long before. Yeah. I'm not sure that HTML. Okay. Nirmal, your deployment has been done. Ok did you tested it or can you give a try right now yeah deployment actually failed why did you re-trigger it it was failed on the validation page no man your deployment is successful. No, I will do it after re-triggering. Okay, you did that re-trigger? Yeah. Okay, then go ahead and then can you trigger your process now? Yeah. There won't be any task in the open, right? Then we will create it.
+
+00:35:36 - 00:36:05 Unknown Speaker:
+
+Then you can pass that, uh, from the context data, and that was the reason we should have that flexibility to pass it from the context data. You can, you can drop up, uh, that's fine, I just need to enable on the call, okay?
+

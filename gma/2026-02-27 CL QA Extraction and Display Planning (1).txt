@@ -1,0 +1,165 @@
+2026-02-27 CL QA Extraction and Display Planning
+
+Creation Time: 2026/02/27 10:43
+
+
+📅About Meeting
+
+• Date & Time: 2026-02-27 10:43  
+• Location: [insert location]  
+• Attendee: [insert names]
+
+📒Meeting Outline
+
+CL QA extraction & display
+
+• Goal and high-level plan
+  The core goal is to take an input CL (changelist) and find historical/matching CLs and related bugs, then surface QA notes so reviewers can decide testing needs. The plan is not finalized; current immediate objective is to fetch and display data (CL description, related bug(s), linked CLs, and QA notes) in a tabular view. Any automated reasoning (LLM/agent) on that data is planned as a later phase.
+
+• Data sources and fields to collect
+  Data to be collected: CL description, Buggnizer comments/QA notes, Bagnizer/Buggnizer notes/comments, and QA notes from linked CLs (the CLs attached to the bug). Previously the team collected CL description, Bagnizer comments/notes, and related CL numbers but did not fetch linked CL descriptions. Now the change requested is to also fetch QA notes for all related CLs attached to a bug.
+
+• Scope: display vs decision-making
+  Current deliverable: a Python script (not an agent) that iterates, fetches the CL → related bugs → linked CLs → QA notes, and renders the results in a tabular format in the front end. This view is for human QA reviewers to gain confidence. The system will not make final test-or-no-test decisions in phase 1. Using an LLM to make decisions (test suite selection, pass/fail, etc.) is a phase-2/phase-3 activity and requires explicit instructions/criteria from stakeholders.
+
+Source & traversal logic
+
+• Order of lookup and fallbacks
+  Primary source: CL critic/excel sheet (CL description & CL-level QA notes). If CL-level QA notes are missing or unclear, team will check Buggnizer comments (bug-level QA notes). For a given input CL: find its bug(s); for each bug, enumerate linked CLs; for each linked CL, fetch QA notes (if present) from CL and Buggnizer. This aggregated information will be displayed.
+
+• Use of linked CLs QA notes
+  Team consensus: linked CL QA notes are useful to avoid missing test points and catch functionality that sits across multiple CLs. Even if the final automated reasoning will not use these notes in phase 1, fetching and displaying them adds value for manual reviewers.
+
+• What will not be done yet
+  No automated final decision-making (the system will not automatically mark a CL as "requires testing" or "do not test") in current phase. No detailed reasoning using linked CL QA as input to the decision engine in phase 1. Rack system architecture and agent-based workflows are out of scope for now.
+
+Implementation details and next steps
+
+• Implementation approach
+  Implement a Python script that loops through inputs, calls critic/excel and Buggnizer endpoints, collects CL descriptions, related bug IDs, linked CL lists, and QA notes/comments, and produces a tabular display in the front end. The team will not modify existing rack architecture now; focus is on data fetch & display. Later, an LLM/agent can be added to consume the same data and provide suggested test cases or decide test-suites.
+
+• Phase planning
+  Phase 1: Data collection and tabular display of CL → bug → linked CLs → QA notes.  
+  Phase 2 (planned): Use LLM/agent to suggest test suites and test cases or to take preliminary automated decisions; requires clear decision rules and acceptance criteria from stakeholders (examples: what constitutes "needs testing", how to map QA notes to test suites, priority rules).
+
+• Testing & manual workflows
+  The team clarified manual testing remains the primary execution method. Copycat/automation runs might exist for some CLs but are separate and not part of this CL-validation pipeline. The view produced will help manual QA to decide testing priorities. If production failures occur post-merge, manual reviewers investigate contract account issues and use historical CL/QA notes to identify missing checks.
+
+Questions, clarifications, and stakeholder inputs requested
+
+• Decision criteria for LLM/agent
+  If the team wants automated decision-making (test suite selection or pass/fail), the LLM will need explicit rules/instructions (what to detect in QA notes, mapping to test suites, thresholds, etc.). Stakeholders (Balaji, Manu, Pallavi) will be consulted to define these rules.
+
+• Deliverables list requested by stakeholders
+  Stakeholders asked to receive a clear list: what the developer is working on today, and what the proposed changes are. The developer agreed to send the current work and proposed changes.
+
+• Folder/code & queries
+  Code has been copied into the folder provided by Sachin. New queries are being generated because old queries returning previous results are incorrect. The team was asked to review that folder.
+
+📋Overview
+
+• Fetch CL description from critic/excel as first source.
+• If CL-level QA notes are missing or unclear, fall back to Buggnizer comments.
+• For the input CL, enumerate related bug(s) and for each bug gather all linked CLs.
+• For each linked CL, fetch QA notes (from critic/cl record and Buggnizer where present).
+• Present all collected data (input CL, related bugs, linked CLs, QA notes) in a tabular frontend view.
+• Phase 1: display-only; no automated decision taking yet.
+• Phase 2: plan to add an LLM/agent to suggest test-cases/test-suites or make decisions — requires rules/criteria from stakeholders.
+• Manual testing remains primary. Automation (copycat) runs are separate and not directly part of this pipeline.
+• Developer to share current work status, proposed changes, and confirm code location (Sachin's folder). New queries are being prepared to fix incorrect results from old queries.
+
+🎯Todo List
+
+• Developer / Data engineer:
+  • [ ] Implement Python script to iterate input CLs → related bugs → linked CLs → fetch QA notes and comments, and output results in a tabular format (no deadline specified).
+  • [ ] Replace old queries with new queries in the shared folder (Sachin's folder). (ASAP)
+
+• Product / Stakeholders (Balaji, Manu, Pallavi):
+  • [ ] Provide decision rules and acceptance criteria if they want LLM/agent to make test-suite decisions (define mapping from QA notes/CL descriptions to test suites and thresholds). (By: agree timeline in follow-up)
+
+• Developer / Integrator:
+  • [ ] Share a concise document/email listing: (a) what is being worked on today, (b) proposed changes/next steps, and (c) folder/code location. (By: next working day)
+
+• Reviewer / QA owner (Ramesh or assigned QA lead):
+  • [ ] Confirm what QA note fields are authoritative (CL critic excel field vs Buggnizer comment vs other fields) and whether any additional metadata is needed to interpret QA notes. (By: TBD)
+
+• Engineering lead / Architect:
+  • [ ] Confirm rack/agent architecture out-of-scope for Phase 1 and sign off to proceed with Python-script + frontend tabular display approach. (By: TBD)
+
+Notes:
+• If owners and deadlines need to be assigned precisely, please provide names and target dates and the summary will be updated accordingly.
+
+Transcription
+
+00:00:04 - 00:01:12 Unknown Speaker:
+
+What is the plan? Plan is not decided yet. This is what we have. You were not in the call yesterday. Yeah, but I got it. The context I got it in differently. What you got? So basically by CLID, we will get the bug if bug ID is there. For third bug ID, we will try to get the comment information what previously we were doing. OK, since that is not possible now, they told to get QA notes from each bug. Yes, that is also in the list, that is also in the list, but this is also discussed. Yesterday. You were there. Na, Yeah, but I don't. This is going to help? They have, so what you are working on right now? Okay, no, no, what I am trying to say, see, basically, we have a input CL, okay?
+
+00:01:12 - 00:02:43 Unknown Speaker:
+
+For that CL, we are trying to find historical matched CLs. That's our goal, okay? So, CL description itself, we will try to relate with the existing Excel sheet, CL description is there, And when we are creating a rack system, uh, so right now I don't have the architecture open. See, leave the rack system now, because that is not in the scope. Yeah, if rack system is not there now, uh, I.We have to do a similarity search, it's see with similarity search with what? With that description, what and all previous CLs that are being matched. Okay. That we are getting it. And I mean why we were using Bagnizer data also. We were collecting the CL description, Bagnizer comments, Bagnizer notes and then related CL numbers only. We are not actually getting related CL, I mean linked CL descriptions.
+
+00:02:43 - 00:03:26 Unknown Speaker:
+
+That we were not doing previously. But based on what we discussed with Ramnesh yesterday, when there is a CL, for that there is a bug and bug also will have multiple CLs. We will get all the QA nodes from those bugs. That I was not aware. Right now, we will only get those CLs and display it in the front end. So now, my plan is to get the QA nodes for those CLs also. Okay. And that would be used to decide on the test tracker. Okay. But I will not use it in taking a decision whether this CL request testing are not okay, but that will be displayed. Okay, this is the input CL, and it has this bug, and this bug has these CLs, and each CL has these QA nodes.
+
+00:03:26 - 00:04:28 Unknown Speaker:
+
+I will display it in a tabular manner. It is not an agent tick process, it is a Python script. We simply get the information and display it, and so once we get this information on top of this. Okay, that's when I'll try to use an LLM. We'll fetch the information first, and using an LLM is something that we will discuss later. If I'm I wanted to use LLM, I need instructions on what basis I have to do something. For example, test case, decision, test, what you say, test suit, what test suits need to be executed. You wanted to decide based on that. So what I can right now do is I will get QA nodes for all these related bugs CL numbers and I will display it and then next decision is to find what test suits need to be executed.
+
+00:04:49 - 00:08:40 Unknown Speaker:
+
+Input CL and what is the bugs available for it? And then all related CLs, their QA comments. I will display it in a tabular manner later. If they say no, no, use this information to fetch this, then I will do another use case for that same thing anyway. We are fetching the data now, we are running it in a loop and fetching the data. And after that. What we are going to do that the data is the next thing that we will do in phase 2, I mean, phase 2 I made. Let me see if I can pull that. Amen. Yeah, he's... share this link with him. He is still in the chat now. From right bottom corner. There is I sign right? On the right side bottom there is I sign. From there copy joining him.
+
+00:09:30 - 00:10:28 Unknown Speaker:
+
+Hey, hi Ramesh. Ramesh, good morning. So, Ramesh, one question I have. So, right now the procedure is you get a CL description in the Excel sheet when you run the script. I mean, I think for web it is a different case. That is okay. So, you get that information and then you will also see the related bugs. Will bugs have any QA nodes? It does, uh, will contain any information other than comments. What type of information you're looking for? See, I'm not looking anything, but I wanted to know what information you people are using in that. From this one, that's what I'm saying for basic break with it. For CL, we only see Q and O's if we have anything related to work on any of the CL.
+
+00:10:28 - 00:12:24 Unknown Speaker:
+
+QA will update very clearly that this is the Q and M what we need to perform on, so once we get that Q and O, we'll be working on it. Yeah, that will be there in the CL Excel, the CL description critic Excel will give that. I'm asking, with respect to bug nature, what? And all information you capture for your use case, I'll share my screen. Yeah, I'll repeat once again, Yeah, here we are getting a Q&A, by any chance, we don't have any Q&A over here. Still, we go on our test account, so once we test in our test account, what we do is the CL will change the status to verified because it has a QA note and we have checked it manually. If there is no intervention, nothing is happening and we are not adding anything.
+
+00:12:24 - 00:13:22 Unknown Speaker:
+
+It's an NA, what we do is we simply give NA. Okay, it's there in the comments on this. It's there in the QA notes. No, this QA notes is part of comments or what is it? This you are saying? This is the CL, right? In the CL you have anything. The priority what we see is this QA note. This is there in the CL itself, right Ramesh? No, yeah, but in few aspects it will not be there in the CL. Like over here. Here also it will not be there. Sometimes. Then you will go to Buggnizer and Buggnizer also you will see if there is any QAnon. Buggnizer is the final destination where we will see if there is anything there or not. Okay. Because in two aspects it might be missing. So we will check.
+
+00:13:23 - 00:14:18 Unknown Speaker:
+
+Okay. This and this. Okay nice. So this part we will posture open and check. So okay let me repeat. Sorry if I am repeating. So, first go to critic and you get the QA notes. If it is not conveying anything, you will go to Buggnizer comments. Buggnizer comments also there might be a QA notes. Based on these, you will take a final decision whether it requires a testing or not. Correct. And what about the linked CLs? Do you use any information of the linked CLs? We will see the final one only. No, no. Buggnizer will have linked CLs, right? Do we use any notes of those? No. The final one what we have, we will be looking into it. But for functionality, we will cross check it. For example, this is this. This.
+
+00:14:18 - 00:15:09 Unknown Speaker:
+
+Have an ad hoc schedule working as expected, right? So, what I will be doing is, I will come to compose. Draft an email. Schedule sent. So, I will check around this schedule sent. Is it working fine or not? Those things we will check. Okay, okay. And so, I mean, one thing I'm not confident is, okay, you get this related CLs and you are saying you will also go to those CLs to see what is the QA comments. Is that mandatory or you are just doing it for... Because for us to implement our use case, we need to know if it is required for that CL, what is the bugs that are attached and that bug... Each will have its own CL link. And what is the QA nodes for each CL?
+
+00:15:09 - 00:16:42 Unknown Speaker:
+
+We wanted to display it in a table. Is that required is my question. One final question, So currently, my our plan is to get the input CL for which we are going to do validation. And related bugs, the linked bugs and bugs will have not bugs, or maybe one bug might be so that bug. Internally will have multiple CLs attached to it, and each CLs QA nodes also will fetch it and display it in a table format. OK, and once we decide it, so for a QA. When he sees all this information and what are the linked CLs and QA nodes from each? And it would be very easy for him to take a decision. I mean, it will be more confident when taking, when agreeing with the What agent has generated.
+
+00:16:42 - 00:17:33 Unknown Speaker:
+
+But we cannot provide any of these inputs, I mean, the linked CLs QA nodes to the reasoning system. Okay, and we will not take a final decision on that information. Do you want us to take a decision based on that as well? All six will be for the same functionality, right? So, they would be doing first phase in one CL, second CL, third phase. So, end of the day, the final CL what we are getting will be the functionality of all the CL which are part of one CL. They can't have two different functionalities in one CL. Okay. So, in that case, why do we need to go deep inside those CLs and see what is the cleanups there? Because we have to check for the rounder functionality, right?
+
+00:17:34 - 00:18:13 Unknown Speaker:
+
+The one that example I have shown, schedule email, I just click schedule email and I'll say okay, domain has sent. But behind the scenes, there will be many things which we need to separate. So once I send schedule email, the reception is getting or is receiving the schedule email or not also, I'll check a lot for the different account which I'm sharing and I'll check over there also whether it has sent or not. Or whether it is showing its schedule email or not. Those things will be part of that particular CL. So behind the scenes, all the CLs will be part of it. Okay, so do you want us to fetch those CLQA notes also, internal CLQA notes? That will help, see, that will help because we will not miss out any point of tech issues in that.
+
+00:18:14 - 00:19:42 Unknown Speaker:
+
+Okay, but we will not do any reasoning with the data? You can take the final CL reason, that may help, but giving the QA notes of any existing CLs will definitely have an add-on because we will not miss out any point of missing out any part. Nice, nice. And final question, how are you guys deciding on the test suit? What test suits need to be executed with respect to these QA nodes? Test suit I meant, see, automation tests only, right? It's not manual, right? What you are doing? We are manual only, right? You don't have automation test suits. Okay, how do you list what is not covered there? So copycat run is something that will get executed automatically for you or you will trigger that for ELCL? You are talking about CL, No, for CL, we will do manually.
+
+00:19:42 - 00:20:42 Unknown Speaker:
+
+Oh okay, so for this, only manual manual will do it. On this all iOS Android Web, if there is any CL Auto Copycat triggered, run and passed, or will again project manually. Okay, got it okay? Uh, to be very honest, this is the final phase where if you pass the CL and still it have any issue, it will directly go to contract account and all the Googlers will file work or file the issue saying that this functionality is missing out. Then those issues will come to the organiser. Then manual team will be picking out those organiser saying that what functionality we are missing out. Again they will check in the contract account if this is happening. If that is happening in the past one month, that's an aspiration. That means we have missed that. Okay.
+
+00:20:42 - 00:21:44 Unknown Speaker:
+
+Fine. No, I am good. Right now, Ramesh, thank you. Sure, Ramesh. Thank you so much. Thanks for the time. Ravi, I wanted to continue the discussion. Yeah, thank you, Ramesh. So, Ramesh, you understood, right? So, basically, we will display the information. He is saying if we can get those QAnons that it is good only, get it and display it for now. If they say, based on this, you take one more decision, we will add that as a separate agent where it will extract this also when taking the final decision. That we will do in task 2. And one more thing, what Pallavi is expecting, Is that there would be an integration test suite, automation test suite that will get executed based on the CL? But that is not right.
+
+00:21:44 - 00:22:57 Unknown Speaker:
+
+What he is saying is they manually do the testing, copycat testing, that is, that will be done automatically, they don't need any involvement with respect to CL. Yes, so manual testing only, it is so. Maybe we can do one thing. Based on the functionality that is being changed as part of all these ELs, the description we can create one more agent and list down all the test cases to be executed. Maybe in a descriptive manner that, for example, send mail, you check it. Based on what is changed, it can give nice test cases that need to be executed. That information only can be provided. We will discuss it. Of course, we will have to discuss. And, yeah, we will discuss it with Balaji and Manu. And also send me the list on which part you are working.
+
+00:22:58 - 00:26:14 Unknown Speaker:
+
+What we are working today and what you are proposing. Send me all the... Sure, sure. You are working today and what is the proposal change sure yeah. That is total IT expense. Yeah. Yeah. Perfect. Today, I have prepared everything in the car. Have you seen the folder? Yes, I am looking at it. For that, I have copied and pasted the entire code in the folder given by Sachin. We are generating new queries. It is wrong to display old queries.  .  . . .
+

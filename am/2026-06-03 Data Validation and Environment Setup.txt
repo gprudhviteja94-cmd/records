@@ -1,0 +1,183 @@
+2026-06-03 Data Validation and Environment Setup
+
+Creation Time: 2026/06/03 18:03
+
+
+📅About Meeting
+
+• Date & Time: 2026-06-03 18:03  
+• Location: Virtual Meeting  
+• Attendee: Anand, Ansi, Suman, Sachin, Rajana, Bhargav, Sameer, Jason, Rachna, Sajjan, Rich, Vichna, Others
+
+📒Meeting Outline
+
+Data Validation and Environment Setup
+
+• E2 and E3 Environment Table Creation and Validation  
+  Suman reported ongoing E2 validation for TLS, with E1 tables created recently. The same tables need to be created in the E3 environment for testing and validation. Coordination with Rajana and business partners is pending for finalizing the table creation. Sachin requested formal documentation (RFC) for moving tables to E3. Rachna's alignment is required for creating two specific tables related to MR code and non-MR code in E3.
+
+• Pipeline and Metadata Updates  
+  Updates were shared on the deployment of the Lemon Benefits use case to production, with a minor issue on Feed Key resolved. For lazy new pipelines, two pending tables' pipelines have been set up, and testing with Jason is planned. Jason confirmed that RACI pipelines require a different test vehicle, which involves metadata updates rather than E3 deployment. The process for updating metadata and approval workflow was clarified.
+
+• Access Issues and Platform Setup  
+  There are ongoing issues with admin access to the platform (Open Composer), which is necessary for setting up parameters and running pipelines. The point of contact has been identified, and efforts to obtain access are underway. Training commitments may delay immediate progress, but follow-up is planned.
+
+Data Quality (DQ) Rules and Repository Updates
+
+• UMD Requirements and DQ Rule Insertion  
+  Ansi is working on validating bulk updates and analyzing UMDL requirements received from Rachna. She has started inserting DQ rules into the DQ repository. Discussions clarified that multiple variables in DQ rules can be stored as comma-separated values. The table ID, variable ID, and rule ID will remain zero going forward, with only the DQ ID incrementing.
+
+• Data Migration and Filter Criteria Finalization  
+  Sachin emphasized completing updates on existing data with filter criteria and description before new roles are submitted. The process will allow users to edit and submit additional columns, making the system user-friendly. The team agreed to finalize the filter criteria for about 300 checks and review with Anand and Rachna before sharing with the DBA team for migration to E2 and E3 environments. The migration is expected to take 3-7 days.
+
+Deployment and Monitoring
+
+• Deployment Status and Email Alerts  
+  Sajjan reported that the main branch build is expected to go live soon, with contingency for deployment issues. There was a concern about multiple individual ICRV alert emails being sent instead of a consolidated email. This issue requires urgent investigation. Rachna explained that "no data available" messages appear when no records are found during rule execution, which is expected behavior.
+
+• Metadata Editing and Table Deployment  
+  Jason demonstrated how to edit metadata to update the table reader access group for seven tables. These changes will prevent unnecessary moves to E1 and E2 environments. The team plans to deploy all seven tables simultaneously by next week, pending final approvals and group creation for access control.
+
+📋Overview
+
+• E2 and E3 environments require synchronized table creation and validation; formal documentation and business partner alignment are pending.  
+• Pipeline updates include resolving minor production issues, setting up new pipelines, and updating metadata for RACI pipelines with a new test vehicle.  
+• Access to platform admin features is critical and currently being pursued through identified contacts.  
+• DQ rules are being updated with new requirements; multiple variables can be stored comma-separated, and IDs are simplified.  
+• Data migration requires finalizing filter criteria and descriptions for existing data, with a timeline of 3-7 days for migration.  
+• Deployment plans include a main branch release, resolving alert email issues, and coordinated deployment of seven tables with updated metadata.  
+• Monitoring of alert messages and system behavior is ongoing to ensure data quality and operational stability.
+
+🎯Todo List
+
+• Suman  
+  • [ ] Coordinate with Rajana and business partners to finalize table creation in E3 environment.  
+  • [ ] Share validation results via mail with retro.  
+
+• Sachin  
+  • [ ] Send email to Rachna requesting formal sign-off for moving tables to E3.  
+  • [ ] Finalize filter criteria for all 300 DQ checks and review with Anand and Rachna.  
+  • [ ] Oversee data migration to E2 and E3 environments (3-7 days).  
+
+• Ansi  
+  • [ ] Continue validating bulk update and inserting DQ rules into the repository.  
+  • [ ] Connect with Rajana for requirement clarification and prepare for tomorrow’s discussion.  
+
+• Jason  
+  • [ ] Confirm whether to use existing or create new access group for metadata changes.  
+  • [ ] Submit updated metadata files for all seven tables.  
+
+• Rachna  
+  • [ ] Provide alignment and support for table creation in E3 environment.  
+  • [ ] Monitor and clarify alert email issues and "no data available" messages.  
+
+• Bhargav and Sameer  
+  • [ ] Continue working on self-serve UI deployment to E2 environment and quantum part testing.  
+
+• Anand and Vichna  
+  • [ ] Review and approve filter criteria and data correction proposals.  
+
+• Sajjan  
+  • [ ] Monitor main branch deployment and escalate any issues promptly.  
+
+• All Team Members  
+  • [ ] Prepare for follow-up call tomorrow to finalize UMD requirements and data migration plans.
+
+Transcription
+
+00:00:02 - 00:03:10 Unknown Speaker:
+
+Thank you. Hey, Anand. Hi, everyone. Sorry, I was into some other talk. Okay, hi, sir. Hi, sir. Ansi, can you go ahead with your updates? Is Ansi there? Okay, no, right? Suman, could you please go ahead with your update? Hi everyone. I said actually I'm doing TLS. The E2 validation is going on. Because yesterday we don't have the data in E1. Because we created E1 tables. We have created the tables. The tables we don't have in E2. So yesterday we have created, so today I need, uh, that table can handle E3, also E3 environment, also I go to testing E3. Also in the validation part, uh, then I will share the result, uh, the mail with the retro, okay, and uh, the whole part is done. I already shared the result with Rajana.
+
+00:03:10 - 00:04:22 Unknown Speaker:
+
+I'm waiting for the business partners. Uh, we got mail from Rajana, we are waiting for the phone. Uh, so, you know, the table is going to remain same, so please make sure to create that on YouTube. He's not having the data, right? Then again, .  So please make sure you create those intermediate table on A3 environment also. Sachin, we need an RFC of this from the formal documentation. So that evidence . Yeah, so can you send an email to Rachna to provide  a sign  up to move those tables to  the A3 environment? Yeah, OK. Okay. Reshna, we would need your alignment for creating that to the E3 align environment, those two tables. Sorry, which table is it? I missed it. These two tables where they are saving, I think, MR code and non-MR code. Okay, okay.
+
+00:04:22 - 00:05:19 Unknown Speaker:
+
+Sure, sure. Yeah, there are a couple of tables. Okay, thanks a lot. Sir, can you please go ahead? Just before the session, just one quick point, right? For UMD, we have received the requirements. Okay. I think probably we can just review it and then share it with you guys. Yeah, then probably let's set up a call tomorrow, right? And then we can discuss with respect to any new changes. Hello? Okay. Seven? Sure. So, first for the computer at Ludo, Lemon benefits use case that has been deployed to production on Monday. There was a small issue where Feed Key was not getting populated, but me and I have verified that yesterday and I think it will start populating from next turn onwards. Uh, for the lazy new pipelines, the pending two tables pipeline has been set up.
+
+00:05:19 - 00:06:12 Unknown Speaker:
+
+Uh, we'll work with Jason for even ingestion and testing. Apart from that, Jason confirmed yesterday that for all the RACI pipelines, we need to use a different test vehicle, not the normal engineering one. So we have to change across the board. So that one is the one that you are mentioning, right? That RACI one, we have to do it, right? Correct, yes. I don't think that would require an E3 deployment. Can you just check if you can just update the metadata? It should not move to the E1 and E2. I didn't see an option to edit. No, no, there won't be an option. I'll show you. If this call gets over, I'll show you. Okay, sure. Even if it moves to even, that should not take us much time to move that change. Okay.
+
+00:06:12 - 00:07:04 Unknown Speaker:
+
+Right, right, right. So, this will impact all seven tables that have been deployed to now. Seven or eight. Yeah. No, I think the previous table which had been created, right, that goes with the tracing only. I think the okay, the the, the last one which you have. Yes, yes, yes, yeah, got it, yeah, okay, yeah, thanks. Seven. Also, I think we have to, yeah, Dt Flow, I'll connect with you tomorrow. Seven on that, I, I'm aware with that, and, you know, on that one also. First of all, I have cross check with the you know platform team. So we are still missing some of the access on that platform, the admin access and all. Okay, so I was having a conversation and they are routing me basically from one person to one person, so finally I got a point of contact.
+
+00:07:04 - 00:08:04 Unknown Speaker:
+
+Okay, so let me just chase him and then get the access. Because if you see Open the Composer, you would not be, uh, you know, visualizing that admin access over there. Okay, okay. And without that, we won't be able to set up some of the parameter, right? Uh, so with that, you won't be able to run your process, the pipeline and all right. So maybe, uh, again, I'll be busy from 6 30 to 8 30 due to training, right? Uh, so let's connect tomorrow on that to close it out, okay? Meanwhile, you can continue on that, uh, that, uh, the crazy part. And then anyhow, we are meeting at nine, right? For the talk integration, so let's see how it goes over there. Okay, thanks, uh. I think we already have your updates and do we have anything to say the update?
+
+00:08:04 - 00:08:58 Unknown Speaker:
+
+Or it's the same? Yeah, it's same. And add on that one, yeah, some description I'm updating in the MGM related one. So that is going in deployment, can be going currently in the environment. And yeah, apart from that one for the GCS, that cloud cleaning, right bucket cleaning. So then the DAX, which I have selected, if we have the 17, so that one I just redirected to the project bucket location so that currently not deployed. So I will add a few more also DAX today, and I will deploy those changes in your environment today. Yeah, okay, okay, uh. And for Kundan, that, uh, we are trying to, you know, basically deploy the self-serve to UI to the E2 environment. And then I have already told you right, there are some issues going on.
+
+00:08:58 - 00:09:55 Unknown Speaker:
+
+We are working on that from Bhargav's side and Sameer's side they are working on the quantum part and most probably we will be getting a result by tomorrow. Bhargav, would you like to share any specific update? Samir has tested one of it and now I'm like modifying a code on that artifacts thing where I can like, instead of giving one big ID. How to insert multiple and all ID set ones to get the to test back test the data? So once it is finished, I will share with Samir. So I'm working on that right now. Okay, and did you paying class for that access? Yes, yes. He replied back just now. He said he will follow it up. Okay, yeah. With respect to the ask, Sachin, it is clear now, right? Yeah, yeah.
+
+00:09:56 - 00:10:40 Unknown Speaker:
+
+The ask was pretty clear, Anand. At least this is clear to me. I was just going through that. You were showing the other day also some examples. That is perfectly like, what exactly what I'm looking for? Basically? So, yeah, that initiative one right, the one that I, yeah, yeah, you have already created, right for a few exactly. Yeah, actually, you know, I was preparing that data. The reason being suppose, I want to explain the quanto to somebody right to leadership level. So even if you see the description, I have modified the description using the chat GPD. It is a bit different from the one that has been stored in the DQ result. Got it. It should be in such a way that, you know, if somebody reads... Exactly, yeah. That is very presentable.
+
+00:10:40 - 00:11:45 Unknown Speaker:
+
+That's a very nice table that you have created over there. Okay. Thanks, Anit. Okay. I think, Ansi, can you go ahead with the updates that you have? Yeah, sure, Sajjan. So, I was working on the validation of the bulk update. So from the process start tool, I validated the bulk-made DPM1 and it is working. So there are some edge cases which you mentioned so that I need to validate. And on the UMDL, I analyzed the requirements which Rishna sent yesterday. And I have started working on inserting the DQ rules to the DQ repository. Okay. Just just pass on those uh inside query to, uh, yeah, yes, yes, I'll. Uh, I'll connect with that. Okay, thanks Nc. Uh. So on UMDL, let's have a reconnect with Rajna. So that, you know, just go through that requirement.
+
+00:11:45 - 00:12:42 Unknown Speaker:
+
+So that when we would be meeting tomorrow, right in case you have anything. So regarding that, yesterday we discussed the overview, right? So like initial ones remain unchanged, what we had discussed, like we can start with this segment, right? Most of that I see is still the same. I think Ansi can continue with that. And even the later parts, like those, if there is any doubt, I can take it up. But mostly it's the same, whatever we had discussed yesterday, right? So what I am proposing, let her go through those requirements, right? So that in case you have any query, let's close it out tomorrow so that, you know, from day after tomorrow, we can leverage our capacity to completely build that use case. Yes, it's in that works. Sure. I have one question on that.
+
+00:12:44 - 00:13:34 Unknown Speaker:
+
+So. Um, like, um, earlier, there used to be like a one one variable is applied for each DQ rule, right? So in these requirements, um, yeah. So when we are inserting it to the DQ repository, like, uh, this table ID and variable ID, we used to take the combination, right? So here, like how we have to do, we need to split those variables separately, we don't need to split and see. We can just use them in comma only. Like I remember, we have a few rules as of now also, which are like multiple variable rules. I remember raising ones are there. So it's like, update time stamp, comma, user ID, that's there in the variable part. So you can just continue it like that just comma separated array, right?
+
+00:13:34 - 00:14:51 Unknown Speaker:
+
+You can store it that way, there is any technical issue by doing it that way. A quick callout, Ansi. The table ID, variable ID, and the rule ID is going to remain 0, 0, 0 going forward. Okay. Okay? So, no need to create rule ID. You just need to, you know, increment the DQ ID to the next ID. We really don't need rule ID, var ID, and table ID. Okay. Okay, Sachin. Thank you. Yeah, but sorry, okay, thanks and see on in the additional. Do you have any further questions? Nothing from my side, I'll keep you posted on. With respect to the data migration. And, uh, do you want to have further discussion on that? Or no, let us know. Where did you get an idea or not? Let's not park it again till tomorrow.
+
+00:14:51 - 00:16:02 Unknown Speaker:
+
+You're there, you're on mute. If you're speaking, I'll just show you what needs to be changed. Sorry, sorry, okay, yeah, yeah. What we were asking is, Uh, are you clear now? Or, yeah, we need, uh, you know, a finalization with respect to that. So, Anand and Vichna, just to, you know, reiterate. What I have asked with is that whichever, uh, data which we were able to, you know, segregate with respect to the you know, filter criteria and the description. Right, whatever update we can do with the existing data, right, let's do those with respect to the existing data, right? And then whenever there would be a new role that could be submitted, right? Anyhow, user is going to observe that if they have already some existing role, right?
+
+00:16:02 - 00:16:44 Unknown Speaker:
+
+They can see that this has been written in filter criteria, this has been written over the test strips, right? So that would amount. Anyhow, we're going to give them an idea, right? And then maybe what we can do while... you know, the rules are getting reviewed at your end, right there. We would populate that filter criteria and the use case, use case, and, you know, is going to be, you know, added by yourself, right? So yeah, use things and whatever additional column, right? We would give you that privilege to edit those and submit it so that, right? So in that way, user would also feel it user friendly that they are able to submit anything that they would like to. And as we are expecting, maybe two to three rules per day, right?
+
+00:16:44 - 00:17:29 Unknown Speaker:
+
+So even that would not be a very hectic work for you guys. Also, to make slight a modification and then, uh, just approve it. And then the template that Fifth P has created, uh. I have already asked him, first of all, to adjust with the template that has been shared by Rachna. And then, you know, whatever existing rule are there, right? If some slight deviation is there, then just make it. Let's review it with you guys and then we can don't go for a data migration. But let's close it tomorrow. Because I need couple of days to three days to work with the DBA team to move it to even an E2 environment and post that again. Uh, three days. So finally, we are actually going to get the filter criteria.
+
+00:17:29 - 00:18:18 Unknown Speaker:
+
+Even if some issues are there, they'll get it rectified by the business team and that he gets submitted. Yes, it would be rectified again. There might be some edge cases and that may fail to create a sequel. For time being, it is okay, this is the very first version of product. Let it go. And then we would think about our solution. And what about correcting the existing data? SACHIN Yes, yes, yes, go ahead and let's have a final proposal for the data correction, the existing data correction also. Okay, yes, yes, yes, fine, fine, okay, I'll come up with the filter criteria for all the yeah, all those 300 checks. Okay, okay, let's review it with Anand and Rich. Now. If they give us enough, then we can share those data to the DBA team to insert it into even environment.
+
+00:18:18 - 00:19:07 Unknown Speaker:
+
+And then, if it is validated, then we can move over to E2 and E3. So that's the reason I'm asking you. I would need three to seven days for these data migration and all from my side. Everything is done, the database setup, sRE review, everything is being done, this data migration, just this part is pending. Okay, okay, so let's close it out. Yeah, and then the father Pescal is an email. Okay, uh. We have built it for the main branch. Hopefully that would go live tomorrow, but if some issues are happening in the deployment, it would go on. TriDENT Okay, okay, I saw today there were, like, uh, some seven, eight ICRV alerts separately sent out, and one like, seven, eight. I think I had already called on compiling that, right?
+
+00:19:07 - 00:20:21 Unknown Speaker:
+
+We were just waiting for the thing of that. Did you take those email? Yeah, I'm just taking that one session, I will update that. Okay, so Rich, now I will... That is what I think Sajjan is mentioning, right? Go live tomorrow. No, no, no. Is that not the case, Sajjan? That is escalation email, right? Rachna was asking for ICMD. We have created a single template. All those failures should go in a single mail, right? Yeah, yeah, correct. Can you check that one? I think the data has been live, right? So is that the case that we did not stop these individual emails? No, because I don't see a combined one either. It's not even like data is live and the whole thing is also working. Hey, please check this on priority.
+
+00:20:21 - 00:22:15 Unknown Speaker:
+
+Yeah, yeah, yeah, this is this is, I think almost a couple of months back that that went live, right? So can you check this one on priority and just keep us posted? Yes, can you also check these mails we were getting for RPAH? I saw some names which said that there is not enough data available to run DQ. Check. Something like that in the actual value, what is that exactly? Uh, yeah, I'm just checking once. Yeah, I got that one. I'm sharing this. In the actual value, it is showing no data available for the rule to be executed. Is this one you're asking? I don't see your screen, right? I don't see your screen. At least it is not visible to me. Yeah, actually it is loading, Sachin, I think. Hello? Sachin, you are audible.
+
+00:22:15 - 00:23:08 Unknown Speaker:
+
+I think that's an issue from Atma side. Yeah, Sachin, I think we are unable to share the screen. I think so. It is taking, but not able to. But, Rachana, that actual value, it is a string is populated, right? That is what we are talking about, right? Is this correct, my understanding, Rachana? Yes, yes, that is the one which you just now mentioned, right? And actual value has no data available for the rule to be executed, it says. Yeah, actually if there is no data available for that one, right, I am putting that message actually. So that is populating. What exactly are you checking there? That one when we are executing the complete cycles, right, which are from the current date to the past. So that one if there is no data is populated, which means there is no records found in the calculation.
+
+00:23:25 - 00:24:43 Unknown Speaker:
+
+Yeah, yeah, sure, I will keep monitor this one, I will note it. Uh, if anything will, I will take a update on that part. So are we sorted out or, uh, still need to check that one? Oh, it's fine. So I hope Jason might have shared you that table details, right? Uh, that, uh. SD Basically what needs to be done, right? So I think you just need to change this part under metadata. I hope you're able to see my screen, right? Yeah, I can see that edit option enable now. Yesterday I I was not able to see that edit option. No, so you just need to come over here and where that went, man in target, in target. Sorry. They are looking for the change because the, you know, that approval would go to them.
+
+00:24:43 - 00:25:33 Unknown Speaker:
+
+Okay, so just edit this one and then make the changes to all those seven one. Yeah, because this is in target, right? If it would be there in this pipeline details, it would not go to the E1, E2, but it's there in the metadata, right? So MD changes, any changes in MD would go by even in E2. But just mention over there that we just changed the table reader access group from this to whatever you are placing the new one. Okay, okay, okay. But I think Jason will have to submit those files again. Yeah, yeah. That's something he has to do it. Okay, I'll check it. Okay, and do all those seven tables so that, you know, once it would be ready by end of this week, we can, you know, place all those tables live next week only.
+
+00:25:34 - 00:26:14 Unknown Speaker:
+
+Yeah, deploy it at once. Yeah, yeah, okay, because even even you can do it today, uh, for all seven, right? Just created a group with Swiss key. She should be able to approve it. And then tomorrow you can wrap up P2, and then, uh, if you are able to wrap up E2, we can plan for a Tuesday deployment. I confirmed with Jason once I think he was talking about creating a new group altogether. So let me confirm with him if he wants to use the existing raising group, or if he wants to create a new group. Okay, thanks, thanks, bye.
+
