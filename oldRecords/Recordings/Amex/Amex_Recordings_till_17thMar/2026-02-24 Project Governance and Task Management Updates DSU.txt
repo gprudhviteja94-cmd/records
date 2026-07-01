@@ -1,0 +1,319 @@
+2026-02-24 Project Governance and Task Management Updates DSU
+
+Creation Time: 2026/2/24
+
+
+📅About Meeting
+
+  • Date & Time: 2026-02-24 11:48 (Duration: 2708 seconds)
+  • Location: Virtual meeting (call)
+  • Attendee: Anand, Sachin, Anand (multiple mentions), Ansi, Kundan, Athar, Prithvi, Nirmal, Sindhuja, Samir, Shraddha, Saurabh, Shraddha (platform), Appa, Shabir, Sameer, Iyap, Nirmal, Sakshi, Raj, Manju, Hilary, others (participants referenced)
+
+
+📒Meeting Outline
+
+
+Project governance, DSU expectations, rally update and discipline
+
+  • DSU updates & rally recording The lead emphasized that weekly rally updates are recorded and must be accurate. Everyone must provide detailed DSU (Daily Stand Up) updates for the next three days. If someone has no work, they must notify the lead who will provide tasks. Placeholder or one-line DSU entries are discouraged — updates must explain work end-to-end and be useful for reviewers.
+
+  • Quality mindset and code ownership The lead instructed developers not to copy- paste existing implementations blindly. If existing code has bugs or inefficiencies, modify and rectify it rather than reproducing flawed logic. Emphasis on thinking broadly about maintainability, informative error messages, and production debugging ease.
+
+  • Task creation quality Feedback from Sachin: tasks should be created with clear, informative descriptions (not placeholders) so reviewers (e.g., Raj) can understand without extra effort. This applies to DSU and task management.
+
+
+Access, blockers, and engagement with other teams
+
+  • Data access for AMC/ANSI Ansi created a task and a prototype processing flow using dummy data in pandas to perform weekly window analysis and detect violating FDR transactions. Access to the real ADS/BigQuery tables is currently missing/expired. One SD access for travel record had been approved for an individual; lead will re-raise access and create engagement request with product partners and DBA. Meanwhile Ansi will continue with mock data and other app work.
+
+  • Raise/track access and blockers The lead will monitor access requests and inform team members whether they can progress or will face blockers. Team should report when they have connected and whether they can view tables.
+
+  • E1/E3 environments & SOR team expectations For control and priority work, deployments and testing across environments (E1 -> E3) were discussed. Priority-one changes have been tested in E1; code must be pushed to E3, load date changed to today, and full validation/regression testing performed (onboarding performance, run-for-day check, monthly checks, monthly algo). SOR team is strict — thorough testing is required; share regression testing results and have follow-up connect before E3 deployment.
+
+
+UI, BPMN invocation, task info and distribution-list UX
+
+  • UI refactor and configurability Athar is refactoring UI to be more configurable and will present changes in the DSU. UI must expose required fields for use cases (e.g., task info elements).
+
+  • Calling BPMN from front-end There is a requirement to call BPMN (pass BPMN name in request parameter). It's not a REST-like BPMN API; it's invoked by the front end passing BPMN name. Kundan will create human tasks from received requests. Action: check with Saurabh if they already call BPMN from front end (Saurabh worked on form submission). Possible sync today around 15:30–15:34 if Saurabh is available.
+
+  • Task info: show dropdowns & variables Anand shared requirements to show two dropdowns in Task Info for true-positive incidents: "customer impacted" and "financial impacted" (with specified dropdown values). Three configuration aspects:
+    
+    1. Show dropdown values in UI
+    2. Add those values in Task Info display
+    3. Include those data in the data object if required The task creation flow for true-positive will include justification and then these dropdowns at the end.
+
+  • Distribution list registration A use-case was raised to allow users to register distribution lists (for true positive incidents and watcher lists). Need discussion with Kundan and Anand on whether that data is required in the data object. The team agreed to discuss further in DSU rather than separate call.
+
+
+APIs, build issues, mocks and integration
+
+  • REST APIs Several GET REST APIs exist or are mocked (for fetching table details, use case details, tasks). Save/update may not be REST for some flows. One developer is migrating code from Maven to Gradle and facing version mismatches; build issues blocking deployment. Action: fix build problems before integrating mock JSONs and deploying.
+
+  • Mock JSONs Suggestion to integrate mock JSON responses into front-end for testing while backend stabilizes. Deployment is required to make mocks available.
+
+  • Control and exception logging Nirmal / others: exception messages for JSON conversion and missing keys need clearer, distinct messages so production errors can be quickly triaged. Example: differentiate "could not convert to JSON" (parse error) vs "missing key: errorCodeMessage". Lead asked to update error handling and logs to be explicit. This change should be implemented and deployed to E3 after thorough testing.
+
+
+Stagnant / DQ templates, SQL/JSON generation and validation approach
+
+  • Templates for stagnant/duplicate/missing-value checks Prithvi presented three stagnant templates (stagnant1/2/3) covering multiple query types, a duplicate-check template, and missing-value checks in progress. He reduced the set to fewer templates and is consolidating multiple checks into single templates where feasible.
+
+  • Validation and comparator framework Prithvi built a comparator that takes a CSV input (user-provided rule entries) and resolves the appropriate template per entry to generate SQL queries and outputs. Currently this runs locally against sample data (e.g., 100 rows) and does not touch production environments. He plans to run across ~1600 existing rules to validate accuracy and generate side-by-side comparisons vs existing queries.
+
+  • JSON and SQL generation Next steps: generate/modify JSON (DQID-driven) for new rules; more complex part is safely updating SQL files (daily vs monthly) — team agreed to keep separate SQL files per schedule type (daily/weekly/monthly/intraday) to reduce maintenance and testing overhead. If a rule is daily vs monthly, it should be placed in the appropriate SQL file. Team accepted separate files to lower regression complexity.
+
+  • Deliverable hosting & visibility Prithvi will produce HTML pages for generated queries and outputs for review; team offered to host HTML(s) in GCP bucket if required. The group will help place code on GitHub and assist deployment.
+
+
+Work assignments, KTs, onboarding and next steps
+
+  • Quantro work / KT Appa reviewed basic Quantro info and repository link from Shabir; will attend KT and start implementing after clarifying requirements with Anand. Lead asked Appa to provide more than one-line DSU updates — explain KT, analysis, and planned next steps.
+
+  • Coordination with Shraddha For the E1 issue (long-pending), Kundan to set up a call with Shraddha (platform team) to check feasibility; no UI dependency. Lead will join if required. The goal is to resolve environment instability or a specific E1 issue using logs and demonstrate within the call.
+
+  • Templates review Sachin and team will review templates/HTML generated by Prithvi; request a second eye (Ansi) for hosting/placement. Expectation to validate template-to-query accuracy across existing rules.
+
+
+📋Overview
+
+  • DSU updates must be detailed, accurate, and consistent for the next three days; recordings are being kept.
+  • Ansi has a prototype for AMC using dummy pandas data; real data access expired — lead will re-raise access and engage product/DBA teams.
+  • Athar is refactoring UI to be configurable and will present in DSU; front-end must pass BPMN name in request parameter to create human tasks.
+  • Kundan will coordinate BPMN invocation and human task creation; check with Saurabh on any existing front-end BPMN calls.
+  • Task info must show two dropdowns (customer impacted, financial impacted) for true-positive incidents; capture config + data object requirements.
+  • Fix and improve exception logging/messages to distinguish parse errors vs missing keys; Nirmal/others to update and deploy to E3 after regression testing.
+  • Control priority work: push code to E3, set load date to today, perform thorough regression testing across scenarios before release to SOR.
+  • Prithvi created templates and a comparator to auto-generate SQL from rule inputs; next steps include JSON creation (DQID-driven) and careful SQL updates, keeping daily/monthly separation.
+  • Maven->Gradle migration/build issues exist; resolve before deployment of mocks/APIs. Integrate mock JSONs for front-end testing while back-end stabilizes.
+  • Appa/Quantro: proceed with KT, analyze code thoroughly, and present development activity in DSU; avoid trivial DSU lines.
+  • Kundan to set up call with Shraddha to debug E1 issue; lead will join if needed.
+
+
+🎯Todo List
+
+  • Anand (lead):
+    
+    • Re-raise access/engagement request with product partners and DBA for ADS/BigQuery datasets; inform Ansi of outcome. (ASAP)
+    • Monitor and approve E3 deployment after receiving regression testing report. (Before E3 push)
+
+  • Ansi:
+    
+    • Continue development using mock pandas data for AMC; maintain DSU updates with details of what was done and next steps. (Daily for next 3 days)
+    • Clone prototype code and prepare to integrate real data once access is granted. (Upon access)
+
+  • Kundan:
+    
+    • Check with Saurabh whether there is an existing front-end BPMN invocation pattern; coordinate a possible sync around 15:30–15:34 today. (Today)
+    • Create human task flow for BPMN-invoked requests; ensure data object contains required variables. (After sync)
+    • Set up a call with Shraddha to investigate the E1 issue; inform Anand if escalation/joining is required. (Today)
+
+  • Athar:
+    
+    • Continue UI refactor to make UI configurable, document changes, and present full explanation in DSU. (Today)
+    • Ensure REST API usage is integrated for fetching table, use-case, and task details; coordinate with backend fixes. (Ongoing)
+
+  • Developer handling Gradle migration (unnamed):
+    
+    • Fix build/version mismatch issues migrating from Maven to Gradle; confirm successful builds and deployments. (ASAP)
+
+  • Nirmal / developers responsible for error handling:
+    
+    • Update exception messages to clearly differentiate JSON parse errors vs missing keys (e.g., explicit "missing key: errorCodeMessage"). (Today)
+    • Run regression tests locally and in E3; share test reports with Anand before E3 deployment. (Before E3 push)
+
+  • Prithvi:
+    
+    • Run generation / comparator across full set (~1600) of rules to validate SQL/JSON generation accuracy; produce side-by-side report vs existing queries. (Target: upcoming Tuesday)
+    • Generate JSONs (DQID-driven) for applicable rules and prepare safe SQL update plan (keeping daily/monthly separation). (Target: upcoming Tuesday)
+    • Share HTML outputs and templates with team for review; coordinate hosting (GCP bucket if needed). (ASAP)
+
+  • Appa:
+    
+    • Continue Quantro KT, review repository, and prepare development plan; present detailed DSU entry describing KT, analysis, and next actions. (Today)
+
+  • Sachin:
+    
+    • Review task descriptions and provide guidance on task creation quality; share additional feedback from Raj if received. (Ongoing)
+    • Assist with template/code review and GitHub deployment support for Prithvi. (Before Tuesday)
+
+  • Samir / Iyap / Nirmal (E3 validation team):
+    
+    • Join grooming/follow-up call to ensure E3 priority tasks are understood; perform thorough validation for onboarding, daily/monthly flows. (Today / Before E3 push)
+
+  • All team members:
+    
+    • Provide detailed DSU updates for next 3 days, not placeholders; include what was done, blockers, and next steps. (Daily, next 3 days)
+
+If any owner needs clarification on scope or timing, ping Anand or the relevant teammate and update the DSU accordingly.
+
+
+Transcription
+
+00:00:00 - 00:00:47 Unknown Speaker:
+
+Even if you are normal, I was having a discussion with you, right? You are raising an exception under exception that day. So don't go ahead and, you know, just blindly write whatever has been implemented. Whatever has been implemented, that might not be accurate one. That might have some bugs, right? Modify that one. You know, rectify that one instead of just writing the way it has been. So many of us, you know, I just copy it and then paste it and my job is done. No, that should not work. So, make sure we are not going for number one. First of all, on the rally update, at least for this week, keep a note that it is getting recorded. So, please, we are three more days to go. If you don't have a work, do let me know.
+
+00:00:47 - 00:01:52 Unknown Speaker:
+
+I'll provide you the work. But whatever work you are doing, explain it thoroughly in the DSU starting today. You have to be, you know, for upcoming three days, be very serious on these DSU updates. Okay, now I'll start with ANSI. ANSI, are you able to move ahead with AMC? Hello, yeah. So I was able to create one task where we are fetching that first query. But since we didn't get the access, I gave some dummy data there and it was able to... with that data, it was able to like. Process that weekly window analysis, then find that FDR transaction, which is violating. So that code. I didn't optimize right now, anything in that code, I tried to execute that in that first step. Okay, you have this, clone it as it is right.
+
+00:01:52 - 00:03:00 Unknown Speaker:
+
+Yeah, yes, so the first part was this one. It goes to the pivot creation. At least I am expecting that SQL query would have been moved to a different sequence. Yes, yes, so that the access raised it was expired. For the table reader, one SD access was approved for the travel record. It's on your individual ads ID. Yeah, that was for my individual ADSLD. Re-raise it. Anyhow, I'm going to raise a, you know, engagement request with the product partners and I'll let you know. So you would be able to progress or there would be a blocker for you? So right now, like I, like a dummy data I prepared in that data frame by that Panda that is compatible in our framework. And that way I was able to print some of that dummy data.
+
+00:03:00 - 00:03:56 Unknown Speaker:
+
+But require that access so that I'll work on the access. But I need to know you're not completely blocked and you have some pieces of work to do, right? Yeah, okay, then you can continue on the apps even, and I'll work on that access part. I keep an eye on that. Okay, and the way that you have just given the details to me, right? This was something expected in the DSU ball. Okay, you just keep a track. I did that, like, and then then, you know, just leave that update to the other partners on this self. So when? First of all, tell me when you have connected in where you able to view the tables or it's still not being updated, I'll I'll check with the DBA team.
+
+00:03:56 - 00:05:29 Unknown Speaker:
+
+Okay, um, but we discussed and you mentioned, like, The UI design which rest of us use case in the UI. Uncle, why didn't you raise it yesterday? Let's discuss that today. Distribution list registration, right? Yeah, in the virtual list we are giving an option for the user to register a user, right? Use case, sorry. So in that restaurant, mentioning to add distribution list also how to create it for the true positive one. We need to discuss basically, like there's one thing which Anand mentioned to show the options dropped on there. Now I need to discuss with you and Kundan, maybe like, do we need those data in the data? Yes, yes, okay, so so yeah, you can wait. Uh, by end of this call, anyhow, I thought of, you know, even letting you play three and Kundan to wait.
+
+00:05:29 - 00:06:20 Unknown Speaker:
+
+So just stay back and we'll discuss and you have work to do for today's. Yes, sir. And second thing, you have to call an API and that should be calling the BPMN. Okay. I was having a review call and it would not be a rest call, Kundan. It would be a plain call that Ather would be calling that BPMN. Just check with Saurabh if they have called any of the BPMN from the front end. Then we can take that reference from them. Saurabh Agarwal was there, right? Who was helping us on that form submission. Yes, but in the SID, we are not calling any BPMN API. No, it is not a BPMN API. You have to pass the BPMN in your request parameter, BPMN name. That's the reason I'm asking.
+
+00:06:20 - 00:07:06 Unknown Speaker:
+
+Just check with Saurabh if they have made any implementation. Like you are calling the forms right now, right? So similarly, is there a way to call the BPMN? Just figuring, figure out that part also, okay, okay. And once you made the call, uh, Kundan would be just, you know, picking up those requests and, uh, creating a human task out of that. You got it. The flow would remain same. It would validate the form or which IFR has built at the front end and, sorry, in the in cell bundle. And then it would just move in and create a human task. So just you just need to call a, you know, VPM. And so just check with Saurabh if he is available today, maybe around 3 34, if he's available, we can have a connection with him.
+
+00:07:06 - 00:08:06 Unknown Speaker:
+
+Got it and and you, yeah, go ahead, uh, one thing for good. Then can you just check with the Shraddha? Regarding the E1 issue, we have to say it's been a long pending thing and we need to. Just so, let me upload a file and figure it and see, you know, let's check, check her feasibility and check with her. Because we don't have any UI dependency. Since you have the logs and everything you have, so we. We connected with Sarah when you know the issue, right with the random, so just connect with her and get this result. Because we need even environment stable today, we are not more like requiring it on priority. But there may be a time where we would just need one and people might ask on that.
+
+00:08:06 - 00:08:59 Unknown Speaker:
+
+Just set up a call and just set up a call, and you know, uh, start it out within the call itself. Yeah, exactly, that's what I'm mentioning. Uh, there is no UI requirement or anything. So it might be like, sometimes what is happening? If I am free, then you and Shraddha are not free, and sometimes when you guys are free, then check the calendar, check everyone. But in such a last time, also, we set up a call if Shraddha is not joining, Shraddha is reporting to Saura. No, no, she is so from other team, platform team, I guess, so what I am saying, maybe Kundan can connect with her directly. Okay, there is no UI requirement or any details support required from my side. That's what I mentioned. Kunthan, do one thing.
+
+00:09:01 - 00:10:06 Unknown Speaker:
+
+Set up a call with Shraddha. Do let me know. In case I am required, I will join the call. Sir. Sir. And, Athar, you have work to complete today? Yes. I am looking into the UI part, refactoring, making it more configurable. Yeah, you should be able to, you know, distribute into part and explain it during the DS4. Okay, okay, uh, for your side on the cell. Sir, what is the API that you are working right now? Uh, API already created three? Okay. Another thing is, you know, I created on the Maven side, okay, so now I'm moving it to the Gradle side. In the Gradle, I'm facing some issue with this, you know, version one, so I'm fixing that part only. Okay, so you have work to do today also, right? Yes, that's correct.
+
+00:10:06 - 00:11:11 Unknown Speaker:
+
+But you mentioned you don't need this REST API, right? Rest API would be required, man. Rest API would be required for fetching the table details, for fetching the use case details for fetching the tasks. Which are, you know, if approved or not. We are using a score, right? So internally a score will be having. Some of the, you know, they still have notes, so we have. I have already given you. And after those nine or ten rest Apis, right? It's only the update. And save would not be a ball rest ball, but rest of the things would be a rest ball. Okay, okay, then let me, uh, let me fix this build issue, and then, you know, all those codes have already been there. This build is creating some problem. I will let you know.
+
+00:11:11 - 00:12:12 Unknown Speaker:
+
+Such. And so maybe all the all the APIS have been done, or all the get APIS. It's a mock okay one, right? So why don't you integrate those mock JSOn with that? You have to deploy it, right? That's why I'm telling you, created, created a project, I have to migrate all those dependencies and that is creating problem. Okay, that version is not matching. Okay, okay, and then go buy it for the deployment. Uh, Samir, Uh, this control one, right? So for the control one, like, uh, as we, uh, discussed. Like, the priority one new requirement changes was done, and uh, for the testing, like for testing in E1 was also done for the priority one with new requirements, and, uh, priority two. But like, Uh, we need to move that to E3 and we need to change the load date to today.
+
+00:12:12 - 00:13:03 Unknown Speaker:
+
+Because, like, as per the new requirement, even though the monthly monthly tag also runs for the daily, but it will fix only the current day. So this is there is some part of manipulating the data for artifacts table and repository table is required. So that should be done and I have to push the code to E3 and have to validate from all. Like for all the scenarios, like for the onboarding performance and one for run for day check and monthly check, and monthly algo check. And I need to. Data is also like how this data is actually like whether I'm getting many blanks or not. Like as we have the whether the data is actually changing as expected or not. I need to observe, uh, I need to make a couple of for a couple of runs to check the for the entire process.
+
+00:13:03 - 00:14:00 Unknown Speaker:
+
+Okay, okay, uh. So once completed, keep me posted and try to have a connect with Uh on and today. But the E3 priority like I have groomed Iyap and Nirmal yesterday. But like maybe we need one more call today as well so that like they have a better understanding on what we are doing. Since like Iyap is already working in Q-Track season but like someone will need someone more call to understand. Okay. Nirmal, I am aware with the task you are doing. What about this one, man? Here you're getting that, then data get. This one then could not able to convert it to JSon, and then again, in the exception, could not able to convert it to JSon. Uh, click. For some exceptions, the message format is not, this is, this is exception, exception is fine.
+
+00:14:00 - 00:14:52 Unknown Speaker:
+
+What about this one man? Uh, if the error code message is not there, like there are like a couple of fields are there, uh, like error code message and some other filter there, so I'm getting the error code message. That one is the descriptive one, no, but but why this one? What is the meaning of this one? I'm still not understanding if you can make me understand this one. If, like, the air code message key is not there, then. So, I think this get method is actually a dictionary. So, if he is not able to find error code message, he will populate this, like could not able to convert it. He should have mentioned, right, the error code message is blank or something, right? Does it make a difference between these two statements?
+
+00:14:52 - 00:15:56 Unknown Speaker:
+
+When there is an exception, you are writing it like, you know, I am not able to convert it to the JSON or not able to parse it, right? If you're not getting the key also, you're printing the same message. Now, tomorrow, suppose there is an error, right? How do you identify whether it failed in the try block or in the exception block? I'll change it. Okay. These are small, small, you know, things. That might, you know, you feel like, you know, we could have moved it, right? But, uh, think from a broader perspective, it's all you know. You only would be struggling to identify when there would be an issues in the production environment. Okay, make this change and then this should go and get deployed today in the E3 environment.
+
+00:15:56 - 00:16:53 Unknown Speaker:
+
+So close your testing and that should be a thorough testing because the SOR team, you know, they are very firm with their responses. If any mistakes from our side, then they would not accept these solutions over there in the E3 environment. So do a proper roundup testing. I have asked you yesterday only to do a regression testing. Share me the details. Let's have a connect today again and then go for E3 deployment. Okay. Prithvi, I'll let you wait because I need to review you, yours one. Okay. Yeah, I think then we are done. Anyone having any other questions? Sindhuja, you thought of pitching in at the end of the call. Like before, Sindhuja, I would like to ask Nirmal, like, Nirmal, like, whenever you got us free time, like, please check the documentation for receiving you.
+
+00:16:53 - 00:17:54 Unknown Speaker:
+
+Metadata Yeah, yeah, I'm working on. Yeah, yes, um, you've pretty much covered everything. SACHIN Um, yeah, I would. Just one more thing to add on to it is when you're creating tasks, I think a lot of you are creating just a placeholder task. That shouldn't be the case. Just take hours a minute and let it be like a little more intuitive, right? So that when people read it, they'll understand. So just understand. Raj won't have time to open up your placeholder task and see what you've written inside it. So that's just one feedback. So I do have, like, a call with Raj today and he might share more on the you know, like, the proceedings. So I'll let you guys know if there's any other feedback. Okay. But just continue like it shouldn't be like a one time thing.
+
+00:17:55 - 00:18:52 Unknown Speaker:
+
+Just ensure that he will get the transcripts like he'll track it whenever he wants it. So just ensure that we follow like these good practice in the DSU every day, not just one day and then leave it. Okay. Yeah, I think that's all Sachin from my side. Yeah, thanks Indhuja. Prithvi, Kundan and Athar, you guys can stay back. Hey, sorry, I forgot. So, Appa, you get the gist of Quantro? Yeah, I got basic details from Shabir yesterday. So, I got the repository link. So, I am just going through the details. So, I think today she will give more details. Still more, I think. But what you are going to explain in the DSU then, man? Yeah, I think today we need to start something right now. Yeah, some, some development activity you have to showcase, right?
+
+00:18:52 - 00:19:57 Unknown Speaker:
+
+So what else you can? So that's what I'm thinking, maybe, uh, some deletion of the Dag. Can I create one deck for that? Uh. Look, don't pick up any unnecessary activity because you have to focus on Quantro then so that you can speed up in the Quantro. Do you think go ahead? You can say that, you know, I have received the KT from Sameer yesterday with respect to the Quantro and I have gone through the analysis of the code and the requirements. So I'll start the implementing post, you know. You know, having some conversation with Anand with respect to the requirement clarity like that. Some clarity is required. So post connecting with him, you can close that one. Okay. So just don't stick to one liner. Yeah. So explain it end to end. Okay. Yeah.
+
+00:19:57 - 00:20:54 Unknown Speaker:
+
+Got it. Okay. And then, you know, when we are mentioning, please go through the codes and the recordings multiple times. Contro is a bit tricky. Okay, so if required, go that, uh, one bit, uh, you know, in depth of that concepts. If required, go through the initial level of, uh, you know, recordings that Ananda said, So please go through those thoroughly. Okay, yeah, okay, okay, thank you guys. UH, Kundan Uh, yeah, you can go ahead first and then I'll talk to P3, yes. Sachin, so the mail which Anand has shared just wanted to know which all variables we would need in the data object as well as which has to be shown in the task info. Task info is not a code change, right? We have to show these variables in the task info, right?
+
+00:20:54 - 00:22:39 Unknown Speaker:
+
+Will you share the screen once? Yes, I will. If you understand Hindi, right? I can understand. Okay. He just asked you to create one justification. He said you have to show two more dropdowns, right? There is no extra requirement in task info. As far as... That's what I... Just give me a moment. Are you testing all this or not, Uncle? Is it a story? If you don't test it, will you just leave it as it is? He has a postman, Sakshi has a postman. It won't come, guys. It would not come. It's coming. This API is failing. Open E3. Oh bhai sahab, ye saara blank kaise ho raha hai? No, no, mujhe toosre iska dikh raha hai. Mujhe iska bhi access raha hai. JPP ka. To ye uske task raha hai. Oh.
+
+00:22:40 - 00:25:04 Unknown Speaker:
+
+See, justification ke baad we have to show to drop down, right? And the values which will be coming in, we have to show to drop down, right? Oh, achha, haan, correct. There's one. Correct. Um, now we have the option for true positive, right? As you mentioned, as the user will collect, uh, select true positive. We have to show this too, right? You only have to show customer and financial sharing the values once you are sharing these details. Back to the. So basically in UI there would be one label with customer impacted with drop down values as this. And the other drop down as financial impacted with the drop down values as this. Whatever the financial one is there. Correct. And these two.
+
+00:25:05 - 00:26:44 Unknown Speaker:
+
+Only true positive because we are creating yeah because we are creating incident only for true positive now in this task info you remember we have like expected value actual value. Now the last object is not the justification, if it is true positive, it will come in the end. So this was the clarification, I will do this. So there are three configs, one is to show the drop-down value, second thing is to add those values in the task info, third thing is if you require those data in the data object. Right um creating an incident done so maybe that's all such in. So, basically, you understood, right? To show this watcher list in the headwatcher. Now, when you explain in DSU, then you have to explain this all stuff. Okay?
+
+00:26:45 - 00:27:49 Unknown Speaker:
+
+Look, guys, we have done a lot of effort in making this CDO project right. So, I don't want it to go out of our hands because of small mistakes. Agreed. Ultimately, look, you may get a project here and there, right? I'm not denying that. But at the same time, if you have spent that much of effort, it's better we can, you know, refine this process more instead of just, you know, don't have that mindset. No, no. As you mentioned, we'll keep a point. Okay. So I was mentioning about this. Yeah, let's discuss with them in the DSU. Let's not have a separate call for this because that doesn't make sense for our two-minute discussion. We would be having a different call. Not required. And we will bring up this once everybody completes their updates.
+
+00:27:49 - 00:29:07 Unknown Speaker:
+
+We'll talk on this one. Okay, okay, uh, go ahead, man. You would like to have a review of your template? I think if you want people to drop, sure, yeah, thank you. Good. Then just a small reminder just check with the shredder. Because there might be a time when sorrow put might chase us on this. Okay, can you ping me on that channel once? I think a lot of group are there, so no, no, no, I'll just I'll just ping you on that group. Thank you guys. Bye, thanks. Okay, hi Sachin. Yeah, so, yeah. So these are the templates I have come up with with. Stagnant I found three templates, okay, and then can you open one of the template that's equal that you have shown? Okay? So everything is dynamic over here, right?
+
+00:29:07 - 00:30:18 Unknown Speaker:
+
+I hope everything is dynamic. Yes, nothing is hardcoded, nothing hardcoded. Right now. Only the DQ ID. I'm not generating this one right now. I'm giving DQID as DQID. No, no, no, you, you don't need to generate the DQID. That has to be passed as a dynamic parameter. Yes, yes, yeah, that one I'm doing, but the SQL down down, okay, because this is one of that, okay. Oh, he has created different template, right? So, it would be having only one. Yeah, go ahead, Prithvi. Next. Yeah, this is stagnant check. And then stagnant 2, okay? This is another one. And yeah, stagnant 3. So, totally three templates for stagnant. And it's covering all types of queries. And with respect to duplicate check, there is only one template. Um, so that is also created, and then missing value check is what I'm working.
+
+00:30:18 - 00:31:20 Unknown Speaker:
+
+I completed four, uh, three to four. Nearly stagnant. When you have told me like, you'd have seven template, right? If I remember, 77 scripts were there, and you were mentioning that we had seven template for stagnant, right? Yeah, I thought, uh, but it, it's not having that many, only three, three are there and then. And then that's a fabulous job, man. If it has reduced to three, then we are quite in the right direction. Okay, yeah, I made it to three. Even missing value also multiple are there. I'm trying to get into one template. And you have tested these queries or you just written it like this? So what I am doing, my testing part. So, I am I create a comparator. This comparison report what it does is.
+
+00:31:21 - 00:32:29 Unknown Speaker:
+
+So, for that particular this is what template valid validation template ok. Do not go by this actually this is not properly done I am doing this. So, basically what I am trying to do is. I pass all the existing rules that we have. Yeah. So, my input is this one. For example, this is for threshold check. If I pass this and I run it, it will generate queries for all 20 inputs. Yeah, like this. Okay. So, this I got it from BigQuery. For all the tables with valid value, check, this is the list. Okay, and these are from the environment or from where we are picking up this local dev environment. Only thousand, because with respect to data, that's what I'll I'll tell you, sure, sure, only definitely, I'm not touching.
+
+00:32:29 - 00:34:27 Unknown Speaker:
+
+I have not logged into any other environment so far, even that is local, so it is fine, it's not on the system. If you want me to run it for one, uh, it's not my internal property, right? I'm just concerned. It should not flagged because if it is flagged, right, and if the number is going high, right, it would directly come from Manju, right, or Hilary, right? We would be in trouble. Sample input description is the file. So, this is stagnant check. I am giving it as an input and I am trying to run validate all rules. I can pass how many records I should take because I am giving all. So, for now I will give 100. I need to fix this, I think. No, what we are achieving by doing this, you know.
+
+00:34:27 - 00:35:36 Unknown Speaker:
+
+So, when I run this, what happens is, so for all these rules that is there in the system already. So, it will take one after the other and it will try to create for each query. The query for each entry so, and it will generate a report. No, no, where is that logic? Welcome to report that. Okay, fine, that is scripts, okay, so this is one logic to get and validate. You are getting the file right, and then reading this, yeah, the report right, if I can understand, yeah, you are reading that CSV, parsing it, yeah, and then I getting it right right. Because right, editing it and filtering out and generating the query, right. Yes, yeah. So it will resolve the template and for that template will pass.
+
+00:35:36 - 00:36:32 Unknown Speaker:
+
+It will call and it will create a query and it will put it in output folder. Oh, okay, got it okay, so this is the output. I need to understand why we need to read all the rules from, you know, from the existing system. Yeah, now only thing how accurate the script is working? Okay, if we have, we need to have some reference, right? I don't want to take one query. I wanted to take all the systems, like 1500 entries and I'll run it and I'll have side by side. What is, um, being generated now, and what was there previously? I, I got your point. Suppose, just take an example of threshold, right? So for threshold, suppose, you have 1200 rules that declare a projected table type for those 1200 rules.
+
+00:36:32 - 00:37:19 Unknown Speaker:
+
+What you are doing, uh, in in your logic, you are, you know, basically filtering all those 1200 records. First of all, that is one loop, and then against those no, no, no, no, no, sorry, sorry to confuse you. The logic right now is you provide an entry like this as a CSV file. You wanted to generate queries for all these four entries. It will go one after the other. First, it will see based on the description, it will find the template okay, first first entry, and the template. It will. It will use it, and it will create a query. That's it. We are not using any of the existing queries. Got it? Got it okay, whereas that's fine. Yeah. This is just one input that we might be receiving from the end user, right?
+
+00:37:19 - 00:38:14 Unknown Speaker:
+
+And then based on that input, it would be figuring out the template, right. No, no, the thing is based on the table name, it will pull the rules. No, no, no, no, I'm not doing that. He is making you understand that one. This is the user entry. Yeah, this is the input to me. Yeah, this is the input to you, right? So user would be, suppose one role gets created, there should be one record over there. And then based on this, right, based on that description, filter conditions and, you know, whatever extra parameter is there. Based on that, he has made a template. Okay, three templates or four templates. He has picked a template. Template is already been created with this description. What is the template that is matching?
+
+00:38:14 - 00:39:02 Unknown Speaker:
+
+It will use the template and it will put all the variable information and it will create a query. No, that's fine, that's fine, then then it just looks fine. And and one more, so, yes, yes, one more thing just now. The next step you need to do, just see, Uh, suppose this matches a template, right? And now? Additionally, you have to check if it is a daily check or monthly check. Then try to update the existing SQL file over there. That would be the next step that we need to do. Okay, fine, yeah, I.I'm even targeting the JSon also. Yeah, I got your point. Yeah, JSon also, correct. Json also. First of all, try to modify the JSON. JSON, if you can. JSON, basically, you just need to pass the DQID. That's it. Right.
+
+00:39:02 - 00:39:47 Unknown Speaker:
+
+Most of the things would remain the same, right? Yeah, yeah. Where to place it, that much we need to program it. I think that is easy. Yeah, correct. JSON would be easy. The complex part, you would be ending up in modifying the SQL file. Right. You are right. So, for me to understand... Yeah, this is good. Okay, thank you. Yeah, go ahead. So Sachin, For me to understand, for a particular rule, based on whether it's a daily or monthly, there would be a separate escalation correct, correct, correct for daily. Suppose, you know, I have an AZ table, right? It might be having 10 rows, so what we did, suppose out of those 15 rows, suppose? 10 rows are running daily? So we have created a separate daily file for those 10 rows.
+
+00:39:47 - 00:40:35 Unknown Speaker:
+
+And if it is having five, monthly run, right? So for those five rules, there would be separated monthly SQL file. Okay. The reason why we created like that is that just for scheduling purpose because I can't mix the daily tag with the monthly tag. Got it. And we can even club that one in the SQL file like preparing a condition but let's not complex it that much. Otherwise, you know, maintenance would be very difficult. Understood. We have to think from the maintenance perspective also, right? If I'm modifying the daily DAG, I should only modify the daily SQL. If I club the monthly also, then I need to test when I'm making any changes, I have to test again the monthly as well as daily, right? That would be overhead for the developer. Yeah.
+
+00:40:35 - 00:41:25 Unknown Speaker:
+
+So based on the check type, if it is daily, weekly, intraday, or monthly, let's have four different SQL files, I'm okay with that. Okay, yeah, I understood, so I'll then if you guys have any other thought process, do let me know. But this is something I thought of, right? Because if I mix everything, it would be, you know, lots of things. For a developer, for the maintenance perspective. I mean, actually, if else look only, it will not be a day, but no, no, if it, it would be only first man. But what you do? Look, suppose tomorrow you introduce another daily check, okay, so it's a defense loop. You need to check the daily check also. Whether there would be an impact on daily check. Also, okay, the developer need to check whether there is an impact on the monthly.
+
+00:41:25 - 00:42:13 Unknown Speaker:
+
+Also, right? So that would be a lots of testing effort that would be required going forward. Sure, sure, fine, I only worry is we'll have more SQLS. I thought, Fine, that is, I agree your point. Impact Testing impact would be increased. Exactly, release and all of the stuff, right? You have to stop both the tag, right? Monthly tag, daily tag, do a testing for both, do a regression for both and then release it, right? So let's have a separate one. So if you have only daily, you just need to bother about the daily one and then let the monthly run as it is. Okay, sure. So my request, Sachin, one request is, I'll create this HTML pages for all the different roles.
+
+00:42:13 - 00:42:59 Unknown Speaker:
+
+I want a second eye on that, maybe like Ansi, who can help me answer how to you, you know when, how to host it, that is the problem. No, no, just HTMLs. I'll attach it and send it. Okay, okay, I'll attach it so it will. It will be right and left, both the sides, it will be so you can see side by side and see some difference. And if it is missing anything, I'm missing anything, okay, I mean, anyway, side by side only. It should not take much time for them. Since you guys are working from long time in these queries, you will have more understanding than me. Yeah, yeah, correct, correct, go ahead. Uh, no, no worries with that. If you require, we can save it into the GCP bucket. Also.
+
+00:42:59 - 00:44:05 Unknown Speaker:
+
+No, this is HTML only, I'll attach it and send it. No, no. I mean, what I mean to say, if you want to save it in the environment also, we can save this HTML file also. No worries with that. That's what I meant. Okay. Okay. If somebody wants to debug and do something. Yeah. I mean, only to find the accuracy of generation because we might miss few. Yeah. That's why I'm running for all 1600 rules once. And if it is generating for all those existing, then a new query should not be a problem for us. Yeah, that's fine. Yeah, okay, yeah, uh. Do you have any query? Or you would be first of all resolving that? Uh, uh, I will resolve that once again. And then, uh, close those APis and all.
+
+00:44:05 - 00:44:38 Unknown Speaker:
+
+Okay, let's target to close it by upcoming Tuesday. Once you are, you know, done with that, right, let's do one thing, let's deploy it. Okay, oh yeah, I need a code base. Uh, this one code will, uh, get up. Yeah, I'll help you with that, give me some time, I'll help you with the Github. Okay, yeah, okay, yeah, thank you. Okay, thank you guys.

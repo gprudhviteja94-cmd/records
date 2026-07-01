@@ -1,0 +1,288 @@
+2026-01-20 Data Ingestion Monitoring and Sprint Planning Discussion
+
+Creation Time: 2026/1/20
+
+
+📅About Meeting
+
+  • Date & Time: 2026-01-20 12:33 (Duration: 3607 seconds)
+  • Location: Online meeting (screen-share, Rally/Lumi/UMDL referenced)
+  • Attendee: Anand, Jason, Raj, Sachin, Sindhuja, Rachna, Karthik, Kundan, Prithvi, Sameer, Suman, Aipa, Nirmal, Aman, (others referenced: Jason, Gundan, Athar, Sajan)
+
+
+📒Meeting Outline
+
+
+Data ingestion & monitoring (Ingestion reliability & alerts)
+
+  • ingestion failures observed Discussion about ingestion failures beginning after 7th Jan for several tables (notably tables 66, 68, 69 and possibly others). Some tables (64, 65) are working fine. The ingestion gaps have persisted for ~two weeks.
+  • existing alerts / "Where is my data" capability Team noted that Lumi has a capability ("Where is my data") and that alerts were previously set up for ingestion failures. For the affected tables alerts were not received; attendees will investigate whether the alerts were not configured for those specific tables or if Lumi failed to send them.
+  • recommended automation Analyst recommended building an automation job that monitors these tables daily and sends a consolidated daily report (success/failure/no-file/sequence mismatch). Team agreed this automation can be built from their side and will produce daily email updates so owners can act (e.g., Karthik can fix sequence issues and re-send files).
+  • next steps / ownership Sachin / Raj / relevant owners to double-check Lumi alert configuration for missing tables and correct any misconfigurations. Build automation for consolidated daily ingestion status report (team to discuss offline to avoid hijacking current call).
+
+
+Epic / Capability / Feature setup in Rally (Planning & backlog organization)
+
+  • epic shared and visibility Anand confirmed he included Jason in the epic email; Jason reviewed it. Some attendees cannot see the epic/features in Rally — likely due to missing iteration/project mapping or permission/visibility issues.
+  • capability & feature structure Anand showed the UMDL capability "USCDO Q Drafts Initiative 2626 UM" containing ~12 features covering 26.1 and 26.2. Features include DQ Portal (self-serve), new use cases, existing use case modifications, cleanup, production support, data load stories, human task enhancements, reporting considerations, build/implementation stories, and bug update features.
+  • feature/story creation guidance Guidance was provided to create features then child user stories (or placeholder tasks if breakdown unknown). Use bulk edit at feature level to set Project/Iteration to ensure visibility. When creating stories, include description and acceptance criteria; design tasks can be marked as 'build' rather than separate design items per guidance from attendees.
+  • visibility / access troubleshooting Some team members reported "item not found" when accessing the capability items; likely missing iteration field or incorrect project selection. Action: check feature/capability-level project/iteration settings and bulk-update where needed. Add Jason as product owner on capability so he can view and add items (Sachin to add him post-call).
+
+
+Sprint planning / capacity & story-point allocation (Sprint starting today)
+
+  • sprint timing & coordination Iteration planning to follow this meeting; planning requires walkthrough for Jason on what to add and how to create capabilities/features/stories.
+  • assignments & story-point proposals
+    • Self-serve front-end build: assign to Jason (or designated FE owner) — suggested 3 story points for front-end; Sindhuja/Anand to confirm.
+    • Self-serve back-end / API design (Anand working): assign 5 story points to Sindhuja for back-end design/build.
+    • ServiceNow integration: paused; needs move to E3. Assign to Kundan (or Gundan) with 1–2 story points depending on order with Data Load. Plan to move to E3 (possible target adjusted from 27th to 2nd/3rd due to dependencies).
+    • Data load (January migration): small effort — 1 story point; ensure TQ result table migration prior to cut-off (31st) and account for public holiday adjustments.
+    • Human task enhancements / monitor justification / actual value: assign backend story to Kundan.
+    • New use case builds / validation: assign to Sameer / Samir / Prithvi as applicable. Prithvi to be onboarded gradually with smaller point allocations until ramped up.
+    • Rule updates (67 model IDs / 267 DQ IDs): create stories under Rule Modification / Cleanup. Suggested 1–2 story points for table-level updates; may be 2 if deployment/migration steps required (requires E3/E2 access).
+    • Insurance validation & implementation: give 1 point for build; validation and launch combined require additional points — recommended assignment to Aipa and Suman for validation with proposed points adjusted by complexity (some suggested values: implementation/validation = 3–5 points depending on review needs).
+    • SME story: postpone for this sprint (defer to next sprint when demand clarified).
+  • capacity & holidays Team noted public holiday on 26th only; adjust story-point allocations accordingly. Some members’ available capacities were discussed (e.g., Aipa 7 points, Kundan 7 points).
+
+
+Specific features / stories discussed
+
+  • DQ Portal / Self-serve Features and child stories created: front-end, back-end automation, human task enhancements, data load. Discussion on not creating separate design tasks; mark as build and include required details in description. Rachna exploring generic capability for automation — exploration to continue in coming weeks.
+  • Reporting / QTrack DQAM Reporting will be added under existing feature rather than a new feature; E3 deployment may require additional effort once data is available.
+  • Production support Recurring production support story created for each sprint; ensure descriptions and acceptance criteria are complete. Assign monitoring tasks and on-call responsibilities; give Suman specific monitoring and production support tasks with story-point allocations.
+  • RAC / RACI / Coordination Some RACI/coordination tasks pending until Jason and Nirmal align; allocation may change post-Jason walkthrough.
+
+
+Follow-ups, demos & handoffs
+
+  • Walkthroughs & onboarding After this call, a short walkthrough will be given to Jason (product-owner role) to create capability/features and stories; Sachin to reconnect with Jason and Anand for access and quick training (few hours total).
+  • Demo scheduling Demo of functionality (selection/incidence creation) planned for tomorrow (not today) — DSU call can be used for a short 5-minute demo. Anand requested a quick live test to see how incidents are created/appear.
+  • Permission & access adjustments Add Jason as product owner on the capability; check Rally permissions for those who cannot see epic/features and update iteration/project at feature level.
+
+
+📋Overview
+
+  • Ingestion failures detected post-7 Jan for specific tables (66, 68, 69). Team to investigate missing Lumi alerts and implement automation for daily ingestion reports.
+  • Lumi "Where is my data" alerts exist but did not surface for some tables; owners to validate alert configuration and correct omissions.
+  • Epic/capability and features are created in Rally (USCDO Q Drafts Initiative 2626 UM); some attendees lack visibility due to iteration/project mapping or permissions. Bulk update at feature/capability level recommended.
+  • Self-serve DQ Portal features and child stories created; front-end/back-end allocations discussed. Avoid separate design artifacts; mark as build where appropriate.
+  • ServiceNow integration needs to be moved to E3; dependent on merging and test readiness — target may shift to early Feb.
+  • Data migration (Jan) must be performed prior to month-end; account for holidays when assigning story points.
+  • Rule updates (67 model IDs / 267 DQ IDs) require story creation and deployment/migration steps; assign appropriate points and ensure access path is available for implementers.
+  • Resource allocations proposed (Anand, Sindhuja, Kundan, Sameer, Aipa, Suman, Prithvi, Nirmal) with recommended story-point values; final adjustments pending individual capacity confirmations.
+  • Demo to be done tomorrow; brief walkthrough for Jason to be scheduled; Sachin to add Jason to capability and help with Rally tasks.
+
+
+🎯Todo List
+
+  • Anand:
+    
+    • Investigate ingestion failures with Lumi alerts and confirm which tables are missing alert configuration (ASAP).
+    • Provide list of affected tables and confirm ownership for each (ASAP).
+    • Continue as owner for self-serve back-end design work; accept assigned 5 story points (this sprint).
+
+  • Sachin:
+    
+    • Add Jason to capability as product owner and provide a short Rally walkthrough (today / before iteration planning).
+    • Verify Lumi alert configuration for affected tables and follow up with Raj/Sindhuja if misconfigured (ASAP).
+    • Reconnect with Jason and Anand for capability/feature/story creation support (today/now).
+
+  • Raj / Sindhuja:
+    
+    • Bulk-check and update Project/Iteration fields at feature/capability level in Rally to resolve visibility issues (today).
+    • Adjust feature-level settings and/or perform bulk update for the created features so all team members can view items (today).
+
+  • Rachna:
+    
+    • Continue exploring generic automation capabilities for self-serve backend and report findings in 1–2 weeks (by end of next 2 weeks).
+
+  • Karthik:
+    
+    • Be prepared to fix sequence mismatches/file resends when alerted by the daily ingestion report automation (once automation in place).
+
+  • Engineering team (Kundan, Sameer, Aipa, Suman, Prithvi, Nirmal, Aman):
+    
+    • Update Rally stories assigned to you with detailed descriptions and acceptance criteria (by tomorrow).
+    • Accept and confirm story-point assignments:
+      • Kundan: ServiceNow integration + backend stories (1–2 points for SN, additional points per assignment) — confirm capacity (today).
+      • Aipa: Implementation & validation for Insurance checks (assign as discussed, confirm 2–5 points).
+      • Suman: Validation tasks and production monitoring (assign 3–5 points, confirm).
+      • Sameer / Samir: New use case builds & validations (assign points per plan, confirm).
+      • Prithvi: Onboard with lower point tasks initially (confirm ramp-up).
+      • Nirmal: Await Jason input for RACI tasks; then update assignments.
+
+  • DevOps / Automation owner (TBD):
+    
+    • Design and build daily ingestion-monitoring automation that consolidates table ingestion status and emails report (deliverable: daily email report) — coordinate offline; target prototype discussion this week.
+
+  • All resources:
+    
+    • Add your tasks to Rally and update descriptions by tomorrow (as requested by Anand).
+    • Be available for iteration planning immediately following this call and for short walkthroughs as needed.
+
+Notes:
+
+  • Demo of live selection/incident creation to be scheduled for tomorrow (DSU call acceptable) — Anand to confirm timing.
+  • ServiceNow integration target date may shift due to dependencies; plan to move to E3 and confirm final date in iteration planning.
+  • Follow-ups on ingestion alerts and automation agreed to be handled offline to avoid long call extension.
+
+Thank you — meeting adjourned with Sachin asked to stay back for a short follow-up.
+
+
+Transcription
+
+00:00:22 - 00:05:47 Unknown Speaker:
+
+Have you shared the epic for the. No, Anand. I think the email I sent, right, I had included him in that email, if I'm not wrong. Jason, did you have a chance to look at the epic that I had sent? In the email? Yes, in the email, yes. I did. Was I supposed to edit that? Yeah, I mean, no issues. We can do it on the call or later on. We'll just do it on the call because planning is right after this. Store is added for this print. Is that correct Anand? Should I go to the feature? Just give me a second. Not a problem, I can talk to him, you know, individually, that's fine. Um, yeah, possible, and that's when you, you know, consider the weekends and the public holidays, or somebody's on leave, right?
+
+00:05:47 - 00:07:08 Unknown Speaker:
+
+What I have observed it right now, few of the tables, uh, I'll just take couple of minutes, just give me a couple of minutes. So there is a, you know, ingestion failure for few of the tables, and that is being happening from post 7th, there is no ingestion. And it was failing because they were sending sorry. ANALYSt Yeah, correct, so post 7th of Jan. There was no ingestion to this table because, similarly, few other tables also. You know, getting failed, like 64 is working fine, 65 is working fine, 66, 68 and 69. These three tables were not having an ingestion from a quite a long time now, almost from couple of difficult. Because again, you have to go, you know, and always check on this table whether the ingestion happened or not.
+
+00:07:08 - 00:07:53 Unknown Speaker:
+
+One recommendation I can provide you that we need to create an automation job that would monitor this table on a daily basis. And this is going to send you a report like whether the ingestion was successful or failed for this, uh, particular table. And then that is already existing, right? I'm not sure why we did not get those alerts. Yeah, right, we are not getting that alert. Yeah, I had to check if for this table that is done, but I think for some of the I think for all nine endless table. I created some alerts on Lumi, so there is this capability called as Where is my data? Right? So if let's say the ingestion fails, you remember there were some alerts we got earlier and when the ingestion was failing.
+
+00:07:53 - 00:08:55 Unknown Speaker:
+
+Not sure why for this table, we have not received it, but let me check it quickly. We can go ahead and apply those alerts because right now I'm just getting for those. One which, you know, we are sending the files, right? The alert that we set it up, correct failure we, we if. I'm not sure if I'm part of those emails, so you know, you are including and included in all, you are including all. But I have to check if this table is missing from that, what is it? Quickly tell me the MCG product details, right? Yeah, for for, uh, six, eight. It is a trip, uh. Details U.S. CS travel insurance, trip detail, and this table is already part of that, so we need to check why it is not working then, and that's a clear possibility.
+
+00:08:55 - 00:09:57 Unknown Speaker:
+
+Loomy issue Yeah, okay, six, six is, uh, what? Policy? No, no, no policy Purchaser details, U.S. CS Travel Insurance policy, Purchaser details. Detail. It's not us, it's only detail, detail that is also there. So I can just quickly show you the list of tables, right? So there is already a let me know if the screen is visible, right? This is the uh thing, right? So it kind of does the and ideally, you should be getting. I'll double check maybe there is something missing or which I did not apply. I'll just double check that and let you know. If there is anything missing, I'll correct it. But apart from this, you were saying some automation at your end or like what was the solution you would have? Yeah, if some automation is required, we can build automation at our end.
+
+00:09:59 - 00:11:02 Unknown Speaker:
+
+Because look, they are not sending the file. They are randomly sending, you know, sometimes at 4 p.m., 6 p.m. or 7 p.m., whatever, right? We can build one automation, okay? That would give you a consolidated list, like these are the tables, whether the ingestion was successful or it has failed or there was no file has been retrieved. So we can build that automation from our side. And that would be, you know, sending you an email communication on a daily basis. So email communication on like, what is this? You? Okay forward? We have noticed you got it a daily kind of update. Yeah, yeah, daily kind of update, right? So, uh, like if there was a sequence mismatch or something, right? So even Karthik can fix it here. Send the file. Yeah, okay, yeah, I think we can do that.
+
+00:11:02 - 00:12:31 Unknown Speaker:
+
+Let's, uh, kind of talk offline on that. Maybe, yeah, exactly. We don't want to hijack this call. I just wanted to let you know those are production data and it, you know, almost couple of weeks, the data's are not coming. So I thought of, you know, intimating you immediately on that. Yeah, sure, okay, okay, you can carry on. Adan, can you please share your screen with the future? Yeah, you can see my screen, right? See the same one. Yeah, I'm getting item not found for me, I'm not sure why. The same link. I've created it on that UMDL one itself, which Raj was mentioning, right? This is the one, this is the capability I've created. Okay, yeah, I'll just figure it out later, probably we'll just, in the interest of time, continue.
+
+00:12:31 - 00:13:29 Unknown Speaker:
+
+If that's fine, still get like item not found yet. So Sachin I mean, even for two for you, right? I mean, Raj asked me to create it under this one. Uh, so I've created this USCDO Q Drafts Initiative 2626 UM capability here, right? And under this capability. There are uh, 12 features that I've created for both 26.1 and 26.2, both I've created for now. Uh okay. For 26.1. We have, uh, uh. DQL Portal, self-serve, new use cases, existing use cases, modification, cleanup, and production support. Okay, yeah, so yeah, I think those are the yeah, those are the features we are targeting for. 26.1 description acceptance criteria, and then child nodes also have. Like, what I've done is 25.6. I think the last one, right?
+
+00:13:29 - 00:14:34 Unknown Speaker:
+
+I've moved a lot of the WAS, I think, even into testing, validation was already created over there, so I've moved all of those to this. Yeah, and yeah, I've included one more build as well, and similarly, let me just quickly show it for others as well. For DQM portal I have created created for child loans. We can again like create loans or whatever you want to do, right? One is for the human task enhancements, which is basically that expected value and then the monitor justification on that. And then data load, I created one feature. This is for like January data or December data. January data, basically, which you want to load, right? You can do that. And then bug update feature. Once we have done these three, we can focus on this. Okay. Yeah.
+
+00:14:34 - 00:15:32 Unknown Speaker:
+
+The reporting goes under that QTrack DQAM or somewhere else? Yeah, we can add it here itself. But I was expecting it was over, right? So that's why I have not created a new feature for that one. Okay. But for that, anyhow, like in case of E3 deployment, right? To require an effort on it. Okay, yeah, yeah, but that's after, uh, once we have the data and everything right, so I'll create one. Yes, yes, yeah, okay, okay. Um, okay, let me go to the next one we have for self-service. I've created basically a couple of stories of our features for now, one is for sorry stories for now, one is for. Like, the front-end design if you want to complete that in this print or something, right, and then the back-end design.
+
+00:15:32 - 00:16:20 Unknown Speaker:
+
+The how to automate the entire uh chain part of it. No, no, don't create a design one, you can just mark it as build, like build one, build two, you already created, right? Yeah, okay, design part. I'll take care. Uh, yeah, okay. And also in this also. Sachin Oh, I mean, let's focus on the front end part of it for now, how we are getting the input and everything. But on the back end, front of it, right? Even Rachna is exploring if we can leverage some kind of a generic capability for that to automate that as well. So we can also think on that front. She will. I think we will explore this in a couple of weeks and we can discuss that. But that's also just wanted to intimidate you on that. Okay, yeah.
+
+00:16:20 - 00:17:15 Unknown Speaker:
+
+And next is I'll create one more, which I was in a call right now. So PZN has come back. Uh, whether it will go or not is something even. Still I'm not sure, but at least we got the requirements we have sent out, uh, after validating and everything, but let's now see what happens. So I'm just going to use the story. But anyway, insurance you're already doing good. Will be expecting the requirements in this week or next week, so once we get that, we can share. And then, um, alerts also. We got like, we had a discussion right now, so they'll send out the requirements by next week, I think. And then AFC is also a similar case key. They have done the discussions, but we're awaiting the requirements. Okay, I've created like build and implementation stories for that.
+
+00:17:15 - 00:18:43 Unknown Speaker:
+
+Uh, next is I think no modification. That one that I've just like created template stories for now because are just like ad hoc activities, right? So, yeah, correct, yeah, but actually created these stories so like for every screen. Because, uh, yeah, today morning only app ping this to me that he needs some user story for this rule update, there are, I think he has pointed out, 67 model ID and 267 DQ IDs rule updation. I just wanted to cross check if that is regarding the DQ repository description update that Sachin just mentioned. Yes. Yeah, yeah, yeah. So you have shared the one so that one I highlighted here. So this is the same. Shared on our 9th or 9th actually January. One of the main, so that one having the total 67 model IDs and a rule description.
+
+00:18:43 - 00:19:54 Unknown Speaker:
+
+Update. Oh, okay, yeah, thank you, yeah, thank you, yeah, like anyhow, this is this would be required, as I was mentioning, right, right, yeah. And I think finally just production support as well. That also is like every sprint I've created just one story. Yeah. Yeah. But description, acceptance criteria, everything I've filled out. You can let me know, Sindhuja, I think what has to be changed for that to reflect on that portal or the main page. Yeah, actually I checked with another team member. He's also not able to see the epic. We'll have to like, cross check with the previous feature, like if there's something missing. Okay, okay, sure, sure, we can do that. Yeah, he'll do that. Yeah, after this call, probably, uh, now, I mean, like, since we also have like, iteration planning, uh, right after this, right?
+
+00:19:54 - 00:20:43 Unknown Speaker:
+
+Uh? We can just probably give a walk through to Jason. Like, what is needed, uh, from him for, you know, like to these items and stuff, and then we can proceed to the planning. If that's okay with everyone, yeah, yeah, makes sense. Yeah. Generally, there is an iteration column as well here. That is something that I did not fill out. I think that is the reason. Probably maybe it's the Uh, project, like, did you cross check with the feature? Yeah, Project was fine, I think Project is U.S. Consumer Gallery. You're right, not this. Oh, I think for this, okay, for the individual, the story. Is it different? Is it this one? No, no. Choose the second one in recent titles. Yes, yeah, okay, okay, let me do that then.
+
+00:20:43 - 00:23:57 Unknown Speaker:
+
+Yeah, if I change it at the feature level, would it reflect? Yes, yeah, change it at the feature level? Yeah, I think, or even at the capability level, I can change it. You can do a bulk update, maybe just choose all the feature items on the left hand side with that small square check box, and then do a edit and then choose Project. Here. Do, yeah. All the items in loading, though. Yeah, I'll stop sharing my screen, okay, um, so, um, reason? I mean, just to give you a walkthrough, I'm not sure. Uh, if you have any items, uh, you know, like this print for us. But in the epic ID that I have shared of work that you have planned for the team. You can create various features, um, after that you can update it here.
+
+00:23:57 - 00:25:32 Unknown Speaker:
+
+Like in general, if you want, like only one feature to be created under AC, it's fine. And if you want to do another division, you can just add another row here probably, and once the feature is created, work. If you know the breakdown, if you do not know the breakdown, then probably you can just add like a placeholder task. Okay? And we'll take this as reference and we will pull it into, uh, our current sprint when we are doing the planning session. Um, are you clear? Like, do you have any doubts for the upcoming sprint, which starts today? Like, Yes, yes, I do, okay, then I will share it with you now. Uh, probably. Then you can add it while we go through, like other items, create features, and then beneath features, the user stories.
+
+00:25:33 - 00:27:19 Unknown Speaker:
+
+Got it. I'm sure I will do something wrong the first time, so I'm glad we're all on the call. Sure, sure. You can probably share your screen and do it, at least the capability and feature, so that we can just guide you through it, and it's quicker. If it is going to take time, right, we can ask them, they can drop up and then focus on the work that they are doing and we can continue over here. For the planning, at least we'll need them, right? Like, or you can take care of it. We can, probably we'll finish planning for items from Anand and Rachana and then like guide Jason and you can help him out on good stories to pull out. Task enhancement But there would be a copy of this which would be assigned to Gundan.
+
+00:27:19 - 00:30:25 Unknown Speaker:
+
+Also actual value, the another one that monitor rules need to be there. Here. You can mention, like, you know, back-end changes human task enhancement, post that like back-end changes that story and assign it to Kundan. Uh, data load, so Kundan. We have to keep, uh, keep a mind that whatever uh results are there in the TQ result table for the month of, uh, this 31st, right prior to 31st. We do this data migration, Jan data. I'll I'll give you a preview. So in this one, let me assign him one story pointer. This would not take much, give it two story pointer, because one is public holiday, right? So we have to adjust with that couple of story pointers. And then can you go to Q track self serve now? DQIM, I think we are...
+
+00:30:25 - 00:31:34 Unknown Speaker:
+
+Hold on. Hold on for a second. Can you go back there? Yeah. So, Anand, this is fine, right? Service now integration, we have paused right now, right? Or that also you need to move it to E3. Just let me know. Yeah, we'll have to move that as well, right? So, that's why I wanted to check and update as well. Where are we all with that, all those changes, right? Did we have a word? It hasn't been merged yesterday, so we'll do that. Follow up with him on that one by end of this print. Anyhow, this would move to the production. But 27th, it seems like bit difficult. Okay, by when do you think this will go? This all depends on. There is a dependency, right? Okay, so instead of 27th, if I move it to three, right?
+
+00:31:34 - 00:32:45 Unknown Speaker:
+
+Third is basically the last day of the split, or basically second is the last day of the split. So in that way, that should be fine, right? Yeah, then then this should go, this will go to the products and take it, sure, and then then, yeah, uh, uh, uh. Pick up this service. Now. Assign this to Gundan. Uh. With one story pointer. Because all the build and updates for this one earlier and then just let me know means, if the story pointed out, fine. So such, in my second, all those enhancement plus service now integration, all of it will go to each rewrite. Just need to move it to E3, okay, or vice versa. You can do like Service Now 2 and then Data Load 1, because data load would not take much time.
+
+00:32:45 - 00:34:52 Unknown Speaker:
+
+You can do it vice versa, Service Now 2 and the data load as well be modified. In the BPMN, in the LUMI, in the ISO. I'll give you that. So, on this self-serve one front-end design, you can assign it to a third with three story pointer is having five story pointer. Uh, capacity, right, yeah, does he have any coordination thing left right with? Uh, GCST? Yep, yeah, five, yeah, that is something. Yeah, okay, fine, right? And if you can go back there, assign couple of story pointer to Kundan. From there Kundan is having seven story pointer, right for this one. Yes, yeah, yeah, build piece. Resources are done right, and now you are now, Anand. First of all, let me know, is there a new use case build that is required?
+
+00:34:52 - 00:35:48 Unknown Speaker:
+
+First, go to the Control one control, we can assign it to Samir. Yeah, go to the Control one. You guys can view these stories over the rally. Uh, please take a look, uh, till the time we are assigning the stories to other. And, you know, let us know in case any issue. Bill you can assign to Sameer. So, Anand, here you need to, you know, let us know your expectations. Like, one of the story, like, you know, we would add that in the description itself. The one that we were discussing, right, that part is almost ready, right? What is the expectation in this print apart from that one? Do we need to move to the second stage where we would start, you know, just validating this? No, no, no, definitely.
+
+00:35:48 - 00:37:23 Unknown Speaker:
+
+So, after step one, the second part of it, which is basically your auto updating as well, right? That code also has to be completed in this print itself, for sure. Okay, yeah, okay, okay. So assign this with five story pointer with, uh, maybe five story pointers. So on him, we would just on board Prithvi, who would? He would not be that fast like Samir right now. Uh, you know, uh. We would start giving him some some sort of work from the point row so that he can come up with the speed in the next minute. And that's why we are not utilizing each story pointer for him for this print, sure, and couple of story pointer for Valid. Is Prithvi onboarded? I don't think. Yeah, yeah. He has it. Yeah. Okay. Okay.
+
+00:37:23 - 00:39:00 Unknown Speaker:
+
+Shamir and Prithvi are done then. Yeah. Just remove that copy one and then maybe you can... some build part of it also. Maybe something like spying. Sorry, spying. Basically a spike story. Yeah, we use it. Yeah, it's mostly like analysis and, uh, discovery kind of a thing. Uh, okay, yeah. So now I'll leave it on. Like, uh, how much Anand is comfortable to, you know, accept those five story pointer because I end up the sprint, uh, we need that acceptance one. And just let us know, like if that five story point is fine, or how you would like to take it up. He should build something, it should not be, you know, complete blank for this print. Yeah, but I need your input. No, I think that should be fine. Okay, okay, yeah, okay.
+
+00:39:00 - 00:40:45 Unknown Speaker:
+
+And now on the new use case on. And then, first of all, uh. What we need is that we need some capacity for the insurance that we have, so we need some capacity for this one. Anand work is there in crazy also, man, okay, not this one. The tech business channel, Yeah, so on. And we need this DQ rule update, uh, description which we were discussing, right? That is one, uh, insurance table validation is there is looking into Maestro Notification app. This is just a follow-up so we can do it right. All user story is not required for this one, so these would go on a new use case validation and all, or how you would like to. Also, this is under the rule modification and deletion Cleanup itself.
+
+00:40:45 - 00:43:00 Unknown Speaker:
+
+Point number one one you can directly tag under Root Modification Cleaner, four under use case and five is under promotion. Anyway. Okay, no Maestro notification for Maestro notification. Uh, I, I don't need a user story. Uh, that we can consider that production issue, so for insurance anyway, we have a user story, right? You can add it over. Yeah, that can be used there. Okay, then, uh, go back to that, so that from there and how much capacity, uh, you need for those rule modifications? That is, uh, this, yeah. Is this the new use case? What is it? This feature need to go? How much? Story, point, term? Yes, that one is a one point vision of. It is just a table update thing and I have provided the exact details. Also.
+
+00:43:00 - 00:44:01 Unknown Speaker:
+
+No, uh, I know those are minor details. But what happens when he is going to modify that one? He, he don't have a right access, right? So he had to go to that use case to use his migration path. Where you know that can go via tag and all. That is the reason I was asking if one day is sufficient or in case he needs some action. Because it should not come back to us. Maybe I can take it to two pointers. Maybe I can leverage if any bandwidth available. I will leverage those others into other uses. Okay. Right now make it to Sindhuja. Because we don't have a right access on E3, Rachna. Right, right. Got it. Yeah, that makes sense. Okay, so this is one on the use case validation, go to the insurance one.
+
+00:44:01 - 00:45:52 Unknown Speaker:
+
+Uh, sindhuja, and then you can pull now IPO, you, you have a build also one, right? And then, uh, go to the new use case. Much effort you need. Yeah, Bill, uh, one point is enough for this. Okay, uh, give one pointer for the insurance check implementation. Yeah, in implementation, I have like, included validation and launch both. Okay, okay, then implementation. One. Assign it to Ayapa, uh, maybe with, uh, he's having seven story pointer, right? Bandwidth, so two went there, two, maybe build, and then this validation with three. Uh, let him complete this insurance, one one. Also, you have to assign it to, uh, okay, implementation, also you want me to assign to Ayapa. Yes, yes, so as Anand mentioned, the implementation is, uh, having that build also, sorry, validation also.
+
+00:45:52 - 00:47:37 Unknown Speaker:
+
+And then we have to create a copy of this one. Can this also be two story pointer? Market has three if he has been a bandwidth of seven. No other holiday operates apart from 26. Yeah, yeah, no holiday. Yeah, seven pointers capacity. Will it still be three story pointer for? Let me know how much capacity you need for the validation. And see if you're there. So I think five would be needed, validation and both if any changes are required in this group. Five would be too much. How much complex are the scripts? To deploy it in E2 and, uh, then validate and share the results. Yeah, okay, uh, did the code have been reviewed by HNA? We are still waiting for that. Oh no. I had a conversation with ANSI and I was suggesting that it's better to share the code and results together.
+
+00:47:37 - 00:49:00 Unknown Speaker:
+
+Because what happens is like, sometimes something gets missed, right? It's better to review both of them together. Okay, okay, uh. Then assign to five story point, Uh, Cinderella, in that case to N. C. And then there is a production issue which is under her bucket, right? So there would be a production support, so assign couple of story point advancing from the production support. And see no other holiday right apart from 26th. Yeah, no other. Okay, so ANSI done, Kundan done, Athar done, Sameer done, Aipa done, Prithvi done, right? Now we are left with Suman. So Suman is also having that three stories, three user story which he need to do the validation. So copy that implementation and assign to the Suman with five story pointer for the validation.
+
+00:49:02 - 00:50:25 Unknown Speaker:
+
+You want to add, like, what kind of implementation they are doing, because, or they will, we will. We will describe it in the description or part of it. So that is something I'll modify based on the details that we have. And it will be like, what a five story pointer for someone. Or, yes, yes, he is new, so we have to give him some time. And then the production support to him with three-story pointer when he is monitoring some jobs during the hours. He doesn't have any holiday, so you can just give him eight-story pointer. I need to check on the RAZ1 home to assign. I think you and Prithvi are left. Sorry, you and Nirmal are left. So for Nirmal, you can go to self-serve one and assign in that build one.
+
+00:50:27 - 00:51:49 Unknown Speaker:
+
+We still have like RAC, so do you want to like wait until Jason, yeah, until like rearrange it, yeah. But even for RAC, we would need some age. We need somebody who can guide, you know, Nirmal on RACI. Okay. So let's wait for Jason input and post that. I'll just, you know, make a change between Sameer and Nirmal. Yeah, sure. Okay. And go to that feature of. It has been created. We need one story pointer for insurance also, so if you can ask Aman to create one feature for insurance, uh, we, we can get a story pointer for insurance. Also, this is I'm currently working on so you can assign it to me. I have six story pointer, right? So two would go to insurance. You can assign a couple of story pointer for this one.
+
+00:51:50 - 00:54:00 Unknown Speaker:
+
+Anand, don't we have any SNE story pointer? No, Sajan, I've not created it. I think even last time you were creating it yourself, I think, right? If you want, I can... But under which feature? But under which feature? I don't know. What we were doing last year. Oh, okay, oh, then how to, because it would be, you know, Razy plus Q track, plus the insurance. So, yeah, he hasn't shared anything in general, at least with my other teams. Wherever additional design effort is needed, right there, they create an SME story, so if there's something like that, like, you can just add the SME support story for that feature. Probably we could just alternate it between, uh, two, three initiatives. For different sprints, like for example, if this sprint is effort is mostly towards racy design, then, or Quantum or something like that, then for that you create it next sprint.
+
+00:54:00 - 00:54:57 Unknown Speaker:
+
+It'll be like insurance, and then it's Q track in that way makes sense to me. Such, and so you can. Where you feel like the most effort will go here, right, would be self-serve, because I'm working on that, you know, back-end API design and all right. Yeah, let's do one thing for self-serve. Right now. You can give me five-story pointer, Sindhuja, and then maybe insurance. You can ask Aman to create one, and then I'll leverage the insurance story pointer. Not here. This back-end design. Assign a five-story pointer to me. And then, once Aman create a feature right from there, we can pull for insurance one. And what about SME? You do not want in this sprint? SME, yeah, let's avoid that during the sprint.
+
+00:54:58 - 00:56:24 Unknown Speaker:
+
+I can, you know, maybe from the next sprint we can check where is the effort and then we can plan accordingly. Got it, got it, yeah. I've added, yeah. Okay. So, Anand, I think from QTAC point of view, right, we covered up everything. Yeah. Here, okay, okay, there might be just a suffering of Sameer based on, you know what Jason would like to build it. So maybe on his validation part, we can give him two story pointer. Uh, for guiding, maybe, you know, yeah, so once he, uh, once it's approved, Jason, if you can just reach out back to me, right? I'll add you like with the product owner role. Um, and um, probably, uh. I think it'll take like a couple of hours only.
+
+00:56:24 - 00:58:01 Unknown Speaker:
+
+So Sachin, if you're available, uh, I'll reconnect back with you, uh, you, me and Jason, and we'll add stories. If that's okay, yeah, yeah, like you can just text me, then it'll take like another few minutes for me to add you. Okay, uh, other than if you are available, I'll also just add you just for the capability and feature part. Okay, and then let's add on Cinderella, because, you know, it's, uh, doing right. So, yes, I will do that. But we would like to know exactly what we would like to build so that would get more clarification. Continuously for my GCS team. Um, in case if it's like quite late, like, post that if I don't find time, I will at least, um, you know, like, connect you guys, like, if that's okay, if I can't make it tomorrow.
+
+00:58:01 - 00:58:58 Unknown Speaker:
+
+So if there is any, any changes that is required. So just one thing with Anand, like, are we going for demo today? Or you wanted to do it tomorrow? Um, let's do it tomorrow. That should be fine, I'll set up some time. Okay, sure, thank you in the sense, Anand, you just need the. Just wanted to test it out live on call once. Once I select, how will it show up, right? Where will the incident get created? All those things. You can do during the DSU call also, Anand. It would not take more than five minutes. Sure, sure. Yeah, right. Yeah, additional call is not required. We can do it now. You know, once we are done with the update, we can just demo it to you. Sure, sure, yeah.
+
+00:58:58 - 00:59:58 Unknown Speaker:
+
+And then, Anand, There is a call at 8.30 regarding those... required in that crazy kitty call. No, no, you're not required today, that's fine. Okay, okay, yeah, okay, oh, nothing from my side. I request all the resources to add your task uh, and then, like, just go to like, uh, and update your description. Okay, like by tomorrow. Thank you, everyone. Thank you. Sachin, could you please stay back for a minute? Yeah, yeah. So, Sachin, this guy actually, I shared these details, right, like, they are a mix.

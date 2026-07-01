@@ -1,0 +1,322 @@
+2026-01-16 SFTP Configuration and Lumi to ACE Data Transfer Process
+
+Creation Time: 2026/1/16
+
+
+📅About Meeting
+
+  • Date & Time: 2026-01-16 18:40 (Duration: 2591 seconds)
+  • Location: Remote (recorded session)
+  • Attendee: Sachin, Kundan, Prithvi, Suman, Nirmal, Samir, (others referenced: Abhilas, Jitendra, Sikha, Saranya)
+
+
+📒Meeting Outline
+
+
+SFTP configuration & mapping (Lumi ↔ ACE)
+
+  • Purpose and profiles Explained that file transfer between Lumi and ACE uses SFTP as a middleman. Two separate profiles were created: one for sending files from Lumi to SFTP (Lumi_TST / LUME TST) and another for ACE to read files from SFTP (CDO_TST / UCDO THT). Profiles act as credentials/user IDs for the SFTP access. Separate test and production profiles are maintained.
+
+  • Viewing and inspecting profile details Demonstrated how to open the File Exchange (FileX) profile details through the portal: File Exchange → Profile view → FileX account → select environment (test/cert/prod) → click Details. Custodian/owner name appears in the profile (example: Sachin). Emphasized that the portal can show profile status (enabled/disabled) and certificate details.
+
+  • File mapping and naming convention Showed File Exchange Map view → inbound mappings. File mappings are created against file name patterns. Required naming pattern for Lumi files: filenames must start with "Lumi_DQResults" (examples provided: Lumi_DQResults_123, Lumi_DQResults_rejects_1). Mapping ties a specific filename pattern to a sender profile and a receiver profile (sender = Lumi profile, receiver = ACE profile).
+
+  • Status, alerts, tracking
+    
+    • Profiles can be enabled/disabled; disabling will stop transfers.
+    • Notifications can be enabled to receive email alerts on file transmission.
+    • File tracking (Track Files / Base file) was demonstrated: the track shows lifecycle events (pushed to SFTP → catalog → file mailbox → receiver inbox).
+    • The SFTP inbox/outbox/send folder flow was explained: uploaded files land in Inbox → Outbox → Send folder; send folder files are auto-removed after 24 hours. FileZilla was used to show receiver view and manual upload for testing.
+
+  • Operational notes
+    
+    • Certificates must be monitored for expiry.
+    • Someone must ensure profiles are not accidentally disabled.
+    • Manual uploads are used for tests, automation handles production transfers.
+
+
+Lumi code walkthrough — how Lumi posts files to SFTP
+
+  • Airflow / Tag scheduling and Dataproc The job is scheduled with a tag (cron). To access external services (SFTP), a Dataproc cluster is created. The cluster creation installs required packages via an initialization script (package list provided in the script/package.sh). Most of these config items are static but can be updated when needed.
+
+  • Cluster job submission and job content After cluster creation, a job (PySpark) is submitted to the cluster. The job executes Python code that builds the CSV file and pushes it to SFTP.
+
+  • Data extraction and file creation The get_data operator runs SQL (BigQuery) to read DQ tables from GCP/BigQuery. The query output is transformed into a CSV with a particular format (including trailing zeros added by GCP formatting as mentioned). The CSV file is stored locally (GCS/local path as defined in config).
+
+  • SFTP connection and transfer The job uses a Python SFTP library (pysftp / paramiko-style connection via a helper SFTP connection module) that creates an SFTP connection using host, username, credentials, and host key. The CSV file is converted to a blob-like object (large file/object construct) and uploaded via sftp.put(local_path, remote_path) into the SFTP receiver inbox. The connection is closed after upload.
+
+  • Blob explanation Clarified that "blob" in this context means a binary large object representation of the file used when transferring; it is not the same as Azure Blob Storage.
+
+  • Exception handling gap Noted code observation: if an exception occurs, the SFTP connection may not be closed—exception block should explicitly close the connection (add finally/cleanup).
+
+
+ACE side (brief recap)
+
+  • File download and processing ACE creates its own SFTP connection to read/download the file from SFTP, then proceeds with downstream processing. The ACE side workflow and code walkthrough were previously covered and only briefly referenced here.
+
+
+Dashboard and Kibana (deferred)
+
+  • Status & plan Dashboard code walkthrough (Kibana/Elasticsearch index creation, parent/child index, query tuning for full-text search) requires more preparation. Team agreed to park detailed dashboard/code walkthrough and handle on next call (Monday). Index creation and the query changes will need a dedicated walkthrough.
+
+
+CICD, repo & deployment process
+
+  • How BPMN and assets are built BPMN creation in the UI triggers backend builds. Previously an asset repo was used; builds now run via GitHub Actions. When a BPMN is saved, a tenancy selection occurs and build pipelines operate automatically.
+
+  • Manual pipeline triggers & promotions Demonstrated Actions → Run Workflow to promote builds across environments (DEV → E2 → E3/Prod). To promote to production, an RFC number is required.
+
+  • RFC / deployment approvals RFC flow: submit RFC (contains implementation, backup, validation steps), approvals required from multiple teams (Lumi Big Data support, authentication team, etc.). Raise RFC at least 48 hours before scheduled deployment.
+
+  • Platform team involvement for metadata/table promotions Some tasks (like promoting table metadata to E3) require the platform team because the project team lacks E3 access.
+
+  • Reuse & repo segregation Discussed possibility of creating a shared utility repo (for SFTP utility) vs using the same repo for different projects (QTrack vs Razy). Action to check feasibility of separating repos and CICD segregation to avoid mixing use-cases.
+
+
+Team responsibilities, training and follow-ups
+
+  • Skill expectations
+    
+    • Suman, Prithvi, Nirmal: need to review code and understand main flows over next week (Python/airflow/operators).
+    • Samir: focus on Lumi side if not comfortable with ACE side.
+    • Developers asked to check exception handling and SFTP connection cleanup.
+    • Python familiarity is important; Java experience is expected to carry over.
+
+  • Knowledge sharing & upcoming sessions
+    
+    • Plan to run Razy overview starting Monday (7:00 PM / 6:30 PM depending on availability).
+    • Additional session(s) planned: CICD demo and dashboard/code walkthrough Monday.
+    • Schedule hands-on Cointreau/CICD demos for Prithvi and Suman to get practical experience.
+
+  • Operational housekeeping
+    
+    • Update contact details and holiday calendar to avoid surprises.
+    • Team members should add themselves to the project page/contact list.
+
+
+📋Overview
+
+  • SFTP is used as an intermediary for Lumi → ACE transfers; two separate profiles created for send and receive (test and prod separate).
+  • File mapping requires filenames to start with the agreed pattern (Lumi_DQResults_...) and mappings tie patterns to sender/receiver profiles.
+  • Portals allow viewing profile details, enabling notifications, tracking file lifecycle; disabling profiles blocks transfers.
+  • Lumi pipeline: scheduled Dataproc cluster, run PySpark job that queries BigQuery, writes CSV, converts to blob-like object, uploads via SFTP (sftp.put(local, remote)). Exception paths must ensure SFTP connection closure.
+  • ACE pipeline: creates SFTP connection to read/download and then processes files (covered earlier).
+  • Dashboard/Kibana walkthrough deferred; requires more preparation (index creation, query tuning).
+  • CICD uses GitHub Actions; promotions require RFC and approvals; platform team handles E3 promotions where needed.
+  • Team training: focus next week on code familiarity (Python/operators), CICD demo, and Razy overview.
+
+
+🎯Todo List
+
+  • Sachin:
+    
+    • Schedule Monday sessions: Razy overview (7:00 PM / confirm 6:30 or 7:00), CICD demo, and dashboard/code walkthrough. (Due: ASAP — before Monday)
+    • Share RFC/deployment overview and walk team through RFC creation and approval process. (Due: During CICD session / Monday)
+    • Ensure contact list and holiday calendar are updated; request all team members to add details. (Due: End of this week)
+
+  • Kundan:
+    
+    • Share FileZilla screen and SFTP receiver view recording (or live) for team to verify file routing. (Due: Next meeting / Monday)
+    • Update code to ensure SFTP connections are closed on exceptions (add finally/cleanup). Provide PR or patch. (Due: Within 3 working days)
+
+  • Prithvi:
+    
+    • Complete ESCO services setup and confirm readiness; assist in Lumi/ACE setup if not completed today. (Due: By Monday)
+    • Attend hands-on Cointreau/CICD demo and take ownership of initial hands-on tasks. (Due: Next week — coordinate with Sachin)
+
+  • Suman:
+    
+    • Review Lumi codebase (Python/data pipeline) and raise clarifying questions within the next week. (Due: 1 week)
+    • Update contact details on project page. (Due: Today)
+
+  • Nirmal:
+    
+    • Review code (focus on Python operators used in the pipeline) and raise clarifications within the next week. (Due: 1 week)
+    • Update contact details on project page. (Due: Today)
+
+  • Samir:
+    
+    • Focus on understanding Lumi side flows (file creation & SFTP upload); review relevant code and ask questions. (Due: 1 week)
+
+  • Dev/Platform team / Assigned Platform contact:
+    
+    • Check feasibility of separating shared SFTP utility into a separate repo (and separate CICD) to avoid mixing QTrack and Razy use-cases. Provide feasibility assessment. (Due: Next sync / by Monday)
+    • Support promotion of metadata/tables to E3 (raise tickets and approvals as required). (Ongoing as needed)
+
+  • All attendees:
+    
+    • Review the recorded session and go through the code (Lumi pipeline & SFTP connection). Post questions in project channel within one week. (Due: 1 week)
+    • Ensure holidays and contact details are updated on the team page. (Due: Today)
+
+If any attendee was missed in the attendee list or any action owner needs adjustment, please respond with corrections so the todo list can be updated.
+
+
+Transcription
+
+00:00:00 - 00:00:57 Unknown Speaker:
+
+Getting a file and sending it to the SFTP and then this SFTP configuration, I'll explain it to them, how to do this SFTP configuration and all. And then this part, anyhow, we already covered up, so this will wrap up the first of all this Q track UI, and once we covered up this one. Then, uh, give the overview of this dashboard that you have created. Okay, or if, or if it takes much time, then we can park it for the next call. Uh, sure, okay, okay. So let me start the recording. Let me know once you're ready with the details so that I'll, uh, start the recording. Yeah, yeah, we can, uh, uh, okay. Should I start the recording? One second? Let me open the tag. Okay, yeah, yeah, that is the reason I was waiting.
+
+00:00:57 - 00:02:04 Unknown Speaker:
+
+Once you're ready, then only I'll start the recording. Open the tag, open the code base and give me those two profile ID. And and make sure one thing as we are recording the session, remove the password from that code for time being, just remove the password from there. I don't have it on local. Just give me a second. Just clone it. Then just clone it. And one more thing, give me those two profile ID. I have to show that SFTP mapping, right? So just give me those two profile ID. Okay, I have it opened. So you want me to do or you will do that? Anything is fine. No, no, you won't be able to show them the mapping, right? You can open the file zilla right but you won't be able to show that mapping.
+
+00:02:04 - 00:03:09 Unknown Speaker:
+
+I'll show that mapping just give me those couple of profile ID. Till the time Kundan is preparing himself I have asked Prithvi to set up the ESCO services. Hopefully, that should have been done by today. But if not, once he is ready, he would help you to set up the ESCO services. Okay, maybe on Monday connect with him. Okay, okay, that is required for this. Uh, you know this, uh. Q track UI, right? Because in case there are some issues and you know that need to be handled during the onset, then you can pitch in and then take care from there. Yes, such a like that Bp and BpM, right? Yeah, because last Thursday, myself and Kundan, we wished each other till 12 a.m. Okay. No, last Wednesday. Last Wednesday. Okay. We wished each other till 12 a.m.
+
+00:03:09 - 00:04:17 Unknown Speaker:
+
+So, there was an issue. So, going forward, what I'll do, if there is something issue, then I'll work with you. Or if some some other engineers comes in the USD house, then he can coordinate with you and then you guys can work during your working hours. Okay, such a you want product details, which one broad detail also SFTP project. No, no, no, this is fine. Uh, so you have shared one, is this USC? Do TST? And yeah, correct these two. Just give me a second. Okay, let me delete it, just give me one second before going for recording. Okay, do one thing in the time you are covering, uh, this one, right? Uh, code workflow, let me tell them the SFT configuration in between, okay? Yeah, yeah.
+
+00:04:20 - 00:05:18 Unknown Speaker:
+
+I'll share my screen and just let me know, guys, once you're able to see my screen. Let him be ready till the time I'll share you what SFTP configuration is there. Okay. This meeting is being recorded. So, This, you know, right? Like we are sending the file from the Lumi to SFT, and then ACe is reading the file from SFT. Okay, so for sending the file to the SFT from Lumi, or for reading the file from this Ace platform? We need a profile ID. Okay, it's just kind of a you know, user ID for logging to that SFT. So that you can place your file over there, okay, or to read the file over there. Okay, so we have created one profile for sending file from Lumi to SFT and another profile for reading the file from that SFT.
+
+00:05:19 - 00:06:24 Unknown Speaker:
+
+I hope this is clear. Or do you have any questions on this? No. Got it, right? It's just like a handset that is being done, right? You want to log into, suppose, any system, right? So you need a credentials, correct? So even for file transmission, that needs a profile through which they can send the file to this one or to read it. You can utilize the same user ID, but we would like to avoid it because these are two different platforms. So we created two different profile. So this USDCHT, let me go like this one. This Lume TST would be responsible for sending the file from Lume to SFT and then your CDO TST is responsible for reading the file from SFT. Okay. So now this is the SFT place where you would be able to see the mapping, the mapping that we used to do.
+
+00:06:24 - 00:07:15 Unknown Speaker:
+
+So if you want to view a profile details, you can click on this chat box. Okay. And suppose I would like to check the details of this Lumi one, let the chat box to open and then I'll send it to you. I don't know why it is extremely slow today. Okay, so from here you can view profile details, you can click on FileX account, just paste the user ID and this is for test environment, not for the production, so you have to select cert. Similarly, we have details for the production environment that is having a different profile, so we maintain a different profile for test and production. So if you can click on details, this should share you the details. Like, you know, uh, this is the file, family, uh, and this is the profile details.
+
+00:07:15 - 00:08:23 Unknown Speaker:
+
+Basically. Okay, uh, you can see this. My name, the reason being I have created this one, and, you know, custodian for this profile, that's the reason my name is being appeared over here now. How the mapping has been done so far? In order to understand the mapping, you have to go to this menu File Exchange Map View Profile. Okay, and then I have to click on File X Inbound Okay, the file that we have created for this. Give me a second. I think it starts with Lumi. What was that? The file that you are creating. One second, Sachin. It's lomi underscore bqresult. Bqresults. So this is the file mapping, right? So when we are creating the file, right? So with that file name, you would be creating a mapping over here, okay? Tag two.
+
+00:08:24 - 00:09:09 Unknown Speaker:
+
+Your file names should always start with Lumi DQ Results, post that you can provide any other abbreviation if you want to provide it. This is the file X space. Okay, and look, this is the file name file profile with which this file has been attached. Okay, so this profile would be able to send this file with this name, okay? And if you go to this one, you can see that post Lumi DQ result. There would be anything that you would like to place and which is the profile that would be reading this file. This is the UCDO THT, which is from the A side, so this configuration I have to do it over here. So this is your sender which would be sending this file, and this would be the receiver which would be receiving this file.
+
+00:09:09 - 00:10:10 Unknown Speaker:
+
+Okay, so your file names would start like Lumi Underscore DQ results post, that means I can send a file like Lomi DQ results. Pose that one two three. This is one combination. I can send a file I can send a file or DQ results underscore one two three four I can send a file. It's a rejects. Basically, I would say okay dig your results Underscore even such in Okay, any questions on this mapping? Can I take it as a No? Yeah, okay. So this is basically, uh, the mapping that we need to do in this SFT portal for, you know, sending and receiving the file. So this was the configuration that I would like to show you guys. It's a one-time configuration, it's a one-time configuration.
+
+00:10:10 - 00:11:08 Unknown Speaker:
+
+And maybe we need to see if certificates are getting expired that might be required in early ones. Yeah, means you have to keep an eye on these. Like, you know, somebody should not come and disable this profile, right? So right now this is an enabled state, right? Somebody can disable it, right, you can. Uh, if I try to take an exam, uh, Lumi, Lumi. DQ results are on the right. Um, yeah, DQ details. So I can even disable this one, so if I disable it one, that means your file transfer would get impacted and you would not be able to transfer the file anymore. Okay, and when there would be a file transfer, we can set the alerts also over here. Okay, I can, uh, suppose I would like to get a notification whenever there would be a file transfer.
+
+00:11:08 - 00:11:58 Unknown Speaker:
+
+I'll show you this one so I can get a notification like this one, like. You know, for this one, there was a file that has been sent over here. OK, for this test environment, we did not enable it, but I can enable the notification also. Like whenever there is a file that has been transmitted, it would send an email communication to me. This is number one. Second, using this one, right, you would be able to track the file also. Suppose I would like to track this file. OK, so again, go to this bot. Here is the track file option is there, or you can set it via base file. Okay, whichever is there, like, you know, you can select that one. Suppose I select this one with a ProD environment, so it would give me the details wherever it is.
+
+00:11:58 - 00:13:37 Unknown Speaker:
+
+Okay. So I think it's not founding because there might be some glitch with the name or something. Let me try with the base file environment, right? And I'm trying to fix the production environment file, so it would not be possible. So for that, I have to go to this SFT central that is the E3 environment for SFT mapping. So again, here the you know, same thing is comes. You can just click on this part Track Files, Base file, paste it, let's try if it fetch. No. This is pretty surprising. These are the three different files that has been sent it over. Okay, this is for today's data around this time. So when you click on this tracking ID, this would display where exactly is them. So file has been pushed to SFTP, right?
+
+00:13:37 - 00:14:36 Unknown Speaker:
+
+So source has sent the file to SFTP. Then it went to the catalog, then the file mailbox to the this Lumi PRD, which is the receiver, so even the file has been received to the Lumi PRD. It's inbox now. Any questions on this? Otherwise, I'll ask Kundan to share the file and then there you can see it. Let me know if you guys have any questions on this. No? Kundan, if you can log into FileZilla, just share your screen once you log into the FileZilla. So that is one way, guys, you can check your file routing. Through that bot, otherwise, this is, there is another mechanism called this file, or even you can track it via your Intellij also, so this is another portal. When you connect, right, you can see this one, right?
+
+00:14:36 - 00:15:34 Unknown Speaker:
+
+I have already told you guys, right? There are three boxes, one is Inbox, one is outbox and one is the send folder, right? So whenever file gets loaded, it comes to the first of all inbox. From inbox, it would move to the outbox, and then finally, once you did it, move to the send folder, post 24 hours, the file would be automatically removed from the send folder. Also, okay, for example, let me upload it, okay, so I'll see I'm uploading a file, so this is your sender. Okay, so if you see the username right, so it's sender username, so it started uploading and it's successful, right? So now if you'll click on inbox, it take few seconds. Okay. Now you have selected, I think send folder while uploading that might be there in the send folder.
+
+00:15:34 - 00:17:05 Unknown Speaker:
+
+Check that one. Yeah, it was in send folder. You have selected the same folder. So I'm going back to. Can you stop sharing? Can you stop sharing? Let me... I will share again. Just give me a second. Let me connect. Let me know if you are able to see the screen. So this is the receiver one, so whatever we have sent, you can see those five here. Oh, one second, just a second. This password, sir, it's correct only. So why is this? Manual upload is required. We cannot put any script there. Annual upload is not required. P.3. It was all, uh, through the automation. We were just letting you know that these are the tools which you can monitor. Okay, okay, so we are just explaining you the process. Okay, yeah, no, no, no, you can automate it and anything.
+
+00:17:05 - 00:18:06 Unknown Speaker:
+
+Yeah, so just for testing purpose, sometimes you need it. Okay, okay, so I connected with this receiver one, so in the outbox if I click on. You can see the file, right? Right now it is in Outbox. Once the automation consumes this file, it would move to the send folder. Now, Kundan, you can go ahead and then brief the Lumi code base. How we are creating connection to SFTP. So, you know, Now I'm testing you. The process where we are, you know, sharing the data from Lumi to Ace, so to directly we cannot share the data. So what we did is we created a middleman, you can consider it that is SFTP. What we are doing is whatever the data we need, we are creating it, and that data we are posting it over the SFTP.
+
+00:18:06 - 00:19:00 Unknown Speaker:
+
+So we created a tag. The name, if you will see it right, will upload file to GCP, upload file from GCP and send it to SFTP. Okay, uh, basically, if you will see, we have, we have different full uh files are there we are using. Uh, I will explain you one by one. So this is the tag ID, and this is the scheduled one, if you see this is the schedule we have given. The, you know, the duration is already mentioned, the cron expression and this is the tag you can provide it, and these are the operators we have provided. Okay, so, uh, to connect to, you know, the external services like SFTP or some other services, right? You have to create a cluster, so we created a Dataproc cluster here you can see, and within the cluster.
+
+00:19:00 - 00:19:53 Unknown Speaker:
+
+You have to provide the script to URI, so which URL, which script you want to basically execute, so this is the file actually, if you will see, this is the package. Sh. What we are doing is before going to create the cluster, right? So we are providing which all certificate will be needed, which all you know, the external packages will be needed for this particular, uh, you know, for to connect with the SFTP. So these are all the, you know, the packages that needs to be installed there, so while creating the cluster, these all packages will be installed. Till here, any, any questions? Yeah, this is the configuration one then that you cannot do anything. So those all things will be keep changes and you have to update it, but most of the time it will be static.
+
+00:19:53 - 00:20:34 Unknown Speaker:
+
+Okay, okay. So after creating the cluster, what we are doing is we are submitting this cluster. Okay, submitting this job. So this cluster is a job basically. So this job we have to, you know, submit it. So before going to submit it, we have to tell it within the cluster what we want to execute, so we are telling so within this cluster. We have a job that is called the, you know, the PI spark job, you can tell. And then what we are doing is we are creating this, uh, SFTP connection Dot PI, so we are maintaining that you have to, you know, run this particular PI script file, so to run this, we have this, you know, Python provides this library that is called the PI SFTP. Okay, and where we have this, uh?
+
+00:20:34 - 00:21:45 Unknown Speaker:
+
+Con output, which provides you to provide the host key and create the SFTP connection. So we are providing our host name, username, credentials, and other details. Okay, and then once the connection is established, okay, so okay, okay, fine. So what we are doing is basically we are reading a CSV file, so okay, fine, fine. So basically we are creating a CSV file and this CSV file. We are, you know, posting the data. So one second, uh, where we are creating the CSV file. Okay, send file from this bit. One second, just one second. I think I missed one thing, just a second. It creates a SQL file. Yeah, yeah, okay, sorry, I missed this one. So get data operator is there, so what we are doing is basically within this diagram, only these all methods are there.
+
+00:21:45 - 00:22:36 Unknown Speaker:
+
+If you'll see after creating the cluster, next step is to get data operator, so get data operator. There is a this SQL file is there, if you'll see this file, right? What we are doing is basically we are reading the data from our DQ digital table. Okay, and then what we are doing, we are creating a CSV file. If you'll see, this is the format of this CSV. Okay, and this is star, it will, you know, uh, this, uh, gc Gcp. Add some, you know, zero, zero, zero kind of thing at the end, what we are doing here in our SFTP connection. So we are providing the path of this particular file because it is going to be stored in this location. As we mentioned it here in this one, if you'll see the path we already mentioned here, right?
+
+00:22:36 - 00:23:29 Unknown Speaker:
+
+Okay? So that particular location, we are reading it, and that particular file, we are creating a blob object, and that blob object we are uploading. We are, you know, putting in a local file path and this is the remote file path. Okay, so what it doing is basically from this local file path, it pushing this particular file to this particular remote location. Inside the inbox of your uh, this one uh in sorry in box offered SFTP, okay, so here blog download this particular file name, and if you see it here SFTP dot. Put this local path to this remote file path, so from sender location, basically from your local to your remote location, and the file will be get transferred. And we are closing the SFTP connection here, so this is the entire mechanism.
+
+00:23:29 - 00:24:38 Unknown Speaker:
+
+While we how we are, you know, creating the file, creating the file, using the database, and that particular file. We are transferring it over the SFTP from Lumi, any question in this? What database they are using there on the on the Lumi side? It's a GCP, right? That, uh, through the big query only Google storage, we are pulling. Yeah, we are pulling the data using the GCP query. Anyone having any doubt please come up and post that we will take it up. So what is the purpose of Blob here? Such like, is it a container? Or like? No, no, no, see the file, you cannot send it normally. So what we are doing is basically we are, you can say, not encrypting exactly. Uh, blob is a data type actually.
+
+00:24:38 - 00:25:39 Unknown Speaker:
+
+So we are converting the file to that blob object, okay, and this Blob object, we are transferring it. You cannot transfer the directly file. Okay, you have to convert into the Blob object inside it. Okay, got it? If you want to, you know, Samir, send a file. Like object, right? Yeah, in that case, we have to go with, uh, this blob that is, uh, for handling the large object, right? Yeah, yeah. So that is the reason why I have asked you, because, like in Azure, we have a blob storage something. So I thought, like, something, uh, that we have seen that in Google also. Okay, so that's why I have asked, but this is different. Yeah, got it, yeah, this is different. So yeah, anyone, any question in this process? Okay, if no, pose this, you know?
+
+00:25:39 - 00:26:47 Unknown Speaker:
+
+When the file gets, send it over to the SFTP, right? The next step is to download the file, which we already discussed in the last call, right, Uh, the Ace side again. It would create a SFTP connection, read the file from the SFT and then download. And then the next processing code. Walkthrough is also done for that. So that is the steps for this one. So this cover of this Qtac DQ IAM portal code walkthrough. Okay. Now, let's move to the dashboard creation one. Okay, on the Kibana side, right? Okay, fine. Yeah. Do we need time for that to prepare it? Because that would be the code walkthrough. You can, you already walked him through the code, right? No, no, for this one, I did not let them walk through the code, so this would require a part of code walkthrough.
+
+00:26:47 - 00:27:44 Unknown Speaker:
+
+So if you require time, we can do it on Monday. Uh, no, let's close it, okay, then don't have too many things here. So yeah, yeah, it would not be here, man, it would be there in that, uh. Configuration file where we have configured the input configuration. Oh, you want to do those things. PI repository and all. Then we need time. Let's do that on Monday. Let me stop the recording. That I was talking about the config that we'd made and created a... Index. Index, right? We'll have to tell you all that. No, then parent and child index, right? For that, let's connect... I also need some time. Exactly exactly that, that index creation. And then then you have to explain, how did we twist the, you know, query over there in the deluxe text search to populate those data?
+
+00:27:44 - 00:28:35 Unknown Speaker:
+
+And all right, so that take time. So guys, do you have any other questions? Feel free to ask. Look, we would be working. And then anyhow, you guys always reach out to me, but I need you know if you. If you get a thorough understanding right now, it would be easier for you to speed up the work. And then you would not rely on anyone to, you know, multiple time chasing because every individual are having their own task, right? So they need to pitch in on their task to complete it, right? So I need Suman, Prithvi and Nirmal to understand a bit of pieces of even the code. You can go through the code. If you have any query, clarify within the next week because we have to speed up once. You know, this kid is being over.
+
+00:28:37 - 00:29:40 Unknown Speaker:
+
+And I have plans. I mean, I have included you also in these calls along with NC. The reason being, I'll suffer you guys now here and there. Okay. Maybe few folks may be dedicated to some modules, but like I pulled you to this incident creation, right? So don't restrict yourself. With incident creation only. Understand the flow, how it is working in DQIM so that you would be able to take care of the end-to-end process journey. Yeah, sure. Right, from delegator, from the file download, anyhow, this one, right, transferring a file from Lumi to SFT, you already did another piece of job for Razy, right? So you are aware with this stuff, correct? So at the same time, please make sure you understand the ace part also from the delegated itself. Don't restrict yourself in the service.
+
+00:29:40 - 00:30:39 Unknown Speaker:
+
+Now integration only okay, and Samir even not on a side. Uh, at least you can focus on the Lumi side, right? If you are not feeling comfortable at the A side, at least on the Lumi side right, if there is an issue. You should be able to troubleshoot that one. Yeah, sure. Okay. And Nirmal and Prithvi, I guess Python might be new to you. Spend some time to understand that one because that is again, you know, major project is being there. So we need your contribution over there. Okay. Apart from the Java one. Java, anyhow, I expect you guys to catch it up. Very quickly, having six, seven years of experience Python, I can still give you some time. But still, you know, spend some time, uh, to understand how these operators and all function and utilities are working.
+
+00:30:39 - 00:32:04 Unknown Speaker:
+
+Okay, uh, then do one thing. I have seen your code. One observation is there in the exception block, close that SFTP connection that is not being there. Number one is that, and second way, is that serious? When I tell you once you are sending the file, you are closing the SFTP connection, right? But if there is a exception, you are not closing that, so in that exception block, who closed statement? Although, what's that? Is one second now, as IAPA is also going to utilize this one, right? Create a utility for this. Um, and figure out one way if we can take it up to our. For last year, we have asked, I have asked them to, you know, use the same repo, but just check the feasibility if we can deploy it to a different repo.
+
+00:32:09 - 00:33:12 Unknown Speaker:
+
+Otherwise, what would happen, you know, we would end up missing RACI also with this QTrack project. Because your use case stands for RACI, right? This is fine until the time it is using for Q Track, right? We are still fine with that, but I don't want to mess up any Raisey. Use case code configuration in this Q track module. So you would be needing only that pipeline creation, right? CICD1, so check the feasibility. Let's, let's, let's segregate that one. Maybe on Monday, uh, give a demo on the CICD to these books. Okay, sure, oh, one one session may be on CICD so that they would understand how it is going on. Yeah, got it. So, um, that was your question today, right? So for the BPMN that we are creating, right, that is getting, uh, automatically built in the system.
+
+00:33:12 - 00:34:36 Unknown Speaker:
+
+Okay, when you click on Save or submit, right, a PR gets generated automatically in the backend. We used to have a asset repo, but now they I'm sharing my screen, let me know once it is visible. So when you are creating a BPMN, right, so once you create a BPMN, right, so this once you select this, uh. Save BPMN, right? It automatically ask for this tenancy where you are saving it. Once you create this one, this get build in the backend by itself. So they used to have this asset folder. This is framework asset is there. Okay. So that is being done. Basically, we are using GitHub link for this one. They used to build it. So now they have discarded this one. They're doing it internally through this GitHub actions. Okay.
+
+00:34:36 - 00:35:20 Unknown Speaker:
+
+My phone was quite older because I was not working on this from last one year. That is the reason you're not seeing the latest change. But on this actions, they used to build it. Let me show you one of our record that we are building. So suppose. You made the configuration, you updated your jar over here, right? And this is deployment config. Suppose we updated our jar over this one, right? Once that is done, you just need to go to this actions. Okay? And here, if we are deploying till E2, select this E1 E2, and we just need to click on Run Workflow, that's it. It would build it automatically. You need to just promote the pipeline to the next, next, next environment. So this has been deployed till E2, once I approve it to E2, it would deploy to E2.
+
+00:35:20 - 00:36:11 Unknown Speaker:
+
+If there is an issue you need to, that's fine. I only triggered it, I saved some APM, so once once I approve it, this would start building the your code base and everything. If there is an issue, you need to report it to the IS IS platform channel. Okay, so this is the CICD pipeline that has been configured. Uh, internally, whenever there is a repo gets created. Okay, okay, and uh, as I was mentioning, right? For India, they used to have a different pipeline because that goes to a different server. Okay, on our project, we are not using any India pipeline, the reason being nothing is being deployed on the India side. Okay, from our for our use case, but if some other use cases are there, they can have India tendency in India pipeline.
+
+00:36:11 - 00:37:03 Unknown Speaker:
+
+This is not enabled for us, so even E2 for till E2. And if you are promoting the changes to production environment, then you have to go through this E1, E2, E3. Here. We have to provide the RFC number which AirPA is creating on a daily basis, right? You might see AIRPA pointing on a daily basis that this is the RFC or something, right? So we have to. When we are deploying in the production, we need a valid RFC. Otherwise, it would not promote to the environment. OK. OK. And RFC creation and all you guys would get to know or maybe I'll ask you to give you a overview once. So he's basically providing the details. Suppose this is one of the RFC. Right. So suppose this is for the plant 19th. Right.
+
+00:37:03 - 00:37:57 Unknown Speaker:
+
+So if you go over here, I hope this would not get here. Sure. These are the basic details that he is providing our project, and you know who is doing this? And then once you go to this C task, this is the implementation where he is providing all the packages and all details. Like this is going to be deployed, right? This is the implementation that he would be going to do, and this is the backup instruction. In case deployment failed. Apart from this, there would be a validation task, which he would be doing post deployment. Okay, and then this needs a approval from different team, this is our team, okay, this is a Lumi big data support team, and then this is the authentication team that we need their approval. And this, this task or something.
+
+00:37:57 - 00:38:51 Unknown Speaker:
+
+This requires to be open at least 48 hours. All right, so this is what he is doing. As a validation log into this one, so we'll navigate to Imposter, validate all the tag, that's it, okay, uh. So for this one, we need to raise it at least 48 tasks prior to, you know, schedule it. That's the reason you can see he has already created for 19. That is on Monday, where we are for Tuesday. Man, go ahead and create it, or you already created it. Yeah, yeah, yeah, completely. Keep the deployment, you know, ready. You never know whenever there would be a deployment would be required. Are the few RFC if I, if you saw. These are some of the, you know, tables that we are promoting, so here we are not going to do any deployment.
+
+00:38:51 - 00:39:48 Unknown Speaker:
+
+So for this insurance when, like, I would be, you know? Promoting the metadata of this table to the E3 environment. So this task could be assigned to the platform team. Okay, so this is the platform team who would be promoting the table to E3 environment. We don't have access to E3 environment. And there again, it goes through multiple approval, sometimes we have to chase them to get the approval on this. So insurance one, it would be hardly one day, maybe in between. Next week I'll take it up, but most probably we would be starting with the Razy Kitty from Monday Monday. I know we have a packed meetings, so let me see the feasibility because I need Suman also in the call. Okay, it's a demo. Oh man, Monday, there is no grooming call, Anand asked for Monday, right?
+
+00:39:48 - 00:40:53 Unknown Speaker:
+
+This is surprising. Okay, see new to Tuesday. Everything okay, then let's do what. Uh, do it. On Monday, 7 p.m. Uh, we will start our uh raz overview. Okay, and on morning, ask Samir, let's close the control so that, uh. Prithvi can pitch in with his hands on Cointreau starting next print with you. Sure, sure, Sachin. Cointreau, we can give that video to Suman. But let's have this with Prithvi. And then at AZ, we can have a connect with Suman, Prithvi and Nirmal in the evening hours. Sure, Sachin. Don't worry. Set up a meeting maybe at 12. We can connect at 12 post DSU call. Sure, Sachin. And one more thing, uh, P3 in Nirmal and Suman guys. Please update your contact details over here so that, in case required, we can reach out to you where it is.
+
+00:40:53 - 00:41:52 Unknown Speaker:
+
+And such an uh, can you please add me on the meetings on Monday? Uh, today itself? If you have a plan to, uh, well, that would be seven. I know, man, that is the reason I kept it at 6 30, otherwise I would have, you know, I, I know it. It was just a surprise. Yeah, because if I'm planning daily 7 30, I have a call, that's fine, so it's just 7 o'clock, 6 30. Means you need, uh, can you? I got? I got your point, I'll, I'll take care, man, I'll take care. Let me send it. Today itself, Okay, I, I got your point, means, you know, basically it's glitch from my side. Actually. Take care of, okay, is that the business continuity planning? And guys? I hope you guys are updating your holidays.
+
+00:41:52 - 00:43:02 Unknown Speaker:
+
+It should not come to me as a surprise because, you know, we are working in Asile, right? Uh? So please make sure you are updating your holiday over here. Any any holiday that you are planning, please make sure that is being updated away. So here, oh man, why these people are there? Lots of people? Okay? Saranya did not join. Abhilas left, Jitendra left, Sikha left. Okay, uh, guys, do one thing on this page. Update your contact details over here. Okay, I'll bring it over this, make an entry of yours. Okay, any question, any queries that you guys have?

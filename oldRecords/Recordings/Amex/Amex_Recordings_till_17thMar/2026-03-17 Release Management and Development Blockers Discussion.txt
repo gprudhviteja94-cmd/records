@@ -1,0 +1,259 @@
+2026-03-17 Release Management and Development Blockers Discussion
+
+Creation Time: 2026/3/17
+
+
+📅About Meeting
+
+  • Date & Time: 2026-03-17 11:30 (Duration: 2050 seconds)
+  • Location: Remote (virtual meeting)
+  • Attendee: Sachin, Saurabh (Sora), Bhagwan, Sindhuja, Sachin (multiple Sachins referenced), Prithvi, Sindhuji, Sandeep, Nirmal, Ather, Semir, Sindhuja, Tanisha, Rachna, Joy, Cinderella, Purna, Anand, Rajendra, Farah, Syed, Athar, Haris, Prithvi, others referenced (some names repeated in conversation)
+
+
+📒Meeting Outline
+
+
+Release / PR Merge & Urgent Blockers
+
+  • PR merge pending Multiple PRs are pending review/merge by Bhagwan and team. One PR has been merged but does not produce expected values; several other PRs remain unmerged. Delay has extended over multiple weeks, affecting delivery timelines and risking product escalation. Bhagwan and Saurabh personally review and control merges; their team’s strict review process limits who can merge (Syed, Athar, etc. mentioned). Expectation: quicker turnaround (ideally 1 day) or dedicated reviewer from their side during the IHTRA window.
+
+  • Walk-through / coordination call Saurabh proposed a walkthrough session to debug dropdown submission issues (drop-down values appear but data not persisted to tasks/paper). A call was scheduled for today at 19:45 IST (7:45 PM). Sindhuja will set up the call and include stakeholders (Cinderella, Sachin, others). Additional follow-up call with Bhagwan suggested around 21:30 IST if needed. Emphasis on including Cinderella so she’s aware and can follow-up on insurance impacts.
+
+  • Impact on product & timeline If deployment is not completed this week, product partners (and higher-ups) may be impacted; Purna is changing scope and product directors may escalate. Team will raise the issue in this week’s team meeting to propose a process for faster PR reviews.
+
+
+Functional Bug: Dropdown values and Insurance data not persisting
+
+  • Observed behavior Dropdown values display correctly but after submission the data and tasks are not present in the downstream paper (production ingestion). Insurance-specific records are not being configured in DB and are failing — causing data failures and plug/data impact. Two key outstanding tasks: PR merge(s) and discussion on already merged PR that’s not producing expected results.
+
+  • Actions discussed Immediate debug walk-through to reproduce and trace issue. Need to ensure insurance configuration is applied to production (two tasks pending: PR merge + investigation/discussion). Team to alert product partners only if delay persists; currently product partners are tolerant due to paternity absence but tolerance is limited.
+
+
+Access & Environment / Blockers for Development and Testing
+
+  • Access issues Several mentions of blocked calls and access (e.g., Joy/Tanisha calls canceled; obtaining access blocked for >1 sprint). Sindhuja to check with Tanisha/team for alternatives and re-establish required access. The US Travel Bank user stories / tasks are not fully created — owner will share within 10–15 minutes; documentation will be provided to Rachna/Ipsi to prepare before call.
+
+  • Sample ingestion & file watcher failures Incident raised for file watcher job failures; assigned to Flourish team (no response yet). Sample ingestion in progress but slow; one engineer (Haris?) needs to run code and audio job; there is concern why it is taking long given previous successful DT flow runs.
+
+
+Data Pipeline / Query Logic and Monitoring Tool Code Review
+
+  • Audit query logic issues The monitoring query currently uses start_time-based filters and QUALIFY row_number partitioning to pick latest rows. Observed problem: filtering by start_time misses rows when start_time is earlier than interval, while created_time would capture them. Team discussed:
+    
+    • Replace start_time filter with created_time in the audit query.
+    • Add explicit status = 'FAIL' filter at the query level to avoid iterating through many rows in code.
+    • Use a reasonable lookback window (12–24 hours) rather than strict start_time logic; confirm expected window (month-end vs 28th discussion concluded: job should run at month-end).
+    • If status is blank in production, raise and analyze separately — if any blank statuses exist, escalate.
+
+  • Monitoring DAG / Config loader design debate Prithvi explained DAG flow: two tasks (SQL generation and validation), SQL Generator orchestrator and ConfigLoader usage. ConfigLoader loads JSON and template files; it has multiple methods to keep code structured. Sachin suggested simplifying by consolidating repetitive methods into a common utility to get file paths (optimize and reduce duplication). Prithvi prefers class/method structuring for readability and maintainability (industry standard). Team agreed to:
+    
+    • Create PR with suggested changes and use code review comments to converge on standard.
+    • Prithvi to prepare/submit PR; Sachin and Raj to review; if needed, discuss with Raj and agree on approach. Both sides agreed to avoid personal conflict and focus on code readability/operational support.
+
+
+Deliverable / Sprint Planning & Task Assignments
+
+  • Sprint tasks Owner will create user stories for sprint in next 10–15 minutes. Team to continue on APC validation changes and US Travel Bank tasks. Rachna/Ipsi to review docs before joining calls. If changes needed in APC validation, continue post-call.
+
+  • Other in-flight items
+    
+    • Move two DTPO flows to E2 environment (pending; coordinate with Purna).
+    • Max length issue: PR to be approved and merged for D2, test E2, then E3 if OK.
+    • Confirm schedule for monthly job (month-end only).
+
+
+📋Overview
+
+  • PR merges are blocking deployment; one merged PR does not yield expected values; several PRs still pending review.
+  • Walkthrough call scheduled at 19:45 IST today to debug dropdown submission and data persistence; include key stakeholders (Cinderella, Sachin, Saurabh).
+  • Insurance records failing due to missing DB configuration; this is causing production ingestion failures — needs urgent action.
+  • File watcher jobs incident is raised and assigned (no response yet); sample ingestion progress slow — follow up with Haris/assignees.
+  • Monitoring/audit query has logic issues: use created_time and status='FAIL' filters, reduce unnecessary QUALIFY/iteration complexity, adopt 12–24 hour lookback as appropriate.
+  • Code structure debate on ConfigLoader / DAG: Prithvi to raise PR; Sachin/Raj to review; aim to converge on readable, maintainable standard while ensuring operational maintainability.
+  • Access and meeting cancellations (Joy/Tanisha) are blocking certain tasks — Sindhuja to recheck and arrange alternatives.
+
+
+🎯Todo List
+
+  • Sindhuja:
+    
+    • Schedule and send calendar invite for the walkthrough call at 19:45 IST today, include Bhagwan, Saurabh, Cinderella, Sachin, and relevant stakeholders (ASAP).
+    • Check with Tanisha/team about canceled calls (Joy) and find alternative access path; report status by end of today.
+
+  • Bhagwan / Saurabh:
+    
+    • Review and merge pending PRs (priority: PR that fixes dropdown/insurance), aim for 1-day turnaround where possible.
+    • Participate in the 19:45 IST walkthrough and an additional sync (possible 21:30 IST) if needed.
+
+  • Prithvi:
+    
+    • Create pull request for DAG/ConfigLoader changes or proposed refactor (submit today); add explanations in PR for design choices.
+    • Work on SQL Generation / Validation task details and be ready to explain config loader methods during follow-ups.
+
+  • Sachin:
+    
+    • Review Prithvi’s PR and provide concrete code review comments; focus on maintainability and operational recoverability.
+    • Update monitoring query: apply created_time filter instead of start_time, add status = 'FAIL' filter, and test with 12–24 hour lookback; confirm results and inform team within 30 minutes of analysis (as requested).
+
+  • Sandeep / Team handling DT flows:
+    
+    • Move two DTPO jobs to E2 environment and validate (coordinate with Purna); update status by end of day.
+    • Finish sample ingestion tasks; Haris to run required jobs and resolve outstanding issues; Sandeep to chase Haris and report progress.
+
+  • Incident owner (File watcher):
+    
+    • Follow up with Flourish team for file watcher job failures; provide remediation ETA.
+
+  • Sprint owner (unnamed; will create US):
+    
+    • Create and share user stories for the sprint (within 10–15 minutes as stated).
+    • Share documentation for US Travel Bank tasks with Rachna/Ipsi prior to call.
+
+  • Nirmal / Query owner:
+    
+    • Share modified query and demonstrate in BigQuery console (show created_time vs start_time changes and explain QUALIFY usage) to the team during the follow-up.
+
+  • Team lead (to raise in weekly meeting):
+    
+    • Bring PR review turnaround process for discussion in this week’s team meeting and propose an approach to speed merges (e.g., designate merging authority during IHTRA windows).
+
+Notes: Owners to update status in project tracker and inform product partners if deployment will slip beyond this week.
+
+
+Transcription
+
+00:00:01 - 00:01:35 Unknown Speaker:
+
+Okay, that's it. I don't see any messages over that. So I didn't ping in the group because last time I didn't get any response, I directly checked with them. Okay, so I pinged Bhagwan yesterday for a quick call, but he didn't reply. But Sora mentioned like he has the back-to-back call in the meeting I have shared in the APR. He wanted to know, like, what is the issue in this? I mentioned the same problem, like we are getting the drop down values, but after submission, we are not getting the data and the task in paper. So he said, like, can we do a walking session tomorrow? That is today at 7 45 ISD? So I mentioned him, Okay, so today we are going to connect. No, we mentioned for 7 45 p.m. that was late night.
+
+00:01:38 - 00:02:35 Unknown Speaker:
+
+Okay, if you want I, I'll keep you also in CC. Yeah, yeah, keep me in the call, let me check my calendar, give me a second. No seven we have, yeah, 7 45 would work. Okay, yes, so I'll just yes. And uh, on this one, right? This has been waiting for quite a long time now. We would need even include Cinderella over that phone. Okay, sure, whether it's a joint or not, that is not an issue. But at least include her so that they would be aware. Like even Cinderella is following for the same accordingly. And we'll also check for the insurance. Also. I have already that Bhagwan has to merge Sachin? Yeah, exactly. It's still not done, is it? So, one of them has been going on.
+
+00:02:35 - 00:03:38 Unknown Speaker:
+
+Yeah, one of them is merged but we are not getting the expected value what we are... But couple of them are still pending. Yeah, and couple of them are pending for insurance. So, there are two tasks which is pending. One for the PR merge and then we need our discussion on the already merged PR. BHAGWAN Right, like, I think yes, around like 9 30 p.m. IST or something. If you can just set up some time with him and, uh, like Sachin said, just include me, right, we'll get it concluded. Over the call, like, yeah, Sorrow mentioned to connect today at 7 45 p.m. So I'll set up a call with Sorrow at 7 45. Go ahead and set up the calls. This is being urgent. Last week, we could have convinced the, you know, product partners mentioning that there is only due to paternity.
+
+00:03:39 - 00:04:27 Unknown Speaker:
+
+So they're still fine, right? But if this is not going to be deployed this week also, that would be as the lesson because Purna is changing on this. Okay. Like I said, I think two days I did follow up with Bhagwan, but then later on he was also on sick leave. But look, end of the day, just I don't know what needs to be done, but just a PR merge, right? So if they are taking that much of time, we need somebody dedicated during the IHTRA. It would be from their team only. I'm not asking you about the access. It would be from their team only, maybe Syed or someone or Athar himself, right? So I think just to add on to your right, even their team faces this issue.
+
+00:04:27 - 00:05:18 Unknown Speaker:
+
+Both Bhagwan and Saurabh are very particular with what code goes in, right? So, they personally review all the PRs. Even for their team, nobody in the IST have the rights to merge. Like, Syed also knows about it. Athar also knows. And Bhagwan is also very particular, right? He reviews everything. That is good. I am not denying that, right? If that is the case, we need a quick turnaround. Maybe a day wait is still fine, right? But this is sitting from last couple of weeks. And, you know, when I used to talk to Anand, he would mention, right, they are also from Rajendra's team, right? So we really don't have answers to, you know, communicate to the product partners. Because lastly, it's still fine, right? Like, Ather was not there, so we won't be able to do an end-to-end testing.
+
+00:05:18 - 00:06:09 Unknown Speaker:
+
+But again, if he has reached out to them yesterday, right, and again, just a PR review and much, right, it's not a major change, right? Even if it is a major change, I could have understood. Just a simple, you know, simple PR that needs to be incorporated. So this is delaying our delivery timelines. This needs to be, you know, taken care of. Like, you know, better coordination, maybe we can reiterate to Farah and Bhagwan that. We just need your input on this because this workspace and all you won't, right? So even one day delay is fine, but if it is getting dragged for a week or two week, there is a collision from the product team directors. We need to communicate. Yeah, probably this week's team meeting, I'll bring this up and see how we could probably establish a process to speed in this up.
+
+00:06:11 - 00:07:06 Unknown Speaker:
+
+I'll keep you posted on that, okay? Yeah, thank you. Another, I'm expecting you to be continuing on those AP details and this this needs to be moved. Uh, this, uh. Drop down value, along with the insurance one, the real impact in Doja on the insurance, the insurance part is not going. The records are getting filled in the production and I mean, okay, that is the problem. So if they don't take actions, right? And there will be lots of record which is failing. You know, as those have not been configured in the database, right? Uh, those records are failing and impacting the plugs and data. Understood. I will, I will make a note of it and get it up in the team meeting, right? Like, how probably we could improve this team between the team coordination.
+
+00:07:06 - 00:08:13 Unknown Speaker:
+
+Yeah, exactly one day. I'm still finding, but it is getting delayed. It has raised this PR quite a long back, even before going on a leave, right? And so this is something we we need. A urgent, uh, you know, look into this one. Okay, okay, yeah, sure, okay, okay, thanks. Uh, uh. And C is starting today, right? Uh, your AFC is done right? I am, as the code yesterday, correct. It's just the validation? Yeah. Okay. So, Sindhuja, again, on that, can you just check with Tanisha and team, like, the calls is not being set up again? With Joy or who was it? I think they only asked me to cancel the meeting, Sachin, saying... close it out. So even like, you know, can you check with them? Is there any alternative way or something that we can get the access?
+
+00:08:16 - 00:09:14 Unknown Speaker:
+
+This has been a block form, almost to, more than a sprint, no. And we raise the engagement also along back. Sure, I'll check with them. Okay, and I'll see if there is a refinement, you can go through that. Otherwise, for the sprint, I'll share my task. I haven't created the user stories for all of you. I'm sorry. All of you as of now, but it's in progress. It will be done within the next 10 to 15 minutes. So, you'll be continuing on this US Travel Bank. So, we have a call today, right? So, just check with Rachna Ipsi and at least help you with the document so that you can go through that one before, you know, getting included into the call. And till the time, if any changes required in the APC validation, uh, you can continue on that okay post, occur and see.
+
+00:09:14 - 00:10:06 Unknown Speaker:
+
+SAmir Uh, so for this one. I have raised the incident. Okay, I did not get a response from yesterday. I have also raised that incident, but that is with respect to the file. Watcher jobs are failing. That is actually assigned with flourish today. So maybe, yeah, results like, yeah, and coming to this, uh, this one max length issue such in. Uh, someone has actually tested in E1, so he sent me the PR. I will, uh, prove and merge it until D2 and I will test in E2. Once. If everything was good, I will move to E3 today. Yeah, so he was able to do it by his own, or he was struggling. I just give him instructions like what is the issue and like he has done on his own. Okay, that's good.
+
+00:10:06 - 00:11:06 Unknown Speaker:
+
+And what about the other DT flow that he was working? That is also done, Sachin. Actually, there is a small issue but like it got resolved. That is like he is unable to update that column name. That is some issue with the UA actually. Even though he is giving, it is not resolved. I just instructed him. He's done, I guess. Yeah, just like yesterday, create a to-do list, okay? Number one is that chasing with Haris. Sorry, for Haris. For that silver ingestion. Second is moving these two DTPO to the E2 environment. Sure. It's bending with poor now. Need to reach out to him. No, man. Sample ingestion is not done. It's in progress. Which one? Yeah, he's doing that. I think he's currently doing that. I have mentioned that issue. Actually, what is the issue?
+
+00:11:06 - 00:12:05 Unknown Speaker:
+
+He needs to run our code and the audio job will take care, right? It will happen. It should not take this much of time. Yeah. Because he has already done one of the DT flow, right? And if he's still struggling, there is an issue then. I'll talk to him in the evening. Okay. You can continue on this control. So couple of to-do list to just complete that one. Anything else that is pending on now? No, right now, no, Sachin. Okay. One thing, Sachin, that one, whether it should run like on 28th or the month end. It should be month end. Okay. We will... take that confirmation today, but it should be month and only. Yeah, okay, uh, nirmal, uh, you're modifying the query. Can you show me the query once again? Ather and C and Semi?
+
+00:12:05 - 00:13:03 Unknown Speaker:
+
+And if you don't have anything, feel free to drop off. Guys, thank you, thanks, thank you, thank you. I did modify the code, not only the query start time. It's not possible. Because there is a big delay between the start time and the created time. So right now I am just modified the query to get the rows as it is. And I am just comparing them. Can you just confirm? Can you go back to the query? You are modifying it from that start time to created time. It's okay. Can you go to the query once? Yeah, this is the query. No, no, no. I mean, I'll not be able to understand, right? There are very, you know, dynamic parameters out there. Can you go to the BigQuery console? Yeah. Okay.
+
+00:13:03 - 00:14:11 Unknown Speaker:
+
+So, make me understand why we are using this qualify row number over 47, the table name, or the starting timestamp. This one? Yeah. Can you make me understand why we have written this piece of code over here? This one is for each table name. It will get all the rows for this table name. And then it will partition by them and order by their start time. And it will take the first result. Is that really required? Without that, how do I get the first row, the latest data? Look, even if you're getting multiple rows within an hour, and if the result status remains failed, then it's just a simple thing. Just send a mail for that. And even we're not cross-checking the status, whether it's failed or not. We're just getting these rows. Correct?
+
+00:14:12 - 00:15:18 Unknown Speaker:
+
+Yeah, yeah. Checking the start time, we're getting just only the last one hour of data. But you know yesterday the start time was like 753. So when the diagram data, the row was not there, so it thought that like, there is no data. But at 8 p.m. Because we are checking with the start time, the time was 753. So it would be a simple query, right? Um, you should just do this this, blah, blah, blah, right? Then, where status equals to fail within an interval of one hour that you have written, that is correct current time stamp with the interval of one hour. Okay, and you have to apply a filter of status equals to fail if there is no record with status equals to fail, right? Doesn't make a sense to send her email, right?
+
+00:15:19 - 00:16:47 Unknown Speaker:
+
+Yeah. Then even we don't need this qualified row number over partition by table name. Okay, this part is one hour interval we cannot do, Sachin. Why? Because the start time, let's say... Remove the start time. Can you do a select start to this audit input table and pick the table which has been filled? Yes. I think last time only Nirmalai explained you this stuff, right? You can write down the Paris there itself right now to open up. And it's the table environment, and so no, no, go back to that product environment itself. Not anybody. You can do a select star. There is no PI data in this table. Filter of failure on right. Yeah, go ahead, run this. Yeah. Status equals to fail. It would give you n number of result because, uh, that's, uh, having lots of echo, right?
+
+00:16:47 - 00:18:06 Unknown Speaker:
+
+126 results are there. Yeah, I don't know that 126 result right now. Apply a filter status equals to field, right? And then, uh, that interval, current, timestamp or whatever. You have taken that one. Go back to the other query. Go back to your other query. No, no, no. You're taking right start TS greater than equal to date times up. That part you can take it. Instead of start timestamp, you can take that created timestamp. This order by start time standard yeah, instead of start time stamp, use this created time stamp. That would be you need to take it 24 hours right now, it might be more than 24 hours. Just check whether you are getting a result or not. It might go beyond 24 hours because the OTC we have to convert.
+
+00:18:06 - 00:19:42 Unknown Speaker:
+
+Okay, so you're getting it, right? Yeah. So can you reduce it to 24 to 12 hours? No, is it to 16? Okay, so I think it's almost 22 or 23 hours, right? I'm a bit surprised not to see the status filter over there, right? Then what we are checking if there is a row, right? Okay, you are getting the result and then again you are iterating through the status, right? Yeah. Unnecessary code man, unnecessary code. If you can already filter it out with the status, why do you need that iteration over the code then? No, no, adding the status field here, like if there is a retry happened and there is a row above it, then that row might get missed. No, so if it comes as failed, then it is fine, right?
+
+00:19:42 - 00:20:37 Unknown Speaker:
+
+If it is coming as a blank or a success, right? We really don't bother about that movement, understand the business logic we. Thus, if it comes as successful, do you need that row? No, right, no. If there is a retry happened, and, uh, like, above the failed one, there is a successful one, and then we don't need that row. Exactly, then why should I not include the status filter in the query then? So if I include the status filter Sachin, it will always give me the failed one. I don't know like if there is a retry happening for this particular pipeline or not. So look, if there is a retry, right? And if it gets success, right? We are intimating the product partner, there is a failure, right? They would not just go blindly and run the process.
+
+00:20:37 - 00:21:30 Unknown Speaker:
+
+They would verify, right? It would be their job to verify. If there is a retry, right, then, right, even if they send the same file with that sequence number, it would fail because that would have already been, you know, successfully ingested. Okay. This would be your query, man. The query that you have written that was not a correct one. We are just bothered about the field status and any of the row. Did you observe that status is coming as blank? If yes, then we need to think about it, just analyze that in that production environment. And if you feel if we are getting any of the record in this table with a blank status, then just intimate me. Okay, okay, okay, and just inform me within next half an hour. It should not take you more than that.
+
+00:21:30 - 00:22:57 Unknown Speaker:
+
+Yeah, yeah, thanks with that code analysis like the one that we were discussing yesterday. Yes, Sachin. You can drop up. Yeah. Yes, Sachin. So, okay. Go ahead. Yeah. Okay. Go ahead, share your screen. Can you see my screen? Yes, it's again like yesterday. You have to, I think, come out of the desktop mode and then. Sindhuji, you set it up at 7, right? Yeah, Sachin, I've moved it to 7, but I have typed in planning also. In like 30 minutes, we'll have to wrap this up. Okay. 7.30 I have my other teams planning. Okay, okay. And then again, like, you know, Athera set up all at 7.45. Yeah, so I don't think I can make it to that because 7.30 Titan planning we have and immediately after that gets over 8.30 to 10.30.
+
+00:22:58 - 00:23:56 Unknown Speaker:
+
+I have the alpha planning and after that we have the pre-PI planning session. Okay, so it's a little busy, yeah, today, yeah. Just, Just a case, if Saurabh doesn't join, I'll check with them. Okay, yeah, thanks, yeah, quickly go ahead. Okay, so this is the DAC file. Okay, so this I'm going to explain the DAC flow first. So you have two tasks, one is the execute SQL generation, another is valid output, so one would execute the generation process. So for that, it imports two different classes one is SQL Generator orchestrator and another is config loader. So config loader we use it to load the configuration information. I will go to that class. I will explain it later. And SQL generator it uses the configuration information and uses the template information that is present in the config loader itself.
+
+00:23:56 - 00:25:01 Unknown Speaker:
+
+Like templates it gets, JSON file it gets and then SQL files it gets. It keeps those configuration details and generate that SQLs using SQL. Generation Orchestrator Okay, these are the two imported classes from that, and these are two different methods that I have created inside the DAG. Okay, one is execute SQL Generation task. As I said, there are two different tasks, one is the generation task, another is a validation task. So in Generation, we start with loading the configuration. Okay, this is the configured loader class I explained just before, and it loads the configuration, and then same configuration is... Can you go to that config loader method? Config loader, line number 77. Yeah. So, it has different methods. Init method is there. It will get initialized when you call it. Constructor. And it has multiple methods.
+
+00:25:02 - 00:26:05 Unknown Speaker:
+
+Sachin, do you need me on this call? Can I drop off? Okay. Okay, Sandeep. I'll talk to you separately. Yeah, sure. So, what we are trying to achieve over here? We are, as I said, there should be configurations. So, you wanted me to merge them together, right, Sachin? Go to the init method. What we are trying to do over the init method? This is the path config JSON file. Okay. And we initialize the config file and then there is a load config method in what this load config does self dot load config. This gets this JSON file and it loads the configuration. What is the method? Can you go inside that load config method? Yeah, this is the method. It takes that config file here, if that file exists, then it load the JSOn file and that config would be used in other places.
+
+00:26:05 - 00:26:59 Unknown Speaker:
+
+So since it is there as a local variable here within the class, so other places also that config can be used. So why I need this one, right? Just to load up file, right? We can use the import statement the way we are doing in that framework, right? Have you seen that piece of code? Yeah, yeah, but such in. I felt this is more structured because loading a file jSOn file structured, I feel it's more structured. I mean, I don't know why. Methods only required, we'll only do with them. I understand, I have seen that monitoring tool, it's in line by line and very big methods they have written, it is not structured. We have an option to segregate the work to multiple methods.
+
+00:26:59 - 00:27:58 Unknown Speaker:
+
+Okay, one to load, one to get the conflict, okay one, one to get the file, and one is to get a particular JSON file, or one is to get the SQL folder. So multiple methods would make code more readable also, and you haven't modified these methods as of now, right? Which we discussed yesterday. I thought of actually trying to merge it also, but it's. Lot of lines of code is coming, Sachin. I mean, we are... Yeah, look, Prithvi, challenge, try to understand the challenge, right? If it is moving to the environment, right? It's just not that, you know, it's a code that we are just moving ahead in the environment. If you are not able to merge the, you know, modify the code right now, right? What if there is an issue in the production environment?
+
+00:27:59 - 00:28:43 Unknown Speaker:
+
+How we are going to fix it then? No, I'm not saying modify. I can do modification. But what I'm trying to say is... But you have mentioned right now, just right, like it would be a lot of code changes, right? No, I didn't say that. Sorry, maybe I've given you a wrong impression. What I'm trying to say is, even if I do that in one method, multiple code lines are coming. So, for example, okay, that the JSON file I can import, I load it. Look, this one, the one that I have just explained it to you, right, where there are multiple methods, correct? And then we just need to create a utility, common utility, correct?
+
+00:28:44 - 00:29:33 Unknown Speaker:
+
+And then out of that common utility, we just need to perform a single operation just to get the path of the file where it is being placed, whether it's a SQL file in the SQL folder, config file for the config folder. Right, uh, the you know, uh attack file from the dark folder, right? It's just one operation to get the path. Oh yeah, you could have those to a single method, right? So if you're not able to define it right now, right then how could we move ahead with these changes? It's not about not able to do it. See, I can do it in next 15 20 minutes. I'm not liking to go to such in the because. It is cumbersome, right? The method is being overloaded with lots of... No, he was busy, okay.
+
+00:29:33 - 00:30:18 Unknown Speaker:
+
+I have a call today with him. I'll discuss. See, Sachin, it's not about what I'm discussing with Raj or about you. End of the day, what makes the code more readable is matter, right? That is why I'm... Otherwise, see, I can do simply what you are saying, Sachin. The problem gets solved there only. But I feel more readability in this one. I don't know, even... I asked this one, GitHub Copilot also. This is more readable and you use classes, use methods, very structured. This is the industry standard they are saying. I agree that we have been doing in this monitoring tool already in a different way, but it's not recommended standard, Sachin. This is not a recommended standard. I cannot comment anything on the existing because they would have done it for some reason.
+
+00:30:18 - 00:31:05 Unknown Speaker:
+
+But in this case, this should be more structured because you have two different modes. One is local mode, another is DAG mode. So this has to be structured in a nice way, using classes and multiple methods. See for me how much time it will take to move everything to one method, one. Uh, and get the jSOn or file, but I'm not able to accept that. Okay, when it is, that's the problem, that's where the problem lies, right? If they have asked you to modify something and if you're not able to, you know, accept that proposal, then there is a problem. No, it's not accepting, okay? What is standard matters, right? It's not you or me, what it is. Standard, right, Sachin? So, tomorrow we won't be there yet. So, somebody else... No, no, no.
+
+00:31:05 - 00:31:56 Unknown Speaker:
+
+I have really asked, right? These five different methods are doing the same operations, right? We could have wrote a single method, correct? Which would be giving me that written type. Is that not an optimized way of writing a code? Even if it is a Java, I would have done that way only. I asked. Let us do one thing. Get a tribute from us. I will not give any further input on this. No, Sachin. So, do not think me wrongly. Here, there is no personal. There is nothing personal here. Let us not get into that. So, what I am trying to say is what is best and let us use that one what I am saying. I discussed with through chat with Raj also. Okay, I told, Okay, why don't we have a pull request and put some comments there?
+
+00:31:56 - 00:32:42 Unknown Speaker:
+
+He said. That is right, you can go ahead and create a pull request. I will tell Sachin is what he told me, so I don't know whether he informed you, so I would request the team to go through. I did not add a discussion on you yesterday, I was more on to that discussion into those use cases that we are building. Okay, that's fine, also, right? So I am not aware what is going over there. So I just shared my, uh, you know, observations to him. Uh, just have a discussion with Raj in that case and do let me know right now and see if you don't put over this. SacHIn See, I'm again saying, Okay, I'm, I'm very open person. Okay, I agree, I take the inputs from people, but I'm I'll not go.
+
+00:32:42 - 00:33:26 Unknown Speaker:
+
+What is industry standard? Okay, to be frank, I don't know anything in Python, I have been researching to see. Okay, I am asking, Charge EPT and Google and ask, what is a better way? Do you do we use classes? Yes, do we use separate methods? Even in Java, they agree that we should use. Okay, so I am not denying this, uh, I'm not denying this, right? But the problem arises when you have got this code right, you should have a grip on this code. Yeah, this is... Look, you are building this product, right? And if you don't know in and out of this product, right, how would you be able to explain it to others? No, no, I... That's going in a different direction. I'm not saying I don't know, right? Here, you are talking about configurations.
+
+00:33:27 - 00:34:02 Unknown Speaker:
+
+Code review comments we are discussing. Doesn't know what we know, we doesn't know. Maybe one method line of code, I don't know. I can research and I can find it. That's not a big deal. That is a problem. That is a problem. No, no, I'm saying I know... I'm not saying completely, I don't know. Right, because if anything goes wrong in the production environment, it would be very difficult to, you know, again fix and sort it out. Have that discussion, okay, and just let me know in the evening once you have a connection. Sure, sure. Thank you. Thank you.

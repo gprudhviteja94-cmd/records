@@ -1,0 +1,135 @@
+2026-02-03 Validation Service and BPMN Integration Discussion Stand up 11:30am
+
+Creation Time: 2026/2/3
+
+
+📅About Meeting
+
+  • Date & Time: 2026-02-03 11:32 (Duration: 862 seconds)
+  • Location: Remote / Video call
+  • Attendee: Sachin, Sameer, Kundan, Pripy, Sindhuja, Samir, (others referenced: Man, Kundan?), deployment engineer (unnamed)
+
+
+📒Meeting Outline
+
+
+Validation Service and BPMN Integration
+
+  • validate request form class The team discussed creating a service/class to validate incoming UI requests. This class will check that mandatory fields (as defined per human task input/output variables in the BPMN) are present and non-empty. If any mandatory value is empty or null, the service must raise a business exception and terminate the process. System exceptions (e.g., null pointer during processing) will also terminate the process.
+  • Identifying mandatory fields Mandatory fields for each case are identified from the human task input/output variables and from a downloadable requirements/design document linked in the design page. The document contains templates (template 1..4) with key columns, allowed values, data types (e.g., numeric), and which fields are mandatory for each template. The service must use the provided template number in the UI request to select the correct set of mandatory fields.
+  • Allowed blank/null values Some fields may be explicitly allowed to be blank or null per the requirements document. The validator must treat such fields as valid. The team emphasized reviewing the downloaded document to determine which fields allow null/blank.
+  • Error handling & process flow On business validation failures, raise a business exception and terminate the BPM process. If exceptions occur, ensure the service common exception handler and existing BPM error flows are engaged. After validation succeeds, the flow should continue to the "send email" operation. The email operation must include retry functionality (retry policy) and interacts with BPM transitions accordingly.
+
+
+Implementation Details and Naming
+
+  • Service class name and repo Create the service class (suggested name: ValidateRequestForm or similar). If anyone prefers a different name, they should raise it. A branch will be created from the existing repository (no need to create a new repo). The service class will be invoked by a REST API (details to be provided later).
+  • Inputs, context, outputs The service should accept all UI input parameters, validate them, and put validated values back into process/context as required. If validation fails, throw a business exception. If runtime/system exceptions occur, allow the process to be terminated by system exception handling.
+  • Templates and allowed values Template-based validation: each template has its own mandatory field set and allowed value constraints (e.g., "allowed margin" numeric). There are four templates indicated; implement logic to branch validation rules based on template number provided in the request.
+
+
+Related Tasks, Sprint Assignment and Priorities
+
+  • Assigned stories and additional work The assignee(s) were reminded of additional sprint responsibilities:
+    • Rule update: update symbols / create placeholders if details missing. Create ~16 hours of tasks for this (production support related).
+    • Insurance validation: currently in progress; team members may need to assist if required.
+    • Email integration and service bundle: expected to take ~1 day for email, ~1 day for service bundle; rule creation may take additional time. The validation service should not take more than a day to implement (target), excluding rule generation effort.
+  • Acceptance and change control A previously accepted story should not be changed in Rally/Jira without notifying Sachin and Sindhuja; making changes will move it to "In Progress" and require re-acceptance. Team members were reminded to follow the communication process: update Dev Group on Slack and CC Sachin and Sindhuja when changes are made.
+
+
+Documentation and Knowledge Transfer
+
+  • Design document & UI reference A design page and downloadable requirement document exist and contain the field mappings and template rules. Developers must download and review these documents to determine mandatory fields, allowed values, and data types. UI mockups are available for reference.
+  • Analysis deliverable from Pripy Pripy confirmed analysis was completed and updated in the ticket. Sachin requested Pripy convert the ticket analysis into a document (bullet points expanded into a document) and send it today. A reverse knowledge transfer (KT) session will be scheduled in the evening to review Pripy’s understanding (UI-driven metrics request, Artifact Payable onboarding trigger, etc.).
+  • Communication expectations Team members must post updates to the Dev Group on Slack and tag Sachin and Sindhuja. Lack of clear communication was raised as an issue; moving forward, all ticket updates must be communicated to leads.
+
+
+Deployment Status and Next Steps
+
+  • RFC and deployment Deployment engineer has RFC and will start deployment after this call. Branches and tags are prepared; only the build/trigger remains. The plan is to trigger the build within ~5–10 minutes and aim to close deployment in ~30 minutes. Team will reconvene at 12:30 to confirm deployment status.
+  • Post-deployment After validation service is completed and merged, the REST API invocation details will be shared and integration tested. Ensure exception flows and email retry behavior are tested within the BPM.
+
+
+📋Overview
+
+  • Create a validation service/class that checks mandatory fields per template and raises business exceptions on missing mandatory values.
+  • Mandatory fields and allowed null/blank settings are defined in BPMN human task IO variables and the downloadable requirements document (templates 1–4).
+  • The service must branch validation rules based on template number from the UI request.
+  • On validation success, continue to send-email operation; email must have retry functionality.
+  • On business validation failure, raise business exception and terminate process; system exceptions also terminate the process and should be handled by common exception handler.
+  • Use existing repository; create a feature branch (no new repo). Naming of class open to suggestions.
+  • Convert ticket analysis into a document (Pripy) and schedule a reverse KT this evening.
+  • Deployment RFC is ready; build to be triggered post-meeting and status reconvene at 12:30.
+  • Communication protocol reminder: always post updates to Dev Group Slack and tag Sachin and Sindhuja; avoid making uncommunicated updates to accepted stories.
+
+
+🎯Todo List
+
+  • Sachin / Lead:
+    • Provide REST API invocation details for the validation service (time: to be communicated)
+    • Confirm branch and merge strategy / provide branch name for feature work (time: ASAP)
+  • Assigned Developer (implement validation service):
+    • Create validation service/class (e.g., ValidateRequestForm), branch from existing repo, implement template-based validation, throw business exception on missing mandatory fields, integrate with BPM context (time: target 1 day)
+    • Ensure email operation integration and retry logic are compatible with BPM transitions (time: target 1 day)
+    • Use design document to mark fields that allow null/blank and enforce data type/allowed values per template (time: during implementation)
+  • Pripy:
+    • Convert ticket analysis into a formal document and share with Sachin and Sindhuja (time: today)
+    • Prepare for reverse KT session in the evening (time: today evening)
+  • Sameer / Task owner:
+    • Create/confirm tasks for rule update (include placeholder if details missing) and log ~16 hours for production support task planning (time: ASAP)
+  • Deployment engineer:
+    • Trigger build and start deployment using existing RFC, report status (time: within 30 minutes after call; reconvene at 12:30)
+  • All developers:
+    • Post any ticket/story updates to Dev Group on Slack and tag Sachin and Sindhuja (ongoing)
+    • Review downloaded requirements document and BPMN human task IO variables to validate rules before implementation (time: ASAP)
+
+
+Transcription
+
+00:00:23 - 00:01:14 Unknown Speaker:
+
+So if you open this BPMN, right, at least create this class validate request form. What it would do, it would validate whether those, you know, values that are coming from the UI, whether those are, you know, a mandatory field should not be empty, basically. Okay. And how would you identify what are the fields? So if you go to this human task in this input output variable, those all parameters are already been listed over here. So table is table. ID should not be planned, variable ID should not be bang use case to. You know these things, but it doesn't mean that, you know, this cannot be blank. Include null as valid. This can be blank. Okay, so just go through this. UI, Uh, you have this one, right? Uh, confidence.
+
+00:01:14 - 00:02:47 Unknown Speaker:
+
+So from this one, give me a second, can you ping me this one? Yeah, not this one? Created another QI. So check this page. Okay, okay, here these BPMn and everything has already been there. Okay, and then you can download this document. Okay, Once you download this document, you would be able to identify what are the mandatory fields and what are not the mandatory fields. Give me a second, guys. It is... Let me download it. Sachin, I think it's not a pre- and post-passage. It's a kind of utility classification that may... Just a second. It's just a service bundle. And then you can integrate email, right, and here we are going to send the image, you can integrate the email over there. So if you go to this requirement document, so here if you see this one, right?
+
+00:02:47 - 00:03:36 Unknown Speaker:
+
+This is their very first form, right? So here if you see this one. For this case, right, this allowed margin should be there. So you have to create a method. Means, you know, UI would be sending you a request. And that request, he would be sending you the template number. If it is template one, then these are filled should be there. Without that, you should, for this one, like, you know, allowed value should be like this one, data type numeric. Okay, so this is having different column like key columns over there, right? So we have, I think, four different template one, this is two, this is three, and this is four. Okay, so if template one, these are the mandatory fields that should be there, if template two, these are the mandatory fields that should be there.
+
+00:03:36 - 00:05:25 Unknown Speaker:
+
+Okay, so you have to build this one, just just check if you are okay with this service. Class name create with this one. If you want to rename to let me know, okay, you can name it. If any of the values you know empty or null, then you need to raise a business exception and terminate the process. Okay, got it. And in case anything exception happened, then at least complete this one. Once you're done, then you can move to this send email operations and the service common exception handler. Okay. I have already created. So no need to create a repo, let me just create one branch out of it. Okay, So this is the... I'm giving you this design page so that, if required, you can download this document from here.
+
+00:05:25 - 00:06:22 Unknown Speaker:
+
+And if you want to refer to the UI design, then you can go and then just check this. Okay, okay. So this is your job and what else it has assigned to you for this sprint? You have been assigned with this rule update, right? So, uh, this was earlier on, and see, okay, she was mentioning. Symbols are required to be updated, right? If you have the details, you can take it otherwise. Uh, just create a placeholder and then, you know, just generate 16 hours of tasks for this one production. Supporters like, you know, we are still having those. Insurance validation is in progress, right? So in case that is required, you need to pitch in. And then the ourselves of that. I have told you, right? This plan, it should not be like, you know, complete sprint.
+
+00:06:22 - 00:07:08 Unknown Speaker:
+
+We are working on this one. Okay, this should not take more than a day. Uh, email again should not take more than a day. The service accepts and bundle, and then the rule creates some response. Okay, here it. It would take time, but apart from this, I think we should be ready with this. Okay, okay, so be ready with those details. And then, you know, this service class would be called by Rest API. Okay, I'll let you know those details later, but first of all, complete this part. Yeah, so this one is, do we need to get all the details, input parameters and validate and just put it into the again? In the context of it, that's all. If any flat exception, we need to raise a business exception.
+
+00:07:08 - 00:08:01 Unknown Speaker:
+
+Correct, correct, and suppose suppose while you are handling your program right, there might be a null. In that case, the system exceptions would generate and terminate the process. Okay, and when you are booking for the email, we have to include the retire functionality. And based on these, the BPM would move. Just check this BPM, you would get, you know, just start with. And if you have any query, let me know in that case. Okay? Got it. Sameer, you have created the task. Okay. Can see the task from Samir normal create the task for you. And for these two user story this one, you know, right? The update, uh, you are doing normally, and this automation is the one that you are working, the one that I we have discussed. Yeah, yeah, sure, okay.
+
+00:08:01 - 00:10:18 Unknown Speaker:
+
+So man, again, he hasn't created. Okay, well, selectance is only, Kundan is only. Pripy, we did not receive any details from you yesterday. Myself and Sindhuja were waiting and we still not received any response from you. Hi, hi Sachin. Yeah. Sorry, with respect to what, I mean, the story, yeah, the analysis is completed and I updated the story. I mean, analysis is the understanding of that. I have asked you to give me a bullet pointer, right? Yeah, I updated it in the ticket itself. Shall I share it with you as well? Where is the ticket? Can you show me where did you update it? Thank you. No, no, no. You can. Can you see my screen, Sachin? I can see your screen. Can you do one thing? Can you create a document out of it and send it to me today?
+
+00:10:19 - 00:11:07 Unknown Speaker:
+
+What you have understood by UI driven metrics request, Artifact Payable as onboarding trigger. Okay. Whatever topics that you have mentioned over there, right? Create a document out of it and then we will set up a reverse KT today in the evening hours. Okay, yeah, okay, okay, thanks. P3 where we are with the deployments? All of us had the and then, uh, it makes you. You're not making any changes to this one now because this has been accepted, if you make any changes to this one, this would go to, you know, in progress state. And then we won't be able to ask the product team to re-accept this story. So please be careful when you are handling this user story. No more, no more update on this one. Otherwise, that would again go to in progress status.
+
+00:11:07 - 00:11:56 Unknown Speaker:
+
+This has already been accepted, we talked to the team to get it accepted. Uh, the problem is that if you have updated over Rally, you did not update it to Sindhuja or to me that you have updated it over Rally. So no one is aware of this one that you have updated. I don't know, the communication from your side never been clear till this point of time. I was on sick leave yesterday, so I'm back today only. No, look, you are on sick leave, but I have asked you, right, if you have logged in, I have asked you to drop those notes. Correct. Look, nobody would come to me. In my dream that, uh, mentioning that we has updated this stuff in the rally, I should have updated you.
+
+00:11:56 - 00:13:11 Unknown Speaker:
+
+But, uh, I thought you were asking me to update it in the ticket itself, in the Jira itself. So, uh, no, man. I hope you understand the commission that I have written. Go ahead, check your Slack message. The clear, uh, instruction was to update the details to Dev Group and CC's. Can you check your Slack once, share in the Dev Group and tag me in Syndrome, right? Can you share? Your update on the task? Yesterday is the last working, so I thought you're asking to update the ticket itself, task itself, can you? Can you see the third statement? Yeah, this is yeah, once it is updated? Yeah, I should have done that, yeah. Okay, let's not, you know, discuss more on this. What I need, create a document out of it and then let's set up a reverse detail with respect to your understanding.
+
+00:13:12 - 00:14:10 Unknown Speaker:
+
+Okay? Thank you. Where you are with the deployment? Yeah, it's a change. So I'll start with the deployment. I got the RFC. So I'll just start with the deployment after this call. Okay, because if RFC gets invalid right, it would be very difficult for us. Sure, everything is done, basically the tags and everything I've created yesterday, all the branch merging. I just need to trigger the chicken's build with all the details. Okay, just in five to ten minutes, I'll trigger the build and probably share with you. Or maybe we'll check on that, so hopefully in half an hour we'll be able to close this. Okay, then let's connect SAP at 12.30, okay? Once the deployment is done. Okay, anything from your side, Sindhuya? No, Sachin. Okay, yeah. Thanks, then. Thank you, guys. Bye.

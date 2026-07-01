@@ -1,0 +1,155 @@
+2026-02-05 Airflow and QTrak Monitoring Tools Training Ayyappa KT
+
+Creation Time: 2026/2/5
+
+
+📅About Meeting
+
+  • Date & Time: 2026-02-05 19:46 (Duration: 1057 seconds)
+  • Location: WebEx / Screen share
+  • Attendee: (not explicitly listed) — presenter, Manmohan, Sachin, Richard, monitoring team members
+
+
+📒Meeting Outline
+
+
+Airflow tag monitoring & QTrak data monitoring tool
+
+  • Access & initial checks The presenter shared their screen and confirmed attendees could access the production monitoring pages (Airflow and QTrak). The workflow for initial access was explained: open the QTrak monitoring page, add a filter (execution day / free text), refresh to see tags for the selected date. The filter limits the view to a particular column and execution date (e.g., today, 5th).
+
+  • Finding and inspecting a tag Walkthrough of selecting a tag: copy the tag name from QTrak, search that tag in the QTrak UI to view its configured schedule, tasks, DAGs, and the list of DQ (data quality) rules associated with that tag. The presenter demonstrated opening the tag in the production Airflow UI, where the DAG for that tag populates automatically after pasting the DAG name.
+
+  • Interpreting DAG/task status In Airflow, the DAG tasks on the left display color-coded status: green = success, red = failure. Green indicates the related database data updates happened for the given date. Red indicates a failure that requires attention. The presenter emphasized that DAG-level failures require immediate action; individual failing DQ rules may not always require immediate escalation.
+
+
+Querying BigQuery for DQ results
+
+  • Constructing the verification query The presenter showed the BigQuery console and explained how to construct a SELECT query to verify the DQ results for the tag on the execution date. Required inputs: table name (available in the QTrak config and UI), list of DQIDs (use IN operator with all rule IDs for that tag), and the execution date filter (e.g., today’s date). The presenter ran the query to show the 16 DQ rules and their results for the chosen date.
+
+  • Interpreting query results The query returns rows for each DQ rule for the date. Important columns include pass/fail status and whether data exists. Sometimes a rule will show “no data” (e.g., only 15 rows rather than 16) which is expected when no records were produced for that rule/date. When all returned rows are passing, monitoring confirms the tag passed for the day.
+
+
+Notifications, escalation, and actions
+
+  • Email notifications The DAG ID/tag is used to search the email inbox for the daily notification. The team receives emails for both success and failure, and the monitoring process requires checking those notifications as part of end-to-end validation. If everything passed, the team sends a summary message stating no failures for that tag that day.
+
+  • Failure handling and partners If a DQ rule fails, the failure details (e.g., check type and observed value) are included. For threshold checks, the example showed an expected range [-10, 10] and an observed value -11 causing failure. When failing rules occur, partner email addresses are included for escalation in some failure types. Only certain failure types (and DAG failures) are escalated to partners; routine DQ rule failures may be handled internally.
+
+  • DAG failure vs rule failure The presenter clarified the difference: a DQ rule failing is not always critical, but a DAG showing red (task/graph failure) indicates a larger problem requiring immediate attention. DAG failure indicator: the DAG view shows a red state for tasks or an overall red representation in the graph.
+
+  • Rerun and remediation process If a DAG or critical failure occurs, the team first informs Sachin (or the designated owner) to decide whether to re-trigger the DAG or take alternate actions. Possible root causes for failures include infrastructure issues, numerator/denominator data inconsistencies, or code/configuration errors. For reruns, the team waits for guidance from Sachin before re-triggering.
+
+
+Access, training, and assignment
+
+  • Required access Cloud console (BigQuery) and Airflow access were identified as mandatory for monitoring tasks.
+
+  • Training & ramp-up Manmohan asked questions and was provided KT (knowledge transfer) during the call. The presenter said initial monitoring assignments are limited to allow ramp-up; responsibilities will expand as members become proficient. A Confluence production-issues tracker was created and should be used to log production incidents.
+
+  • Supporting materials The presenter offered to share sample query snippets and the SELECT schema/query used for verification if anyone needs details or examples.
+
+
+Miscellaneous
+
+  • The presenter demonstrated the DAG graph view (cyclic graph representation) and mentioned there are multiple display options to explore.
+  • Attendees were encouraged to reach out if query results do not display as expected or if they need further clarification.
+
+
+📋Overview
+
+  • conclusion of access & initial checks: Confirmed QTrak and Airflow production pages are accessible; add filters for execution date and tag name to scope monitoring.
+  • conclusion of tag inspection: QTrak shows tag schedule, configured tasks, and list of DQ rules; copy tag name to find the DAG in Airflow.
+  • conclusion of DAG/task status: Use Airflow colors to identify pass (green) vs fail (red); DAG red requires immediate action.
+  • conclusion of BigQuery verification: Run SELECT against configured table with DQIDs and execution date to validate DQ rule results and detect “no data” cases.
+  • conclusion of notifications & escalation: Check email alerts for the DAG/tag; if all passed, send summary stating tag passed; failing rules may be escalated to partners per type.
+  • conclusion on rerun & ownership: Inform Sachin first for decisions to re-trigger or remediate; common failure causes include infra, data anomalies, or configuration/code issues.
+  • conclusion on access & training: Cloud console and Airflow access mandatory; initial small assignments with ramp-up; use Confluence tracker for production issues.
+  • conclusion on support: Presenter will share sample query snippets on request.
+
+
+🎯Todo List
+
+  • Presenter:
+    
+    • Share sample BigQuery SELECT snippet and example schema (ASAP).
+    • Post Confluence link to production-issues tracker and any monitoring runbooks (ASAP).
+
+  • Manmohan:
+    
+    • Confirm receipt of KT materials and access to Airflow & BigQuery (by end of day / next business day).
+
+  • Sachin:
+    
+    • Be available to decide on rerun vs alternative action when DAG critical failures are reported (on-demand).
+
+  • Monitoring team members (names to be assigned / filter by individual):
+    
+    • Add filter for execution date and tag in QTrak; verify tag’s DQIDs and schedule (daily, as part of monitoring checks).
+    • Run BigQuery verification query for assigned tags each execution day and record results in Confluence tracker (daily).
+    • Search inbox for DAG notification emails for assigned tags and include the email status in daily monitoring notes (daily).
+    • If DAG shows red, notify Sachin and update production issues tracker with details (immediately on detection).
+
+  • Richard:
+    
+    • Confirm repository commit status for QTrak / data monitoring tool and review any pending code changes referenced in the meeting (ASAP).
+
+If anyone needs clarification or the sample query/snippet, ping the presenter directly to receive the code and runbook.
+
+
+Transcription
+
+00:00:17 - 00:01:32 Unknown Speaker:
+
+Sure, then we can start. Now I'm sharing my screen. Second, yeah, so you guys are able to access this page, right? Whatever I have shared this one. Yeah, right, okay, yeah, then we are good. So here I just list out, right? So here I hope just I'm giving this filter criteria, how you can be able to check so here you can refresh this. Here is how we can add the filter. Actually, when you open the first time rate, just you can add that filter, so add a filter. So you can execute on execution day on Okay, then you can add a free text filter here, then you can add this filter. So then this particular column only a filter will apply. So just if you can execute today date at 5th, so these are the tags will appear automatically.
+
+00:01:32 - 00:02:27 Unknown Speaker:
+
+Same thing. Okay, so I'm just considering taking one example. Uh, one tag actually, so this is the one how I need to monitoring, so copy this tag name actually. So you guys already clone the Lumi, uh, this project, right? Uh? Q Track data monitoring tool there. Yeah, find it okay, then. So here, just come here and search with this particular tag name. Okay, so this is the tag name. Actually. This is the schedule which we have configured, and here you can see the list of the details. What are the tasks we defined, and apart from them, how many? What are the DAGs or DQID rules are there for this particular tag? So this one, right? So once you note down this one and you just simply open our tag, actually here.
+
+00:02:27 - 00:03:57 Unknown Speaker:
+
+So just opening the production second, my window got closed, I think so, let me opening the air flow, so air flow. Also. You guys are able to access right for E3, I hope you got access production. Can you share that link with me. Yeah, this page actually is the production I'm sharing here Yeah, I'm sharing in the WebEx, talking to can get, can take it out. This is the production actually tags of where we need to monitor all. So you just know what is the tag name? Or you talk got it right from the conference page. So you just Update it here. There is such a DAG option is there right here, so when you copy here, automatically it will populate the DAG here. Actually, okay, so once you open this DAG right, you can see the results in the left side.
+
+00:03:57 - 00:05:48 Unknown Speaker:
+
+These are the tasks we defined, and left side is. The green color means all are successful, if red means it is failed in some issue, actually if it is green. This is database really data got updated or not in this particular date, actually. So for that one, right? How we need to build one query, actually access this one, I hope so Bigquery console one. Okay, let me record this. If that is okay. Oh yes, yes, I think you have option to record it. So this is the database set and everything, the table name. So here the table name and DQL is how we need to find out is what are the tag we are looking for the right. So you will get all information in the Qtrak config file itself only. Yeah, this is the tag.
+
+00:05:48 - 00:06:48 Unknown Speaker:
+
+Those are the rules running under that particular tag, right? Yes, these are the rules. So 16 rules are running here. So these 16 rules you can create a query like this way. Something like this one. So you have to give the table name is important and DQID's IDs are important. So table name you will get it here. If you can see this one table name also here only. So simply you can use this table. And DQID's how many are there here? Just add everything there only in the DQ ID in operator. And also you are looking for the today date, right? So that's why you have to give a fifth date. Okay, just when you execute it, uh, it will show you the results of how many are there. Second, this is no data.
+
+00:06:48 - 00:07:48 Unknown Speaker:
+
+Yeah, pick the wrong one. Okay, I've given wrong ones. So these are the all the DQIDs I have loaded here. Just executing. So if you can see so these are the 16 DQ rules right. So it got executed for the today date and it is showing into the database. So you have to verify result. This is the important column. So all are pass. Sometimes it might be fail also. You don't need to worry about on that one. Are not, you just cross verify once, okay? And there is a one more scenario, even though if it is 16 rules, right, one DK rules there is no data means there is no data. Record will be appear here. So it will come that time only 15 now, so that will be a chances also.
+
+00:07:48 - 00:08:41 Unknown Speaker:
+
+So once this is, ensure that one data got inserted successfully, then your last step will be the same. DAG ID right, same in your email inbox. So if you can take this tag, name, search within your email, so usually I will get an email notification. It's not that we just have to see the mail and vote. If there is an error, we always, whether it is successful or failure, we should do the tech check on that day. Oh yeah, yeah. Because complete end to end step, because while we are monitoring, right, so we are considering end to end steps are properly done or not. So this is the final step. If everything is goes well, right? There is no failure results today, all results are passed.
+
+00:08:41 - 00:09:50 Unknown Speaker:
+
+Okay, so in that case, we are sending like this message today, there was no failure results today, so all this tag is passed. So there is a chance. If suppose, if any rule got failed, right? So what will happen is that rule will, uh, failed rule will go to the uh, partners? Actually so and so DQ rules all failed, so that will get another way. Okay, only where the type of failing scenario is calling. I'm living. I got it. What you're saying? Yeah, yeah, sure, no problem. Thanks. Yeah. Are there any other questions? Or maybe you can ask? No problem. If there is a failure, what could be the reason for failure? Yeah, I will show you. Manmohan already got this KT, is it? Sorry? Manmohan already got this KT? No, no, no.
+
+00:09:50 - 00:10:41 Unknown Speaker:
+
+Just now only he asked me so that I connected with him. Okay, fine. I will remove the filter. Let's see the failure one, so it should be like this, if you can see this one is the failure one. Yeah, so this is the failure one. So what happened is this is the check type, is a threshold check actually, so threshold check. What happened is so actually. We are expecting the value is between minus 10 to 10 actually, but we are receiving minus 11 actually, so this is the failure, so that's why what will go? This information are passing to the partners actually, so that's why we are adding to the partners. Here. In the mail ID, if it is passing, means we are not sending to the partners, only our internal team, only we are circulating the mails.
+
+00:10:41 - 00:11:51 Unknown Speaker:
+
+I hope I answer your question. Yeah, yeah, good, I'm good, sure. Any other things like, uh? While portal access. Yeah, cloud console and air flow access. I think these two should be mandatory to access these things. Sure, sure, yeah. Yeah. So our high alert is what are the major precautionary items we have to take care is when any DAG is failure here, right, then we need to take immediate action on that one. Okay, okay, sure, yeah. So that is the actually that important one. So then we need to raise a production. Have shared one confluence page right where we need to track the production issues, so there we need to update this one actually production issues. This is the tracker I have created. Sure, sure, okay, yeah, yeah, so like that way, uh for uh, since initially you will be, uh, to understanding these things, right?
+
+00:11:51 - 00:13:06 Unknown Speaker:
+
+So it will take time. So for that one, I have only assigned a few only, so later if you are very good with that monitoring, then we will assign a few more. Also for timing, I have assigned very less. Only maybe you can filter with your name so you can. Yeah, okay, so, is it normal is back? Or Yeah, I'm back? Yeah, yeah, so normal. Any other questions you can ask, no problem, any confusion and anything. I got it right, yeah. So Select Query is the simple one, only same this one schema, you can use this one. Okay. Anyway, if you are having anything details required, you just ping me. I will share you the sample snippet code. This one. Okay. Okay, then I'm stopping this recording. I think if nothing else, we can write up this talk.
+
+00:13:35 - 00:14:36 Unknown Speaker:
+
+So, maybe I am repeating my question. So, in case if there is a failure, do we fix anything or we see the error? No, no. Only where we need to take a precaution is if air flow, air flow tag, right, if air flow tag is failure, then only we need to take immediate action. Yes, there is a reason. To take action on that one. So how do we know whether DAG is failing if it has run out of 16 only 15 it has run then it is a DAG failure right? No no no no the DAG it is showing the red or a complete red color actually let me show you. Okay okay report I mean DQ rule failing that's not a big deal but actually DAG is. Okay I got it. Yeah yeah.
+
+00:14:43 - 00:15:55 Unknown Speaker:
+
+Okay, if there is some failure like that with red color, so will you rerun that particular data? Yes, but first we need to inform to Sachin based on his input, either we need to re-trigger or we need to do any alternative action on item. What could be the reason for such failures? Infrastructure, is it? Or it may be numerator or denominator having different values will come. So that time it will be, these issues will occur mostly. Okay. Or in worst case, any wrong configurations if we are matching, right? So in the code level. So maybe that time also it will occur chances on that one. Okay. Yeah. So this is the one. And also when we are executing the query, right, the record should be also presented here. You is properly not showing, you can let us know.
+
+00:15:55 - 00:17:21 Unknown Speaker:
+
+No issues. Okay, understood. So this is the one failure example. It is showing like this red color here. So this is the graph actually. We can say cyclic graph representation. On the requirement, we are doing this one, there are multiple options. Are there actually? We need to explore more and these things. Okay, yeah, sure, yeah, I think, uh, normal, I think you committed code to anything. Q Tracker repository in this tool today data monitoring tool, and Richard to me.

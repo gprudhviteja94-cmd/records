@@ -1,0 +1,179 @@
+2026-03-12 ACE Reporting and Onboarding Process Discussion
+
+Creation Time: 2026/3/12
+
+
+📅About Meeting
+
+  • Date & Time: 2026-03-12 14:00 (Duration: 2045 seconds)
+  • Location: Remote meeting
+  • Attendee: No relevant content mentioned
+
+
+📒Meeting Outline
+
+
+ACE Reporting & Onboarding Process
+
+  • ACE reporting high-level fit The session opened by placing ACE reporting within the ACE ecosystem. When a tenant needs a use case on ACE, requirements are gathered, a tenancy is created (ILM tool used to automate ILM tenancy requests), BPMN is developed and deployed to AS tenancies. ACE reporting captures events from Kafka topics and injects them to Elasticsearch/Kibana for visualization (tables, charts, graphs).
+
+  • Reporting applications and onboarding artifacts The reporting platform requires tenants to provide three reporting-side applications/configurations: PI registry, PI event ingest, and PI egress. PI registry requires a registry.json in a specified format (includes PI deployment ID — a UUID that uniquely identifies a use case). The registry defines index name, ES index name, application ID (car ID), application name, source, and deployment IDs to capture. A flag viewEnabled (true/false) controls whether child indexes are created.
+
+  • Indexing and ingestion flow Events produced by BPMN/use cases go to Kafka topics. Ingest applications read from topic names and use configured transformers to convert payloads to JSON suitable for Elasticsearch. The ingest application plus transformers and mapping.js entries determine how fields/properties appear in Elasticsearch indexes.
+
+
+Elasticsearch / Kibana Index Management
+
+  • Index templates and settings Before creating an index, an index template is created that defines index name patterns, index settings and aliases. Templates include alias names (used instead of direct index names), shard count, number of replicas, and other index-level configurations. Aliases can have roles/rules and help route writes/reads without changing actual index names.
+
+  • Shards, replicas and storage considerations Shard count and replicas are configured in the template. Shard size guidance (e.g., ~30GB per shard) and min/max docs per primary shard are part of index settings. These determine how data gets distributed across the cluster and influence performance/storage.
+
+  • Index lifecycle management (ILM) policies ILM policies are used to manage data lifecycle across phases: hot (active), warm (less active but occasionally queried), cold (infrequently queried), and delete (retention). Rollover can be enabled with thresholds by size or age. Retention policies differ by environment:
+    
+    • Default/typical retention currently 180 days (was 700 days historically)
+    • Some environments (E1) may have 15 days
+    • Some indices (exceptions) have 30 days (example: roles index) Tenants cannot change retention directly; they should request changes from the platform team.
+
+  • Dev Tools / Queries for index operations Kibana Dev Tools are used to run queries for index creation, data fetch, deletion, reindexing (move data from one index to another), and other manipulations. Examples discussed:
+    
+    • Delete by query for a deployment ID within a time range.
+    • Reindex from a source index to a destination index with filters (e.g., by car ID / deployment ID). Resharding for E3 is handled by another team (XPAAS/desktop platform), not by the XPAAS reporting team.
+
+
+Kibana Visualization & Dashboard Questions
+
+  • Data availability vs. dashboard display If properties/fields are present in Elasticsearch (visible in Discover) but not shown on dashboards, the tenant must ensure those fields are included as properties in the registry payload (registry.json) and mapping. Dashboard creation/modification is generally tenant responsibility; the platform ensures ingestion and availability in Kibana.
+
+  • Dashboard creation support limitations The platform team guarantees data ingestion and availability in Elasticsearch/Kibana but does not provide extensive dashboard-building support for each tenant. Tenants can create tables, charts, and dashboards in Kibana, selecting properties that exist in the index mapping. The team offered to check specific cases offline and provide documentation links; tenants may also reach out to Gaurav for further help.
+
+
+Child / Parent Index Structure (viewEnabled example)
+
+  • Parent and child index relationship When viewEnabled is true, a parent index holds multiple deployment IDs and child indexes are created per deployment ID. Child index definitions include index name, app details (car ID, application name), shard/replica settings, Kafka topic name, and transformer name for ingestion. Mapping.js and transformer configuration must be updated to capture correct fields.
+
+
+Next Steps & Follow-ups
+
+  • Session length and continuation Meeting reached time limit; remaining topics (if any) will be covered in the next session. Attendees were invited to reach out to Gaurav or the presenter for additional details or clarifications.
+
+
+📋Overview
+
+  • ACE reporting ingests Kafka events into Elasticsearch/Kibana for tenant dashboards.
+  • Tenants must provide registry.json (PI registry) with deployment IDs, index names, and properties so fields appear in ES indexes.
+  • Index templates define patterns, aliases, shards, replicas, and settings before index creation.
+  • ILM policies manage hot/warm/cold/delete phases; retention defaults to 180 days with exceptions (e.g., 30 days for some indices).
+  • Kibana Dev Tools support index creation, deletion, reindexing, and other management queries; resharding may be handled by a different team.
+  • Dashboard building is tenant-responsibility; platform ensures ingestion and field availability but limited dashboard support is provided.
+  • Child indexes are created when viewEnabled=true; transformers and mapping.js updates are required for correct field capture.
+  • Remaining details to be covered in next session; contact Gaurav or platform owner for more information.
+
+
+🎯Todo List
+
+  • Platform / Reporting Team:
+    
+    • Share documentation links for Kibana dashboard creation and registry.json format (no deadline specified)
+    • Investigate the specific dashboard field visibility issue raised (tenant’s case) and provide guidance or fix (owner: presenter/platform engineer) — follow up offline (no deadline specified)
+
+  • Tenant (requesting dashboard help):
+    
+    • Verify registry.json contains all required properties/fields for the index and submit PR to update registry if missing (no deadline specified)
+    • If fields are present in Discover but not in dashboard, capture examples (index name, deployment ID, fields missing) and share with platform team for investigation (owner: tenant; no deadline specified)
+
+  • Gaurav / Platform Contact:
+    
+    • Be available for follow-up questions and deeper technical clarifications on transformers, mapping.js, and retention exceptions (no deadline specified)
+
+(If you want, I can extract specific action owners and deadlines if provided — otherwise listed as open follow-ups.)
+
+
+Transcription
+
+00:00:25 - 00:04:58 Unknown Speaker:
+
+Oh, yes, you need to pay money. I thought of taking this laptop to my home by doing this remote access. Same price only. It is not as increased. No, no. It is not increased. Why people are telling it will go up? It will. It will. But the Iran, they told, you can export to India, they gave the statement. For petrol, no problem. In the morning, I got a reel saying that when a cylinder has the power, when it gets time, why don't you get the time? Yesterday I went home. Had nicely big fish. For cold fish is very good. The year is even hard to get by. Since I need to take medicine, I just... So today we will be talking about the ACE reporting. First we will understand where this ACE reporting fits into this ACE ecosystem.
+
+00:05:00 - 00:06:14 Unknown Speaker:
+
+So maybe you are already aware of this, whenever we have a requirement to develop any use case using the ACE platform. So what we do usually, we gather the requirement. And whenever we have to develop any huge case by the tenants, they come to the IS team and they create a tenancy. So now those things have been automated through the ILM tool. We need to create the ILM request for the tenancy onboarding. Then when they develop the BPMN, they come up for the platform. And finally this gets deployed and onboarded to the AS tenancies. So AS reporting, what we do is we capture the reports. So whichever use case will be developed, tenants will have a requirement to see the data in the form of the GUI, maybe the tabular format.
+
+00:06:15 - 00:07:42 Unknown Speaker:
+
+Graph in the form of graph or pie charts. So we have here there is a the open source tool which you are already be aware of. So we we use as the elastic search. Elastic Kibana, basically, so here we capture the data from the the Kafka, from the top Kafka topics, this Elastic Kibana tool. That provides a facility to capture the data and manage the life cycle of data to store, like how there is a policy to store the data. So basically, the end use of here, I'll just show you an example. Case is onboarded so in on daily basis, whatever their use case is running. And they want to see their data in the form of the graphs, pie charts or tabular format, they can capture the data and they can see here.
+
+00:07:42 - 00:09:15 Unknown Speaker:
+
+So we will see like how this the entire process, the high level we can, I can explain how these things works. So the platform side you are already aware of. We developed the BPM and huge cases and finally those events, we made the events and whatever events getting into the Kafka topics, finally we captured it and the injection happened to the Elasticsearch Kibana. Have so for I'll just show you so whenever you have a requirement to like, onboard your use cases to the ACe reporting. So we ask, we ask our tenants to follow a few things for new new onboarding, like we asked to. So we have three applications from the reporting side. One is the PI registry, PI event ingest, and PI egress. So PI registry, that basically what it does, we ask them to provide the data in the form of JSON.
+
+00:09:17 - 00:10:41 Unknown Speaker:
+
+That makes it enables to capture the data. So basically, whenever you develop. So under registry.json, we ask them to create the data in the form of... So here if you see this PI deployment ID, this is basically a UUID. This is the unique ID for one use case. So Kibana basically captures the data in the form of indexes. So here there is a user guide to create the onboarding the application. We provide them these things to update the PI registry and so that it enables the Kibana to for injection. So few things the tenants has to follow and provide. Update the registry in the form of in this form basically so here if you if you type if you try to understand here.
+
+00:10:41 - 00:11:57 Unknown Speaker:
+
+So this is the index name for if for any particular use case, there will be a index name and ES Index name is same as index name. And here we provide the application ID, which is a Car ID, basically application name, source, and under this index for which deployment ID. We want to capture the data. So here we these details we provide in in this form and here if you see one more, things like BU enabled equal to false or true, so if the view enabled is false. That means there will be no child index for this particular use case, if it is true, that means there will be child indexes. So I'm not taking you more deeper into the code side. Let's try to understand, like the how Kivana works to capture the data.
+
+00:11:57 - 00:13:18 Unknown Speaker:
+
+So here we have a index management, so whenever we when we create a index for any new use case onboardings. So first we create a index template. So Index template is nothing but a kind of template where we will be. Existing configurations will be there, so suppose recently I have created some. Let me show you with example. So before creating the actual index we create the template, index template basically. So here we provide the name of the index, the pattern, for what kind of index pattern it will be. It will be a template, it will work as a template. So here we provide the star. So so these all it, this kind of index pattern it will cover. And basically these informations we provide here. And next important thing we provide here. The index setting.
+
+00:13:18 - 00:14:28 Unknown Speaker:
+
+So under index settings like the alias name, basically so alias name that that is kind of for one particular index, this alias name will work as a.You can say, it's a kind of the way you. We use the databases also we use the aliases, so instead of using the actual index, we can use the aliases name. And for a for every alias we can, we can define some roles, and here it's one important thing is the charts and replicas. So so, as I told you, this kibana is basically used for the storage management. And so for one particular in place, data will be used. Maybe in the TV or TVs. So, data management is very important part here. So, shards basically when we define the shard here is a 3 or 5 or whatever number.
+
+00:14:28 - 00:15:51 Unknown Speaker:
+
+So, for that particular index it will create a kind of clusters of 3 shards and number of replica here. So, suppose we want to create a replica. For this index, two replicas or three replicas, whatever that we can mention here. So this is the the template, nothing more. Here. On aliases, we can define here, and through aliases we define the rules for particular index. Instead of calling the actual index, we can paste the data through the aliases. Any question you can tell me. I have a question. So suppose I am logging data in one of the index and data is being logged properly. So I want to show it in tabular format over there in Kibana. So I want to have a dashboard which you are showing. The mapping will go on over there.
+
+00:15:51 - 00:17:02 Unknown Speaker:
+
+Like, suppose I am logging in, like, let's say some 15 uh, columns, uh, in the index, and I want to show out of 15. Like, let's say, I want to show over there. Like columns only in the dashboard. So how that will go, how we can create that, and suppose I want to modify afterwards, like currently, uh, some requirements. Instead of 12, I want to update the dashboard to have all 15 columns. So how I can do that? So I would like to understand that. We don't provide much support from them as a part of this platform. But we do have a, here we have this, we can refer it. I will also have to do some research on this. Because every tenant, they do create their dashboard on requirement.
+
+00:17:03 - 00:18:27 Unknown Speaker:
+
+So even I don't have much idea on the dashboard creation. But yeah, in Kivana, whatever data is ingested, till there is our responsibility. Data should be available. Elasticsearch Kivana and how to use that and how to manipulate the data that like you I can check it offline or maybe You can refer this documentation. I can share with you, properties are in the payload and those properties will appear in your indexes in the Kibana site. And then you can design your own dashboard, so there is the option to create a table. You can create your chart and you can select the properties Kibana provides that flexibility. Actually, what is happening, Kundan. I am logging some columns, like close to 17 or 18 columns. But what is happening, I am not able to see all those 18 columns when created a dashboard.
+
+00:18:27 - 00:19:27 Unknown Speaker:
+
+I am seeing some 12 columns. When you register those columns, you have to create a PR and in the payload you have to provide those properties. Then it will appear there. When I paste this, you see. And then by passing the proper property, it appears there on the elastic. Evoking is fine, like there I am seeing, but in dashboard I am not. Then he is able to see all the data in the elastic search Kibana, in the discover, all the data is available. He is not able to manipulate or create the data using the dashboard. So that is his question. No, I I think, you know well, while I was doing those all you know properties was a little there. So why it's not a very nice job? Somehow that is not appearing for me.
+
+00:19:27 - 00:21:17 Unknown Speaker:
+
+Okay, okay, yeah, we can check it offline and maybe check. So, uh, next thing was important thing here is the index life cycle policies. So for data management, data life cycle is one of the important things. Particular index We create a policy like how data should be, how the life cycle of data should be managed. So here if you see like there are multiple phases of the data, like here we have a hot phase, so hot phase means. This is the active data where there is storing, storage and the at the same time you are fetching the data, also, so hot phase means like it's a active data. So here, this enable rollover means like whenever we enable this checkbox for that particular index. So here we define the data size and the age.
+
+00:21:17 - 00:22:20 Unknown Speaker:
+
+So, shard size so I already have shown you like for particular index. How much shards will be created that we can configure it. But for each shard, how much? What will be the size? So here, for one shard there will be a 30 jigs data. It will be able to store it. And a few more information we provide here. Minimum maximum documents in primary shard, the maximum age. So this, this all data we are defining for the outfit is the data which is currently active and on daily basis the data is being used. So here we are defining the policy for the same. Uh, one more important thing here is one phase, so one phase is the phase where the data we are not actively storing, but we need that data sometimes we need that data to be fetched, so that kind of data will be defined, defined.
+
+00:22:20 - 00:23:42 Unknown Speaker:
+
+Under warm phase. If you enable this here, we will be able to configure here the things. And one more thing here is cold phase, cold phase that is not actively being stored and not even fetching the data also actively. That we keep under the cold phase, so whenever we define, so after that period, data will move to the cold phase. Another thing is the delete phase. So delete phase is a kind of retention period. So suppose when we define the delete phase as 30 days. So after 30 days, the data will be deleted automatically. So for each environment, we have a different retention period. Like for E1, we have 15 days. We have a retention period as one month before production. Earlier it was 700 days, but after talking to all the tenants, now we have made it as 180 days.
+
+00:23:42 - 00:24:55 Unknown Speaker:
+
+So for few of the tenants, it's a kind of exception where we keep 30 days. So this is one example. This is for the roles index. So we have made this retention period as 30 days. Important things, the lifecycle. And so when we create the template, like the policy after, finally we have to create the index, so index creation part that we do. Through the dev tool. One more thing Kibana provides that is the Dev tool. There you mentioned data retention policy is 30 days. So is it the default policy and how can we modify that for 6 months or something? Or is that possible? No, you cannot define that. If you have any requirement, then you can reach out to us. So you will not have access to change the retention period.
+
+00:24:55 - 00:26:03 Unknown Speaker:
+
+You can do that. You can do it in 2 days. So default is currently 180 days. It's not 30 days. 30 days is the exception for few of the index. I was showing you for the rules related index for that it is 30 days. But for E3 currently it is 180 days. Earlier it used to be 700 days. Okay. Understood. So here we have a we can run the query so this Kibana supports the KLA queries. I don't know the full name of KLA, but this is the KLA queries. Where we can, like, manipulate the data through the query. So suppose so for index creation also, we have a query through that we can create the index access. Finally, and we have we have other queries also to manipulate with the data.
+
+00:26:03 - 00:27:04 Unknown Speaker:
+
+So suppose, if you want to. There is that sometimes there will be a requirement to delete the data, so here we can do that. Sometimes we have a requirement to resharding it so that also we can do it for E3, we don't do resharding by. That is not a part of the XPAAS team is there, they do it, things we we take as a part of desktop platform team. So here different queries are there through which we can like, here this is the query for fetching the data, here this is for. This query will delete the data for this. If you see this for this particular time period for this deployment, ID data will be deleted for this period.
+
+00:27:04 - 00:28:19 Unknown Speaker:
+
+So there is this kind of multiple queries we can use here here, suppose we want to move the data from some existing index to some other index so we can do this. Like, this is the destination index and we want to. This is the source index, from this index, we want to move data to this index so we can use this query. Here, we define the period and we have some more filters, like the PFRAm ID is nothing but the car ID. So using this query, we can do a data manipulation and we can play with the Kibana data, so this is the more about the Kibana. But the core part is we have more things to be explained. I don't think anything can be covered here, so the important thing is like, here, we defined.
+
+00:29:24 - 00:30:58 Unknown Speaker:
+
+Let's take an example of view-enabled decoding. So here you see the example. So the parent index is, this is the parent index. Under this multiple deployment IDs are configured. So here you see the view enabled equal to true. So here we can define the PI deployment ID. So this is the reference for the child index. So if we search this. Yeah, so here is the information for the child index. So this is the child index. So for child index also we have index name, cluster application data. Here we have a car ID application name. And here we define the number of shards, number of replicas. And under Kafka metadata, we define the topic name. The transformer names, so what we do in the ingest application?
+
+00:30:58 - 00:33:22 Unknown Speaker:
+
+Uh, this is the so topic name from where we will be, from which topic we will be reading the the event. And the transformer is basically, uh, which transformer it will be? It will use to to convert the JSON the data in the data, and it will store in the kibana, so there are multiple transformers defined the Ingest application. This format will capture the data. We have to update the Afmapping. Js also. I think, again, these are . So yeah, so I think there are time also. So what we will do is we'll see if there are a few more things that need to be covered as part of this topic in the next session. If not, can reach out to Gaurav as well for any more information you require from him. Hey, hey. Sorry.
+
+00:33:23 - 00:33:43 Unknown Speaker:
+
+Sorry to interrupt. What I was just saying is that we were at time as well and then we'll see if there are some more topics left in this so we can take it in the next session. If not, probably team can also connect with you for more information. Thank you.

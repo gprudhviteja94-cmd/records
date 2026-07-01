@@ -1,0 +1,161 @@
+2026-01-12 Project Migration and Development Status Update
+
+Creation Time: 2026/1/12
+
+
+📅About Meeting
+
+  • Date & Time: 2026-01-12 10:48 (Duration: 1042 seconds)
+  • Location: [Not specified]
+  • Attendee: Praveen, Anu, Panavit, Samir (mentioned), Rajan (mentioned), Ayapa (mentioned), NC/App (mentioned), Rajendra Bhatt (mentioned), plus unnamed team members
+
+
+📒Meeting Outline
+
+
+Project timeline & scope (Migration to Lumi / Cornerstone → Cloud)
+
+  • High-level status The team completed high-level HMD planning and is transitioning into development, which may have started immediately. Migration from Cornerstone to the new platform (Lumi → BigQuery/cloud) is underway. The project is large and long-term — estimated minimum two years of sustained work with additional tasks likely beyond that.
+
+  • Pipeline & incoming work Multiple projects are in the pipeline; several new deliverables (six to seven items) must be delivered in upcoming sprints. Expectations from stakeholders vary, and similar migration efforts across the organization will continue to generate new work for the team.
+
+  • Work allocation / expectations Team members should engage with data-related tasks when they have bandwidth. Not everyone is expected to be dedicated full-time to data activities — work on it as time permits.
+
+
+Data migration & ingestion details
+
+  • Data responsibilities Cornerstone team will handle pulling data from on-premise to cloud (data ingestion). Our team will need to migrate and adapt scripts and flows related to that ingestion, including bulk ingestion, real-time ingestion, and daily flows.
+
+  • Lumi framework usage Lumi provides prebuilt flows and documentation (bulk, real-time, daily). The team must leverage Lumi’s flows and modify where necessary, integrating our changes back into the framework.
+
+  • Training / required learning Relevant Lumi training modules identified: Lumi Overview, Lumi Usage Policy, Lumi Data Transformation (completed by the speaker); next required items: BigQuery Overview, Data Ingestion Lumi Part 1 and Part 2. Team members should watch the Lumi portal videos and review docs — videos explain steps and flows clearly. Some pipelines may not be visible until names are added to access lists.
+
+
+Access, permissions & onboarding
+
+  • GCP & project access Speaker has GCP access but needs project-specific access. Action: raise access requests (IEQs) for required project resources — check with Ayapa for the list of required IEQs or consult the Confluence page. Avoid raising excessive IEQs to prevent manual justification to management (e.g., Rajendra Bhatt).
+
+  • Table-level access Table-level access requests were included by mirroring Samir’s request; these may be accepted or rejected. Current recommendation: request only necessary project access for now.
+
+  • Who to contact If access issues arise, check with Ayapa, NC, or App (team members who maintain Confluence and access lists).
+
+
+Development status — CL/Agents/LLM solution
+
+  • Codebase & POC The developer has implemented code for agents (orchestrator, execution, generation) and completed the POC — demo-ready. They can connect to Gmail, extract CLs, and get recommendations. The implementation follows the architecture document; three sub-agents were created as planned.
+
+  • Data loading & master data Phase zero master data (5 years of historical data from Excel) still needs to be created/loaded. This is necessary for the Retrieval-Augmented Generation (RAG) component.
+
+  • Current functionality Without RAG, the system can:
+    
+    • Retrieve CL-to-CL mappings and identify related CLs (e.g., 5–10 related CLs).
+    • Compute code differences, organizer comments, and CL-level details.
+    • Provide that CL-level context to the LLM with a system prompt to determine whether an integration test is required. The system produces reasonable results currently, but accuracy will improve once RAG (historical data retrieval and QA correlation) is implemented.
+
+  • RAG requirement Implementing RAG is identified as the missing piece to correlate CLs with five years of historical QA/sales data and to improve answer accuracy.
+
+
+Meetings & logistics
+
+  • Attendance / scheduling Some teammates will be out on holiday (14th noted as holiday). The speaker will not be present tomorrow but plans to be back on Wednesday (dates discussed). Agreement to catch up on the first working day after holidays.
+
+  • Communication Request to ping/call to coordinate meeting attendance and follow-ups.
+
+
+📋Overview
+
+  • Development has moved from planning to active coding/POC; HMD completed.
+  • Migration from Cornerstone to Lumi/BigQuery is ongoing and will be long-term (>= 2 years).
+  • Cornerstone team will perform raw data pulls; our team must migrate and adapt ingestion scripts and flows.
+  • Lumi training modules remain to be completed: BigQuery Overview and Data Ingestion (Part 1 & 2).
+  • Access requests: project-specific GCP access required; consult Ayapa/Confluence; avoid excessive IEQs.
+  • Codebase POC for agents (orchestrator, execution, generation) is implemented and demo-ready.
+  • Master data loading (5 years) and RAG integration are outstanding; RAG is needed for higher accuracy and historical QA correlation.
+  • Meeting coordination planned around upcoming holiday; team will sync on the first working day back.
+
+
+🎯Todo List
+
+  • Ayapa / Confluence maintainers:
+    
+    • Provide the list of required IEQs and project-specific access steps to new team members — AS SOON AS POSSIBLE (no hard deadline given; coordinate immediately).
+
+  • Developer / Speaker (owns Lumi trainings & initial setup):
+    
+    • Complete Lumi trainings: BigQuery Overview, Data Ingestion Lumi Part 1, Data Ingestion Lumi Part 2 — by next sync (recommended within 1 week).
+    • Verify Lumi portal access and watch the ingestion pipeline videos; note pipelines not visible due to access and report missing visibility to Ayapa — within 3 days.
+
+  • Access requester (new team members):
+    
+    • Raise IEQs only for necessary project access (consult Ayapa/Confluence); avoid unnecessary table-level requests — raise immediately; adjust based on responses.
+
+  • Data engineering / Cornerstone team:
+    
+    • Continue on-premise → cloud data pulls (bulk, real-time, daily) and share ingestion outputs and expectations for script migration — ongoing.
+
+  • Development team (owners of agents & RAG):
+    
+    • Prepare and load master data (5 years historical Excel) for Phase 0 to enable RAG — target: as soon as access/data available (coordinate with data team).
+    • Implement RAG retrieval and integrate with LLM prompts to improve accuracy for QA correlation and historical context — after master data is loaded; target: next sprint planning.
+    • Demo current POC to stakeholders (show CL extraction, recommendations, code diffs, and LLM decisions) — schedule demo in coming week (coordinate exact date).
+
+  • Project manager / Lead:
+    
+    • Coordinate sprint priorities for the six-seven new deliverables in pipeline; clarify stakeholder expectations and timelines — before next sprint planning.
+
+Notes: Where explicit deadlines were not given in the meeting, action items are prioritized with suggested timing and require owners to confirm exact dates. If any attendee was misidentified or additional attendees should be listed, please reply with corrections.
+
+
+Transcription
+
+00:00:13 - 00:01:29 Unknown Speaker:
+
+We have done some high level HMD and all these things. Uh, yeah, so development will start, maybe, I think, from today, or somehow. Okay, and then we have this, uh, data in this and where we are, you know, migrating the data from Cornerstone. Okay, so everyone should be working in all these everything like data. Yeah, that's okay. It's not like, you know, you are specifically dedicated if you have the time, you have to work. How long this will go? A lot of work is there for us, at least for next two years. What? How long this will go? At least two years work is there for us. Yes, it will go, you know, more than that one. It's a long time project because we this migration activity right now. They started when we were there.
+
+00:01:29 - 00:02:10 Unknown Speaker:
+
+So there are a lot of projects in the pipeline, people are working on it and we are also getting it. Because you deliver a lot of things and some new things. This year, we got a lot of new things in the pipeline that they are never studying, right? Six, seven things are there that we have to deliver by this, the sprint and not the system that you can say, okay, okay. So they have the different expectations. So going forward also, you know, we will be getting this because this is, uh, uh, you know, everyone is migrating to this normal setting. Okay, okay, got it. Why I am asking is that Lumi trainings most on data side, that do I really need to go through them properly?
+
+00:02:10 - 00:03:09 Unknown Speaker:
+
+Or that's why I was asking data we, we are not handling the data, but the team is there. Okay, sorry, team is there. Okay, yes, so we are not going to query and do all these things. So from cornerstone side, they will pull the data. Okay, that is. You are talking about data ingestion part from on-premise to cloud. Yes. That they would be doing it. But those scripts, okay, once they migrate the data, we need to migrate the scripts related to that. Oh, there is, you know, there are different steps in there for this migration one. So, there are different approaches there, like, if you see, that's the bulk ingestion is there, and somewhere they have this real-time ingestion time. Daily data is there. So, those all flows are there that are already provided by the loop table.
+
+00:03:10 - 00:04:11 Unknown Speaker:
+
+We have to, you know, leverage that one and then, you know, changes will be required. So, in between, we will, you know, perform our activity and pass it to the framework methods again. Okay. Okay. Basically, it's a kind of migration only. So... so for me, the list it is showing is Lumi Overview, Lumi Usage Policy, Lumi Data Transformation. I think till here I completed, I mean, this is anywhere required. Next is Big Query Overview Data Ingestional Lumi. Part one, data will be two. Uh, two parts will be there. Yeah, part one and part two. Yeah, yes, correct, so those two I need to go through that. Yeah, just go through those documents pretty straightforward. Okay, just go through that one and you have the access to Lumi Portal, right? Yeah, yeah, yeah, you can see it there.
+
+00:04:11 - 00:05:03 Unknown Speaker:
+
+There are a few of the pipelines, I think you will be not able to see those pipelines because your name is not there, right? We have not added your name. And that is not needed. Also because you will get the access and all, so they will not tell you. So, you know, just go through that in the video. It's, you know, they explained it quite nicely, you know, what are the steps, what they are doing, how the things are and all. So, you will understand it. Okay, okay. Anything else? Yeah, that's it for now. I'll go through these trainings. On code base, code base access, I have reached access to GCP only. Uh, no, once you have to raise the access for the project specific, just check with Ayapa. Once.
+
+00:05:03 - 00:05:54 Unknown Speaker:
+
+Okay, he has the list of all these IQs, he will share with you. Okay, okay, or in our conference page. I think it is there so you can get it from there. I don't find any complaints related to that one you share with respect to GCP. If you didn't find this, check with NC or App. Okay, these guys are maintaining this conference. So, they will let you know, you know, which all IEQ will be required basically for project related access, okay. Do not raise too many IEQs, like that we will go to, you know, the Rajendra Bhatt and, you know, we have to provide the explanation. Okay. Just know me access, project access, I think right now this much is enough for you. Okay. And for GCP, whatever Shamir has, I raised the same request.
+
+00:05:56 - 00:06:54 Unknown Speaker:
+
+Okay, even that is fine. Table level access you have to reject. But not sure you need it or not because whatever the access Samir has, Rajan means that you also needed that many things. I simply added all that list. Let me see what happens. That's fine. They will reject or accept it. That's fine. Okay. You are coming tomorrow? Tomorrow, I will not be there. I will come on Wednesday. Wednesday, what is the date? Wednesday is holiday day. We have on 13th. 14th. 14th is holiday for us. I must go there. I don't need it. Okay, okay. Got it. Tomorrow, it's not. It's too hard. I'm coming daily. Yeah, I know. I try it, yeah. Fine, let's see. That's fine, that's fine. We'll meet, you know, on the first day.
+
+00:06:55 - 00:09:09 Unknown Speaker:
+
+Because my stage holiday, if you are coming, most probably I'll be coming. Yeah, yeah. So let's catch up on the first day, huh? Sure, sure, yeah. All right. Okay, thank you. Can you just ping me? Sure. Sure, come then, yeah. Yeah, thank you so much, come then. Okay. Thank you. Bye. Okay, thank you. It's the same error. Is everyone coming? Yes, they are coming. Yes, they are coming. Yes, they are coming. Yes, they are coming. Yes, they are coming. That's what I'm excited about. Do you think it will take time for you to stop? No, I don't think so. Tell me, what is this? You are the only one who is watching. We don't have anything to stop. I don't have anything to stop. I don't have anything to stop. I don't have anything to stop.
+
+00:09:09 - 00:11:12 Unknown Speaker:
+
+I don't have anything to stop. I don't have anything to stop. I don't have anything to stop. I don't have anything to stop. I was afraid that my mother would come to my house. I was afraid that my mother would come to my house. I was afraid that my mother would come to my house. I was afraid that my mother would come to my house. I was afraid that my mother would come to my house. Exceptionally large stages are occurring. Yes, not, obviously it could have been done, but not done now. Sprint and go to back and forth separate operator and using the is running here in the back and freedom for you, you can find and separate the back and separate. Hey, hi, man. Okay, hi, everyone. Hi, Panavit. Good morning. Hey, Praveen.
+
+00:11:12 - 00:12:27 Unknown Speaker:
+
+Hi, Anu. Good to see you. Let's see the link. Okay. Since you are taking care of the solution alone, right, we will go. Because what we agreed that there is with him, he must have joined the CL verification whatever you already have, right? Yeah. You use that and above that add this. The existing CL verification function. Yeah, yeah, yeah. We will add them. You were supposed to get access and everything. Is the accessing solved quickly? Yeah, so right now the situation, I mean, I'm in position to run the code. So you can start coding then. I hope you can start it. Yes, sir. What I want to understand is how far are we through and what we're not through. Okay. So with respect to development, I have created the test cases. Sorry, not test cases, the code part.
+
+00:12:28 - 00:14:34 Unknown Speaker:
+
+Agents have created, I mean, I can even share my screen. Okay. So, yeah, I created in Critic, I created all the code base with respect to all the agents, starting with orchestrator and then execution, generation. So, POC, everything is done. It's ready for even demo also. Because when you say, that means I'm able to connect to Gmail, I'm able to understand the CL, I'm able to extract the CL out, I'm able to get the recommendations, because the CL had all those, remember the three sub-agents we created? Yes. According to the architecture document, have you done everything coding? Yes, yes, yeah. Except data loading in phase zero, we have to create master data, right? From the excel data five years data that is available so that will be used. Okay. Okay. Okay. So probably one thing is, uh.
+
+00:14:34 - 00:15:24 Unknown Speaker:
+
+Without a rag implementation, where we would be looking out for five years. Historical data and matching this CL with any of those and correlate the response, I mean, the QA data. For that and for this, what would be the answer? So this is the rag implementation, right? This thing is not done other than that. So currently, what it does is it gets from one CL number to another CL number, what, uh, CLs are existing. Okay, it will get like 5, 10. What hour is there what the QA team runs to get all the sales between two day? Two CLs, right? It gets that if you provide both of them and two and then each CL, it will go through and it will get the code difference. Uh, organizer comments, Okay, and then, uh, CL details.
+
+00:15:25 - 00:17:08 Unknown Speaker:
+
+All the complete information it fetches at a CL level, CL number level and try to give it to the LLM for taking it digital. So we have put a prompt or system context for the LLM that we are looking to check if it requires an integration testing or not. So if you ask me, it is doing a nice job right now. But if I do with the RAG, it will be more accurate. Yeah, yeah. So could we let us do it okay but demo it doing it as well. Okay, okay. I'm coming up with a . Sorry, yeah, go ahead.

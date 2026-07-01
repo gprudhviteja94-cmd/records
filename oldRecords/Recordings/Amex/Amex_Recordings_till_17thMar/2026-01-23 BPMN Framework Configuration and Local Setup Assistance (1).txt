@@ -1,0 +1,131 @@
+2026-01-23 BPMN Framework Configuration and Local Setup Assistance
+
+Creation Time: 2026/1/23
+
+
+📅About Meeting
+
+  • Date & Time: 2026-01-23 12:37 (Duration: 902 seconds)
+  • Location: Remote (video/Slack screen-share)
+  • Attendee: Sachin, Prudhvi (participant being assisted), Nirmal (mentioned), other team members (unnamed)
+
+
+📒Meeting Outline
+
+
+BPMN Framework Setup and Purpose
+
+  • Framework vs BPMN design The group clarified that the repository under discussion is the runtime framework that executes BPMN configurations (not just the BPMN designer). The BPMN definitions are designed/configured and then executed by this framework; service bundles and framework configuration live in this codebase.
+  • Difference between BPMN and DAG It was reiterated that BPMN is different from DAG. Team members confirmed BPMN is used (not DAG) and that the framework will run BPMN definitions.
+  • Who works on BPMN Team composition and experience were discussed: Nirmal knows parts of this framework from prior exposure; some team members work primarily on BPMN. One attendee recently joined (~2 months) and needs time to onboard.
+
+
+Running the Project Locally (IntelliJ Configuration)
+
+  • Why run locally Sachin asked why Prudhvi was trying to run the project locally if no code changes were planned. The response clarified that running locally is needed because configuration and BPMN execution are validated within the framework; some local checks and debugging require a running application.
+
+  • IntelliJ run configuration issues Walkthrough of IntelliJ steps:
+    
+    • Right-click current file → Run/Run Configuration → Edit Configuration.
+    • Locate the application configuration (spring-boot / application entry).
+    • Ensure correct Java version is selected (Java 21 was shown as incorrect in one view).
+    • Select the correct application main class; if it doesn’t appear, IntelliJ is not detecting the main method.
+    • Use Modify Options → Add VM options / Active profile as needed.
+    • If run configuration can't find the main class, try manually typing the class name or recreate the configuration.
+    • For spring-related applications, ensure Spring Boot main class is recognized (it should scan for main annotation or public static void main).
+
+  • Specific configuration troubleshooting The participant could not get the main class auto-detected. The helper suggested:
+    
+    • Verify the main method exists and is public static void main(String[] args).
+    • Use Modify Options to add VM options and active profile settings.
+    • If the main class still isn't picked up, delete the existing run configuration and create a new one, typing the main class name manually.
+    • Copy-paste of certain arguments was discussed but blocked due to secret values — those will be delivered via secure channel (email/Slack).
+
+  • IDE performance problems The remote machine was slow / hanging; recommendation to "Invalidate Caches / Restart" from IntelliJ (File → Invalidate Caches / Restart) was given. The participant reported the system was very slow and would take time to recover.
+
+
+Tooling and URLs
+
+  • Composer confusion Two composers were mentioned: "lomi composer" and "ace compose" (ace composer). The correct URL for the ace composer will be provided by the helper later.
+  • Repository/branch guidance The participant asked which branch to use and how to find the remote; the helper indicated how to search for the remote branch in the IDE (searching remotes). Exact branch name was not captured in the transcript; the helper offered to share the correct branch/remote reference via Slack.
+  • Secrets and properties Some run arguments/properties are secret; the helper will send required properties/arguments through a secure channel (email/Slack). There is no need for additional property files beyond what will be shared.
+
+
+Communication & Next Steps During the Session
+
+  • Screen-share and controls There were repeated screen-share switching and confusion about which screen was shared. The helper instructed to minimize chat windows and focus on the IntelliJ screen at the top-left where current file/run configuration appears.
+  • Assistance scope The helper confirmed they would share configuration details, run arguments, and the ace composer URL. They will also follow up with instructions/screenshots as needed.
+
+
+📋Overview
+
+  • The codebase being discussed is the BPMN runtime framework, which executes BPMN configurations and service bundles.
+  • BPMN is distinct from DAG; ensure team members understand the difference.
+  • Running the project locally is required to validate framework configuration and BPMN execution even if no code changes are planned.
+  • IntelliJ run configuration issues were preventing detection of the main class; steps were provided to recreate the configuration, add VM options and active profile.
+  • Some configuration values are secret and will be shared securely (email/Slack).
+  • IDE performance issues (hangs) observed; recommended invalidating caches and restarting IntelliJ.
+  • Helper to provide ace composer URL, branch/remote reference, and required run arguments/properties after the meeting.
+  • Newer team member(s) need onboarding; Nirmal has relevant experience and may be a resource.
+
+
+🎯Todo List
+
+  • Sachin / Helper:
+    
+    • Share ace composer URL via Slack (ASAP)
+    • Share branch/remote name and exact repo location via Slack (ASAP)
+    • Send required VM options / run arguments and any secret properties to Prudhvi via secure channel (email/Slack) (ASAP)
+
+  • Prudhvi:
+    
+    • Recreate or modify IntelliJ run configuration: select correct main class (or type it manually), set Active profile, add VM options as provided (by next working session)
+    • If IntelliJ is unresponsive, perform File → Invalidate Caches / Restart and retry (today)
+    • Confirm receipt and apply the properties/arguments shared by Sachin/helper (after they are sent)
+
+  • Team onboarding / Knowledge sharing:
+    
+    • Pair with Nirmal or an experienced BPM team member to cover framework basics and common run/debug steps (schedule within this week)
+
+Notes:
+
+  • Deadlines were not explicitly given; items marked ASAP should be completed before the next working session or within 1 business day if possible.
+
+
+Transcription
+
+00:00:00 - 00:01:18 Unknown Speaker:
+
+Which branch? Can you tell me that I am not able to open this chart? Okay, fine, I am bringing you over slack. It's like, that's this is not working already. Start you just check out this one, click on this one now. Yeah, correct. Check out that remote here. Search ever, you will find it this one. And why Sachin is asking me to run this locally? If we are not going to make any changes to this, or where we would be using this, if at all, in that we use design. No, no, see, uh, this is a framework, okay, so here the BPMN you will configure, right? Or you will design that total BPMN will, uh, execute in the framework value. And all those configuration.
+
+00:01:18 - 00:02:42 Unknown Speaker:
+
+We have to do it here, so this is framework is, uh, see code service about the configuration of the BPMN and our service bundles. Okay, okay. What is the BPMN tool we use? BPMN is not DAG. DAG is different, BPMN is different. Okay. BPMN, can I get the 10.1, sir? There is no endpoint for that one. There is a composer is there, okay. Okay, okay. Yesterday I did the setup, no? Composer no that is a different that is the lomi composer okay uh this is ace compose i will bring you the url okay let's go earlier you were in the uh you work on mx or some other project oh. He joined Sinecron recently only. Two months before. There are a lot of things you have to understand. Yeah, a lot of things.
+
+00:02:42 - 00:04:00 Unknown Speaker:
+
+I don't know how come Nirmal has an idea on that. He has worked on that part because everyone on the team works on BPM in one day. He worked in another team, is it? No, the floor where you are sitting. The entire age works on this BPM manually. They use this framework, it's called framework. Okay, so all those meetings and all you will be, uh, saying, right, yeah, those all are there, okay? So it is composed, uh, this one actually such in given me, yeah, now I got so. Here. Only the Java ID will process. We'll call. Right click on this current file above, Go to Edit Configuration right hand side. That current file is there. Click there. Top top, top Sir input. Can you minimize this chat window? We don't need this one, this.
+
+00:04:00 - 00:05:29 Unknown Speaker:
+
+What are you doing? One second, let me this is, uh, here, right on the same line at the top, that top only. You go at the top, top, top, top come left hand, side, on the same come left hand. Current file is there, right? I am telling tops there. How you said it? You worked on IntelliJ, right? Before? Wait, wait. You are, okay. I am sharing you the IntelliJ, no? Wait, wait. Okay. What is this? I was actually sharing you. One second. Let me share it again. I thought I shared you the other screen. Okay. Yeah. Now, can you see? Your current file is there at the top right. Okay. I was actually. No, no, no, okay. I click Select the screen Springboard. Basically. Yeah, springboard is the right click. What is the Java version here?
+
+00:05:33 - 00:08:14 Unknown Speaker:
+
+Where you are showing that build and done is there? Right? Select that one. No, not that one. Sir, that's the top down. Use this. Hmm, what is this? Is Virgin local machine build run Java, not Java. June 21 This is wrong, Java. And we have, okay, main class you are searching for, right? Yeah. Where can I put it on Slack? Yeah, Slack. I know I defaulted, so I didn't. Take this. Select codes. I can express first one is selected here. Yeah, select the application. That's fine, first API. Yeah, this one, it's not getting selected. It's not a main method, right? It is in, I mean, this is the main method. Wait, wait, wait, wait, wait. Modify option Click on the building. Click on the right hand side, that option is there in the project, right?
+
+00:08:15 - 00:09:43 Unknown Speaker:
+
+How come it will search? Can you scroll down? What is the problem? No, no, not. The library is what we will do with. Oh, that's why I'm telling you, you know, Connect, Uh, this one you can do. Where is the VM house? But the main class you have to provide it, right? I can tell you the VM of. But uh, uh, just uh. Delete this application, go back on dot a Exp. No, don't go ahead, type one by one, it will come, it should automatically come. No, it's not, it's not, it's not coming, but that is fine. See, ideally it should come with this name itself. If it is not coming here, it's not considering it as a main method. That I got your point, but that is the main method.
+
+00:09:44 - 00:11:24 Unknown Speaker:
+
+Okay, shall let me see that once, if it has a main method. It should scan it. It should scan the ACE code. Why it's not scanning for you? No, there's no main, okay, it has a main method. This is the main matter We are building a school when they write No, You're selling the project, your project is not coming there. Me, see what is there? In the Modifier option, we have only you have to select Active profile. Click on Modify option Modify options. Okay, what? All are selected Active profile, Add Dependency, Add VM, I'll select that. Add VM Options. Another thing is why it's not pointing here. It did not come in, that should come here now. How about this being that? Can you share your screenshot of your songs?
+
+00:11:24 - 00:14:10 Unknown Speaker:
+
+I will share it and any property file you need to put. There's no need to add anything, that's the point. Okay, if I configure this, that's enough. Okay, my video is there. Like, Okay, Julia, 21, Modified target. Okay, it's robot application only. Okay, can you copy paste those arguments? I'll send you over mail. We cannot paste it. Here. There's some secrets. Do I have to generate any certificates? No, What is the email address? Prudhvi.teja1. What is this? What system is this one? Mind. Why it is hanged? Do one thing, invalidate chaos, so maybe sometime it happens. Go to files and do that one what are you doing here click on the invalidate cache is there right just below the third one restart it. System is getting hanged. You shared those properties, right? No, no, no.
+
+00:14:10 - 00:14:36 Unknown Speaker:
+
+System got hanged, so it will take time. It's very slow. Not survive. Morning I am facing this. Okay. I will share and let you know, okay? Okay, fine. okay okay thank you thank you

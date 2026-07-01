@@ -1,0 +1,696 @@
+2026-01-25 Automation Process Naming, Versioning, and Trigger Strategies
+
+Creation Time: 2026/1/25
+
+
+📅About Meeting
+
+  • Date & Time: 2026-01-25 17:07 (Duration: 7362 seconds)
+  • Location: [insert location]
+  • Attendee: [insert names]
+
+
+📒Meeting Outline
+
+
+📅About Meeting
+
+  • Date & Time: 2026-01-25 17:07 (Duration: 7362 seconds)
+  • Location: [insert location]
+  • Attendee: [insert names]
+
+
+📒Meeting Outline
+
+
+Naming and Versioning of Processes
+
+  • Naming convention The team reviewed a standard naming format for automation processes. Internal automation processes should start with the prefix "ACES", followed by an underscore, the functionality/business process name, and a semantic version (major.minor.patch). Example purpose: easily identify origin (ACES/internal) and related business process.
+  • Versioning rules Semantic versioning guidance was given: increment major for breaking changes, minor for non-breaking enhancements, and patch for bug fixes. Versioning is required before redeploying a changed process.
+  • External (non-automation) use cases For processes originating from external business teams (with their own IDs), they should prepend their central asset or identifier to their use case / business functionality name. Feature IDs may be added but are optional; the version field remains important for internal automation.
+
+
+Ways to Start a Business Process
+
+  • Trigger types overview Multiple input channels to start processes were described:
+    
+    • API / application-to-application triggers: external systems call ACE APIs to start a process.
+    • UI triggers: web UI actions can start a process.
+    • Event ingestion (injections): processes start in response to events (e.g., merchant invoice arrives).
+    • Bulk processing / file-based ingestion: upload files (Excel, CSV, flat/mainframe files) to trigger a process per row.
+    • Scheduled jobs: on-demand, one-time, and recurring schedules (date, duration, cycle, cron).
+
+  • Bulk processing details The file ingestion feature supports Excel, CSV, and flat files; configurable delimiter support (e.g., semicolon for certain markets); header-line skipping and header validation (field names/order). For each row, ACE will trigger the target business process. Files can be processed immediately or scheduled for later.
+
+  • Transformation policies A transformation policy/editor maps input file columns to process input fields (e.g., column1 → address1). This policy defines how ACE will interpret file data and feed it into the process.
+
+  • PII handling and encryption PII column marking is supported but recommended to avoid explicit marking when possible. ACE performs whole-file encryption and process-level encryption; sensitive fields in processes can be encrypted by default per configuration. EDPP and platform security controls apply.
+
+
+Scheduling and Run Controls
+
+  • Scheduling options
+    
+    • On-demand (one-off) scheduling for one-time jobs (e.g., KYC refresh for 100K accounts).
+    • Recurring schedules with cycle parameters or cron expressions for complex schedules (specific days of month, weekdays, intervals).
+    • Duration: delay-based starts (e.g., start after 5 minutes). Cycle: repeat frequency with optional repetition limits or continuous runs.
+
+  • Timer start event configuration Timer configuration supports Date (specific datetime), Duration (delay), and Cycle (recurrence with repetition/stop conditions).
+
+  • Process orchestration and chaining One process can start another using a process task. Options:
+    
+    • Async: trigger downstream process without waiting for completion.
+    • Sync (default): wait for downstream process to complete before continuing.
+
+  • Concurrency and capacity Processes can run sequentially or in parallel. Parallel execution depends on deployment capacity and must be performance-tested in lower environments (E1/E2) to determine production sizing. Teams should benchmark volume and request additional capacity based on performance tests.
+
+
+Event Ingestion and Listeners
+
+  • Event ingestion ACE supports listeners (ACE listener component) that subscribe to external events (merchant invoice arrival, email bouncebacks, inventory events). When an event occurs, a process can be triggered per event.
+  • Reliable event-based consumption The platform can poll or listen to event sources and start processes; examples include SFTP object arrival, secure file transfers, or message-based triggers. Configurations can check file locations periodically and replay transfers where required.
+
+
+Input Channels and Storage
+
+  • Supported input channels
+    
+    • Secure file transfer (Accepts/AS-specific secure transfer)
+    • Email attachments (extract and process email content)
+    • Object storage (AWS S3) for large files
+    • Cornerstone/big-data platform integration
+    • Direct API calls from external applications
+
+  • Control Center Bulk upload and control center UI screens allow upload, scheduling, mapping, validation, and triggering of jobs. Detailed control center demo to be covered in next session.
+
+
+Error Handling and Reliability Patterns
+
+  • Exception categorization
+    
+    • Business exceptions (e.g., account already closed): handled by business paths (notify ops, log work item).
+    • System exceptions (e.g., downstream API failure): logged and surfaced to support teams; SRE may monitor platform-level failures.
+
+  • Retries and backoff Retry strategies should be part of process design. Recommended patterns:
+    
+    • Configurable retry count
+    • Delay/timer between retries (exponential or fixed backoff)
+    • Escalation/notification after persistent failure (email to ops or support, create work item)
+
+  • Work baskets (queue analogy) ACE provides work baskets (user or ad-hoc) to queue/process items—serves as equivalent to queues for manual/operational handling and to avoid accidental duplicate runs.
+
+
+Security, Governance, and Ownership
+
+  • Data protection & EDPP ACE adheres to Enterprise Data Protection & Privacy (EDPP) guidelines. Platform encryption and controls protect PII. Deployment and process-level access control aligns with EDPP.
+  • Deployment IDs and isolation Deployment IDs segregate processes by BU/market or functionality. Access controls can limit who sees/interacts with a deployment ID; platform support has access for operations.
+  • Operational ownership Ownership for failures is determined by which system (API/service) failed. Product owners and respective system teams own remediation for their components. ACE provides platform capabilities and logging to identify failing components for RCA.
+
+
+📋Overview
+
+  • Internal automation naming should use "ACES__" and follow semantic versioning; versions indicate breaking changes and releases.
+  • Processes can be started via APIs, UI actions, event ingestion, file-based bulk processing, and scheduled timers (date/duration/cycle/cron).
+  • Bulk processing supports Excel/CSV/flat files, mapping via transformation policies, header validation, and scheduling of immediate or deferred runs.
+  • There are multiple scheduling patterns: one-time, recurring cycles, cron for granular schedules, and on-demand/manual triggers from Control Center.
+  • Process chaining supported via process tasks with sync/async options; parallel execution is supported but constrained by deployment capacity—requires performance testing.
+  • Event ingestion uses ACE listeners; ACE can integrate with SFTP, object store (S3), email inbox, and big-data platforms like Cornerstone.
+  • Reliability best practices: classify exceptions, implement retries with timers, alerting/escalation, and use work baskets for queued manual work.
+  • Security: EDPP compliance, encryption of files and sensitive fields, deployment-level isolation, and controlled access to work baskets and admin roles.
+  • Operational responsibility: the system owning the failed component typically takes ownership after RCA; ACE provides platform and logging to assist.
+
+
+🎯Todo List
+
+  • owner: Platform/Product Owner
+    
+    • Document and publish the official naming and versioning standard (ACES__), including examples and guidance on external team identifiers — due: [insert date]
+    • Share semantic versioning examples and when to increment major/minor/patch — due: [insert date]
+
+  • owner: Integration/Product Engineering
+    
+    • Provide Control Center demo covering bulk upload screens, transformation policy editor, header validation, and scheduling — deliverable: demo + brief guide — due: [insert date]
+    • Add documentation and examples for cron expressions and timer start event configurations (date/duration/cycle) — due: [insert date]
+
+  • owner: Security/EDPP Liaison
+    
+    • Confirm and document encryption & PII handling recommendations (whole-file encryption, field-level encryption guidance) and publish best practices for marking PII in processes — due: [insert date]
+
+  • owner: Performance / SRE Team
+    
+    • Define performance-test plan for high-volume processes (E1/E2 testing steps, metrics to capture, required capacity estimation) and share template with product teams — due: [insert date]
+    • Provide capacity-request process (how to request additional deployment capacity for production) — due: [insert date]
+
+  • owner: Operations / Support
+    
+    • Create runbook for handling secure file transfer failures (replay options, SFTP checks, control center steps to re-run processes) — due: [insert date]
+    • Document who to contact for API/global layer failures and post-failure RCA workflow — due: [insert date]
+
+  • owner: All Product Teams
+    
+    • Perform E2/E1 performance testing for planned high-volume jobs (e.g., bulk 100K+ rows) and submit capacity estimates to SRE — due: [insert date]
+
+Notes:
+
+  • Insert specific dates and attendee names where placeholders exist.
+  • Control Center and transformation policy deep-dive scheduled for next meeting/training session.
+
+
+Naming and Versioning of Processes
+
+  • Naming convention The team reviewed a standard naming format for automation processes. Internal automation processes should start with the prefix "ACES", followed by an underscore, the functionality/business process name, and a semantic version (major.minor.patch). Example purpose: easily identify origin (ACES/internal) and related business process.
+  • Versioning rules Semantic versioning guidance was given: increment major for breaking changes, minor for non-breaking enhancements, and patch for bug fixes. Versioning is required before redeploying a changed process.
+  • External (non-automation) use cases For processes originating from external business teams (with their own IDs), they should prepend their central asset or identifier to their use case / business functionality name. Feature IDs may be added but are optional; the version field remains important for internal automation.
+
+
+Ways to Start a Business Process
+
+  • Trigger types overview Multiple input channels to start processes were described:
+    
+    • API / application-to-application triggers: external systems call ACE APIs to start a process.
+    • UI triggers: web UI actions can start a process.
+    • Event ingestion (injections): processes start in response to events (e.g., merchant invoice arrives).
+    • Bulk processing / file-based ingestion: upload files (Excel, CSV, flat/mainframe files) to trigger a process per row.
+    • Scheduled jobs: on-demand, one-time, and recurring schedules (date, duration, cycle, cron).
+
+  • Bulk processing details The file ingestion feature supports Excel, CSV, and flat files; configurable delimiter support (e.g., semicolon for certain markets); header-line skipping and header validation (field names/order). For each row, ACE will trigger the target business process. Files can be processed immediately or scheduled for later.
+
+  • Transformation policies A transformation policy/editor maps input file columns to process input fields (e.g., column1 → address1). This policy defines how ACE will interpret file data and feed it into the process.
+
+  • PII handling and encryption PII column marking is supported but recommended to avoid explicit marking when possible. ACE performs whole-file encryption and process-level encryption; sensitive fields in processes can be encrypted by default per configuration. EDPP and platform security controls apply.
+
+
+Scheduling and Run Controls
+
+  • Scheduling options
+    
+    • On-demand (one-off) scheduling for one-time jobs (e.g., KYC refresh for 100K accounts).
+    • Recurring schedules with cycle parameters or cron expressions for complex schedules (specific days of month, weekdays, intervals).
+    • Duration: delay-based starts (e.g., start after 5 minutes). Cycle: repeat frequency with optional repetition limits or continuous runs.
+
+  • Timer start event configuration Timer configuration supports Date (specific datetime), Duration (delay), and Cycle (recurrence with repetition/stop conditions).
+
+  • Process orchestration and chaining One process can start another using a process task. Options:
+    
+    • Async: trigger downstream process without waiting for completion.
+    • Sync (default): wait for downstream process to complete before continuing.
+
+  • Concurrency and capacity Processes can run sequentially or in parallel. Parallel execution depends on deployment capacity and must be performance-tested in lower environments (E1/E2) to determine production sizing. Teams should benchmark volume and request additional capacity based on performance tests.
+
+
+Event Ingestion and Listeners
+
+  • Event ingestion ACE supports listeners (ACE listener component) that subscribe to external events (merchant invoice arrival, email bouncebacks, inventory events). When an event occurs, a process can be triggered per event.
+  • Reliable event-based consumption The platform can poll or listen to event sources and start processes; examples include SFTP object arrival, secure file transfers, or message-based triggers. Configurations can check file locations periodically and replay transfers where required.
+
+
+Input Channels and Storage
+
+  • Supported input channels
+    
+    • Secure file transfer (Accepts/AS-specific secure transfer)
+    • Email attachments (extract and process email content)
+    • Object storage (AWS S3) for large files
+    • Cornerstone/big-data platform integration
+    • Direct API calls from external applications
+
+  • Control Center Bulk upload and control center UI screens allow upload, scheduling, mapping, validation, and triggering of jobs. Detailed control center demo to be covered in next session.
+
+
+Error Handling and Reliability Patterns
+
+  • Exception categorization
+    
+    • Business exceptions (e.g., account already closed): handled by business paths (notify ops, log work item).
+    • System exceptions (e.g., downstream API failure): logged and surfaced to support teams; SRE may monitor platform-level failures.
+
+  • Retries and backoff Retry strategies should be part of process design. Recommended patterns:
+    
+    • Configurable retry count
+    • Delay/timer between retries (exponential or fixed backoff)
+    • Escalation/notification after persistent failure (email to ops or support, create work item)
+
+  • Work baskets (queue analogy) ACE provides work baskets (user or ad-hoc) to queue/process items—serves as equivalent to queues for manual/operational handling and to avoid accidental duplicate runs.
+
+
+Security, Governance, and Ownership
+
+  • Data protection & EDPP ACE adheres to Enterprise Data Protection & Privacy (EDPP) guidelines. Platform encryption and controls protect PII. Deployment and process-level access control aligns with EDPP.
+  • Deployment IDs and isolation Deployment IDs segregate processes by BU/market or functionality. Access controls can limit who sees/interacts with a deployment ID; platform support has access for operations.
+  • Operational ownership Ownership for failures is determined by which system (API/service) failed. Product owners and respective system teams own remediation for their components. ACE provides platform capabilities and logging to identify failing components for RCA.
+
+
+📋Overview
+
+  • Internal automation naming should use "ACES__" and follow semantic versioning; versions indicate breaking changes and releases.
+  • Processes can be started via APIs, UI actions, event ingestion, file-based bulk processing, and scheduled timers (date/duration/cycle/cron).
+  • Bulk processing supports Excel/CSV/flat files, mapping via transformation policies, header validation, and scheduling of immediate or deferred runs.
+  • There are multiple scheduling patterns: one-time, recurring cycles, cron for granular schedules, and on-demand/manual triggers from Control Center.
+  • Process chaining supported via process tasks with sync/async options; parallel execution is supported but constrained by deployment capacity—requires performance testing.
+  • Event ingestion uses ACE listeners; ACE can integrate with SFTP, object store (S3), email inbox, and big-data platforms like Cornerstone.
+  • Reliability best practices: classify exceptions, implement retries with timers, alerting/escalation, and use work baskets for queued manual work.
+  • Security: EDPP compliance, encryption of files and sensitive fields, deployment-level isolation, and controlled access to work baskets and admin roles.
+  • Operational responsibility: the system owning the failed component typically takes ownership after RCA; ACE provides platform and logging to assist.
+
+
+🎯Todo List
+
+  • owner: Platform/Product Owner
+    
+    • Document and publish the official naming and versioning standard (ACES__), including examples and guidance on external team identifiers — due: [insert date]
+    • Share semantic versioning examples and when to increment major/minor/patch — due: [insert date]
+
+  • owner: Integration/Product Engineering
+    
+    • Provide Control Center demo covering bulk upload screens, transformation policy editor, header validation, and scheduling — deliverable: demo + brief guide — due: [insert date]
+    • Add documentation and examples for cron expressions and timer start event configurations (date/duration/cycle) — due: [insert date]
+
+  • owner: Security/EDPP Liaison
+    
+    • Confirm and document encryption & PII handling recommendations (whole-file encryption, field-level encryption guidance) and publish best practices for marking PII in processes — due: [insert date]
+
+  • owner: Performance / SRE Team
+    
+    • Define performance-test plan for high-volume processes (E1/E2 testing steps, metrics to capture, required capacity estimation) and share template with product teams — due: [insert date]
+    • Provide capacity-request process (how to request additional deployment capacity for production) — due: [insert date]
+
+  • owner: Operations / Support
+    
+    • Create runbook for handling secure file transfer failures (replay options, SFTP checks, control center steps to re-run processes) — due: [insert date]
+    • Document who to contact for API/global layer failures and post-failure RCA workflow — due: [insert date]
+
+  • owner: All Product Teams
+    
+    • Perform E2/E1 performance testing for planned high-volume jobs (e.g., bulk 100K+ rows) and submit capacity estimates to SRE — due: [insert date]
+
+Notes:
+
+  • Insert specific dates and attendee names where placeholders exist.
+  • Control Center and transformation policy deep-dive scheduled for next meeting/training session.
+  • Date & Time: 2026-01-25 17:07 (Duration: 7362 seconds)
+  • Location: [insert location]
+  • Attendee: [insert names]
+
+
+📒Meeting Outline
+
+  • Naming convention The team reviewed a standard naming format for automation processes. Internal automation processes should start with the prefix "ACES", followed by an underscore, the functionality/business process name, and a semantic version (major.minor.patch). Example purpose: easily identify origin (ACES/internal) and related business process.
+  • Versioning rules Semantic versioning guidance was given: increment major for breaking changes, minor for non-breaking enhancements, and patch for bug fixes. Versioning is required before redeploying a changed process.
+  • External (non-automation) use cases For processes originating from external business teams (with their own IDs), they should prepend their central asset or identifier to their use case / business functionality name. Feature IDs may be added but are optional; the version field remains important for internal automation.
+
+
+Ways to Start a Business Process
+
+  • Trigger types overview Multiple input channels to start processes were described:
+    
+    • API / application-to-application triggers: external systems call ACE APIs to start a process.
+    • UI triggers: web UI actions can start a process.
+    • Event ingestion (injections): processes start in response to events (e.g., merchant invoice arrives).
+    • Bulk processing / file-based ingestion: upload files (Excel, CSV, flat/mainframe files) to trigger a process per row.
+    • Scheduled jobs: on-demand, one-time, and recurring schedules (date, duration, cycle, cron).
+
+  • Bulk processing details The file ingestion feature supports Excel, CSV, and flat files; configurable delimiter support (e.g., semicolon for certain markets); header-line skipping and header validation (field names/order). For each row, ACE will trigger the target business process. Files can be processed immediately or scheduled for later.
+
+  • Transformation policies A transformation policy/editor maps input file columns to process input fields (e.g., column1 → address1). This policy defines how ACE will interpret file data and feed it into the process.
+
+  • PII handling and encryption PII column marking is supported but recommended to avoid explicit marking when possible. ACE performs whole-file encryption and process-level encryption; sensitive fields in processes can be encrypted by default per configuration. EDPP and platform security controls apply.
+
+
+Scheduling and Run Controls
+
+  • Scheduling options
+    
+    • On-demand (one-off) scheduling for one-time jobs (e.g., KYC refresh for 100K accounts).
+    • Recurring schedules with cycle parameters or cron expressions for complex schedules (specific days of month, weekdays, intervals).
+    • Duration: delay-based starts (e.g., start after 5 minutes). Cycle: repeat frequency with optional repetition limits or continuous runs.
+
+  • Timer start event configuration Timer configuration supports Date (specific datetime), Duration (delay), and Cycle (recurrence with repetition/stop conditions).
+
+  • Process orchestration and chaining One process can start another using a process task. Options:
+    
+    • Async: trigger downstream process without waiting for completion.
+    • Sync (default): wait for downstream process to complete before continuing.
+
+  • Concurrency and capacity Processes can run sequentially or in parallel. Parallel execution depends on deployment capacity and must be performance-tested in lower environments (E1/E2) to determine production sizing. Teams should benchmark volume and request additional capacity based on performance tests.
+
+
+Event Ingestion and Listeners
+
+  • Event ingestion ACE supports listeners (ACE listener component) that subscribe to external events (merchant invoice arrival, email bouncebacks, inventory events). When an event occurs, a process can be triggered per event.
+  • Reliable event-based consumption The platform can poll or listen to event sources and start processes; examples include SFTP object arrival, secure file transfers, or message-based triggers. Configurations can check file locations periodically and replay transfers where required.
+
+
+Input Channels and Storage
+
+  • Supported input channels
+    
+    • Secure file transfer (Accepts/AS-specific secure transfer)
+    • Email attachments (extract and process email content)
+    • Object storage (AWS S3) for large files
+    • Cornerstone/big-data platform integration
+    • Direct API calls from external applications
+
+  • Control Center Bulk upload and control center UI screens allow upload, scheduling, mapping, validation, and triggering of jobs. Detailed control center demo to be covered in next session.
+
+
+Error Handling and Reliability Patterns
+
+  • Exception categorization
+    
+    • Business exceptions (e.g., account already closed): handled by business paths (notify ops, log work item).
+    • System exceptions (e.g., downstream API failure): logged and surfaced to support teams; SRE may monitor platform-level failures.
+
+  • Retries and backoff Retry strategies should be part of process design. Recommended patterns:
+    
+    • Configurable retry count
+    • Delay/timer between retries (exponential or fixed backoff)
+    • Escalation/notification after persistent failure (email to ops or support, create work item)
+
+  • Work baskets (queue analogy) ACE provides work baskets (user or ad-hoc) to queue/process items—serves as equivalent to queues for manual/operational handling and to avoid accidental duplicate runs.
+
+
+Security, Governance, and Ownership
+
+  • Data protection & EDPP ACE adheres to Enterprise Data Protection & Privacy (EDPP) guidelines. Platform encryption and controls protect PII. Deployment and process-level access control aligns with EDPP.
+  • Deployment IDs and isolation Deployment IDs segregate processes by BU/market or functionality. Access controls can limit who sees/interacts with a deployment ID; platform support has access for operations.
+  • Operational ownership Ownership for failures is determined by which system (API/service) failed. Product owners and respective system teams own remediation for their components. ACE provides platform capabilities and logging to identify failing components for RCA.
+
+
+📋Overview
+
+  • Internal automation naming should use "ACES__" and follow semantic versioning; versions indicate breaking changes and releases.
+  • Processes can be started via APIs, UI actions, event ingestion, file-based bulk processing, and scheduled timers (date/duration/cycle/cron).
+  • Bulk processing supports Excel/CSV/flat files, mapping via transformation policies, header validation, and scheduling of immediate or deferred runs.
+  • There are multiple scheduling patterns: one-time, recurring cycles, cron for granular schedules, and on-demand/manual triggers from Control Center.
+  • Process chaining supported via process tasks with sync/async options; parallel execution is supported but constrained by deployment capacity—requires performance testing.
+  • Event ingestion uses ACE listeners; ACE can integrate with SFTP, object store (S3), email inbox, and big-data platforms like Cornerstone.
+  • Reliability best practices: classify exceptions, implement retries with timers, alerting/escalation, and use work baskets for queued manual work.
+  • Security: EDPP compliance, encryption of files and sensitive fields, deployment-level isolation, and controlled access to work baskets and admin roles.
+  • Operational responsibility: the system owning the failed component typically takes ownership after RCA; ACE provides platform and logging to assist.
+
+
+🎯Todo List
+
+  • owner: Platform/Product Owner
+    
+    • Document and publish the official naming and versioning standard (ACES__), including examples and guidance on external team identifiers — due: [insert date]
+    • Share semantic versioning examples and when to increment major/minor/patch — due: [insert date]
+
+  • owner: Integration/Product Engineering
+    
+    • Provide Control Center demo covering bulk upload screens, transformation policy editor, header validation, and scheduling — deliverable: demo + brief guide — due: [insert date]
+    • Add documentation and examples for cron expressions and timer start event configurations (date/duration/cycle) — due: [insert date]
+
+  • owner: Security/EDPP Liaison
+    
+    • Confirm and document encryption & PII handling recommendations (whole-file encryption, field-level encryption guidance) and publish best practices for marking PII in processes — due: [insert date]
+
+  • owner: Performance / SRE Team
+    
+    • Define performance-test plan for high-volume processes (E1/E2 testing steps, metrics to capture, required capacity estimation) and share template with product teams — due: [insert date]
+    • Provide capacity-request process (how to request additional deployment capacity for production) — due: [insert date]
+
+  • owner: Operations / Support
+    
+    • Create runbook for handling secure file transfer failures (replay options, SFTP checks, control center steps to re-run processes) — due: [insert date]
+    • Document who to contact for API/global layer failures and post-failure RCA workflow — due: [insert date]
+
+  • owner: All Product Teams
+    
+    • Perform E2/E1 performance testing for planned high-volume jobs (e.g., bulk 100K+ rows) and submit capacity estimates to SRE — due: [insert date]
+
+Notes:
+
+  • Insert specific dates and attendee names where placeholders exist.
+  • Control Center and transformation policy deep-dive scheduled for next meeting/training session.
+
+
+Transcription
+
+00:00:01 - 00:01:31 Unknown Speaker:
+
+Is d3 that i will seven with that i will hand it over to uh. We'll first go through the agenda, the left-right agenda from yesterday, and then we'll cover the day three agenda. So one part that we didn't cover yesterday about yesterday's agenda was how to name a process. So one of the key things that we have is that we have a standard format of how we expect the teams to name or design a process. So essentially what this means is. It just helps us understand where these automations are coming from and also give us an insight as to what is the business process it actually caters to. So typically, any automation use cases which comes from, say, low-pressure migration, those actually what we do is we have them start their process name with ACES.
+
+00:01:32 - 00:02:32 Unknown Speaker:
+
+And underscore the functionality name, the business process name, and a version. So the business process name is pretty straightforward. ACES indicates this is an ACES internal automation workflow. And the version is kind of critical in the sense that it indicates how many versions that the process has gone through. Is it 2 days? Yes, it is 2 days. I have recorded it. You have recorded it? Yes, I have recorded it. I have understood it well. I have written all the charts. Okay, good. It is easy. If you don't understand it, it is easier than this. It is a very easy process. Daily is not easy. It is a very easy process. The concept is easy. There might be some difficulty in coding. They will show you how to create a show chat.
+
+00:02:33 - 00:08:23 Unknown Speaker:
+
+They will show you how to create a show chat. They will show you how to create a show chat. They will show you how to create a show chat. I called him again in the morning and he said he was coming. And that's the extent of some of that. Okay, let's go. . . Now you make a change to the business process, then you introduce a new step to it. Now this is what we call as a breaking change. So there is a difference between how the business process works with 1.0.0 version and 2.0.0 version or however you want to name it. So the 1.0.0 typically means 1 is the major version, 0 is the minor, and the last 0 is the batch. So it's typically semantic versioning. If you're not familiar with it, that is fine.
+
+00:08:23 - 00:09:22 Unknown Speaker:
+
+But it's like if you are making a major change, then you change the major version. If it's a minor change, you change the minor version. And then if it's like a bug fix quick change, then you update that version. So that's what it is. And that is very important because if you change the business process and you are going to deploy a new version, you update the version and then re-deploy it. So that is the change that we are looking for and that's the format. So non-automation use cases where we have external business teams that work with us who have their own AMIDs or car IDs, okay, then essentially we ask them to add their central asset in front of their use case and their business functionality name. That's the format of it. So .
+
+00:09:23 - 00:11:52 Unknown Speaker:
+
+I'll take a pause. Are there any questions? Yes, okay, so you can add feature IDs. But the base for the expectation is that if it's internal automation and the version is very important for us. From our perspective, we just want to make sure that we try to do that. Lift it back to the use cases. So in day three, family wanted to. Right now, you have had some kind of an insight into what is this, what is the process, what is the case, but what it means to actually starting a process, starting a business process, right? So as product owners, product managers, you would be thinking, okay, how do I go about starting a process? So there are multiple ways. Uh, that we do, uh, that you can actually, uh, integrate with is, uh, okay.
+
+00:11:52 - 00:12:48 Unknown Speaker:
+
+There are a few that we are covering here, okay, one is called processing okay, and you can also do scheduled jobs, okay. So which means, um, I think the report covered it a little bit, so which is like scheduling, uh, business process, every day, every hour, every minute. Okay, so, however you want it, but application to application integrations, this is like, okay. Say, there's a merchant system that you have and you want to integrate that to Ace. So the merchant system can actually send a request to Ace. And from Ace. You can start a machine process, right? So that's your typical application to application. Or say, similarly, if their merchant system has a neat web application, a UI. And they want to actually trigger a process the same way you can actually trigger it.
+
+00:12:49 - 00:15:52 Unknown Speaker:
+
+The other interesting way for you to start a business process is responding to an event. We call it typically an injection. Injection, what this means is say, so the same way like say a merchant is actually going to send an invoice to American Express. So in this case, it's an event for American Express. So when this event occurs, then we want to actually take an action. So when this kind of event occurs, then we have to be ready to know that the event occurred, the first thing, and then actually take an action for it. So this is what the event injection is. Any questions? So, I talked about bulk crossing. What is bulk crossing? Because it's a very generic term. So, what is bulk crossing in maize? We have a specific... Any questions?
+
+00:15:58 - 00:20:12 Unknown Speaker:
+
+So, I talked about bulk crossing, I didn't give any, you could have watched it, it's okay, but... Because it's a very generic term, right? So, what does bulk crossing mean? We have a specific feature within case, okay? And what this does is... It is an easy way for a team. Start the process with the pilot. Thank you. Typically, when you are starting a process, the first thing that comes to your mind can be in different formats. And one of the most common formats that I've seen is they have files. So the file comes from a different system. The file is something that the ops team made ready or paid, comes from an external entity. So there are different ways to file. So what we do is we are supporting.
+
+00:20:13 - 00:22:21 Unknown Speaker:
+
+The most basic formats out of the box, we have support for Microsoft Excel, comma-separated values, CSVs, and also we are adding support for flat files. Flat files are basically mainframe files, which is basically, they are what you call, they are very flat files, they don't have delimiters. Nothing of that sort and they just have like say it's like 0 to 10 the field is named or something of that sort. That's what a flat file is. If you're aware of it, it's fine. Otherwise, the data can be in Excel or . So this, what we do with this is like we take the file and essentially there are say 10,000 rows of the file, then process for each row of the data. So, say, that is what we typically do, right?
+
+00:22:21 - 00:23:59 Unknown Speaker:
+
+So the first row is basically your data, the second row is your data for a different customer, the third row is a different customer, something of that sort, and then we try to actually trigger a business process for each and every row of the data. And we also provide easy options to execute the process immediately, like as soon as you upload a file, or you can also schedule a file to process later. Okay, so that week, say, if you want to schedule the process to run two days from now, you got the file. But you just want to schedule it and wait. So you can do that too. These are some screens, okay, from the bulk processing from RAS Control Center. I'll actually go over it a little bit in detail tomorrow when we cover Control Center.
+
+00:24:00 - 00:24:52 Unknown Speaker:
+
+But this is the file upload screen where you can upload a file. And then you can actually process a file from this way. And here, again, so one important thing is when we are trying to process a file, okay, so the first thing is that we need to understand this, okay? I have N columns in a file. So I have, say, 10 columns in a file. And the first column is name, the second column is address, the third column is account number. So this file, through my business process, how do I map it? So I need to actually provide a way to understand how Ace would actually interpret the file. To push this data to a business process. So that's what we are doing here.
+
+00:24:52 - 00:30:35 Unknown Speaker:
+
+This is called a transformation policy, a policy that we provide this editor for you to easily configure saying, okay, column one is address line one, column two is address line two, and this is how it needs to be set to the business process. So that's what this screen is about. Oh, Pompica! Any questions? Only I have one question. So when we say bulk processing, is it a part of an RPA task or is it something which is driven by the Java classes? This is not an RPA task, okay? This is just a feature. To take a file input and trigger a process, like a base process, right? In the AS process, you can have a service task, task, or RPA task, user task, whatever. That doesn't... but this is just to consume.
+
+00:30:35 - 00:33:14 Unknown Speaker:
+
+This is to read your input and convert it to a format. Where that gate, which is there in the pile, can be fed to your business. That's about it, an input channel. This is an input channel. Just like mapping the columns of the data. So we don't reformat. Okay, this is an out of box feature, right? So if you have to reformat, then you would have to say how to reformat and things like that, right? So it doesn't, uh, give a way to reformat it. But it has some features like, say, uh, like. If if you are looking at, say, if your file has two or three lines of headers, okay, you can configure and then your data. So you can configure how many lines to skip. So there are multiple lines of headers.
+
+00:33:15 - 00:34:10 Unknown Speaker:
+
+So there are even files with headers up to 10, 15, those merge headers with documentation, right? So you can actually tell how many lines to skip before your data starts. So those kind of configurations you can do. And there are different types of PHP files. So there are comma separated files. But then again, they are not gamma separated in some markets, right? We recently encountered a Germany market where it was semi-colon separated, okay? So we support that too, okay? And things like that, okay? So the basic features will be supported, but then one of the pictures had a validation, say if you want to validate. Say your first column is always address, the second column is the start of line 2, the third column is account number.
+
+00:34:10 - 00:35:18 Unknown Speaker:
+
+And if your header has these fields, let's bring address 1, address 2, and account number. Then we can validate so that it's in the same, the field name is the same, and also it's in the same. Because sometimes, see, systematically generated files, they're always that. But say if somebody is manually creating a file, then the orders can change something of that sort. So if you want somebody to validate that, so there is something called header validation, which you can configure to say it is in the same order and the same data is spreaded. Got it, got it. I also see PII data, so does it specify a column as a PII column? It does, but you don't have to use it. We recommend not using it anymore. I'll give you a . We do whole file encryption.
+
+00:35:18 - 00:36:27 Unknown Speaker:
+
+And what we do is when we start a project, we actually then send the data to the process. And what that eans is you don't have to market PI data . Es , specifically , but within your process . Kay uh , values say , uh , okay , this is my input field . Kay , uh . I i hink uh , group would cover it a little bit , but within the process , you would say , okay , this data is pi , okay . O then what happens is is that , uh , by default , would encrypt that data always , and , uh , store it . Kay , i'll cover that in a little bit . Kay , that's one of the. . Thank you. Any other questions? Okay, so the next way to start a process is scheduling a process. This, again, we looked at it a little bit, but we'll just go over them a little bit more.
+
+00:36:27 - 00:37:25 Unknown Speaker:
+
+So there are, when you're talking about scheduling, right, so you have different ways of scheduling, okay, so on demand, okay, which is something that you say, okay, I have this event that occurred, say I have to do KYC refresh for this market, and I have, say, 100K accounts to which I have to do it, and I need to do it just one time, okay. So this is like a one-time project, right? And you want to actually do this only one time, so you would actually have a scheduler which you can configure to start and execute this process only one time for your use case. Now, there are scenarios where you say, okay, I have to run this every day or every week, every month. These are called the recurring process, so where you actually have a schedule that is consistent and you can actually...
+
+00:37:26 - 00:38:33 Unknown Speaker:
+
+So these are the different types of scheduling that you can do. Okay, So the next way, uh, to start a process is scheduling a process. Okay, this again, we, uh, looked at it a little bit yesterday, but I'll just go a little, a little bit more. So there are, uh, when you are talking about scheduling, right? So you have different ways of scheduling. Okay, so on demand, okay, which is, uh, something that you say, okay, I have this event that occurred. Uh, say, I have to do KYC Refresh or this market and I have, say, 100k accounts to which I have to do it. And I need to do it just one time. Okay, so this is like a one thing.
+
+00:39:07 - 00:41:28 Unknown Speaker:
+
+You want to actually do this only one time, so you would actually have a scheduler which you can configure to start and execute this process only one time for your use case. That's scenarios where you say, okay, I have to run this every day or every week, every month. So these are called the reckoning processes. You actually have a schedule that is consistent and you can actually do that as well. So these are the different types of scheduling that you can do on it. A little bit, so I don't know how much you can see the screen, because on the right hand side there is something called time and cycle limit. So when you, actually there is a drop down and when you select the drop down, So these are the different types of scheduling that you can do.
+
+00:41:28 - 00:42:25 Unknown Speaker:
+
+A little bit, so I don't know how much you can see the screen. On the right hand side there is something called timer cycle event. So when you actually there is a drop down and when you select the drop down when you're creating timer start event. So this is a whatever that you see here is the timer start event. And when you select that and then you try to configure your timer you have these options. Date, duration and cycle. Date is to start a process on a specific date time. Okay. You would want to say, okay, January 1st, 2024, I want to start this process. Then you can specify the time exactly to start the process. Duration is basically, okay, I want to start this process with a five-minute delay.
+
+00:42:26 - 00:43:20 Unknown Speaker:
+
+So I'm going to start it now, but it needs to be done after five minutes, right? So that's what a duration would be. And cycle is what a recurring schedule is. What it means is like you would say I want to start this process with a five minute delay and it needs to run every five minutes. And within the cycle, the recurring process, you can also define if it is going to be running non-stop continuously or say I would have repetition of three times. I want to run this process three times and then I have to stop it. Okay, uh, so you can say I'm going to run this process every five minutes for three times, and then I'm gonna stop it. Or I can run it continuously for every five minutes, right?
+
+00:43:20 - 00:46:42 Unknown Speaker:
+
+So that kind of configuration is something okay, so these are the different ways to schedule a process in. Yes, okay. So that way, you can plan to execute your business process in, however, the way that you want. So we give you a number of options to do it. Any questions? Is there a way to trigger a process based on the outcome of some another process? So a process completes or terminates, fails, something like that. The next process can be scheduled like that. You can do that. Okay. So essentially at the end of the process, within the process itself, you can actually do a start process of the next process. So let's say... First step, and then you want to actually go to the end of your process, and then you want to start a new process, right?
+
+00:46:42 - 00:48:01 Unknown Speaker:
+
+So here, you have an option of doing a process task. So the process task would be most in the process, okay? And that way, it will execute. So here, you would say... And essentially... After these two steps, when it encounters this step, it will start this new process. And it has different flavors too. One is async. Async is, it triggers the process and then essentially it would finish this process. It doesn't wait for this process to complete. But say if you don't mark it async, then what happens is it waits for this process to complete before actually it stops or ends the first process. Does that answer your question? I actually have one more question. So some schedules are in a very cyclic fashion wherein, for example, the process is supposed to run five days a week or seven days a week, but some processes are more sporadic.
+
+00:48:03 - 00:49:03 Unknown Speaker:
+
+They might be required to run on a specific number of days in a month. So how can we do that kind of scheduling? So there's two options here, okay? When you're actually changing it to a time of start date, right? When you're doing a cycle. So I'll share the documentation. There's something called . The typical time of value that you would give us something like . So this is your. This is basically we need to run every five minutes. Okay? And there is also a cron schedule, which is, and you can say, I'm not sure if I'm doing the cron correctly. Okay, but what if this means is you can configure it like this? Okay, what it says is okay? Run on the first day, third day, 50, 80 of the month, something of that sort.
+
+00:49:05 - 00:50:16 Unknown Speaker:
+
+So the cron gives you more options for you to run it at a very granular level. Same way you can do it at a minute, hour, and things like that. Okay, I've already got it. Thanks. So it's called a cron scheduling. If you look at the documentation, it will be there. Yeah, just to follow up on that question. So processing is generally not sequential, right? Like we can run multiple processes at the same time as long as we use this async thing, right? Do you want to start multiple processors? Yeah, so I think the conclusion is that we are used to BP where one process is running on the server and then it starts the next process, right? But because all of these server starts will be running in the RPA web handlers, I don't think that is the case, right?
+
+00:50:17 - 00:51:12 Unknown Speaker:
+
+So does this make sense to have a process running sequentially in A's? You can run sequentially, you can run parallelly, you can run any number of processes. But what you need to take into account is, okay, what we talked about yesterday, right? There is a deployment ID, a specific cloud deployment that is done for a service, right? For a business process. And it has a specific amount of capacity that it can run with. So typically you would do this in your event testing, you do testing, right? That you would say, okay, how much volume can I push through? Okay, I can say. I can run 100,000 processes at the same time, right? So something of that sort. So you would have to have a benchmark to say, OK, how much you can actually utilize your particular capacity to run the processes.
+
+00:51:13 - 00:52:19 Unknown Speaker:
+
+But it's not like BP. It doesn't have to be one process that you use, and then you'll have to trigger the next process. Nothing of that sort. Yeah, right. Yeah, that's an excellent question, John. Thanks. Any other questions? Yes, I have a question. So do we allow a process that starts only when someone gives the order? It could be like any time on any day for a particular month. So there is no fixed time or fixed frequency for a process. But when volume is coming, someone... So like what happened in DP, we have processes where we will have someone to raise the request to the control room, then control room will run them. Do we allow the same arrangement? You can, you can. Okay, so this is called, this is on demand.
+
+00:52:19 - 00:54:28 Unknown Speaker:
+
+Okay, so here you don't have to do a start process. So this is like a start demand. Okay, so let me give you a demo on how we would do it. This is your control center i'll cover this in detail tomorrow but essentially. We don't have that much of ragh, we can leave now. What are you doing? I'm doing programming. I left my ragh, I'll come tomorrow. Sir, can I give it to you? I'll give it to you. I'll give it to you. Sir, can I give it to you? I'll give it to you. See, these trainings, is this Ace or Loom? Ace. Ace training is over. Next, Loom. After that, I'll tell you about the counter. Okay. If you understand this, watch it for 2-3 times. Okay. This is a complete summary, right?
+
+00:54:28 - 00:56:52 Unknown Speaker:
+
+Stop in the middle. After 60 minutes, stop and keep a recording. Keep it continuous. Okay. This is the process that ran just now and it got completed. If you look at it, it has the process. Yes, so the flow will be the same, right? . . . . Are there still operators to, for a case to start? Okay, so first thing, the time delay on this thing doesn't come into picture in case. Okay, you would have to probably, as you're looking at this, right? You would have to go away from thinking of this time delay or missed event, right? Because this doesn't do it, okay? Because you have infinite capacity. There is not a specific machine that is allocated for your processing and that machine was not available so I'm not able to process that.
+
+00:56:53 - 00:57:51 Unknown Speaker:
+
+That doesn't come into picture here. Now whether you want to actually react to an inventory coming in, that is what I'm going to cover in a little bit. Either basically event investment, like basically inventory coming in as an event. You can actually assume that as an event, okay, and then essentially you're going to start the process. Any other questions? Yeah, sorry, Marty. It might be a little bit unrelated, but is there any way, like, there's no such thing as a queue, right? So in Blueprints, we would load cases and people keep track of inventory, but I don't think there's any equivalent in age, right? So let's say I have a process that should run once a week, but not more than once a week. Is there any way to prevent that from happening?
+
+00:57:51 - 00:58:44 Unknown Speaker:
+
+So that's, for example, if it triggers the inventory more than once in the same week, that's... you know, there's some tracker somewhere or some data that it can use to prevent it. So it doesn't mean, it's not that there's no queue. What we have is, it's called a work basket, okay. So it can be a user work basket or it can be what we call it as an ad hoc work basket, okay. So it's typically akin to a queue, okay. So you put your work items into a work basket, and then you can pick and choose from the work basket to process them. So that's how you would manage a queue within ACE. So you'll create a work basket for your business process, and then you would read off that work basket.
+
+00:58:44 - 01:01:01 Unknown Speaker:
+
+Now to your question, if a process is supposed to run only once, it would only run once a while. Based on your schedule, if you set it up, it is not going to run more than once. Sure, yeah, I'm thinking an accidental retrigger or something like that, but it'll be more difficult, right, because instead of drag and drop, we'll need to trigger it manually through the postman, so there's this room for error. Okay, perfect. I'm sure all of you are going to know what we call AI. Do you want to eat birji pala? What? I don't want to eat birji pala. I don't want to eat birji pala. I don't want to eat birji pala. I don't want to eat birji pala. I don't want to eat birji pala. I didn't take any flint with me.
+
+01:01:02 - 01:06:35 Unknown Speaker:
+
+I didn't take any flint. I didn't take any flint. Wouldn't doubt. Is there an option to pause the video? There is a pause option. Hit the middle button. Hit the round button. Let's try again. Let's try again. Let's try again. Let's try again. Let's try again. Is exposed api's for them to trigger this particular process okay so that's pretty straightforward so it's the application has to call our application. How do you respond to a demand? So this is another way of wanting to start a process okay so um. Is it too much? No, it's okay. The design is a bit... We'll have to see. It's okay if you put it in now. No, it's because of you. So the first thing, understand that the event occurred, and then you want to trigger a business process for each event.
+
+01:06:36 - 01:08:29 Unknown Speaker:
+
+So that's what a business event can be, say, what we talked about earlier. Or be getting the inventory of a certain system, or say, experience in... Am I leaving to go to the hospital again? Why don't you take a helmet? I don't want to wear a helmet. Everyone is wearing a helmet. If I get a new helmet, I will wear a new helmet in a week. God will not let you wear a new helmet. So all of these can be, or say you send an email to an external customer, the email bounces back. So this is a bounce back from the email inbox of a customer. So you want to actually then trigger. Paper communication to the customer. So this would be an event again, okay, so these kind of events can be configured to be CM or shop.
+
+01:08:29 - 01:09:38 Unknown Speaker:
+
+Okay, so Ace has something called Ace listener component. Okay, and I will not get too much into the detail of how. How cruel is he? He bought clothes for the government. He won't change. He won't buy good clothes for the government. What will happen if he leaves the trains? I don't know. It will happen. He won't change as much as the youth. Because the CMs are big, right? Do you have a question? I've been shopping for 4-5 days now. People like me in one way, but they don't like me in another way. Okay, I'll agree to that. But we can't do anything other than shopping in the middle of the city. That's what the princes used to do. They used to say, with the wall right. Hey, the king of the tribune will lose his eye.
+
+01:09:38 - 01:11:01 Unknown Speaker:
+
+They used to say, with the wall right. How much is this night's payment now? Is it 3 double? It's in the trends. It can be configured to listen to specific events that occurs within NextBus and then it can actually deliver a business process. So that's what the event ingestion is. Do you want me to tell you something? Yes. You should always buy clothes. If you go in front of the festival, you will get wet. What is the problem if I go in front of the festival? It is not the festival, you will get wet all over the village. Now buy one get one will definitely be in the trends. Do you have any coupons? In the trends? Yeah. I have one, but it expired. How many do you have? I don't know. I'll try to buy one.
+
+01:11:03 - 01:12:47 Unknown Speaker:
+
+What do you want? I want to buy a t-shirt and pants, what else? I've lost all my money. What? I've lost all my money. I want to buy a t-shirt and pants. I don't know. I'll try. Do you have a coupon for a shirt? There are different types of coupons There are different types of coupons There are different types of coupons There are different types of coupons There are different types of coupons. This is a difficult example of... So, essentially, what happens is the merchant sends an invoice to Amadeus, and then it actually clears a merchant process, the invoices are processed with the NAS. Hi, it's me, Niko. I have a quick question. Sorry, I just wanted to check on when you mentioned about the APIs that are being used in these.
+
+01:12:49 - 01:14:33 Unknown Speaker:
+
+Space I should say if if there is a you know API failure or any specific reason and then we do the RCA and we figure out that there was an API failure. Who would pick up the ownership? Is it the ACE team or capabilities, basically the product owners? Okay, so how would you ? You understand which APIs fail, which system actually had failures. Okay, so the API can be API's, the API's can be your calling's global layer API's and global layer API's fail. So who wants that particular global layer? And they have to go to actually monitor and maintain their API's right. So those are more events depending on what actually happened. It's typical to any other application or a business process. You would have to investigate that the application failure was, which system failed, and eventually that system would take ownership.
+
+01:14:48 - 01:16:56 Unknown Speaker:
+
+So basically, from this standpoint, when the build is being done, the owners or stakeholders would be involved in the overall automation? We provide the platform for you to build on. You are the product owner and you are going to build on. Then you as the product owner need to be part of this business process. And your tech team whoever is actually working on it would actually be working with the other tech teams right so that's how it works okay. We provide a platform. Yeah, got it. Thank you. How many buildings are there in total? 6 buildings total. How did you build 6 buildings? It is the same building. I built 6 flats. Why did you buy it? I didn't know then, so I thought I should buy it. I thought I should buy something, so I bought it.
+
+01:16:59 - 01:18:08 Unknown Speaker:
+
+How many houses are there in the village? There are no houses. All of them are getting their heads cut from their heads in the village. There is a Maramba village next to the old one. The third one is next to it. The one next to my house is in Australia. There are two more houses there. The first one is for the elder one and the second one is for the younger one. The fourth one is about to start again. They are being built for Marambabhi. They are being built for Marambabhi. They are being built for Marambabhi. They are being built for Marambabhi. They are being built for Marambabhi. They are being built for Marambabhi. At that time, there was a big storm. There was no cement, right? Yes, there was cement.
+
+01:18:12 - 01:20:33 Unknown Speaker:
+
+When the storm stopped, they built a new one. Once again, this N was built. What was his name? His name was Anjali Mamma. Anjali Mamma was the one who built this building. Not just him. There was Buddha. There were 4 buildings next to him. This is the kitchen after the hall. This is the kitchen after the hall. Did he build a room in the cave? Yes. When he built it, the ghosts came and killed him. 2BHK or 1BHK? 1BHK. There is a quarry in HM Pallu. A granite quarry. They are there. Are they bachelors? Not bachelors. They are in higher positions. They are the system workers. How many are there in your village? There are 5,000 or so. 5,000 in your village? How many are there in your village? It's not good.
+
+01:20:33 - 01:21:52 Unknown Speaker:
+
+My father set it up by talking to him. How much does it cost in our village? Who lives in our village? In our village? How much is it? It's 4000. 4000? Yes. Hey, isn't it a few rupees a day? No, it's a small amount. Before that, there were people who were dead. They gave it to us for 6000. This book is very nice. What do you mean by the road that you gave us? It is not a new road, it is a distance road. It is not a main road, it is a road that connects you and us. It is not a main road, it is a road that connects you and us. We need a new town for HMPadu. We don't know what to do in Madigal. Is it on the road?
+
+01:21:52 - 01:23:25 Unknown Speaker:
+
+Yes, it is on the road. We can do it on the road. We can do it on the road. Do we have to, and if we do concurrent processing of those accounts, do we have to pre-book capacity in the workspace, or how do we manage the capacity there? So, before you process a 500K record, and the business process, you would have to test this in E1, E2, okay? So the volume that you're going to push in production, you need to do a performance test in E2. And then based on the performance test outcomes you would say okay i need two fourths okay. There is only one dog in our village. There is only one dog in our village. There is only one dog in our village. There is only one dog in our village.
+
+01:23:25 - 01:25:13 Unknown Speaker:
+
+There is only one dog in our village. There is only one dog in our village. There is only one dog in our village. I don't have any other advantage other than that, I don't have any other advantage other than that. I don't have any other advantage other than that. I don't have any other advantage other than that. I don't have any other advantage. He had a son and a son-in-law. He didn't have a son-in-law. He was the first son-in-law. His son-in-law was born in Bhaji. He had to go to Nelkanthapuram. He had to go to Nelkanthapuram. He had to go to Nelkanthapuram. He had to go to Nelkanthapuram. He had to go to Nelkanthapuram. So based on that, you can actually increase or decrease the amount of processing volume that you need. I see.
+
+01:25:14 - 01:26:40 Unknown Speaker:
+
+All right. So that estimation is something which we are going to derive from the lower environment testing, particularly the performance testing at a lower environment. That's correct, yes. All right. Do you have any idea about Chanchamma? I don't know. Do you have any idea about Chanchamma? I don't know. Do you have any idea about Chanchamma? No, he bought a house and bought a garden. What did you do with that money? I went to a puncture shop. Did you get a job? I got a job after I got married, but I didn't get a job. I got a job for Rs. 300, but I didn't get a job for Rs. 2000. I got a job for Rs. 1100 a day. What investment do you have? I don't have a sticker. I bought everything.
+
+01:26:45 - 01:27:46 Unknown Speaker:
+
+Still, we are earning 18 lakhs per year. No one else in our village. We are earning a small amount. All of these are the result of our hard work. We are earning a small amount. We are earning a small amount. We are earning a small amount. We are earning a small amount. We are earning a small amount. There are more than 30 of them. How many are there? How many are there? 1 in 20 people, 2 in 50 people have 2 eggs. Their wife has 1 egg and an 8-year-old has an 8-year-old. They have a master's degree and a master's degree. They have worked for 10 years. They have worked for 10 years. They have worked for 10 years. What is the price of a moustache? 10 rupees per moustache? 10 rupees per person?
+
+01:27:46 - 01:28:59 Unknown Speaker:
+
+10 rupees per person per moustache? They give it for free. If you give it for 300 rupees per moustache, they give it for 400 rupees per moustache. If you give it for 500 rupees per moustache, they give it for 500 rupees per moustache. What is the price of a moustache? 10 rupees per person? 5 rupees per person and 10 rupees per person. Is there any other price? What is the price? What is the price of a moustache? I don't know what to say. Not now, but when I was in Javan, I used to pay Rs.10,000 per hour. In that Rs.10,000, I used to pay Rs.10,000 per hour. In that Rs.10,000, I used to pay Rs.10,000 per hour. In that Rs.10,000, I used to pay Rs.10,000 per hour. So going forward.
+
+01:29:13 - 01:30:41 Unknown Speaker:
+
+The people who used to work in our village used to be the first mob. They used to work in our village and work for us. If we don't do anything about it, we will be in trouble. How many houses do you have in Ramakkam? We have about 7 houses in Ramakkam. How many houses? They will definitely do it. Who? They will definitely do it. They will definitely do it. They will definitely do it. They will definitely do it. They will definitely do it. They will definitely do it. What is this? I have never seen this. I have never seen this. I have never seen this. I have never seen this. I have never seen this. I have never seen this. I have never seen this. If they die, they will not be able to eat for 2-3 days.
+
+01:30:42 - 01:32:05 Unknown Speaker:
+
+After that, they will eat for 2-3 days. After that, they will eat for 2-3 days. After that, they will eat for 2-3 days. After that, they will eat for 2-3 days. After that, they will eat for 2-3 days. Continuously, you will be able to talk to the driver. What do you do to talk? Everyone on my side is a new generation. What happened to you when you were a child? Yes, I was born as a child. Now I am a normal person. Yes, you were born as a child. You were born once a year. Yes, I was born once a year. Now I am a normal person. Now I am a normal person. Now I am a normal person. Now I am a normal person. What about the time when the doctor was not there?
+
+01:32:06 - 01:32:54 Unknown Speaker:
+
+Do you know one more thing? In our village, everyone used to go out and work in the doctor's office. We used to go out and work in the doctor's office. We used to go out and work in the doctor's office. We used to go out and work in the doctor's office. We used to go out and work in the doctor's office. We used to work in the doctor's office. The one who has 60 acres of land is better than the one who has 10 acres of land. Is it the doctor's choice? No, it is not. If you are the first to start in the year, you should be the one to take care of him. This year is the year of Kothumal. They are in the rainy season. This year is the year of Kothumal.
+
+01:32:58 - 01:35:06 Unknown Speaker:
+
+Why should he be afraid? Why should he be afraid? Why should he be afraid? Why should he be afraid? Why should he be afraid? Different ways that you can get data into ASIC. So whether you pass the data as input to the... I have to take it again. If the doctor is full, we can do JC load. If the system is fully working, it won't be enough for JCV. It will be a down-label for the doctor. So, the system within American Express or outside of American Express via API, or you can also have these systems pass the files to us in a secure manner, which is secure... When I saw my machine, I thought it was my Rambabai. He was the one who was cutting my wounds. He was the one who was cutting my wounds.
+
+01:35:06 - 01:37:27 Unknown Speaker:
+
+He was the one who was cutting my wounds. Um um or even if you look at it we can actually get it from object store so object store is i'm not sure how many of you are aware it's a aws object store which is. They call it a strike. They call it a strike. We have to hire a driver every month. He has to pay Rs.2,000 to Rs.3,000 a year to maintain the vehicle. We have to pay Rs.1,000 to Rs.1,000 a month. My parents paid Rs.65,000 for this vehicle. It took them 3 years to pay Rs.5,000. After JC became famous, our Kishanadu Babu sold it to us. We took it. Our Ram Babu took it to our Kishanadu Babu and gave us a few lakhs.
+
+01:37:28 - 01:38:20 Unknown Speaker:
+
+Again, My Babu took a chain mission and gave us a few lakhs and gave it to our Kishanadu Babu and gave us a few lakhs. And gave it to our Kishanadu Babu and gave it to our Kishanadu Babu and gave it to our Kishanadu Babu and gave it to our Kishanadu Babu and gave it to our Kishanadu Babu and gave it to our Kishanadu Babu and gave it to our Kishanadu Babu and gave it to our Kishanadu Babu and gave it to our Kishanadu Babu and gave it to our Kishanadu Babu and gave it to our Kishanadu Babu and gave it to our Kishanadu Babu. How much does a doctor pay for 6 months? For 6 months, you have to pay Rs. 60,000 or Rs. 70,000. Second hand you will get a good one.
+
+01:38:21 - 01:40:14 Unknown Speaker:
+
+We are also making a lot of money. We have lost a little more than Rs.120,000. What do you think about this? What do you think about this? What do you think about this? What do you think about this? What do you think about this? What do you think about this? I don't know. I don't know. I don't know. How much is this? Rs. 50,000. How much is this? Rs. 150,000. How much is this? Rs. 70,000. We have email, email attachments, okay. Or Cornerstone is a big data platform within American Express. So you can actually go and get the data from Cornerstone. Or even if you look at it, you can actually get it from Object Store. So Object Store is, I'm not sure how many of you are aware, it's AWS Object Store, which is...
+
+01:40:15 - 01:42:09 Unknown Speaker:
+
+They call it S3. So it is basically a way for you to store large files and transfer and manage large files. So that is another option of storing and retrieving data. So these are the different ways we can have the data that you require for your process, whether to start a process or whether you need the data in between your process. So you can actually fetch and use the data properly. Is it okay if I do it like this? I think it will be better if you do it like this. Is it okay if I do it like this? Is it okay if I do it like this? If you open one tipper, it will take 3.5 liters. The mission is done. We bought the truck for 1800 rupees, but it took 2000 rupees for the tipper.
+
+01:42:11 - 01:44:56 Unknown Speaker:
+
+How much did it take? For the mission and for the tipper. That's the idea, isn't it? We didn't count the driver's salary. I don't know what to do with it. The mission is going to be very difficult. It's going to be very difficult. It's going to be very difficult. It's going to be very difficult. It's going to be very difficult. It's going to be very difficult. It's going to be very difficult. It's going to be very difficult. Why don't you come out of the village and make a living? Why don't you come out and make a living? What are you going to do? I am going to eat chicken. What? I am going to eat chicken with you. I am not going to eat chicken with you. I am going to eat chicken with you.
+
+01:44:56 - 01:46:41 Unknown Speaker:
+
+I am going to eat chicken with you. I am going to eat chicken with you. I am going to eat chicken with you. I am going to eat chicken with you. I am going to eat chicken with you. I am going to eat chicken with you. I am going to eat chicken with you. I am going to eat chicken with you. I don't know what to do with it. I'll just throw it away. I'll just throw it away. That's how data input files are executed. Okay, I see it now. Thank you. One box of curry and one box of papaya. One box of curry and one box of papaya. One box of curry and one box of papaya. One box of curry and one box of papaya. Essentially, yes. You can read off the .
+
+01:46:41 - 01:47:54 Unknown Speaker:
+
+We have API integrations that you can actually read their work baskets. So if you look at the service catalog, you will find all of those . Thank you. This is just an illustration part of within the data injection part. So the first example is Expedian collects all the data for AMREX and then they do a secure transfer. When I'm talking about secure transfer, it's accepted to. It's a specific functionality within AMREX for us to transfer securely large scale. And we have out of the box capabilities within ACE. Okay, if you look at it, go to Service catalog and search for Accept TV. You should be able to find it and you can read the data and using secure files, and then you can process the experience.
+
+01:47:54 - 01:49:04 Unknown Speaker:
+
+So one ingestion or input source or input channel that you can look for, okay, so that's what it is, and the second one is again. Merchant sends the data through email, via email to Amex, and then you can actually read the email content. Again, we have a lot of works features in the catalog. You can actually extract the email content and you should be able to process the merchant data. Only I have a question actually there. Specifically related to the signal of transfer. So, one of the processes that we have with us, at times it happens that the delegation process fails due to some reason, and we have to then go to event engine and re-trigger, I think the file transfer, then come back to ACE Control Center and start the process rather than having to change.
+
+01:49:05 - 01:50:16 Unknown Speaker:
+
+So, is there a way to do this action that we currently are doing from event engine via the ACE control center itself? So, one of the process has a SFT file transfer in them, Apollo process. So, in that particular process, At times it happens that the delegation fails, Wherein the SFD file transfer would fail. And then, during such circumstances, we are required to go in the event engine and re-trigger that particular action. And then we have to go back to a control center and manually start the process. Okay. So, is it right to do it from the control center itself? You can, okay. So if you're actually a step, that step, you can actually add it to one of your processes and then add that as one of your steps if you want to replay it.
+
+01:50:17 - 01:51:23 Unknown Speaker:
+
+Okay, so I'm not sure why the secure file transfer fails. Okay. That's something you, if you want, you can even configure SFTP to check the file transfer location every few minutes, right? Something of that sort. Right? So, and then see if the file has arrived at the location to . Okay, got it. I'll suggest. So, actually, you want to also think about how to enable the reliable automation. So, we covered some of this content a little yesterday. Okay, but what do you want to think about when you're building reliable automation in ASS? Okay, I have always things are going to break, right? So there are going to be exceptions, there are going to be scenarios that you didn't anticipate for, and there are going to be scenarios, say an Excel system goes down.
+
+01:51:24 - 01:54:29 Unknown Speaker:
+
+Okay, so how do you handle these scenarios? That is where we provide you with all capabilities to design your process in such a way that you can actually, uh, have reliable automation forward. Okay, so this is an example, okay, so in this case, okay, say, but actually trying to read the list of. You are trying to add a memo to the account? Business exception say the account got cancelled already. Okay, and what do you do at that point? Okay, so you can actually notify, uh, an email to the operations saying, Okay, this particular account has been. The automation has failed. So, whatever you want, however you want to want. So, you can handle this as a system exception. When you're updating it, their API failed. Then, essentially, that's a system exception at that point.
+
+01:54:30 - 01:55:42 Unknown Speaker:
+
+So, typically, system exceptions, the log it and capture it already. The SI comes to know immediately, so you don't have to worry about it. But, the thing is, If you want, okay, so this is just an illustration. You wouldn't do this. You wouldn't like to send an email to SRE. But if you want, okay, so you want to send an email to the production support or the SRE team, okay, which manages our application platform, right? So if you want to send a note to them, then you can actually do that, okay? So that's a way for you to design your process. This process, okay, so again, you will, if the API fails, okay, but then you want to actually think about, okay, I want to actually retry if there is a failure in the API, and do the same thing, right, say, send an email to ops, or... one four three one.
+
+01:56:14 - 01:57:28 Unknown Speaker:
+
+No, I'm not. I'll talk to you later. I'm not in the mood to talk to you again. I don't like your french fries, bro. You gave me french fries again? Why? Because I have so many of them. Yeah, that's what I'm saying. So here you can design a process in such a way that you can introduce a retry mechanism. And you don't want to retry like immediately, right? So when you think about retries, the retry . When you're thinking about retries, you might also want to think about, how long do I wait? Before I retry. So you can introduce a timer in between which says, OK, I will wait for five seconds before I want to retry. So that's what this illustration shows up. So when you're designing a process, you might want to think about these things.
+
+01:57:34 - 01:59:28 Unknown Speaker:
+
+Any questions? One of the other things that we want to touch upon is buildings in Europe. As a business thing, what are you thinking of? I'm getting this data and processing this data. How secure is my data? So there are JNS partners, there is PIA data that doesn't work, there is data that is very critical so that it doesn't, nobody else should actually see it. So you are thinking about all those things. So it gives you all of these capabilities out of the box. You don't have to... Think twice about whether my data is secure. So we give you all the capabilities to process your data in a secure manner, have your business process in a secure manner. So EDPP is a system or team with an American Express who are enterprise data protection and privacy practices.
+
+01:59:29 - 02:00:34 Unknown Speaker:
+
+They define how the data needs to be handled with an American Express. And it follows all EDPP security guidelines. So, for example, if you are thinking about deployment ID, okay? So, what we talked about, a deployment ID is a separate way for you to segregate the business processes at the business unit level or business workflow level, okay? So, you say, all my KYC processors goes to this deployment ID. All my India market data would go to this particular deployment ID. So you can have that kind of authorizations and people who have access to a specific deployment ID. That deployment ID, okay. And nobody else other than your platform support team. So we do have access to all deployment IDs because we support your... Diplomat IDs across the board.
+
+02:00:34 - 02:02:31 Unknown Speaker:
+
+But other than that, any other teams who try to access your Diplomat ID should not be able to access it. Same with your work baskets, your queues that we talked about earlier, and also the admin roles for your Diplomat ID. So you can configure all those. Your PIA data, if at a process level, if you are defending... When I was in Hyderabad, a girl called me and told me that her brother had brought her here. She asked me what I was doing. I told her that I was going to take care of the village. She asked me what I was doing. Okay, we'll be right back. All right thank you so much for me i hope it was informative. Thank you.

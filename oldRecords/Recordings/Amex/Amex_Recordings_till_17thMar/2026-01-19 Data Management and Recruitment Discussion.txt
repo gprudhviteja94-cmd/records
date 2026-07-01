@@ -1,0 +1,207 @@
+2026-01-19 Data Management and Recruitment Discussion
+
+Creation Time: 2026/1/19
+
+
+📅About Meeting
+
+  • Date & Time: 2026-01-19 18:59 (Duration: 1607 seconds)
+  • Location: Virtual (Teams)
+  • Attendee: Anand, Rachna, Athar, Kundan, Atik, Jaisvi, Samir, Shabneer, Sachin, Jameer, Anandi, others (names spoken in transcript)
+
+
+📒Meeting Outline
+
+
+Data Volume & Failure Grouping
+
+  • 280 rules grouped into one Discussion on an example where 280 rules were grouped into a single item. Concerns raised that 280 failures looks excessively high and likely caused by test data being inserted. Rachna and others agreed actual failures should be much lower (suggested maximum ~30 if daily failures occur throughout a month). Clarified there are no intraday rules; maximum frequency is daily.
+  • Multiple failure occurrences and merging justifications Suggested approach: if the same rule fails multiple times (e.g., twice) and has different descriptions/justifications, append both justifications (comma-separated or combined) rather than creating separate rule entries. Team agreed this is acceptable to avoid excessive duplication.
+
+
+Justification & Outcome Classification UI/Flow
+
+  • Fields required from UI Clarified required fields: justification (text), outcome classification (true positive / false positive), and sub-status (delete rule / revise rule / monitor / modify rule). The flow: user selects outcome classification, then provides justification and selects sub-status.
+  • Justification visibility and requirement Decision: always show a justification text box (including for false positives). Users must provide justification when selecting any outcome (delete, revise, monitor). Athar and Kundan were requested to add the justification text box for false positive selection. Team agreed to make justification mandatory and ensure drop-downs have sensible defaults (e.g., default outcome = positive) and validation that required fields are filled before submission.
+  • Hierarchy and conditional fields Discussed not making justification conditional (i.e., always present) to ease user experience and downstream processing (Atik’s work). Sub-status is considered a child field of outcome classification (sub-status appears based on outcome selection) but justification remains common.
+
+
+Recruitment / Candidate Discussion (TCS / Insighting Global role)
+
+  • Interview scheduling & employment model Candidate shortlisted for initial virtual interview tomorrow 13:00–13:30 (Teams). Clarified employment: role is with TCS for a long-term project but engagement is under Insighting Global brand (contract roles). Work location: client expects work from office primarily; occasional WFH possible subject to reporting manager approval. Candidate confirmed availability to join immediately and preference for contract engagement without PF generation. Recruiter agreed to handle remuneration structure and clarify PF/benefits.
+  • Salary expectations Candidate expectation around 48 (CTC). Negotiability discussed; candidate open to decision if PF is not generated. Recruiter to follow up with clarity and confirm candidate’s acceptance.
+
+
+Daily vs Onboard Metric Computation (DQ repository / Artifacts / Thresholds)
+
+  • Role of Artifacts table vs DQ repository Clarified process: artifacts table is only a temporary staging for user inputs from UI (initial onboarding). Once onboarded, main processing uses the DQ repository (DQ repo) which stores the metric configurations (table name, variable name, focus metric, algorithm selection, etc.). Artifacts are not used in daily run.
+  • Onboard metric flow Onboard metric job: determines best metric and algorithm, runs historical data (6/12 months) against the source table, computes aggregated statistics (mean, stddev, skew, min/max, etc.), and inserts thresholds (lower/upper bounds) into threshold table in DQ repo.
+  • Daily run flow Daily process should:
+    • Read each metric configuration row from DQ repository.
+    • Based on focus metric (mean/count/median/etc.), parameterize and execute the appropriate aggregation query for the day (e.g., yesterday to today).
+    • Retrieve the aggregated value for the day (using the same logic used during onboarding but restricted to the day window).
+    • Compare the daily aggregated value with stored thresholds (lower and upper bounds) using metric ID mapping.
+    • Insert daily result into DQ results, including primary method used. Note: primary method can change over time; method recalculation happens during periodic re-onboard (e.g., monthly) not on every daily run.
+  • Implementation detail and code clarity Anand demonstrated code snippets (creating temporary base tables for mean, etc.) and recommended reusing those queries but parameterized for the daily window rather than re-reading artifacts. Team agreed: daily pipeline should read from DQ repository and execute parameterized aggregation queries; artifacts are not required at this stage. Samir/Athar to update daily code accordingly.
+  • Confusion resolved Several participants confused artifacts vs DQ repo usage. Confirmed artifacts = UI staging only; DQ repository holds the canonical metric definitions and must be used for both daily checks and threshold mapping.
+
+
+Miscellaneous / Open Items
+
+  • Validation & defaults UI drop-down defaults and mandatory field validation to be added (no empty outcome / justification).
+  • Work distribution Atik’s work will be eased by always having justification available; Athar & Kundan to implement justification box and validation.
+  • Code changes Samir acknowledged making a recent change. Anand confirmed remaining part is not complicated and will be implemented; team to re-test daily run flow end-to-end.
+
+
+📋Overview
+
+  • Confirmed 280 grouped failures likely due to test data; real failures should be far less (approx. up to 30 daily-persistent).
+  • Agreed to merge multiple justifications for same rule instead of creating many duplicate entries.
+  • Justification text box will be mandatory and shown for all outcome classifications (including false positives); sub-status selection follows outcome classification.
+  • Artifacts table is only for onboarding; daily runs must use DQ repository metric definitions to compute daily aggregated values.
+  • Onboard process creates thresholds (lower/upper bounds) using historical data; daily runs compare daily aggregation against those thresholds.
+  • UI validation to ensure outcome and justification are filled before submitting.
+  • Candidate interview scheduled; employment model clarified as TCS project under Insighting Global; work-from-office expected with occasional WFH; salary and PF concerns to be handled by recruiter.
+
+
+🎯Todo List
+
+  • Athar:
+    
+    • Add justification text box to UI for false positive and all outcome selections; make it mandatory. (Due: ASAP / before next demo)
+    • Ensure validation prevents submission when outcome or justification is empty. (Due: ASAP)
+
+  • Kundan:
+    
+    • Implement UI changes for outcome classification and sub-status dropdowns (delete / revise / monitor / modify rule) and default values. (Due: ASAP)
+
+  • Atik:
+    
+    • Confirm downstream processing expectations for justification field and adjust ingestion logic to read combined justifications. (Due: Before next integration test)
+
+  • Samir:
+    
+    • Update daily-run code to read metric definitions from DQ repository (not artifacts), parameterize aggregation queries (daily window), compute daily aggregated values, and compare with thresholds. (Due: Next sprint / coordinate with Anand)
+    • Insert daily results into DQ results including primary method used. (Due: Next sprint)
+
+  • Anand:
+    
+    • Share final parameterized query example and confirm how to compute per-day aggregates (examples for mean/count) for implementation by Samir. (Due: Immediate)
+    • Re-test daily flow end-to-end after Samir’s changes. (Due: After Samir’s update)
+
+  • Recruiter / Jaisvi:
+    
+    • Confirm interview schedule (Teams) and share invite for tomorrow 13:00–13:30. (Due: Today)
+    • Clarify PF/contract and salary negotiability with client and update candidate. (Due: Before interview)
+
+  • Team (collective):
+    
+    • Review and confirm the decision to append multiple justifications for the same rule (format and storage schema). (Due: Design sync)
+    • Plan periodic re-onboarding cadence (monthly or as decided) for recalculating primary method and thresholds. (Due: Next planning meeting)
+
+
+Transcription
+
+00:00:03 - 00:00:59 Unknown Speaker:
+
+So, let's say, you know, we are grouping it here, okay? So, let's say 280 rules, we grouped it into a, you know, the single one. So, 280 can have, you know, different, different root causes, okay? Correct. So, which one you will pick it? Means, Anand, he meant to say that you already... First of all, 280... Looks like a very huge number to me first of all. Because same data we are right now inserting. So don't check this data. These are test data. Yeah, but otherwise it should not be this much, right, Rachna? Exactly, like the failures cannot be more than 30 and 30 also I am saying if it has failed every day in the month and they have not responded for an entire month. Because we have daily rules only, the maximum frequency is daily.
+
+00:00:59 - 00:02:04 Unknown Speaker:
+
+There are no intraday rules. Let's just say you have the same rule, let's just say, uh, failing for two times, right? And it has two different descriptions or justifications, just like appended, using a comma or something and put both of them down is what I'd say. Probably does that make sense? Yeah, I think that should be okay. Yeah, because most of the cases we are expecting, um, yeah, and uh, either way, we are expecting the partners to respond like within a week, right? So anyway, like, uh, so many multiple failures should not pile up that way. Okay, yeah. So what is justification? What is? Another column? Means whatever we are receiving from here, justification and outcome classification, these are what they are looking. Okay, I think justification in itself should be fine, because that would not come for that, would not come for a false positive.
+
+00:02:04 - 00:03:06 Unknown Speaker:
+
+That would make sense, right? Because they could also know log, whatever was the justification for that as well. Okay, I think initially that is that in mind as well, but I think over the discussion it got removed, I think. But we should have that field for false positive as well. Yeah, like whatever option they are selecting, whether to delete the rule, edit the rule, along with that, they have to provide justification for their selection. Okay, we'll make that change. Athar and Kundan, just for your info, we need to add that justification box, Athar, especially for you, if even it is false positive. Athar, you are there, right? Yes, sir, yeah. So add that justification text box for false positive, also post somebody, select that combo box, select you know, delete rule and all that delete and just add.
+
+00:03:06 - 00:04:36 Unknown Speaker:
+
+It should be like outcome classification, where the user selects true positive, false positive. After that we have to show the justification, or then again, that drop down will come for revise rule, modify rule, and then after that. If it is, if it is, means it would form like this. If it is true positive, true positive, we already have justification, justification, correct, right? Yeah, but if it is false positive, right now, we have a drop down. So where we are selecting delete rule, delete or revise, or monitor, this would be the sub status, sub status. Uh, rather than creating this, you know, you need to check that hierarchy. Okay, got it, got it? No one thing. Can we move justification in the first place. So, it should be like this. No, no, no.
+
+00:04:37 - 00:05:41 Unknown Speaker:
+
+How you just provide justification and then, you know, this delete rule. This is not possible. So, justification is common, right? It's for true positive. Yeah. So, it'll be fine. Then, let's do it. Then, put that justification. It would ease out Atik's work, that's it. Yeah, that's fine, that's fine. We will not conditionally, so if I say about the config, we have to provide two entries. One below true positive, false positive. If we are just giving a common without condition, there would be only one entry. So that's the only thing. Even the drop-down is, you know, default we set it to positive. You know, you cannot change that one, you cannot enter, you know, empty or anything. Yeah, point is basically, I suggest make sure that both of them are filled, then only you can submit.
+
+00:05:41 - 00:06:54 Unknown Speaker:
+
+That's all. Yes, yeah, that's fine, okay? So these are all changes on you know, once site. So they have shortlisted your profile for initial discussion for tomorrow and one o'clock with PCs for a virtual round of interview. Okay, it would be a team's call, team's meeting, so I request you to be available between 1 to 1 30 tomorrow. But sir, I got to know that you are, it's a direct payroll with TCS, right? No, no, no. It's not direct payroll. It's with TCS. This is a long-term project which we are expanding with TCS, right? It's a long-term project which we are expanding under the direct roles of Insighting Global. Okay, okay, fine. Right? You see, Insighting Global, we are one of our own branded organization. We have been in this for six years.
+
+00:06:55 - 00:08:04 Unknown Speaker:
+
+We are one of the leading IT services organization. She told me actually sorry to cut you she told me but and I said. If it is a contract role and work from home, I might show interest. Work from home, I don't think so we can give this opportunity as work from home because DCS expects everyone to work from office only. I think all the five years now they have that opportunity of work from office only. So you can get the work from home once in a while. I think that depends upon your... A reporting manager is allowing you for a work from home that depends completely on your reporting manager. It is, yes, okay, so that at this point of time, the message that we want to convey is like.
+
+00:08:04 - 00:09:28 Unknown Speaker:
+
+As per the information from the client, it would be the complete work from office, but once in a while you can expect the work from home, so that depends. Okay, so basically, for me, okay, work from office is okay. But uh, where do you stay in the band of? So, I see that like, you know, when Jaisvi could have discussed with you about this opportunity, right? You also informed that, you know, that you are currently available to join immediately as well. As your last coordinate was on September 20th, is it? Yeah. 2020? 23? 25. Okay, I think there is a mistake. I am doing only contract jobs now, so even this one there is a contract role, then I can show interest. I'm sorry, this is also a long-term project. Yeah, see that I'm working to.
+
+00:09:28 - 00:10:48 Unknown Speaker:
+
+Contractually, you are working as a direct employee. No, no, I have no problem. But uh, uh, I don't want you to generate any PF or anything. So I, I'll do. For me. It's a contract only, I can, I'll work for long term. Only then she told me already, I told her already, she said. That is okay, we will manage. It is what she told. If it is like, work for you, like a full-time with inciting global, as I told you, you will get your bf all your insurance. What salary can I expect? CTC, CTC Yeah, uh, I think, you know, when we discussed with you, uh, informed you. But your current budget was a portfolio, right? And your expectations is around 48. Yeah, right, yes. So is there any negotiable in that budget, by the way?
+
+00:10:48 - 00:11:44 Unknown Speaker:
+
+Is there any negotiation that you can look forward and help? No only thing is if there is no PF, I can that, let me take the decision on that part. Thank you, thank you. We can see to that, we can work in a process. So I'll just drop off, okay? But you should help us in giving the proper clarity towards your. Uh, and then do you need me here? Or do I? Uh? Generally we go with the players. Okay, right, okay, yeah, I'll come back. Yeah, thank you. Please confirm back. Sure, sure. Yeah, thank you, thank you, thank you. Yes, go ahead. I think you're on mute. And Shabneer, you can also continue, I think. My bad, I was speaking on mute. Yeah, Samir, go ahead. Serious, too.
+
+00:11:44 - 00:12:48 Unknown Speaker:
+
+So this was, you know, regarding Anand, finding the mean and max when we were going to compare it for the last 12 months, right? Where we used to take the, you know, while doing a comparison, right? Last one, compare against the threshold lower and upper value, right? So now suppose we have data for six months. Okay, uh, for a particular table. Uh uh, if you can show me that dummy uh record that you are showing me that people that no, I mean that, no, that was, this is the one, right? This is the one. No, no, no, go back, it's artifacts. Okay, okay, then you can go ahead and then mention it to somebody. So once we populate the artifact data on end right, go to Can you show me the artifact table once?
+
+00:12:49 - 00:13:41 Unknown Speaker:
+
+So, now this would be having on a maybe on a same table. No, not from here. The Excel sheet that you are maintaining, right? So, this is the very first your artifact table, right? Yeah. So, this can have different table with different column name, right? Which would be having the metrics basically. Yeah. Right? So, now when you are going to compare this data for last element, which metric to pick data? Like, Max and mean, right? How we are going to determine whether it's based on the table name or no? No, it's not from here. SaCHIN Uh, Jameer, I think we discussed this already on Friday, right? So yeah, let me so you. Uh so. From the thresholds table, we are actually picking this lower and upper bond. Uh right, uh right, correct based on the metric, right?
+
+00:13:41 - 00:14:33 Unknown Speaker:
+
+We have a six months data already that we run for, uh, six months, like our job, one of the job which we run for six months. Suppose. And we have, uh, read all the artifacts from the artifacts table and created a threshold for the six months. That way, for each room, for each suppose, there is a table called X and the column Y. And for that, based on the focus metric we have calculated, and we have a threshold like lower and upper values. Likewise, we have all the rules and we have all the thresholds. Now, suppose we are running for a day or a month, right? Suppose we are considering we are running for a day, that means from next day to today, we are running a table and column is something like A and they have calculated the value.
+
+00:14:46 - 00:15:42 Unknown Speaker:
+
+The day data is also we are actually getting it from the artifact and we are actually calculating. And, uh, getting the threshold, like, uh, sorry, not the threshold. We are getting this aggregated like primary method and the. I think you're getting a little confused with the tables itself, Shamil. See, first of all, artifacts table is not at all involved, right? Artifacts is what? It's the initial requirement that we get from our users, right? That's all, right? That's the first time we look at the table and then we calculate and insert it into Deque repository. That's the main table. Table, right? That has the focus metric and everything which is actually required. So once you have onboarded the rule into this table, then artifacts is not required at all. That's done. Like we don't need that table.
+
+00:15:43 - 00:16:23 Unknown Speaker:
+
+So based on this, then you calculate the threshold and everything and insert the lower or upper bound for that particular metric ID and threshold table, right? Yes. For 6 months or 12 months or whatever. Then on a daily basis when you run, you go back to DQ repository, you check what is the focus metric. And then based on that focus metric, which is like average or mean, or count, or whatever. You run that same query which I showed you, that exact query also, I showed you right key, what, table, name, variable, name, where, condition, and everything you run that for that particular day. And then that whatever value is there, you just join it based on metric ID and check if it is like between lower bound and upper bound, that's all okay.
+
+00:16:23 - 00:17:23 Unknown Speaker:
+
+That means for a day or a month. The input data is actually from DQ repository, not from the data artifacts. Artifacts is not not at all anywhere required DQ repository. Maybe you get the table name, the variable name, so you actually query the main table, right? Like just if it is ReSI, Amex, Cust, is the table name right, so you actually go? You say focus metric if it is average, so select average variable name is, let's just say user ID. Suppose in this metric we have one record, and for that one record, we have to run the onboard metric again for that one day. And we have here we have a metric ID, so so you don't have to run onboard metric again. Uh, Samir, So what I meant is like, Yeah, yeah, I understood, but here what I am saying is like, Uh, we have.
+
+00:17:23 - 00:18:25 Unknown Speaker:
+
+We are utilizing the same onboard metric for all. Uh, let me show you the code that's like the new one. So from this DQ repository, we are actually reading one record, okay, for a day, for one day. We are trying to calculate the average. We have to run this and we will get the mean RSD like a standard deviation and skew, and based on this, we will get no. No, no, no, that's what, right? Just go up. Yeah, all you have to do is in, just scroll down, scroll down a little bit. Yeah, here there is there, right? If, if. Uh, yeah. Like for example, in this one, if let's just say your focus metric is mean, then create or replace table data dot mean, underscore that thing.
+
+00:18:25 - 00:19:27 Unknown Speaker:
+
+Yes, these lines, for example line number 46, line number 54, this will have value. Actually. Yeah, this will work. That is exactly what you have to do, right for that one table. Sorry, one day, like where your date condition will be current date and current between current date and current date or something like that. Yeah, for that day, you create the um, okay. So that means like from the DQ repository we will get we got it, so this is the user table and all these details we are getting from the DQ repository. Okay, so as this is one day one, we had get like yesterday, from yesterday to till date. Okay, and uh, so, suppose the focus metric is count, then the so, then, uh, the start date for here is like this yesterday date.
+
+00:19:27 - 00:20:28 Unknown Speaker:
+
+And we are doing this, uh, creating this base, that means, which is this one, uh, data data.com, so this will have that average value, uh, aggregated. It's not safe to delete all the agents. You don't even have to create the base, you can create it as well, but you just want that value. Basically can do a select. Okay, you are saying that we have to directly pick that, uh, like once we go, once we, uh, invoke this uh. Data from data DQ repository. Based on the focus metric, we have to read this table data and we have the value directly. Right? Exactly, exactly, okay, so that data should be compared with this threshold data, you're saying exactly based on that metric idea, right? Which is the mapping is there between, yeah, the mean and max values are there.
+
+00:20:28 - 00:21:33 Unknown Speaker:
+
+Uh, you consider the DQL project table for that metric, so you can compare that. So if we have focus metric, then for based on the force focus metric. And uh, like, uh, you can get the table name directly if you see here. So so what, uh, Anandi saying that? Like, instead of running this entire thing, we can directly read this table. And we have this value and that aggregate. That value should be compared with the threshold. Lower and upper ones, correct? That's what I was mentioning, and I think the basics. What exactly are we trying to do is a little unclear. I think, still for you, so let's go through that very, very clearly right now. Yeah, like, till now, what I'm trying to do is like, I am trying to read the artifact table instead of, uh, DQ repository.
+
+00:21:33 - 00:22:25 Unknown Speaker:
+
+So like, uh, that's why I was confused, because there is no metric idea out there. So now I will try to let me just run the entire flow once again. Right? Put you at the high level. What we are doing, right? We are getting requirements from the user. First of all, yes, that we are temporarily storing in artifacts table, that's all that is all the what do you say need of artifacts, which is we are coming from the UI. Correct exactly done right. Next is when you have to onboard it, you run onboard metric, onboard method is this entire code which I have already given right, which does this, whatever. It first of all calculates the right metric to use, then the right algorithm to use, then using that algorithm on the original table it runs the data for 6 months or 12 months and then creates the thresholds, inserts the thresholds, right?
+
+00:22:25 - 00:23:08 Unknown Speaker:
+
+Yeah, that is done. Now when I have to run the check daily, right? Now what I am trying to do is every day I am calculating the value for that particular day and comparing it if that lies between those thresholds or not. When you say calculating for that particular day means like? Uh, this is the calculation you are saying, right? Exactly exactly. So what I have to do is in my in my daily code, in my daily code, all I have to do is go go to DQ repository. One by one, I check each row, I say, Okay, here everything is like, parameterized, right? Your uh? Select variable name, your table, name, your where, condition, your group. By what table. Everything is parameterized. Select metric everything.
+
+00:23:09 - 00:24:13 Unknown Speaker:
+
+So you just have to check with your repository what is my focus method, what is my table name, variable name. Accordingly, just parameterize and create the same variable. Which is like 46 or 62 or whatever, right? That's all. So that means when you say calculate, so if you are running for one day, this is the starting date, which is the last yesterday date. And we are passing the test data and we are calculating this and we will have this table. This aggregation table correct, correct. So not this one, not this one, and I hope we have to run this way this as well. Why I am? I am saying this? Because in finally, we have to like based on the uh, comparison between lower and upper bound for this aggregated value, right for one day.
+
+00:24:13 - 00:24:57 Unknown Speaker:
+
+So we also have need to like in the DQ results we have when you insert the data. We also need to insert the primary method, so this primary method will be decided only here, like no primary method, you already have it in DQ repository. Also, right? Why do you have to calculate again? When you say so? Here? I can see that we have to insert the new insert, right? Like for one day, maybe that primary method may change, right? Like you don't know. Because they're not recalculating the thresholds, right? Thresholds are constant, constant. Okay, then we can do changes, then the method changes, that we will do once a month, which is the second requirement, right? Okay, then, yeah, I got it. Then everything will be there in the DQ repository only.
+
+00:24:57 - 00:25:57 Unknown Speaker:
+
+We have to only like calculate this segregated value and we have to compare with lower and upper bound, and if it is true, we have to use that. And whether we have to just need to mention is allow me or not. So, I will make this change accordingly and retake her once. But let's clarify, I mean, if they're still doubtful. Because, see, the rest of the code I had provided already. This was the only part of the code. We're still figuring out this part of the code, which is not exactly very complicated also. So, that's why I'm just trying to understand. Because, see, this is still first part. And we had like two three four and everything still left to do right yeah so like yeah i understood donald so we already come yeah.
+
+00:26:17 - 00:26:37 Unknown Speaker:
+
+Sure, anything else? I think this was the query. Thanks, Anand. Yeah, no worries. Thank you. Thanks, Anand. Sameer, just made that change.

@@ -1,0 +1,347 @@
+2026-01-19 Configuration Changes and Backend Support Prioritization
+
+Creation Time: 2026/1/19
+
+
+📅About Meeting
+
+  • Date & Time: 2026-01-19 11:37 (Duration: 2424 seconds)
+  • Location: Virtual meeting / Team channels
+  • Attendee: Athar, Kundal, Bhagawan, Raj, Sindhuja, Varun, Sachin, Saurabh, Sayyed (Syed), Anna, Nirman, Rachna, Prithvi, Sameer (Samira?), Suman Reddy, Nirmal, Ayapa, others (not all named explicitly)
+
+
+📒Meeting Outline
+
+
+Configuration & False-Positive Handling (High priority)
+
+  • Config JSON changes Discussed required changes to the configuration JSON: for several variables (example: table name declarations) the current values must be replaced with the actual/expected values. This is the first required change and must be applied to the repo/config urgently.
+
+  • False-positive reason update The false-positive selection logic must add one more reason option: "monitor rule" in addition to existing "delete rule" and "revised rule". This is the second required change to be deployed.
+
+  • Priority and deadlines These two changes are highest priority: target deployment requested before 23rd January because of a demo on 27th January and public holiday on 26th. If missed (by 23rd), the 27th demo will be compromised.
+
+  • Immediate assigned owners and collaboration Both Athar and Kundal instructed to modify urgently today. Athar has dependencies (Bhagawan). If Bhagawan is unresponsive in the existing group, create a new group with Sindhuja, Athar and Bhagawan; escalate to Raj if still no response. Sindhuja to ask Varun to support for today if possible.
+
+
+PR Approvals, Dependencies & Blockers
+
+  • PR review bottleneck PR approvals are a notable bottleneck — reviewers (e.g., Bug One / Bug1 / core owner) require thorough review and can take ~1 hour or more. There have been late reviews (sometimes after two weeks). Team to chase reviewers and create group chats for faster turnaround (target: coordinated review once reviewer logs in — suggested around 20:00 IST).
+
+  • Resource availability issues Key developers (Bug1, others) are occupied with high-priority work (Project 10) and may not join sprint calls or be available for reviews. Raj and Saurabh indicated limited availability; several team members have been on leave (Saurabh, Athar) producing gaps (no communication between 9th–14th).
+
+  • Backend ownership & knowledge gaps ACE workspace backend changes: Bug1 is the core owner; only a few developers (Bug1, some others, Anna) have backend knowledge. Sayyed/Syed is looking into backend but has local setup issues and needs assistance (Anna or Bhagawan). If Sayyed is blocked, it becomes critical to get a backend person in IST timezone to debug.
+
+  • Sub-status issue Sub-status (a specific functionality) must be fixed today — assistance from Bug1 or appropriate backend owner required. PRs can be approved, but sub-status is the main blocking problem needing Bug1’s help.
+
+  • Communication & escalation If key people remain unavailable through the week, communicate to Anand and stakeholders that dashboard changes cannot be guaranteed by 27th. Continue development work locally to minimize dependency wait times.
+
+
+Support Requests & Temporary Assistance
+
+  • Varun support Sindhuja to try to get Varun’s assistance just for today; acknowledge his bandwidth may be limited due to other commitments.
+
+  • Approval workaround If Bhagawan doesn’t respond, create direct group chats with Bhagawan, Athar and Sindhuja; escalate to Raj if necessary. For PR approvals, consider alternate approver (Saurabh) if available.
+
+
+QTrack / Quantro Progress, Testing & Build
+
+  • Quantro (Q Track) status Developer work completed for a portion; testing is ongoing. Day-level test cases pass; month-level/other test scenarios have some concerns. Data migration mostly complete; encountering file corruption when loading data — effort ongoing to finish migration and mark as complete.
+
+  • Validation & scripts Build completed on some side; validation to start. Nirman assigned additional script work — he received access and will start on Monday (was out today). Rachna to review scripts; some scripts already sent to her, more to be shared.
+
+  • Code sharing guidance Do not paste code into email body or Slack directly. Share via repo links and grant read access; attach files with proper security settings if needed. Avoid exposing schema/table details in plain email or Slack to minimize risk. Delete downloaded code in Slack channels after use.
+
+  • Service setup & environment access Multiple developers have incomplete local setups (Java 21, GitHub Copilot, JDK links provided in dev channel). Rally access and other accesses were pending for some. Priority: set up A-score service and composer services so development can proceed. Ayapa and others available as examples for good process (Rally updates).
+
+
+PI Expectations, Processes & Team Conduct
+
+  • Rally and activity updates Emphasis on keeping Rally updated and burning down hours regularly. Raj monitors Rally; lack of updates can nullify delivered work from visibility perspective. Recommendation: add recurring calendar reminders and update every alternate day or after sprint planning; use daily/DSU or evening DSU to update.
+
+  • Slack responsiveness Expected turnaround on Slack tags/messages: within 30 minutes where possible. Don’t ignore mentions.
+
+  • Deadlines & accountability Stick to deadlines unless exceptional personal reasons. Management expects the present team to increase productivity (use AI tools where applicable) rather than adding headcount.
+
+  • AI/Vertex/LLM tools Discussion about Vertex AI and collaboration (Amex & ChatGPT). Team encouraged to join public/organized sessions for available tools and training (multiple sessions referenced). Access to enterprise LLMs requires organizational collaboration; follow up with Raj for permissions. Use available sessions to learn how to apply the tools inside project constraints.
+
+
+QTrack Query Generation Architecture (Agent-based automation proposal)
+
+  • Proposed architecture summary Proposed an agent-based flow to automate query generation and execution:
+    
+    • Natural Language Interpretation Agent: parses business user's requirement at ACE platform layer.
+    • Query Generation Agent: creates queries leveraging schema info and RAG (Retrieval-Augmented Generation) using historical rule/query repository (approx. 1,500 rules).
+    • Schema Access Module: fetches table schema for accurate query generation.
+    • Validation & Execution Agents: validate generated query; provide frontend buttons for devs to execute in dev/test; production executions gated by approvals.
+    • Feedback loop and publishing; phase 2: trigger DAG for fully automated pipeline.
+    • Emphasis on implementing a layer at ACE side (cannot run purely on BigQuery input), use existing queries as reference, and ensure output matches current SPL/format.
+
+  • Feasibility & next steps Initial review with Suman Reddy indicates feasibility; needs further study of existing queries to analyze transformation approach. Recommendation: create another dedicated discussion to analyze existing queries and define the interpretation agent’s minimal viable model and inputs.
+
+
+Miscellaneous Items
+
+  • E2 pipeline E2 pipeline has been approved. Sameer to notify once done; then move pipeline to next environment in coordination with stakeholders.
+
+  • General housekeeping Several team members to coordinate on local setups, access, and share scripts to enable validation by tomorrow. Encourage cleaning up repo folders and avoiding ad-hoc folder creation in repo.
+
+
+📋Overview
+
+  • Config JSON must be updated to use actual expected values for specific variables (table name and similar fields).
+  • Add "monitor rule" to false-positive selection reasons in code and deploy before 23rd Jan.
+  • Sub-status issue is a critical blocker and must be fixed today; requires backend owner involvement (Bug1 / Bhagawan / Sayyed / Anna).
+  • PR approval delay is a known bottleneck; create focused group chats and coordinate reviews during reviewer availability to speed up approvals.
+  • If key reviewers remain unavailable, escalate to Raj and inform Anand by EOD if the 27th demo will be impacted.
+  • Continue development locally to reduce idle dependency time; keep work moving where possible.
+  • QTrack automation proposal (agent + RAG) is promising; schedule deeper follow-up to analyze existing queries and feasibility.
+  • Maintain strict repo/code sharing security: use repo links, file attachments with security level, avoid pasting code in emails/Slack.
+  • Rally updates and Slack responsiveness mandatory; set recurring reminders and update tasks regularly to maintain visibility.
+  • E2 pipeline approved — coordinate environment promotion after Sameer’s confirmation.
+  • Team members with incomplete setups must prioritize getting set up today to receive tasks starting tomorrow.
+
+
+🎯Todo List
+
+  • Athar:
+    
+    • Update config JSON values to actual/expected values (table name and specified variables) — urgent, today (EOD).
+    • Add "monitor rule" option to false-positive selection logic and create PR — urgent, today (EOD).
+    • Work with Bhagawan (or escalate) to resolve sub-status issue — urgent, today (EOD).
+
+  • Kundal:
+    
+    • Assist Athar with the JSON and false-positive change; coordinate testing — urgent, today (EOD).
+    • Help chase Bhagawan if unresponsive and join new group chat if created.
+
+  • Sindhuja:
+    
+    • Create new group chat (if required) including Sindhuja, Athar, Bhagawan to chase Bhagawan; escalate to Raj if no response — today.
+    • Request Varun to support the team for today’s urgent fixes (try get availability) — today EOD.
+    • Communicate to Anand by EOD if backend dependency prevents delivery by 27th (if confirmed).
+
+  • Bhagawan / Bug1 (core backend owner):
+    
+    • Provide assistance on sub-status fix and any backend debugging required — respond ASAP today (target: within a few hours).
+    • Review and approve dependent PRs where feasible or delegate alternate reviewer (Saurabh) — ASAP.
+
+  • Sayyed / Syed:
+    
+    • Confirm local setup status; request assistance from Anna or Bhagawan if blocked — today.
+    • If local is functional, assist debugging backend sub-status issues — today.
+
+  • Saurabh:
+    
+    • Provide PR review assistance if available; coordinate approval if Bug1 unavailable — ASAP.
+
+  • Varun:
+    
+    • Provide temporary support for today if available (coordinate via Sindhuja) — today if possible.
+
+  • Sachin:
+    
+    • Continue validation/testing tasks for Quantro; finish data migration and resolve file corruption issue — finish ASAP (target: today/tomorrow).
+    • Ensure build validation and share scripts with Rachna (attach files or repo link, do not paste in email body) — today.
+
+  • Nirman:
+    
+    • Start script assignment and code check (access granted); begin work Monday / continue after return — start as available.
+
+  • Rachna:
+    
+    • Review scripts sent and provide feedback; request remaining scripts via repo link or file attachment — ASAP.
+
+  • All developers:
+    
+    • Do not paste code into emails or Slack body; share via repo link with appropriate access or attach file with security tags — immediate and ongoing.
+    • Ensure Rally is updated regularly (burn down hours). Add recurring reminders and update every alternate day — start by 26.01.2026.
+
+  • Prithvi:
+    
+    • Join Vertex/LLM sessions (as available) and collect details for potential use in project; share findings with the team — ongoing (join upcoming sessions).
+
+  • Person owning E2 pipeline (Sameer/Samira?):
+    
+    • Notify stakeholders when E2 pipeline ready to be moved to next environment and coordinate promotion — after completion (post-lunch / today).
+
+  • Architecture/Agent Proposal Owner (presenter):
+    
+    • Schedule a follow-up meeting to deep-dive into QTrack agent-based architecture; analyze existing queries and define minimal viable interpretation model (include Suman Reddy, Sachin, backend owners) — schedule this follow-up within the week.
+
+  • Raj / Managers:
+    
+    • Be prepared to be included in escalations if Bhagawan/Bug1 remain unresponsive; assist with reviewer approvals if possible.
+
+Please reach out to Sindhuja or the meeting lead if any clarification or re-prioritization is required.
+
+
+Transcription
+
+00:00:01 - 00:00:56 Unknown Speaker:
+
+Okay, so he would be passing, so you have to modify your config jSon file over there. Okay, the way you are doing these right now. For a few of the variables, like this one, right, declare the table name, so just similar to that, make this actual value expected value. This is number one change, second change is that when we are selecting false positive, right in this one, uh, reasons are delete rule or the revised rule, so apart from these two, you have to add one more that is monitor rule. Okay, so this is the change which needs to be deployed. On the 23rd, I said, but please do it earlier to that one. Because we have a demo call on 27th and we all are having a public holiday on 26th.
+
+00:00:58 - 00:01:51 Unknown Speaker:
+
+We miss it by 23rd, then that demo would get ruined. So please make sure that these two changes are on highest priority. This is both for you, Athar and Kundal. Please modify this urgently today itself. Athar, I know there would be a dependency to... So do one thing. If Bhagawan is not responding over that group, create a different group with, you know, myself, yourself and Bhagawan. Let's try to chase him. And if he's not responding, I'll include Raj over there. And apart from this, yeah, apart from this, the sub-status should get fixed today only. And then, Sindhuja, we again need your help. If you can just iterate it to Varun to support us just for today. I think if he can share, you know, with us.
+
+00:01:52 - 00:02:37 Unknown Speaker:
+
+Yeah, it might be a little hard, Sachin, Because... high priority item than the Titan team's working on 10. You know, I don't know if you're aware of it and bug one's leading it. So basically, he and the other developers are actually pulling in all nighters to complete it. Like, Um, so I don't know how far he'll be able to support it, but I'll just run it past through him to check whether he has capacity. Like at least, like for for an hour or something, maybe half an hour, even even half an hour is not required. It's just that. You know, number one, he just need to approve the PR. That would hardly take a couple of minutes. That is number one. But he will not approve it without reviewing it thoroughly, right?
+
+00:02:37 - 00:03:29 Unknown Speaker:
+
+So that's like a bottleneck that I've always faced with him for my other PRs also. So he will not approve it in five minutes, Sachin. He wants to completely review it and only then he'll approve, which will take like about an hour at least. Somebody have given you that feedback, then he is not giving you the right justification. The reason being suppose, uh, I'll give you an example, right? Uh, for an any anything, right? This is my piece of code. Just take an example. Okay, if I go to this file, uh, just take an example. This is my file, right? This is my existing file. Okay, now, what that is going to do? Apart from these, he would add couple of more parameters over here, right from the other developers.
+
+00:03:29 - 00:04:21 Unknown Speaker:
+
+Also, like, Um, there are cases where he's come back after like two weeks with the PR review comments, Uh, just, yeah, you really need to check why he's taking. Because if I'm just adding two parameter, I should be looking into those two parameter because these are already in production and these are up and live. Right then, if somebody has not made any change, that is not going to impact it. I'll check with them and I'll, uh, I'll also initiate a group chat, maybe with you. Him and me, like around, like once he logs in around 8 p.m. ISD. So here, like, you know, when he said, like, you know, occupied for a couple of days on Jan. 7th. Uh, that's fine, right? But uh, if, can he?
+
+00:04:21 - 00:05:20 Unknown Speaker:
+
+I mean, you know, if he's been working all night ever since then, like for the past, like 10 days or so, um. What was Saurabh saying? He can review it for you guys, is it? In case if he is not available. Saurabh has taken this conversation to a different, all together a different context. And this was a miss from our developer, I would say. I don't know why there was a miss from our side also. Because they had a connect with Saurabh on 9th of Friday. So this went to a complete different direction from east to west like that. And it was a complete mess up from our side, I would say. Yeah, I mean, why has there not been any communication from 9th to 14th? No, because post that Saurabh was on leave and then from Tuesday, Athar was on leave.
+
+00:05:21 - 00:06:25 Unknown Speaker:
+
+Okay. Let me check. Yeah, let me check with Bhagwan and probably I'll just initiate like. I think PR Saurabh may approve it, I know. But this one, right, when I was talking to Athar on the substantive one, right, that is something, you know, being delayed from December and we are chasing them from December, right? And they have different thoughts of conversations like, you know, move it to E2, move it to, you know, somewhere else. That is the problem, right? Uh, they have asked us to move it and then there was no, you know, delay and all. But this is not the actual issue. Um, yeah, um, let me just take this up, uh, such, and I'll make a note of it. Sayyed is there in the IDS who's looking into the back end, but, uh, he's also facing some issue like his local setup is not up.
+
+00:06:26 - 00:07:15 Unknown Speaker:
+
+He also needs some assistance with Anna or maybe Bhagwan. Whatever the discussion I had with him last week. So today let me just check with him, Syed also. If his local is up, probably we can just check with him. If he is also blocked, then probably that's a high time we need to check. Because in ISTS, we at least need someone from the backend team who can debug it. Who can just let us know the issue and... we'll figure it out who is the actual person to fix it? But for now, we are not able to figure out the issue. Also, Okay, and and one more thing, Yeah, you're sorry. None of the others in IST, like Ishan Saurabh, nobody knows about it. Is it? Other? No. For this Ace workspace is back and bug one is the core owner.
+
+00:07:15 - 00:08:05 Unknown Speaker:
+
+And then say the added him later on. Apart from that, no one knows about this. Backend changes, uh, I mean, all the configurations and everything. The these are the only two developers who was working on the backend. And I guess Anna was also working, but not majorly okay. Just say, ask Syed, or you like, set up a meeting with Anna today. Um, and like, in, you know, like when she logs in. And in case if she is not able to help you out, then we'll go to bug one. Because, like I said, He's not even joining the sprint calls. I've got an email from Raj and Saurabh that he'll not be joining for a few days because apparently he's working all day and night for 10. So I don't think at this point he'll be able to help you out.
+
+00:08:07 - 00:08:54 Unknown Speaker:
+
+Sindhuja, if that is the case, then we need that confirmation by today EOD. I'll communicate the same to Anand that this is the dependency on... and we won't be able to make any changes to the dashboard by 27th because they have a demo with the 27th. It's an office hour demo so that, you know, whoever product teams are there, right, in the ESCD who are using this tool, right, they all would be involved, right? And then they don't want any, you know, hindrance while they are doing a demo in that case because lots of VPs, directors would be involved in those calls. So I'll check with him as soon as he's available. SAcHIn And in case if that's the case, like, like I've been mentioning, right, he's not.
+
+00:08:54 - 00:09:43 Unknown Speaker:
+
+I've not been able to talk to him too, like for a week now. So if if it continues for this week, also, probably. I'll just let you know. Like we'll initiate a group convo and you can take it up that he is unavailable. Okay, yeah, like, then I'll communicate Anand. To go with the existing, uh, you know, structure that we have right now, then these would be having, as there is a dependency, we won't be able to deliver by 27. I'll communicate to him in that case. Yeah, yeah, yeah, we'll do that. Yeah, okay, but meanwhile, at least, you know, start the development so that it would be ready. It should not be like, you know, we are dependent on them, so the process is not moving. Okay, so please make sure my side changes that I know, yeah, I know.
+
+00:09:47 - 00:10:50 Unknown Speaker:
+
+So, just, you know, check that one. And once the PR, I think PR would be get approved. It's just that the sub status, which is the problem where we need one's assistance. PR even sort of would approve it, right? Once you explain in the chain. Sub status is the main problem where you need one's assistance. Okay. And please make sure that you are keeping an eye on DV entry. And all those part. Any questions on the requirement or you're good? No, this looks good. Okay. Sameer, on Quantro, let's take the progress, you know, and then whatever you have query will clarify during that call. Okay. The developer part was completed, Sachin, and the testing part coming to run over, I have, Scenarios, right? One day and day and month.
+
+00:10:50 - 00:11:57 Unknown Speaker:
+
+So I tested for day and it's look, it's working fine, but like, I have some worries, so it's connected. I did that. Data migration is completed, no such thing that is pending. Actually. I'm trying to finish it today, the last Friday. I'm facing some issue with corrupting that file, so I just modified that and trying with loading the data right now. I should not be, you know, marking it as completed. When we repeat this, please make sure you are marking it as completed by yourself. Okay. Sachin, I have a question, Sachin. Like that Contra OKT call, like, do you want me to set up now in 10 minutes? No, no, no, no, no, no, no. Let's not do it. I'm not feeling a bit well, so let's connect tomorrow. Okay. Give me an hour break and then I'll come.
+
+00:11:57 - 00:12:51 Unknown Speaker:
+
+Back so we can do it tomorrow. Okay, okay, uh. And see on the build part, did you assign that additional script to? UH? Nirman? Uh, Yes, I had, uh, connected with him on Friday, so he said that he got the access on uh, Thursday or Friday. Something. But, uh, he has to once check the code and he will start, he said. From Monday. Okay, that's fine, he's out today, but. Let him come back tomorrow and we'll check the progress. From your side, I already know that you already completed the build, right? So you can start doing the validation. And I hope all the scripts have been reviewed by Rachna. On the insurance you're telling? Yes. She was asking, right? At least share us the script so that we would review it. Yes.
+
+00:12:52 - 00:13:44 Unknown Speaker:
+
+Initially, a couple of scripts I had sent her. So after that, I have, I'm yet to share with her. Okay, and one feedback. When you're sending the code, right? Please make sure you're attaching it as a file, marking it, as you know, a security level. Don't paste it over the email body. Okay, yeah, yeah, uh, because why we are sending the file over mail? We have the repo so we can provide them the access and they can. Might be difficult for her to understand my point. All right, I was talking about this one, right? We should not be doing it over the email body. Okay, I saw the scripts are going on the body. Yeah, correct, this should not. This should not. Go over the email body.
+
+00:13:44 - 00:14:39 Unknown Speaker:
+
+If you want, attach it over here and you can select the you know security level for this email. Okay, please don't send it over the body. Any code you are doing, and even if you guys are doing it, the Slack, when somebody download it, delete this piece of code. Okay, because, suppose your accounts gets, uh, you know, hacked. Then anybody can take up these details from there, your all schema details, right? The table details everything, they can get it from here. Like, you know, you might be saying, man, this is my project, right? So they don't know, but this table name is not sending it over an email. Or, as mentioned, right? Uh, you can give them the repo link, from there they can review it. How do you create a folder on the repo?
+
+00:14:39 - 00:15:39 Unknown Speaker:
+
+Only? Okay, later we'll delete it. Okay, no, no folder and all doesn't look good. Uh, you can just send them that I can give them the read access, if required, they can read it from there. Better to send it via report. That would be much better. Because if somebody is not having access to the repo, they won't be able to see that code. Also, okay, so better send it via the repo. Also. That is also, you know, a right way to get a tribute, and then, you know and see, today, try to get your all script tribute. So that if there are any minor change or something, you can do it today and then from tomorrow, you can start on the validation part. Yeah, your setup is done, a score, you're on mute, man, and then you're there.
+
+00:15:39 - 00:16:48 Unknown Speaker:
+
+In office. Uh, yes, I'm in office today. Did you meet Prithvi? Uh, no TV, and, uh, I'm not in today. I'll meet him on Wednesday. I, I came to my native for the festival, so I'll come on Wednesday. What about your setup with me? Uh, I'm see the code base for Q Track, I did monitoring tool, I, uh, I imported the code. But, uh, I'm struck, uh, in this one, the GitHub Copilot thing and then Java 21 setup thing. Reach out to somebody. No, no, I'll do it today. No man. Look, uh. If something has been asked, take it up on a priority. It should not be like, you know, from tomorrow, the sprint would start right. If you have done the setup last Friday, at least, you could have debug a piece of code today, now, from tomorrow.
+
+00:16:48 - 00:17:38 Unknown Speaker:
+
+How would I assign you the story if your if your setup is itself not ready? Sachin I was not told to raise request for rally and many of the access are still pending, so I updated. Look, I asked you to set up a score service, that's it. You did not, uh, require to go to that Q track script, uh, you know, GitHub link and all. That is something. If you have done it additionally, that's fine, but that is something not the ask help you with that. Rally access? No, no, I don't have access today, so yeah, rally, you, you, you don't have a, you know, any contribution required on Rally right now. Rally something is not required. The simple ask was to set up a school service.
+
+00:17:38 - 00:18:23 Unknown Speaker:
+
+Okay, and I'll do it today, Sachin before the tomorrow, you can now send me some task, I'll work on it. This makes your race services, you know, up and running today. And then then we can, uh, think about what we can assign. One is a score service to you, and then the composer to Nirmal. Now Nirmal is out, right? If you guys have done it, like, you know, if he has done that, uh, composer, you have done it. A service you could have connected tomorrow, and you know, vice versa. All the setup would be done right today. You had a set up for the composer and he could have set up the A score service. So now he is out, your A score service is not ready. He's on the clue today.
+
+00:18:23 - 00:19:44 Unknown Speaker:
+
+Yeah, just take a help from Ayapa, and, you know, set it up. Uh, today. Uh. But uh, you know, just make sure your migration is priority. Okay? So in case, uh, you know, you don't have bandwidth, do let us know in up front. Wants to speak something, right? Yeah, before such a signature will come up. So I, uh, shared the link of, you know, JDK 21 setup in the UH Dev channel. Okay, so just go through that and if you face anything, then we can come to. I'm not speaking, yes, I had over that, uh, depth channel. Yeah, have anything? Um, yeah, Sachin, Yeah, just just wanted to, you know, like, because we are starting with a new PI in the New York. Just wanted to talk to all the team members and let them know, like, what are the expectations and stuff?
+
+00:19:44 - 00:20:39 Unknown Speaker:
+
+Um, so, I think the first thing is, uh, towards the end, uh. The team was really able to like, um, you know, like, uh, come up to speed. And like. They were regularly updating Rally and then like, burning down the hours. But somewhere. I think in the last print, it was lost again. So I just wanted to point out that Raj regularly checks these things. On multiple occasions, he's reached out to me and Sachin, you know, regarding the task and stuff like that. So just, you know, like a reminder to all the team members, keep this in mind. People are regularly checking what you guys are doing on the rally board because that's the only source. Who sit above? Like, Um, you know, like, on what you guys are doing so regularly, I want you all to like, Um, you know.
+
+00:20:39 - 00:21:31 Unknown Speaker:
+
+Like there was that one sprint where you were all updating regularly. But it's no longer the case, so at least from 26.1. Keep a reminder like you can just keep a recurring appointment on your calendar every other day, right? Like one is right after the sprint. Planning, you need to add the task. Every alternate day, update the task with what you guys have done and burn down the hours accordingly. So this is my first ask. And second one is, you know, I'll tell you why we are asking you or forcing you to do this. There have been instances in other teams where people have been let go of even though there's work and they've asked AI tools to be used like Chad Shippity or Copilot to keep up the protection. Level, while the human is not there.
+
+00:21:31 - 00:22:27 Unknown Speaker:
+
+So if you don't want the same to happen to our team, then I think you guys will have to show that you're working. Like, again, I and Sachin are not doubting any of you. But more than doing work, it's also important that you showcase your work, so that's the reason we are asking you to do this. So I hope like at least from 26.1, right? I will be able to, you know, like, see these changes in the team. And the last ask is, Um, on Slack channels, be it such in Beat me beat the product owners. When somebody will assign you a task or there is a Slack message, please reply to it. Keep a turnaround time of not more than 30 minutes. Sometimes maybe you have stepped out for lunch or something, I understand, but in other cases, see that your name is tagged.
+
+00:22:27 - 00:23:19 Unknown Speaker:
+
+Just don't ignore it, reply back to it. And the last thing is, when some task is assigned to you, that there is a deadline associated with it. Folks, you will have to stick to the deadline. Unless and until there is like, a very, very, you know, like reason that, you know there's some health issue, there's some family emergency. Otherwise, at least in 26.1, you guys will have to stick to the deadlines. Just keep in mind that Raj is monitoring, he's done it with this team. He's remote people, uh, you know, like people who've not been regular, people who've not been, uh, you know, like, giving, consistent work. And it'll not take him much time to do the same with our team. Um, he's quoted, he. He quoted in one of the meetings that the work will not reduce, will not add additional resources.
+
+00:23:19 - 00:24:14 Unknown Speaker:
+
+But whoever's present has to use AI to increase the productivity. So this is coming from him. Like, Um, so I just wanted to, you know, like, remind you all of this. And I'm sure like, we all can make these small changes. So that, you know, our team, you know, can do like, really well in this year, also like we did in the previous year. Um, yeah, I think this is what I wanted to tell you, like all of you such. And in case, if you want to add anything this on a, you know, regular stand-up call. So you guys just, you know, need to understand the criticality of this. Even sometimes I have shown you the messages from Raj, direct messages from Raj, also, right? So keeping Rally updated is as much important as you're delivering the task.
+
+00:24:14 - 00:25:13 Unknown Speaker:
+
+Because every, you know, the review would be shared by Puna to Raj, right? So, although you would be job over here. But if that is something not displayed over rally, captured over somewhere, then that goes as null and void. So, you know, in that case, you know, although you are getting kind of appreciations and all, that would erase your current contribution, which you are not registering over the rally. I would, you know, give an example of Ayapa. He is doing that fabulously, each and every minute task he is recording over that valley. So we need to learn from Ayyappa, like, you know, if he is able to do it, why we are not able to do it. And I thought for your case also, they spent, you went on leave and, you know, you've said that it was a burn down chart.
+
+00:25:14 - 00:26:07 Unknown Speaker:
+
+It was not up to the expectation because you did not burn out the, you know, your hours before going on leave. So it's not just for an individual person. Just make sure, you know, we are burning down the hours on a daily basis. Maybe during this DSU or in the evening DSU, whenever you would like to do it. If you feel like I can do it by end of the day, do it during the evening DSU. It would hardly take a couple of minutes. Okay. Anybody having any concern, you can reach out to Sindhuja or me. But this is really, really important. Important, and, you know, uh, one more thing, Prithvi, I would like to tell you, you are asking for that Vertex AI, right? So I? I just remember it when Sindhuja was mentioning Chart GPT, right?
+
+00:26:07 - 00:26:55 Unknown Speaker:
+
+So there was a collaboration between American Express and Chat GPT AI, right? So when there is a collaboration now, you you are free to use the Chat GPT UH AI tool. We need access to an LLM, such a small LLM is enough 8 billion parameters or something. So so that's that's what I was mentioning when Sindhuja mentioned, right? I? I remember, like, you know, there is a collaboration between Amex and Chat GPT. When they are setting up some meetings to give you a walk through what piece of tools and all those they are going to use it. Okay, join those, call okay and just check what are the features they are providing to you. And with those features, you can leverage it in your project, but not outside of those.
+
+00:26:55 - 00:28:17 Unknown Speaker:
+
+So I can still talk to Raj on this Vertex AI. But until unless there is a, you know, collaboration between the organization, we won't be able to raise the access or use it. No problem. So where I'll get those details about the meetings, I think chat GPT, they are sending it on a public basis, used to look, this is the welcome session. Uh, these have already been done. Okay, okay. Apart from that, also there are lots of meetings you can see the right. I think improving progress, right? That would be a kind of initial. So it was there on Wednesday, last Wednesday when training was there. This is, this was a session tomorrow. Can you share this to me if you don't mind? Yeah, yeah. So these one, you know, which there is a collaboration between MX and the different team, right?
+
+00:28:17 - 00:29:07 Unknown Speaker:
+
+You can go ahead and then join this session. And if there is a possibility to raise a question, just stick with them. Okay, sure. If you can raise a question, It answers your... It's not just one session. Post that. Also you just need to check your calendar. If the invite has came to me, it would be for you also. No, no, I don't look even there is a right. Even. There is a session on Wednesday. Okay, okay, okay, so if I check on Wednesday, no, Wednesday, yeah, this is for EST people. Okay, we have it tomorrow and if you go to 22nd, look again, there is a session two on Thursday. So through these session, you can leverage the tools that the MX is providing to you. Okay. Okay. Okay.
+
+00:29:07 - 00:29:57 Unknown Speaker:
+
+And then there is a session on Friday also on analytics. We are working on the analytics, right? So there is a session on analytics on Friday. Okay. So this one is something you can use, but this one, which we were talking, right? That vertex API. Yeah. I'm not sure whether we would be, It doesn't have to be Vertex AI. Vertex AI means we'll all be in one GCP platform itself. So it will be more secured also. That's what I thought. But if ChargeGPD is there, yeah, I'll see what options I have. I'll join the call. Yeah, join the call. And if you get any details, do let us know. Okay, sure, Sachin. Yeah. Okay. Anyone having any other questions? What analytics, you know, we are discussing about this?
+
+00:30:07 - 00:31:02 Unknown Speaker:
+
+Basically, this Q Track tool is there right for query generation, validation, and execution into different environments. I was actually talking to Sachin. If we can automate using Jenny from the from the time, we request data input from the business query generation execution. So I have one architecture document I created, shall I quickly share it? If you are free? Two minutes? I think everyone is here. So okay, maybe everyone should be interested in this. So this is what I have been working, okay, I mean, for the weekend. So it's a Q track query generation architecture, so when a request comes from a business user. There is a natural language interpretation agent that we will be creating. So it understands the user's request based for that particular table.
+
+00:31:03 - 00:31:59 Unknown Speaker:
+
+It gets the information about the schema of the table and what rule they wanted to put in on that and understands that natural language and calls query generation agent. This is the agent which generates query based on the schema of the table and historical queries that are already present for the existing rules. It uses that, we call it as RAG. So the drag information, so 1500 rules are there, there must be 1500 queries or information related to that. We will try to use that information as an, uh, reference data for us. Okay, okay, sorry, yes, so I was, actually I thought you were listening, sorry, so Sachin, I was actually presenting. The question from Kundan was, what exactly that analytics? We wanted to do it using Agent K, so I'll start it again.
+
+00:31:59 - 00:32:54 Unknown Speaker:
+
+So basically, this is a architecture that I created it. I thought of discussing with you after this car. So since he asked, I'm proposing it now. So business user puts in information for in the Q track system. So that's the actual language that will be interpreted by the agent. This is an agent it will interpret based on the input and understands the what is user's intent is, and it calls query generation agent. So this query generation agent takes up the input and it understands the query for table. For what they wanted to put, this particular query and what rule they wanted to apply. And that is the input. And it also has some brain that is rag information, we call it. Existing 1500 rules are there. For all those 1500 rules, there must be queries, maybe like 500, 600 queries related to that.
+
+00:32:54 - 00:34:00 Unknown Speaker:
+
+It will try to see and keep that in the memory. Okay, understands what is the user intent now and what is there existing and try to create a query. So schema access module. So this gets the schema from the table. This is a feedback loop kind of thing. So the generated query would be validated and would be published. So from here, we would end up giving some front end for our user. I mean, again, the developers inside our team. So they can go and click on DAO executions, test environment execution, and production environment. Just a button click. But production definitely is not possible directly to do it. After a few approvals, you can execute the query and get an output. That's the plan, so this is the execution agent, so once the execution is done, everything is fine.
+
+00:34:00 - 00:34:50 Unknown Speaker:
+
+The rule is up created and my plan is to trigger out a dagger as well for that, so that will that will come in phase two. So this way we don't have to spend a lot of time in query generation because anybody is creating. I had a call with Suman Reddy as well. He has given me a lot of info. So with his inputs, what I understood is when a rule comes in, he need to understand the requirement. And see the existing queries that are there related type of queries and modify them for the new use case. So even if it is a new use case completely for the agent, for example, it is not done previously at all. Since it has more information related to a BigQuery, it knows how to create SQL statements.
+
+00:34:50 - 00:35:46 Unknown Speaker:
+
+It knows how to create proper syntax related to the BigQuery. So it can generate even if it is a new format as well. It doesn't have to be an existing format, but it will create it in a format such that we are already using it. If you see the SPL structure, I understood so the output is in one format. Thank you. Okay, so so same structure. It will use it and it will generate it. So we don't need, uh, it has to be an existing type of queries. Yeah, we can discuss on this one a bit more. So maybe not right. Maybe in another call, you know, you can schedule it and, you know. Yeah, sure, sure. We will get the, you know.
+
+00:35:46 - 00:36:43 Unknown Speaker:
+
+This one, if we just do one thing, you know, one feedback for this one, just analyze the existing queries those are already facing and check the feasibility how we are going to transform it using this identity key. That is something, you know, one, okay, For that, you need, I don't need that. Actually, I have to go through the existing queries. But uh, exactly so I connected with him, uh, last Friday for almost two hours, and I understood the queries. It is it is possible to do it. Sachin We can do it if you can introduce one layer so that you know, even, uh, you know, we will get an idea. You know, the big query, let me be very clear on this. We have to do it on the ACE side.
+
+00:36:43 - 00:37:46 Unknown Speaker:
+
+You won't be able to use the big query. Okay. Because the input that we are receiving from the business user is at the ACE platform level. Anyhow, Sachin, those inputs, right, we are, you know, consuming those inputs and putting in our big query. So we can leverage out this big uh GCP. But the thing is, the ask basically is, if he can, you know, at least one model, this uh, uh, this one uh. Interpretation agent. If you can, you know, with the limited number of data, if you can introduce few of the thing, right? At least, uh, you know, we will also get an idea, you know where we can, you know, but you know, that is something is required for that. And then actually, he needed that access, the tool that we were discussing, but I say that he was getting okay.
+
+00:37:46 - 00:39:34 Unknown Speaker:
+
+Uh. But we will, uh, discuss this, uh, later on this one, maybe with for a few more details. Uh, anything else from anyone else. Oh, one more thing. Uh, Samira. The E2 pipeline has been approved. Okay, so can you do one? Once you are done with it, you just have to let me know, then I'll talk to stay for moving that pipeline to the next environment. Sure. I'm doing it right away. Okay. Yeah. And Samir, give me some time. Maybe post lunch, I'll connect with you. Okay. I'll be away for an hour. And then once I come back, I'll let you know. Okay. Okay. Three agents created a new one. There is no problem in creating a new one, it's just a rack. Okay, that's interesting. When did our previous agents call?
+
+00:39:36 - 00:40:21 Unknown Speaker:
+
+That's what we do, we change it. Now what's happening is, you have three back-end agencies, you called Python and created these three agents. You brought these and created an orchestrator here. This is an orchestrator. You called them here. Where the self-taught data is fetched. So, that agent is called here. After calling this, previously, this vector rag is connected to this. So, what is happening now? It is running on this. It is following our architecture now. That's it. It is done. Sir, you are modifying it, right? Everything is happening on this now. You are doing it?

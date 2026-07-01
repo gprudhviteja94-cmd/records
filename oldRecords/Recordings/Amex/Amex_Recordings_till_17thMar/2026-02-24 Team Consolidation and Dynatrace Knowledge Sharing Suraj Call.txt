@@ -1,0 +1,283 @@
+2026-02-24 Team Consolidation and Dynatrace Knowledge Sharing Suraj Call
+
+Creation Time: 2026/2/24
+
+
+📅About Meeting
+
+  • Date & Time: 2026-02-24 14:01 (Duration: 2804 seconds)
+  • Location: [insert location]
+  • Attendee: [insert names]
+
+
+📒Meeting Outline
+
+
+Team consolidation & admin updates
+
+  • Channel consolidation The team discussed consolidating previously separate groups (e.g., Bangalore Team, Unity) into a single Ace channel so everyone working in Ace is in one place. The goal is to improve coordination for knowledge sharing, scheduling, and onshore-offshore connections. Sessions will be recorded for those who cannot attend and for new joiners.
+
+  • Shared sheets (two trackers) Two shared sheets were introduced:
+    
+    1. Personal details and leave — team members must update their details and leave information.
+    2. Monthly status/compliance report — the client requested governance/compliance-focused reporting rather than daily task details. The sheet will capture:
+       • Timesheet submission status (month-on-month; applicable people only)
+       • Training status (Navigator / mandatory trainings — note changes pending until March 2)
+       • Top two key accomplishments for the month (guidance provided on how to select top two: prefer stories you single-handedly delivered and those with greater business impact)
+       • Any day-to-day operational issues (WebEx, Slack, internet, laptop, etc.) to be reported immediately
+
+  • Improvement suggestions & issues The client wants ideas to improve deployment, feature delivery, and daily processes to add business value. Team members were encouraged to surface problems and suggest improvements promptly.
+
+
+Dynatrace knowledge-sharing session
+
+  • Purpose & placement Dynatrace was presented as the observability tool in the Hydra Cloud Platform stack (Hydra = wrapper over OpenShift/Kubernetes). It provides 360-degree visibility — logs, metrics, and traces — for the platform and applications.
+
+  • Architecture & data flow The presenter explained the infrastructure stack: data center/cloud → hosts (Kubernetes worker nodes) → pods → containers → processes (Java/Spring apps) → services (API endpoints). A Dynatrace agent is installed to auto-instrument and collect telemetry (logs, traces, metrics) and send it to the Dynatrace cluster.
+
+  • Accessing Dynatrace Access via the Hydra console → Application Launcher → select environment → Dynatrace landing page. The landing page shows high-level issues, request counts, response times, JVM/.NET/Go metrics and links to services.
+
+  • Service & request views The services view lists running services, endpoints, request counts and response metrics. You can click into Web Requests and drill down to individual services and endpoints. Filters (region, service name, etc.) help narrow views.
+
+  • Distributed tracing Distributed traces show the request journey across services: security filters → controller → service → DB calls → events → response. Each span/step is recorded; tracing context is propagated across services (OpenTelemetry will be explained in detail in a future session).
+
+  • Multi-dimensional analysis The tool provides a multi-dimensional analysis/diagnostic view to correlate metrics (CPU, memory, disk, exceptions) with request patterns. You can pick metrics and see which services/requests are consuming resources.
+
+  • Pod-level vs service-level Demonstration included examining a specific pod to view response time, failed requests, throughput, events, and pod logs (Kibana-like logs integration intended but not fully configured). Emphasis by presenters (and reinforced by a colleague) that pod-level investigation is often more actionable than service-level for debugging, while aggregation across pods/services is available via multi-dimensional analysis.
+
+  • JVM & System metrics There was a focused walkthrough of system metrics and JVM metrics (GC activity, memory regions like ZGC/old gen, thread counts). These are key when doing load testing and performance analysis.
+
+  • Tracing & logging integration Dynatrace captures logs and traces; there is a separate ELK/ELF pipeline/UI for logs — more detail will be covered later. The presenter confirmed that tracing correlation is done via context propagation (HTTP headers) and OpenTelemetry instrumentation.
+
+  • Follow-ups requested Requests were made to show:
+    
+    • How Dynatrace maps microservice dependencies automatically (to be covered in the OpenTelemetry session)
+    • Standard thresholds and configuring events/notifications/alerts — presenter to gather and present info in a future session
+    • How to aggregate metrics to service/project level (use multi-dimensional analysis with correct filters)
+
+
+GenAI / Agentic direction & tooling guidance
+
+  • Current state in ACE / MX Discussion about GenAI, agent APIs, GitHub Copilot usage and Copilot Agent demos. The team is seeing interest from clients and internal groups in agentic solutions.
+
+  • Preferred frameworks Senior leadership is advising teams to prefer LangChain alternatives suitable for corporate use:
+    
+    • SafeChain (a more corporate-safe implementation of LangChain in Python) and LangGraph were recommended over generic GitHub/JFrog POC setups for anything intended to move toward production. SafeChain is described as a restricted, safer subset of LangChain features (around ~60% of LangChain features), more suitable for enterprise use.
+
+  • In-house agent framework An internal Amex agent workflow/framework is in development. Senior leaders have demonstrated codebases and repos; formal propagation is expected. The intent is modular, plug-and-play agent workflows tailored for Amex use cases.
+
+  • Technology recommendations & upskilling Python is gaining importance within ACE (mod development moving to Python). Team members without Python exposure were encouraged to upskill (Udemy courses and other resources to be shared). Spring AI was discussed; leads appear to favor SafeChain/Python-based approaches for corporate deployment — one team member will verify rationale vs. Spring AI.
+
+  • External tools/initiatives Brief mention of Devil.ai / Claude / Cognition and Synachron partnerships; these are early-stage explorations and some internal sessions were held.
+
+
+Meeting cadence & participation
+
+  • Weekly sessions The group will have weekly knowledge-sharing sessions, with recordings for those who cannot attend. Team members were encouraged to propose topics they can present and to join on video where possible.
+
+
+📋Overview
+
+  • Consolidated Ace channel: all India Ace members will be in a single channel to improve coordination and knowledge sharing.
+  • Two shared sheets created: personal details/leave and monthly compliance/status report (timesheets, training status, top two accomplishments, issues).
+  • Emphasis on compliance data and highlighting high-impact, single-owner deliverables.
+  • Dynatrace overview: explained placement in Hydra platform, telemetry capture (logs/traces/metrics), service/pod views, JVM & system metrics, distributed tracing, and multi-dimensional analysis.
+  • Pod-level diagnostics often more actionable than service-level, though aggregation is available.
+  • OpenTelemetry handles trace propagation via headers; more detail to be presented later.
+  • Action items requested for follow-ups: thresholds/alerts, dependency mapping via OpenTelemetry, logs/ELF integration, and service-level aggregations.
+  • GenAI direction: leadership recommends SafeChain/LangGraph for production and corporate-safe agent solutions; in-house agent framework in progress. Python skill growth encouraged.
+  • Weekly sessions will continue; team members asked to present topics of interest and attend (video preferable).
+
+
+🎯Todo List
+
+  • [Owner: All team members]
+    
+    • Update personal details and leave information in the shared "details" sheet — (ASAP)
+    • Populate the monthly status/compliance sheet for February: timesheet submission (if applicable), training status, top two accomplishments, and any issues faced — (Deadline: as per team lead; please confirm specific date)
+
+  • [Owner: Meeting organizer / Team lead]
+    
+    • Share final links to the two shared sheets and confirm deadlines/format for monthly status report — (Within 2 business days)
+    • Ensure session recordings are saved and accessible for new joiners — (Ongoing)
+
+  • [Owner: Dynatrace presenter / Observability lead]
+    
+    • Prepare and present a follow-up session on OpenTelemetry: how tracing context is propagated, automatic dependency mapping, and correlation with logs — (Next weekly session)
+    • Compile and present standard threshold values, event/notification setup, and sample alerting workflows for Dynatrace — (Next 1–2 sessions)
+    • Verify and fix pod log integration with Kibana/ELF so Dynatrace pod logs and Kibana logs align — (Follow-up, target date to be defined)
+
+  • [Owner: Performance/Load testing leads]
+    
+    • Demonstrate pod-level diagnostic workflows and how to aggregate metrics to service/project level using multi-dimensional analysis — (Next 1–2 sessions)
+
+  • [Owner: GenAI leads / Raj / Senior leads]
+    
+    • Share the in-house Amex agent framework repos, documentation, and recommended corporate standards (SafeChain / LangGraph guidance) with the team — (When available; request formal announcement)
+    • Clarify reason/s for preferring SafeChain over Spring AI and share guidance on which approach to use for different use-cases — (Follow-up with leads)
+
+  • [Owner: Individual contributors interested in GenAI]
+    
+    • Review the shared GenAI framework GitHub link posted in WebEx chat and provide questions/feedback on the channel — (As convenient)
+    • Upskill in Python (recommended courses list to be shared by organizer) if not already proficient — (Ongoing)
+
+  • [Owner: Anyone facing immediate technical issues]
+    
+    • Report WebEx, Slack, Internet, laptop or access issues immediately on the channel so these can be triaged — (Immediate)
+
+Please update owners and deadlines where appropriate; if any item needs re-assignment or prioritization, indicate in the channel so it can be updated.
+
+
+Transcription
+
+00:00:07 - 00:05:37 Unknown Speaker:
+
+Thank you very much. Wait for the sale. We have 46 people in Ace and even half the people have joined. So now we have at least 50 percent. Okay, good, uh. I just want to share some updates, few things. And then we will get to the uh, knowledge sharing session. Since, uh, this is the first one. Um, yeah, so first thing I just wanted to share is that, yeah. As you know, previously, we had separate groups, or Bangalore Team Unity, even though everyone were working in Ace. So what? Uh, we discussed, and me and Deepak also, we discussed Deepak. So, uh, we wanted everyone to be in one place. So we can coordinate on a few things, we can set up some coordinates, we can set up knowledge sharing sessions and everything in one place.
+
+00:05:37 - 00:06:43 Unknown Speaker:
+
+So I just included everyone into the same channel. So going forward, entire is in India. We will be trading as one team only, and also we will have some connects with our onshore team as well. Okay, so we will have some, some sessions, uh, with our onshore team, uh. Before that, what we wanted to do is. Onshore team, they work closely with the directors. Here also, obviously, we have Deepak Kothari. Some people were aligned under him. So we work closely with him. But initially, the thing is to have a common knowledge sync across the team. What I'll also do is I will record each of these sessions. And then if anybody... is not able to attend, or we have new joiners joining the team, it will help out. They can go through these recordings.
+
+00:06:43 - 00:07:48 Unknown Speaker:
+
+Uh, yeah. So apart from that, a few more things I just wanted to emphasize is that I have shared a couple of sheets, two sheets specifically. Um, so wherein one of one of the sheet is for your details, so please update the details, uh, together with your leave, and the second sheet is basically the status report. So previously, if you remember, we were actually sharing the content based on the tasks, the user stories, the user points, story points and everything. But what the client has given the feedback is that they already have the data on a day-to-day basis. Like, what you're working on and everything. What they are rather interested is in some of the compliance, governance-related activities, what is happening there. For example, on your timesheets, they are interested whether you have submitted your timesheets appropriately for the entire duration.
+
+00:07:50 - 00:08:48 Unknown Speaker:
+
+So currently we plan to track that on a month-on-month basis. So for the entire February, have you submitted your clarity timesheets? This is only for those who it is applicable to. Second thing is on your training status. So currently, as we speak, navigator training, mandatory trainings, actually there is going through a change, so they have some changes ongoing till next week, March 2nd. But after that, if you have any mandatory trainings to be completed, or so, keep a track weekly basis and then plan and then complete that. So there we are very much interested to know about the status of that because it's a matter of compliance. Second thing is that we don't want to miss out sharing the details as to what was, what were the major deliverables that we were able to achieve.
+
+00:08:48 - 00:09:46 Unknown Speaker:
+
+So, and that is why I have also kept a column there to tell, Let tell me. Uh, what do you think were your key accomplishments in the month of February? So, highlight only the top two that you have worked on, and in that top two, how you need to. Let's say you have worked on a lot of user stories, uh, small small ones and things like that. Maybe two pointers, three pointers, four pointers, but what I want you to highlight there is when I take top two. Uh, if that story that you have worked on, if you have single-handedly worked on that particular user story, that will be of more priority than some user story where three or four folks were working together, right? So if you have a user story you had dedicatedly worked on and then that is completed.
+
+00:09:46 - 00:10:49 Unknown Speaker:
+
+And out of that, if you can tell for the business, what made more sense, or what was, which of the user story was more sort of had an impact on the business. If you can highlight that, that would be that would be great. So I have mentioned only top two, how to identify the top two is how you do this, right? So you say which user story I have dedicated to Levercon, and out of that, user stories, what is what I think is the what the business was looking for? Or, let's say, for example, if you are working on a mod, then the CPR mod would be of greater priority than the other bots. So I'm giving you an example there. If you are working on, let's say changes related to toolkit, then obviously the rest API toolkit or sub API toolkit would be of more priority.
+
+00:10:49 - 00:11:52 Unknown Speaker:
+
+Rather than something like an S3 or or any other toolkits. You need to see access, how many people will have a greater impact on that particular work, so that is another example there. So apart from that, the client is also like they are interested to know if we are facing any issues with respect to our day-to-day activities. Right? So there's a gain of higher priority to highlight such things, although I don't. Want you guys to wait till the end of the month or end of the week to highlight that but if you can highlight those immediately and anyone facing issues with With respect to WebEx, Slack, Internet, Laptop issues or anything like that that will also We will sort that out, right? So, apart from all these things, ideas and suggestions, we have been working in this project for a long time.
+
+00:11:52 - 00:13:03 Unknown Speaker:
+
+So the client is looking at us to see how we can improve on certain things, what all challenges we may be facing. It can be as simple as the deployment can be a hurdle. How we can improve those activities, it can be new features that is getting added, how we can improve certain aspects there. What we need to do better on a day-to-day basis so that we can help business in a better way, how we can enhance whatever we have built so that it will add value to our business. So any ideas, suggestions, improvements we can do, those also would be helpful. So yeah, so that is what I just wanted to highlight. So now I'll hand over to our pilot who will take us through Dynatrace session. Yes, you can start. Thanks so much.
+
+00:13:03 - 00:14:06 Unknown Speaker:
+
+So today's session is about Dynatrace. So I'll be explaining what it does for us, how to use it and where does it fit. This meeting is being recorded. Yeah, and where does it fit single MX infrastructure? So as you know, MX, we use Hydra Cloud Platform. Yeah. So yeah, MX, we use Hydra Cloud Platform. So Hydra Cloud Platform is a wrapper over OpenShift. So OpenShift provides us with Kubernetes container platform. So with this wrapper around OpenShift, We have defined several things, like how are we going to deploy our services, the securities, the observability, the developer tools. So this Dynatrace comes under the observability part. So through Dynatrace, we get a 360-degree view of what's happening in our HydraCloud platform. So basically, it gives information about various things. It tracks our logs.
+
+00:14:06 - 00:15:02 Unknown Speaker:
+
+It tracks the metrics in the HydraCloud platform and all of our traces. And then it submits to the Dynatrace cluster behind the cells. So just a quick introduction to our technology style. So imagine this is our infrastructure. It could be physical or virtual infrastructure. And we have layers like this to data centers. So data centers could be cloud infrastructure or on-prem or OpenShift, like I mentioned just now. It could be anything. So in our Agile platform, it's OpenShift. Infrastructure, and on top, we have another layer on top of it, which is host. This is our Kubernetes Worker nodes, and on Kubernetes Worker nodes, we deploy our applications on containers, and containers are again put into pods, and then this Kubernetes Worker nodes coordinates all of that. And then we have processes.
+
+00:15:02 - 00:16:01 Unknown Speaker:
+
+Processes is nothing but the Java applications, the spring applications that we develop, and services could be the functionality that our processes expose. It could be start process, you could say that start process, resume process, cancer process, these are all services. And together all these processes and services, forms and applications, and we have many such process services, and we have many such applications. Yeah, so this is our like hybrid infrastructure. And to monitor all of this, we have one one agent, which is provided by Dynatrace and this is installed in our. And what it does is it collects all of the logging, metering, and tracing information. So it collects all of these three informations, logs, traces, and metrics. So behind the scenes, one agent automatically instruments all of the things that is happening behind the scenes.
+
+00:16:01 - 00:17:25 Unknown Speaker:
+
+So instrumentation is nothing but writing some piece of code, which basically collects some kind of information. And here the telemetry information are logs, traces, and metrics. So this one agent connects all of this information and send it to our Dynatrace cluster. And through this, all of the information comes to our Dynatrace taskbar. So everything is going to take this path. Okay. Okay. So moving on. I will show you how to access our Dynatrace platform. So to access the Dynatrace platform, we will go to the Hydra console. Hydra console. And here we have application launcher at the top right. You click on here and you select the environment. So I will navigate to this one. So this is our landing page. So it gives us a high-level information of what's going on in the Hydra Cloud platform.
+
+00:17:25 - 00:18:21 Unknown Speaker:
+
+As of now, you can see that these main issues have been reported. This menu is active as of now. How many requests counts on its server, the request counts, the response times. Each of this you can click, and it will redirect you to one of the services. It will redirect you to one of the services. And again, we have further classifications. These are JVM metrics, .NET Go metrics. So when you click on each of this, it will redirect you to the service and give more information. This is the landing page. So generally, here in MX, we deal with applications and services. So that part I'll be focusing on. So as I said, services. Basically, you could say we have light codes in JavaScript. And exposes some endpoints, and when the request come to the endpoints, it does something and gives us a response.
+
+00:18:21 - 00:19:32 Unknown Speaker:
+
+So that is the service to go to, service where? And this page will list out all of the services that are running on the platform, everything and this page. These are basically, you could say, if I search any service, let's say I'm searching for this interval, this is where I deploy. These are basically, yeah, this is my service, and it is running in this Xbox. In this page. Also give some other informations, like you should click on Web request. It will give a global information of how many requests that have come to Hydra Cloud Platform. And all of the requests will be present here. So you could see this API was hacked. This was the service name of the technology being used. And all of this will be solved.
+
+00:19:34 - 00:20:35 Unknown Speaker:
+
+You can further categorize this, the region service name, like I searched OloSIM 200. Navigate from the previous page. You can go from here as well. Same thing. And again, applying the filters, we will come back to this again. Web request then we have distributed traces, so tracing is nothing, but when we make, when a request come to our system. It travels through various services. You could say web request came, it first traveled through a security layer, probably could be a filters, interceptors. Then it came to our spring application. It reached a controller from controller, it got navigated to some service, it made a database call, generated events and then returns a response to us. So all of this journey, we are tracking in distributed traces. So this part I will go in depth when I will explain about open telemetry.
+
+00:20:35 - 00:21:29 Unknown Speaker:
+
+So this currently shows the charts, like during this point of time, how many like traces are generated, so each trace is a step. You could say a request goes through, let's say database call is a step that data request might go through. So we consider it as a trace, and we log it here, so this information is shown. And then, at the last, we have this multi-dimensional analysis, so it will be direct to this request page only and here. So it's basically a diagnostic tool, so you see, we'll be hitting multiple requests over time, and you want to track some kind of metrics. It could be CPU, it could be memory, whatever. So, you can just select all of this from here. You can check the CPU time, disk time, time exception and all that.
+
+00:21:30 - 00:22:28 Unknown Speaker:
+
+So, if I click on CPU time, I have not applied any kind of filters but also it would give all of the information at Google level. What request came? This new route request came. It took this much CPU time. This was the service name. It went to orchestrate with controller and all. So from clicking it, you will see various information. So this is the interface. So during the design course, we have seen, we give an explanation about how a pod performed, how a service performed, when some kind of load testing is done. So for doing that, So, I basically search the service name. So, I usually do this in asyntangle. So, I listed out all of the codes in Kubernetes. So, I usually go to one of the pods one by one in here.
+
+00:22:29 - 00:23:38 Unknown Speaker:
+
+It gives some useful information. Like in this pod, which is a part of asyntangle service, it has this much response time, fail request, throughputs, and all that. And also, yeah, it also starts tracing information related to this problem. And then at the end, you can see here the events that it generated. As of now, it is showing nothing. And these are the pod logs, the same which you saw in Open Source dashboard or in Hydra pod logs. So if I click on here, so as of now, this does not work, but it will return the same response that you see in Kibana. As of now, I guess this might have not been configured correctly. Otherwise the logs will be same. Questions still not? So I'm inside one of the pods. So this section is the most important part.
+
+00:23:39 - 00:24:59 Unknown Speaker:
+
+So let's start what process is running, where it is running, some other information. So generally for collecting system information and for GVM related information, I usually come to this section, processes and host. I just click here. And this will give all the information about this process. So you could see here divided into various categories, system, JVM and some further details. So for checking the system performance, you can come here. You can change the timings here, and then it will show you it will create a graph here. Now the CPU connection, you can filter, put it in here. It's a details controller. It's listing out services. Background text and garbage collection is happening now. Details controller is running. So this will give you information about how much CPU consumption. What happened when the request was getting executed.
+
+00:25:02 - 00:26:04 Unknown Speaker:
+
+And then we have JVMetrics. So when we develop Java applications, we usually track about all of this information. So this particular page will give you all of the information. So for garbage collection count, you can go here, click here. So you can see this graph over here, ZGC old generation, the first one. You could see that over this duration of times, these many objects got created in memory. Like six objects was present at this point of time and garbage collection detected it and cleaned it out. So all this information, you can track it under this section, GVMetrics. So anyone who is doing load testing, yeah. These two sections will give you the most information. System performance and JVM documents.
+
+00:26:05 - 00:27:28 Unknown Speaker:
+
+And if you would like to further, like, check how many requests came to this part and how the CPU and memory behave, you can go to here and navigate to this page. The first page on the application observability on the landing page. One second. We click here and then we find multi-dimensional analysis. So under this part, we can generate more information like we can check how many requests arrived. We'll give that information. Over the time, like for the last two hours, this many request came and so many other methods. So this all you can see in the load testing reports. It has so many useful information input, output, time, number of calls to database processing and all bounce back into database calls and all. So all of this information you can track.
+
+00:27:30 - 00:28:54 Unknown Speaker:
+
+So this is the binary traces. So I have only, today I have only explained it about the matrix part. Basically CPU, memory, Java, Java matrix and all. But it also does logging for you, logging and tracing for you. But we have a separate UI for that under ELF. So that I will explain later. But tracing and logging, yeah. And apart from this, you can also inspect all of our infrastructure here. Go to Infosec, Kubernetes, All Configurations, GCP devs. Everything is present. But as of now, for our load testing for inspection of services, we usually bring application visibility and services. Okay, yeah, that's all for Diamond. Please, any questions? So whatever the matrix behaves on until now, right? It is. It is at a poor level for one of these services, so now it is possible to complain at a service level or a project level.
+
+00:28:57 - 00:30:12 Unknown Speaker:
+
+I showed you, if you click on this, then it will show at what level, but you can directly go to multi-dimensional analysis, then you have to apply filters here at this level. You will get aggregated reports of all of the ports at one place. So I haven't done it like that, but in my case, we usually share information of each port from now on. So here you can go and do it, just you have to set the parameters correctly so that it gets filtered out. Performance at a service level only. So here also as a what is the GBM all thread count at a service level or traffic at a service level? That's what wanted. But generally what I've seen is that I'll come, I'll do it back to you and that.
+
+00:30:12 - 00:30:52 Unknown Speaker:
+
+But generally, in my testing, we are very easily asked to change the mission of each sports. But at global level, we can do it via multi-dimensional analysis. So, yeah, I was just identifying that, you know, how we can do it at service level. And then we will share some of it. Yeah, we will continue to help you. Thank you. Yeah, but just to add two cents on this, right? Hi, all, this is Arsena. So, we usually do this analysis, like, you know, like, using the Dynatrace at the pod level only. I mean, like, as far as I have noticed with my experience, right, like, across planes I'm talking about, we... As you said, checking at a service level would help.
+
+00:30:52 - 00:31:36 Unknown Speaker:
+
+But if you take a closer look at the related issue, whatever you are trying to solve, checking at a pod level would be much more feasible than checking at a service level. That's what I have seen. And it's across the board, like as Saurav mentioned, it's at the pod level only. And you can definitely aggregate it. If you select from the previous stage, like the multidimensional analysis, If you select the CPU and then... on changing the parameters from the next drop down so you can definitely aggregate them. Yeah, and that's what actually even I'm exploring that part, because, um, we have this department or something like that. If you want to see that a service level, you're not a particular part. So very effective on that one. Thank you.
+
+00:31:47 - 00:32:52 Unknown Speaker:
+
+So you've shown that it's able to map the dependencies between the microservices, correct? Do you know how it is able to do that, automatically detect that and map the dependencies? Dependencies, the tracing part you are asking about? Yes, yes. Multiple microservices are there, right? It's able to map that dependency. Yeah, so I'll go in much detail on this when I explain about OpenTelemetry. So generally what we have is we have an OpenTelemetry. So OpenTelemetry is instrumented in our Java applications. So what this OpenTelemetry does is like it tracks all of the things that goes with the application. It captures all of the logs and traces the spans information and keeps on building a kind of context. Like what has happened till now. And then this information, context information is passed to another service.
+
+00:32:52 - 00:33:49 Unknown Speaker:
+
+So that the next service continues as to where previous service left. So this part, I will explain in much detail when I go to open telemetry. So that's how it is. So basically we pass context information from one service to another service in different formats. We generally do it by API headers, HTTP headers. Of this, how it is done, and how Kibana relates all of this. You can just type in all of this, and it displays information related to one process that is currently running. So I will go in much more detail on this when I discuss open-to-limit. So as far as you understand, when you make API calls, you pass context information from one service to another. API calls, REST API, gRPC and all. So we add some information to the API headers, HTTP headers.
+
+00:33:51 - 00:35:28 Unknown Speaker:
+
+Okay, I mean, understood. So it's a bit smart to write that basically based on those headers. So behind the scenes, we have this whole ELF pipeline, which correlates all of the steps and shows this on our URL. So yeah, we'll discuss this once again. Later Okay, yeah, sir, you can. Probably in the next session. We can also talk about, uh, the standard, uh thresholds that is there, and also if you were to set up some notifications, um, around that standard thresholds reaching of that or anything specific. If you're able to do that, okay, yes, process. And how are we going to find them? Yes, yes, events and notifications. Okay, I'll collect information on that. Okay, so that is it. Okay, yeah, thanks, Aram. Sessions every week, Sarah will continue on some of the topics that we just discussed, post that.
+
+00:35:28 - 00:36:47 Unknown Speaker:
+
+Also, I have shared some topics on the channel, feel free to come back on that. If you have knowledge on some of the topics which you think will benefit all the team, everyone in the team. So please let me know so we can add on to those topics as well, and certainly, I mean, I or who can be able to present these presentations. And we'll also keep this a little more interactive with the Q&A and any other topics that you can, any other things that you think can be added on as well. Okay, so yeah. So can we discuss about. Is JNI, like, anyone is aware, like, any JNI solutions are being worked on? Yeah, sure. Yes. So, Tim, as you are aware, right, so, in Amex, we have already started using GitHub, GitHub Copilot, GitHub Copilot agent-related stuff.
+
+00:36:51 - 00:38:09 Unknown Speaker:
+
+Where even Syed had demonstrated a few things on the co-pilot agent mode. But apart from that, if you are aware of any other Gen AI related or agent API related flows, if anybody is aware of that, can you please share a few things? Yeah, this is fairly important. We are getting queries from some other clients and as part of ACE, they have heard ACe is moving on to Agentic. They are developing some module, so if any insights around that, please share it now or later. Recently, I went into a call with Raj for some of my GenAI specific ideas. So I have some insights there. I won't share this thing, but I think it will be helpful for anybody who wants to work here within AS and MX ecosystem for GenAI.
+
+00:38:10 - 00:39:13 Unknown Speaker:
+
+So I will share that kind of feedback and insights with you here. So first thing first, you can see, Amex Specific Ecosystem Repository, JFrog everywhere. So that is not, you can say, a best practice. As of now, higher level management is deprecating it. Or, like, not good to go ahead. In terms of taking it to E1, E2 and E3, it is good for POC. But I have been told that if somebody really wants to work and thinking about taking it till Prod, they should prefer either Langraph or SafeChain. So, these two things are being pushed from senior people. So, I think whoever is working or even solutions within Amex. So, please give some preference to SafeChain and LandGraph. So, that is suggested during that feedback. So, I think that may be helpful for anybody working upon this.
+
+00:39:13 - 00:40:06 Unknown Speaker:
+
+So, yeah, that's an insight, I think, worth sharing. So, I.Are they not exploring on the spring AI? Like they are still going with line graph dependencies? Yeah, yeah, yeah. So actually I was also pushing our team to like keep ourselves into our very basic Java shop. And I told them that we, most of us like used to work on Java thing and is more services and backend everything is in Java. So it will be less, you can say friction for us to adapt in terms of integrating agents or flows. But my manager and leads asked the people who are in GenAI Council and working in these solutions. So they told us, no, this is a kind of hard pushback from our side. If you want within MX, go with the Safechain.
+
+00:40:06 - 00:40:59 Unknown Speaker:
+
+For Safechain, I can tell you it is an implementation of LanChain in Python, which is kind of more secure for corporates. So say if LanChain is having around 100 features and code flows, SafeChain used to come with 60% of it only, whichever is meant to be safe for corporate use. So that is a kind of just a basic overview of SafeChain. So they are currently going more in a, you can say, a safe way, a safe standard corporate way. So that is why SafeChain is being propagated from upward direction. Apart from that, we are developing some framework which is still in pipeline. Raj showed us some URLs and some things. So some agent workflows and things are being developed within Amex for Amex use case. So it will be in terms of basic overall idea, it will be something like one app.
+
+00:40:59 - 00:41:45 Unknown Speaker:
+
+How we have a modular kind of thing we just plug and play. So that kind of solution is already under development within Amex. So some outbuilt code bases and repos were shown by senior leaders. Hopefully soon that will be propagated by the seniors in a more formal way. So that is the kind of insight I think may be worth sharing here. Okay, so, yeah, when you get a chance, right? When you have a discussion on this, can you just check? Uh, what is the reason they are not going with spring, right? Because, again, this line graph can save chin, right? So these are again dependencies. So again, there will be a new version, there will be upgrade, or maybe they might remove those dependencies also if some new libraries come into the chair, right?
+
+00:41:45 - 00:43:29 Unknown Speaker:
+
+For example, what they did with the language. So using Spring AI, maybe we can avoid that, but just check with the leads with whom you are working. Just get an insight. I just shared one GitHub repo on the WebEx chat. You guys can take a look. So that's the GenAI framework-related documentation. So this I received from Saurabh in one of the calls and some meetings, I guess. So I just bookmarked it, thought of sharing it. Hope it will help. Please take a look on this. OK, sure. Thank you. Anyone heard about have you heard this devil.ai atlas? Yeah, sure, yeah, yeah, the one associated with cognition correct, correct. So any insights like in ACE, any type of work they are doing, or any type of hiring activities. No, I haven't heard of any such things.
+
+00:43:29 - 00:45:14 Unknown Speaker:
+
+With respect to this is, uh, that is early stage. They were still exploring, uh. Cinechron also conducted a session on the On Devon that will be of interest. We did a session to Manju and his directs and I think some of you also got that invite. So that session was mainly talking about how do we use Devon. We understand MX is also going, Synachron has already partnered with Cognition, whatever, so these are the synergies very good for. I'm really happy to see this team come together for these kind of discussions. Uh, sorry, I am in transit from one office to other. Was not on video. I think next time, most of us will like this to be on videos. So thanks, Steve for sharing that.
+
+00:45:14 - 00:46:03 Unknown Speaker:
+
+Uh, if you hear anything around Devin Claude, LLM libraries or anything like that with respect to AI, uh, so please, uh, let us. Apart from that, I just wanted to mention one thing, um, if you see all these contacts, right? So Python is gaining a lot of importance in Ace, Uh, even though now you are also aware that you are trying to build mods in Python only, so there have been a lot of development around that. If you have exposure to Python, good. If you do not have, I would request you to take some Udemy courses. We have some dedicated Udemy courses as well. I will also list a few things which I'm able to find out on Udemy for Python for beginners, Python for a little bit advanced if you already know something.
+
+00:46:04 - 00:46:37 Unknown Speaker:
+
+Please upskill yourself. It will be of high importance. Okay, fine then. Thanks everyone for joining. We'll have this session every week. So hopefully everyone would take some time out there and attend this. It'll be very helpful for each and every one of us. Okay, thank you all for joining. Thank you.

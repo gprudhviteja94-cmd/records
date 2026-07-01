@@ -1,0 +1,368 @@
+2026-01-25 BPMN and CMMN Process Management Overview
+
+Creation Time: 2026/1/25
+
+
+📅About Meeting
+
+  • Date & Time: 2026-01-25 15:38 (Duration: 5182 seconds)
+  • Location: [insert location]
+  • Attendee: [insert names]
+
+
+📒Meeting Outline
+
+
+BPMN (Business Process Model and Notation / Composer)
+
+  • BPMN definition and purpose The team reviewed what BPMN means: a visual, industry-standard language for modeling business processes so repeatable work can be automated, executed, controlled, and optimized across the process lifecycle. A "process" is defined as a business flow specifying activities in sequence.
+
+  • Supported BPMN shapes and common uses The commonly used shapes were presented and explained:
+    
+    • Service task: automated business logic (API calls, system interactions).
+    • User (human) task: work assigned to a person (manual actions).
+    • Gateways: control flow (XOR, parallel splits/joins).
+    • Sequence flows: conditional and default paths.
+    • Start events: normal start, timer start (scheduled runs), and signal start (wait for external signal).
+    • Intermediate and boundary events: for long-running processes and suspended waits.
+    • Error boundary events and error end events: to catch and route error flows, enable retries or alternate handling.
+    • End events: normal end and terminating end (aborts other parallel flows when reached).
+
+  • Error handling and retry patterns An example diagram was shown: a service task calls an external system to get payment details. If the external system is unavailable, an error boundary attached to the task captures the error and routes to a retry service task or to failure handling. Timer boundary events may be used to wait before retrying. Multiple distinct error boundaries may be attached to a single task to route different error types to different recovery flows. Teams should standardize error naming and codes so reporting can aggregate and classify errors consistently.
+
+  • Timer boundary for reminders and SLAs Example: user tasks (CCP tasks) can have timer boundary events to send reminder emails or notifications if the human task is not completed within a SLA window. Timer boundary events can lead to reminders, escalations, or alternate actions (cancel or reassign task).
+
+  • Signal events for asynchronous interactions Signal start/boundary/intermediate events were covered for cases where the process waits for external inputs (e.g., payment confirmation). Using signal events makes the process async and allows resumption once the external event occurs.
+
+  • Composer tool and design workflow Composer (design tool) was demonstrated: creating BPMN diagrams, adding start events, service/user tasks, boundaries, gateways, and referencing reusable service logic. Best practice: build reusable BPMN subprocesses and reference them where needed.
+
+
+Error Boundaries and Reporting
+
+  • Error boundary configuration details Error boundaries are configured with an error code/name and optional retry/wait logic. They are intended for recoverable errors that have a reasonable next action—automated retry, human intervention, alternate workflow. Multiple error boundaries allow separate handling for different error types.
+
+  • Human tasks and boundaries User tasks generally don't have meaningful error boundaries because they don't throw automated exceptions. Instead, use timer boundaries (e.g., SLA timeouts) or signal boundaries (external input) on user tasks.
+
+  • Standardization for analytics The group discussed the need to standardize naming conventions and error metadata (error codes, types, messages) so reports and scorecards can consistently classify errors across automations. This enables leadership and teams to track business exceptions and automation health.
+
+  • Reporting platforms and approach
+    
+    • Current reporting (Blue Prism era) is via Cornerstone -> Tableau (scheduled / delayed).
+    • ACE goals: replicate important Blue Prism reports and move toward real-time reporting using Elasticsearch + Kibana for more self-service, near-real-time analytics.
+    • Data pipelines are in place; teams can iterate on report definitions. PO/owners may need to request specific report formats; the team (Jason, Abby, Jay) will assist in translating existing report sets to ACE.
+
+
+Case Management (CMMN)
+
+  • CMMN definition and when to use Case management addresses unpredictable, event-driven, complex flows where sequence is not fixed. Use CMMN when the process is not strictly sequential and requires human-driven decisions, parallel and dynamic activities, and can be long-running (30/60/90 days).
+
+  • Supported CMMN shapes and concepts
+    
+    • Case model: the case definition and root container.
+    • Stage: a group of tasks/processes activated by conditions; used to structure case phases.
+    • Tasks: human tasks (manual activities) and process tasks (invoke BPMN subprocesses).
+    • Milestones: markers to show progress or achievements during case life cycle.
+    • Entry/exit sentries (conditions): event-driven triggers that evaluate to true/false to control case behavior.
+    • Conditions use context/state (ACE calls it context); evaluation language is MVEL for expressing conditions.
+
+  • Interplay between CMMN and BPMN
+    
+    • Case can reference and invoke BPMN subprocesses (process tasks reference a BPMN asset available in the environment).
+    • You cannot embed a full case inside a BPMN process (standards are different), but subprocess reuse is supported (BPMN called from cases).
+    • Subprocesses should be defined as reusable BPMNs to be referenced across multiple cases.
+
+  • Use cases for case management Examples discussed: disputes, fraud workflows—long running, human-involved, parallel activities, document attachments, external interactions. These map well to CMMN with BPMN subprocesses for automated sub-flows.
+
+
+Differences: Process vs Case
+
+  • Process (BPMN)
+    
+    • Sequential, predictable, process-centric.
+    • Suited for short-running, automatable flows.
+    • Easier to fully automate end-to-end.
+
+  • Case (CMMN)
+    
+    • Event-driven, dynamic, user/human-centric.
+    • Suited for unpredictable, long-running, human-involved flows.
+    • Can invoke BPMN subprocesses but is driven by conditions/events rather than fixed sequences.
+
+
+Deployment and Naming Conventions
+
+  • Deployment ID and purpose Deployment ID is a logical name identifying where an automation/case runs. It groups automations by infrastructure and non-functional requirements such as volume, geography, regulatory constraints, and integrations.
+  • How deployments are chosen and managed The ACE managed services + engineering will recommend deployment based on throughput, geography, compliance, and integrations. The deployment decision is effectively permanent for the automation's lifetime (moving between deployments is possible but requires negotiation).
+  • Scaling and capacity Deployments are sized and can be scaled. For large jumps in volume (e.g., 10 → 1,000,000), teams should notify ACE so the deployment can be scaled or reallocated. Options include scaling a deployment, allocating a new one, or distributing load across deployments.
+  • Naming conventions and reuse Teams follow naming patterns during onboarding for logical consistency (examples: ACE_SOMETHING, team-specific logical IDs). Reusable assets (the meeting mentioned 228 existing reusable tasks) and integrations (RTF, ECM, ELF, PI) are available to teams.
+
+
+Next steps and scheduling
+
+  • Plan to continue and finish remaining material in the next session. Proposed start time for follow-up: 9:00 Eastern to extend session and cover all material; Merle to start his portion at 9:30. Further discussion on reporting and deliverables scheduled for Friday.
+
+
+📋Overview
+
+  • BPMN is the recommended approach for repeatable, predictable automation; Composer is the design tool used.
+  • Key BPMN shapes reviewed: service tasks, user tasks, gateways, start/intermediate/end events, error/termination behaviors.
+  • Error boundary events: used for recoverable errors, configured with specific error names/codes and alternate flows (retries or human resolution). Multiple boundaries per task are supported.
+  • Timer boundaries: used for reminders and SLA enforcement on human tasks.
+  • Signal events: for async external events (e.g., payment confirmation).
+  • Case management (CMMN) is for unpredictable, event-driven, human-centric, long-running workflows; supports stages, tasks, milestones, sentries (conditions).
+  • BPMN subprocesses can be referenced from cases; cases cannot be embedded into BPMN processes.
+  • Conditions in CMMN evaluate case context (state) using MVEL; they control when stages/tasks/milestones activate.
+  • Reporting: transition from Cornerstone/Tableau to Elasticsearch/Kibana for more real-time, self-service analytics; standard report set mapping is being worked (Jason, Abby, Jay involved).
+  • Deployment ID groups automations by infrastructure and non-functional needs (volume, geography, compliance). ACE advises on deployment selection and scaling.
+
+
+🎯Todo List
+
+  • owner: Automation/Product Owners (POs)
+    
+    • Review existing Blue Prism reports and share the set of current reports with the ACE reporting team (Jason/Abby/Jay). Time: before Friday session
+    • Provide any specific reporting requirements or examples of required dashboards for migration to ACE. Time: by Friday meeting
+
+  • owner: ACE Engineering / Managed Services (Mitch, Drupal)
+    
+    • Provide links and access to Composer/BPMN and CMMN documentation and supported shapes for all teams. Time: ASAP
+    • Share naming convention guidance and onboarding checklist (deployment ID patterns, asset naming). Time: ASAP
+    • Finalize mapping of commonly used Blue Prism reports into ACE (Tableau -> Elasticsearch/Kibana equivalents) and present during Friday session. Time: Friday session
+
+  • owner: Automation Teams / Architects
+    
+    • Identify reusable BPMN subprocesses and register them with ACE asset library for reuse across cases. Time: ongoing; initial list by next week
+    • Provide data attributes (context) and example condition expressions to ACE team for cases that will rely on complex sentries/conditions. Time: within 2 weeks
+
+  • owner: Reporting Team (Jason, Abby)
+    
+    • Build initial Kibana dashboards to replicate top-priority Blue Prism reports; coordinate with POs for validation. Time: initial draft by next reporting checkpoint
+
+  • owner: Onboarding / Platform Setup Team
+    
+    • Confirm platform onboarding steps and ensure new teams have required assets, environment access, and connections (RTF, ECM, ELF, PI). Time: ongoing during onboarding
+
+  • owner: All Attendees
+    
+    • Prepare questions and examples (existing workflows, disputes/fraud examples, required SLAs) for Friday deep-dive on reporting and deployments. Time: by Friday session
+
+(If any action item has a specific assignee or deadline you want recorded here, provide the name and deadline and the summary will be updated.)
+
+
+Transcription
+
+00:00:02 - 00:01:07 Unknown Speaker:
+
+Day two is hello. So what does this mean? Is, uh, when? When someone's in enterprise, right? If someone wants to build, have some automations, they want to build a BPMN flow, uh, that involves in modeling, building the BPMN and automating it through using some tool, right? And and so the repeatable work can be offloaded. And executing it in the environments, and controlling through the data flow and everything, and optimizing the process management on the lifecycle of that. So that's what we mean, what does the BPM means, that is the definition. And so in this, we build a process. Process means nothing but a business flow, what activity should go on the flow. And uh, and we. We follow the business, uh, BPM in its industry. Uh, specification for business process.
+
+00:01:07 - 00:08:11 Unknown Speaker:
+
+Uh, this is the BPM means, the business process model. Uh, and notation. So quickly, let me go, uh, I've prepared some examples, uh, how to handle, uh, read rise and failure. Okay, quickly, I'll go through the documentation of what repayments we support. So here is the SO, here are the shapes, what we support currently. So the commonly used one is this task, which is called the service task. That means here you can build your your business logic of what you want to do in the business room. Like calling, getting information from any, any source, system, or somewhere, and building a user task, which involves some manual action when some user has to take some action. And there we support, like in the previous discussion, it was.
+
+00:08:11 - 00:09:16 Unknown Speaker:
+
+We can build the parallel flows, with the gateways we can build the parallel flows like XOR or where you can build multiple paths. And we have conditional and default sequence flow and these are meant to join to provide the path for the sequential flow. And we have different start events, like the regular Start event. When it has been invoked, it will immediately start the business flow and we have a timer start, which is nothing. But when you want to schedule a process and runs automation regularly, once in a month or once in a week, you can use this Timer Start event, which is meant to run everyday or once in a month. And we have a signal start event. You have started a process and you are waiting for some signal coming outside, like a payment or something.
+
+00:09:17 - 00:10:22 Unknown Speaker:
+
+And you can be using these sort of signal events, like signal event and a boundary signal event or intermediate. So these are the type of signals you can define based on the design. And we also have these intermediate events. These are for a long-running business process where you want to have intermediate debate for certain user to perform some action. And once it's done, you want to come back and resume the process, right? So these are intermediate and bound events which you can use. And we have error event. So this is the error diagram. So which how through which you can handle your free tries or or business failures, Strong failures or something. And we also have different types of end events, so the normal end event and terminating end event, so terminating end event is kind of powerful.
+
+00:10:22 - 00:11:26 Unknown Speaker:
+
+When you want, when you have parallel cases, and you want to, you want to end article flow when you reach the terminating end event, even though the other flows are still continuing. You want to have you use this kind of terminating of the end, so we can use this terminating end event. So this is also one powerful event. And quickly, I prepared few examples, maybe we can also design them, okay? So this is one example how you can build an handling, error handling and retries. So here in this example, I'm using a gateway and service task and error even. So when you want to get some details for the payment, you will be calling some system to get the details. And in those scenarios, if an external system is down or you are not able to reach out to that and get the details right.
+
+00:11:26 - 00:14:58 Unknown Speaker:
+
+You can use this error bound remit, configure it to handle those exceptions and do a retry. So you can build another task which does this retry and be joining the gateway. So in this way you can retry and perform business errors. And handle them through a business workflow. And then do the normal activities. This is how you can automate the business errors and retries using error boundary event. And I prepared one more example on sending reminder emails. So this is one of the examples where you are waiting for some user to perform some action. From some ccp has to get some details from paying on from the. And I prepared one more example on sending a reminder email. This is one of the examples where you're waiting for some user to perform some action.
+
+00:14:59 - 00:16:22 Unknown Speaker:
+
+Some CCP has to get some details from the customer. And you can use a boundary event. This is another kind of boundary event. It's a timer boundary event through which you can perform a set of action, send an alert, send a rebounded email to the user. To the CCP to get this work to be done. So this is how you can define the sending email, sending the email to the CCP. Quickly we'll go through compose and quickly there are other shapes which how you want to use maybe I can quickly help you understand what are these nodes. So this is the compose. So here we can create a new BPMN. So like in the previous shapes, this is a regular start event. And this also has other start events. This also has the other type of start events.
+
+00:16:22 - 00:17:29 Unknown Speaker:
+
+Like signal and a timer start event. So timer start event, like you mentioned, can be used in automations where you want to build process runs once in a day. So as an example, we are just going to use a normal start event. And you can select this type, pen type, and this will be a normal type and you can make this as service task. Make this one as your get element details something, and here you can. This is the cluster. This is the way you're going to get the information about the payment. Here. You can have an header boundary, you can also have a gateway here in order to handle the. This is an error-borne event. This is how you can define an error-borne event.
+
+00:17:31 - 00:18:56 Unknown Speaker:
+
+And based out of this error, you want to handle a retry or do some failure and have some other service tasks. And then you can, based upon this, you can join it back to the gateway. So through this, you can do a retry handling. Retries. So we can use in this way you can build a retry for this particular system where you are trying to reach out to get details. So this is error-bound remain and define the details. And quickly, let me also show the example where you can build reminder emails. So we are going to take a normal, normal event. And then select a user task. This is a CCP task, where CCP a user task to call call a customer and here based upon. This particular user wants the next action to be done.
+
+00:18:56 - 00:20:23 Unknown Speaker:
+
+So if the CCP needs some more work to be done, then you can have a reminder kind of flow. You can have a timer boundary, and then you can send a reminder in here. You can build which will, which will send a reminder to the CCP to follow up on the action. And there are different types of home, so we also have a task, so this is a repeat us. So which you can do your automations where you have, where you have certain user to perform some action, but which is which you want to make it automatic. And this is a web-based and you can. You can automate this by creating your own step using RPM, and then this can be also automated, so we also have a different other type of signal.
+
+00:20:23 - 00:21:38 Unknown Speaker:
+
+Like I mentioned, this is where you you are going to use. When you are waiting for a long running process and you are waiting for some payments from the other systems, right? So you can have this sort of, let me remove this. Yep, once after you're sending a request and you want to be waiting for a signal for the payment. And you can use a signal event. And this will make the process async. And then you can move to the next steps. So this is how you can make use of this signal event to make it async. And also, we also have the gateways, different type of gateways in order to have different flows, like shown in the previous example. Have a handle and gateway also and perform parallel actions like this way.
+
+00:21:41 - 00:22:44 Unknown Speaker:
+
+So this is how we can build a parallel gateway for performing parallel actions. Are there any questions in there? If not, Tripod can continue. I want to make sure everybody's understanding what the different shapes, their purposes, why we use them. The tool we're looking at now is the Composer. I think Jairo introduced it to us yesterday briefly. But this is our design tool, and we use it for composing BPMN. BPMN is just a visual descriptive language for describing automation, right? And so we have the flexibility to design our automations to do essentially anything we needed to do systematically. And so Drupad will continue telling us about what are the different shapes that we support and what their purposes are. I just want to make sure that everybody is with us so far.
+
+00:22:52 - 00:24:12 Unknown Speaker:
+
+All right, there's a question in the chat. So you were talking about error boundaries a bit ago, right? Maybe you can go back and show that diagram. Can we talk a little bit about how an error boundary is defined, what its purpose is, and what do we do with it when it occurs? Have the error boundary event and then rectify, do the retries. Or if your downstream system is failing and you want to wait for certain action to be done on the other side, right? So you can have a wait or fail to handle using error boundary event and then do a retry, have certain duration of wait and then you can perform that action. So, similar way can take an example, there is a system we are going to maybe to call to get the payment details, you are going to call the details, call some API.
+
+00:24:13 - 00:25:24 Unknown Speaker:
+
+And here you want to see. Of weight. And then you can perform that action. So the similar way. Can take an example. Uh, there is a system we are going to, maybe, uh, to call to get the payment details, you are going to call the detail call, call some AP and here you want. You are seeing these failures and you want to rectify here. So in order to handle those situations, you can build a boundary when and have certain sleep during here with a timer timer event. So that the all process might have you might see in this error and then can be handled like this. And then here, you can define define your custom failure to this type office and then hold the process for a certain duration and then do a retry.
+
+00:25:25 - 00:26:14 Unknown Speaker:
+
+Yeah, so pause on this for a second, Drupal. So, Shivra, is this answering your question? Oh, okay. Yes, thank you so much. Okay, great. So, when we look at this error boundary, I just want to make sure that it's clear, right? So, as Drupal is saying, right, we have these various activities that are occurring that we've configured in the VPN. We've configured an error boundary event called an error boundary. And this error boundary gets triggered any time an error happens in the task that it's attached to. And it's not just any error, right? We're looking for a specific error. So if you see in the right panel, we can specify what is the specific error we're looking for to occur. And we can drive what Drupal is showing right now. We can drive alternate flows.
+
+00:26:15 - 00:27:04 Unknown Speaker:
+
+Based on the particular error that has occurred. And so what you see here is you see one error, right? But actually you can have n number of error boundaries on a single task. All the different potential errors can be configured here as different error boundaries with different flows coming from them if you need that level of complexity. What we see happening most often is when we get these errors is that we have one or two, maybe three at most. And they're usually divided into different kinds of business errors. So the thinking here is that we configure these error boundaries. We configure them because they are recoverable. That means that there is some reasonable next action that can be taken either by the system or by a person as a result of the error occurring. Yeah.
+
+00:27:05 - 00:27:54 Unknown Speaker:
+
+So this is what Drupal is showing. So sometimes we have an unreliable system we're integrating with downstream and we want to do retry in five minutes when we think it will probably be available again. And that's the timer example, right? But it might be that we need to, you know, we've got some bad data that we weren't expecting. It can be fixed. We know it can be fixed. And we assign it to a human that's going to come. And do some action, right? Change the data and then re-trigger the task. So we see that very commonly also. One of the important things that I think, Drupal, you're going to talk about a little bit is we want to standardize across the portfolio, like the naming of these kinds of error boundaries, because what happens is in reporting,
+
+00:27:54 - 00:28:38 Unknown Speaker:
+
+when we want to see our scorecards at the end of the day, in reporting, we want to be able to recognize what was the error that occurred, what kind of error it was. And we want to be able to report on it so that our leadership can see, hey, we had this many business exceptions or this percent of our automation attempts had some kind of error in them. So we've been working with JP and Jay. I think JP's on the call. I don't think Jay's here today. But what are those standard naming conventions? What is the information that we need to have in those? Error messages so that we can get the right information into our reports and so on and so forth. So we're building out this entire ecosystem to say, reflect. The.
+
+00:28:38 - 00:29:33 Unknown Speaker:
+
+Firstly, be able to recover appropriately, and secondly, being able to recognize across the value stream. That is being able to see in the automation itself, and also being able to see in our analytics and reports what's happening and when these errors are occurring, report you can continue. Yeah, so, uh, in order to get into the report slides. Okay, you can have your own code here. What? Uh, the failure? And also define the name, what is this error type? And like? In example like which Mitch mentioned, you can define multiple and have a different error flows in order to handle different failures. And, uh, yeah, like the other scenario, if you can handle through some user and perform this action manually due to some knowledge, system or any failure.
+
+00:29:34 - 00:30:36 Unknown Speaker:
+
+And yeah, here you can define your error name so that can be going into the reports and get the details accordingly. So this is how we can do. So that's a really good question, if you don't mind. So user tests don't really have error boundaries. You can use them, but they're not really meaningful because user tests don't have automated behaviors in the same way that these other tests do. So what happens is with a user task is whatever the data is, it gets assigned to a person and that person can see the data. So there's not really a way it can fail. So there's no exception they have to perform that. Yeah. Now, we can use other boundaries on the human test. So we can use timer boundaries, for example. So say the task has an SLA.
+
+00:30:37 - 00:31:25 Unknown Speaker:
+
+It needs to be done within, let's say, an hour. I think we might have talked about this before. Let's say it needs to be done within an hour. We put a timer test, a timer boundary event. As soon as this task gets created, that timer gets initialized. And after an hour, we can take an alternate path. So we see sometimes a notification might be sent based on the timer or we might cancel the task and do some next step. There's all kinds of different things you can do here. You have the full flexibility of the system to be able to do whatever makes sense for your use case. We also have signals here. So signals are an outside notification to the automation that an action should occur. Yeah, so when we say signals, that's what we mean.
+
+00:31:25 - 00:32:20 Unknown Speaker:
+
+So we can put a signal boundary on this, and if that outside input comes to the automation, that signal can get activated, and again, you can take an action. You can have your automation do something as a result of that. So those are the things that we see on human tasks. Thanks. Hi Mitch, it's me, Nico. Mitch, I just wanted to check, you know, just one step back, you were just speaking about the reports, you know, which would be published from this platform itself. Now, we have a standard set of reports which are currently being published, you know, from the BPE space in itself as of today. And those are very specific reports. I guess we have like somewhere around 10 to 12 reports, which covers, you know, my PRSA requirement.
+
+00:32:21 - 00:33:13 Unknown Speaker:
+
+So when we move into the ACE space, I should say, do the POs have to put in a specific request for that report to be, you know, to be turned out? Or do we have a standard set of reports? Because I would have to, you know, then replace, you know, whatever reports would be published within the ACE space with, you know, with regards to the BPE world, which is being done today. Yeah, so you're actually one of my favorite subjects. I could talk about it for a full hour. In fact, I think I am on Friday. But let me give a quick answer, and then we'll talk more about it at the end of the week. So when it comes to reporting, the Blue Prism stuff, like you said, today, the automations, it's all going to Cornerstone and being reported through Tableau.
+
+00:33:15 - 00:34:05 Unknown Speaker:
+
+Jason and Abby, they're working on reporting, similar reporting that matches what Blue Prism produces for ACE automations. We have multiple reporting platforms that are available to us. And what our target is, is that eventually we don't rely as much on Tableau and Cornerstone because that data is delayed. But instead, we use our Elasticsearch database. Kibana over the top of it. So those are just two different technologies. We don't need to get into the details, but the interesting thing there is that the data is all available for you to build real-time visualizations of your own. And it's a toolkit that is self-service. But we're also there to help you get started on that. So it's not like a sink or swim kind of thing.
+
+00:34:07 - 00:34:48 Unknown Speaker:
+
+We're trying to provide a little bit more robust toolkit for you to get the information out of the system that you want to get. So the nice thing is that the data pipelines are all well established and there's no work that you need to do. But when it comes to what is it that you want to see in your reports, I don't really know the answer to that. And sometimes you don't even know, right? You have a view of it, but it changes, right? So the new toolkit should help you to... be able to iterate over that and generate the information from an analysis standpoint that's most meaningful for you. No worries, thank you. And I've been in touch with Jay and Abby as well because, yeah, I could share the similar reports which have been published by UBP and itself today.
+
+00:34:48 - 00:36:22 Unknown Speaker:
+
+So I guess Friday will be a good conversation then. So thank you so much. Yeah, no problem. Yeah, to continue on the next steps. Yeah, so we also support the, like Mitch mentioned, we also support signals and we can have a signal boundary event on human tasks. This is when you are waiting for some actions to be done by user and then you can have the signal event. Defined here and I'll provide the name and then this can be in movement as payment has been completed it can be moved back here and resume the process yeah so we'll jump on to next case management. What is case management? Case management is used where you don't have any non-reputable or predictable process. So these are the scenarios where you want to use case management instead of process management.
+
+00:36:23 - 00:39:52 Unknown Speaker:
+
+So when you have a complex case process which you have to define. And then these are not in a specific order. The process is nothing but which can be predictable. That means the flow you can define when designing the process. And then you can have a gateway that will run through the flow. But in case management, it's not driven through. It's driven through the events, based on the actions, what we perform. So in, we follow the industry standard specification CMMN MMN stands for case Management, Model and location. So, sorry, okay, and uh, quickly I'll go through, uh, the CMN supporter, uh, with water. What is the shape which are. Thank you very much. Thank you. . So these are the supported shapes in CLM. So we have something called a case model, which is nothing but the case definition.
+
+00:39:52 - 00:40:54 Unknown Speaker:
+
+And this is the starting of the case. You can define the items in here, what are the actions they're going to perform. So we also have a stage. Stage is nothing but a group of... Task or process where you want to have certain tasks to be performed, when you have, when you want to perform based on the condition. So we all have tasks, these are the tasks, these are the human tasks, when so most of the human task is complex. Due to when some CCP has to work on this user task. And then then they want to validate everything and do not oppose the case. And also here, but if you want, you can also build a process. You can also include process inside a case, but the other way is not supported case, you can't include a case into the process.
+
+00:40:54 - 00:45:14 Unknown Speaker:
+
+So we also have milestones, so these are the supported shapes in CMN. So we have something called a case model model, which is nothing but the case definition, and this is the starting of the case. You can define the items in here, what are the actions they're going to perform. So. We also have a stage. A stage is nothing but a group of tasks or processes. Where you want to have certain tasks to be performed when you want to perform based on the condition. We all have tasks. These are the tasks. These are the human tasks. So most of the human task is complex due to when some CCP has to work on this user user task. And then then they want to validate everything.
+
+00:45:14 - 00:48:16 Unknown Speaker:
+
+I do want to pull the case, and also the good part is you want to also build a process. You can also include process inside a case, but the other way is not supported case, we can't include a case into the into the process. Um, So we also have milestones. And it's a milestone, right? So during the case, case can be a long-running case. And during the case execution, you can have different milestones. Trying to, when a user is trying to create a new account, right, and there will be different steps in getting back and checking the current report and getting details from the user. So you can track. To drive all the events, all the actions by Milestone. By having this Milestone item, whatever the items achieved can be flagged to the Milestone.
+
+00:48:17 - 00:50:07 Unknown Speaker:
+
+We also have this entry and exit entry. So these are the main. How these actions perform quickly i'll i'll show create a simple cmm and walk you through each steps how to use. Yeah, so here we can create a CMN. When you create a case, when you want to create a new case, you will move back and get this definition. And here you can define your fact, your item, what action it wants to take. So as this is a task, there are two types of tasks. One is the human task. And you can also, there are all these cases, nothing but event driven. And when any event occurs, all the items, the task will be performed. So you can define based on the event you want to perform only certain action. So you can have this entry condition.
+
+00:50:07 - 00:51:21 Unknown Speaker:
+
+This is called entry. But here you can define your conditions based on the event you want to have some condition. Like here, psa.customer.verify. So, if a customer is verified, the customer is verified, you want to perform verification when creating an account. So, when the customer is verified, you want to perform setup action, which is a sequential action. You can select a process task and then perform the process based on this event and based on this data. And also when you want to choose a manual action to be done, you can use a task. This is nothing but a human will be working on it. When you want to group these both actions, So you can have a stage and have a entry condition here and then have, if you can.
+
+00:51:21 - 00:52:25 Unknown Speaker:
+
+Define human office task and also a human task in order to perform this action. So this, this is how you can have the conditions, these are the event reactions, which are through which these are, these are driven from. And also I mentioned, we also have milestones, you can have addition to the in order to get this active, and similarly, you can have multiple milestones. And these can be achieved with this. This can be completed or achieved with this condition condition, it can be achieved. So let's, um, let's talk a little bit about, um, conditions for a second, okay, so um. When we talk about conditions, right, these are evaluated to true or false, these conditions. That's what we're looking for. So what does that mean, right?
+
+00:52:25 - 00:53:17 Unknown Speaker:
+
+When we look at a case or even at a process, right, we have data that's associated with it or state. We use the term state to reflect the data that's associated with a case. So keep in mind, through the life cycle, when I start a case, I'm going to start it with some information, some data as an input. It may be, and we call that in ACE, we call that as context. But largely we're saying, look, in order to start a case, we need to input these data attributes. Anytime those data attributes come into a case, we have an opportunity to evaluate that those data attributes have particular values and those attributes can be part of these conditions. In the example, can you pull up that example you were just showing with the condition, the create account?
+
+00:53:19 - 00:54:12 Unknown Speaker:
+
+Right? Yeah, so if you look at, yeah, click on that sentry. Right, so this condition, PSA.CustomerVerified, what does that mean? That means that there's some data attribute that has already been passed into the case that is called PSA.CustomerVerified, okay? And right now we're checking to see, is the value of that equal to true? If it is, then we can trigger this sentry, which means that that process gets triggered. These conditions can be as complex as you need. So we're showing a very simple one. One attribute is equal to true, but we see some things where we've got multiple attributes or multiple scenarios that need to evaluate all to true in order to be able to trigger the condition. We can also have them evaluate the false, I guess, as well.
+
+00:54:13 - 00:55:03 Unknown Speaker:
+
+But at the end of the day, we're looking for this to evaluate either true or false or to trigger the condition. The language that we use for specifying the condition is something called MVEL, and it's a public specification. You can find out how to use it. It's fairly simplified. The syntax is a little bit like Java syntax. But it's not as complex as having to know a coding language. So anyways, I just wanted to kind of bring this to your attention and make sure you're aware of what we're talking about when we say conditions, because that's a critical piece of this. Can you also click on the process task? Because I think we missed one piece of this. So when you see we're going to trigger a process, but you see that we've got that in detail, we've got this thing highlighted on the right panel called reference.
+
+00:55:04 - 00:56:06 Unknown Speaker:
+
+So what does that mean, right? So what we're saying with the process task is the reference is going to be some BPMN document that we created that is available in your environment. So remember, you know, a few minutes ago, Drupal was showing us how to configure BPMN diagrams and automations to do whatever activities we need to do. So once we've defined those, we can use those here as subprocesses. And those can be triggered as process tasks here in case management. Okay, thank you. Yeah, so they can be referred into the case and whatever is defined that can be added here in the reference and can be viewed as part of case flow. These are the main task which can which we are supporting. Uh, quickly want to have.
+
+00:56:06 - 00:57:25 Unknown Speaker:
+
+If anyone has any questions, we can quickly get on more to the next topic. So, yeah, yeah, I have a question. Uh, so yeah. It may be a little elementary, but I just want to understand cases like a superset, right? And if. Within a case, as you mentioned, there's a process, right? So can a BPMN fit into that process? I mean, a process BPMN can fit into a case, basically? A definition, you can't include that as part of a process because there are two different standards. One process is the business process model annotation. And case supports only case management notation. So these are different. So we can't include but you can refer them as part of case. Like, we process, we solve, get payments, and then we try, and then we succeed.
+
+00:57:25 - 00:58:20 Unknown Speaker:
+
+So something similar, what would be a real case? Case-by-case? I mean, in general. Well, so we have a, if you guys play with disputes workflows, that's probably a good example of something that we use for companies. For fraud. We use cases for those also. So what happens is I have a number of activities that happen with disputes. I get notified that the dispute should start. Sometimes I have a receipt that I need to attach. I need to issue a request to a merchant to provide their feedback on whether the dispute is valid or not. I have to send a notification to the customer. I have 30 days to wait where I'm doing some activities about checking to see if the... If the financial adjustment is posted or if I need to initiate a chargeback, right, there's a lot of things.
+
+00:58:20 - 00:59:18 Unknown Speaker:
+
+And many of these things can happen in parallel. They don't have to be all sequential. Sometimes I need people to take an action, right, to look at things. So all those things, you know, disputes is a fairly complicated thing, but that's an example where we're very confident in the enterprise and using case management to handle disputes. So within a dispute, though, I have some sub-processes that are automated. For example, sending a correspondence to the merchant and asking them for documentation, that can be a sub-process with all the steps there as a BPMN that's triggered as part of the case. Got it. And all these sub-processes, they are reusable throughout the stream? Correct. Yeah, so that's how we define these, right, with case management.
+
+00:59:18 - 01:00:26 Unknown Speaker:
+
+We define the subprocesses in BPMN, and then we just put the reference name of the BPMN right here in the right panel, and that's how we define these complex cases that include subprocesses. BPMN and CMMN, there's a lot there. So I want to make sure that folks understand this is not meant to be a training. There's lots of material out on the internet if you're interested in learning more about how to use BPMN and how to use CMMN. We don't even refer to any specific one because there's so many of them out there. We chose an industry standard on purpose so that that way there's no mystery. The documentation that Drupal had referenced, I think on the second tab here in this browser, that's available to all you guys. We'll make sure that you have access to those links.
+
+01:00:27 - 01:04:58 Unknown Speaker:
+
+That talks to the shapes that we support in ACE. So even though the specifications for both of these things are quite robust, what we've learned in American Express is that we can accomplish what American Express needs by supporting a subset of the total spec. So we don't support the entire spec, If it turned out that we found a gap, right, there was something in the spec that we don't support that needs to be supported, the good news is that we're the engineering team that built this thing, so we can always add support for shapes as needed. Okay, I think we can move to the next subject. Yeah, so, okay. So quickly, I mean, what are the differences between a case or a process? Yeah, like I mentioned, yeah, so case is a complex. Hello?
+
+01:04:58 - 01:06:38 Unknown Speaker:
+
+Yeah, I'll get them. Both are different, different, have different flows. So case can being complex and can be, uh, can having a human task which is a certain user has to perform more actions. And also we can automate that. Uh, we can have a certain process can be included, and case can have a process. And the other difference is the process is a process-centric approach, which is a sequential one, and case is event driven. So based on certain events, it can be changed, the flow can be driven. So like I mentioned in the previous example, we have a process, we have a case, and we have, based on events, the user has to perform certain actions, or due to some data change, it has to different case, right? So process is a sequential and it's a predictable.
+
+01:06:38 - 01:08:02 Unknown Speaker:
+
+So case is predictable. So based on the data chain, different conditions can be triggered and accordingly different tasks can be. And like mentioned, process is a sequential event, and also it's a predefined flow. But case is event driven, like mentioned. And the process, most of the process can be fully automated into it. That means the automations are running on daily basis, but case requires a human task decision. So these are the main differences for process and a case. You want to use case and you want to use a process. Cases can be long running 30, 60 or 90 days also. But process automations are quick. These are the main differences where you want to select. Let's move on to next. So there was a question about what is the deployment ID.
+
+01:08:03 - 01:15:35 Unknown Speaker:
+
+So deployment ID is nothing but a logical name for a use case. So this can be... teams can provide a logical name during onboarding. . . . Um um. I don't know. Hello? Hello? Um um um. Hello. The way to onboarding, as part of onboarding you get platform setup. So platform setup which is given to the onboarding team. And this removes all the management of the environment and all the which means you don't need to worry about getting a new DB instance, or getting a cloud environment. So you really need to focus on building your flow. Your flow can be either process or a case, and test it in the environment, and then your assets independently. So as part of this all onboarding of the platform setup, you will be given assets and can be working independently.
+
+01:15:36 - 01:18:01 Unknown Speaker:
+
+Like with the reusability part, we have 228 reusable tasks which can be integrated. And also we already have integration with different enterprise architecture platforms like RTF, ECM, and ELF. And also we have integration with PI for reporting so that we have a different data. More discussion of it. So this is the, this is what we need in the deployment area. And quickly as we are in time crunch, so with the naming conventions, we have certain standards of what we want. For automation teams, we use some name like ACES, ISON. Logical name for use cases. Like an example, we have an example of fraud use cases which are built by automation teams. So they use the ASA cycle, GSDF and fraud, or the dispute.
+
+01:18:02 - 01:19:32 Unknown Speaker:
+
+So for non-automation use cases, the naming pattern is card ID, that is common for any team, and card ID is a logical name. We have a use case, something called as a banking use case, so they have card ID and their life savings banking use case. So that's how these, uh, this, naming conventions are before we jump on any more questions. So over time, we fielded a lot of questions about .90s. So I want to make sure that people understand what this is. Every time we deploy an automation or a case, deploy within a deployment. I'm using the same term like six times. What does that really mean to us? That means we take and we group the automations in a way that it runs together in the same infrastructure. So this is a little bit technical in nature.
+
+01:19:32 - 01:20:33 Unknown Speaker:
+
+Now, as the ACE team ourselves, the managed service provider is part of it, we help you to determine which deployment is best to run your automation. We make this determination largely based on criteria like what's the volume of it, what systems does it integrate with, what's the geography it's covering, what's the regulatory considerations. Because sometimes data needs to be segregated for reasons outside our control, like India, for example. Or sometimes we have, you know, a million rule chain checks in in an hour's time, like with collections and eight court outside placement. So in these examples, right? We want to have the flexibility to be able to run these in in an analogy environment. That makes sense. To be able to handle the volume or handle the regulatory concerns or compliance needs, or whatever.
+
+01:20:33 - 01:21:27 Unknown Speaker:
+
+We group these things together and we call them as deployments. So what will happen is we decide up front what is the deployment that an automation will run in. And that name of that deployment that is associated with that automation basically for the lifetime of that automation. So we talked a little bit about reporting a little bit ago. Anytime we look at the data that comes for reporting, every automation will have the associated name with it. This is meaningful because different deployments have an identification of what's happening, right? We see that people are interested in what's happening and what deployments they can identify, you know, what's running, where it's running, you know, who does it belong to, and so on and so forth. So deployments, you know, are a consideration of...
+
+01:21:28 - 01:22:31 Unknown Speaker:
+
+Generally, what infrastructure it's running in, that's a technical thing, but understanding that your organization is running in a particular deployment is meaningful in a business context, because when you're looking up information about what's happening, you need to look at this automation. Hey, Mitch. Yeah. Great. Not to get too technical, also, but is this just a way of grouping capacity? Mostly it's about how the infrastructure should be allocated to be able to handle the requirements, the non-functional requirements of the automations. I know that's getting a little technical, but every automation has some non-functional requirements like we're talking about. It has a certain number of volume or a certain amount of throughput or data segregation. And we need to make sure that automations are... in an infrastructure or map to an infrastructure that can handle whatever those non-functional requirements are.
+
+01:22:31 - 01:23:18 Unknown Speaker:
+
+Once we determine that an automation should be in a particular deployment, that is pretty much a permanent decision. Technically, can they be moved from one deployment to another? It's technically possible, but it never would happen without you know, a lot of negotiation and discussion. So the reason I say this is because there's been a lot of conversation about, well, what if you guys arbitrarily change our appointments? What happens to our reports, right? We don't, we consistently see what's happening across the life cycle of these things. And it turns out that we don't do those changes, right? And if we did have to, it would be something that we would raise and everybody would be aware and we would make sure that whatever. Reporting needs were associated with it were met before we made those changes.
+
+01:23:20 - 01:24:19 Unknown Speaker:
+
+Makes sense and just follow up to that. It sounds like there is no limitations, but just from the original limitation within a deployment, say, like volume triples, quadruples over time, there is no limitations for that. There so we can so with our cloud resources we can scale the infrastructure in a way that it can grow with the volume of the automations as they grow. But if something were to be a meaningful change, for example, today we're doing 10 and tomorrow we're going to do a million, right? We'd want to know that so that we could make sure that we mitigate any potential risks there. Would you scale that deployment idea or move it to a bigger deployment idea? The last thing, a lot of things are very dependent.
+
+01:24:19 - 01:25:29 Unknown Speaker:
+
+There's a lot of science there, but also a little bit of art there. It really depends on the circumstance, but we have both things available to us. We can scale the deployment if we want to. Or we can say allocate a new deployment if it makes sense, or we can spread the volume across multiple deployments if that makes sense. So there's a number of different ways to solve these kinds of problems if the circumstances change in a meaningful way. Thank you. Extend it tomorrow or to cover the rest of the topics and pick up tomorrow's agenda? Yeah. So, you know, we're talking over Slack. I think what we'll do tomorrow is right now we're scheduled to start at 9.30 Eastern is our current schedule. 9.30 Eastern is what the schedule is. We can start at 9 instead.
+
+01:25:32 - 01:26:07 Unknown Speaker:
+
+We'll add an extra half-hour. We'll start at 9. Drew Bud will come and we'll finish up your material, first part. And then Merle will start with his material, second part, at 9.30. In the meantime, Merle and I will address any... Thanks, everybody. Thanks, everyone. Thanks.

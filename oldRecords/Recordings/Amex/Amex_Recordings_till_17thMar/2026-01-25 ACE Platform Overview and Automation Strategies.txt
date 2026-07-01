@@ -1,0 +1,422 @@
+2026-01-25 ACE Platform Overview and Automation Strategies
+
+Creation Time: 2026/1/25
+
+
+📅About Meeting
+
+  • Date & Time: 2026-01-25 13:11 (Duration: 3,827 seconds)
+  • Location: [insert location]
+  • Attendee: [insert names]
+
+
+📒Meeting Outline
+
+
+ACE Platform Overview
+
+  • What is ACE ACE (Automation and Case Ecosystem / ACE Studio) is a foundational platform for business workflow automation (process management) and semi-predictable business case management (case management) across Amazon. It supports process, case, and work management, business rule execution (RuleAssist), RPA, process intelligence, and an admin portal (ACE Control Center). ACE emphasizes use of open-source libraries so teams avoid specialized proprietary tool training.
+
+  • ACE Engine (Automation core) ACE Engine is the runtime/controller that takes the designed workflow and automates execution. It drives stepwise process automation, interprets design-time decisions, routes work, and orchestrates tasks (including service, user, and RPA tasks).
+
+  • Automation modalities
+    
+    • Stepwise BPMN-driven process automation.
+    • Business-rule-driven automation via RuleAssist (Drools-backed).
+    • Robotic Process Automation (RPA) using Robot Framework to automate web, mainframe, and desktop interactions.
+
+
+Process Management
+
+  • Definition and capabilities Process management covers design, development, execution, automation, and tracking of workflows. ACE supports BPMN (industry standard) with alternate flows, gateways, human tasks, and robot tasks. Processes can be scheduled or triggered.
+
+  • Sample process discussed Monthly scheduled payment process:
+    
+    • Step 1: Get payment details (service task).
+    • Step 2: Process payment via RPA (robot task).
+    • Step 3: Validate payment status (service task).
+    • Gateway: On success -> end; on failure -> manual human task to complete payment. Demonstrated handling of pass/fail outputs, alternate flows, and combining RPA + human tasks.
+
+
+Case Management
+
+  • Definition and when to use Case management (CMMN) is for semi-predictable, non-linear, data-driven business activities where the order of tasks depends on inputs/conditions. Cases support stages, sentries (condition watchers), milestones, subprocess/process tasks, and human tasks. ACE supports CMMN and provides ACE Caselight (low-code/no-code) for simple case types and rapid onboarding.
+
+  • Sample case discussed Credit line application case:
+    
+    • On case creation, collect applicant details (process/subprocess task) runs automatically (no sentry on that plan item).
+    • Case data updates trigger sentries that evaluate conditions (approve/reject).
+    • If rejected -> handle rejection stage executes; milestone updates accordingly.
+    • If approved -> enter fulfill-application stage; create-account process task may trigger, update case data, then communicate to customer.
+    • Milestones track completion state of logical goals; not all plan items must execute for case completion.
+
+  • Clarifications about sentries and subprocesses
+    
+    • Sentries act like signal/condition checks evaluated when case data is updated.
+    • Subprocesses are BPMN processes invoked within a case (or user tasks).
+
+
+Work Management
+
+  • Definition Work refers to tasks assigned to humans or human-like actors (bots). Work items pause process/case execution until completed or exited. Work management covers assignment, lifecycle tracking, and queuing.
+
+  • Task lifecycle ACE follows OASIS human task lifecycle with selected states: ready, reserved, in progress, suspended variants, completed, exited. Examples discussed:
+    
+    • Ready -> Reserved (assigned) or Suspended Ready.
+    • Reserved -> In Progress (start) or Delegate or Suspended Reserved.
+    • In Progress -> Complete, Suspend/Resume, or Exit.
+    • SLA handling: interrupting boundary events and SLA routes; breached SLA can release assigned user and return task to work basket for reassignment.
+
+  • Work baskets and worker actions
+    
+    • Grouping/queuing of tasks.
+    • Workers update status (in progress, suspend, complete, exit).
+    • Admins can allocate tasks and view/filter by task state.
+
+
+ACE Studio (Composer) and Tooling
+
+  • Composer features
+    
+    • Visual designer for BPMN and CMMN models.
+    • Save, share, collaborate, publish models.
+    • Define inputs/outputs, work baskets, assignments, RPA script references, scheduler for processes.
+    • Service catalog for reusable service tasks and RPA scripts.
+    • RPA development integrated (Robot Framework used for RPA scripts).
+
+  • Demo highlights
+    
+    • Building the sample payment process: add service task (get payment details), RPA service task (process payment on portal), validation, gateway to end or manual user task.
+    • CMMN modeling: stages, sentries, milestones, process tasks.
+    • Publishing models to assets for reuse and sharing across processes.
+    • Reusable service tasks allow consistent reuse across multiple processes.
+
+
+Business Rules (RuleAssist)
+
+  • Purpose Business rules evaluate input data and produce outputs or decisions (e.g., reject applicant under age 18). Useful for validations, eligibility checks, and decision logic.
+
+  • Implementation
+    
+    • RuleAssist is powered by Drools.
+    • Supports Drools native language, decision tables (Excel), and domain-specific languages.
+    • Supports rule usage tracking and auditing; rules can be updated without interrupting running processes/cases.
+
+
+Process Intelligence
+
+  • Purpose Capture and analyze event data to discover process patterns, identify bottlenecks, measure throughput times, and surface optimization opportunities.
+
+  • Capabilities
+    
+    • Automatic acquisition of process event data across ACE and integrated systems.
+    • Discovery, modeling of variants, monitoring and optimization recommendations.
+    • Metrics for work distribution, completion times, bottleneck detection.
+    • Helps teams prioritize automation or improvements.
+
+
+ACE Control Center (Admin Portal)
+
+  • Purpose Admin portal to manage processes, cases, rules, scheduling, security, and bulk processing.
+
+  • Key sections
+    
+    • Process and case instance search and status dashboards (filter by dates, status, process ID, correlation key).
+    • Work management: manage work baskets, allocate tasks, filter tasks by lifecycle state.
+    • RuleAssist: view deployed business rules, usage metrics, and audit logs.
+    • Scheduling: configure and review scheduled processes.
+    • Bulk processing: define bulk policies to run processes for bulk datasets.
+    • Security: manage access controls for triggering processes, creating cases, and picking up work.
+    • Process Intelligence integration (insights dashboards) — deeper dive to be covered in later sessions.
+
+
+Q&A Highlights
+
+  • Difference between process and case:
+    
+    • Processes are directed, predictable flows (BPMN).
+    • Cases are data-driven, non-linear, and not all plan items must execute (CMMN).
+
+  • Sentries behavior:
+    
+    • Sentries evaluate on case data updates (signal-like).
+
+  • Subprocesses in cases:
+    
+    • Can invoke BPMN subprocesses or user/human tasks.
+
+  • RPA scripting language:
+    
+    • Robot Framework is used.
+
+  • SLA/time boundaries for human tasks:
+    
+    • Use interrupting boundary events and SLA routes; on breach, task can be released back to basket for reassignment.
+
+
+📋Overview
+
+  • ACE is a unified platform for process automation, case management, RPA, business rules, work management, process intelligence, and admin operations.
+  • ACE Engine automates BPMN-defined processes and orchestrates tasks including RPA.
+  • Case management (CMMN) handles non-linear, data-driven business cases; Caselight provides low-code/no-code for simple cases.
+  • RuleAssist (Drools) enables business-rule driven automation and decisioning; rules are auditable and updatable without downtime.
+  • Work management supports OASIS-based task lifecycle, work baskets, SLAs, and task assignment/delegation.
+  • ACE Studio Composer provides an accessible UI to design BPMN/CMMN, build RPA scripts, and publish reusable service tasks.
+  • ACE Control Center centralizes admin tasks: process/case monitoring, work allocation, scheduling, rule management, bulk processing, security, and process intelligence insights.
+  • Process Intelligence captures events to reveal bottlenecks and optimization opportunities.
+
+
+🎯Todo List
+
+  • [owner: Training Organizer / Presenter]
+    
+    • Create Slack channel for ACE training follow-up and questions (ASAP)
+    • Share session artifacts (slides, sample BPMN/CMMN, RPA examples) to team (by next meeting)
+    • Schedule Day 4 deep-dive for ACE Control Center and Process Intelligence (date/time TBD)
+
+  • [owner: ACE Engineering / RPA Team]
+    
+    • Provide example Robot Framework RPA scripts and documentation for reference (within 1 week)
+    • Publish sample reusable service tasks and catalog entries to Composer assets (within 1 week)
+
+  • [owner: Business Rules Lead]
+    
+    • Share Drools rule examples and decision-table templates used in RuleAssist (within 1 week)
+
+  • [owner: Security/Admin]
+    
+    • Prepare a short guide on Control Center security roles and access management (by next session)
+
+  • [owner: Process Owners / SMEs]
+    
+    • Identify 1–2 candidate processes or cases for pilot automation or case onboarding (by next week)
+    • Prepare sample datasets/events for Process Intelligence ingestion (by next session)
+
+If you want, I can fill in attendees and location, convert the action items to calendar invites, or create the Slack channel and collect required artifacts.
+
+
+Transcription
+
+00:01:20 - 00:02:24 Unknown Speaker:
+
+This data that's received. Some can also be dependent on human tasks, such as a CCP needing to complete some operational work in order for this process to move towards completion. Some of these processes could also have sub-processes that complete a smaller unit of work within the bigger main process. No matter how complex the designing, execution, and monitoring of these processes is known as process management. Other times, business activities aren't really able to be represented or completed in such a cookie-cutter, stepwise workflow fashion. While we may know at a high level what activities need to be done and what the end goal is, these activities can be data-driven, where the order of these activities can be dependent on. Let's say custom or enterprise inputs or communications, and we may have different steps to complete in order to complete this larger business activity.
+
+00:02:24 - 00:03:28 Unknown Speaker:
+
+Within ACE, we coined these semi-predictable workflows as business cases. Cases can also vary widely in complexity, with some cases even leveraging business processes, no matter how complex as well. The designing, execution, and monitoring of these cases is known as case management. So now back to the main question. What is ACE? Well, ACE, Automation and Case Ecosystem, better known as ACE Studio, is a foundational platform that provides the capability of business workflow automation and business case management across Amazon. So now let's take a quick glance into the features ACE provides today. So the first main feature of ACE is its automation capability. We'll talk about how ACE provides automation and what that can mean for your workflows. As we briefly discuss next, we'll talk about ACE's capability of process, case, and work management, and we'll go deeper into what these mean.
+
+00:03:30 - 00:04:20 Unknown Speaker:
+
+Then we'll talk about ACE Studio, ACE's provided user interface for the design of business processes and cases. This more serves as a developer toolkit for developing and designing these processes and cases. Next, we'll talk about ACE's capability to manage business rules and use them in both your automations as well as a standalone tool using RuleAssist. Then we'll briefly talk about process intelligence, which can provide key insights on how your process is performing within ACE. And lastly, we'll take a... quick look at the ACE Control Center, which is ACE's provided admin portal for the management and administration of all your business processes, cases, and any business rules you may be having. And so one thing I want to highlight is in all our applications, we align to use open source libraries.
+
+00:04:21 - 00:05:16 Unknown Speaker:
+
+So we, as an enterprise, don't need to spend our time or resources on specialized training to be able to use ACE. So we'll go into what we do use as we move forward. Let's go. So now we'll talk about automation. What is automation? So we all have a pretty, I'd say, general understanding of what automation is. So automation is the act of making something run automatically on its own. Now, how does ACE provide that automation? In terms of workflows, automation is what moves the workflow step by step from start to completion. ACE's automation is powered by ACE's flexible and powerful ACE Engine. ACE Engine is what you could call the core of all ACE has to offer. Through ACE Engine, our platform takes in your design workflow and automates it to execute as designed.
+
+00:05:16 - 00:06:18 Unknown Speaker:
+
+From meeting your design workflow to then knowing what actions to take when at a particular step in the flow, ACE Engine is the master controller of this process manager. Aside from stepwise workflow automation, ACE also provides automation in a few other ways. So another way ACE provides automation, which I've touched on briefly before, is by automating actions that would be taken when validating data against existing business rules through a feature called Rule Assist. So just to briefly touch on business rules, Business rules are essentially rules that the business has, that... represent a scenario, to excuse me, that represent that. Based on input, we want to proceed with a certain action so that business rules are defined for the business. We can leverage these using rule assist.
+
+00:06:18 - 00:07:05 Unknown Speaker:
+
+So one quick example could be the rejection of a credit card application, let's say the applicant age is not at least 18. With rule assist, this could be a condition as part of a bigger business rule, and when we see that condition being satisfied, we know to reject. So we'll take a deeper look into rule assist as we proceed with the training. Another way AI provides automation is through what's known as robotic process automation, or RPA. So what's RPA? RPA is the act of a bot completing actions that a human would typically do to complete tasks. An example of this could be... Going back to the payment portal example, an example of this could be going on a payment portal and making a payment, which instead of being done by a CCP, could be done by a bot.
+
+00:07:06 - 00:08:11 Unknown Speaker:
+
+With RPA and ACE, you could also automate business processes requiring any sort of web browser activity, accessing many different systems, as well as automating desktop application activities as well. Now we'll move forward to what is process management. So as we touched on earlier, process management is all the activities performed in designing, executing, and tracking your workflows. As we've learned, Ace provides this capability through Ace Studio Engine. Automation of a workflow is what process management is. This design of the workflow, the development of the workflow components, the execution and the automation of this workflow. And then tracking its results is what defines process management. So processes can also be designed to have alternate flows. In case of any signals or failures in the workflow, we want to be able to account for these things.
+
+00:08:12 - 00:09:26 Unknown Speaker:
+
+Workflows can also have tasks to be computed, to be completed by humans. Or human-like entities, like let's say another bot. ACE supports the automation of workflows by using industry standard business process model notation. So if a process is defined in this notation, we support it here at ACE. So let's now take a look at an example of a that could be used here at ACE. So here's a sample process use case. So in this scenario, we have a process that is scheduled to run once a month and complete some actions. Looking further into the design, we can see each of our defined steps along the workflow. So as you guys can tell, this workflow defines actions to be taken in order to complete a scheduled monthly payment. So once a month, this process has started.
+
+00:09:27 - 00:10:22 Unknown Speaker:
+
+The first step that we do is we take, is we are getting the payment details needed to complete this payment. So that is defined here in this next step, this service task, get payment details. Once we've collected our necessary details, we can go back to this. So this step is called process payment report. If you see with this little icon, this means a robot will be taking care of this task. So this step is leveraging an RPA task. As we discussed earlier, RPA tasks are used to leverage a bot to complete some actions on either a web page, a mainframe screen, or some desktop application. In this case, we are going to have the bot go to the payment website and try to complete the payment. I say try.
+
+00:10:23 - 00:11:18 Unknown Speaker:
+
+Because as we all know, sometimes things just don't work as expected. The website could be down, the payment part could not be responding properly, or just something could happen along the way where we don't get this payment completed. The bot is not able to complete this payment. So once the bot is done trying to complete its job, it'll produce some output, whether pass or fail. In this next task, we are going to... validate this payment status. So we're processing the output that they gave us in the previous task. So whether it may be pass or fail. Based on pass or fail, let's see that there are two things that can happen. Here, this is called a gateway. Once we finish this task, we go to this gateway, which then will check for a condition for us.
+
+00:11:19 - 00:12:29 Unknown Speaker:
+
+Based on the condition that we want, whether the payment was succeeded or failed, we want to either end this process or take another step, which in this case, if in case of failure, we want an actual human to go and manually do the payment as a fail-safe option. So this is a pretty, excuse me, well, this is a simple condition. In a real scenario, we may even be, let's say, extracting some other data from the payment task, right? And then performing another flow, another step based on that other data that we extracted. So, again, this is a pretty simple sample process use case, but it does show how we could have alternate flows. We could also have... human tasks in our workflow, as well as robot tasks in the workflow, and what sort of conditions we can check for when designing our workflows.
+
+00:12:33 - 00:14:01 Unknown Speaker:
+
+Okay, so as we wrap up process management, we'll move on to case management. So what is a case, and what is case management? So a business case... as opposed to a business process that we were discussing just now, is designed for situations where business activities are not necessarily able to be streamlined into a workflow. So case management provides problem resolution for these non-repeatable industry standard business. And these are not necessarily able to be streamlined into workflow. So case management provides problem resolution for these non-repeatable, unpredictable activities as opposed to the efficiency-oriented approach of process management for routine, predictable processes. Age supports business cases defined in the industry standard case management model notation. More complex cases, we also provide a feature called ACE Caselight, which is a low-code slash no-code solution that is used primarily for simple case types to rapidly onboard those simple case types.
+
+00:14:01 - 00:15:07 Unknown Speaker:
+
+So there are a few scenarios in which maybe we could use Caselight. Caselight is designed to handle. These are a few common scenarios, so let's go over. Just to real quick. So let's say scenario one. We have a servicing request that is designed to require human intervention. This request is simple. We just want to collect data from the customer, assign a task to a CCP to then follow some operational procedure. And then once they're done, they will go ahead and close this case. The assigned tasks need to follow some proper lifecycle. And communication may need to be sent to the customer, and the customer may need to provide some inputs as well. So for a simple case like this, Caselight is perfect for these manual sort of business activities, as well as the Caselight is also really good for, as I touched on, rapid onboarding.
+
+00:15:08 - 00:16:10 Unknown Speaker:
+
+Reason being is, so let's say a new product is launching in American Express. We're optimistic that the product will succeed, but we also want to limit our investment into this product just in case that we need to fail it fast, right? So we may be wanting to make a decision to handle more complicated servicing requests for this product in the early days manually. As I said, as I touched on before, manual handling is a great use case for case slide. So now let's take a look into a sample of a case management use case. So here we're looking at what's called a case model in the case management model notation. In this case model we can see that this defines the business case for approving or rejecting a new credit line application.
+
+00:16:12 - 00:17:25 Unknown Speaker:
+
+Based on this model, when we choose to start a case, one process task will kick off automatically. Based on this model, when we choose to start this case, one process task will kick off automatically. So that is the collect applicant details task. So now, how do I know this task will automatically start during the creation of this case? So if you look closely, there are two tasks in this model that don't have what case management model notation calls as a century. That's these little diamonds right here. Centuries. Are just conditions that are watchful that, once met, will then activate this. This um plan item task that we have defined here. So since, um, since, there was no century here when we started. When we create this case, this case will know to automatically take off this this task and collect the applicant details.
+
+00:17:25 - 00:18:27 Unknown Speaker:
+
+Now, if that's the case, why didn't create account Start automatically as well. The reason why is because the object that this task is within, we'll see it's within this bigger, oops, excuse me. It's within this bigger figure. This is known as a stage. So we see that this stage has a century. So stages are used for logically grouping certain tasks together. So that means we want these tasks within this stage to, kind of perform, either execute or perform at around the same time. So, yeah, if you guys have any questions on these shapes, just, they, these are all CMMN defined shapes. So if, as we're going through this, if maybe it's a bit confusing or you forget what the shapes mean, it's very well documented online.
+
+00:18:27 - 00:19:58 Unknown Speaker:
+
+You can always... reference a few other sample cases as well as learn the definitions of all the symbols. Just to pause and check with the audience if they have any questions so far on what we have covered so far. Anybody have any questions so far? Right, is it? Yeah. I have a question, though. Yeah, sorry, someone in the audience has a question. So the difference between a process and a case. So one, aside from the... modeling differences, right? So the difference between a process and a case is that a case, while we know high level what tasks we have, we don't always know the order of these tasks, right? So let's say we collect this applicant details, right? And I'll cover it as we go, this exact example, but a process is more for static workflows.
+
+00:19:59 - 00:20:51 Unknown Speaker:
+
+We know the flow, we know each and every step, and we know what order we're going to go along the way. For a case, this is all dependent on any inputs that this case is getting when being created. Or as this case is created, when this case is updated, then certain tasks will move forward versus in a process, no matter what, we're going step by step. Does that kind of answer your question? So let me just see if I can add a little bit of color here. So when we have a process, so what happens with a process is it's a directed flow. That means first something happens, and the next thing happens, and the next thing happens, and you can kind of follow along through the path that it's designed.
+
+00:20:51 - 00:21:44 Unknown Speaker:
+
+With cases, if you look here, you can see you can have multiple things that are happening in parallel. Anytime these sentries, these diamonds, whatever those conditions evaluate to true, the underlying task will execute. And these tasks include process tasks, which are also then directed, right? And it also includes stages, as you can see. It also includes human tasks, which I don't think are shown on this diagram, but those are there too. So what happens is, and then you don't have to actually execute all the things in a case to complete a case. So you may have things here in your diagram that never happen or only happen on occasion. That's okay. With cases, with processes, it doesn't really work that way. So cases generally are made up of sub-processes and human tasks for the most part, but they don't all have to execute as we do.
+
+00:21:45 - 00:22:47 Unknown Speaker:
+
+I don't know. Hopefully that adds some clarity. Yes. Yeah. Yeah, and going off the point that they said they... they won't all have to execute. Well, as we're going through this sample case, I'll cover that here in a second. So, yeah, back to the sample case. So, first, the applicant details are collected in this process task. This process task, right, this can be a sub-process. So, that's more of that directional flow that we were talking about. We may have a... a defined standard way of how we want to collect this applicant details, right? So this is a subprocess task. This could be a process within a case, as Mitch was saying. But yeah, so in this task itself, we are processing the applicant details, and then we are updating our case data once we complete that.
+
+00:22:47 - 00:23:42 Unknown Speaker:
+
+So upon the update of this case data, right? ACE engine case manager will see if any of these sentries have been fired. So let's say our sentries for handle rejection and fulfill application, which is this stage, are looking for data that says whether or not we want to approve this application. So we can be like, there can be something in the case data that says, approve, and then we can make sure if we see approve is false, we may want to go to rejection. If we see approve is true, then we may go into fulfill application. We want to go into fulfill application. So in the event, let's say the applicant is too young, or maybe the credit score is too low, right? Our collect applicant details task is updating the case data with a rejection.
+
+00:23:42 - 00:24:37 Unknown Speaker:
+
+In that event, our handle rejection task will then kick off and do its necessary actions. Right, oh, sorry, um, we'll do its necessary actions. Um, so, in that case, right, we'll notice that, hey, we didn't do any of these activities here, but that's okay. Um, because we. We completed the goal of this case, which is to, um, take it in, uh, take in and have, uh, sorry, take it in. Application, then approve or reject the application, and then close the case. So that's okay. But in the event that the application is good, then we'll go into this fulfill application stage. Once we get into this stage, we'll see that this create account process task will kick off. And we don't know if this communicates customer process task will kick off. In this case, let's say no.
+
+00:24:37 - 00:25:39 Unknown Speaker:
+
+Let's say this sentry here is waiting for this account task, create account task to complete. And maybe update the case data with account created. So, um, excuse me, so the sorry, um so. Then once we're in the stage, uh, this, uh, create account task goes on and it creates the account. Once that's done, it'll update the case data. Which then, as we, as, as we just defined this century, will be waiting for this account to be created, so then. Once this is done, the case manager will know to execute this task and communicate to the customer their account details and things of that nature. So while these are the tasks, you may be wondering what these figures here on the side are. So these are what we call in case management model notation as milestones.
+
+00:25:41 - 00:26:35 Unknown Speaker:
+
+So milestones are more so for, um, more more so for, like, tracking of the of completion of steps in your case, right? So, uh, maybe so. Once we first collect the applicant details, we want to say, hey, we know that the application has been accepted. Let's say we handle a rejection well, we will know to either. This milestone will will be updated to complete because we have then rejected the application. And then in the event that we proceed to fulfill the application, right? While we're running create account, we'll know that we won't see this mark as complete. Not until everything here is complete will we then mark it as approved. And then we can then also mark it as complete. So these are centuries just the same as these others.
+
+00:26:35 - 00:27:47 Unknown Speaker:
+
+So we could update the case data and look for some, value in that data in order to satisfy these milestones. So, yeah, that's an example of this case. Does anybody have any questions before we move forward? Yeah, I just wanted to ask, should we think of these centuries like RTF events, or is it like it's checking for these conditions at any time? Yeah. Not necessarily like RTF events. They are more so for when the case is updated. That's when the sentries will check the condition again. So we provide basically endpoints where users can then update their case information, right? And then upon that update of this case information, The case manager will check to see if any... centuries have been satisfied, right? So it's like a signal event, like, yeah, it's a signal, yeah, okay, okay.
+
+00:27:47 - 00:28:55 Unknown Speaker:
+
+And the the subprocesses, we can kind of think as the BPMNs, right? It's like separate BPMNs that would get triggered. Um, yes, yes, correct. Sometimes they can be, um, human tasks, though, so I'm in this model. I don't have a user task here, but these are all process tasks. But it can be either a BPMN or it can be just an actual user task that somebody needs to complete. Sure. Okay. And so now let's talk about work management. So in the context of ACE, work refers to tasks that get assigned to humans or human-like actors, so like bots, to complete, right? We've seen that workflows and so business processes and business cases can have tasks that need to be completed by these humans or human-like actors. So these work items halt the process lifecycle until the task is completed or otherwise exited.
+
+00:28:55 - 00:30:05 Unknown Speaker:
+
+So if these are required, then they'll need to be completed. So work management is the tracking and delegation of these human tasks. So how does ACE provide that for you? So ACE provides work baskets for the grouping and queuing of tasks for people in that work group to complete. ACE allows for task workers to then, once they are assigned some work, meaningfully update the status of their assigned tasks, whether it's in progress, they need to suspend it, or... they finished it, it's completed now, or they need to, for whatever reason, cancel this task. It should not be completed. These are all things that task workers can update the task status with. So this is what we call as a task lifecycle. So just to give you a quick glance, Work in ACE follows the OASIS human task lifecycle, which is pictured here above.
+
+00:30:06 - 00:30:59 Unknown Speaker:
+
+There is a bit of a modification. We don't use this created, failed, error, or obsolete states, but we do use ready, reserved, in progress, completed, exited. As we're discussing, when a task is ready, that means it's in the work basket and it's ready to be picked up. So from there, a task can move either to a reserved state, which means it's assigned to somebody, or it can move to a suspended ready state. So that means maybe we want to hold off on doing this task. It's suspended, but hey, it's ready for whenever we need to pick it up. Nobody has assigned to them. Once you go, if we go to reserve, we can also do the same thing. We can suspend a task, but it'll be in suspend reserve state.
+
+00:31:00 - 00:31:45 Unknown Speaker:
+
+So we know that, hey, this task is suspended, but somebody was working on it. And yeah, we can resume it and it'll still be assigned to that same person that was working on it. So from reserve, we can either go ahead and start the work or we can maybe, maybe we need to assign it to somebody else to complete. So that's we can reserve it to, it'll stay in reserve state, but delegate it to somebody else. Or we can start this, start the UM task, and then it'll be in progress. So from in progress, we could also suspend and resume just the same as which we did for reserved, sorry, as we did for reserved and ready. Or we can go ahead and complete the the task, or we could go ahead and complete the task and then mark it as complete.
+
+00:31:45 - 00:32:43 Unknown Speaker:
+
+Or if, in case of anything, we want to go ahead and exit this task. From any point of the life cycle, so either ready, reserved, or in progress, we can exit the task and not go forward with its completion. This is the only event that we need to cancel this task for whatever reason. Maybe it's not required anymore or whatever the case may be. We don't want to proceed with processing that task. We can go ahead and exit it. But otherwise, all tasks will be in either completed or exited state at the end of their life cycle. Any questions on this lifecycle here? No? So I just have one question. So when we set a human task, do we set a time for that? Say, suppose, like an approval that needs to come through from operations.
+
+00:32:44 - 00:33:37 Unknown Speaker:
+
+So suppose there's a time of, say, one day. Do we set such kind of time boundaries to... for that human task? Or, yes, yes, so, um, when we are defining our processes, we can define, um, interrupting, uh, boundary events. So these can be for use for, let's say SLA. So, like you said, if we wanted to, um, if, if we want this task to complete within a certain time. But let's say the the human worker did not finish it in time. Um, there will be an Sla uh route in your, sorry. There'll be a an alternate flow for when this SLA breach happens for your process to proceed forward in maybe a different way. Or either, in the case of human tasks, there's an SLA when that's breached, it'll move, if it's in, if it's,
+
+00:33:37 - 00:34:33 Unknown Speaker:
+
+I'm sorry, if it's assigned to somebody, we'll release that task from them and put it back into the work, back to the work basket. In ready state for somebody else to be able to pick it up and and resume the work on it. I see. All right. Thank you. So now we'll talk about Ace Studio. Now you may be asking, how would I design my business processes or business cases to be used in Ace Platform? Well, that's where Ace Studio comes in. So Ace Studio Composer is our in-house user interface that allows for the creation, publication, And optimization of your business process models and case management models. So, from Composer, we can save, share and collaborate on these BPMs and CMMs. So you know if you want to design with your technical team as well.
+
+00:34:33 - 00:35:41 Unknown Speaker:
+
+Based on their inputs. What we want to, how we want to complete a task, or how you want to move forward, all these can be done collaboratively here on Composer. So in Composer, ACE also provides units with the ability to configure a scheduler for defining when their business processes are to run. ACE also provides a web mainframe and desktop automation tool for developing RPA scripts, which, sorry, RPA scripts for use within your business processes. And then also ACE provides a service catalog for managing and maintaining common business tasks, including RPA developed scripts. So we'll quickly take a look at all these features here on our Ace Studio itself. If we have any questions along the way, we can do that. So this is Ace Studio Composer.
+
+00:35:41 - 00:36:43 Unknown Speaker:
+
+This is where... you can actually go ahead and design your BPMNs and CMNs as well as your creation of the RPA scripts. So we'll just quickly go and demo creating a new BPMN. Let's continue with the same example that we had in that scenario. So we have a start task here. From here, Let's say we want to just go ahead and add a normal. We want to go ahead and add an appended task to this start. Right. So we can easily go ahead and click this task icon, which will go ahead and automatically put an arrow that will connect the start to this task. So here we can go ahead and. Define our task So let's say this is our get payment details task that we saw in our example.
+
+00:36:43 - 00:37:53 Unknown Speaker:
+
+Um, and we'll know that, hey, from the start, our first step is this get payment details, define it as a service task. And then in our example, we also leverage an RPA script, so in this example, we're leveraging the RPA to go ahead. And um, go into the payment portal and process the payment, so I'll give it a name, process payment on portal. So we that that, excuse me, sorry. Now we have to find the RPA task here and again, we want to go ahead and go to the next task. Or we want to validate the payment status. Okay. And so based on this, since we have a decision to make after we see this status, we would use what's called a gateway. So from this gateway, I'm going to go ahead and append an end event because let's say payment goes good.
+
+00:37:53 - 00:39:17 Unknown Speaker:
+
+We want to just go ahead and end. But I also want to go ahead and add a new task, which is of type user. Okay. And then this is. For a manual payment. Okay, and then from this gateway, we can define our condition. So let's say payment failed equals. And then for this flow, we want to do this false. So that's how we would define the alternate flow for this workflow. In the event of a green flow, which means everything is good, we'll go ahead and end. In the event of a bad flow, we want to go ahead and do this alternate route where we do this manual payment. So this is just a quick demo on how you would create a sample. Your process is here. Cases are similar in the same way, and we can take a quick look.
+
+00:39:17 - 00:40:39 Unknown Speaker:
+
+But fairly user-friendly to be able to use the SACE Composer. All the shapes are here and ready for your use, and it's easy to go ahead and define. Uh, your your tasks as needed, with what inputs they may need and the outputs you're expecting from the task. Um, here's where you would define, uh, maybe like the work basket or somebody that, um, you want to assign to this task for you. In the case of user tasks, in the case of service tasks, in the case of user tasks, in the case of service tasks, which of type is tasks, including RPA developed scripts. So we'll quickly take a look at all these features here on our ACE Studio itself. If we have any questions along the way, we can do that. So this is a studio composer.
+
+00:40:39 - 00:43:23 Unknown Speaker:
+
+This is where you can actually go ahead and design. As well as your creation of the RPA scripts, right? So we'll just quickly go and demo creating a new BPMN. Let's continue with the same example that we had in that scenario, right? So we have a start task here, right? From here, let's say we want to just go ahead and add a normal... Let me do it here. We want to go ahead and add an appended task to this start, right? So we can easily go ahead and click this task icon, which will go ahead and automatically put an arrow that will connect the start to this task. So here we can go ahead and define our task. So let's say this is our get payment details task. We saw in our example.
+
+00:43:25 - 00:44:33 Unknown Speaker:
+
+And we'll know that, hey, from the start, our first step is this get payment details. Define it as a service task. And then in our example, we also leverage an RPA script. So in this example, we're leveraging the RPA to go ahead and go into the payment portal and process the payment. So I'll give it a name, process payment on portal. That, excuse me, sorry. Now we have defined the RPA task here. And again, we want to go ahead and go to the next task. We want to validate the payment status. Okay. And so based on this, since we have a decision to make after we see this status, We would use what's called a gateway, so from this gateway, I'm going to go ahead and append an end event. Because let's say payment goes good.
+
+00:44:33 - 00:45:56 Unknown Speaker:
+
+We want to just go ahead and end. But I also want to go ahead and add a new task which is of type user, Okay, and then this is for a manual. Okay, and then from this gateway, we can define our condition. So let's say payment failed equals true. And then for this flow, we want to do this false. So that's how we would define the alternate flow for this workflow. In the event of a green flow, which means everything is good, we'll go ahead and end. In the event of a bad flow, we want to go ahead and do this alternate route where we do this manual payment. So this is just a quick demo on how you would create a sample. Your process is here. Cases are similar in the same way, and we can take a quick look.
+
+00:45:57 - 00:46:58 Unknown Speaker:
+
+But fairly user-friendly to be able to use the SACE Composer. All the shapes are here and ready for your use, and it's easy to go ahead and define your tasks as needed with what inputs they may need and the outputs you're expecting from the task. Here is where you would define maybe like the word basket or somebody that you want to assign to this task. In the case of user tasks, in the case of service tasks, it's really just the input and the output parameters. And same thing with our PA task. Here is where we also include what script we're using and things like that nature. We just are defining all the inputs that we need for this process to be able to run. Okay. And likewise with CMMN, we are here.
+
+00:46:59 - 00:48:16 Unknown Speaker:
+
+We can use the shapes that I was discussing earlier. So here would be an example. For this process to be able to run. Okay. And likewise with CMN, we are here. We can use the shapes that I was discussing earlier. So here would be an example of a stage with a century right here. The stage, let's say I want it to be fulfill application as we did before. In the example, here is the collect applicant details. To drag this and then you can easily drag for as much space as you may need. Um, if you have a big case where you have a lot of tasks, you may need more space. So, yeah, the The Composer is really user friendly with being able to define your task easily and quickly.
+
+00:48:16 - 00:49:26 Unknown Speaker:
+
+And then, as we said, um, so you are able to download the the definitions to then share with your team. Or, um, uh, publish to, um, our assets, where it will then be available for use for your business or, sorry, for your business process or business case. And just because we're running toward the end of time, I won't go too much further in, but just to show you the catalog. So here's where we have reusable, you can create reusable definitions, basically, for tasks in your workflow. So they can be either RPA tasks or just service tasks in general, where, let's say, if you were to create a service task in one process, one of your processes can then leverage that same service task to easily reference the step that you're doing if the logic is all the same.
+
+00:49:27 - 00:50:29 Unknown Speaker:
+
+If the actions being taken is the same, you can, across multiple different processes, you can leverage creating a service task for that step in order to easily reuse that same task without having to define it and create it for every single process flow. Okay. And now we'll go back to presentation. Okay. So ACE also allows you to use business rules with business processes and cases, right? So we touched on rule assist earlier, but basically, yeah, business rules are a simple but effective way to process data and get an output based on that provided data. So this can be, like I was saying in the example earlier, if we want to do a simple data validation where, hey, we don't want to proceed with this.
+
+00:50:31 - 00:51:35 Unknown Speaker:
+
+Applicants application because one, they're maybe not of age or two, their credit history or score may not be up to par with what we want. So regardless of what the condition may be, business rules are a simple way to just go ahead and process data and provide that output based on that data. So ACE supports the following industry standard rule definition types. So rule assist is actually powered by what's called Drools. Drools is an engine that helps you manage these business rules. So we support, as it's running through with Drools, we support Drools native language. With Drools, we also have the capability to support decision tables, which are basically Excel files that have the conditions for this information. Sorry. The conditions for the defined business rules. Or we may be able to support domain specific language.
+
+00:51:35 - 00:52:50 Unknown Speaker:
+
+Where, let's say you're using business rules that are checking against. You know specific terminology that's used in a in a specific application that you're getting this data from, so. With rules, the usage data of all these loaded rules are provided. So as well as like in a way, an audit trail on when these rules were used and what happened when these rules were executed. So this data can be extremely useful for business units to see what business rules are actually useful or in use at that point. In order to optimize their resources. As business requirements may change, so may business rules. And so with Rule Assist, ACE makes it easy to update these rules without any interruption to your currently running processes and cases. Okay. And we'll move on to process intelligence.
+
+00:52:52 - 00:55:10 Unknown Speaker:
+
+So that's a pretty long one. And we'll move on to process intelligence. Okay. So today's information systems, right? So applications and just business processes and business cases in general all produce an unprecedented amount of data from both digital and physical sources. So what that means is every time something happens within ACE or just within our enterprise in general, most of the time, events, are emitted with a timestamp and event details. When we properly ingest this event data, this wealth of data can be used to discover patterns and insights that illuminate paths to better customer experiences and also to be more efficient as an enterprise. So process intelligence is the automatic and continuous acquisition of process data. Across any system in our enterprise with a goal to provide clear and accurate visibility into the state of these processes and also identify any potential for improvement of these processes, right?
+
+00:55:10 - 00:56:18 Unknown Speaker:
+
+So it helps us improve our operational efficiency. Process intelligence, with process intelligence, ACE provides business units with accurate information about what work items they have, who is completing the work items, how long it takes for this work to be completed. And also identifying maybe any bottlenecks that you may be facing along the way of your business process. So, um, essentially, this graphic is to, kind of, um, highlight, uh, how we what we do with process intelligence. So first, we go ahead and collect these events, this data from source systems such as A-Studio, any event logs that you may be publishing, as well as any events coming from legacy systems that we support. So then with discovery, we then model these processes and kind of identify any variation there. Then we try to optimize these things.
+
+00:56:18 - 00:57:15 Unknown Speaker:
+
+So see what tasks maybe we can automate. See what tasks maybe we can improve on. And then we monitor key metrics such as maybe throughput time and, again, these bottleneck detections. We want to see where the things are taking the most time, when things are getting done, how fast things are getting done, and all these things. So with process intelligence, ACE provides these type of insights for you in order for you to see where maybe you can improve with your process. Okay. And lastly, we're at ACE Control Center. So ACE Control Center is the admin portal where you'll conduct any management actions related to your processes and cases. Here, you can also manage your work baskets and tasks, such as allocating tasks to workers, seeing the status of their tasks,
+
+00:57:16 - 00:58:09 Unknown Speaker:
+
+seeing the status of tasks that are part of a specific process or case, or getting task data for tasks based on what status they are. So maybe I want to see what all tasks I have that are in progress or what all tasks that are suspended in progress or suspended, reserved, or whatever the case may be. I want to see this task data. With Work Management, we allow you to filter and get the data you need easily. Rule Assist for managing and viewing your deployed business rules. So as we touched on earlier, here's where you can see your business rule usage, data, and actions taken. So scheduling, here we have a page where you can manage your scheduled tasks as well as see what is coming up and what has been completed. Security.
+
+00:58:09 - 00:59:08 Unknown Speaker:
+
+So here you can manage your security accesses for your service. So this could mean whether it be who is able to pick up work from your work basket. This could be who is actually able to trigger one of your processes to run, trigger one of your cases to be created. All these things, who has access, can be used here for security. Then through Ace Control Center, we also have the capability of bulk processing. So bulk processing is a way for you to, say, take a bulk set of data and execute a process for each entry of this data. So bulk processing here in Ace Control Center is how you would define your bulk processing policy. So what you want to do. What process you want to run, any outputs you're expecting from this.
+
+00:59:08 - 01:00:14 Unknown Speaker:
+
+All this can be configured here in the bulk processing session of ACE Control Center. And then lastly, we have Process Intelligence, which, as we just touched on, can provide these insights on your process. We'll take a quick look at ACE Control Center in a further, in one of our later sessions, we'll actually take a deeper dive into it. But just so you guys can kind of familiarize yourself with what it looks like. Here's our ACE Control Center home. So from here, we have different sections for dependent, depending on what type of actions you want to complete. So let's say I want to look up, sorry about that. Let's say I want to look up on some processes that I may have ran, right? I can go ahead and select which one of my processes I want to see information for.
+
+01:00:16 - 01:01:14 Unknown Speaker:
+
+What, between what dates this process may have ran, and what status I'm expecting? And then I can get the data. So let me just go ahead and go and see if I can get some sample for this process. Okay, I don't have any. I don't think I have any examples here. But essentially that this is where you could get that process data. See if that process was completed, or maybe it failed along the way, and we could see where it failed, or we could, we could see all these things. We could also search by its process ID and or a correlation key that we have given for this process. So, um, this is where we we see that UM case management similar, similar functionality. We want to see the UM status of these cases and where they may be at along in their workflow.
+
+01:01:17 - 01:02:18 Unknown Speaker:
+
+We can do that here. Work management here is where we can define our work baskets and all these other things. So as we're running short on time, I'm going to go ahead and stop here with going through this. One of our sessions, I believe, day four is going to be going more into depth and using ACE Control Center. So, that wraps up day one of the ACE framework training. Do we have any questions? Hi, Jairo Manuel here. I had a question about what ACE, how the studio was built, or what language was it used? Like, for example, when a script is run on what programming language? Is it typed? Okay? So yeah, when a script is run? So for these RPA tasks, we use Robot framework.
+
+01:02:18 - 01:03:23 Unknown Speaker:
+
+Robot Framework is the um, yeah, the language that we use for RPA, that we support for RPA. Okay, thank you, I will look into it. Okay, and uh. Yeah, I'll also set up a Slack channel through which if you all have any questions, we can take them offline. We can go through them and try to answer to the best of our abilities. And yeah, we can continue for the next one minute if we have any other questions from anyone in the audience. So we have a pretty extensive topic list. So today was intro. So if it feels like you didn't get enough information about various subjects, that's okay because we're just trying to wet your whistle and then over the next several days we'll get into more detail on all the subjects you saw today.
+
+01:03:25 - 01:03:35 Unknown Speaker:
+
+Brilliant. Thank you very much, guys. All right. thank you everyone for your time and we should connect tomorrow thank you

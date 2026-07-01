@@ -1,0 +1,110 @@
+2026-03-05 GCP Storage and Composer Deployment Strategies
+
+Creation Time: 2026/3/5
+
+
+📅About Meeting
+
+  • Date & Time: 2026-03-05 15:05 (Duration: 589 seconds)
+  • Location: Virtual screen-sharing session (GCP / Composer environment)
+  • Attendee: (names not provided in transcript) — participants from development team and environment/platform (E1) admin
+
+
+📒Meeting Outline
+
+
+GCP Storage & Composer Deployment
+
+  • Access to BigQuery table and environment The team confirmed that access to the BigQuery table is available from the E1 environment after deployment. Deploying to E1 will make the resources accessible without additional manual authentication.
+
+  • Where to store generated SQL and Python files Discussion focused on where to keep generated SQL files and supporting Python code. The recommendation is to upload files to the project’s GCS bucket (Cloud Storage) that is tied to the Composer environment. A specific bucket path (project/Composer bucket) was shown during screen share; files can be placed in an existing folder or a newly created folder inside that bucket.
+
+  • Local vs environment-level authentication When executing from the environment (Composer/E1), DAG/composer maintains authentication and connections automatically; no manual auth is required. For local development, developers must authenticate locally and create needed connections.
+
+  • Bucket path details & file placement The presenter showed the Composer environment tab and Cloud Storage bucket contents. The bucket contains various files and folders; developers can upload Python and SQL files directly into the bucket. If unsure about exact folder, team members can request the specific path or create a new folder under the project bucket where the team has access.
+
+
+Composer Behavior & Deployment Workflow
+
+  • Composer auto-deploy / syncing behavior Composer auto-deploys files present in the bucket into DAGs. In lower environments (like E1/dev), uploading files directly to the bucket is enabled (upload UI enabled). For higher environments (E2, E3), direct upload is disabled and files must be deployed via the formal deployment pipeline (Git sync / CI).
+
+  • GitHub sync and planned workflow There is an intended plan to sync Composer bucket with GitHub, but that capability is not yet enabled (limited bandwidth/priority). Currently Composer can copy files from GitHub to the bucket in some setups, but for immediate testing the recommendation is direct upload to the E1 bucket.
+
+  • Testing workflow on E1 For validation/testing on E1, upload the Python files (one or many) or a folder containing files to the Composer bucket. Composer will parse the Python DAGs and the corresponding DAG IDs will appear in the Airflow UI. If E1 is not currently synced, placing files directly in the bucket ensures they are available for validation.
+
+  • Files count and folder upload The upload UI supports multiple files and folders — you can place many files together in a folder. Once uploaded, the DAG(s) created from those files should appear in Composer/Airflow UI according to their DAG IDs and tags.
+
+
+Troubleshooting & Next Steps
+
+  • If DAGs don’t appear If uploaded DAGs do not show in Airflow UI, verify:
+    
+    • Files are in the correct project bucket tied to E1 environment
+    • Folder structure and file names are correct and DAG code syntax is valid
+    • Refresh/lookup by DAG ID or tag in Composer UI If still failing, escalate or ping the E1 admin for checks.
+
+  • Testing vs production deployment For development/testing use direct upload to E1 bucket. For higher environments (E2/ E3) and production, follow the formal deployment pipeline (Git-based deployment) when it becomes available.
+
+
+📋Overview
+
+  • E1 environment provides access to BigQuery table after deployment; no manual auth required when running in Composer/E1.
+  • Generated SQL and Python files should be placed in the project’s GCS bucket tied to the Composer environment for testing.
+  • Composer auto-deploys files from the bucket into Airflow DAGs; uploaded files will create DAGs visible by DAG ID/tag.
+  • Local runs require manual authentication and connection configuration; environment-level runs do not.
+  • Direct upload is enabled for lower (dev/E1) environments; E2/E3 require formal deployment (Git/CI) and currently sync with GitHub is not enabled.
+  • If DAGs don’t appear, verify bucket path, file placement, syntax, and search by DAG ID/tag; escalate to admin if needed.
+
+
+🎯Todo List
+
+  • E1 Developer:
+    
+    • Upload generated SQL and Python files (or folder) to the designated GCS bucket path in the E1 environment for testing — as soon as possible
+    • Validate that uploaded files produce the expected DAGs in Composer/Airflow (search by DAG ID/tag) — after upload
+
+  • E1 Admin / Platform Contact:
+    
+    • Provide the exact GCS bucket path and confirm access permissions for the developer (deliver: full GCS path and write permission) — due immediately / before upload
+    • Confirm whether E1 is currently synced and able to auto-deploy uploaded files; assist if DAGs do not appear — follow-up within same workday
+
+  • Developer (if testing locally):
+    
+    • Ensure local authentication and connection configuration are set up when running code outside Composer (deliver: working local run or documented steps) — before local test
+
+  • Team / DevOps:
+    
+    • Plan and schedule GitHub <-> Composer bucket sync / CI deployment for E2/E3 environments (deliver: plan/timeline) — discuss in next planning meeting
+
+If you want, I can extract the GCS bucket path shown in the recording (if you share the path) and list the exact folder to use, or prepare a short checklist for uploading files and verifying DAGs in Composer.
+
+
+Transcription
+
+00:00:03 - 00:01:09 Unknown Speaker:
+
+Yeah, but I need to access to this one, the BigQuery table. Yeah, you can access from the E1 one. Once you deploy on that E1 environment, it will be ready. Okay. And I'm generating SQL files, right? That's my plan, right? So where should I keep the generated files? You keep them on the GCP one, you know. Create a new. You are creating a new file, right? Yeah, new SQL file, I'll create. Yeah. So provide the GCP path. If you will see that, I will show you. Okay, let me see GCP path, let me say my screen. Yeah, okay. So you have all the things up, let me know if you are able to see it. Yeah, I can see, see. Here we are reading the file, right, this Python file, so what we are doing basically, we are giving the GCP.
+
+00:01:09 - 00:02:12 Unknown Speaker:
+
+Uh, actually bucket path, right? This is the folder. Here is the file to download this one. Just a second. Now, see here we are downloading it in our, you know, S3 bucket. So, you have to provide, when you are giving the local path, right, you can provide the GCP path, okay. So, you know, once you go on the environment level, right, so DAG maintains the authentication and all those things. You don't need to, you know, authenticate it manually. If you are doing it from local, then we have to, you know, authenticate that and create the connection and do that one. But on environment level, Airflow does all this thing to you. Okay, as you create the connection and all you just have to, you know, trigger the request, that's it.
+
+00:02:12 - 00:03:47 Unknown Speaker:
+
+Okay, okay, we have just have to change the path. You provide the till here is our bucket path. Okay, I will show you the bucket, also where you will find it. Okay, so you want me to push it to GCS pocket path somewhere. Yes, not somewhere. It's not like anywhere you go. Somewhere where we have access to and our project we are using. Not understanding this one. If you have any specific folder path, you can give it to me. I will try to keep it there itself. Even you can create your, you know. Okay, shall I share my screen? I will show you one second. You can check with anyone. What is written here? R, E, B, C, A, P, I, O, N. No. E, P.Just a second, let it validate first.
+
+00:03:47 - 00:06:09 Unknown Speaker:
+
+I'm sorry what I was doing. Yeah. That is for input serial. So here you have project, right? You can click here. So this is, you have to go to the tab environment. Here you have to search cloud storage, okay? So this is our bucket, okay? In this bucket, you have to put your sites. Anywhere you can create a new folder also and keep it. I don't know this guy. I think yes, this is the folder. If you see all these bags are here. You can put your python pen here or if you want you can create your folder also that's not a problem but why do i need to put a python code here. Pardon? Why do we need to put Python code in this? We have GitHub, right? You have GitHub, right?
+
+00:06:09 - 00:07:19 Unknown Speaker:
+
+I am telling you just for testing on E1, right? Oh, okay, okay. Just to test on E1, you put your file here and then in the composer, you know, this will get compiled and your DAG will be created according to your syntax what you are using, okay? You can see here in the, let me create a duplicate. Uh, basically it's auto deployment. Even if you're going through the big bucket also Github also, right? And once you're going to deploy it, basically it's copy the file from GitHub and put it in your bucket. You can go to Composer, right? And all those things will appear here in the tags. Depends on what kind of tag you have created. Here it is messed up, so don't worry. You can create your own folder here and keep your file.
+
+00:07:20 - 00:08:24 Unknown Speaker:
+
+And if E1 actually is not synced right now, I will suggest you to better put your file on this storage and validate it on E1, okay? Okay, there is the option here to upload a file, right? But on other environment it's disabled E2 and E3. There you have to go through the deployment value. But in lower environment, like development environment, we provide you the flexibility where you know, based on your requirement. You can, you know, uh, create the folder and all, but we are planning to sync it with the Git. Not right now, we don't have that much bandwidth right now. But yeah, so that's the step you have. You also have to follow. Okay. Okay. Got it. Yeah. But once you copy the script, I have to use Docker Composer to. Why Docker Composer?
+
+00:08:24 - 00:09:37 Unknown Speaker:
+
+Here you have to just upload file. But it's not one file, right? I have a lot of files. Put in a folder, upload folder is there, right? Okay, okay. And then it automatically displayed into that DAG, the ear clock. Yeah, correct. Depends on, you know, what DAG you have created, like I will show you. Go here, right? This one. Go and download it. See, this is the DAG ID, right? Um, so if I search it here, see, it's present, right? This is the bag corresponding to this, uh, this particular Python file. Okay, so, similarly, whatever the tag you have created that should appear here, you have to just search it and it should appear. Okay, okay, that makes sense, right? Yeah, yeah, let me upload the code and if not helping, then I'll ping you sir. Oh yeah, thank you.

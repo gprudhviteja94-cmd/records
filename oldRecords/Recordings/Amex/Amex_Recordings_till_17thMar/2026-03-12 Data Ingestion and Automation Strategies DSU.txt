@@ -1,0 +1,255 @@
+2026-03-12 Data Ingestion and Automation Strategies DSU
+
+Creation Time: 2026/3/12
+
+
+📅About Meeting
+
+  • Date & Time: 2026-03-12 11:31 (Duration: 1986 seconds)
+  • Location: [not specified]
+  • Attendee: Sachin, Samir, Kundan, Nirmal (Nirmala), Ayyappa (IAPA), Rachna, Anand, Manju, Tanisha, Manish, Anasi, Sindhuja, Raj, Rajna (?), Colin, Dhanisa (Dhanisa/Dhanisa?), PR (unnamed), and others on the call
+
+
+📒Meeting Outline
+
+
+Data ingestion / warehouse monitoring and automation
+
+  • Use case folder & table structure Discussed the project structure: there is a use-case folder where business logic is applied and a warehouse table (same table name in warehouse). The key table referenced is a resume/Delta NWA (CM Delta NWA) table. Confirmed data for run_date / timestamp (UTC) must be checked to detect whether new records for today were inserted.
+
+  • Monitoring / pipeline gap and automation requirement Current platform pipeline dumps new data to the warehouse but there is no automatic track/notification of success or failure. Requirement: build an automation job that:
+    
+    • Checks the warehouse table (same table name) for the latest inserted date (consider UTC).
+    • If pipeline completes by ~12:00 UTC (example), automation should run around 13:00 and verify today's data exists; if not, send alert/raise incident.
+    • The job should check run_date / ingestion timestamp field(s) for today's date. Samir and Sachin are the key contacts for table and production environment details. Confirm with Samir for pipeline behavior and zip/SFTP specifics.
+
+  • Priority sequencing This monitoring job is second priority. First priority is the implementation Kundan asked for — Sachin must validate that implementation and ensure it goes live on E3 today (max today) for review ahead of Raj meeting on Monday.
+
+  • Alerting destination and incident handling Reports are not sent to customers; failure alerts should go to internal mailing list / incident process so incidents can be raised (mail-to internal ops).
+
+
+Delta NWA table, history table and code usage
+
+  • Table usage and history table check Conversation to confirm who worked on the CM Delta NWA and whether CM Delta NWA history table is used. Code was reviewed; only CM Delta NWA (main table) was found in constants and code in many places, history table not referenced. Ayyappa (who worked on it) asked to share parameter/query details.
+
+  • Requested deliverables Ayyappa must send, within one hour: list of columns/attributes used in the query, parameters used for the query, and specifics of how weight class or other derived fields are generated (SQL logic). This is only for Delta NWA.
+
+  • Manual fixes and automation Some small fixes (prefix adjustments, other manual changes done by Ayyappa during migration/testing) must be inventoried. Decide which manual fixes need to be automated for E3 — connect with Ayyappa today, list manual adjustments so they can be automated.
+
+
+File export, compression, and SFTP delivery
+
+  • Export to project bucket Ayyappa / team tested flow to export files into project bucket; export works but compression not yet confirmed.
+
+  • Large file creation & zip logic Action: create ~1GB test file (by looping data or pulling records) and test compression/zip logic (previous issues in Cornerstone). Samir knows zip structure used previously; check Python support and basic zip approach.
+
+  • SFTP transfer Test whether the project can send the generated (and possibly zipped) file to SFTP. First test simple file transfer to the SFTP site; then test zipped file if required by receiver. Confirm file format and SFTP registration details.
+
+
+Code review, refactoring, and DataProc jobs
+
+  • Post-lunch walkthrough Sachin to present code post-lunch for walkthrough and review. Focus: data validation, refactoring, and combining multiple DataProc jobs into a single job to avoid repeated cluster creation.
+
+  • Excel export / multiple sheets Current Excel export yields multiple sheets but only one sheet shows expected dummy data; other sheets not fetching values. Plan: consolidate methods into a single DataProc job and store results in a dictionary to generate all sheets correctly.
+
+  • Avoid multiple DataProc jobs Recommendation: do not create multiple DataProc jobs (causes cluster spins); club tasks into one job.
+
+  • RPA queries After current tasks complete, start RPA queries work. Review document and connect with Rajna for clarifications.
+
+
+BPMN/process workflows, reminders and human task lifecycle
+
+  • BPMN changes and timers Modify BPMN: add non-interrupting timer event(s) on human task to send periodic reminders (e.g., immediate, second reminder, third reminder at day 7), and if no action after reminders, automatically close the human task. Create service class to send email reminders. Add logger to the send-email bundle / role creation steps.
+
+  • Testing & process instance IDs Walked through steps to locate task ID and test human task in Control Center: view details → Human Task → Task ID → search in Work / action → reserve → start → submit. Ensure the process instance ID used corresponds to Dev environment when testing.
+
+  • End-to-end testing After human task flow validated (reminders, task completion triggering role creation), perform end-to-end testing. No additional flag required; completion should trigger role creation. Add logs to verify role creation response reaches expected system.
+
+
+Scheduling jobs and dashboard updates
+
+  • DQAM / scheduled job runs A job (DQAM or related) was updated for yesterday's data (process instance ID updated). The team must trigger it manually now, then schedule for 10:00 IST tomorrow (job runs 10:00 IST, ACE will trigger at 11:00). After scheduling, notify lead so ACE job can be scheduled.
+
+  • BPMN timer behavior In BPMN create non-interrupting timer with short interval (e.g., 1 minute) for testing, keeping human task active until validated; confirm behavior in UI.
+
+  • Dashboard relocation Sindhuja moving dashboard to IP — this is planned; ensure migration does not break columns/queries. Confirm columns in use (team using only three columns from the table — verify query selection and any downstream grouping logic).
+
+
+Meetings, attendees and next steps
+
+  • Meeting reschedules and attendance There is a planned review/meeting at 11:00 PM IST today; some attendees (Dhanisa, Rachna) are critical. If both Dhanisa and Rachna cannot attend, call may be moot. Team to confirm availability or move earlier if possible. Monday meeting with Raj is important (review of Kundan's implementation).
+
+  • RFC creation Prepare RFC for Monday — someone will create RFC and have it ready.
+
+
+📋Overview
+
+  • The team must implement an automation job that checks the warehouse table (Delta NWA/resume table) for today’s data (UTC run_date/timestamp) and raises alert if missing. This is second priority after Kundan’s task validation.
+  • Samir to be consulted for pipeline, zip structure, and SFTP specifics.
+  • Ayyappa to provide column/parameter details, SQL logic, and manual fixes done for Delta NWA (within 1 hour).
+  • Test export/compression: create a 1GB test file, test zip logic (Samir to help) and SFTP transfer.
+  • Sachin to validate Kundan’s implementation and make it live on E3 today (max) for Monday review with Raj.
+  • Refactor DataProc jobs: consolidate multiple jobs into a single job to avoid repeated cluster creation; fix Excel multiple-sheet export so all sheets contain expected data.
+  • BPMN updates: add non-interrupting timers and reminder flow for human tasks; implement email service class and add logging; test full lifecycle and role-creation trigger.
+  • Schedule the DQAM job manually now, then schedule to run at 10:00 IST tomorrow; ACE will trigger at 11:00.
+  • Dashboard migration to IP is in progress — confirm used columns and queries.
+  • RFC for changes to be ready by Monday.
+
+
+🎯Todo List
+
+  • Sachin:
+    
+    • Validate Kundan’s implementation and ensure it goes live on E3 today (Max today). Deliverable: live run on E3 + PR link shared, due: today (before EOD).
+    • Trigger the DQAM/process for yesterday manually now and then schedule the job at 10:00 IST for tomorrow; notify lead after scheduling. Deliverable: scheduled job confirmation, due: today (trigger now; schedule for tomorrow).
+    • Present code walkthrough post-lunch and demonstrate data validation / consolidated DataProc job. Deliverable: code walkthrough session, due: today post-lunch.
+    • Confirm which three columns from the table are used and ensure dashboard queries align. Deliverable: list of columns & confirmation, due: ASAP.
+
+  • Ayyappa (IAPA):
+    
+    • Send details within 1 hour: parameters used, columns/attributes used in Delta NWA query, exact SQL logic for weight-class generation and other derived fields (only for Delta NWA). Deliverable: email with columns, parameters, SQL snippets, due: within 1 hour from meeting time.
+    • List manual fixes/prefix adjustments performed during migration/testing that need automation on E3; connect with Sachin and finalize list. Deliverable: list of manual fixes to automate, due: today.
+
+  • Samir:
+    
+    • Confirm pipeline behavior (success/failure timing), zip structure used previously, and Python support for that zip approach; assist with 1GB compression test. Deliverable: guidance and test outcomes, due: ASAP.
+    • Help validate SFTP setup and test file transfers. Deliverable: SFTP test confirmation, due: ASAP.
+
+  • Nirmal / Nirmala:
+    
+    • Finish current implementation (if pending) and coordinate with Sachin for validation. Deliverable: completed code ready for validation, due: today.
+
+  • Colin:
+    
+    • Test BPMN route (human task reminders) and save screen recording of flow; confirm reserve/start/submit sequence works and logs show role creation. Deliverable: test log/screen capture and notes, due: after BPMN changes are in place.
+
+  • Developer/Engineers working on DataProc & Excel:
+    
+    • Consolidate multiple DataProc jobs into a single job and implement dictionary-based storage for multiple Excel sheets. Deliverable: refactored job producing Excel with all sheets populated, due: today.
+    • Create 1GB test file and test compression. Deliverable: test results and whether compression and SFTP transfer work, due: ASAP.
+
+  • Sindhuja:
+    
+    • Complete dashboard migration to IP and confirm it shows required columns and queries run correctly. Deliverable: migrated dashboard and verification, due: ASAP.
+
+  • Raj / Rajna:
+    
+    • Be prepared for Monday review re: Kundan’s requirement and implementation. Deliverable: review session input and feedback, due: Monday meeting.
+
+  • PM / Meeting owner:
+    
+    • Create RFC for the upcoming changes on Monday and have it ready. Deliverable: RFC document, due: Monday.
+    • Confirm attendance for the 11:00 PM IST meeting today (or reschedule earlier if possible) and confirm critical attendees (Dhanisa, Rachna, Tanisha, Sachin, Manish, Anasi). Deliverable: attendee confirmation, due: ASAP.
+
+If any owner needs clarification or timing changes, please raise immediately so we can adjust schedules and dependencies.
+
+
+Transcription
+
+00:00:17 - 00:01:23 Unknown Speaker:
+
+So if you see this project structure, this is our use case folder. No, no, I'm asking it to remember. Are you clear with this or not? OK. So what the regime is? First, what's the nearest to you, you know, applying the business logic, and then there is a table called resume first. Okay, so that data is getting stored in this team in this use case. Okay. Once this is done, he is following one of the platform pipeline. Okay, uh, that pipeline is responsible for dumping new data to this warehouse. This is your warehouse experience. Okay, now we don't have a track of that job, whether it's a success or failure. We don't get a notification until unless we go, and, you know, check the pipeline, so what you need to do?
+
+00:01:23 - 00:02:29 Unknown Speaker:
+
+The table name remains same in the warehouse table. Also, check with summation. What is the runtime? Suppose? If it is getting completed by 12, then your automation job should run around 1 p.m. Check for latest date means if it is for today, consider for UTC whether there is a new record inserted for today's date or not. If no, you need to send an alert. Got the requirement or your confuses, just let me know. Yeah, just check with Samir. Samir will help you out with, uh, with the table and in the production. So so such. In here, he needs to check whether the table has having the data with the current date or not. It is not like he used to alert us. So Sachin everyday 230 ISD, it is running so 230, right?
+
+00:02:29 - 00:04:02 Unknown Speaker:
+
+So he can turn his job around. So this is the table name, this is in warehouse, okay. This comes under use case folder so I have to change the schema so just check this one right whether that current dating is and remains or not and you can check that form. Run date is there right in this table. But this would be your second priority job label, first priority. It's the one which Kundan asked you to do it. So, Sachin, we are checking in the warehouse table, right? Yes. So, we have do we initial type, Sachin? Okay, we do. We do, right? Yeah. Okay. And this report is not going to send to the customer anymore. Okay? This would be intended. Okay. Mail to to, so that in case of failure, we will raise the incident for this.
+
+00:04:02 - 00:04:58 Unknown Speaker:
+
+Okay, so you can check this luminescent timestamp for today's data. Okay, so this is your second priority? The first one remains the one that Kundan asked you to do it, he already did. That implementation you're just validating. And please make sure this gets live on E3 today or Max Today itself. So that we can review and then see whether it's working or not. Tomorrow because I have a review call for that year requirement with Raj on upcoming Monday at 7. Okay, I will share with the PR link. Is there a code change required for that? Yeah. So Sachin like here how we are dealing like whatever the Nirmala has implemented or like developed so we are just adding the list of tables that need to be changed or like it should be updated.
+
+00:04:59 - 00:05:54 Unknown Speaker:
+
+Okay list of table that's it but for this case it's very very different compared to the previous one so you can include a different SQL query for that. Okay so Nirmal got it right first of all complete the work and then ask that is all. Highest priority? Once you're done, then take up this for this one. If you require, you can connect with somebody. Yeah, okay, now next thing I need a details who worked on this one. There is a email from Manju directly. Okay, uh, this was the email from Manju and we need this one who worked on this, uh, Delta NWA table. Can someone confirm me immediately? This is regarding what? We need to look use case details that you have asked Rachna and Anand to give it the details to me.
+
+00:05:54 - 00:08:02 Unknown Speaker:
+
+First of all let me know who worked on this. And I don't see this history table, right? So, that is having a history table also. History of what? LWA's history table. I didn't meant anything stupid. So this is there, right? So did anyone of you use its history table also? This is CM Delta NWA. We have another table called CM Delta NWA history. That we can check it directly in our code. Can you ping me those? No, in the code I have seen, we have used only this Delta NWA. I already cross-verified that one. Can you check in the constant file also? If in both the places it is not there, then we are not using it. No, it's not there. Then we are not using it. No, no, no. We are using that.
+
+00:08:02 - 00:09:02 Unknown Speaker:
+
+Can you say you are not using? We are using. Here it is. History I am talking about. No, history is not there, but the actual, this table is there. Right, so I need a name. It's a name you want. I work on it. So, Ayyappa, can you do one thing? As you have worked on it, I need this parameter that we have used for that query. Okay. Got it, right? What are the different columns that you have used, specific data elements? Send these details to me immediately in the next one hour, okay? This way you have to revert it to the other one. Only for Delta NWE, only right, only for this one. Yeah, you got it. Yeah, you're not in the production issue. Share me these details.
+
+00:09:02 - 00:09:56 Unknown Speaker:
+
+Whatever attributes are we using, uh, yeah, how it is actually generating the weight class according to how we need a required like in the point of SQL, it is generating the same way. And yeah, I'm able to generate also like the results. Okay, so maybe like, I need to connect with IP and I need to list down like, what are the changes we have automated? Like, there are some changes like if you remember, like, uh, the prefix should be, and right, like that is manually changed by a part. Like the small changes which is handled by APA in the data migration itself. But I just want to understand how we need to deal with the E3. Suppose our code move to E3, it will deal with the loss.
+
+00:09:56 - 00:10:50 Unknown Speaker:
+
+But like there are some conditions where we have done manually for testing in E1. So those should be also automated or like how we... Yes, that should be also automated. Then, I need to check with IAPA, like we need to connect with IAPA, and we need to list down the small fixes, which he has done manually also. I just want to do that search. Okay. Okay, then try to connect with IAPA today and close it. Next to IAPA, you tested that flow in that project. Yeah, I tested it in my file. I can able to export the file into the project bucket. And were you able to compress the file size? That one I didn't work out. I read the export part. Yeah, check that one. Do one thing. Create a 1GB file in the download bar.
+
+00:10:51 - 00:11:40 Unknown Speaker:
+
+Okay. Maybe what you can do, pull some download records from any of the keywords which is having that bunch of data in the download bar. Okay. Or else, just, you know, create a loop. Where it would be, you know, just, uh, posting that data multiple times, maybe 10 times. Under impact, make your files as a 1GB Okay, and then layer zip logic. We did that in cornerstone for one of the use case, if you remember right? Then also we were having struggling with this file size. But I'm not sure whether that would work. So connect with Samir Samir knows that, uh, zip structure. So just check whether the same you know Python supports or not, and see whether you are able to compress that one GB file or not.
+
+00:11:40 - 00:12:41 Unknown Speaker:
+
+Okay, okay, yes, one more thing that whether you are able to, you know, send from that project location to SFTP or not. Oh, correct, that part also you need to test is correct. So after that, you worked on the zip side, and this will also have that requested file format. What is, you know? Register on the SFTP site. Okay, first try with SFTP, then we can go for the Zip file. Zip will not take that. Uh, can you explain about the SFT part once again? SFTP part? No. Just create a simple file, Okay, okay, the one that you're doing. You have already placed that to the use case folder right now. From there, just see whether you are able to send it to Asset to your first computer. Yes, then the next part is that from present part.
+
+00:12:41 - 00:13:39 Unknown Speaker:
+
+Yeah, now I understood, Yeah, thank you. Okay, uh, moving to, uh. Let's have a connect today. Post lunch to review your code that you have done. So, hey, hi Sachin. Okay, yeah, I'll thank you. Maybe post lunch. Click at your program and let's, uh, have a walkthrough with respect to the code that you have built. Sure, okay, uh, and see how you are still stuck with the data valid, isn't it? So I'm working on that refactoring things, so actually all the tasks are different. Data proc jobs, so. Because of that, I think so. In the Excel file, for one tab, I'm seeing the data. For the remaining two tabs, there is no data. So I'm trying to club all the methods in a single data prop job.
+
+00:13:41 - 00:14:41 Unknown Speaker:
+
+So that we'll be able to verify if we can see the data for all the tabs in that Excel attachment. Were you able to create the multiple seat? In the Excel, yeah, yeah, multiple sheets are coming, three sheets are there, only one sheet. I can see the dummy data which I have, so the remaining, I think between the task, it is not fetching that value. So, and that's why I'm. I will put all the methods in a single file and check if we have seen the data and then the other. I think refactoring things which you had mentioned for storing in the dictionary option, so that also. I will try to write the build today. Okay. Just one thing. Don't create multiple data blocks. It will create a cluster every time.
+
+00:14:42 - 00:15:52 Unknown Speaker:
+
+So it's better, you know, club into a single data block. Why create one? He's doing the same thing. That's what she mentioned. Yeah, okay. Yeah, and create a single one. Earlier, I had created three jobs for that three different tasks. Okay, I can see. And I just forgot, I just crossed you that RPA queries and all that has been said. Even we need to start that one off once you're done with this one. At least go through that document and then, in case you have any query, let's connect with Rajna today. Serious thing I need to, you know, make some changes in your that bpm and what I'm seriously it show me that. And did you ran that? Uh, not this one? Uh? Yesterday data for the DQAM, Yeah, yeah, that is already done.
+
+00:15:52 - 00:17:24 Unknown Speaker:
+
+I already updated, you know, that process instance ID is for that data for yesterday date. Yes, yes, yes, yeah, that is done. I have to just schedule it. No, no, no, so did you ran it for yesterday? That is my question. Yeah, yeah, that is done. So we are able to see yesterday's data? Go to the dashboard once. Yesterday is 11th you are telling right? Yes. For 11th I didn't trigger it. I have to trigger it now. Go ahead and trigger it. Then we have to schedule it. Then schedule it at 12pm for today or 1pm for today and then reschedule it back to 10pm actual time. 10pm I said right? No, no, no. 10am. Your job would be running at 10 a.m. and then Ace would trigger at 11. Okay.
+
+00:17:25 - 00:19:15 Unknown Speaker:
+
+So that is the reason I'm asking you. Right now, run it manually and post-manual run, schedule it for 10 a.m. tomorrow. 10 a.m. IST. And then once you schedule it, do let me know. I'll schedule the job at Ace at 11. Okay. Now go to your BPMN. Once done, this is confirming you on this one, okay? Okay, I will let you know. Just a second. Yeah, this is the BPMN. Now open it. Now create another non-interrupted timer. Drag it and create another non-interrupted timer. Where do you want to create it? In that same human task. Let me send this. The first part you have tested right i need to test the second part now i have told you right that is not the complete ppm. Create a different class over here. Okay.
+
+00:19:18 - 00:20:50 Unknown Speaker:
+
+What do you want to open? I'll tell you. So, this is your PT Tennis, right? Tennis is getting triggered. Now, here what you need to do. So, this should get pinned. Post this much of time, okay, or make it one minute okay, and then this human task should remain active. Yeah. As soon as your validated request gets completed, you are getting the notification over here and this is activated. The process instance ID that you have given is for Dev environment, correct? Uh, is there anything from your side? Um, no, not for the team. But, uh, Due has again, uh, postponed a proposed a new time, which is like, at 11 p.m. ISD. Even yesterday she was not okay with that time. No, it is getting too late. Yeah, so I think she will have to attend.
+
+00:20:51 - 00:22:08 Unknown Speaker:
+
+Guys will have to make it to the 11pm call today. There's no other call. So probably I'll just ask her to attend. Okay, who all are needed for this? Sachin, Rachna, Tanisha, Manish, and Anasi. But yeah, I think Sachin said we can cover for her. Okay, so Colin, just test this route, okay, and confirm. Can you save your screen once for that previous process? What is the ask there? What is the business? The ask is, there would be a human task created, right? We are going to send a multiple reminder to them, okay? Because as soon as the roles gets created, it would intimate the business that roles has been created, either approve or reject the request, right? Now, the... should be waiting for a couple of days.
+
+00:22:08 - 00:23:18 Unknown Speaker:
+
+We would be sending a second reminder to them, Okay, then there would be a third reminder, maybe on seventh date, right? And post that. Also, if they don't take the action, then we would close this human task. Okay, so this is, this is going to get figured, this should be right, right once, once this, this, this is done, right one. This gets triggered. And if this remains active right, then our testing is done, then we can start the actual implementation for this one. So save this, yeah, I saved it. It checks all everything, you just need to create this, uh, service class. Let's send email to that one, okay, and show me your screen once, okay, the process instance ID that you have said. Even 10pm in my opinion it is quite late.
+
+00:23:20 - 00:24:19 Unknown Speaker:
+
+So just check with him if he can join a bit early. So yesterday he told me he cannot. And he postponed it, like, till 11, what about Monday? What about Monday? Then? It's too late, right? Every day it keeps getting postponed yesterday also, he said. And he, he was the one who proposed the 10 a.m call. And then, like today morning, when I logged in, like sometime mid time, midnight. He's again denied it, like he's inclined to invite and propose. This 11 p.m. So this is not active, right? This is getting read over there. No, no, this is active. Can you click on Do details? Give me the okay, I am not able to, uh, copy the task ID, copy the task ID, go back. This one. This is process ID, this is process ID, not the task.
+
+00:24:26 - 00:25:51 Unknown Speaker:
+
+Click on View details. No, no, that is process instance ID. Again, I'm asking you. Click on View details, click on Human Task. Click on Human Task Task ID. Copy this one. Now, uh. Click on that process button is control center this item, click on that, click on work, put the put the task ID, search it. Now, click on action. Click on action. Click on action. Action is there. Hold on. Mark it as... Click on start first. Reserve. First reserve. Click on reserve. No, no, no. Click on reserve. Submit. Okay. I know. Okay, I'll test it out. So, we can determine once more. The one that I have saved just right now. So what will happen once we complete the end-to-end testing, the last bundles will get executed. So right now the BPMN looks like this.
+
+00:25:51 - 00:26:51 Unknown Speaker:
+
+You would be doing a trigger like this, this, this. And once we mark it, Task is completed, so we'll roll creation. Maybe just add some logger. Okay, right now you're adding logger to this send email bundle guys, so you can add some logger in this. Role creation once you create a task, once you test it on this, just to let them. We can complete the task through that UI and just see whether it's coming to this role creation response or not. Once this is done, then your end-to-end testing is done. No, no flag is required. No flag is required. That would directly go over there. No flag is required. Just complete this and just then post that to a letter of allowance. So, Sindhuja, are we meeting today or it would be cancelled?
+
+00:26:52 - 00:27:48 Unknown Speaker:
+
+Yeah, for now it's scheduled at 11pm. I am waiting for Rachna. Yeah, I have to still move it. I've asked Rachna because she is the main person, right? No, no, no. Rachna is not the main person. The main is Dhanisa. If Dhanisa and Rachna both are not joining, then there is no use of that call in that case. Because on the business perspective, Tanisha should be able to do it. Yeah, I'll wait for Rachna to log in, check with her and make people posted. And just check with Rachna. Like, you know, if she would be able to, you know, take care in absence of Tanisha, then I'm fine. But Tanisha is the, you know, the biggest book who points this use case to all of it. Okay, sure. I'll check and let you know.
+
+00:27:51 - 00:29:33 Unknown Speaker:
+
+Anyone having any other queries? I am moving the dashboard to IP, OK? OK, here is large, right? So is that being moved or you're doing something on that? There is some other activity. It will not directly move. OK, OK. OK, then go ahead and move it. Sindhuja, rally the footage. No, I have not checked it today. Just open it up. So we are using only those three columns? Yeah, yes, Sachin. Can you set your query? Can you set your stream? So it's surprised that we are using only three volumes out of that yeah i'm sharing where is that table has been written sunset once again we know this will take you to go down with this one. Yeah, I think one column is this one. What else? What else? Wait, wait, wait. Go down.
+
+00:29:35 - 00:30:54 Unknown Speaker:
+
+Okay, this is another one. Hold on. Next. You're not searching in the right direction. Okay, didn't? We have written a selection select query from this table. No, we are using this is our column name, right? So that's why I'm searching with this table name only because this is the S or table, right? So from there, we are picking the right columns. Enough sub query for this table, or we don't have any sub query for this table? No, we don't have any sub query required required column. So we are taking as your first priority, then we are make using the calculating, the threshold and some other logics. Here. That's all okay, so I can see one column that you have seen so far. What about rest? Yeah, yeah, this one. As of date.
+
+00:30:58 - 00:32:11 Unknown Speaker:
+
+Can you search the stable in that BigQuery once? You have time, right? You do have time or you have to drop off? I need to join another call actually. Okay. I will help you on this first. So you want me to open this table only? Yeah, yeah, yeah, table only. Yeah, click on X, believe me. Okay. Hold on, hold on. So this is having lots of column and we are using only those three, right? Yeah, account ST, I was there, yeah, like this. Yeah, I think they are, they are applying the field, the alerts. Exactly, but, you know, sometimes what happens, we used to group by, you know, do something by certain logic, right? So, if it is not there, I'm fine with that, no problem. Yeah, yeah. No, no, not that much complex query is not used.
+
+00:32:12 - 00:32:59 Unknown Speaker:
+
+Okay. Okay, then. Let's try to do it. Let's try to do it. Okay, then anyone having any other questions? Such an upcoming Monday any plan for to create an RFC? Yeah, go ahead, have it handy. Okay, Monday I will create it. Yeah, sure. Okay, then. thank you guys yeah yes so regarding them if you remember last time

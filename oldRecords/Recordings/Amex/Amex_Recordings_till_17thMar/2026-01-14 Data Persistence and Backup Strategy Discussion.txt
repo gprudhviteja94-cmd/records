@@ -1,0 +1,241 @@
+2026-01-14 Data Persistence and Backup Strategy Discussion
+
+Creation Time: 2026/1/14
+
+
+📅About Meeting
+
+  • Date & Time: 2026-01-14 18:35 (Duration: 2631 seconds)
+  • Location: Virtual meeting / Screen share
+  • Attendee: Sachin, Anand, Upadhyay (Aryan Raj?), Nancy, Srishti Panda, (and other team members — names mentioned: Man, Sachin, Anand, Aryan Raj, Nancy, Srishti Panda)
+
+
+📒Meeting Outline
+
+
+Data persistence & backup strategy for use-case tables
+
+  • MX Quest history table / use case folder Discussed that the MX Quest History table (under the use-case folder, referred to as "use case one" / USCS) should not be modified. This table contains November history data; the DT (data transfer) flow must sweep data into a separate backup table rather than into this history table.
+  • Action required: create backup table and target DT flow Clarified that instead of backing up then running an operation on the same table, the team must create another table (backup table) and run the DT flow pointing to that backup table. Confirmed the process: create table → run DT flow targeting the new table.
+  • Data sharing / import concerns & storage limits Discussed sharing data with customers by importing from the use-case folder if persisted there. Noted production storage limit of 10 MB; estimated that a 50M-record dataset would exceed 10 MB (needs size check). Team member will check actual size (MB) of the dataset.
+
+
+Linkup / Managed Data Dependencies & Access
+
+  • Linkup page / dependency view Reviewed the managed-data "link up" landing page which shows table dependencies and execution details. Demonstrated selecting a project/environment to view all table dependencies and clicking a dependency to view dependency and execution details (ingestion events, timestamps, notifications).
+  • Access controls & who can create dependencies Discussed access: only some team members currently have access; Nancy can create dependencies herself. Need to confirm whether feature allows others to add resources by default. Decision: if not, provide access to one on-site member and an additional HTR member. Action to check with Aryan Raj / Upadhyay for access status.
+
+
+DQ (Data Quality) / Master tag JSON-driven DAG triggering flow
+
+  • Master tag JSON config & Maestro topic Reviewed the mechanism: a master tag reads JSON configuration and stores it in an Expo variable (Maestro topic). If no subscription found, tag stops; otherwise it triggers the corresponding DAG. If data anomaly alert occurs, flow stops. On success, results are stored in Google Cloud and an email is sent.
+  • Retry logic & failure handling If the DAG fails, retries will occur; alerts are raised on failures. Discussed that basic flow was reviewed previously and no further questions at this time.
+
+
+High-level design: Lumi → Lumi Warehouse → IS/ACE flow and SFTP handoff
+
+  • BigQuery DQ results table, DAG, file creation High-level design: a DAG queries BigQuery DQ results table (persisted pass/fail), prepares a file and transfers via SFTP to MX/ACE consumer.
+  • SFTP usage and schedule Confirmed SFTP is used instead of cloud S3. Producer job uploads file to SFTP (e.g., run at 10:00 for 13th Jan data), ACE automation checks SFTP on an hourly scheduler (e.g., 11:00 check) and processes available files.
+  • SFTP folder semantics and file discovery Explained SFTP folders: inbox / outbox / send (or similar). ACE looks in both outbox and send to ensure it finds files moved between folders. Retry logic on download (up to three attempts); if all attempts fail, Slack/email alerts are sent to support team.
+  • Empty file handling If file contains zero records, the system raises a notification to business users indicating no records for the date. If file contains records, processing proceeds.
+
+
+ACE BPMN processing & human task flow
+
+  • Delegator vs. main process File processing creates a delegator process which spawns child processes (one per record/task). Child tasks can be PASS or FAIL:
+    • PASS: task marked complete automatically (no human action).
+    • FAIL: human task gets created and exposed in the ACE UI for manual remediation.
+  • Control Center / Process Monitoring Demonstrated ACE Control Center: select deployment tenancy / process, view delegator instances, view child process status (active/completed), view process variables and task details (table name, rule description, status code).
+  • Resume & alerts If the whole process fails (system exception, ASTV downtime, null data, etc.), alerts are generated and team can resume jobs from Control Center once root cause is fixed.
+  • Human task UI Shown how a human task displays variables (TQID, table name, rule date, rule description). Users can mark false positives, delete rule, or close tasks; closing a human task updates ASTV status and completes the flow.
+
+
+ACE implementation details, repo & configuration
+
+  • BPMN configuration files Reviewed repository locations: as.yml contains BPMN files; service manager config holds service bundle/class registration. Deployment config JSON includes jar version, deployment ID, and service dependencies (email, Java classes).
+  • SFTP util code & configs Showed code that handles SFTP connection (host, username, secret key stored in vault), folder list (inbox/outbox/send), file name extraction, POJO creation, and retry logic. Mentioned exception classes, constants, and configuration (ECM/email/SFTP).
+  • Clear context data & reuse Explained clearContextData bundle clears saved context data to avoid persisting unnecessary DB context. Advised that teams can import the repo as a Jar to reuse classes in future projects.
+  • ACE framework classes Noted iBundle and other ACE-provided classes available to use; service bundles can include multiple Java classes. Emphasized need to register classes in service manager config and test with hands-on ACE training.
+
+
+Operational items, incidents, and next steps
+
+  • ServiceNow incident Srishti Panda asked to raise a ServiceNow incident for an environment/dependency issue (ASTV or platform availability). Team agreed to raise incident; expected SLAs uncertain (approx 24+ hours mentioned).
+  • Next sessions & code walkthrough Plan to cover SFTP code and Lumi platform specifics in next call. One session planned to dive into the AS (ACE?) code part and SFTP mapping/config in detail. Anand scheduled a separate call at 7:30 to discuss further; meeting to be forwarded to relevant team members.
+
+
+📋Overview
+
+  • MX Quest History table must not be modified; create a new backup table and run DT flow targeting it.
+  • Confirm dataset size vs. 10 MB production limit; 50M records likely exceed 10 MB — size check required.
+  • Linkup/managed-data page shows table dependencies and ingestion details; verify and grant access where needed (check with Aryan Raj / Upadhyay).
+  • Master-tag + JSON configuration triggers DAGs; flow supports subscription check, retries, anomaly handling, and email notifications.
+  • SFTP chosen for file handoff from DAG to ACE consumer; ACE polls SFTP hourly and includes retry + alerting on failure.
+  • SFTP folders (inbox/outbox/send) can move files between folders; ACE checks multiple folders to find files.
+  • ACE BPMN creates delegator and child processes: PASS tasks auto-complete; FAIL tasks generate human tasks for manual remediation.
+  • ACE Control Center used to monitor processes, resume jobs, and inspect process variables and task contents.
+  • Repo/config review: as.yml, service manager config, deployment config; secrets stored in vault; JARs used for deployment.
+  • Teams must get ACE hands-on training to work confidently with BPMN and service bundles.
+  • Raise ServiceNow incident for platform/dependency problems; SLA may take ~24 hours.
+
+
+🎯Todo List
+
+  • Sachin:
+    
+    • Create the backup table for MX Quest History data and confirm table name and schema, by 2026-01-18.
+    • Update DT flow to target the new backup table and run DT flow once created, by 2026-01-20.
+
+  • Data size owner (Assign: Sachin / Anand):
+    
+    • Check actual size (MB) of the 50M-record dataset and confirm if it exceeds 10 MB production limit, by 2026-01-16.
+
+  • Access / Linkup owner (Assign: Upadhyay / Aryan Raj):
+    
+    • Verify who can create/manage linkup dependencies; confirm current user access (Nancy, on-site member, HTR member) and provide required access, by 2026-01-17.
+
+  • ACE / Dev owner (Assign: Anand):
+    
+    • Walk through SFTP mapping/config and SFTP-handling code in next technical session; provide code walkthrough and explain retry/exceptions, scheduled for next meeting (coordinate with team, suggested 7:30 session).
+    • Share repo details and instructions for importing shared JAR and service bundle configuration to enable reuse, by next session.
+
+  • Incident / Ops owner (Assign: whoever raised — Srishti / Anand):
+    
+    • Raise ServiceNow incident for the platform/dependency issue (ASTV / managed-data access) and share incident number with team; raise immediately and notify stakeholders. Target: raise now and report status within 24 hours.
+
+  • Support / Monitoring owner (Assign: Support lead):
+    
+    • Ensure Slack/email alert subscription for SFTP download failures and DQ job failures is configured and the on-call rota knows how to resume jobs in ACE Control Center, by 2026-01-18.
+
+  • Training owner (Assign: Team lead / Platform team):
+    
+    • Organize ACE hands-on training for team members to get comfortable with BPMN, Control Center, service bundles, and deployment steps, schedule within 2 weeks.
+
+Notes / Clarifications needed:
+
+  • Confirm exact names and schemas for the new backup table.
+  • Confirm who will be the on-site member and HTR member to be given Linkup access.
+  • Confirm SLA and expected turnaround for ServiceNow incident resolution.
+
+
+Transcription
+
+00:00:00 - 00:01:29 Unknown Speaker:
+
+Call that triggering JSon job, right? While saving the record, you just need to change the table name. Okay, and how would you be? And would we be able to share the data? If that is being persisted in this use case folder, we can import it, right? Yes, uh, Sachin, I can see that data still persist in the our use case one, on use case one. But I don't want and to, you know, do any modification to this table. Man. It is the MX Quest. History is the name, right? Yeah, yeah, yes, yes, yeah, yeah. U.S. CS, right? So this is under our use case folder. Don't make any changes to this table data because this versus your, uh, November history data flow, but your DT flow should sweep the data into that backup table instead of this history table.
+
+00:01:31 - 00:02:48 Unknown Speaker:
+
+Okay, so here there are two activities. One, first of all, I have to backup this data and after that I have to run the... No, no, no. Not required? Not required. You need to create another table here. Another table here and I have to run the DT flow targeting to that table. That backup table and just confirm me if this is the table, right? If I am doing a query over here. Will I be able to import this data? Import this data to? Oh, because we need to share it to customer, right? So suppose this is the data save, so save is not possible, right? So it's under the production only 10 MB data we can store. Oh, okay, and what would be the size of these 50 million record?
+
+00:02:48 - 00:06:00 Unknown Speaker:
+
+Definitely more than, uh, let's move, let me check, but definitely more than 10 MB. But I need to check. How can we see? Check that? MB 10 MB 10 MB data. That's what we can do. About the history, like a history table prospector. We have run on November and December, it got failed. When I I try to do a group by with the AS update and run date, I get, I get only November. Okay, it's just now, am I right? Proceeding, the link up page where you know, I invited you yesterday. Also, the reason for, you know, showing the table dependency that we were creating. Can you share your screen once? You are following up with that Upadhyay, right? What was his name, man? Aryan Raj, right? Just check with him.
+
+00:06:01 - 00:07:02 Unknown Speaker:
+
+From our team, only I do have this access to this link up. Did you guys move that feature to add additional resources to this one or not? Nancy was created her own, I showed him, but she can able to create it. Then if that is the case, then let me know. We need to provide the access to one on-site member and then maybe one more member to HTRs. Yeah, so here I'm thinking probably whoever having the project access, right, respective environments, by default, they can able to create these dependencies. Okay, If it is not, let me know, I can open it. My and NCS said me that link yesterday, yeah, just might is open, just open this one. Okay, so here is the page we need to go for the managed data, right here, we need to click on the link up, so here we can see the view.
+
+00:07:02 - 00:08:19 Unknown Speaker:
+
+Our dependencies. Just like, you know, like, you know, these folks, Okay, yeah, so this is the landing page. Yeah, so if some of the projects having more than one project set, so we can do the switch and we can check the corresponding project. So once you select the project and which dependencies you are looking with the respective production environment, so select this one. And it will show the all the table dependencies here. So, example if we can click off any of the dependencies here, Uh, just click on here. This name, yeah, this is If's own name. We have shown this yesterday, just thought of, you know? If we have any additional details, then let's find them. Yeah, this is the dependency details and execution details, suppose you? If any data ingestion happened, right?
+
+00:08:19 - 00:09:39 Unknown Speaker:
+
+So it will show a dependency is made. So we will get a master notification message. So and so data got ingested and the timestamp details. Yeah. Any other things we need to cover Sachin? That's all. No, no, that's it man. This was, I was not having the access, right? So I just thought of letting them know. To this Maestro topic and saving it to that Expo variable, right? If there is no subscription found, then basically this tag gets stopped. Otherwise, whenever the corresponding tag from that master tag that read that JSON configuration, right? We we talked about having those all Master tag details, input details, and the tag that would run, right? If there is no match, it would stop it, otherwise it would go and know trigger the corresponding dag.
+
+00:09:39 - 00:11:01 Unknown Speaker:
+
+If there is a failure, retry would happen, otherwise it would, you know, go. For that business logic, if there is a data anomaly alert, no alert, it would stop. Otherwise, it would store the result in the, you know, Google cloud and then send an email to this one. So this is the basic, the basic flow that we we were discussing yesterday, okay, any questions from yesterday, or management tool? Okay. And this tool is basically having a data flow between Lumi to Lumi Warehouse. To IS TV okay, so the data is getting transformed from from the Lumi to IS okay. So if I go for a high level design diagram for this one, so basically what we were doing? Uh, we are going to do a big query to that DQ results table where those.
+
+00:11:04 - 00:12:02 Unknown Speaker:
+
+Data get persisted with failed result or past result. There is a DAG or okay, which would be corresponding, you know, responsible for running that query, getting the result and then creating a file. And then that calls SFTP protocol. So in MX, we are using SFTP for transferring a file from one system to another system. Okay. So once that, you know, query gets completed, we are creating one file and then we are sending it to the SFTP. So this piece of code, I'll cover in the next call. Okay. Maybe I'll proceed with the AS part today and then maybe in the next one, we will talk about this Lumi platform side. Basically, this is same as, you know, we were discussing yesterday, but still I'll let you know on the code part.
+
+00:12:05 - 00:12:56 Unknown Speaker:
+
+Calls the SFTP, we are storing it to the SFTP. Ignore this AWS S3. Earlier we thought of reserving it to the cloud, but now we have went through the SFTP. So once this SFTP received that files, this ACE platform becomes a consumer. So again, this is a schedule job, as I mentioned, right? Suppose it? It has been scheduled to run at. It would be picking up 13th Jan. Data. So this job might have been scheduled at 10 a.m, so it would run at 10 a.m. Place the file over the SFTP and then this automation job we have scheduled at a one hour interval. So that when it would go for that 11 a.m, right? It would be able to find that SFTP file and then process that file.
+
+00:12:56 - 00:14:34 Unknown Speaker:
+
+Okay, how the processing is done in the East Platform, I'll explain it, but but let me know if you have any query over this. Those are already being taken care by, you know, during this SFTP transfer. Those are secured file transfer. We are not applying because they don't. This is the ACE framework, how it works. Okay, BPMN we already, uh, talked about today morning, right? Uh, how the task flows so in is basically it is intact with the BPMN. Okay, so now there is a file in that SFTP. So when my ACE automation system would get triggered, what it would do? It would, first of all, download the that SFTP. Okay, so this is my very first bundle, which would be downloading the file from the SFTP. We have applied a RipTree functionality.
+
+00:14:34 - 00:15:35 Unknown Speaker:
+
+So if there is a, you know, breakage or some issues are there, then we can go ahead and do a retry for the second time and the third time, if it is not, you know, downloaded, even after third time, then we would be raising an alert so you would be receiving an alert on the Slack as well as over the email. So that, you know, uh, we as a support team again, would you know back? And, you know, try to re-trigger the process or analyze what is the issue, why the file is not getting downloaded. One thing you have to understand how SFT works, SFT is having, uh, just like email, right? It is having one is inbox, okay, file to the inbox, and as soon as the upload gets triggered, the files are available on this outbox folder.
+
+00:15:35 - 00:16:18 Unknown Speaker:
+
+Okay, so these are three different folder, okay? Now, the file resides in this outbox folder from where Ace is trying to download the file. So as soon as you start looking into this outbox file in your first attempt. If you are able to face the file well and good. If you are unable to face the file from the outbox, the file automatically moves to next time. If you are just searching for the Outbox folder, you won't be able to find the file over there because that is already been moved to the send folder. So we have already applied a logic so that it is not only searching for the file in the outbox as well as it is searching for the file in the send folder.
+
+00:16:18 - 00:17:28 Unknown Speaker:
+
+So wherever the file gets placed, it would be picking up that file and then, you know, uh, process that file. Any questions on this asset, TP, and then how this SFT mapping and all is being done? That is again a set of, you know, configuration that I need to explain, maybe we can explain it into the next session. Okay, any questions on this? No, I'll take it as a no. Okay, right? That file might be having 100 records or 200 records, right? But in case there is no record, that file is empty. In that case, it is intimidating us, as well as the business user, that there is no records to be processed for today's date. Okay, but in case that file is having 100 records, in that case, it would move to the next step.
+
+00:17:28 - 00:19:29 Unknown Speaker:
+
+And for those hundred cases, it would create those. Suppose that file contains 10 records, right? Out of those 10 records, So here we used to call this as a delegator and this as a main process. Okay. So now out of these 10 tasks, the task one might be having a power status, right? This task two might be having a failed status. This again might be having a failed status. Pass status. We are not going to do anything. I have to show it over this BPMN, give me a second, so this USCDO is our tenancy over which we have deployed these BPMn. Okay, so this is the delegator I was talking about, right? It is calling this file for the SFTP, no email. Otherwise triggering the we are right now here, right?
+
+00:19:29 - 00:21:23 Unknown Speaker:
+
+Triggering the human task, so if for those 10 tasks, it would be creating a calling, this human task. Okay, so now, if you come back with the power status, we are just marking that task as completed, there is no activity being done over there. Okay, if it is fail, then in that case, we are creating a human task, using that human task, the UI gets represented where they can take any. Right. These are just the BPM and diagram. Right. So in order to monitor this one, we have this is control center. The UI representation from where you can monitor these jobs. Comes over here. We have to select this deployment ID. Okay, so six, one, two, three, four. So this is our tenancy. Okay, now you have to come to this process. Okay?
+
+00:21:23 - 00:22:12 Unknown Speaker:
+
+So this ACE utility provide you these feature mod process, case management, work management, different kind of rule assist. You can schedule your job through this scheduler, right? There is a security provision, you can create a robot task, you can save your secrets, and all over the secret. Management. There are forms manager to submit a form, bulk processing for, you know, doing a bulk activity on all those things. So once you go through that was training, you would be able to know these all different icons. With those details, I'll come up with this process management. So as we are into this tendency. This would show you my BPMN which is being deployed to this one, right? Let me select this delegator, right? Suppose I will try to select from 1st December till 15th.
+
+00:22:12 - 00:23:07 Unknown Speaker:
+
+So these are different different tasks, so this is delegated task which has been triggered. Let me check the latest one. These all are on 1 2 26, No. 1 12. This is the latest one that has been triggered. I think on 12th of Jan. So if I can click on View details, right? So this shows me. This task delegator, What is the status of this task? Right? Uh, what are the steps? Uh, all have been there. And then the process variable with this correlation key or whatever. So this would be having a child child key, right? Okay? So to this dependency, there would be this child classes, this task creation 2.0, suppose if I get, so, if that is having multiple records, right? So those many child process would be created.
+
+00:23:07 - 00:24:02 Unknown Speaker:
+
+Okay, so you can see some are active, some are completed, right? So few of them are marked as completed. Why? Because for this one, there would be no human task this would have. This record might have came with a status as pass. Okay, look, the status code has Park pass, right? So for the status code As pass. We are not making any activity, we are just marking this task has completed for the one which is failed, right? So that remains in the active state. Okay, and for that human task gets created. Okay, so if you go to this process variable, you would be seeing this status code as fail, okay? So for this one, this human task gets created, and now if you click on View details, these details would be having this task data which would populate this,
+
+00:24:03 - 00:25:19 Unknown Speaker:
+
+this table name, these variables, the rule description and whatever additional details that we were passing through this human task. Let me log into that portal. Give me a second. I'll reset post login. Give me a second. Till this point, anyone having any query such an, uh? If the process got failed, a human task would be created. Let's say there is a system failure, and in that case, uh, the entire thing got failed. Uh. So in the in those cases, do we get any alerts, like, yes, yes, for any? Any case that is getting failed, we will be getting else alerts and we have to check why it has failed. Okay, again. And then I'll let you know what type of issues usually come, so why those tasks fails.
+
+00:25:33 - 00:27:29 Unknown Speaker:
+
+There might be some system exception, like there might be some null data, right? And if you haven't handled that in your code, right, in that case that would fail, right? We are not calling any external API or something, right, so in that case you would not be getting any exception. Basically, don't know why there is no data, give me a second. I need to log into a different system basically. Been reflected and ASTV is down due to certain reason. Then again, in that case, your record would fail, but you can resume it. There is an option to resume the jobs also. Okay, now, let me reshare my screen. So suppose this is one of the work, right? We were displaying like this TQID, this table name and all, right? That gets visible over this one, this human task, right?
+
+00:27:29 - 00:28:49 Unknown Speaker:
+
+The table name, variable name, description, rule date and all, right? So these data gets displayed over here. And then once you take an action on any of this activity, right? And that marks this task as completed. Okay. Let me see if I can search with this task ID, then I'll demo it right away. Then these task IDs are unique for each run. Yes. These are all unique ID. Okay. I was just trying to view if I can close one of the tasks and you know, this has logged out me. So basically, you know, that flows like that and then once you mark that task as completed over here, that would get reflected over the ASTV and then that would be marked as completed. So this is the flow of the DQIM.
+
+00:28:51 - 00:30:52 Unknown Speaker:
+
+You can select false positive any delete rule and then once you submit it it listens okay and then that's closed. Okay, so if I go to that delegator, So this is how you look like, and the configuration would be USCDO. So let me show you where we configure the PPMN, so this is our deployment tenancy, or the repo where we are going to configure our BPMNs. If you go to this as.YML, okay, this is the file where you would be seeing your BPMN. This is the BPMN file list, Configure your BPMN over there. Okay, and then this RT event has been registered because we are using this human task. Okay, and some default configuration these have been set up by the platform team. Excuse me, okay?
+
+00:30:52 - 00:32:39 Unknown Speaker:
+
+So this is the service name using which we configure the vault and all configuration and over there, so this is a one of the configuration file. Now this BPMN comes up with the class name. Okay, I show you the delegator, so this comes with this class name, right? So this is the service name which gets configured over this service manager config. Json. Okay, so if you see this one, search it. So this is having this which gets called when the BPMN gets called over here. And this is a code that has been written Util. I have to take the update. So this is the SFTP host, right where we are creating a SFTP connection to connect over this one. Okay, so these are just, you know, line by line. Do you need our explanation?
+
+00:32:39 - 00:34:35 Unknown Speaker:
+
+Or I'll leave it, just let me know. SFTP connection. This is the folder list that we are fetching, right? The inbox, outbox and folder that I was talking about, right? So from there, it would be fetching that input file name, right? Once it fetched that input file name, it would read that file, iterate through that file and, you know, pull the data. Once it gets a establishment and then we would be creating a POJO out of it. So that extract the input from the SFTP. You can go through which has been there. Creating a template right and then it there is a retry functionality that we have added i talked about right so if the retry count is three then it in that case we have. These are the exception classes.
+
+00:34:35 - 00:35:28 Unknown Speaker:
+
+These are constant and then some config that ECM config if you are doing or email config or the SFTP config that we are doing. So for establishing the SFTP, we are passing the hostname, username and the secret key is nothing but the password for that. Okay, and I'll leave one bundle at the end that is this clear context data, right? So whatever details you're saving in the data, we are clearing. Because when you are selecting the context data, that means you are saving the data to the database using that context data. So clear context data, if you go to this one, this is the class, right? So here, if you see this clear context data, here we are clearing the context data, unnecessary context data over here. Okay. Any questions on this?
+
+00:35:29 - 00:38:11 Unknown Speaker:
+
+So, And I want to reuse. You just need to import that repo as a jar and you can include into your next project to reuse this class. Okay. Okay. And some of the class you might have seen this iBundle class, right? This is being provided by the ACE framework, right? If you go to this one apart from iBundle class, there are lots of other classes and methods are there, right? So those have been... balance here to you. Created over this is a work manager, right? So these are some predefined classes and method that they are providing which we can live this when we are making it. These are, you can call these all as a service bundle, right? For all those service bundle, you have a configuration over this Service Manager Config.
+
+00:38:11 - 00:39:15 Unknown Speaker:
+
+Under that Service Manager Config, you can define the Java classes which you are going to build. Because for few of them, like, you know, and it's not necessary that, you know, there would be only one single Java class intact. To this service, you can have multiple classes over the same service bundle. Okay, so this is the configuration that you need to do with BPMN with this Service Manager Config, and then you need to add that BPMN into this h.YMN. And if you want to place some, you know, properties, right, you can place remote host or whatever it is. Password is being saved in the world, that's why you won't be able to see the password. So these are some of the configuration that you can configure over here, okay, and then in this is deployment configuration.
+
+00:39:15 - 00:40:26 Unknown Speaker:
+
+This is our JAR file, that is the report, right for that, we have released that third version, so we have, you got my point, right? This is the place which I was showing you over this intelligent right. For this, we use create a jar, and that jar would be configured on this dependency. This is the EDS version, this is our deployment ID, and here in this dependency, this is this dependency is for email. And and this is for the, you know, Java classes that we have written to run it. So this would be there in this is deployment config. Json, so you need to consider this one, deployment config, and then this, this one, and then the PP. Modify something or go through the code. Then only we will have more confidence anyhow.
+
+00:40:26 - 00:42:53 Unknown Speaker:
+
+You have to have some hands-on, right? Without having a hands-on, it would not be, you know, straightforward that you'd be able to understand. So you need to go through that ace training and then post that you would be able to understand how it have some hands on on this ace part or not. Like this pipeline, like I see, Anand has set up a call at 7.30, let me forward it to you, let's connect at 7.30 to have a discussion with. And we need to raise this instant, right? Like, I don't know like how much time they will take once we raise that incident. Also, because that is a dependency, one like that is not in our hand. So okay, Anand has actually shared this. Yes, yeah, waiting. I have such. I just forwarded it to you.
+
+00:43:00 - 00:43:25 Unknown Speaker:
+
+So Srishti Panda is actually asking us to raise a ServiceNow incident, right? I'll do that. I'll do that. I'll do that. Yeah, like what I'm trying to say is like even once we raise that incident, it will take a couple of days, I guess. Yeah. 24 hours a year

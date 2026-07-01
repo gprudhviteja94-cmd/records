@@ -1,0 +1,207 @@
+2026-02-16 Team Calendar, Leave Planning, and Rally Updates Stand up
+
+Creation Time: 2026/2/16
+
+
+📅About Meeting
+
+  • Date & Time: 2026-02-16 11:32 (Duration: 1309 seconds)
+  • Location: Virtual meeting / team call (screen sharing used)
+  • Attendee: Sachin, Sindhuja, Nirmal, Sameer (Samir/Samira references), Ayyappa, Raz, Nancy, Kundan, Elsie, Sajan, Anand, Jason, other DSU/DI team members (some referenced but not present)
+
+
+📒Meeting Outline
+
+
+Calendar & Leave Planning
+
+  • Optional vs Public Holidays Discussion about Holi and other holidays: team clarified that some holidays are optional and should be marked as "optional holiday" in the calendar (rather than "public holiday") to avoid confusion. Sachin asked everyone to update their calendars for March and upcoming dates so Sindhuja can plan the sprint.
+  • Individual leave updates
+    • Nirmal has already updated his public holiday.
+    • Several people (including Sachin, Sindhuja, Sameer) admitted they had not updated calendar entries yet and agreed to do so immediately.
+    • Ayyappa has multiple leaves: today, 9th, 19th, 23rd, 28th (concern raised about frequent leaves; follow-up needed).
+    • Sameer confirmed leave on 19th and 20th (income-related).
+    • Team reminded to update PTO, public, and optional holidays so sprint capacity is accurate.
+  • Work-from-home guidance Raz’s WFH was approved but he emphasized not to increase WFH frequency. Sachin reiterated to respect that guidance.
+
+
+Rally (Work Tracking) Updates and Story Status
+
+  • Marking tasks in Rally Sachin requested everyone to update Rally: mark completed tasks completed and move/inform about any incomplete ones. Multiple items found mismarked or pending.
+  • Carryover vs reduce scope
+    • Team discussed one user story (Quantum) that had new requirement changes and needs to be carried forward to the next sprint. Consensus: carry the entire story over since little or no work was done; the story points/capacity will be reduced for current sprint.
+    • Clarified process: move story to next sprint, update state (defined/ready) and re-estimate remaining work in the next sprint.
+  • Rally bug reported There was a discrepancy where a story/task was showing Completed incorrectly — suspected Rally bug. Team asked to report it.
+  • Specific pending items & ownership
+    • Samir/Samira: mark automation/resi tasks completed; Sachin to review automation merge in 10–15 minutes.
+    • Nirmal: needs to mark tasks as completed where done; ingestion from our side done but storage validator failing — incident created and waiting for DI team allocation and logs; will coordinate with Jason/DSU.
+    • Some stories mistakenly marked done; Sachin clarified to move tasks back to defined/progress as appropriate and ensure task-level completion aligns with story state.
+
+
+Technical Implementation Details & Guidance
+
+  • Code quality and refactoring Sachin advised not to copy-paste product-owner provided code (which contains boilerplate and inefficient practices). Guidance:
+    • Refactor boilerplate: move repeated steps into methods.
+    • Move SQL into separate SQL files.
+    • Optimize JSON input handling and overall code quality.
+    • Debug and refine before committing; reach out to Sachin for doubts.
+  • Excel report & email delivery
+    • Requirement: after processing, send email with Excel attachment (rather than S3 link). Template/pattern exists (Java example) and must be replicated in Python.
+    • Create separate task for graph generation and for Excel sheet generation (multiple sheets vs single sheet to be confirmed with stakeholders).
+    • Sachin will assist and provide Panda template and example patterns for attachments.
+  • APIs and DB
+    • Kundan: create REST APIs to fetch records using H2 DB for now; later switch to production DB/table. Follow the controller → service → DAO pattern. Ensure US/CDO, Q-tracker, self-serve, and table call prefixes applied as discussed.
+  • Automation checks
+    • Automation templates created for stagnant check; objective to have at least two checks implemented (stagnant + duplicate) before moving to validation checks.
+    • Ensure runnability before leave; provide backup/hand-over if going on leave.
+
+
+Communication & Next Meetings
+
+  • Demo & planning Team has demo and planning meeting tomorrow. Sachin asked whether a roaming call is needed today — decision to cancel today’s roaming call and proceed tomorrow.
+  • Host & follow-up Sachin requested a host to review a report and join back in ~10 minutes. Team members free to drop out afterwards.
+
+
+📋Overview
+
+  • Team must update calendar entries (public/optional/PTO) immediately so sprint planning capacity is accurate.
+  • Raz’s WFH approved; team advised not to increase WFH frequency.
+  • Mark Rally tasks correctly — move incomplete stories to next sprint instead of reducing scope arbitrarily.
+  • One Quantum user story/new requirement will be carried over to next sprint (no work done; full carryover).
+  • Nirmal: ingestion completed; storage validator failing — incident assigned to DI team; waiting for allocation.
+  • Samir/Samira: automation and RESI tasks to be marked completed; Sachin to review automation before merge.
+  • Code provided by product owners must be refactored for efficiency; Sachin available for help.
+  • Excel attachments (not S3 links) required for final communication; graph generation must be a separate task.
+  • Kundan: implement APIs using H2 for now; follow standard layers and naming/prefix conventions.
+  • Rally showing a possible bug where stories appear completed incorrectly — to be reported.
+
+
+🎯Todo List
+
+  • Sachin:
+    
+    • Review and merge automation job, 10–15 minutes (today).
+    • Assist with Excel email attachment pattern and provide Panda template (ASAP).
+    • Follow up on Rally bug report if not raised by the team (ASAP).
+
+  • Sindhuja:
+    
+    • Update personal calendar with public/optional/PTO entries for March and upcoming dates (today).
+    • Plan sprint capacity once calendar updates are received (before sprint planning tomorrow).
+
+  • All team members:
+    
+    • Update individual calendars (public/optional/PTO) particularly March/Holi dates (today).
+    • Mark completed tasks in Rally accurately; move/flag carryover stories (today).
+
+  • Nirmal:
+    
+    • Mark completed tasks in Rally where applicable (today).
+    • Monitor incident allocation for storage validator failure and coordinate with DI/DSU teams (follow-up until resolved).
+
+  • Sameer (Samir/Samira):
+    
+    • Mark RESI and automation tasks as completed in Rally (today).
+    • Provide automation samples/templates for stagnant and duplicate checks before leave; ensure backup (before Wednesday/Thursday leave).
+
+  • Kundan:
+    
+    • Implement REST APIs using H2 DB (prototype), follow controller → service → DAO layers and naming/prefix requirements (ASAP).
+    • Create US CDO / Q-track / self-serve / table-call story tasks as needed (ASAP).
+
+  • Jason / DI team:
+    
+    • Accept and clear incident related to storage validator and provide logs/data injection clarifications (ASAP).
+
+  • Ayyappa:
+    
+    • Confirm and update calendar leaves (today). Manager follow-up required regarding frequent absences.
+
+  • Rally/Tooling owner (anyone responsible for tool admins):
+    
+    • Investigate and report Rally bug where stories show Completed despite tasks not completed (ASAP).
+
+  • Sajan:
+    
+    • Confirm cancellation of today’s roaming call and ensure team informed (today).
+
+Notes: Deadlines labeled "today" refer to the immediate next working day to ensure sprint planning is not impacted. For any blocked items, owners should flag in-channel and escalate to Sachin or Sindhuja.
+
+
+Transcription
+
+00:00:00 - 00:00:57 Unknown Speaker:
+
+Do they have any planned leave in between? Anyhow, for Holi, even I do have a public holiday on 4th. And you guys updated in the calendar? I only see Nirmal has updated his public holiday so far. No, no, even I didn't. Let me share my screen so that we can close that right away. Yeah, sure. Even I did not, uh, done that. Sinuja. So I think fourth is not for this print on, it's for this print only, so look, uh, Ansys on leave on, uh, 23rd. Okay, okay, it's even for me. I have to update it. So this meant a 17 to second. It doesn't exist. Just a quick question, man, how it could be a public holiday for you? It's a you're working for Bangalore, right? Yeah. There's a list of optional holidays that he can choose from, Sachin.
+
+00:00:58 - 00:02:17 Unknown Speaker:
+
+Okay. So instead of public holiday, mention it as an optional holiday, man. Okay. People would get, you know, confused with this. I'm doing it. Yes, Sindhuja, no other holiday for me. Ayyappa is on leave today. Ayyappa is taking lots of leave, Sindhuja. We need to talk to him. He is on leave today, again on 19th and 28th and again on 9th. Okay, nobody has updated. Okay. Sameer, do you have any holiday in between? No, Sachin. I have holidays at 19th and 20th due to like you got the income. Okay. That's fine. Just update it if you are having those, you know. Look, when we are sure that we are going to take leaves on, you know, XYZ day, right? So, please make sure you are at least updating the calendar. Yeah, sure, Sachin. Yeah. Okay.
+
+00:02:20 - 00:03:38 Unknown Speaker:
+
+That would help Sindhuja to plan the sprint. Yeah, yeah, definitely. I will do that right away. Okay. And see, you are having a PTO on 19th, then that is a public holiday. Again on 2nd PTO and then a public holiday. Okay. And normally you would be out on 4th and 20th, right? Only couple of days. Yeah. Okay. Okay. And then, you know, I would like to share this one to all of you. So this is a message, although, you know, Raz has approved his work from home, but at the same time, he has stressed on this point that he don't increase any work from home. Okay. But please take care of this one. Okay, let me get back to the updates. Anybody having any query on that? I'll take it as a no.
+
+00:03:41 - 00:04:55 Unknown Speaker:
+
+First of all, please update the rally and mark your all the tasks as completed. Any tasks that you... We're not able to complete it. Anyone such as I have my user story for Quantum complete since there is a new change in the requirement. One. But yeah, that morning we would carry forward, right? Like that, we would discuss with Anand today, and then that would. We are going to carry forward. Uh, auto Messenger validation, right? Self-serve, we are, anyhow, we are working on those part. And see, market has completed. You can mention that, you know, we were validating the check type that you are doing, right? So that's fine. The market has completed. The analysis part, or hold on. This is your analysis. Okay, we'll take care. Basically, what do we need to reduce that?
+
+00:04:55 - 00:06:07 Unknown Speaker:
+
+I did not get your point, Nancy. Yeah, I was only for one day in the sprint. No, no, we won't be able to do that. That's what Sindhuja used to tell us. Just mark it as completed. We will talk to them. And this, Samir you have marked it as completed. Samir, this is pending with you. Yeah, I will mark it. Like for resist support, I will mark it. Nirmal, you need to mark it as completed. And then this one, let me review it. But till the time, mark it as completed. Yeah, coming to this, Nirmal, when you search in that, ingestion from our side is done. But like the storage validator is actually failing, if you remember. Yeah, we will talk to Jason if he is not joining the DSU. Are you able to help his story get moving?
+
+00:06:07 - 00:07:02 Unknown Speaker:
+
+Yeah, such an uh, so regarding that, uh, there is instant was created by us like. And initially there is that incident with the other team, and he actually commented that there is. Some logs should be unclear from the data injection team, uh, DI team, so see here I can move that it's done to the other team. So I am just waiting someone to allocate to that incident and clear that. Okay, until the time, you know. Apart from this, I don't see any challenges over the user story that has been created over here. This is something, uh, can we reduce or move it to the new sprint? Is that possible? Probably we can just do a carry over, but let's not reduce in this. No, no, anyhow we need this carryover.
+
+00:07:02 - 00:07:48 Unknown Speaker:
+
+But you know, no major work has been done on this. And and she was right, like she was away for one day. Also. No, sure. So we'll just carry this over, we'll just move this to next project. And what about this? This would? This would still remain as a progress as no, no, we'll mark it back to done state. I mean, sorry, in a defined state. But is there any piece of work that was done for the story? No, see, story will carry over. Sachin. So, anyhow, your story pointer is going to get reduced, right? If it is getting carried over to the next print. If I understand it correctly. No, no, no, no. So, uh. Since she's not done even a single piece of work on this, the entire story will carry over.
+
+00:07:48 - 00:08:42 Unknown Speaker:
+
+And in the next print, based on how much work is remaining, you can, like, estimate the story. It can be two, or it can be more, uh, based on the work that is yet to be done. Look, if it is getting carried over what we are going to do over here for this, this one currently, what we are going to take action on this pin. That's what I'm trying to understand. No, so you just move the entire story, so this will just, um, disappear to the next print. Okay, so anyhow we are reducing the capacity, then, right, like the overall strength capacity. Yes, you are reducing. Yeah, exactly. This is free and oh man you mark it as completed and see No, no, Let me move it to the defense date and then let me assign it to be three.
+
+00:08:42 - 00:10:06 Unknown Speaker:
+
+You'd be working on that, take care, like, uh, this wouldn't be not build, uh, so and see, you can carry on on this one. Okay, oh, whatever you have done, uh, you, you understood, or you still need some input from my side? Um, that is for, uh, uh, AFC is for now. Okay, okay, yeah, yeah, I understood the use case, so, um. So just make sure they have, I already told you, right? They have written lots of boilerplate code over there. Okay. Don't implement as it is. Refine it. Try to, you know, move those steps to the methods. Try to move those sequels to the SQL file. Your JSON input string might be blank as you would be implementing that to the framework. But still see how you can optimize that code.
+
+00:10:08 - 00:11:03 Unknown Speaker:
+
+They are, you know, they are basically the product owner. They are not engineers. Okay. So they implement the way we used to do in our college days, right? Just that the program should run, right? They don't analyze the efficiency and the code quality, everything. So when you are implementing it, debug it once and then try to incorporate it with the efficient one. If you have any doubt, reach out to me. Yeah, okay, so those graphs that also will come in this implementation, right, exactly everything. So you need to create a different task for that, so the graph that you are creating that should be a different task. Okay, okay. And and you would be able to create those Excel sheet with a different sheet, right? So that is not a big implementation that is already being there, so you can incorporate all.
+
+00:11:03 - 00:11:54 Unknown Speaker:
+
+Or let me check with them, because if they want, uh, three different Excel, or a single Excel with the way they have given it to us. The Excel is the alert which she was showing in that recording. Exactly. No, no, no, not the alerts. And see once the process gets over, right. Once you are done with the complete processing, you need to send an email communication attaching the Excel sheet. Okay, uh attachment and uh code, which, yeah, like we did, implemented in n number of use cases. So if you need help, do let me know. So even here you can see we used to send the attachment. Okay, it's, it's in Java, we just need to replicate it into Python. That's not going to be a very big challenge for us.
+
+00:11:54 - 00:12:52 Unknown Speaker:
+
+Okay, and then, in some cases, also we, uh, this. Like, you know, we used to give them a S3 link through which they can download, but I don't want this S3 link. And all, because again, I, I have to integrate S3 with that. Uh, so you can just follow this mechanism while sending the Excel, and this would be containing all the data. I'll help you with this. Do let me know in case you face any. First of all, wrap up the build. And then all these email and all email anyhow we are sending, right? It's just the Excel attachment where you may need some some directions. That would be also available in the Panda template. Okay. Any query, Elsie? No, Sachin. I don't know. Yeah. Start with that and then in case you face any challenges, do let me know.
+
+00:12:53 - 00:14:42 Unknown Speaker:
+
+But don't blindly copy-paste the code that they have written. Try to understand and refine it. Hello there. Just mark this story is completed right now itself. Then let's connect in the evening hour just to have a demo with them. Nothing pending from your side. Kundan, you are there? Creating the APIs for fetching the records from the table. You can use the H2 database right now, you can use the H2 database right now, and later on we will start from the actual table. Okay, and look, the API should be your rest controller, followed by the service Tau but. First of all, make it as a US CDO, mandatory. This is for US aggregated. Most that apply a Q track, post that, self-serve, post that for table call. Got it, got it. Drag it like, here and there.
+
+00:14:42 - 00:15:53 Unknown Speaker:
+
+Okay, that's that prefix I will add in. That's fine. Your stories are completed. Uh, Samira, I know I know what you are doing so you can continue on the one. Uh, just mark this as completed your automation job. Give me 10 to 15 minutes, I'll review it you before merging it. Okay, even mark this RESI one has completed near one. Okay, even I am. I am aware what you are doing, so you can mark it as completed and you can continue on the build that you are doing. On that automation part, any challenges? Uh, till now? Uh, no, I.I created templates for the stagnant check alone, okay, I will give it once the sample one is up and running. I wanted to work on it. Just make sure that as you would be on leave for Wednesday, Thursday, right?
+
+00:15:53 - 00:16:41 Unknown Speaker:
+
+Who to create your backup man? No, no. I will give you some up and running one, Sachin, by that time. Look, I know you might be able to give it something up and running, but again, you know, I want that. Okay, you come back from the leave and then you can continue. Let me not, you know? Resupply resources, that's right, sure, yeah, and uh, so once, uh, shall I? I wanted to do it for at least two checks. Uh, because, yeah, yeah, go ahead. Look, any of threshold is going to take time, right? So if you can complete the stagnant and then pick up the duplicate one that is going to have only one template, right? Okay? And then then you may jump into the Valid. Because I wanted to see how it is generating based on the type of check type.
+
+00:16:41 - 00:17:48 Unknown Speaker:
+
+If it is behaving. Yeah, yeah, correct, correct, that we have to test it out. Uh, first of all, you know, complete one of the part and then we will decide. But don't wait for the evening, just mark this task as completed. Okay, I did not review the task. Uh, don't give it as a planning and make it as analysis. Don't give. Planning. Planning is not a right term. SQL pattern. What about Nirmal? Let me check Nirmal's one. What changes? Hey man, nobody is accepting, going to accept it, Nirmal. Testing in E1 is fine. Make it as E1 instead of E1 and E2. And how this is completed? No, no, I'm not blaming you, man, this is a Rally bug. It's a rally bug. I'm not asking you, man, being in this progress, right?
+
+00:17:48 - 00:18:53 Unknown Speaker:
+
+How can this user story is in completed? That surprised me. I'm not asking you, it's a, you know, from your side. There could be one thing that the user story would have been directly marked as completed instead of the task. No, but. But even if you are marking it, I'll also you write, Suppose, Uh, this is in progress, right? Two tracks. I marked it as completed. Oh see, it's still in progress. Oh man, then that is a bug in the rally, man. Report it. It's a bug, then it's a complete bug. It should not be get completed if we are not completing the task a.s. So it's only your story which is being left. I think we already discussed. Anything else you guys want to discuss? No, Sajan, I'm good. Okay.
+
+00:18:55 - 00:20:39 Unknown Speaker:
+
+Sajan, I just wanted to check since we are already meeting for demo and planning tomorrow, do you still want a roaming call today? Just one day, right? Do you? I can, like, increase okay, okay, okay, okay, then let's do that tomorrow. Yeah, I will just cancel that time, okay? And I think you guys have joined a bit later. Please keep this calendar up to date. Sindhuja need to plan it for the sprint, right? So only one day. And uh, and guys, please take your calendar. If you have a public holiday, please keep this updated. So if it is a public holiday, we won't be able to do anything. Then for public holiday anyhow, you are going to avail that. Then we need to review it. So update the March calendar.
+
+00:20:39 - 00:21:43 Unknown Speaker:
+
+At least if you're not updating, at least update March calendar. Like, Holy is there, right? So you might works might be only one holy and all. So just check that one email I have to close. Can you be a host over here and just review the report? That? Okay, let me make you host and I'll. I'll pitch in in next 10 minutes. Okay, just give me 10 minutes, I'll I'll join back. So okay, thanks for the folks, feel free to drop out, thank you and then you guys can carry on.

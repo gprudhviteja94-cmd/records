@@ -1,0 +1,242 @@
+2026-01-28 Automation Strategy for Role Onboarding Flow
+
+Creation Time: 2026/1/28
+
+
+📅About Meeting
+
+  • Date & Time: 2026-01-28 16:29 (Duration: 1950 seconds)
+  • Location: Q-Track / Lumi discussion (virtual)
+  • Attendee: Sachin, Yancy, Kundan, Prithvi, Anand, (others referenced: rewards team, partners, developers); NCFN mentioned
+
+
+📒Meeting Outline
+
+
+Role onboarding & overall flow
+
+  • Overview of requirement The team is building a self-serve role-onboarding flow where customers submit inputs via UI to create DQ (data quality) rules. After approval, data flows from the ACE database to the Lumi warehouse. The next initiative is to build an automation utility (batch job) to process these inputs and integrate new/changed rules into existing Lumi processes.
+  • End-to-end data movement Initial landing: partners push files to SFTP → files are ingested into ACE DB → data pulled to Lumi workspace. The utility will read files from SFTP and insert file details into a DQ repository (projectly ext table) in the Lumi use-case folder (not the warehouse).
+
+
+Automation utility responsibilities and design
+
+  • Job steps (high level)
+    
+    1. Read file(s) from SFTP.
+    
+    2. Insert file metadata/details into the projectly ext table in Lumi workspace.
+    
+    3. Run an automation job daily to:
+       
+       • Read the latest available data (but pick up only previous-day data for processing).
+       • Identify rule properties: role type (daily/weekly/monthly/intraday) and check type (threshold/stagnant/missing/duplicate/valid etc.).
+       • Create or modify tags (do not create duplicate tags; modify existing tag files like daily/monthly/weekly tags for the table).
+       • Create or modify the SQL script file(s) for the rule (or DAG configuration) and place the resulting files in a specified location for developer commit. Attempted Git commit automation is being investigated (auth/token required) but may not be feasible; if not possible, files should be staged for manual commit.
+
+  • Tag & DAG handling Existing DAGs/tags (e.g., C360_daily tag) should be updated to include newly added rules where applicable. The process should add the rule to the correct tag (daily/monthly/etc.) rather than generating a new tag. If the existing DAG requires framework code changes, preference is to modify configuration rather than Python files. If modification of Python is unavoidable, consider Git commit feasibility; otherwise place files for manual developer commit.
+
+  • SQL file handling & pattern Observations: many existing SQL files exist for one table (e.g., CM11), often with a large shared common pattern (select ... union distinct ...). The desired approach:
+    
+    • Make the common portion constant/template and dynamically append DQ-specific queries (union distinct blocks) so one consolidated SQL per table can be maintained rather than many files.
+    • When UI creates a new rule, the automation should append the new rule’s query block to the unified file (or generate a SQL file following the single-file-per-table rule).
+    • If immediate full refactor is not possible, allow a transitional approach: new tags for rules can be created but moving forward single SQL per table is required.
+
+
+Analysis & distribution of work on check types
+
+  • Action for team members The team must analyze existing SQL scripts and classify them by check type (threshold, missing value, duplicate, valid-value, stagnant). Identify patterns and commonalities in the SQL structure:
+    
+    • Each person should review multiple SQLs (not just one). Recommended: 3–4 SQL files per assigned check type to ensure robust pattern identification.
+    • Distribute check types among the team: those with more bandwidth take two check types; others take one.
+    • Deliverable: a confirmation/report of findings by tomorrow morning (DSU) to guide design decisions for automation and SQL consolidation.
+
+  • Scope for Prithvi Prithvi (new to project) should be given consolidated inputs from the team to help build the utility. Team should provide sufficient scripts and patterns to accelerate his ramp-up. From next week he must increase delivery velocity.
+
+
+Technologies, scheduling & infra
+
+  • Airflow & language Apache Airflow will be used for scheduling (DAGs). Python is the primary language for the DAGs and automation code. Shell scripting can be considered for small tasks but Airflow + Python is the primary recommendation.
+
+  • Deployment / Lumi platform Automation will run on Lumi platform. The first steps (SFTP -> ACE DB) are already in place; we need reverse read capability from ACE DB/SFTP to Lumi. The utility will operate in Lumi, stage generated SQL/DAG files into a repository area. Git commit automation with token/ADS ID is under investigation; if not feasible, files will be staged for manual commit by developers.
+
+  • Phasing
+    
+    • Phase 1 (immediate): SFTP file-read and insert into Lumi DQ repo; daily automation job to pick previous-day data and identify rule metadata. Start next sprint (from Tuesday).
+    • Phase 2: Generate/modify SQL files and tags; attempt Git automation; if not possible, provide files for manual commit.
+    • Phase 3: Consolidate SQLs into single-file-per-table design and refactor DAGs/config as needed.
+
+
+Risks / constraints / clarifications
+
+  • Many existing SQL files per table (e.g., CM11) cause maintainability problems — must consolidate.
+  • Git commit automation requires authentication tokens and may not be feasible; manual intervention fallback must be supported.
+  • Changes to Python framework may be undesirable; prefer config-based changes where possible.
+  • Steps and design are not fully final — may change with further discovery. However, the first 2–3 core steps (SFTP read, DB insert, automation pick & create/modify artifacts) will remain.
+
+
+📋Overview
+
+  • Data flow: partners → SFTP → ACE DB → Lumi workspace; automation will read SFTP and insert into Lumi DQ repo.
+  • Automation job responsibilities: daily read (previous day), identify role type and check type, modify/create tags, generate/modify SQL scripts and DAG/config.
+  • Prefer modifying config over Python code; Git commit automation under investigation; fallback is staging files for manual developer commit.
+  • SQL consolidation required: identify common query patterns (select ... union distinct blocks) and make them dynamic/template-driven to avoid many per-rule files.
+  • Team must analyze existing SQLs by check type and report patterns/feasibility; deliverable due by tomorrow morning (DSU).
+  • Use Apache Airflow + Python for scheduling and implementation; split automation into smaller jobs (ingest job and tag/SQL generation job) to allow manual intervention if Git commit fails.
+  • Prithvi to ramp up and increase delivery speed next week; team should support with analyzed inputs and templates.
+
+
+🎯Todo List
+
+  • Sachin / App / Kundan:
+    
+    • Distribute and assign check types among team members (threshold, missing value, duplicate, valid value, stagnant). (Due: tomorrow morning/DSU)
+    • Analyze 3–4 existing SQL files per assigned check type, capture common patterns (select → union distinct blocks) and confirm whether these can be templated. (Due: tomorrow morning/DSU)
+
+  • App / Kundan / NCFN:
+    
+    • Provide consolidated examples of SQLs and identify the common constant portions that can be templated (3–4 per check type). (Due: tomorrow morning/DSU)
+
+  • Team / Prithvi:
+    
+    • Prepare a short note on feasibility of modifying config files vs. Python framework for adding new rule behavior. Include examples where config is sufficient and where code change is needed. (Due: tomorrow morning/DSU)
+
+  • Engineering (Dev team):
+    
+    • Investigate Git commit automation feasibility from Lumi platform (requirement: ADS ID / token, auth flow). Report whether automation commit is possible; if not, define the staged file drop location/workflow. (Due: ASAP; recommended by next working day)
+
+  • Prithvi:
+    
+    • Begin building the automation utility skeleton (Airflow DAGs + Python tasks) focusing on:
+      
+      • SFTP read and insert to projectly ext table.
+      • Daily automation job that reads previous-day data and identifies role/check type. (Start: next sprint / Tuesday; initial prototype: within first sprint)
+
+  • Sachin / Team:
+    
+    • Decide and confirm the file staging location where generated SQL/DAG/config files will be placed for manual developer commit (if Git automation not possible). (Due: tomorrow morning/DSU)
+
+  • Sachin:
+    
+    • Consolidate team inputs and finalize automation plan (may iterate after discovery). Prepare to present to partners. (Due: after receiving team analysis; aim: by next status update)
+
+  • All team members:
+    
+    • Share any drawbacks or improvement suggestions for existing system and SQL design to help finalize automation and consolidation approach. (Ongoing; initial inputs due: tomorrow morning/DSU)
+
+Notes: "tomorrow morning/DSU" was requested in the meeting as the deadline for the SQL analysis and feasibility inputs. If the team needs to adjust due dates, confirm with Sachin immediately.
+
+
+Transcription
+
+00:00:03 - 00:03:37 Unknown Speaker:
+
+Q-Track self-serve. Hello? Hello? Yes. Is this correct? So we want to be check with the app if he's joining or not. Hi, Sachin. Hey, Yancy. I'm not sure, Like, Hey, hi everyone, uh, so let me be, you know, starting with the point, Uh, we are already late by two minutes and I have a follow-up call again. Um, so this is regarding, you know, building an utility, okay, I'll give you a overview, right? What? Uh, the requirement is okay? So, as we, as you guys know right? We are already in a process of, you know, creating the uh, rule onboarding right where the customers themselves would be, uh, submitting the input request for creating the roles right through these UI. Okay, I think I have given a bit of overview to you.
+
+00:03:37 - 00:04:32 Unknown Speaker:
+
+Anyone who is not aware, please, please do let me know. So, so I'm taking a consideration that at least a basic knowledge is known. KUNDAN Anyhow, you're working closely with me on this one. So for rest, NCFN, I would take an exemption that at least you have a basic idea about this, okay? So what would happen once the user submits this uh, you know, uh, form, right? Uh? This would go for the approval. Once it gets approved, uh, the data would flow from the ACE database to the LUME warehouse. So this is the first part of the initiative, the second part. What we are going to build is, uh, we are going to build a utility automation batch of job. The responsibility for that job is briefly.
+
+00:04:32 - 00:05:49 Unknown Speaker:
+
+Please understand this thoroughly, because you would be the person who would be building this utility. Okay, so the number one would be. And do raise a question if you have any query on this. The very first step would be that utility would be reading the file SFTP. This is step number one. Step number two would be inserting file details to dequeue a projectly ext table. As it is okay, this is his first job now. The data is now available in the Lumi workspace, and this table table would be available in our use case folder, not in the warehouse. Okay, the third step would be we have to create automation job okay, which would be reading these file that would be running every day. Okay, now, what would be the responsibility of this automation dog if I make a sub A of this one?
+
+00:05:54 - 00:07:19 Unknown Speaker:
+
+First of all, it would, you know, read the latest data, okay, now, post reading the latest data. I mean, suppose this table might be having a data from, you know, for last 10 days or one month or whatever. But this is going to pick up the data for only day before, you know, I mean, previous day data, basically. Now the next step is identify the role type. Okay, role type means whether it's a daily job, or it's a monthly job, or it's a weekly, or an intraday. One next is it would identify it's a threshold type, or, you know, stagnant type, or it's a, you know, a different type of check that we have based on these. Once the these things have been identified, the job would be creating, a, creating or modifying the existing tag.
+
+00:07:30 - 00:08:32 Unknown Speaker:
+
+Have a tag, so it's not going to create another tag for that, it would just re-modify the existing tag. Okay, and now for the 360 table, we might be having our daily tag, monthly tag, weekly tag. That's the reason this segregation is required over there, okay? And based on that, if tag is present, first of all, identify. If the requirement is for a daily one, then it would modify the daily tag. If it is a monthly one, then it would be modifying the monthly one. Or if it is weekly or one entire day, based on that one is this next? We need to check. It would be creating a SQL script, or again modifying the existing SQL script okay, and create a SQL file out of it. Sorry to interrupt, okay. Creating and modifying existing DAG.
+
+00:08:32 - 00:09:48 Unknown Speaker:
+
+What do you mean by that? Look, we were already having a DAG which is running for C360 table, right? There might be a DAG, right? So now somebody who comes to this screen, right? Just take an example, this rewards integrated team only comes, right? They might be having 10 roles already integrated for C360. Just take an example, it's a daily one, okay, take an example rewards team come okay, possibly 360 table okay. Where they have 10 existing rule, which is running already, they added one more rule, okay, and rule out of these existing 10 rules. Suppose eight rules runs on a daily basis? Okay, and two runs on a, you know, two rules runs on a monthly basis, right? So for these eight rules, then you have a C360 underscore daily tag, right?
+
+00:09:48 - 00:10:52 Unknown Speaker:
+
+Just a hypothetical scenario. I'm talking I'm not, you know, giving you the all that things will. And this one suppose it's, uh, instead of doing when this one tool added it is for suppose, take an example, a daily one. Okay? So in that case, it is not going to create a new tag. Please take in, you know, consideration. This is going to just add one existing rule to this daily tag one. So, in order to do that, in order to do that, what is the feasibility we have to see, first of all, for these, you know, existing eight rules? We would be already having a SQL file, right? Should it have to modify that SQL file, right? And now, with respect to the methods, right? Suppose this comes, uh, you know, where the method?
+
+00:10:52 - 00:12:28 Unknown Speaker:
+
+It might not be present in the framework, right? Then in that case, it need to modify that, uh, your Python file also framework file also. I was thinking rather than modifying the py file let's modify the config file. Then the last feasibility, that is something not possible. But still, we need to see if the bot can commit the file to Git. Okay, this is, I'm still exploring. Uh, because Git requires a authentication token for doing a commit. Okay, this is still in discovery. I'll confirm you if this is feasible or not. But, uh, you know. So, once your SQL file is being generated, even if we are not able to do a Git commit, at least these two files should be placed into a you know, place. And then our developer would just go and commit and then test the tag.
+
+00:12:28 - 00:13:30 Unknown Speaker:
+
+Now why? I asked, and see yourself and effort to be in the call. I need this description from all of you. When I go for this type of check, right? The details that I need from you guys is that different type of check. Is there right? Threshold take, uh, missing value, check, duplicate or valid or stagnant value. What I have observed on the script if I go to your sequels file, right, so whenever, just take an example randomly for this one, right? So whenever there is a query, a new rule being added, right? I have observed from this select query. Right till union, right till union distinct, right, this all remains same. This we already discussed long back, right? This one we have to, you know, make it dynamic.
+
+00:13:30 - 00:14:16 Unknown Speaker:
+
+Okay, no, that that I understand, but right now, uh, let's not go with lots of modification right now, as it is okay right now. What I have understood from you know on a you know, on a complete overview point of view. Whenever there is a new, uh, set of rules that you guys are adding, you are just creating this. Select query and then union distinct, and then again, that's the inquiry, right? So this particular section you want to pick, right right? So, but so what would happen when I will be having one more rule added to this C360? I just need to pick up the same SQL file, just add this Union distinct and this set of query which is already being there.
+
+00:14:16 - 00:15:15 Unknown Speaker:
+
+That means you need to read the file, pick up this content as it is right at the end of the file, add that as a Union distinct, and then your query would be ready. So now you decide who is going to analyze threshold type, one person need to analyze missing value type, one person need to analyze duplicate check, one valid value, one is stagnant. Pick up maybe three script, take the pattern how the script is behaving and confirm me by tomorrow morning. Okay, whoever having the bandwidth more, Pick up those two of the check type The person who is not having bandwidth can check one of the check type. And give me a confirmation on this one. Because I won't be able to, you know, analyze these many sequels at a go.
+
+00:15:15 - 00:16:11 Unknown Speaker:
+
+Okay, first of all, I still not understand like there are too many sequel file are still being there. Okay, there are too many sequel file. This is not resolving our problem, for which, you know, we have designed it. Why see is having so many sequels file right instead of one? Why we are still having so many sequel file for CM11? Because if somebody comes and you know, they wants to make changes to. Or am I referring to the incorrect folder? No, no folder is correct. Got your point, right? So actually, uh, Sachin, this one right after the phase one, right? We come up with the CM11 over the two different formats previously, right? So what happened, you know, right after Anand come up with the different logics and he changed the complete script.
+
+00:16:11 - 00:17:18 Unknown Speaker:
+
+So that time, we segregated again with the model ID based, so then it increased. No, then then the problem would be, uh, suppose for this ESP model score 11. Tomorrow, right? Somebody come up with a new rule, new rule ID, are we going to create a new file? Then how we are going to, you know, segregate that logic? Then you have CM11 table, you have C360 table, right? How? Somebody? Then that would be a hard-coded placeholder. Right right now it is like this one, ladies and gentlemen, okay, so I raised it multiple times. You know why we are creating so many sequels, no need of so many. There's a pattern, it's pretty common between, you know, all the SQL, exactly, exactly. Then why didn't we have? Because try to understand this, this UI that I was showing it to you, right?
+
+00:17:18 - 00:18:11 Unknown Speaker:
+
+User is going to this is the pattern, right? Okay, this is not having all the look. This is an example. In the background. Just see, like, C360 demographic, whatever role would be there, right? It would be visible to user here. He is not aware which is the rule ID, for which, uh, this rule is being there, because that is a hidden part. Right now. If he comes, create a new, you know, rule, I'm not going to give him another SQL file over there, right? And currently searching just one point currently the tag which is running in the one table, right? No, that I that we got it up. Okay, it's combined of all the checks, but the point is it's based on the model ID, right? And the DQ ID.
+
+00:18:11 - 00:18:58 Unknown Speaker:
+
+Now if you list, yeah, model ID is only applicable for the CM11 only. Yeah, we are discussing on CM11. Well, if I can see, there are multiple CM11 files are there, right? Correct, Okay, correct. So what was the expectation? Was the before the union, between the two union? All you consider? Okay, whatever the script is there, right? It is common, right? So what we have to do is basically that one, we have to make it as a constant and wherever it is needed. Depends on the, you know, the DQ ID is how many we are adding, we have to, you know, dynamically add it. Okay, that script should be dynamic and keep adding it. Okay, now, what was the benefit of that one? Let's say somebody added a new rule right from the front end side.
+
+00:18:58 - 00:19:53 Unknown Speaker:
+
+So what we have to do is based on the DQ adding. That particular, you know, uh, format will be with us. We will just replace that DQ ID and, you know, append in our SQL, so our job is done right, understood? Now the problem is I have to create a new SQL file for that particular DQ ID, and, you know, and we have to insert it. All those sequels, right? That is a mess would end up. If somebody has created thousands, you know, rule, then I'll end up creating thousand SQL file. I was into my impression, like, you know, these are the dump that you have taken from their uh, you know, uh repo. If this is the case, this is a concern, man. We. We have to combine it into a single file for a single, for a single table.
+
+00:19:53 - 00:20:42 Unknown Speaker:
+
+There should not be multiple sequel file. Yeah, we can say it by two ways. One is by the table name and the script. Or we can go through the multiple, you know, this script and see what is the common. If everything is common, then we can take it. Otherwise, by the table name and that particular, you know, the sequel pattern, we will take it. Okay. Okay. Let's do one thing. First of all, come up with this answer to me. Okay. On these one, because these would give me the directive to, you know, design the system in the uh for the process and see, uh. Your role also is important because you are, you know, monitoring the Raze and the insurance one. So whether we have followed it or not, I need that answers from you.
+
+00:20:42 - 00:21:43 Unknown Speaker:
+
+I hope you are listening to me over the okay, so analyze the Raze query and the insurance one. And, as I mentioned, right, app and Kundan. Distribute the check type among yourself, and it's not that you are if it is a threshold type. I took one SQL file analyzed and that's it. No, at least review three to four SQL file from there, because it would be too much of ask to Prithvi. Because he is new right now. I would like to give him as much as input that we can provide it to him so that he can build this utility. The one that I am discussing right now, do you have any questions on this? I just wanted to confirm on the technologies to be used, Shell scripting is fine or not?
+
+00:21:58 - 00:22:55 Unknown Speaker:
+
+Air flow, and what we say is that we have to create the tag. Basically, Okay, we are using here this Apache air flow. Okay, we are using Apache Air flow. If you are aware with. That is a lightweight one which you use to take that that is directed. A cyclic graph cloud scheduler that used to take your Python file only due to the light lightweight. So that you can take the leverage of Python, okay, so Python is the code, uh, uh, tech, uh, we can say the language we are using here. And you can go through a few of the airflow document. You will understand, you know how, how it is, and you can compare with our code also. And you know, you will, you will get, you know, come to know, okay, about what?
+
+00:22:55 - 00:24:01 Unknown Speaker:
+
+What? All the text? This one read the latest data from the SFTP. I think we are already doing it. Uh, just check with and then he would help you, right? This would be, you know, when we are creating this automation, don't think it would be only single automation process. We we have to segregate this one. So while reading the data, inserting those data to the database, that might be one job, and then this another job. Because if Git commit failed, a manual intervention is required. Okay, that will be through bot, right? It's not possible as far as I understand. I'll check the feasibility because that takes your ADS ID to get configured. That takes the token. Here automation job means it's in Lumi platform side or we need to handle the AS platform side.
+
+00:24:02 - 00:25:05 Unknown Speaker:
+
+It's Lumi. Okay. First step, right, reading the file from SFTP. So the data which I've collected from the partners, right, that is the first to land into the AS database, right? Then from there, we need to pull it to the Lumi platform side, right? Is this correct? Correct. And that is the reason I'm asking. Give me this answer by tomorrow morning. I know it's it's already late We are doing from loamy to a yes for comes and we are pushing that the reverse is not there, right? We can do it that would not take much We are writing it now. We have to read it. Okay, this is the reverse thing we have to do. We have to read that file, You know, and take the whatever the exam we have to take, okay, that would not take much time.
+
+00:25:05 - 00:25:58 Unknown Speaker:
+
+And correct. If we have the SFTP connects and everything is ready, right? If you want, I can build it, not any problem. This is the point of contact for the collecting the information. Uh, main business rules, uh, then we are doing the automation, everything on the looming platform. Just with a state-powered app, you just consider getting a file in the SFTP, read that file, and insert the data into the DQ repository based on these few conditions. These are the few checks that you have to check for. That will be the first step we have to start on. And let me be very clear, these are all not the finalized steps. I may modify this one based on the discovery that I am doing.
+
+00:25:59 - 00:26:54 Unknown Speaker:
+
+Okay, this is not the final one, but, you know, just, uh, gist of the, you know, global picture that I am trying to present to you guys. This may vary, but it's not that it certainly vary a lot. Okay, but the first two steps will be there, right? Yeah, yeah, first three, uh, and these three, anyhow, these are going to be the major steps, right? Any, any, any change would be on this automation job. Think they can start looking on these three points exactly like that means this would be starting next print. Uh, starting Tuesday. Focus on, uh, the contra one. But I'm just giving you a headset that you would be the point of contact who would be, you know, uh, working on this one. Sure, okay, because, because, because, uh, you have shown that interest, right?
+
+00:26:54 - 00:27:39 Unknown Speaker:
+
+I? I can it, like, you know, doing automation and all, so that is the reason I have leveraged you to work on it. Sure, sure, yeah. And here we have one more thing. Uh, see, we have those all sequels and files, right? So you can scan over the file, create your own model, train it okay with those sequels. So those are those all you know features and whatever the things you are looking for, one leverage I can give you if these guys are having having this one, which is not possible right now to merge and create a single utility out of it. I'll give you a leverage to create a separate tag out of it that I can give you.
+
+00:27:39 - 00:28:38 Unknown Speaker:
+
+But once that tag gets created, any new rule that is going to get created for that table should have single SQL file that should not be leveraging these many files. If you don't want to mess up with these many right now, that's fine. But once your utility is ready, the single table must not be containing multiple sequel file. So the way you are writing sequel query that to be important how you are going to write this query? Okay, one query for all one table. Yes, because, because if you go over here, right? If you go, just go through one of the sequel file, right? If you see the below subquery, right from this one, from this, select till this. Uh, this one. Okay, look, this is select query TS paid key B star cast and null and null, right?
+
+00:28:38 - 00:29:52 Unknown Speaker:
+
+That would be same over here, also there might be slight difference, but moreover, these remain same till union distinct again, then same look, same query, timestamp and all. Blah, blah, blah. This would be the inner query from this select till next union distinct. The query remains same. Like that. That is something we need to analyze. Yeah. Go ahead. No, that we will implement later, right? First this one. Automation need to be completed. Okay, so please analyze the existing script and, uh, do let me know, because we need to close this plan and, you know, showcase to the partners. Uh, before starting up the next bit. So I need input by tomorrow morning, maybe by DSU, and, uh, with your input, we can improvise this. Uh, this auto messenger.
+
+00:29:52 - 00:31:04 Unknown Speaker:
+
+Okay, so then, you know, the way we are creating is a simple script taking long. Reduce our time with this automation. And then all complex script we would be assigning to the developers. Correct. We'll analyze it later, Sachin. Okay. Right. Complex script would be assigned to the developer, but these simple, those are coming through the UI from the partners, right? Those would be done through this automation. Any question? And do let us know in case you have any input on this one. It's not that if Prithvi is working you know he should be only responsible for that. In case you guys have any input on that to improvise it, or, you know you want to highlight some of the drawbacks in the existing system, do let me know. Then we can discuss.
+
+00:31:04 - 00:31:35 Unknown Speaker:
+
+And, you know, finalize that one also. And then Prithvi, you know, from next week, I need the speed from your side now, it's three week, I'm expecting you to be speed up now. With respect to, you know, deliveries, because there are lots of work in pipeline. And although the teams looks big, but I'm sort of resources now. Okay, so come to us paid so that you would start delivering.

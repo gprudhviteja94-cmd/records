@@ -1,0 +1,201 @@
+2026-02-27 Data Ingestion Scheduling and Dependency Management Discussion
+
+Creation Time: 2026/2/27
+
+
+📅About Meeting
+
+  • Date & Time: 2026-02-27 11:33 (Duration: 1057 seconds)
+  • Location: [insert location]
+  • Attendee: [insert names]
+
+
+📒Meeting Outline
+
+
+Data ingestion scheduling & Maestro dependency
+
+  • Weekly job behavior The team discussed that the weekly tag/job will pick up whatever latest data exists in the target table at run time (e.g., weekly aggregation covering the previous week). If the business only needs the latest available data/materialized weekly, there is no need to create a Maestro dependency link. The key is clarifying whether the job must run only when a new/latest record appears or always run on schedule regardless of new data.
+
+  • When Maestro dependency is required If the requirement is to run only when new/latest ingestion exists (i.e., discard runs with no new records), then a Maestro dependency (or equivalent) is required to check for latest records before executing downstream processing. If the requirement is to always process whatever data exists in the table on the scheduled weekly run and produce the report, Maestro dependency is unnecessary.
+
+  • Clarify business requirement Actionable point: confirm with business partners whether the pipeline must:
+    
+    • run only when new/latest data is present (requires dependency/guard), or
+    • run on the schedule regardless and generate a report from existing table contents (no dependency). Also confirm exact schedule semantics (e.g., weekly on Friday) and what time window the SQL aggregation should cover (example: last Friday-to-Thursday).
+
+
+Query logic and failure notifications
+
+  • Query time window and filtering The team reviewed SQL query criteria: an example was filtering records with date >= 2024-01-01. Need to ensure the query’s WHERE clause matches the intended aggregation window (weekly, hourly, last one hour for failures, etc.).
+
+  • Failure detection frequency For failure monitoring, there was confusion about frequency: one person modified CD load to run hourly and this caused repeated email notifications. The intended behavior is:
+    
+    • If failure detection is to check last one hour (for an hourly job), send notification only if failures exist in that last hour.
+    • If detection runs on a scheduled daily/weekly basis, use the corresponding time window. The change to hourly without finalizing requirements led to noisy alerts; the team agreed to confirm required cadence before merging such changes.
+
+  • Email notifications logic The query used to find failed records pulled for the current date; this caused missed or repeated alerts (e.g., if job fails yesterday, a query for today shows no failure). Need to align date logic with the intended failure window to avoid false negatives/positives.
+
+
+Codebase, deployment config, and repo structure
+
+  • Repository config files Configuration JSON, deploy config, and platform/dataset/bucket identifiers must remain unchanged for consistent deployment. Team members should not modify these three files unless absolutely required. Email recipients and similar environment-specific fields can be updated if needed.
+
+  • Where to place code Python scripts (daily tag packages) should be placed under the designated daily tag folder. If renaming the tag folder, update any dependencies referencing that name. Avoid creating Java-like SRC folder structures; keep Python scripts and test scripts clearly separated as discussed.
+
+  • Refactoring priority The priority currently is a working demo (target early next week: Monday–Wednesday). Do not spend excessive time on refactoring before the demo. Deploy and run the existing code in E2 to validate functionality; refactor once the demo/initial validation is done.
+
+  • Pipeline and YAML A missing YAML or pipeline setup was noted. Do not make pipeline moves without code review. The owner will grant deployment access where needed; ensure correct rights before making changes.
+
+
+Demos, testing, and immediate next steps
+
+  • Demo readiness Aim to have a demo-ready run (showing automation) early next week. Demonstration should use the existing repo format and configuration.
+
+  • Testing progress Team members will report back in the first half of the day on tests requested yesterday. One member (Prithvi) is refactoring code against a different codebase structure and will prioritize getting a runnable version in the E2 environment for the demo.
+
+  • Specific test issues An example issue: a member pulling failed records keyed to current date (caused missed notifications when failure date differed). Also, a change to hourly CD load caused repeated mail triggers; this needs correction before merging.
+
+
+Status reporting and consolidation for leadership
+
+  • Weekly status to Raj / Sindhuja / Rajan Each person must post concise weekly updates (this week only: Monday–Friday) by 15:00 today. Updates should describe what was built, code/classes written, APIs integrated, UI changes, AFC checks, Excel outputs, etc. Do not include previous week’s items. The lead will consolidate and share with Sindhuja, who will forward to Rajan.
+
+  • What to include Break down completed pieces (per-person), where the code lives, and what was tested. This is required to answer leadership questions about “what exactly we are building.”
+
+  • Rally and backlog Keep Rally updated; items may be reviewed. The lead emphasized timely updates to avoid repeated follow-ups.
+
+
+Miscellaneous operational items
+
+  • Card/responsiveness Some outstanding cards (insurance, other issues) were noted as unresponded-to; one member will take ownership to respond.
+
+  • Team availability One participant left early for medical reasons; others agreed to cover tasks as needed. Personal updates (e.g., child unwell) were mentioned — call if urgent.
+
+  • Other clarifications API calls: team currently calls APIs directly using the provided integration model (service layer discussion concluded direct call is used and pre-existing integration model is to be used).
+
+
+📋Overview
+
+  • Confirm whether weekly jobs require Maestro dependency or should run unconditionally.
+  • Failure detection should use an appropriate time window (last hour for hourly checks; last run window for daily/weekly), and never trigger repetitive emails due to incorrect cadence.
+  • Maintain existing configuration JSON and deploy config files; only add Python tag files in designated folders.
+  • Prioritize a runnable demo in E2 early next week; postpone major refactoring until after demo.
+  • Fix query date logic for failure alerts so failures from previous day(s) are detected when intended.
+  • Provide per-person weekly status by 15:00 (today) covering only current week work; lead will consolidate for Sindhuja/Rajan.
+  • Keep Rally updated and do code reviews before pipeline/promoted changes.
+  • Assign someone to respond to outstanding cards (insurance etc.).
+
+
+🎯Todo List
+
+  • Prithvi:
+    
+    • Get runnable version of current code into E2 for demo, prioritize run over refactor, by Monday (demo target early next week).
+    • List and submit this week’s work items (Monday–Friday) into the dev group by 15:00 today.
+
+  • Athar:
+    
+    • Post detailed UI/self-serve changes completed this week to the dev group by 15:00 today.
+    • Continue UI tasks as capacity allows and coordinate with API integrator.
+
+  • Kundan:
+    
+    • Provide status on AFC checks and the cute Excel deliverable; post details by 15:00 today.
+
+  • All developers (team):
+    
+    • Confirm with business partners whether pipelines should run only when new/latest ingestion exists or run on schedule regardless (clarify dependency requirement) — owner: team / business liaison, due: ASAP.
+    • Update Rally with current-week progress (do not include previous weeks), due: 15:00 today.
+    • Ensure SQL queries for failure detection use the correct time window (e.g., last 1 hour for hourly checks) and avoid triggering repeated emails; test changes before merge. Owner: whoever modified the CD load; due: before next run.
+    • Do not modify config JSON, deploy config, platform/dataset/bucket identifiers without approval. Compliance: immediate.
+
+  • Lead / Repo owner:
+    
+    • Grant deployment/CI access to the developer(s) who need it; ensure correct pipeline YAML and code review gating are in place, due: ASAP.
+    • Consolidate individual updates and send to Sindhuja for Rajan by end of day.
+
+  • Card ownership:
+    
+    • Assign/respond to outstanding insurance card(s). Owner: [assign name], due: ASAP.
+
+If any assignee needs clarification on format or content for the 15:00 status post, reply here and the lead will provide the required template.
+
+
+Transcription
+
+00:00:01 - 00:00:53 Unknown Speaker:
+
+It runs weekly, right? So whatever latest data would be there in the table, we can pull that one, correct? Dependency means, look, when we need a dependency, whenever we are going to monitor that ingestion, right? Whenever there is an ingestion, it should go and pick the latest record, right? But weekly means, you know, there would be data, right? Some year and other day, right? The data would be there, correct? If you don't create a link of dependency for the table, right, from the maestro you will not get the response. I don't need a maestro response. That's what I was mentioning. Then we don't need to create that dependency if you are not looking for that. Why would I look for a dependency if it is a weekly job? Make me understand, right?
+
+00:00:54 - 00:01:42 Unknown Speaker:
+
+Is the requirement that, look, We need to again... we need to first clarify the requirement. Suppose it's a weekly tag which runs on every Friday? Okay, now, suppose the tag runs today? It picked up the data, whatever latest data would be there, maybe of 26th or 25th, whenever there would be the ingestion, right? Basically, check the query, what is the wire clause? Condition? Is being mentioned over there based on which it is, you know, aggregating the data. Okay, so. Suppose if it is aggregating the data for a week, right? Today is 27th Feb. So it might be aggregating your data for the last one week, last Friday till Thursday, right? Now, is there requirement is if it is running on the next Fridays, so that might be your 4th March or 5th March, whatever. Okay.
+
+00:01:43 - 00:02:49 Unknown Speaker:
+
+So are they are looking for new record? Or we can just run the DAG with whatever. Data would be there in the table, so this is the clarity we need. If they are looking for a latest data, then we need that maestro dependency, because if there is no latest data, we would discard that. You know, run for the day. So this is the clarity, first of all, we need to get from the business partners. Yeah, in their query, they are actually checking one year, which is greater than 2024 only. Uh, from the Jan. 1st, 2024 records, they are checking in that query. We don't need Maestro, then we really don't need maestro. Dependency exactly, Then why would I unnecessarily create another link of dependency exactly?
+
+00:02:49 - 00:03:38 Unknown Speaker:
+
+But data would be there in the table, you just need to process it and send the Excel sheet to them. Yeah, this is the analysis that we have to do right. And uh, now, you know, going forward, I would be expecting these to come out from you guys. Okay, so just no, right. No need to create a my short dependency over there, just aggregate the data, whatever piece of data you have aggregated, uh, you know, create a report and send it to them. Okay, okay, uh, I'll be not discussing much today. Uh okay, as I know you all have some piece of work to do, uh, so continue the work that you guys are doing. And then just one question Were you able to test the you know, tasks that I have asked you yesterday?
+
+00:03:38 - 00:04:29 Unknown Speaker:
+
+Uh, I.I will let you know today. Okay. First half I will update you on that part. Okay. And Prithvi, just last one question to you. Were you able to do that query to the table, fetching the details and testing your code? I am refactoring the code with respect to that code base you shared because that structure is completely different. Don't invest your lots of time on code refactoring right now. Look, the first intent would be to have a demo in, you know, you know, maybe on Monday or maybe Tuesday or Wednesday. So first of all, whatever that you have built, go ahead and, you know, try to run it in the environment till E2. Then we I'll give you the time for refactoring and all those stuff. My question is the existing code base that you've given me.
+
+00:04:31 - 00:05:14 Unknown Speaker:
+
+Is that the format that it should be maintained? Yeah, yeah, the same format. Otherwise, your deployment would not go. Fine, I thought of parallelly working on it. Fine, I agree with your point. I'll be prepared for the demo part. Yeah, because, you know, they are more curious to understand how the automation works, right? And based on that, they might be having some input. Look, when you come to this repo, right? So, this is this config JSON. It might be empty for you, right? Have to put your SQL file over here, right? If you are creating your SQL file, you have to put your tags over here, right. If you are creating any configuration file, you have to. So this configuration would remain same, you don't need to touch this configuration first this one.
+
+00:05:14 - 00:05:54 Unknown Speaker:
+
+Go to this deploy config now here again, on this deploy config, you don't need to make any changes, this would remain same again. Okay, so don't touch these three files now under daily tag. Uh, if there is a file, I don't think I have created any file. You have to, you know, put your a new Python package file over there and again on this even JSon, you can remove it. But. But again, like you know, this project name, platform name, data set, ID, these would remain same environment, bucket name. Uh, these are all right. Email recipient. If you want to modify, you can modify, but these configuration would remain same for all the reports. So I don't think I have given you anything. Where you need to do any refactoring, this would remain same.
+
+00:05:54 - 00:06:47 Unknown Speaker:
+
+It's just the Python file that you have created that you have to place in this daily text. Or if you want, you can rename it. But if you are going to rename this daily tag, then based on that, if there is some dependency, you have to modify that one. Also. Okay, okay, like here right daily. Yeah, these are the folders only okay on the UH stories. I have given him this blank template, only, right? I did not created a single file over there, so no need to make any changes over here. Let me give the deployment access anyhow he don't need. I'm creating an SRC folder under that I'm keeping different test cases. No, don't create a SRC. It's not a Java project. Okay, fine. Something like that. I'm creating a folder. Not only source.
+
+00:06:47 - 00:08:24 Unknown Speaker:
+
+One folder. It will contain the Python scripts and the test case Python scripts. So like that I'm managing. Yeah. That's okay, take it separately. Uh, we are not seeing any environment over here. Any idea that one right YaMl file I think not added here, so then only it will be enabled. Can you? Can you do it, man? Let me give it the right access to you. Then? I don't think the pipeline is created right again. Uh, you know, you should not be making any, uh, movement without a code. Review. Okay, this, so this is I already pinned it, you guys can get it from here. Where is the data? So go to this pin okay under this pin for you guys. But all the latest, uh, this guy would be joining bit late.
+
+00:08:24 - 00:09:11 Unknown Speaker:
+
+But again, the job failed. That means, yeah, yeah, the thing is in, uh, you know, he connected yesterday with him. So what he is doing in the query is he is pulling the. Uh, you know? The failed record based on the current date, okay, so if it is executing today, so the failed was on the 26th, if you see the record, okay. And he is pulling the data for 27th. So if you put that one, you know, you will not get an email because it will tell you, you know, 27th, there is no failure. What he had done yesterday then? Yeah, yesterday he made the changes. Okay. So what he did the changes is like he changed the CD load to one hour. But again, the point is, if you are changing the CD load to one hour, right?
+
+00:09:11 - 00:10:05 Unknown Speaker:
+
+The same mail will trigger continuously every one hour, right? So that is also not the correct one. So, uh, the thing is. And the requirement was, what is the ask? You know you? You told him to, you know, trigger every one hour. Or how, how, how you want to maintain it? That's why he was not clear. Also, yeah, it's a valid point. So if they are running it at 3 a.m, right? Good question, because if we Sachi national side, he just looked into that part. Uh, the query, what are his mentioned? But he need to verify only for the last one hour. Only if any failure will happen in the audience. That is fine, we can do that one, that query. He already, you know, written it.
+
+00:10:05 - 00:10:53 Unknown Speaker:
+
+But I didn't merge because I didn't have any, you know, the, uh, a clear picture of the requirement. Okay, then the input that I have provided is a correct one. Just check the Lumi ingestion time for last one hour. If there is a failure in last one hour, then just send this notification. Okay, okay, then I'm going to merge it, you know, appear, Uh, I took that on whole region behind was, you know, I didn't have any clear picture of that. Okay, and before we close from each one of you, okay. We have to save the status to Raj, so this is the last status that we did to Raj. I need a bit more details from you guys, whatever you guys are doing, I'll be sharing it in the dev group.
+
+00:10:53 - 00:11:47 Unknown Speaker:
+
+Whoever is working on whichever initiative, just come up with more data, like where it is. On this one, Prithvi, you are working, right? So, break down these into pieces. Whatever piece of work you have done, list it down for this week, whatever you have done. Same goes for Athar, for yourself, right? You are working on this UI, right? So, whatever changes you have made to UI, whatever changes you have made to self-serve, just post it over this group prior to 3pm. Okay? And whatever API you did on Quantro and the RAZ. Just let us know and same goes for you, uh, and see for AFC checks, and, uh, for you Kundan on that cute Excel. And now, based on this, we would be sharing the details to us in today's call or the, you know, over the internet.
+
+00:11:47 - 00:12:44 Unknown Speaker:
+
+As for you guys, the reference I have just, you know, uh, mentioned it over here, but I need these details without default. I don't want to do another round of allow. Please make sure you guys are updating in 5 to 3 p.m. Whatever work you did on this week, Monday till Friday, don't pull previous week data. These are the status that is going to Pune and Raj. Again, you know, if it is repeated, again in the next week, you would not caught like, you know, we are sending the same status to you. This is good. Okay, Then what we will do is... you just need to provide your individual details, no need to. You know, that's what I was telling you. Otherwise, it will be like 10 people and 10 updates, right?
+
+00:12:44 - 00:13:42 Unknown Speaker:
+
+So yeah, exactly, so you can just give your update. Uh, on that to do. And I'll consolidate and send the details to Sindhuja. Sindhuja would be forwarding it to Rajan. Anything from your side, no such an all code, just, uh, send me the status. By the end of the day, I'll reach out to you for it, like I'll remind you. Yeah, once these folks have said right, otherwise, I'll again go ahead and then say this detail. Uh, the problem with these details is that if somebody wants to know quantum build, right, just build what exactly we are building. That is the ask, the Raz has told us, right? So please specify what piece of code you are writing or what piece of classes you have built. Everything okay. And now he would be back in two to three hours.
+
+00:13:42 - 00:14:50 Unknown Speaker:
+
+Uh, he went to hospital, uh, due to certain, you know, medical conditions, so he would be back in two to three years. Just one thing. So can you respond to this card thing? Insurance one? Well, I'll take care, don't worry, I, I am back. His question is also valid. Like, you know, yeah, that's why I didn't respond and I didn't have any answer. Okay, so I thought that the another guy will respond to different people, right? But I didn't so. And then why didn't we sort it out for, uh, 25th one? Now what happened? Now? We have couple of files. I am not sure, Sachin. So I requested him if you see that, you know, a group, right? See, even Aradia, you know, requested to, you know, send the person. But not sure why he is reset, okay.
+
+00:14:52 - 00:15:50 Unknown Speaker:
+
+Even his point is valid, right? Second time it is accepted. You know, two times he has to do the rework kind of thing. Yes, let him process it because his point is valid. If it is having the same file structure, if it is failing, they need to answer it otherwise. You know, even we have to agree that he is also correct at his time, correct? Okay, and guys, please make sure you are keeping your rally updated again. Today is Friday. It might get reviewed from much. Please make sure that you are burning your ass over there. Yes, okay, just. Uh. I needed some information for the API integration. Uh, were we able to get the mob data or something? We are trying it. Give me some time I have to spend some time with.
+
+00:16:06 - 00:17:23 Unknown Speaker:
+
+So I'll update my task accordingly and pick up some of the UI tasks to enhance and . Anyone having any other questions? So you are introducing the service layer also and calling the API, correct? No, we are directly calling the API. One app, we have, that facility, all the integrations are there, it's just like we have to use that model. My daughter is still not well, so in case anything, I didn't just give me a call. So can you make me host such a month? Ayapa? Can you be there in that? I think I need to drop, maybe because he would go to, Yeah, no problem. Yeah, I will. It will not take that much time. So okay, then then I'll, I'll dropping off. Okay, you guys can carry. Thank you, thank you.
+
+00:17:23 - 00:17:37 Unknown Speaker:
+
+So, cash is not possible in this transaction. Okay, then next, DD, DD I don't, so how, fast one, which is the faster way to do?

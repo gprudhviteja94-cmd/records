@@ -1,0 +1,193 @@
+2026-01-27 Onboarding Data Flow and Metrics Development
+
+Creation Time: 2026/1/27
+
+
+📅About Meeting
+
+  • Date & Time: 2026-01-27 16:15 (Duration: 1455 seconds / ~24 minutes 15 seconds)
+  • Location: Remote (recording available)
+  • Attendee: Prithvi, Anand, Kundan, Athar, Nirman (requested to join later)
+
+
+📒Meeting Outline
+
+
+Onboarding data flow and artifact table
+
+  • UI → artifacts table The UI (developed by Kundan and Athar) captures business requests (use case, table name, column name, where clause, frequency, focus metric). After business verification (Anand and team), approved entries are pushed into the artifacts table. That “push” step (integration between UI and artifacts table) is being developed separately and not finished yet.
+  • Artifact record fields & semantics The artifact entries include: use case id/name, table name, column name, where clause, TS (timestamp/run date), frequency (daily/monthly), and focus metric (average/mean, count, median). If focus metric is not provided, code defaults to mean-related calculations (mean, stddev, skewness).
+  • Clarifications requested / expectations New team members should start by reviewing front-end and artifacts table contents to understand the incoming records and data shape before diving into backend code.
+
+
+Onboard metric creation (12-month baseline)
+
+  • High-level process For each artifact record, the onboarding pipeline aggregates the focus metric for a baseline period (12 months by default). It computes an aggregated time series: timestamp and value pairs (periodal averages/metrics).
+  • Computed statistics and derived signals The onboarding computes mean, population standard deviation, skewness, and rolling aggregates called AC7 and AC30 (7-day and 30-day lag/rolling derived metrics). AC7/AC30 are computed using lagged values (previous 7 or 30 points) — code contains the specific logic for computing these.
+  • Primary method selection Using AC7, AC30, coefficient of variation (CV), and skewness, the code selects a "primary method" for thresholding per metric. The primary method determines how thresholds (lower/upper bounds) are set.
+  • Threshold creation and storage Based on the chosen primary method, the onboarding process creates lower and upper thresholds and stores them in the profile/threshold table (profile metric table). Each metric gets a metric_id (unique per metric and timestamp). Parameter JSON and other metadata are populated and stored into the repository (DQ repository / GQ repository).
+  • Multivariant support Multi-variant logic exists in schema/response but is not enabled in current code — returns null presently. Multivariant onboarding will be implemented in upcoming sprints (3rd/4th sprint).
+
+
+Daily/monthly monitoring and DQ runs
+
+  • Routine runs Once onboarding builds a 12-month baseline and thresholds, daily/monthly monitoring runs are executed. The monitoring job aggregates metric values for the target window (e.g., last day for daily runs) and compares the aggregated value to the previously generated lower/upper thresholds.
+  • DQ results / pass-fail logic Comparison results (pass/fail / positive/negative) are recorded into the DQ results table (DQ repository). The team has completed much of this and is performing post-testing and demos; code may need adjustments after demos.
+  • Threshold revision (monthly aggregation revision) Requirement: periodically (monthly) recompute thresholds by re-running the 12-month aggregation using the latest data (sliding window). If new thresholds differ from existing stored thresholds, update the profile/threshold tables accordingly. This ensures thresholds evolve (e.g., by month the 12-month window shifts one month forward, so thresholds may change). The speaker is currently implementing and testing this revision logic.
+
+
+Code understanding, handover and next steps for new contributor
+
+  • Expectation for new dev New contributor(s) should:
+    
+    • Review the UI artifacts (to see actual incoming records),
+    • Explore the database schema and relevant tables (artifacts table, profile/threshold table, DQ results repository),
+    • Read the onboarding code to understand computing of mean, stddev, skewness, AC7, AC30, primary method selection, parameter JSON creation and insertion flow,
+    • Run the code locally to observe outputs and get hands-on familiarity.
+
+  • Support and collaboration The speaker offered to clarify doubts and work together while the new dev reviews code. Suggested involving Nirman in review sessions (and to share the meeting recording with him) so both can discuss and get clearer on business logic.
+
+
+📋Overview
+
+  • Business submissions are collected via UI and, after approval, inserted into the artifacts table for onboarding.
+  • Artifacts contain required fields: use case, table, column, where clause, TS, frequency, focus metric.
+  • Onboarding computes 12-month aggregated metrics (timestamp + value pairs) and derives mean, stddev, skewness, AC7, AC30.
+  • Primary method selection uses AC7/AC30/CV/skewness and decides thresholding approach.
+  • Thresholds (lower/upper) are stored in profile/threshold table with metric_id and parameter JSON.
+  • Multi-variant support is present in schema but not implemented yet (scheduled in future sprints).
+  • Daily/monthly runs compute recent aggregated metric and compare against thresholds to produce DQ results.
+  • Monthly revision requires recomputing 12-month baseline on a rolling window and updating thresholds if changed — this work is in progress.
+  • New developers should inspect UI artifacts, DB schema, and onboarding code, and run code to understand outputs. Collaboration and follow-up sessions encouraged.
+
+
+🎯Todo List
+
+  • Prithvi:
+    
+    • Review recording and artifacts table entries, schema, and sample data — by EOD next business day.
+    • Read onboarding code to trace mean/stddev/skewness and AC7/AC30 calculation logic — by tomorrow evening.
+    • Attempt to run onboarding and DQ-run code locally and verify outputs (metric table, profile/threshold table, DQ results) — by tomorrow evening.
+
+  • Anand / Current code owner:
+    
+    • Provide pointers to repository, DB credentials (or local dump), and any run scripts / README to help Prithvi run the code — ASAP (today / next few hours).
+    • Share sample queries for artifacts table and profile/threshold tables to speed up schema understanding — today.
+
+  • Kundan & Athar:
+    
+    • Confirm integration plan and ETA for UI → artifacts table automatic push (if not already) — update status in next stand-up.
+    • Share any front-end data validation rules that affect artifact values (e.g., allowed focus metric values) — by next day.
+
+  • Prithvi & Nirman:
+    
+    • Joint walkthrough session (code + schema) to align on business logic and edge cases; include Anand if needed — schedule for tomorrow morning or afternoon.
+    • Review multivariant schema placeholders and prepare questions for upcoming sprint planning — by next meeting.
+
+  • Team (general):
+    
+    • Continue implementation and testing of monthly aggregation revision logic (threshold updates) and prepare demo for stakeholders — owner: Anand / code owner; target: in-current sprint (as discussed).
+    • Post-demo, update code per feedback and finalize threshold revision workflow — owner: Anand / code owner; timeline: after demo.
+
+
+Transcription
+
+00:00:01 - 00:01:11 Unknown Speaker:
+
+I am recording the session, okay? Yeah. So, did you get any chance to look over the existing code? No, I would request you to start from the beginning. This meeting is being recorded. So, I will explain you around with the data. But like you have to go through the code and need to understand the requirement also. Okay. Let me open. Okay. So this is the control and like so as I mentioned earlier, like we are getting all the data from the UI bot, right? Like for that what we have done like the UI data will be stored under artifacts table. I will show you how that data looks like. Can you start from the front end again, that front end? Yeah, let me show you the data. I will start with the code again, okay.
+
+00:01:17 - 00:02:08 Unknown Speaker:
+
+Yeah, so this is how the data looks like. So the UI part is working, okay. So, they are developed right Athar and Kundan. So, From that UI part, like whatever the entry we are getting, suppose today, we have get like the UI. They have got a record. Like saying that for so and so use case, and for so and so. Table name and column name and where class. And this is the frequency, and this is the focus metric. Okay. So, then what that is the data resides in UI. So, what will happen after like Anand and team verify that whether this whatever the data which arrive to this UI, right? Whether the data is correct or like do they really want to do this metric or not, they will decide.
+
+00:02:08 - 00:03:03 Unknown Speaker:
+
+Once they approve, what it will happen is like that UI will be pushed to this artifact table, okay? It will make an entry into this table. Yeah, This is how the plan is. Like that part where we are not developed yet. Because like we are separately developing this part. Like by the coding part, like the onboard metric part we are developing and the UI part developing by Kundan and Arthur. Okay, the middle part should also be developed yet like once it was completed from both the ends, so Kundan and team will update the data to this table. For each and every entry after that. So can you explain me? Okay. This USCS is a use case. Okay. And table for this table. So column name score. They are adding a where condition is it? Yes.
+
+00:03:04 - 00:03:50 Unknown Speaker:
+
+And TS column is. What is that? TS column is? Timestamp. Timestamp. Okay. Run date. Daily we should be running this. And focus matrix is average we are getting it. Okay. That is one of the metric. Average is one of the metric, mean is one of the metric, count is one of the metric, and median is one of the metric. Median is one of the metric. Okay. Only four times are there, is it? Only four times. For now, in our code, if you are not having that metric, we are commonly doing a median. So, I will show you that in code, okay? Which is already discussed in the last call, but I will show you again, okay? Yeah. So so what is like? So, suppose, take the first one?
+
+00:03:50 - 00:04:40 Unknown Speaker:
+
+Uh, okay, we read this one like, Uh, what we are trying to do is you are able to see this Excel, right? Yeah, yeah. So we read each record from the artifact table, and what will we onboard? That metric suppose? It is a count metric for like, for last 12 months, so what? This part, what we are trying to do is like for last 12 months. We are trying to do that aggregation, like whatever the focus metric based on the focus metric, we are trying to do that aggregation. And we are, uh, uh. We are deciding whether it is a what is the primary method for that, and accordingly we are creating the thresholds. Okay, threshold is like, like, maybe like upper value is 100, and lower value may be minus 100, or like lower or like something like that.
+
+00:04:40 - 00:05:29 Unknown Speaker:
+
+Okay, in between this, uh, whatever the value we are getting, that will be treated as a positive one, otherwise it is a failed one or like, native one. So this is what, uh, the current logic we have done. Actually, if you remember, let me show you and explain you have more clarity in this. Maybe, yeah, I wanted to get, uh, in a flow, okay, so can you go to the table once again? Database that would be query so that if I understand it clearly, I can help you for the future. Students also don't take me wrong. Okay, yes, so no, no, no, no worry. Ask me like, just try to clear your doubts, so if I have not cleared, also, we can discuss this section and we can clear our doubts. Okay, no problem, yeah, that is okay.
+
+00:05:29 - 00:06:15 Unknown Speaker:
+
+So now there is an entry from the business the business has submitted and there is an entry for this and first table for that column. You are trying to find, uh, what is that mean? What is data mean out of it, right? Average? You are trying to find the average of it? Okay, this is the rule that we have to execute, that is the basic thing. No, this is not the rule. Okay, this is the focus metric. Uh, they have to perform on this table or the column. Okay, so this is the request data and from this we have to generate a query. Yeah, we are not generating a query. We are performing some operations on this metric based on that.
+
+00:06:15 - 00:08:24 Unknown Speaker:
+
+Suppose if we are getting average, so we have to calculate for last 12 months what is the average of this particular table and particular data, particular column data. Okay, I understand. And we will create a threshold for that. That is what we are doing. So first I will explain for one. So that like you go through that code and just check for the other. Focus matrix also Okay, for now, I'm taking as a mean. So so what will happen in the code? So if you see here, this is the metric. So yeah, you explained me last in this one. Yeah, yeah, yeah, let me let me get the older one. This is also the latest one. Actually. Just give me a second. Okay, just give me two seconds. Hey, Prithvi, I'm back now. Yeah, hello.
+
+00:08:26 - 00:09:16 Unknown Speaker:
+
+So here, if you see here, one record is like average record they have taken. Suppose, just assume that they have picked the first record, the average focus metric, okay? So what will happen here? So if you see here, these are the arguments, which are the same like having the column names over that artifact step. Okay. First, initially, they will check what is the profile metric. Sorry, what is the focus metric. So, if it is null, what they are trying to do, they are trying to get the mean and standard deviation on the skewness of the data. If it is not null, what it will do, as I mentioned, it will check whether the focus metric is average or not. So, in our case, it is a focus metric is average. Average is nothing but mean, right?
+
+00:09:16 - 00:10:01 Unknown Speaker:
+
+If nothing is provided, it will go for all those mean and other thing, is it? As mentioned above. Yeah. So, mean value, we have to create anyway, we need that. So, what they are trying to do is like, there is a basic one, which if you are not receiving any focus metric, they are default doing this metric and calculating the mean and standard deviation for this. Okay. If it is a mean, they are already sent as an average and mean. So what they are trying to do, they are trying to exude this. So see, they are trying to create a table. Okay. In this table, what we will have is like, what we will have is like two values we will have. One is the average value and the timestamp. Okay.
+
+00:10:02 - 00:10:58 Unknown Speaker:
+
+If you see here, one is the timestamp column and another is the value one. So we have two values. Value is nothing but the average value of that particular period, in our case, this is 12 months. Okay, okay, so after that, what they tend to do if they? If you didn't send any, like a focus metric, or like, uh, suppose they have sent a focus metric which is not exist here, they're default carrying this as a medium. Okay, okay. And after that, what they are trying to do, they are trying to get the proper aggregated table. So we got a table right, like, where? In this above scenario? So based on that, say this is base, the base is nothing, but this one, suppose in our case, this is the base.
+
+00:10:58 - 00:11:46 Unknown Speaker:
+
+Okay, data mean, and the table based on the prefix. They are creating a table and having two values, this is the value. If you see here what they are trying to do, they're trying to do average or standard deviation population for this, and they are getting these values. Okay, this will have the mean value, standard deviation value on skewness of the data and something like, Uh, this, uh. They're calculating, calculating this ACE 7 and ACE 30, which has placed them 30 days and 7 days. Just go this code and try to understand what they're doing, so. AC7 is like a lag values based on the lag value they are trying to get this lag value. Lag is like a previous data based on that current record.
+
+00:11:47 - 00:12:44 Unknown Speaker:
+
+Suppose they are getting last 7 days or like 7 values and they are getting this 7 values record and they are treating as a lag 7 which is AC7. They are doing some... to get the AC 7, here if you go through this code, you will find that how they are calculating that AC 7. Okay, but basically for that they need that lag 7 and lag 30, for AC 7 and AC 30, okay. They are trying to insert those values to this column, these values, these variables. Okay, now what they are trying to do, based on these values, they are choosing what is the primary method for that. Suppose AC 7 and AC 30 is actually matching this threshold, they are setting this as this primary method.
+
+00:12:45 - 00:13:32 Unknown Speaker:
+
+And if it is not like conductivity CV is actually matching this and they are treating as this primary method. And based on the skewness also they are treating these primary methods. So by here you are having primary method value. Like, what is the primary method for that particular record? Okay, then what they are trying to do is like they are trying to insert those data. Like, uh, if you see here, metric ID is like metric ID they are creating here. If it's based on the timestamp, that is a unique value for each record. Okay, and use case table, case name anyway, we are getting from the artifacts, table, table name is also getting from there. Until here, you are getting from the app only. The primary method you already calculated, right?
+
+00:13:34 - 00:14:49 Unknown Speaker:
+
+So here, and this is the parameter JSON. This is also value they are setting up based on these values. So here also, you are getting this. So if you go to this one. That is the response data, is it? The final data. Yeah. Okay. Let me, what is this? So as per this requirement, why this is not going? Okay. So if you see here, these are setting up in this need multi-variant, right? For now, we are not considering this need. Multivariant So that's why we are getting null values here, okay, this backup method and everything, you just go through this code. So for this will come in the like in the fourth sprint, or like third sprint. We are getting that multivariant thing, we are getting that requirement in the next coming upcoming, uh, sprints, so this one's multivariant.
+
+00:14:49 - 00:15:49 Unknown Speaker:
+
+Then we'll get some values over here, so whatever the values we have get. Like, we are calculating and we are updating to this GQ repository and that we are. And after that, we are creating the profile metric, we are creating a profile. Like, let's see what is meant by this. Like, what they are trying to do, though they so until here we have this data. But like, as I mentioned, we have to create the threshold side, so here in the profile metric we are we are creating those thresholds. Okay, So see, based on the primary method, they are creating this lower and upper values. These are nothing but thresholds, okay. So based on this, they are creating this and inserting those thresholds to contour that threshold file, sorry, table.
+
+00:15:52 - 00:16:49 Unknown Speaker:
+
+So after this, they are updating the repository that updated at current stamp on this for this metric ID. Okay. This is how the existing data is going to, like going like running in the current cornerstone system or like. And we are migrated to load. And afterwards, once we complete the multi, this is like a one-time task, like for 12 months or like 24 months, you can assume, okay, so we'll run it. No, no, no, my question is code this SQL changes? What we are working is one time task, once it is done, then we don't need those. Metrics are same only right, mean, average, only limited, right? They will not increase that. Yes, right, you know, I coming to that point, I will explain that one as well. So by running this metric, you will have 12 months data, right?
+
+00:16:49 - 00:17:47 Unknown Speaker:
+
+12 months data you have. So now what is? The requirement is like, day and monthly run. We have to perform the records like so in the artifacts table, not in the large type, sorry, from the DQ Depository table, which is created by here. If you remember, yeah. In the onboard metric, this one we have primary method and focus metric, everything right based on the metric idea. What we are going to do here is like, based on the metric focus metric. We are again calculating the aggregated value or for the period of last one day, if it is a day, we are calculating from the aggregated data between, like, last day to today. Here we are doing for 12 months, here we are calculating for last one day to, uh, last 22 current date.
+
+00:17:47 - 00:18:52 Unknown Speaker:
+
+And comparing against this threshold to the lower and upper values which is created in the last 12 months data. Okay, and what we are trying to do is like, we are trying to entry that, whether it is fail or pass in the DQ results table. This part I recently done and, uh, currently doing some, uh, like post testing. Also, we need to demo it, if there is any changes, we need to update those code, that code accordingly. Okay, And in this current sprint, what we need to complete is like this monthly aggregation revision, algorithm revision. So if you see here, this 12 months data we are getting based on the status fail actually. I will show you that data. If you remember the artifacts table, this is the new data which we get.
+
+00:18:52 - 00:19:48 Unknown Speaker:
+
+That means from the fresh data. Okay, by completing this on-board metric, by that time, like if a record, we got a record and it actually passed all through this code and code created the lower and upper bounds. And finally, what we are trying to do is like we are updating that status to true. So in that way, what we can understand that for this table, we already performed the on-board metric, right? So in the current, Current requirement, what we need to do is like we have to perform monthly aggregation for already updated, already updated scenario. That means we have to pick the status equal to true and we need to perform for a monthly one and create the thresholds and need to update accordingly.
+
+00:19:48 - 00:20:45 Unknown Speaker:
+
+Suppose, like, so, so, if you see here they are creating the onboard metric and thresholds, uh, there, suppose we are getting now here. In the last 12 months, we get like 100 to 100, minus 100, right? Maybe in this current month, we, uh, we got like we. Once we perform this one for last 12 months again, what will happen? Like our new threshold records is like 100 to, uh, let's assume minus 101, then we need to update this threshold to this particular metric. You understand, we are just revising that, whether so, the data won't remains forever, right? So what we are trying to do is like, uh, suppose? We are calculating from January to December and we got a threshold of 100 to minus 100. And in 20 for last 20 25.
+
+00:20:45 - 00:21:37 Unknown Speaker:
+
+Okay, I'm saying now in 2026, on January, you you on February, you are trying to run. So for last 12 months means what it will take, like 2026 Jan. It will take, and to 2025 February, right? That means like one month update. Like, got updated the data, we got a new data and we make the data changes also, right, like based on the data changes. We need to update our thresholds also. Okay, so that is what we are doing, so we will. We will fetch the already done like onboarded metric record and we will check the thresholds whether it is remain same or updated. If required, we will do updation of the thresholds to the same threshold tables. Okay, that is what we have to do, so currently, I'm in the middle of this process.
+
+00:21:37 - 00:22:24 Unknown Speaker:
+
+So maybe, yeah, just what you have to do is like, just try to understand each bit by bit for the existing code. Now, as you mentioned, like, you haven't go through the. Like just try to understand and go through the tables also to understand the schema and the tables what we are having and how we are actually doing those aggregations and everything. So that you will get some idea and we can, then we can. You can pick like by tomorrow, if you can complete right like by tomorrow evening. I will let you know like at what stage I am and what can you can pick from here. Okay fine. Okay, got it, okay, sure, yeah. So if once you actually get handy on that, like McQuarrie and everything, right?
+
+00:22:24 - 00:23:16 Unknown Speaker:
+
+Like, once you can able to run the code and check the data and you, then I think you can may get like, some idea on that. Sure, sure, okay, yeah, let me go through this recording once again and understand, Okay, yeah. So if there is any doubt, maybe I'll connect with you in the evening or tomorrow morning. Yeah, no worries. I will be, like, see, this is actually continue, like, maybe IMM is something in this process. Because, like, I know, like, it is little hard, like, maybe the code is simple, but, like, understanding actual business logic is, like, little confusing in the very first starting of this, I know. So, like, maybe going forward, like, We can discuss together and we can... resolve these issues and so that we can have a better picture on the business side also.
+
+00:23:16 - 00:24:10 Unknown Speaker:
+
+Okay, sure, yeah, yeah, okay, fine. Yeah, thank you, thank you. Okay, normal is not. Uh, okay, normal is not there in this call. Uh, such an asking me to join him also. Okay, okay, yeah, thank you. Just so you can do one thing like, uh, just like, Uh, can you take Nirman also into the call while you going through that code? So you can? You can just explain him so that you can also get some real picture on that, right? Like, you both can discuss, and um, I can share this video with him also, right? Yeah, yeah, you can share, and just both both of you just discuss on it. Sure, yeah, yeah, okay, thank you. Yeah, yeah.

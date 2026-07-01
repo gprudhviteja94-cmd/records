@@ -1,0 +1,208 @@
+2026-03-06 Mod Shop Overview and Workflow
+
+Creation Time: 2026/3/6
+
+
+📅About Meeting
+
+  • Date & Time: 2026-03-06 14:05 (Duration: 1469 seconds)
+  • Location: No location mentioned
+  • Attendee: No relevant content mentioned
+
+
+📒Meeting Outline
+
+
+Mod Shop overview and purpose
+
+  • What Mod Shop is Mod Shop is a portal for creating and registering "mods" (reusable components). A mod can be reused by any team once registered and approved. The portal supports registering mod metadata (code name, version, description), business unit/market, repository link, Group ID, Artifact ID and code version.
+
+  • Types of actions (mods) There are three action types:
+    
+    • Task: update-type operations (e.g., update address).
+    • Data Provider: read operations (e.g., fetch address, card details).
+    • Process: combination/stitched mod that may include multiple tasks and data providers.
+
+  • Code/runtime support Currently Java is the supported runtime for mod code. Python is planned for future releases (expected within one or two sprints / one or two years — in development).
+
+
+Registration, review and onboarding workflow
+
+  • Registration First step is to write the code (API trigger, authentication, request/response handling, passing outputs to next tasks) and then register the mod in Mod Shop with required metadata and execution settings.
+
+  • Review and approval Once registered, the mod goes through a review process. Registration moves the mod into Dev status. From Dev, it is propagated to E1 for testing. Submitting for approval moves it to the approver queue (Tech Admin or reviewers). After approval it becomes Active and can be deployed/executed in production (E3).
+
+  • Onboarding Onboarding binds a mod/version to a deployment (residency) where the action will execute. The onboarding step itself goes through review. Some onboarding flags and deployment selection are visible only to Tech Admins (not Tech Users).
+
+  • Editing and versioning
+    
+    • While in Dev status or inactive state, fields can be edited.
+    • Once a mod is Active, it cannot be edited; instead create a new version (major/minor/patch) and submit the new version for review.
+    • For urgent changes when not creating a new version, contact Tech Admin to update flags during onboarding.
+
+
+Execution configuration and settings
+
+  • Execution enabling There is an enableModExecution flag. If checked (default), the mod can be executed directly via UI. Unchecking disables direct UI execution.
+
+  • Execution details Execution configuration includes retry counts, retry intervals, behavior on failures (e.g., escalate to human task or send mail), and other execution-level settings.
+
+  • Input / Output / Config / Vault The registration screen allows defining input CRD, output CRD, application configuration, and vault/secret references. For input CRD you can specify labels, data types, and whether execution mode is single (manual/UI) or bulk (file upload). For app config and secrets, vault settings can be included.
+
+  • Input data types and limits The portal supports multiple data types (string, number, boolean, date, datetime, map, object, list etc.). The date and datetime input types were noted as working; if issues occur, check the required date format. There is no known front-end limit on the number of input/output parameters. Backend limits were not confirmed and may need validation.
+
+
+Execution modes and monitoring
+
+  • Single vs Bulk execution
+    
+    • Single execution: enter inputs in UI and run one instance.
+    • Bulk execution: download input template, populate multiple rows, upload, validate file, then execute. Validation checks types/format before execution.
+
+  • Execution tenancy There is a Direct Execution Tenancy option visible only for certain deployment IDs configured as "bot tenancy." Non-MOD tenancies do not expose this option. Multiple tenancies support was discussed as now enabled; onboarding allows selecting a single tenancy per deployment. Future/expanded tenancy behavior may be covered in follow-up sessions.
+
+  • Execution results and troubleshooting Executions are viewable in "all executed action" with version, time range and statuses (Completed, Executing, Failed). For bulk runs, the system reports counts: triggered, executed, failed, not-triggered. Error details are shown per row (e.g., API returned status 412 with error message). If execution fails, investigate error details (API response, payload format, date format mismatches, configuration).
+
+
+Approval, production promotion, and ongoing changes
+
+  • Promotion to production Only after reviewer approval does a mod move from Dev to Active and become available for production execution (E3). The team can test in E1 and E2 before approval.
+
+  • Post-approval changes Active mods cannot be deleted/edited directly; create new versions for enhancements or patches and submit them for approval. Version metadata (Group ID/Artifact ID/version) can be updated when releasing a new version.
+
+
+Support, next steps and training
+
+  • Support contacts For Mod Shop issues contact listed owners (VB, Method, Swetha were mentioned as support contacts).
+
+  • Future sessions Additional hands-on / demo sessions will be scheduled to walk through new enhancements, tenancy usage, and runtime additions (e.g., Python).
+
+
+📋Overview
+
+  • Mod Shop is used to register reusable components ("mods") that teams can reuse after review and onboarding.
+  • Mods have three types: Task, Data Provider, Process (stitched workflows).
+  • Registration requires metadata, runtime artifact details, execution configuration, input/output CRDs, app config and vault secrets.
+  • Mods move Dev → Approval → Active; testing in E1/E2 is possible before Active. Production execution requires Active state.
+  • enableModExecution controls direct UI execution; can be disabled if you don't want UI-triggered runs.
+  • Onboarding binds mod/version to a deployment/residency; some onboarding options are visible only to Tech Admins.
+  • Input CRD supports many data types (string, boolean, date, datetime, list, map, object). Date format must match expected pattern — confirm format if issues arise.
+  • Bulk and single execution modes available; bulk requires file validation before execution. Execution results and errors are visible with details.
+  • Active mods require new versions for changes; Tech Admin can adjust flags during onboarding if needed.
+  • Python runtime support is planned; tenancy support has been enhanced (multiple tenancies available).
+
+
+🎯Todo List
+
+  • VB / Method / Swetha:
+    
+    • Provide support contact details and escalation path (ASAP)
+
+  • Nathan (or Mod Shop backend owner) :
+    
+    • Confirm if there is any backend limit on number of input/output parameters and report back (no deadline given — please advise a target date)
+
+  • Meeting participant who reported date issue (sender):
+    
+    • Share the exact date/datetime format used during testing so Mod Shop team can validate (owner to share post-meeting)
+
+  • Tech Admins:
+    
+    • Verify visibility and behavior of Direct Execution Tenancy for bot and non-bot deployment IDs and document steps for onboarding (ASAP)
+    • Confirm capability timeline for Python mods (target: confirm ETA and communicate to teams)
+
+  • All teams using Mod Shop:
+    
+    • Start using multi-tenancy support where needed and report any deployment/onboarding issues (ongoing)
+    • Prepare mod registration details (Group ID, Artifact ID, repository link, input/output CRD definitions, vault config) before submission for faster onboarding (ongoing)
+
+  • Meeting organizer:
+    
+    • Schedule follow-up hands-on session(s) focused on tenancy configuration, Python roadmap, and date format examples (next week — organizer to confirm exact date)
+
+
+Transcription
+
+00:00:13 - 00:01:15 Unknown Speaker:
+
+So this plan is available for onboarding. First, we will check the execution enabled plan. Yeah, sorry to interrupt. Since this is the first session on Mod Shop, you can just try the features that is available on Mod Shop. There might be some new joints as well. So they understand what is workshop, what? Where are we using this? What are the different steps or features that is available? Then you can continue from here. Okay, so Mod Shop is a portal where we can create mods. What is nothing but reusable component, so not competent reusable? Suppose, like, for sending me so if you have created this this as a mod. So, any team can reuse this as a mod or reuse this component. So, for that, we are using mod shop portal. So, using this portal, we can register our mod.
+
+00:01:16 - 00:02:06 Unknown Speaker:
+
+So, there are three types. Once the action is registered, so it will go to your review process. Once the reviewer approves your action, so then you need to onboard its action to your residency. Residency is nothing but a service where it will execute your action. So once that, also that again, that onboard process is also. It will also go through the review process. Once the reviewer approve that, then we can execute this mode. So our action. There are three type of action, one is task. Task is like it's a update related to the update operation, you want to update your address, then you can that kind of operation, you can use task type of task data provider it will fetch. It's kind of reading the details from the service, reading the details.
+
+00:02:06 - 00:02:51 Unknown Speaker:
+
+Like if you want to read the address. Or if you're passing the card number and you want to read the details of the card over there, then that type of mode you can register as a data provider and process is a combination of both. So it can be it can have service tasks, admin can task, and it can have data provider. If it's a kind of stitched modes, it can have multiple tasks for multiple data provider. So, first step is the registration of MOT. Once you have written code, before that you have to write code for that operations of MOT for triggering the API authentication and reading the response and passing it to the next task. For that, you have to write the code. As of now, we have only one type of action.
+
+00:02:51 - 00:03:49 Unknown Speaker:
+
+It's Java. In the future, maybe in the next one or two years, we are introducing Python for PM also. It's still in development stage. So maybe in one or two sprints we are introducing that. So this is the first registration. Here we are specifying the code name and version and description of the mod. And you can specify the business unit market and you can specify the repository link and group ID, artifact ID, and version that we have that code for that mod has written. So this is the execution details, but once the, if the API fails, how many times we have to retry and the duration between the retry, if the execution fails, if you are passing it to the human task or you are sending the mail to the, who are executing that action, that configuration, you can detect the second stage.
+
+00:03:51 - 00:04:43 Unknown Speaker:
+
+And here is the third stage. Here you can specify the input for that mod to execute and what the output the mod will produce. And if you want to have any config application configuration that you can include here, and the vault configuration, what? And all the details like secrets you are storing it involved. You can specify here. So once you click on that, you can specify label. And the data type of that CRD on what that and all you can specified in this input CRD section. In the same section, you can specify your mod can execute as a value or it's a single execution. That means you are passing the input through the Excel file or through first a single execution, you are executing it through UI. So, see here we have introduced that enableModExecution plan.
+
+00:04:44 - 00:05:37 Unknown Speaker:
+
+You can see unchecking this checkbox disables this mod from direct execution. Direct execution means execution through UI. By default, it will be checked. So if you don't want to execute it from UI, you can disable it. For now, I am disabling this mode. So, once you click on the next next button, right, it will bring the API call and your actions will be in Dev status. So this is the summary page, you can review all the details you have entered. Once the all details looks fine, you can submit it. Once you submit it, the action will move to the Dev status. So if you move to the dev status right, actually we are registering this action only, we can register only in E3, not in E1 or E2. Once you move to the dev, it will propagate it to the E1.
+
+00:05:37 - 00:06:42 Unknown Speaker:
+
+So you can test it in E1. So before testing, you need to onboard this action. Now I have set that execution enabled as false set. So you can't execute this one. That's okay. If you go here and see that this mod is not available for execution because we are setting that execution and then build as fly as it falls. So still, it's in active state, you can go to Edit and you can edit that flag. Suppose think if it is in not in active status in the Dev step, you can edit suppose think it is moved to the active state, then user can't edit. He can increase the version, can create the new version and then execute. But if you don't want to create the new version of that action, then you can contact the Tech Admin.
+
+00:06:42 - 00:07:48 Unknown Speaker:
+
+And Tech Admin can update this flag during onboarding, because if you go here right for onboarding sections. I've selected the Action and version. Selecting the Deployment ID see only for Tech Admin, this flag will be visible, not for the Tech user. So here I'm enabling this action. And there is one more flag for direct execution tenancy. So here we can specify which deployment ID that action can execute. So this option is available only for bot tenancies. You can see this symbol, right? This symbol means this deployment ID is configured as bot tenancy. Only this type of deployment ID is configured. Direct Execution Tenancy is available. If you see, I have selected Non-MOD Tenancy, so that Direct Execution Tenancy is not available. So I have selected this one. So I'm enabling the Direct Execution Tenancy and selecting the action SPSA, Direct Execution Tenancy.
+
+00:07:48 - 00:09:41 Unknown Speaker:
+
+And you're already aware of this MOD active indicator there. So if you disable this, it's completely turning off this MOD. So it's not available, or even for UI, or it's a part of another stitched MOD. Can't execute this action. So I'm enabling this one also. So now if you go to execution of this mode, so only business admin and business user can execute any of the action. So I'm switching to the personal business admin. So if you search here, didn't onboard. Now it's available for execution. Previously, I onboarded to different car ID. That's why it was not showing here. Now I have onboarded to 7 car ID. Then it's available because I have access to that car ID. So then you can execute. So there are two options. One is single execution.
+
+00:09:41 - 00:10:42 Unknown Speaker:
+
+So you can come here and you can enter the details and you can execute. So there is some issue from backend. You can ignore that. So one more type is bulk execution. So if you click here, so you need to download the input file. So here you can give a list of inputs and then after that you can execute. You can upload here and after that you can click Validate file. It will validate the all the inputs we are provided, if it is of correct type or not, after that you can execute. So once after executing, so you can move to the all executed action. So if you are executed as single action, you can select the action name here and select the version, which version of action you have selected executed and you can select the time range.
+
+00:10:47 - 00:12:04 Unknown Speaker:
+
+So it will show the all the execution status. The execution is completed. Execution still executing, and if any, if there are any other error, it will show here in the bottom section. Same thing for even bulk. Also, if you consider its execution rate, so it has execution will execute the records. And after this, only fire executed and all fire failed. So it's not even triggered any single row, or else, if it's triggered row, you can see, see. All these are the five rows it has executed. All fire failed, you can see Earth output variable. Why it's failed, it says WCC API called file with status 412. It will say, What's the reason for this failure? Is the one thing. Suppose you have your action move to the Dev status, you have test edits is working fine.
+
+00:12:04 - 00:13:14 Unknown Speaker:
+
+Then you can submit it for approval, so once you click on the Submit it for approval, right? So it moved to the academies or basket, so there they will. I'm clicking on Submit for approval. So it has submitted for approval. So if you have TechAdmin access rate, there you can see task. Once you click on the task, you can see here how many actions have been submitted for approval. So this one I have submitted. So you can review the action details. You can view onboarding details. So if everything looks fine, you can upload that action. Now the action will move from dev state to the active state. If the action moves to the active state, then only you can execute this action in production or E3. Until that, it won't be available for production execution.
+
+00:13:15 - 00:14:10 Unknown Speaker:
+
+You can execute in both E1 and E2. This one is approved now, so once after approval date. If you see any issues. Or you if you want to do any enhancement your action so you can't delete that current action. So what you have to do, you have to use, you have to do. Add new version, so new version of that action is added. You can. If there is a major change, you can select major version. If there is just a patch, any vulnerability fixes and all, you can select the patch version. So you're creating the new versions of that currently active action, so it's saving it and you're submitting it. Once you submit, it will go to the active state. So, if you want to update the any dependencies as group ID or artifact ID, or versions.
+
+00:14:10 - 00:15:44 Unknown Speaker:
+
+If you are creating the version, you're releasing the new version, you can change the version. It will still be in active drop state until you do the final submission. So now this version One One 1.0.1 is more to the Dev state. Yeah, see, this is dev state. The process is same, again, same for this one also. It has to go to the approval state. Once approved, it will move to the production. With production, you can execute. Yeah, any questions, stick here. That's it, Suraj. Okay, yeah, thanks. If you have any questions, feel free to ask. I know day in and day out, we'll be using the mod shop for the execution of the mods. And then there are many changes also that is upcoming as, you know, initially it was only one tenancy, then we had changes for multiple tenancy, and then we'll be parking one as default.
+
+00:15:45 - 00:18:02 Unknown Speaker:
+
+And going forward, as I was saying, we will also have Python mods. Yeah, Python mods. Yeah. So feel free to ask questions in this hands-on interactive session. Okay, so no questions then. Then Mithun can ask questions. I can randomly ask people to answer. Even I don't understand. Okay. I'm saying you can ask questions. They can answer. So while onboarding the mod, we have to provide the input and output details, right? So right now, the data type supported is string. So is there any chances that we can support the map or list kind of thing or object data type? Yeah, we are supporting that, right? For input crd there is map object list everything is available okay so if you go and see any of the actions right. See, here you can, these many types are available.
+
+00:18:03 - 00:19:07 Unknown Speaker:
+
+Dead time, Boolean, everything's available. Okay, good. If only for odd configuration, there is string, okay? Usually what will be a key value, right? For this one, there is only string type is available. Thanks. So, Nathan, one question here, like, Is there any limit like adding input parameters or output parameters? Sorry? Any limit like say 10 parameters only or 20 parameters only? No, as of now there is no limit for input and output CRD. Because I've seen like a lot of people say it's like it only accepts like 20-30 parameters if it is more, don't convert into more kind of scenarios. No, from you I said there is no any limitation. I'm not sure about the back end. I need to check with them. I don't think there is any limitation as such.
+
+00:19:09 - 00:20:13 Unknown Speaker:
+
+The date type, input date type, is it working now? Earlier I carried it was not working. Yeah, it is working. Both date and date time, both types are working. Okay, so has anyone like tested with the date input type in E2? I'm not sure, even we have tested. I see an issue in... The format for date has been added with them. Yeah, it is added, so it's available. It's available in the product. It is available from here. We can change the input to date, but while testing it on local. Like, it was not taking any date input type, so I had to test with the string itself. But when I like, it was earlier in January or February. So the date type on E2 was not working. So is it working now? Yeah, it was working.
+
+00:20:13 - 00:21:12 Unknown Speaker:
+
+I'm not sure why you are not able to see data. Yeah, I will check once again, what format are you using? I'll share you the format of date and date time. So you have to use exact format that I'll share. Okay. It's not working since you're not able to see that field of date type. What is the issue? It was not picking that field. It was a data provider actually. So it was giving some error, so I can't say that it is not showing on the UI. It was a data provider while I was testing for the date input type, so from local, it was not taking any date type input. So I tested with the string itself, but on E2 as well, I tested directly, so it was not earlier.
+
+00:21:12 - 00:22:51 Unknown Speaker:
+
+Okay, maybe some mismatch of date type, I think date format. You can share the date format, I'll check with that one. Yeah, sure. I will share post this call. Okay, no more questions. Certain features of ModShop. This was a quick thing about the recent changes that we have done. We will have further more sessions to include specifics or any new enhancements that we are doing on ModShop. Whether the team is aware of or how to use that feature. They just want to understand the team if they need an input or some demo right on their particular piece of functionality. I think while onboarding, we can select the different NNCs there right while onboarding. And once that is deployed, we can test. Yeah, it's not like we can select multiple tenancies, so we can select single tenancy only.
+
+00:22:54 - 00:24:00 Unknown Speaker:
+
+Okay, this team is comfortable, fine. I mean, because I mean, one tenancy, the other day we used, right, there were a lot of issues with deploying, that's where I think, yeah, I requested Deepak specifically to add support multiple tenancies, I think. That is enabled now. Start using that feature as well and understand how it works, right? So if any query system can help. Okay. Okay. Thanks, Steve, for joining it. And then the sessions, then another part of the sessions is you also would know who to contact if you have to. Work or use that application. So, as of now, we've covered a couple of them, or the sessions we have had. And if you know, if you had any issues with Motsha, come to contact VB Method, or even Swetha for that matter.
+
+00:24:01 - 00:24:20 Unknown Speaker:
+
+They can help you out with some assistance there. So, yeah. Fine, then. So, we'll meet next week for another session. I will let you know the context about that. Thanks for joining. Thank you.

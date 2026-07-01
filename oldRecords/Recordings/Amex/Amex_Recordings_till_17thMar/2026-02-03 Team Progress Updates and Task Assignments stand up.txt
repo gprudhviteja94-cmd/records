@@ -1,0 +1,193 @@
+2026-02-03 Team Progress Updates and Task Assignments stand up
+
+Creation Time: 2026/2/3
+
+
+📅About Meeting
+
+  • Date & Time: 2026-02-03 18:16 (Duration: 1335 seconds)
+  • Location: [Virtual meeting / Call]
+  • Attendee: Sindhuja, Nirmal, Sameer, Jason (late/absent), Kundan (to be on leave), Sachin, Suman, Samir, Anand, Rachana, Athar, Matt, others (unnamed participants)
+
+
+📒Meeting Outline
+
+
+Work progress & blockers (Team updates, ongoing stories and immediate next steps)
+
+  • Automation job — tracking data ingestion / DAG testing Nirmal: Currently testing the automation job for the tracking diagram (DAG). He is working on both assigned stories. One story had a question about recommended attribute names vs. attribute names; Sameer clarified and that is now closed. MD (metadata) changes were completed; Sameer requested a file from Jason to test in the E2 environment. Nirmal was asked to commit his current progress to Git to avoid losing work because priorities will shift tomorrow. Sindhuja advised to rename story title to "Automation job for tracking data ingestion to LUMI Tables" and that requirement details will be explained tomorrow.
+
+  • Q-Track self-service & production support Nirmal / Sachin: Nirmal has started building Q-Track self-service based on KT from Sachin; created a control document and is ready for presentation. Team asked Nirmal to add placeholder tasks under his stories. Sachin reiterated assigning tasks and that some focus should be on pointer part today.
+
+  • LUMI data ingestion / tables verification Sachin: All expected table ingestions from the LUMI team have been completed and verified. A few small record-count discrepancies (15–20 records) were raised and communicated to the LUMI team. Files sent by Karthik up to the 25th/26th were ingested; an additional file sent yesterday was ingested today. No pending items on the LUMI side. Jason and others were tagged for visibility.
+
+  • November data ingestion & partitioning Sachin / Samir: November ingestion is in progress; Samir is handling code updates in lower environments. Deployment and ingestion expected by EOD today or by tomorrow ~15:00. Partitioning for November will be done first (Nov 2025). Samir was pinged regarding this.
+
+  • QTAC UI issue (null parameter causing failures) Sachin: Identified null parameter causing QTAC UI failures. Fix involves addressing a null pointer; after fix, promote to E3. If it’s configuration-only, it may not fail on E3; if it’s code, a deployment will be needed. RFC and deployment windows exist (RFC tomorrow, E1 on Thursday). Sachin asked to claim productivity on production support repo after fix.
+
+  • Self-serve REST API & repo onboarding Sachin: Repo created and onboarded yesterday. Initial utility classes pushed. Ongoing design of REST API and further progress will be posted.
+
+  • SFT profile creation Sachin/Matt: Call scheduled tomorrow at 10:00 with SFT team to create SFT profile. Jason to be informed of this meeting/result.
+
+  • DT flow creation / AC Quest History ingestion Sindhuja / Suman / Samir: Suman to start working on DT flow (status DT flow). Samir to guide on creating DT flow; warehouse table metadata depends on JSON from Samir. Meanwhile, Suman will use existing SQL in the user story, adapt to GCP syntax, create DT flow in E2, and save results to the use-case folder. Reference: existing DT flow for AC Quest History Table. No blockers expected; Sindhuja/Samir will support if Samir not available.
+
+  • GMX Quest History (November migration) & control priority validation Samir: Doing E2 testing for November data migration to GMX quest history warehouse table. Also working on control priority validation and a small query change; validation to be done after E3 deployment.
+
+  • Q-Track UI behavior & JSON config changes Anand / UI testers / Sachin: Observed UI issues when selecting "false positive" — the second dropdown (actions: delete/monitor/rewind) is not appearing, and classification/justification ordering needs to change (classification should move below justification). Root cause mapped to JSON config path/variables (data.substatus vs substatus). Action: update config (transformations/path variables) in E2, test, and then promote to E3. No deployment expected; it’s a JSON config change. Timeline: change and test today in E2; if OK ask Saurabh to merge tomorrow.
+
+  • Story assignments & capacity Sindhuja: Jason will be late; Kundan will be on leave for three days — a placeholder task should be added for Kundan (Sachin approved). Team reminded to verify user story assignments; if anyone feels assigned points are incorrect or requirements unclear, raise it by tomorrow DSU so product owners can be engaged and changes made before Monday/Tuesday.
+
+
+Administrative / housekeeping
+
+  • Commit work and rename story titles Sindhuja requested committing current progress to Git (especially Nirmal). Also suggested renaming the automation job title for clarity.
+
+  • Placeholder tasks Add placeholder tasks for Kundan (leave period) and ensure team members add placeholder tasks under their stories when missing.
+
+  • Raise queries by tomorrow Everyone to review assigned user stories and raise clarifications/concerns by tomorrow DSU to avoid delays into next week.
+
+
+📋Overview
+
+  • Automation/DAG testing: Nirmal testing; MD changes done; awaiting file from Jason to test in E2. Commit current progress to Git.
+  • Q-Track self-service: Nirmal prepared control doc and presentation; repo/task updates pending.
+  • LUMI ingestion: All expected ingestions done and verified; minor record-count exceptions raised; LUMI can resume new ingestions from 25th/26th files.
+  • November ingestion & partitioning: Samir to update code and perform ingestion; expected by EOD or tomorrow ~15:00; partitioning planned first.
+  • QTAC UI failures: Null parameter identified; fix required; then promote to E3. May need deployment if code changes required.
+  • Self-serve REST API: Repo created and initial utilities pushed; ongoing design work.
+  • SFT profile: Call tomorrow 10:00 to create profile.
+  • DT flow & GMX Quest History: Suman to create DT flow using existing SQL; Samir to guide; save results to use-case folder for downstream ingestion.
+  • Q-Track UI/config: Two UI items — action dropdown missing for false positive, and classification ordering to change. Likely JSON config updates (path variables) — update in E2 and test, then promote.
+  • Story assignments: Review assignments; raise issues by tomorrow DSU. Placeholder tasks for team members on leave to be added.
+
+
+🎯Todo List
+
+  • Sindhuja:
+    
+    • Ensure placeholder task is created for Kundan (leave) — due ASAP
+    • Rename story title for Nirmal / Sindhuja: "Automation job for tracking data ingestion to LUMI Tables" — due before tomorrow DSU
+    • Send details to Samir to obtain ODL metadata (JSON) for warehouse tables — due tomorrow
+
+  • Nirmal:
+    
+    • Commit current automation/DAG testing code to Git to preserve progress — due today
+    • Add placeholder tasks under his user stories and update story titles as requested — due today
+    • Once Jason provides file, test MD changes in E2 environment — due after Jason provides file
+
+  • Sameer:
+    
+    • Provide clarification/comfort on JSON attribute naming (already addressed) and supply file from Jason to testers (follow up with Jason) — follow-up ASAP
+
+  • Sachin:
+    
+    • Continue verification and monitoring of LUMI ingestion; follow up on the small record-count discrepancies with LUMI team — ongoing
+    • Fix null parameter / null pointer in QTAC UI or coordinate fix; test and promote to E3 (coordinate with Samir & deployment team) — aim to complete before E3 deployment window (this week)
+    • Lead SFT profile call tomorrow at 10:00 and confirm profile creation; update Jason — after 10:00 call
+    • Add task assignments for Q-Track self-serve stories where missing — due today
+
+  • Samir:
+    
+    • Update code for November ingestion in lower env and complete ingestion & partitioning — target EOD today or by tomorrow 15:00
+    • Guide Suman on creating DT flow; provide necessary metadata or instructions — contact Suman today
+    • Update mappings/metadata retrieval (ODL JSON) for warehouse tables and share with Sindhuja/Suman — due tomorrow
+
+  • Suman:
+    
+    • Start creating DT flow (status DT flow) in E2 using existing SQL (adapt to GCP), save results to use-case folder — start tomorrow; complete initial run ASAP
+    • Connect with Samir for guidance and follow-up if Samir unavailable (notify Sindhuja)
+
+  • Anand / UI owner (Anand / UI Dev):
+    
+    • Update Q-Track JSON config: move classification below justification and fix action dropdown mapping (data.substatus path changes) — update in E2 and test today
+    • If tests pass in E2, request Saurabh to merge/promote to E3 tomorrow — due tomorrow
+
+  • Jason:
+    
+    • Provide requested files for E2 testing (MD file for automation and any other requested files) — ASAP
+    • Be informed by Matt/Sachin about SFT profile creation outcome
+
+  • All team members:
+    
+    • Review assigned user stories and raise any clarifications, scope/estimate concerns by tomorrow DSU — deadline: tomorrow DSU
+
+Notes: If any owner cannot meet the listed timelines, inform Sindhuja and the team before tomorrow DSU so dependencies can be rebalanced.
+
+
+Transcription
+
+00:00:03 - 00:02:06 Unknown Speaker:
+
+Hello. Akka, three boiled eggs and rice. Nice, Akka. Boiled egg and one chapati. Yeah, that's it. You can log in. We can get started right uh jason will be late so we have all the team members my audible. Okay. Hi, everyone. So I think we already had an elaborate grooming call and folks have started working on it. So we'll just utilize the first 10 minutes to understand what they've been working on. And then probably if they need any clarifications regarding the story, we can take that up. Another thing is Sachin Sen's Kundan will be on leave, I think, for three days. Should I add like a placeholder task for him? Like we can't just leave without any tasks. Yeah, you can go ahead and add it for Kundan. Okay, I know it for both Ansi and Kundan.
+
+00:02:08 - 00:03:41 Unknown Speaker:
+
+Sameer, can you start with your updates, please? I don't see even Sameer on the call. Okay. Nirmal? First things first, could you add at least a placeholder task to your stories? Yes, under title. Yeah. You can also update what you've been working on today. Yes. You could probably add the task later on. You can update the team what you've been working on then. I'm doing the testing for the automation job for tracking diagram right now. Okay. Anything else? So you are dealing with your stories, right? Both your stories, what you're supposed to do. Yeah, and for the first one, I had concluded with Sameer. There is some issue with the, it's not an issue, he had some doubts between the recommended attribute names and the attribute names.
+
+00:03:42 - 00:04:43 Unknown Speaker:
+
+So he told me that we'll do it later once he got comfortable with it with JSON. So I am waiting for that one also. No, that has been closed, Neemal. So the MD changes has been done. And if you have seen the latest message from Samir, he has asked for the file from Jason for the even environment. MD changes has been done. I have given him the clarification with respect to the TII tag. So that has been submitted. It just was the files. You know, once Jason sends the file, we can test it on even. Update on this automation job for the DAG one, right? So, you know, whatever progress you would be making till today, you know, just commit it into the Git so that you would not lose those track and then tomorrow onwards, we have some other priority job that needs to be picked up.
+
+00:04:43 - 00:06:21 Unknown Speaker:
+
+I'll explain you the requirement and you can start doing that from tomorrow. So, Sindhuji, you can update this title. Job for tracking diagram Instead of that, you can mention it as automation job for tracking data ingestion to the Tables to the LUMI Tables, Data ingestion to LUMI Table. I'll explain you the requirement tomorrow. Don't worry about that, just, you know, commit it and we can get back to that once we have bandwidth later. Okay, thank you. Netmail. Um, so Q Track Self and production support, and Q Track Rules update. So I started working on the Q Track Self server, so I got the all the requirement details from such, you know, so I'm. I started already working on that part to building the self service. So I, I prepared a document for control from what I understood from Shami's KT.
+
+00:06:21 - 00:07:37 Unknown Speaker:
+
+And um, yeah, ready for a presentation as well? Yeah, so add like, a placeholder task for your stories. Is that the story? Uh, yeah, it's assigned to your name. No, that is cute, right? Self-service, right? Yeah, but mine isn't. Yeah, one true was the ask for today onwards, we can, you know, get started on the self-server. It's fine, Sindhuja. For today, I have asked him to focus on the pointer part. I'm just asking to add placeholder. Yeah, I thought it's a different topic. Okay, in the morning, I saw something else. So, may I know what exactly it is, Sachin? Same thing, is it? Yeah, it's the same thing, man. I asked you, right? You would be working on this one from the sprint, right? Okay, yeah, fine now. Yeah, thank you. Um, over to your section, okay, uh.
+
+00:07:37 - 00:08:23 Unknown Speaker:
+
+So first of all, uh, on the insurance part, I mean, uh, all the tables have been sorted out now. Uh, the ingestion which was being expected from the Lumi team, even those all ingestion has been done. Uh, verified the account. Also, there are some, you know, with respect to actual count, you know, maybe 15 20 records for which I already asked are there to save this account. But till 25 or 26, whatever file that has been sent by Karthik, those all have been ingested now for all the tables. So he can, you know, start ingesting the new data starting 25th or 26th whenever you know. He has sent those files, even the one of the files that he has sent yesterday for second, even that got ingested today.
+
+00:08:23 - 00:09:23 Unknown Speaker:
+
+Uh, when you know there was taking care of that file, any questions on that? No, all that's considered. Yeah, okay, and nothing means basically nothing pending from our side now or the from the Lumi team. Uh, and that is the reason I just tagged Jane also so that C would be also aware with that. Okay, uh, okay, uh. Next, moving to the verified that one, uh, so that follows the data. Yeah, November one. Uh, Samir is already taking care. Uh, he's already doing that. So once then, uh, because, you know, we just need to update the code in, uh, lower environment, environment and deployment. That is the reason it is taking time, mostly by EOD today, or, you know, tomorrow around 3 p.m. The ingestion done for November. Also, that is number one, partitioning it also right this time.
+
+00:09:23 - 00:10:14 Unknown Speaker:
+
+Yeah, yeah, that I already instructed him so he would take it like, you know, first, November 2025. I already pinged him over the Slack, so that is number one. Uh, second on this one, right? The QTAC UIA, where we have some challenges. Uh, so I have identified the issue. There was a parameter which is passing as null and and that's causing the the failure of that. Uh, I have asked, uh, he will just fix that null pointer exception and that would sort out the issue. We need to. And then once, then we can promote it to E3. Also. Okay, uh, the UI also can happen in the same agency, also it might be failing due to the same reason. Then, yeah, okay, yeah, yeah, it because, uh.
+
+00:10:14 - 00:11:05 Unknown Speaker:
+
+If just a configuration issue, then I don't think it would fail on E3 because the configuration is different between E1 and E2, E3. But if some, you know, code issue, then in that case, we need to do a deployment. We do have RFC for tomorrow and E1 for Thursday, so nobody's for that. Okay, and then that hardly takes an hour for a deployment. No changes is required from, you know, SOAR website. There is no dependency, basically, on SOAR website or something. Okay, perfect. That's perfect, yeah. Yeah. Okay, so we can sort it out. So just keep it posted once you are, you know, just applying that fix. Okay. And then you can claim your productivity on the production support repo. Okay. Then on the self-serve, like, you know, I'm designing that REST API.
+
+00:11:05 - 00:12:05 Unknown Speaker:
+
+And the repo has been onboarded yesterday only. I created the repo. A few of the utility class I already pushed to the end. More progress would be done and I'll keep you posted on that. Okay, these are the steps, yeah. That much things I took care today. Sure. Yes, Sachin. Suman? I think Suman's days just started, right? So he might be having the same. So that's fine. So he can start from tomorrow, assuming just one thing Uh, you need to start on this. Uh, when you know it is status DT flow, right? So what you can do? Uh, start creating a DT flow. Connect with Samir. He would guide you how to create the DT flow. The warehouse table would not be available right now because we have to get the metadata from JSON.
+
+00:12:05 - 00:12:52 Unknown Speaker:
+
+I'll send the details to him to, you know, send back us that ODL metadata. Meantime, what you can do? The SQL query is already there over that user story, you just need to, you know, use that same SQL query, refine it to the GCP query. And then it is created in the even environment and save the results to our use case folder. These all steps is known to Samir. Okay, or you can blindly follow the way we did it. For AC Quest History Table, there is a DT flow which is already running. You can even take a reference from that one, connect with Samir, and then you can start on that one. There should not be any blocker for you. Uh, and uh, you know, at least save the data till our use case folder.
+
+00:12:52 - 00:13:51 Unknown Speaker:
+
+And then, once the warehouse table would be ready, uh uh, we will, uh, you know, just call that, uh, dependent, uh job, lumi job. So that would take care of that ingestion. Okay, so have a connect with Samir. In case he's not available. Do let me know. I'll brief you. One more update, Matt, as you have joined, Jason is not there. So for SFT profile creation, I have a call tomorrow at 10 a.m. 10 a.m. IHDRs with the SFT team. So hopefully that SFT profile would get created tomorrow. So in case, you know, you want to communicate that to Jason. Okay, great. I appreciate that. Yeah, I'll let him know. Yeah. So, Sindhuja, Samir's joined. Check it soon. Hi, yeah, hi hi. Yeah, you could just provide your updates if you were walking today.
+
+00:13:51 - 00:15:01 Unknown Speaker:
+
+Yeah, so so currently I'm doing, like, uh, that, uh, November, uh, data migration, uh, where we need to ingest the data to the GMX quest history table of warehouse. So currently I'm doing even testing, and apart from that, I'm working on control, uh, priority to validation as well. Query change, a little query change is there and I need to do the validation as well after the deployment of this one to E3. Thank you. Anything else, team? You're all clear on your stories, right? Do you need any clarifications? Yeah, hi, Svendu Jathariya. I don't see your story assigned to me for the sprint. No, it's great. That's a great miss. And I think then somebody has gotten more story points then because... No, no, no. I cross-checked today morning. It's fine. It's just that Athar doesn't have a huge story.
+
+00:15:04 - 00:16:40 Unknown Speaker:
+
+I cross-checked. So you just need to assign him, you know, from that Q-Track self-serve. Which is on a past name right you can just go ahead and if there is a ui story just assign it to us is. There is the observation when Anand and myself were testing the DQUI. What is happening? When you are selecting false positive, right? And then there would be another drop down, right? Where you used to delete the room. Whatever you want to do, right? Right, modify. So if you observe it, that false positive is there, but the second that is there, right, whether it's delete rule or monitor rule or rewind rule, that should appear over here. That is not appearing. Okay. That is number one. Second, pull this classification from here to here. This... how can it move to the top, right?
+
+00:16:40 - 00:17:53 Unknown Speaker:
+
+This is the business clarification that we are providing, right? Justification is fine. All these classifications would appear here. Just then that, uh, you know, yeah, the delete rules or monitor rule, and then your justification. Okay, okay. And I don't think for this one, we have a dependency on server, right? It's just the UI change that is required, right? No, this will be required with the config changes. Yeah, if you'll go through the config, I can explain you how things are mapped. So based on that mapping, we are getting the API response. Maybe you can open any one of the configs. So can you scroll down? There is a path variable? Something? Can you scroll down? Okay, can you open this file? This? This will show only the changes. Yeah, here you'll see input variables are there, right?
+
+00:17:53 - 00:19:14 Unknown Speaker:
+
+Is it in bottom? Yes, just scroll down a bit, you'll see the U.S. Basket a bit more. Yes, now we scroll down and these are the actions, which basically shows that drop down in everything. Okay, and just below that are the variables which are mapped, just scroll down a bit. But oh yeah, this transformation variable. Okay, so this needs to come below, right? Yes, this needs to come below, and the other one which you mentioned, can you? Actually, that is basically this one. Yeah, so this has data.substatus, okay? So we might need to add those because recently we added data.substatus. Initially it was a substatus, right? And that was showing up. We might need to update the path for this also, the below one. Okay, then just update this one, right?
+
+00:19:14 - 00:19:56 Unknown Speaker:
+
+At least for demo purpose, we have things ready, but still, you know, modify this one so that, you know, that would be... Yeah, so we need to modify and E2 and test it. Once that is done, we can proceed with E3. So you got the requirement, right? So just, you know, make the changes today. So if we are able to test it on E2, then we can, you know, ask Saurabh to merge it tomorrow. It's just a JSON config. We don't need any deployment or something like that. Yes, that's what I'll just update and change. So there are two things. One is the classification should come down and the other one is the action since it's not showing up. Yeah, correct. Sure, I'll update the config and we'll test it in E2 account.
+
+00:20:01 - 00:21:08 Unknown Speaker:
+
+From my side, these are the couple of issues. Anything else you want to take it forward? No, I've created QTrack content for him, but then you can add the task according to whatever Sachin just explained, okay? Yeah, sure. Let me update this. Yeah, so I also have nothing else. Anand, Rachana, if you're good, then probably we can end the call. Just one call out. Before we close this call, guys, please go through your user story that has been assigned to you and if you feel like something that is not, you don't understand the requirement or the story pointer which is being assigned is low or high, please raise it by tomorrow. We don't want to coming Monday or Tuesday that three days or four days have been passed and then we are not sure what we need to do over there.
+
+00:21:09 - 00:21:31 Unknown Speaker:
+
+So whatever query you have, please raise it by tomorrow DSU. Then we can have a discussion tomorrow with the product owners and then if any changes required, we can do it tomorrow. Thank you, Sindhu. Thank you everyone. Thank you.

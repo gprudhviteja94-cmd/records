@@ -1,0 +1,202 @@
+2026-02-05 Team Progress Updates and Ownership Coordination stand up 6:00 pm
+
+Creation Time: 2026/2/5
+
+
+📅About Meeting
+
+  • Date & Time: 2026-02-05 18:01 (Duration: 1320 seconds)
+  • Location: DSU / Team meeting (virtual)
+  • Attendee: Pansy, Athan, Shamil, Sachin, Sameer, Hyper, Anand, Rajan, Suman, Sindhuja, Jason (invited / asked to join), plus others on the DSU
+
+
+📒Meeting Outline
+
+
+DSU — Individual progress updates & blockers
+
+  • Pansy — Self-serve automation & local setup Pansy reported work on analyzing an AC script for the self-serve automation job: investigating how to dynamically generate SQL queries based on query patterns and check types. She shared inputs with Sachin. Also worked on several minor insurance-related changes and is setting up ACE core locally.
+
+  • Athan — Q-Track E3 deployment and UI work Athan worked on deploying Q-Track to E3 and coordinated testing to ensure use cases were not broken; testing passed in E3. He began creating a watch dialog in the UI and will continue that work and add test cases and screenshots for today's test results (planned to finish after the call).
+
+  • Shamil — Control deployment, data DAGs, and Resi user venue support Shamil is deploying control to E3; the deployment workflow is running and expected to finish soon. He will trigger DAGs to insert control artifact data and then trigger a longer DAG (12-month onboarding) to create thresholds in repository/threshold tables, and will report results. He’s also supporting Nirmal on the Resi user venue ingestion and found a downloading issue with files from Jason; ingestion currently fails due to column/record mismatches. Shamil asked that Jason attend DSUs for clarifications because messages alone are insufficient.
+
+  • Sachin & Sameer — Code changes, reviews, and test cases Code changes were completed and tested in dev; Sameer reviewed changes. Sachin reiterated to Sameer (and others) to add test cases for AC testing stories and asked them to include test cases and screenshots.
+
+  • Hyper — Q-Track form validation, bundle work, DAX monitor Hyper completed Q-Track self-service form validation bundle and started work on bundle creation for email notifications. Q-Track production DAX monitor showed no DAX errors today. Created a conference space for the Q-Track DAX monitor team.
+
+  • Anand & Automation/Vertex AI discussion Hyper asked about using Vertex AI (GCP); Anand confirmed Vertex AI is not currently provisioned. Team discussed alternatives (Prithvi’s LLM/tools) but noted those are not deployable and would remain manual, which introduces unwanted manual dependency. Action: Anand will check with Raj and report feasibility; others (Hyper/Anand) to follow up about alternative tools or teams doing AI use cases.
+
+  • Rajan — Track self-serve DB provisioning & ownership questions Rajan completed provisioning the Track self-serve DB for EVE provisioning and is setting up the firewall. He has calls with DBAs about table structures agreed with Trish for onboarding. On Q-Track UI, ID Lab onboarded data and validated in E2 and E3. Rajan raised a question about using a central "car ID" for onboarding (car ID is a tag/ownership artifact): confirmed that car ID has tech and business owners and that using an existing central car ID will assign ownership/notifications to its owners (e.g., Pune, Raj). He suggested discussing whether to reuse existing car ID or provision a new one; advised contacting Raj for clarity. Concern: using someone else’s car ID causes notification burden and ownership confusion, and changing car ID after onboarding is difficult.
+
+  • Suman — DT tool access, BPM learning and INC follow-up Suman is blocked by DT tool access; spent time setting up ACE core and learning BPM flow; created a demo BPM file and successfully tested N2M exit. He’s following up on the incident (INC) request. Team asked Suman to escalate by emailing the assigned person (CC Sindhuja and manager) and create a group chat including Sindhuja and himself (exclude Raj unless needed) to resolve the access promptly. If the assigned person is unable, reassign to senior support. Sindhuja offered to join escalation calls if needed.
+
+
+DSU — Ownership, onboarding, and tooling coordination
+
+  • Need for Jason presence and clarity on onboarding steps Multiple speakers emphasized that Jason should join DSUs or a separate call for clarification on user stories, file formats, and ownership decisions (especially around car ID and SFTP/data ingestion). Lack of Jason’s presence risks delaying stories.
+
+  • Car ID / central ownership mechanics Discussion clarified how the central car ID tags pipelines/tables and automates ownership notifications; ownership cannot be changed at pipeline detail level and approval flows tie to specific owners. Suggestion: if a team must own their tables (to avoid notification/ownership problems), provision a new car ID or coordinate with tech/business owners to transfer/assign appropriate ownership. Rajan to check with Jason and Raj for final guidance.
+
+  • Office hours & training invites Rajan / others mentioned office hours (8:30–9:15) and asked team members to attend the session to learn about the tool; some team members did not receive invites and were asked to raise hands / confirm.
+
+
+📋Overview
+
+  • Pansy completed analysis work on AC script pattern-driven SQL generation and shared inputs with Sachin; ACE core local setup in progress.
+  • Athan completed Q-Track deployment testing in E3, started UI watch dialog, will add test cases and screenshots.
+  • Shamil progressing with E3 control deployment, will trigger DAGs and report results; investigating ingestion issues for Resi user venue and requires Jason to resolve file/column mismatches.
+  • Sachin & Sameer: code reviewed and tested in dev; test cases must be added for AC stories.
+  • Hyper completed self-service form validation and Q-Track DAX monitoring setup; working on email notification bundle.
+  • Anand confirmed Vertex AI not provisioned; team to check alternatives and feasibility.
+  • Rajan completed DB provisioning steps and is setting firewall; raised car ID ownership/notification issues and advised creation of a new car ID if needed.
+  • Suman blocked by DT tool access; created BPM demo; needs incident escalation assistance.
+  • Jason’s attendance requested for clarifications on file formats, onboarding, and car ID decisions to avoid story delays.
+  • Team asked to join office hours for tooling overview; some invite distribution issues to be resolved.
+
+
+🎯Todo List
+
+  • Pansy:
+    
+    • Continue ACE core local setup and finalize minor insurance changes — by next DSU
+    • Provide any further inputs to Sachin on dynamic SQL generation tests — ASAP
+
+  • Athan:
+    
+    • Continue implementing watch dialog UI and add test cases with screenshots for today's testing — by end of day (today)
+
+  • Shamil:
+    
+    • Monitor control deployment workflow to E3 and report deployment status and DAG run results — within 15–30 minutes and follow-up with results
+    • Trigger DAGs to insert control artifacts and run the 12-month onboarding DAG; report results — after deployment completes
+    • Coordinate with Jason to resolve Resi user venue file download/ingest issues (ensure Jason attends DSU or scheduled call) — ASAP
+
+  • Sachin / Sameer:
+    
+    • Add test cases (with steps and screenshots) for AC testing stories; incorporate Sameer’s guidance — before next deployment / PR merge
+
+  • Hyper:
+    
+    • Continue bundle creation for email notification for Q-Track — in progress; update at next DSU
+    • Share conference space details for Q-Track DAX monitor and ensure team access — done (confirm access for those missing)
+
+  • Anand:
+    
+    • Confirm Vertex AI/GCP provisioning status with Raj; investigate alternative AI tooling or internal teams working on deployable solutions — update by tomorrow morning
+
+  • Rajan:
+    
+    • Complete firewall setup for Track self-serve DB and coordinate with DBA to finalize table provisioning — in progress; update on completion
+    • Clarify car ID ownership/process with Jason and Raj; advise whether to reuse central car ID or provision a new one — ASAP
+
+  • Suman:
+    
+    • Escalate DT access INC: email the assigned support person, CC Sindhuja and manager; create a small group chat (Suman + Sindhuja + assigned support) to expedite resolution — immediately (today)
+    • If assigned support cannot resolve, request reassignment to senior support — if required
+
+  • Jason:
+    
+    • Join DSU or schedule a call to clarify file formats, ingestion failures, and car ID ownership/funding questions — ASAP (requested by team)
+    • If needed, create a new car ID or advise on steps to provision/transfer ownership — coordinate with Rajan
+
+  • Sindhuja / Manager:
+    
+    • Support escalation for Suman’s DT access INC and join calls if required — immediate follow-up
+
+  • All team members:
+    
+    • Attend office hours (8:30–9:15) to learn about the tool; confirm invite receipt and request invite if missing — before next session
+
+Please let me know if you want this exported as a PDF or if you want action items added into your task tracker with deadlines and assignees.
+
+
+Transcription
+
+00:00:11 - 00:01:30 Unknown Speaker:
+
+One good evening. Hi, everyone. Hi, everyone. Hi. We'll get started with our DSU. Pansy, can you start with your updates? Yes, sure. Hi, everyone. So I worked on the analysis of one of the script, or AC script, as part of the self-serve automation job to how we can dynamically generate the SQL query based on the query pattern and the type of checks. So, I have shared my inputs with Sachin. Then, other than that, I was working on a few minor insurance changes. And also, I'm setting up the ACE core in my local. Thank you, Hansi. Athan? Hi, Sunita. So, today I was working on the deployment of a Q-track for E3. The new features which we have tested is also was coordinating the sire so that our use case didn't break, so we have checked it.
+
+00:01:30 - 00:02:34 Unknown Speaker:
+
+Everything is working fine. In E3, I have started on creating a watch dialog, so I'll continue on that in the UI. I'll add the test cases with the screenshots and everything for this current testing, which I did it today. Maybe after this call or something until the night, that's all from me. That would be great. Yeah, thank you. Shamil. Hi, Tim. So, regarding the control, the deployment to E3 is in progress. I have run the deployment workflow. It is in progress. Maybe in the next 15 minutes, it can be deployed to E3. And I will trigger the DAG to insert the data to the control artifacts. And then I will trigger the actual DAG. 12 months like one year DAG like where it will onboard and create the thresholds in the repository table and the threshold table and I will let you know what is the status of the results.
+
+00:02:44 - 00:03:26 Unknown Speaker:
+
+Trust on me. Sounds good. And apart from that, I am working on Resi user venue where I am supporting Nirmal since he is not aware of the process. Actually, Jason is sending the files and we are facing in downloading part. So I am able to figure out what is the issue in the downloading part. But in the emission part, it is failing due to mismatch of columns and number of records. But when I figure it out, when I check the attack file actually, I'm trying to insert only one record, but like, I don't know, and the columns are also same when I'm putting. When I put parallel, like the side by side in the Excel sheet, I'm just trying to figure out what is the actual issue when it is trying to ingest.
+
+00:03:26 - 00:04:20 Unknown Speaker:
+
+Okay, I think the Excel is not there, so probably you can bring in the update. I think regarding that, yeah. This is where, you know, I was checking with you. Jason needs to join this call, and if the time doesn't suit, we need to move the DSO. We need Jason in the call because there are a few queries with respect to his user story, right? So we can't just rely on the message and the emails because sometimes, you know, his presence is required. Even for one of the use cases that I am working, I need some clarification on that. So just check with him. We have asked him multiple times, Sachin, on the time. He said he was okay and he will join the call. I'll just remind him again to join the DSUs, okay?
+
+00:04:21 - 00:05:45 Unknown Speaker:
+
+Yeah, in case they're not joining the DSU, then the story would get delayed. I'll speak to him today and I'll let him know about this again. Okay. Okay, thank you. Anything else, Shami? You're done, right? Uh, yes, uh, signature, that's it, okay? And like I said, right for your AC, whenever you're doing this testing story, do add the test cases. Okay, that is not on Samir. Uh, normally, to add it. Uh, Samir is just supporting him. Yeah, I'm just asking to guide him. I will let me know, yeah. The code changes have been done. I have tested it in the dev environment and reviewed the code with Sameer. Yeah, that's all I did. Do take Sameer's guidance and add test cases, okay? Both are easy to do. Thank you. I have completed the Q-Track self-service form validation.
+
+00:05:45 - 00:06:53 Unknown Speaker:
+
+That bundle got completed. So I started next item working on the bundle creation for the email notification. So that part I am working in progress. And apart from that one, for Q-Track production DAX monitor also completed. So there was no DAX error failed for the today. And apart from that one, I have created one conference space for the Q-Track DAX monitor to the team. So that one also completed. Thank you, hyper to three. Yeah, I continue to work on the queue to try something. Is automation okay? I making good progress? There is a demo plan for tomorrow with Roger that's not finalized it. But we'll get a clarity by tomorrow morning based on the outcome of what I am doing. Anand, the question to you is that the vertex AI, we won't be able to use it, right?
+
+00:06:53 - 00:07:49 Unknown Speaker:
+
+That is not being provisioned right now, correct? The GCP. Correct, correct. As per my understanding, yeah. Okay. Okay. Okay, Anand. Thanks for the input. I'll check with Raj in case there is some other feasibility. Correct, correct. Just check with Anand. Yeah. Just a.He mentioned that also check like, because I think Manju was referring to some team within his world, right? Who were doing some AI use cases. Just just check with him if he's aware of that as well. Okay, okay, yeah. So actually, you know, Prithvi has used some tools. LLM. But you know, the problem with that is that that is something, not, you know, deployable on the environment, right? So that that that would remain as a manual effort, right? So, I do not want to go with the manual because if that remains a manual then we have some manual dependency.
+
+00:07:50 - 00:08:52 Unknown Speaker:
+
+Correct yeah. So, let me check with Rajan and I will get back to you on that yeah. Sure sure yeah. Rajan over to you. Track Self-serve database for the EVEn provisioning has been completed. Uh, I'm working to set up the firewall for the DB right now. Oh so, that is in progress, and I'll go through those steps to set up the firewall for that one. Uh, apart from that, we means I do have a call again today with the DBA team. Uh, for, you know, provisioning those table structure, uh, the one that trish and we have finalized, uh, so they are up to date for us. Once reviewed, we would be able to, you know, onboard those tables also. And then apart from that, on the QTrack UI, ID Lab onboarded those data and then validated both on E2 and E3 environment.
+
+00:08:53 - 00:09:56 Unknown Speaker:
+
+I started onboarding the MD for this venue loyalty status. So now as JSON is not there, One of the query that I have is that are we allowed to use car ID that we are using for, you know, other tables onboarding? Because that car ID basically owned by Pune and Raj, right? So Isan is coming from a different team now. How to do that? Like, if I use that car ID, the ownership would go to Pune and his basically, Okay, okay, no, no. The car ID might be owned by one tech owner, right? Which would be Raj. Ideally, Raj own this, but the business owner is Pruna. Okay, so it also has, like, tech owner, business owner, like, like, that is what correct, correct. Okay, um, let Suman to complete his status and then I'll show you the central car ID.
+
+00:09:56 - 00:10:52 Unknown Speaker:
+
+Okay, sure, sure, yeah. I mean, I'll probably suggest you just have a word with Raj itself on this area. Okay, okay, because look as safety profile provisioning, I did use the same car ID. Uh, the reason for that, anyhow? We are owning it, right, we are going to maintain it, but table and that on the Lumi warehouse, right? If something goes wrong, right? And again, who now will be notified, getting a notification for that? So that is something I need, that clarity, whether we would be able to use this car ID, or we have to provision a different car ID to. But one question, Sachin, this car ID would be tagged to the project space, right? Or is it just tagged to the table directly? No, no. If you remember when we onboard, let Suman to complete it.
+
+00:10:52 - 00:11:45 Unknown Speaker:
+
+That's the reason I was telling that. So, when you complete it, then I'll show you. Suman, you can go ahead. Good morning. Hi. Actually, Still, I am facing the... issue with my access on DT tool. And yesterday I went to the AS Core setup. And I spent time understanding how BPM works, and I created a demo BPM file and successfully exited to N2M. And I also went through some learning materials to better understanding in DT flow. And I am following up my INC request. Uh, maybe after this call I will come up with them, because ask them, No, no, so when? Uh, swan, can you do one thing on that one? As it has been blocked for a couple of days now? Suit a mail to the person to whom the incident has been assigned.
+
+00:11:45 - 00:12:35 Unknown Speaker:
+
+Keep in charge in the CC. Okay, okay, because it's already a couple of days, we are waiting. Uh, now if he's not responding to you, let's do one thing. Uh, drop a mail to that person and CC me and uh, over there, along with Syndrome, will do call up with them. And you know, don't do an individual ping over the Slack. Create a group along with me, yourself and that person. Don't include Raj in the Slack. That is something not required until NSL asks it. But at least create a group with me, Sindhuja and yourself along with that group. Yeah. Because I got a ping from him. After the call, I will come up with him. If not, it's all because he's a new person. Because yesterday, Got another person, but whatever, whatever, it is right.
+
+00:12:35 - 00:13:22 Unknown Speaker:
+
+If he's a new person and he doesn't know. With respect to the solution, he need to, you know, reassign this, UH, Inc. To his higher hierarchy. Okay, right, uh. So in case he is struggling to resolve it, ask him to assign it to somebody who is senior to him. Yeah, because at the end of the day it is impacting your program, right? You are not able to move ahead with the stories and then we will end up not completing this story. This when you loyalty status, I can ask Sami to create a DT flow. But, you know again, then you won't be able to today because I will do it. Okay, yeah, just take this time, otherwise tomorrow on what we need to check with. You know, somebody to create it for you? Okay, thanks man.
+
+00:13:22 - 00:14:51 Unknown Speaker:
+
+Uh, I'll let me see my screen very quickly. Uh, regarding this, this car ID, so if you see the central car ID, right? Although you know on the ownership side, we own it. Okay. Raj and Manju owns it, basically, but from business perspective, it is Purnam. Right, So so I'm when I'll be going to onboard a pipeline right over the Lumi workspace. Then we have to provide that central car ID. That central car ID fetches the this ownership by default any of the pipeline that we have created. The one that we have created, the ODL pipeline. Do you know or remember where exactly this car ID is being used currently? Yeah, apart from this, any of the use cases that we are onboarding, even the database that we have provisioned, Even this database that has not just fuzzy, right, it's Q track related, also, right, everything, everything, look, this cluster has been created, right?
+
+00:14:51 - 00:15:32 Unknown Speaker:
+
+I was thinking, if we can move the ownership of that car ID to JSON and Bill, right? But then Q track work is also on that same car ID. So what, it's, it's everything, the dashboard, even the dashboard that is running, which has been provisioned right to the side, even which tag to the same car ID. Correct, correct. I think in that case, probably they'll have to create a new car ID then. Yeah, look here, if you see this one, right, the pipeline approval and all, right, so if you go to this pipeline details, this is the central car ID that you have to place, right, and then these ownership would get phased automatically through that central car ID. We won't be able to modify over here.
+
+00:15:32 - 00:16:19 Unknown Speaker:
+
+You can change a few of the stuff here and there in the additional, right, but you won't be able to change the ownership over there. Because this, if you remember this, goes for the approval from those folks, right? The directors and the business, both both used to have to do this. Yeah, yeah, uh, so I.I don't think we would be able to use the Razy one, I mean, this one for the Razy, for sure. Yeah, I mean, all those accesses will get raised to Portland. Exactly. Because, you know, it's not funny when these these notifications are getting, uh, you know. He has been bombarded with three different requested yesterday. So this was, I was clear, like, you know, this one. Like. I have created this SFTP using this because we are maintaining, so SFTP or the database is fine, right?
+
+00:16:19 - 00:17:17 Unknown Speaker:
+
+But this pipeline, I should not be using it. Because, uh, that that makes the ownership of the table, right? So, uh, that is the reason we need Jason in the call for these clarity. Yeah, I think I can, just, I think in that way, probably ask Jason to create a new car already then. I think that's the only way, right? Otherwise... We have to set up a call with Jason because he would not be knowing all those steps and process, right? Correct. Maybe... I think even technology team creates the variety, right? It's just the business ownership part of it lies with us or let's just say Bill's team. I don't know... is funding and everything is being tagged over there, right? Like, if you remember that one of the call UMDL use case or something was there, right?
+
+00:17:17 - 00:18:05 Unknown Speaker:
+
+Which he was explaining that day, right? With respect to funding and all that. So that might get mapped with the car ID or something. Yeah, I'm not pretty sure because I'm not into that, you know, business analytical part, right there, the funded everything. Yeah, yeah, I mean, that's what I was initially referring, right? Just ask with Raj. Also what has to be done if there is some funding located, which should be? I mean, then, you know, they get a new car ready into the field. I think that, yeah, correct, because then you know, any, any, like you have seen, right? A lot of time. Puna is getting a notification right like this table is having this change or that change, right? And then you used to ask us, right? So if. RACI team wants to own their table.
+
+00:18:05 - 00:19:02 Unknown Speaker:
+
+We should not be creating their table with our car ID then, because for insurance, and you know, changing the car ID is not straightforward process. If a table is onboarded earlier, was there. She has used the Analytical Space car ID for one of the insurance table, and that hasn't been changed for last one year. But but it's just that the same car ID was also owned by Kunas. Would be a good with that, but for easy. I think I need to check with Jason on that case. Okay, let me check with Jason first. And if I don't get a concrete answer, then I'll check with Raj on this. Sure, sure, yeah, okay, yeah, nothing from my side. ANaND I I hope you have viewed that. Uh, records. I have created six records.
+
+00:19:02 - 00:19:53 Unknown Speaker:
+
+Yeah, yeah, I did, I did so I.I will test out one of the records as well. I'll do a false positive on one of them. I think, okay, yeah, yeah, yeah, it's better that you can do. It means in case of any issues, right? We can at least be aware. And then, yeah, yeah, yeah. And I think Team Sachin, you will be there, but team whoever is available at that time, please join in. We have the office hours right now, right at 8 30 to 9 15. Um, did everybody receive? Yeah, everybody would have received an invite, right? Because it was, yeah, well, I think I sent it over that technology. Uh, did not receive the invite. Anyone. Can you please raise your hand? At least you guys would be able to know the you know what this tool is all about.
+
+00:19:57 - 00:21:40 Unknown Speaker:
+
+I hope I think in that case on and I like everybody have that motivation yeah yeah so I in that call it a dirty office hours right thank you records. I have created six records. Yeah, yeah, I did. So I will test out one of the records as well. I'll do a false positive on one of them, I think. Okay. Yeah, I did six records. Yeah, it's better that you can do, I mean, in case of any issues, right, we can at least be aware and then take action. Yeah, and I think team, Sachin, you will be there, but team, whoever is available at that time, please do join in. We have the office hours right now, right? 8.30 to 9.15. You would have received an invite, right? Because it was, yeah, I think I sent it over that technology.
+
+00:21:40 - 00:21:59 Unknown Speaker:
+
+Uh, did not receive the invite. Anyone. Can you please raise your hand? At least you guys would be able to know the you know what this tool is all about. I I hope, I think in that case.

@@ -1,0 +1,271 @@
+2026-01-26 BigQuery Data Transfer and PII Handling Overview
+
+Creation Time: 2026/1/26
+
+
+📅About Meeting
+
+  • Date & Time: 2026-01-26 17:33 (Creation Time), Duration: 4549 seconds
+  • Location: Screen share / remote (presentation + demo on BigQuery and Hadoop Gold)
+  • Attendee: [Not specified in recording — presenter and attendees on the session]
+
+
+📒Meeting Outline
+
+
+BigQuery import/export overview and CLI stopgap solution
+
+  • Out-of-box capabilities and limitations The presenter reviewed BigQuery’s native UI import/export options (upload from local, save query results to CSV, etc.) and highlighted existing size limits: small-file limits (10 MB export, ~10–100 MB import depending on UI). These limits make BigQuery’s native UI unsuitable for larger analytical transfers.
+
+  • Stopgap solution using CLI + Hadoop Gold To support larger transfers (up to ~10 GB), the team developed a CLI-based workflow that moves data between BigQuery and users’ local machines via the Hadoop Gold cluster. Flow is:
+    
+    • Export: BigQuery -> encrypted export -> decrypt on Hadoop Gold -> CSV on Hadoop Gold -> download to local via FileZilla/WinSCP.
+    • Import: Local -> upload CSV to Hadoop Gold -> CLI push from Hadoop Gold into BigQuery. The solution is intended for analytical users and personal datasets.
+
+  • Security and PII considerations The presenter emphasized that the current demo/workflow is for non-PII data. Import/export of PII requires additional steps (encryption/enclave workflow): creating an Excel that enumerates PII columns and tags, passing that path to the CLI config, and following the PII-specific flow. PII support is not enabled by default and has additional limitations.
+
+
+Configuration, prerequisites and files required
+
+  • Configuration file details A shared config file (placed in the user’s home directory, e.g., ads.home//LumiConfig) must contain:
+    
+    • user email
+    • WireSafe token (unique per user; provided upon onboarding/analytic project access)
+    • Cornerstone queue name (queue on Gold server)
+    • GCP BigQuery project ID This single config file is used for both import and export operations.
+
+  • Hadoop Gold file placement Users must create a destination (for export) or source (for import) folder within their personal directory on the Hadoop Gold server (e.g., /LumiImport or LumiDestination). Use FileZilla / WinSCP to upload local CSVs to Hadoop Gold prior to an import CLI run, and to download exported CSVs after an export completes.
+
+  • CSV formatting requirements Files used in the workflow should be CSV with the first record as a header row. Non-PII datasets are supported in the current demo; PII datasets require the PII Excel and a different flow.
+
+
+CLI script and execution details
+
+  • Script and main parameters The CLI script used is cfcli.sh. Example parameters discussed for both actions:
+    
+    • action: import or export
+    • -conf
+    • -data_location
+    • -table_name
+    • -ingest_method <new | append | overwrite> For PII imports/exports additional parameters are required (e.g., PII columns Excel path, PII flags).
+
+  • Import flow (demo) Steps demonstrated:
+    
+    1. Create LumiConfig with email, WireSafe token, queue, project.
+    2. Place CSV into Hadoop Gold under a personal folder (e.g., LumiIMP).
+    3. Execute cfcli.sh with action=import, conf path, data_location, table_name, ingest_method=new.
+    4. Respond to CLI prompts (e.g., header row Y/N, PII Y/N). For demo: header = Yes, PII = No.
+    5. The CLI triggers a job; presenter received a “job initiated” notification and later an email from lumidatatransferalerts@aexp.com [lumidatatransferalerts@aexp.com] confirming completion.
+    6. The user confirmed the table appeared in their personal BigQuery dataset and verified data (noting date handling caveat).
+
+  • Export flow (demo) Steps demonstrated:
+    
+    1. Ensure table to export is in personal dataset.
+    2. Ensure LumiConfig present and create a Lumi destination folder on Hadoop Gold.
+    3. Execute cfcli.sh with action=export, conf path, data_location, table_name.
+    4. Respond to CLI prompts (PII = No for demo).
+    5. CLI returns a request ID and “job in progress”; user receives email with a decrypt command.
+    6. The user runs the provided decrypt command on the Gold server; job completes and CSV appears in the specified Hadoop Gold folder.
+    7. Download file from Hadoop Gold to local via FileZilla and verify contents.
+
+  • Notifications and channels Users receive status emails from lumidatatransferalerts@aexp.com [lumidatatransferalerts@aexp.com]. Slack channel exists for queries and support during the operation.
+
+
+PII-specific flow notes (preview)
+
+  • Extra steps for PII data If data contains PII, the workflow requires:
+    • Creating an Excel file listing PII columns and PII types and specifying SDE tags as required.
+    • Adding the PII Excel path as a parameter (e.g., PII_columns_Excel) to the CLI command.
+    • Following the PII-specific prompts and encryption/decryption steps. Detailed PII flow will be covered in a follow-up video and document on Navigator.
+
+
+Demos and validation observations
+
+  • UI import/export small-file demo Presenter demonstrated BigQuery UI “Add -> Local file -> Upload” and “Save Results -> CSV” for small datasets, showing auto-detect schema and immediate table creation / download — reiterating UI limits for larger files.
+
+  • CLI demos for both import and export Presenter showed full end-to-end import and export using the CLI; confirmed email notifications, job IDs, and presence of resulting files/tables. Noted minor parsing/date formatting differences on import that users should check.
+
+
+📋Overview
+
+  • The BigQuery UI supports small file import/export but has strict size limits (10 MB export; ~10–100 MB import), which are inadequate for larger analytical datasets.
+  • A CLI-based stopgap solution leverages the Hadoop Gold cluster to transfer data up to ~10 GB between BigQuery and users’ local machines.
+  • A single configuration file (user email, WireSafe token, Cornerstone queue, GCP project) is required and reused for import and export.
+  • Workflow steps: place file in Hadoop Gold (for import) or create destination folder (for export) -> run cfcli.sh with appropriate parameters -> await email notification -> decrypt (for export) -> download/upload via FileZilla.
+  • PII handling requires additional steps (PII columns Excel, tags, encryption); current demo covered only non-PII transfers. Detailed PII process to follow in next session and navigator documentation.
+  • Slack channel and lumidatatransferalerts@aexp.com [lumidatatransferalerts@aexp.com] are the support/notification channels for the process.
+
+
+🎯Todo List
+
+  • Presenter / Data transfer team:
+    
+    • Publish the detailed step-by-step document (including sample cfcli.sh commands and config examples) to Navigator, due: ASAP
+    • Prepare and publish the PII-specific mini video and documentation explaining Excel PII schema, SDE tags, and secure workflow, due: next session (date TBD)
+    • Provide example LumiConfig templates (redacted) and sample decrypt commands for users, due: ASAP
+
+  • Analytical user / attendees:
+    
+    • Create personal Lumi folder on Hadoop Gold (e.g., LumiImport or LumiDestination) and confirm access, time: prior to first transfer
+    • Obtain WireSafe token and confirm LumiConfig details (email, queue, project) placed in home directory, time: prior to first transfer
+    • For non-PII import: upload CSV with header to Hadoop Gold and run cfcli.sh with action=import (sample command provided in session), time: as needed per transfer
+    • For non-PII export: ensure table exists in personal dataset, run cfcli.sh with action=export, run decrypt command from email, then download CSV via FileZilla, time: as needed per transfer
+    • Validate data formats (dates and types) after import/export and report issues to the Slack channel, time: immediately after transfer
+
+  • Support / Ops:
+    
+    • Monitor and respond to Slack questions during user transfers; ensure lumidatatransferalerts email notifications are delivered correctly, time: ongoing
+    • Verify and confirm limits and capability statements (e.g., maximum supported size up to 10 GB) and update public documentation if needed, time: ASAP
+
+If any attendee needs the exact example commands, sample LumiConfig template, or the PII Excel template used in the demo, request them in the Slack channel or reply here and the presenter/support team will share the artifacts.
+
+
+Transcription
+
+00:00:05 - 00:03:59 Unknown Speaker:
+
+BigQuery import export using CLI. Welcome to Lumi import export functionality mini video session. So in this video session we will be discussing how we can import the data to the BigQuery or how we can export the data from BigQuery and analyze the output. So let me start my screen share. So I'm presenting here one PPT. So we'll discuss about this first. We'll go through the deck and we will implement the import feature and export feature. So this document is built to explain the users what are the import and export capabilities available on GCP BigQuery. . . . I'm sorry. You don't believe me? What do I do? What do I do? Um um. I'm going to lay a guy and he's going to get some of you on him.
+
+00:06:18 - 00:15:00 Unknown Speaker:
+
+So there is out of box import export functionality, which is available. And as you can see here, it is mentioned that it has a data size limitation of the 10 MB. So analytical users, when they make use of the import and export functionality, they expect the bigger volumes of the data to be able to export and import. So that's why we have developed this stopgap solution using command line interface. So with this solution, analytical users will be able to securely transfer the data up to 10 GB from BigQuery or to the BigQuery. So let's move ahead and see how we are enabling the data transfer using CLI. So if you see here in the schematic, we have mentioned this Lumi at the right. Thank you. And this is corresponding to BigQuery.
+
+00:15:00 - 00:15:53 Unknown Speaker:
+
+So if you have the data in the BigQuery and you would like to export more than 10 MB of the data, then you can make use of the command line interface using Qt or the terminal. You can connect your Hadoop Gold in the cornerstone and using CLI, you can export the data into the Hadoop Gold. Once it is available in Hadoop Gold in the CSV format, you can then pull it into your local device, which is given to you by American Express. The similar operation we will be doing while importing the data. First, you can push the file which you would like to import into the Hadoop Gold cluster in the file system. Then using CLI, you can execute the command to push the data into the BigQuery.
+
+00:15:54 - 00:16:45 Unknown Speaker:
+
+So we are making use of the Hadoop Gold environment to facilitate our import and export. So moving ahead, we will be discussing the import first. Well, focus on the import, how we can import the file. So if you see here, BigQuery has the out of the box feature to upload the data from your local system to the GCP. So we have to... use this add button. We need to click on this local file, we need to select the option as upload. We need to describe, we need to provide the details like data set and table, and we can upload the data. We'll see the demonstration of it, how we can do it. And in the next slide. We have explained how we can import the data into the BigQuery from our local system.
+
+00:16:45 - 00:24:47 Unknown Speaker:
+
+So for that we need to have the data. Yeah, bitch. We would like to import in the CSV format uploaded onto the Hadoop Gold cluster, the Hadoop Gold cluster which you have access to. So you see here, we have placed a source on the Hadoop Gold and then we execute the import command. This import command we are executing using this particular shell script, cfcli.sh. And once we perform this activity, Data from the CSV file will be available in our personal data set in the BigQuery project. So how the steps will execute is, the first step is you need to have the configuration file to perform this activity which will be placed into. You're homely. Directory So, as you can see at ID and Home and the personal directory, the config file is stored and what all details it contains is, it has described the screenshot.
+
+00:24:47 - 00:25:38 Unknown Speaker:
+
+So, user email address you need to send, set it as per your ID, then Wire Safe token it will be shared with you. Once you have access to the Lumi, then the queue name, the queue name of the Cold server. You have to mention it over here, and you need to mention the GCP BQ Project ID. You need to mention the project in which you would like to import the data, or export the data. So you have the user email, YSF token, queue, and project name. These four parameters, or these four attributes you have to declare in the configuration file, and this configuration file will be common to both import and the export operation. So, first step, as it is mentioned, we need to create the configuration file, then we need to create the source file.
+
+00:25:38 - 00:26:31 Unknown Speaker:
+
+In the Hadoop Gold Cluster so you can see here. We have appended a screenshot which indicates how we can contain the file, so here we are creating the CSV file. So we have we need to have the Cornerstone folder and the CSV file, which is to be imported, available into the Hadoop Gold Cluster. Then we will be running the CLI command in the third step. So as you can see, first and second step, independently we can perform. Once all of this, both these operations are done, we can come to step number three, wherein we are executing the command on the command line interface. What command we're executing, it is given at the top. This is just a sample command, so you need to click it. For example, here we are... Executing this command, save CLI.sh.
+
+00:26:31 - 00:27:22 Unknown Speaker:
+
+Action attribute, we are setting it to import. Hyphen conf, here we are setting our configuration file. Like here, whatever path of the configuration file, we are mentioning it over here. Hyphen data underscore location. So here we are specifying the location where we have put our CSV file. So LumiIMP is the location where we have. Created our file, so we have mentioned it over here. Hyphen Table underscore name What is the table name we would want? Uh, for when? We for the uh? Importing the data, like whatever the data we have in this file. If we would like to import in the big query, in what table we want to import it. That we have to specify and in just method, we have to specify it as new.
+
+00:27:23 - 00:28:20 Unknown Speaker:
+
+So once we perform this step, once we execute this command, we will get the notification that the job is in progress and the import process is initiated. Once basically the command execution will end over here and after some time you will receive the email that it is completed. And once you receive this email, you can go to your BigQuery console and find that within your personal dataset of the project which you have mentioned in the configuration file, the table is created. The name of the table will be same as the name of the table which is mentioned by you in the command. Like for example here, hyphen table underscore name, we have mentioned import as one. And similarly, if we go to the BigQuery after all the operations are done, the table will be created with import S1.
+
+00:28:21 - 00:29:26 Unknown Speaker:
+
+So let's come out of the slideshow and see how it can be done. So here, folks, if you see here, I have let, and similarly, if we go to the BigQuery, after all the operations are done, the table will be created with import S1. So let's come out of the, slideshow and see how it can be done. So here, folks, if you see here, I have connected to my personal dataset and you can see that the LumiConfig is the file which I have created. If I open it, you will see my configuration file and yeah, you can see my email address and also I have specified my wire safe token and other details in that file. As I was explaining to you, I have query queue name and project name as well.
+
+00:29:27 - 00:30:21 Unknown Speaker:
+
+Please note that wire safe token will be different for the different users. So do not try to use the same one which I'm showing over here. So once I have this, let me show you how I have placed the file on the FileZilla. If you see here, I have connected to my gold server, Hadoop gold server. And within this location, you know, AXBPU analytics CSED on this path. I have created Lumi import folder within my personal folder. And in that folder, I have added this file from my local system because I want to import this data. What data does it contain? Let me quickly show you. So if we just open it. This is the CSP file. It contains the three columns. So first column is a date and first column is date.
+
+00:30:21 - 00:31:13 Unknown Speaker:
+
+Second column is a training title. What all training we are planning to have on that day and duration of the training. This is just a sample data which I have created for testing purpose or the demonstration purpose. So first, okay, so this CLI setup is present and command also I have prepared if you see here to execute it. And have the table available in the BigQuery. So I'm calling this save CLI command. Action is import. Then configuration file, I have put the path of configuration file, which I have created. Data location, where I have kept the data, I am pasting it over here. Table name, what is table name going to be? This is import underscore CLI that I have mentioned over here. And ingest method is going to be new. So we are creating a new table.
+
+00:31:13 - 00:32:10 Unknown Speaker:
+
+So we have indicated that using this. So we can execute it now on the terminal. But before that, let's try to see how we can use the out-of-box functionality import. So for example, see here, As we were showing in the pictures or the screenshots, here we have this add button available, we can click on Add, we can click on Local file. And you know, we have. We get multiple options, so we need to select upload, we need to browse the file. Okay, so test file of Import I'm going to open it, format is CSV data set I am going to create with my own data set, I will name it as Import UI. So this is going to be my table name, so schema of the table, like the columns and data types of it.
+
+00:32:10 - 00:32:56 Unknown Speaker:
+
+Either you can hit Auto Detect Check Auto Detect button, or you can manually type in the field name, data type, the mode, and other details. So I have a simple table, so I will click Auto Detect over here and I will hit this Create Table button. And once I create this, it will create a load job to load the data from my local file into the table. And if you see the data is now available, the table is now available. Within my data set. And even in the preview option, I am able to see the details which are being imported to my BigQuery. So now let's see how we can accomplish the same thing using the command line interface. Again.
+
+00:32:56 - 00:33:47 Unknown Speaker:
+
+I would like to remind you that for import, we have the data size limitation of 10 MB or 100 MB for the import and 10 MB for the export. We have these limitations. So because I'm using the small data, I can use it to directly upload it into the BigQuery. But let's say you are dealing with the data more than 100 MB, then you cannot do it directly. You need to make use of this stopgap solution, which is developed by the team. So let's copy the data and see if it gets imported into the data set or no. So just verify if all of the details are correct. Like path, where we have this command which we are planning to execute, then we have this action, we have. Import action is basically import or export section is import for us now.
+
+00:33:47 - 00:34:52 Unknown Speaker:
+
+So I have specified it configuration file path data location where our data is located, that is that path table name of the imported imported table for imported data data which we would like to import. And in this method, so everything is new, then we can just copy it. You can go to terminal. And we can can just paste the command which we have prepared. So I can see it is getting pasted. So we'll wait until we get, yeah, the final new section. And if I hit enter, so it will ask the question whether the input files have header with the column name. So answer is Yes. I have the header, so I will type in Yes. I hit enter. My input data contains personally identifiable information, so we do not have any personal identifiable information.
+
+00:34:52 - 00:35:46 Unknown Speaker:
+
+So I am hitting it, no. Please note that if you hit the yes, then this solution will again have some other limitations. So as of now, we are not supporting the PII data import because that needs to be encrypted. So as of now, we'll just say no, and anyways, we do not have any data. So we'll hit this button. And it is saying that we have to wait until the import job is in progress. And also we have we are getting the Slack channel, which we can use to post our query in case we need some SSD. One more thing to note here is that guys, once you open the terminal or putty, you need to SSH into your gold Hadoop server. So like I said, I have SSH into the gold server and then I performed this operation.
+
+00:35:47 - 00:36:53 Unknown Speaker:
+
+So now this job is in progress. So as you can see folks now that I have got the notification that import process is initiated and I will receive the email from Lumi data transfer alert at the exp.com when the data is available. So I will wait for that email to come and then I will check the availability of the table in my personal data set. So team as, uh, we have got the notification, uh, the query import process is initiated and we were waiting for the email. So now I have received that email. If you see here. I have received this email for my request ID, which was which I could see it over here like 989. And it is saying that request to import the data is completed and.
+
+00:36:54 - 00:37:50 Unknown Speaker:
+
+Now if I go to the console and if I refresh this, touch the content, I can see that import CLI is created over here. And if I see the data in it, it is, yeah, so we have got the data. So it has appended some additional details, but I think because it was a date, so we need to be a little bit careful about it when we have the date. But now the data is available and imported in the BigQuery. So we discussed how we can import the data and in a similar way, we can export the data as well. But this method we discussed specifically for the data which does not have PII. Suppose we have a data with the PII and we would like to import it, then what we can do?
+
+00:37:51 - 00:38:45 Unknown Speaker:
+
+So that is explained in this document, which will be uploaded on the navigator. You can go through it and reach out to us in case of the assistance required. Or in the Slack channel, you can mention your query. We have also included some import command node like the wire safe token. What it is? So, if you have access to the analytical project, and as we discussed, because import and export functionality is utilized by analytical users, we are enabling this for analytical projects. And once you have access to the project, you can work with, you can get this wire safe token. And while using the Home directory, you need to mention path like ads. Home files to be imported should be a CSV file, first, record should be the header, and other details are mentioned over here.
+
+00:38:45 - 00:50:00 Unknown Speaker:
+
+So even for the ingest method, there are options available, like we are using new, but if when, we can make use of the other option based on our requirement. We are importing the data in the already existing table. And if you want to overwrite the data, we can make use of the overwrite option. Or if you want to append, then we can make use of the append option. So this is something which we need to understand and follow. And suppose you have the data with PII and you would like to upload it, then you will have the additional steps. The six steps are common. Two steps which are independent from each other there. Thank you. Another step wherein you need to create the Excel file and you need to mention all the PII columns and the PII type.
+
+00:50:00 - 00:51:44 Unknown Speaker:
+
+So SDE tag of the corresponding SDE, you have to mention it like this. And you need to also mention the Excel path in the parameter. So if I bring it in the presentation mode, you can see that ingest method would be new, like either new append or overwrite VKI. Saying it as a new and iPhone PII underscore columns Underscore Excel this attribute. We need to fill it using the Excel file which we have created with the PII columns. We need to define it, including the path. Then we can say that yes. Our data contains first the identifiable information, and once it is completed, we will get the email. Similar to the process which we saw while importing the content to the BigQuery. So folks, that's it for the import using the CLI.
+
+00:51:44 - 00:54:51 Unknown Speaker:
+
+We will prepare the mini video for exporting the data out of the BigQuery and you will get the entire idea of how the import and export process works. Thank you so much. Hello everyone, welcome to data transfer using BigQuery mini video session. In this mini video session, we will demonstrate the export operation from BigQuery to Hadoop server. So in the previous mini video session, we discussed about the import operation, how we can import the content from Hadoop server to BigQuery. And today we will, in this session, we will discuss about how we can export the content which is there in BigQuery on to Hadoop. So let me share my screen and this is the deck so we'll cover we'll see some content on the deck and then we will perform the operations on the BigQuery console about how we can export.
+
+00:55:11 - 00:57:39 Unknown Speaker:
+
+Yes. The content which is there in BigQuery on to Hadoop Core Server. So let me share my screen. And this is the deck. So we'll cover, we'll see some content on the deck and then we'll perform the operations on the BigQuery console. So this execution as well, we will need the command line interface and the Hadoop. So when you... I have to export the data out of BigQuery. BigQuery provides the out-of-the-box capability to export the data out of BigQuery in this case. And whatever result of your query execution. I'll give you 4.45 for two. 3.30 is enough. No, 3.30. Eat it, it's good. 3.30 is enough for me. Is, you can export that result into this Save Results option and choose the CSV file. So how? It was very simple.
+
+00:57:39 - 00:58:32 Unknown Speaker:
+
+So if we go to the big query, okay, so I'm showing the big Query console here. So there is this table import Underscore UI, so if I query this table, okay, and if I select it, if I execute it, it has a sample data. This is a sample table which I imported, uh, from my local system. From the CSP file into the BigQuery, and you can see it has three rows and two columns, so now suppose I want to export this to BigQuery? Provides the out of the box functionality. So I can just, uh, save the data onto my local system in the CSV format. And the data limit, you can see there is a data limit of the 10 MB. So even if I save it, you know, because it has very less data.
+
+00:58:32 - 00:59:30 Unknown Speaker:
+
+So you see, the file is saved over here in my local system and I can open it. Yeah, and I can find that there are three rows and two columns are present. So this way we can export in our local system using the out-of-box options available. But what if your data is more than 10 MB? Let's say you have some 100 MBs of data or you may have some GBs of the data, then how can you export it into your local system? So this solution is designed for the analytical users who export the data. From the BigQuery to their local system or they need to export the data to their local system. So you can use this functionality or this solution to export the data from BigQuery into Hadoop Gold Server.
+
+00:59:31 - 01:00:23 Unknown Speaker:
+
+And from Hadoop Gold Server, you can transfer it to your local system using FileZilla or WinSCP. So if you see here, I'm opening my FileZilla. So on the left-hand side, I have my local system, local file system present. And on the right hand side, I am connected to Hadoop COVID server and I have created my Lumi destination folder in my personal folder here. So whatever export operation we are going to perform from the BigQuery, the data will land in this particular folder. So you need to create this folder into your personal folder wherein the data from the BigQuery will land to perform this operation. Now also, You need to have a configuration file like, I'll just quickly show you. So what I have done is on my terminal window, or, you can say, the putty window.
+
+01:00:23 - 01:04:08 Unknown Speaker:
+
+I have performed SSH operation SSH command into my server, and also you can see that in my personal folder, Ads, home and my personal ID. I have this Lumi Config file present and this Lumi config file, it contains what it contains, the email, it contains. Wireship token, which I have received when I got onboarded to this analytical project, which project, that project? Also you need to mention, and also the Uh, on the stone queue name that you have to mention over here. Let's go over the steps in the deck and then we'll perform those in the BigQuery console. So if, let me enter it into the presentation mode, because, yeah, so. We will be facilitating the export from BIG from this query into Hadoop server using command line interface.
+
+01:04:08 - 01:06:28 Unknown Speaker:
+
+So, we will be executing this command, this script, cfcli.sh and action parameter will be set to export. So, how the queue or how the flow will look like. So, first three are the prerequisites. So, first step here, it indicates the configuration file which I just shown. It contains email, token, on the stone queue and the project from which we are going to import then the one time destination. So, in my case, I have greater than Gumi underscore destination, which I have shown you in my personal folder. And then the GCP export file. This is nothing but the table which we have in our data set, the personal data set. And as I have emphasized in the previous import video session as well, guys, that this utility works with the personal data set.
+
+01:06:30 - 01:07:26 Unknown Speaker:
+
+You need to have the table which you have to export in your personal dataset created in the beginning. Once this prerequisites are satisfied, you can execute the command on the command line interface by setting the action to export. Once it is executed, you will get the message in PuTTY saying that it is running. After some time, you will receive the e-mail which gives you the command to decrypt the data which is available after export. Once you execute that command, the data will be decrypted, execute the command, like this is the seventh step. Once you execute the command, the data will be decrypted and will be available to you on the Hadoop whole server in the CSV format. So this is how the flow looks like. So let's... okay, and this show and we'll execute it.
+
+01:07:26 - 01:08:21 Unknown Speaker:
+
+So, uh, let me show you the table which I would like to import, so see, this is my table import Underscore CLI. This table I have created by. This is how the flow looks like. So let's, uh, okay, and this show and we'll execute it. So, uh, let me quickly show you the table which I would like to input. So see, this is. My table, import underscore CLI. This table I have created by executing the import operation. You have attended the import mini video. I had imported the data from the test file on my local system into the BigQuery. So, it has again these two columns and if you see it has the three record only like the import UI table. So, this table we are going to export to the Hadoop OS server.
+
+01:08:23 - 01:09:13 Unknown Speaker:
+
+For that, I have created the command command I have created, uh, keeping in mind all the parameters which I have to choose. So, for example, here I am executing this particular script, I am setting action to export. Okay, so first parameter is action, I am setting it to export. Hyphen Conf. So here I am mentioning my configuration file, so I have shown you that this is my configuration file. So ID and Home Personal Directory and Lumi Config this can be anything like Lumi Underscore Config or whatever you have created, you need to mention it for configuration. Data Location What should be the data? Where should be the data located after the export? So that we are mentioning over here? In this parameter, data underscore location final parameter is a table name.
+
+01:09:13 - 01:10:04 Unknown Speaker:
+
+What is a table which you would like to export? So import underscore CLI is the table. So that I have mentioned and now I can copy it and I can execute it on the terminal. If I come here, if I paste it, so it is getting pasted. Once it is fully pasted, we can hit enter. And this data set does not contain any PI data, so I am mentioning here no. If you want, if you have PII data, then you need to follow the other process wherein you need to prepare the Excel, and that we will explain in the next video session. But the export command, which currently we are demonstrating, is without PII data.
+
+01:10:04 - 01:11:04 Unknown Speaker:
+
+So as you see, I got the notification that export job is in progress and the request ID is available, and we will receive the e-mail from numedatatransferalerts at the rateaexp.com, and this we will receive once the data is available for us to consume in Rube Gold Server. So, let's wait for the e-mail, and then we will check it again. So team, if you see, we were waiting for email from the LumiData transfer, and we can see that we have received that email. And if we go back to the deck and see the flow that we have received the email with the decrypt command. So if you see here, like, again, I will show you that here on the step number six. So email decrypt command we have received.
+
+01:11:06 - 01:12:14 Unknown Speaker:
+
+What it is saying is email is saying that we can log into Hadoop board cluster and following command to decrypt the file. So let's copy this particular command, go back to terminal, paste the command over here in the terminal and once it is completely pasted, we can execute it and we get the notification that decrypt job is in progress. So once it is done, we can see the exported data in Hadoop Gold Server. As we can see that after around two minutes, the job is completed to decrypt the data onto Hadoop Gold Server. And we have got the notification that BigQuery export process completed and data is now available at the location. So the location which we have mentioned by executing the command within that folder, there is this folder available.
+
+01:12:15 - 01:13:24 Unknown Speaker:
+
+So let's go to the FileZilla and you can see that there is no folder available. But if we refresh it, if I open it again, we can see the decrypted data folder is available. If I double click on it, then I can see that one CSV file is available. This CSV file, I can import it onto my local system. And yeah, it is now available. We can see the confirm it with the date today. And we can go to the folder. And we can see that data is available. And we can, like, file is available, we can open it using Excel and we can see the data is exported because it was very small data actually. We can perform this operation using the out of box BigQuery export feature, but when you are dealing with the data in 200 MBs.
+
+01:13:24 - 01:15:08 Unknown Speaker:
+
+You can use this export functionality to export the data of a table into a file and export the data into file and analyze it onto your local system. Thank you so much folks and I will see you in the next video session on same topic in which we discuss how we can work with the PII data on this data transfer utility. Thank you. Another OTP is coming. Another OTP is coming. It is coming now. It has come twice. It has come twice.

@@ -1,0 +1,90 @@
+2026-03-10 BigQuery Job Workflow and Script Issues Discussion Ayyappa call
+
+Creation Time: 2026/3/10
+
+
+📅About Meeting
+
+  • Date & Time: 2026-03-10 16:43 (Duration: 1971 seconds)
+  • Location: Not specified
+  • Attendee: Not specified / Multiple participants (names not provided)
+
+
+📒Meeting Outline
+
+
+Query & BigQuery Job / Repository Issue
+
+  • DK repository tests and SELECT * usage The group discussed a script that references the "dk repository" and a test that was created unintentionally. One participant asserted they do not need the test and confirmed they had already created a test themselves. There is confusion about where the SELECT * call originates from (which file or wrapper). The team noted that SELECT * is being used and that it does not follow the required style; the script is expected to be inside a wrapper script ("Fetch from BigQuery 277" referenced). There was a request to find the caller location for the SELECT * statement.
+
+  • BigQuery job vs ad-hoc query Participants clarified they created a BigQuery job to access a database table, while another prefers to run ad-hoc queries and modify them without creating a job. There is a need to decide whether to use jobs or queries for this workflow and to standardize the approach.
+
+  • Table update and read availability checks A table update was requested earlier but the table did not reflect the update. Team members agreed to check if the table exists and whether reads can happen from it. There were steps planned to verify if errors occur during the check and to determine why the update didn't apply (cross-references / dependencies like "416 onto cross references" were mentioned).
+
+
+Script Execution, Triggers & Failure Modes
+
+  • Script finishing abnormally / trigger behavior The team reported scripts may finish abnormally and discussed trigger behavior — triggers fired but the outcome/time was unclear. They proposed checking logs to understand abnormal finishes and identify whether triggers executed correctly or failed mid-run.
+
+  • Wrapper script and formatting / operator usage There was emphasis on ensuring code follows proper style and wrapper script patterns. Some wanted to move logic into operators to streamline work and make the process reusable. Discussion on customizing queries or code inside a custom operator versus using the provided wrapper.
+
+  • Load process and deployment A stepwise (one-by-one) loading approach was mentioned, with concerns about deployment and whether incremental loads update cross-references correctly. Multiple false updates were observed ("2 false updates") and require investigation.
+
+
+Miscellaneous Operational & Communication Notes
+
+  • Access, machines, and office logistics Some participants noted who is working from home and who needs office machines (laptops) or must visit the office. There was a brief side-discussion about giving videos or directives to team members and coordinating access.
+
+  • Numeric/ID references and executions Various numeric IDs and ports were quoted during troubleshooting (e.g., 324, 8081, 8227, 3275, 416). Participants reported running/executing queries in interfaces and checked for results and execution status.
+
+  • Unstructured comments and personal remarks The meeting included several colloquial and personal remarks in regional languages, expressions of confusion about severity of issues, and some non-technical comments that do not directly impact action items but indicate local team context and informal communication.
+
+
+📋Overview
+
+  • A test for the dk repository was created but considered unnecessary by some; the owner claims the correct test exists.
+  • SELECT * usage was flagged as non-compliant with style; locate where it is called (wrapper script vs direct query).
+  • Need to decide between using BigQuery jobs versus ad-hoc queries and standardize the practice.
+  • Table updates did not reflect; verify table existence and debug update/cross-reference issues (noted 416 cross-reference concerns).
+  • Scripts may be finishing abnormally or triggers behaving unexpectedly; examine logs and trigger timing.
+  • Consider refactoring into operators/wrapper to standardize and reduce repeated manual steps.
+  • Check deployment and one-by-one loading process to ensure cross-reference updates succeed and reduce false updates.
+  • Office access and machine logistics require coordination for some team members.
+
+
+🎯Todo List
+
+  • Unknown / To be assigned:
+    
+    • Locate the source of the SELECT * call (identify file/wrapper and caller), due: ASAP
+    • Confirm whether the dk repository test should be kept or removed; reconcile created tests, due: 2026-03-12
+    • Decide and document workflow: BigQuery job vs ad-hoc queries (create standard operating procedure), owner: TBD, due: 2026-03-15
+    • Verify the target table exists and read permissions are correct; run test read and report errors, owner: TBD, due: 2026-03-11
+    • Investigate why table updates did not apply (investigate cross-reference 416 and related IDs), owner: TBD, due: 2026-03-12
+    • Check logs for abnormal script termination and trigger execution timestamps; produce a short incident summary, owner: TBD, due: 2026-03-11
+    • Refactor problematic scripts into the wrapper/operator pattern (to remove SELECT * and enforce style), owner: TBD, milestone: initial PR by 2026-03-19
+    • Test one-by-one loading flow and confirm cross-reference updates; resolve "2 false updates" issue, owner: TBD, due: 2026-03-14
+    • Coordinate office/machine access for team members who need laptops or in-office work, owner: Team lead, due: 2026-03-13
+
+(If owners and exact deadlines are known, update the Todo List to assign names and specific due dates.)
+
+No relevant content mentioned (for items where topic or details are missing): none — all technical items captured above.
+
+
+Transcription
+
+00:00:14 - 00:02:56 Unknown Speaker:
+
+DQ Repository టేస్ టేబ్లు రీడ్ జాలే దేక్యూ రీపాజటి టేస్ టేబ్లు రీడ్ జాలే, I don't need it. Where does it call from? It says select star from. There is no test for the dk repository. There is only the dk repository. I don't need the test. It is your test, It will create it. I have created the test, This is correct. The spelling is correct, 2 రా పెచ్చింగు విక్వేరి విక్వేరి విక్వేరి విక్వేరి విక్వేరి, 298 లో ఏదా ఉందే ఏర్రు, I told you to update the table. It didn't get updated. I'll check for a minute. It means to check if there is an error or not. If there is an error, it means to check if there is an error or not.
+
+00:03:02 - 00:12:09 Unknown Speaker:
+
+You are using select star, but it is not in the correct style, this script only comes in the wrapper script, Fetch from BigQuery 277, 1 స్క్రిప్ట్స్ లోములా ప్రాప్పరుందే, I have created a job for Bit Query and I am accessing the database table. I don't have a job, I just want to create a query and modify it. operators తో మార్త్రవే మన పనిన పూడ్డ్ చేస్కోవాలం other than this one మన పూడ్డ్ చేలుందే ఏందో ఒక్వేల మీరె వనా కస్టమైస్రిలో చేయాల అనుకొండి ఏదిలో కోడ్ ఏ, 1 సేకండ్ టూ సేకండ్ సేకండ్ సేకండ్ సేకండ్ సేకండ్ సేకండ్, ಕಾವಿಂದೇದು ಇನಿಶೇಟ ಈತ್ತು ಈತ್ತು. it might have been finished abnormally. చాల్ టేమ్ అర్థింది సార్? ట్రిగర్ అవడాంది చాల్ టేమ్ అర్థింది. ఏదలే ఇమారా పంచ్చు స్లోవుందాయింది. డెప్రాయమెం�, 1 మిన్నిర్ చోడ్డామో, 1 by 1 లోడింగావుతు, 416 ఆంటో క్రాస్ రిఫ్రంస్ సరిక్కి అప్డేట్ హిందా లేదా 416 ఆంటో క్రాస్ రిఫ్రంస్ సరిక్కి అప్డేట్ హిందా, 2 ఫాల్స్ అప్డేట్ చేల్లేట్ చేల్లేట్ చేల్లేట్, I came to the village.
+
+00:12:12 - 00:25:05 Unknown Speaker:
+
+EY వాస్ట్వికె మా పాపకె ఫిల్లు ఫేవర్గుందే గనీ నీను ఇంట్లోనే ఉన్నాన్ ఏక్చోల్గా మలీ కొంచ్చు ఏమర్జేన్సి పరపస్తో మలీ అలాదు వచ్�, EY కండియా విడియా ఇచ్చివల్లు ఇప్పుడేనేటే డిరెక్టిన్ను లాఫ్టాప్లు ఉస్తున్నారు దాని కోసా మేమేక్స్ ఆఫిస్ కి రావాలంతే అదికోడా, I will check if the table is available. 324, Q-Track డేటాటాని దాగికుడో ఫేలోతున్ని మీ దేగ్రా ఎమనా కోర్షన్ని పెట్టున్నా డేటాబేస్లో టేవుల్ లో రీడ్ జేస్తానంకి ఆ ఉందన్ని మీడు �, 80 నోమ్మరు 80 నోమ్మరు 82 నోమ్మరు, 8081 న చూసారా ఇక్కడా ఏగ్జికుట్ క్వేరి ఇందు గాదా నే క్వేరి ఇందు ఏగ్జికుట్ యాస్త్నే ఇక్కడా ఇది క్లిక్ చేయిందు ఇక్కడా అంతా కోన్�, Thank you. 8227 3275, 2 నేన్నాడి ఇప్పుడు పెట్టావం? పొద్ధు నాడికింది రమిలేస్టే ఇన్నా టివి వాల్ టివి కాదు. నేన్నాడి ఇప్పుడు పంపిచ్చావం అన్నా? పంపి, 10 సందా, I have a doubt about this. 10 గుడుక్రాన్ సోన్నాంగా నా నేస్టు మందు మందు నేస్టు మందు నేస్టు మందు నేస్టు మందు నేస్టు, we will try our best.
+
+00:25:13 - 00:32:24 Unknown Speaker:
+
+నాలకి నా పేసరాంద పుల్లుకు డాన్ ఇంగ్ ఎంగ్ టీముకు ఒరు పొణ్డింగలు వేర్యాదావుదే ఇర్కుతాన్ కేక్రా ఇల్లే ఇనీకె కేక్రా, ನಂಬದ ಮಕ್ಕಾ ರುಕ್ರವಾನ ನಂತಾವಿಲ್ಲಿ ಚನಕ್ ನೇತ್ಯ, 3 మును పేరు మును పేరు మును పేరు మును పేరు, I don't know the severity. I don't know. I don't know. I don't know. I don't know. I don't know. Raja Raghuram Raghundam, 10 మీ లా వీడు ఉనుకు? ఇల్లా అంక్కరీ ఇదు మీ అన్నా నాక్కేటు కాని కిలో ఇదులా ఇదుకు వాంగు ఉనుమ్నా ఇరీ పాక్రా, 2nd పాతియా డెంటిస్టు న అపోల పారియన్నికి అపోల అంక్కురు కేటా అంక్కురు కేటా అంక్కురు కేటా అంక్కురు కేటా అంక్కురు కేటా అంక్కుర�, 5 రూపల్ పాక్కిట్, A అందు రాజా ఇర్కారిల్లా అవరు సెడుల్ పన్నువారు లీడ్ కాల్స్ మిస్సాయిటేం అదులోడా అదులో యారుమే జాయంట్ పన్నువాటాంగా ఇంది అవరు ,

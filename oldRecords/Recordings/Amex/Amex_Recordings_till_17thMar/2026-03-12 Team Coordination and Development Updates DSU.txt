@@ -1,0 +1,274 @@
+2026-03-12 Team Coordination and Development Updates DSU
+
+Creation Time: 2026/3/12
+
+
+📅About Meeting
+
+  • Date & Time: 2026-03-12 18:00 (Duration: 2123 seconds)
+  • Location: Remote / Team call
+  • Attendee: Rishna, Rajna, Tanisha, Manish (partner manager), Sandhya, NCV, Sindhuja, Suman, Kundan, Dr. Shamir, Nirmal, Appa, Sandeep, Sachin, Jason, Prithvi, Rachna, Rishna (speaker), and other team members (names mentioned in discussion)
+
+
+📒Meeting Outline
+
+
+Scheduling & Partner Coordination
+
+  • 10pm meeting status and partner alignment The team discussed whether to keep or cancel the 10pm meeting because the partner contact who needs to join is not responding. Tanisha will coordinate with Manish (partner manager) to decide connection timing and details. Consensus: cancel tonight’s 10pm call for now and wait until the partner aligns on timeline; 11pm is too late for most participants and Tanisha’s team, so re-schedule only after confirmation. Action: keep team informed if another meeting is required.
+
+
+Development, Code Refactoring & Pull Requests
+
+  • AFC UH build refactor & PR One member reported working on code refactoring for the AFC UH build; they will add a screenshot/picture today and raise a pull request for review afterward.
+
+  • Code refactor for automation (Prithvi & Sachin review) Prithvi walked through an automation codebase stored in the repo (scripts currently under a folder named daily_dash). Sachin asked for clarity on execution entry points, import paths, and unnecessary credential code. Key files: generate_generation.py (entry), SQL generation wrapper, generate SQL for checks. Sachin asked Prithvi to refactor, remove unnecessary code (duplicate credential setup vs Airflow connection), rename folders/nomenclature (daily_tag -> meaningful name like scripts/DAX), and provide a cleaned version for review. Prithvi will refactor tonight and review again tomorrow morning.
+
+
+Production Issues & DAGs
+
+  • Tenure DAG production issue One person reported checking a production issue related to Tenure DAG; NCV to include this in weekly status reporting.
+
+  • Non-interpreted timer & BPMN change A team member completed one level of testing for a non-interpreted timer, made BPMN changes, deployed those changes, and needs to perform further testing.
+
+  • ICMB carbon-related DAG report Jason received comments from Sachin on an ICMB carbon-related DAG report and will work on those changes in about an hour.
+
+  • DAGs that were paused and re-run There was confirmation that jobs paused during the incident were re-run and none were missed; jobs were verified.
+
+  • Palladium testing block (status history JSON issue) The status history table testing is blocked due to an issue with JSON/profile; the profile fix is in progress.
+
+
+Data Migration, E3/E1 Environments & Metadata
+
+  • RESI Venue status and status history Sindhuja reported the RESI Venue status table is available in the warehouse; metadata registration completed. A DT flow has been created to populate RESI Venue Status into the Resi new status loyalty table; after that, populate the history table via insert into the history table. Sindhuja offered support for event testing and certification once event testing completes.
+
+  • Data migration automation & missing index on dashboard One member is working to automate manual steps for data migration so E3 deploys require no manual intervention. They noted a missing index when migrating a dashboard to E3 and have informed the relevant channel; team is investigating.
+
+  • Loyalty status deployment to E3 and incident follow-up Loyalty status metadata was promoted to E3 via RFC. There are issues in E3 similar to ones in lower environments; the owner will dig previous incidents and replicate fixes. Several related metadata registrations (status history, status summary) completed in E1.
+
+  • Need for engagement request for Lumi API Sachin obtained API details for fetching table and attributes from Lumi and will raise an engagement request (email to be sent) to formalize access.
+
+
+SFTP / File Transfer / Connectivity for RESI files
+
+  • SFTP host confusion & connectivity test There was confusion between hosts used for test environments (E1/E2) and production (Lumi PRD). Sachin shared the correct production host in Slack. Jason to upload a blank file (same filename as expected) to the Lumi PRD host using the Lumi PRD user ID; JSON (team member) will attempt to fetch it to validate connectivity. Team agreed to test and confirm within ~5–10 minutes. Action: Jason uploading blank file now; confirm whether JSON can pull it.
+
+  • Host/profile mapping Discussion clarified that SFTP (SFT) traffic is confined within MX network; profiles and host mapping must be consistent across environments. Use production host and Lumi PRD user for production transfers.
+
+
+Tasks, Workload & Time Tracking
+
+  • Burn down hours / board audit Nirmal was reminded to burn down hours on the board; only three days remain and current board shows zero hours for his product — this will be audited and could cause issues. Team members offered help to update hours and the board correctly.
+
+  • RPA use case documentation Team discussed recorded sessions and RPA use case documentation. Rishna pointed out the Excel form’s 'Business Justification' tab contains questions that should address use-case queries. Rachna to ensure documentation and the form are filled out as needed.
+
+
+Miscellaneous Updates
+
+  • POC for file ingest (R&R project backup & SFTP) One member started a POC in lower environment to dump expected data file into R&R project backup; this worked. They are testing a DAT for SFTP upload and verifying whether files land on the SFT side.
+
+  • Injection monitor for RGCUS table Nirmal will work on injection monitor for RGCUS table per Sachin’s morning note.
+
+  • Control on metric code analysis & dataflow runs Sachin worked on control-on-metric code analysis, status history dataflows, and provided guidance on running DT flows to populate data into the resume tables. He emphasized running the resume DT flow then the status history DT flow to populate data in E1.
+
+  • Next steps on incidents and escalation Sachin emphasized identifying root cause before creating incidents and advised to escalate (loop Raj) only if necessary after trying proposed solutions. If a colleague delays, create an incident since release to E3 is blocked and is a high priority.
+
+
+📋Overview
+
+  • Tanisha to coordinate with Manish for partner alignment; 10pm call canceled for now.
+  • AFC UH build refactor: screenshot to be added and PR to be raised.
+  • Code refactor: Prithvi to refactor repo (remove duplicate credential code, rename folders) and review with Sachin tomorrow.
+  • Tenure DAG and other production issues are being investigated and will be included in weekly status.
+  • Non-interpreted timer BPMN change deployed; further testing required.
+  • RESI Venue Status DT flow and status history flows exist; Sindhuja/Suman to run and complete flows; metadata registration done.
+  • Loyalty status promoted to E3; investigate recurring E3 error using previous incident records.
+  • SFTP host confusion resolved; Jason to upload test blank file to Lumi PRD; JSON to validate retrieval.
+  • Nirmal must update/burn down hours on the board before audit; team offered help.
+  • RPA documentation: use Business Justification tab in shared Excel; Rachna to ensure completeness.
+  • Sachin to raise engagement request mail for Lumi API and send host details in Slack.
+
+
+🎯Todo List
+
+  • Tanisha:
+    
+    • Coordinate with Manish (partner manager) to confirm connection time and approach for partner integration; update team on timeline (ASAP).
+
+  • Prithvi:
+    
+    • Refactor automation repo: remove unnecessary credential code, clarify execution entrypoint, rename folder(s) (e.g., daily_tag -> scripts/DAX), and clean imports. Submit updated repo for review (by tomorrow morning).
+
+  • AFC UH refactor owner (unnamed speaker):
+    
+    • Add screenshot/picture and raise pull request for AFC UH build refactor for review (today).
+
+  • Sindhuja:
+    
+    • Run RESI Venue Status DT flow to populate Resi new Status Loyalty table and then run status history DT flow; confirm completion for certification (today).
+    • Help with event testing certification once event test completes (coordinate with Suman).
+
+  • Suman:
+    
+    • Complete event testing for RESI and confirm to Sindhuja; send PR for the history table change for review/approval (ASAP).
+
+  • Sachin:
+    
+    • Send engagement request email for Lumi API access (include API details and required access).
+    • Follow up on metadata and E3 issues; advise on escalation steps and provide host/profile details in Slack (done for host).
+    • Validate code refactor changes with Prithvi tomorrow.
+
+  • Jason:
+    
+    • Upload blank test file with expected filename to Lumi PRD host using Lumi PRD user ID and notify JSON to attempt fetch (immediately / today).
+    • Confirm test results in Slack thread (within 5–10 minutes of upload).
+
+  • JSON (file consumer / tester):
+    
+    • Attempt to fetch uploaded blank file from Lumi PRD and confirm connectivity/results to Jason and Sachin (immediate upon notification).
+
+  • Nirmal:
+    
+    • Burn down hours and update the board correctly; if unsure, reach out to any team member or Sachin for help (ASAP, within 3 days).
+
+  • Rachna:
+    
+    • Ensure RPA use-case documentation is complete; verify the Business Justification tab in the shared Excel is filled and circulate if anything is missing (ASAP).
+
+  • Kundan / Team owning migration:
+    
+    • Investigate missing index on dashboard migration to E3 and update channel with remediation progress (ASAP).
+
+  • Team (general):
+    
+    • Include production issues and DAG incidents in weekly status report (owner: NCV to ensure inclusion).
+    • Follow first-line troubleshooting suggestions before escalating incidents; escalate to Raj only if solution is not obtained or action is blocked (ongoing).
+
+If any owners require clarifications or need the meeting recording/notes for their tasks, please let me know and I will attach or share the relevant snippets.
+
+
+Transcription
+
+00:00:25 - 00:02:17 Unknown Speaker:
+
+I have such in my everyone. Yeah, Rishna, we have seen his message. Thanks for watching. Start the DSU. Rajna will you be replying to because he is not replying to my personal message? DM Oh, OK, OK, yeah, I will drop a message there. No, actually, I talked to Tanisha. She will get it done by Manish because Manish is the manager from our partner team. So he will be talking to him. Like regarding when to connect and how to connect. So that should be taken care of. So this 10pm meeting, should I still keep it or cancel it or move it to 11? You can cancel it since he won't be joining, right? Let's see what their conversation leads to. Then once they align on the timeline, then we can keep accordingly.
+
+00:02:18 - 00:03:31 Unknown Speaker:
+
+Because 11pm is very late for everyone, right? We need Tanisha's team also to be joining. So it would be difficult. Cancel it for now. Today's call. Yeah, just keep me posted if you need another one. Sure, sure, sure, thank you. Okay. Um, starting with the DSU and C. Hi Sandhya, Hi everyone. Uh, so I was working on the Uh, code refactoring for the AFC UH build. So I will add a picture today and sometime after that I will be raising a point request for review. And also I was checking one production issue for the Tenure DAG. So yeah, those were the things I was working today. So I did it in the task. So thanks for NCV, and NCV had to mention the production issues. Also so. The 10-year one, right? I think she has done it, yeah.
+
+00:03:32 - 00:04:44 Unknown Speaker:
+
+Yeah, okay. Okay. Thank you. Yeah, keep a note of this because when we would be sharing the, you know, weekly status that needs to be included over there. Yeah, like a short session. I was working on this non-interpreted timer one. So one level of testing is done. There is some modification in the BPMN. So I was working on that part. It's been deployed. I have to test that one. Along with that I was migrating that dashboard to E3. So the index was missing. So I already conveyed them over the channel and they are looking into it. Other than that, I started working on the skew track self-serve. So that is one of the initiatives. And there is one production issue that I am looking into that part. That's the update.
+
+00:04:45 - 00:05:42 Unknown Speaker:
+
+Could you not just take out some time to add your task or content? Yes, I will add it. Actually, I added it yesterday. So today I will add it. Updated Yeah, sure, uh, so currently so as, uh, yesterday, uh, I have completed the way it was, uh. Generate aware class accordingly as per the table name. Like, uh, we have a table called CM11. So for that, like, we have, uh, we have generated like, we get the maximum date based on the model ID, and we are able to complete that. Uh, like, we had generated weight loss for that, and when we run that, it was successfully running. Even so, yeah, right now, like, I'm figuring out what are other manual uh things like?
+
+00:05:42 - 00:06:40 Unknown Speaker:
+
+We have done for this uh uh data migration process, so we are trying to identify and I will be trying to automate those processes. Also so that once we deploy to E3, there is no moment intervention for, uh, data data, like when doing data migration, there is no manual interaction there. To run the control onboard matrix. And coming to this loyal royalty, loyalty one loyalty status, so we have deployed to E3, but we are facing an issue. So I need to connect with someone and the last like, like, there is a like error called. So I just need to check with someone like this issue we have already faced in even lower environment. So I need to check with him like how we have solved it because like we have raised an incident at that time.
+
+00:06:40 - 00:07:45 Unknown Speaker:
+
+We need to like dig that incident and like we need to go through the incident. We need to do the same to E3 also. Yeah, that's all from my side. Dr.Shamir. Nirmal. Hey, hi. So, I was working on the updating the tag when the starter sent to the input table. So, committed that part and I will be working on the injection monitor for the RGCUS table that Sachin has mentioned in the morning. Nirmal, you will have to burn down your hours. If you're not sure how to do it, please reach out to any of the team members or you can give me a call. We only have three days left and according to this product, zero hours of work. Okay? This is very important. I've been telling you guys, the boards will get audited.
+
+00:07:47 - 00:08:49 Unknown Speaker:
+
+Ultimately, you're the ones who will be in trouble if this is the way you show the board. Yeah, please write down. After this call, you connect with any one of us, we will help you out, okay? Okay. Thank you. Hi, Appa. Hi, Sandeep sir. Hi there. So, I worked on the, regarding the yesterday production issue, right? So, I just started one of the POC to do the, we need to expect a data file into the R&R project backup. In the lower environment I started, that is working fine. So today I have started one more DAT for the SFT TP, uploading the file, so that is a RISI use case. So that part also I have tested that is working fine. So I need to track the SFT file whether file is landed into the SFT side or not.
+
+00:08:49 - 00:09:45 Unknown Speaker:
+
+That part I am checking currently, and apart from that one regarding the yesterday issue, is there any DATs are faded in the product. Yeah, and apart from that one, ICMB carbon-related DAG report, that one I got a comment from Sachin. So that part I need to work on. So maybe after one hour, I will start work on that part. And apart from that one, for the RPA use case, I'm just going through the recorded session, which is shared by Rachna. So that part I'm working on. Rachna, on that RPA, we need the documentation. Have seen the instances right now, the table owners, and, you know, BP's are also reaching out to understand the use case. So if you can ask in the form itself, right?
+
+00:09:45 - 00:10:34 Unknown Speaker:
+
+If you just open that Excel that has been shared, so in the first tab, it has a tab called Business Justification. There only you will see like it has questions which are specific to the use case, so that should answer your question about the use case. OK, thanks Rishna for pointing. Something is still missing, just let me know I will get that. Yeah, yeah, so thank you. I I think I missed that one. Let me, you know, cross check and I'll confirm you back. Also. Uh, one more thing, such an uh, like regarding, uh, yesterday's issue, right? The Darks, which had stopped working, so during the time frame, uh, those were rerun. Yeah, that's right, I have confirmed, right he I, those have written or not, and he just given that.
+
+00:10:34 - 00:11:55 Unknown Speaker:
+
+He said that none of them were missed. Is it? Yeah, yeah, like it was paused, it was paused during the execution time, but, uh, when we resumed the environment, all all of them got executed and already already verified those jobs. Okay, thank you. I'm working on code refactoring so that I can contribute with Sachin. I'm also working on another validation as well. Checked it. Sorry. Your voice is too low. Oh, sorry. Yeah, no issues. I'm good. Just cross check your mic. We move on to Sachin. You can go ahead to someone and then, uh, and at the last, I'll I'll pitch in a few queries. Actually, I have going through like a control on the metric code analysis and I have a better some columns in the control, artifacts and that monitoring and searching.
+
+00:11:55 - 00:12:53 Unknown Speaker:
+
+I already created a resume when you load the status history, a data flow. And I have. Um, and I read the script because, uh, I didn't follow, uh, rise the request. Um, to the E1 because the E1 we don't have any data, right, so we need to upload the data in E1, right? Don't we get any data in this? Okay in the venue table, so you can run the data from the resume a new table, right? You would be getting data. There is a DT flow which is already being there for the resume, and you write, run that DT flow. It would populate the data to the resume. A new table and then you can run this resist when you status history table DT flow.
+
+00:12:53 - 00:13:48 Unknown Speaker:
+
+So so, so, just on top of such, and so you just need to run the DT flow where it will. Uh, like, get the data from use case table to use case table. Like, uh, whatever, such me saying, so we are already, I'll help him out, leave it. Uh, anything else so many wants to discuss, that's a search and this one is blocked, right? Session The history for the palladium testing. Yeah, that is being blocked, that is being known to JSON. We are working on that profile to fix it, that's it okay. So starting with my update. Sindhuja So first of all, this is for Suman. So now this RESI Venue status table in the warehouse this is also available. The metadata registration for this table is also completed today. So you know what you need to do?
+
+00:13:48 - 00:14:34 Unknown Speaker:
+
+We have created a DT flow for RESI Venue Status table, right? Run that DT flow. It would pick up the data from the corresponding table and then it would populate the data for your resume new Status Loyalty Status table. Okay, once that is done, then this history table would be just select Star from that table and insert into that this history table. So in that way, you can complete the STD flow for this history table. Also for the event testing, right for the event testing, now the table is available in even once you complete the event. Post that I'll I'll go for the certification so you to confirm me today. Once you're done with your, uh, even testing for this, uh, okay, okay, now let me connect with you in case you have any further query.
+
+00:14:34 - 00:15:49 Unknown Speaker:
+
+Okay, uh, so with my update, first of all, today, you know, I have promoted this uh uh. Loyalty status, UH metadata to E3 with RFC. Okay, and apart from this, there are couple of table status history and status summary those metadata registration also completed in E1. There are few code reviews, some production issues with Suman Kundan, and then the BBMN update. And then I.I got the API details for fetching the table and the attributes from the Lumi, so I was working on that. So, For that we need to raise an engagement request. I'll be setting a mail for that. These are the tasks that I have completed today, Sindhuja. Okay, Sachin. Okay, Jason, just one quick query. You're sending the file for the lazy tables, right? Is it not blocking you even that.
+
+00:15:50 - 00:16:50 Unknown Speaker:
+
+That is something you are sending from an external environment, right? Yes. We use a different host when we send files currently. What is the host for that? Let me grab that for you. Yeah. So can you try using the same host and using the same profile that I have sent it to you? Oh, yeah. So the host you sent to me won't work in production. No, no, no, the host that I have sent it to you, that is for production environment only. But let me know what is the host that you are using for AZ in the production. Okay, one second. And then I can cross verify with the SFT team, like we can, you know, use the same host or not. Okay, I'll drop it in the Slack thread. That is a post that you are doing, right?
+
+00:16:50 - 00:18:20 Unknown Speaker:
+
+And SFTP is being for a... This is E2 environment, man. Jason, this is E2. You are sending the file for Waze in the production environment also. Is that the same, this test environment or some different environment? I don't think you are using this in the production environment. Let me share my screen. You are getting confused between these two. Host, right, which you have sent? This is for E1 and E2, it's a test environment. Okay, so even if I show you, give me a second, just take an example, this I could, and I may have given you the wrong host there. Yeah, exactly, that is not the host. Let me find it. So look, this is an razy one, right? So this is the host that you have given me. This is our test environment, correct?
+
+00:18:20 - 00:19:20 Unknown Speaker:
+
+This works for your E1 and E2. That is palladium and silver that we used to call. But even when you are sending the file for the production environment, this is the host which I have sent it over the email to you. Right for sending the easy file. What is the issue? Well, you know downloading the file from that same server Yeah, I actually think I sent you the Sorry, your screen's a little blurry right now Is it better? It might be my screen, okay, sorry. Yeah, so for production we don't actually use the .Intra.axp. Com you're using, yep, but let me find it, because that's so. If you're. If you're not using the internet, the one that you are using for the daisy, that same you can utilize right even over here, using the same profile.
+
+00:19:20 - 00:20:28 Unknown Speaker:
+
+It might be some, you know, bypass might have been made for you, for you guys to, you know. Upload or read the file from SFT. SFT is confined to MX only. I'm aware with that, that is the, you know, sending the file securely within the MX network only. Right? But if you are able to access this interval, that means, uh, right. Or whatever host you are using in the production environment, you should be able to pull the file from the production. Okay, because profiles are being, you know, if I show you this FCP central right is nothing but that Intra host and the mapping right, the where is those? Not this membership. I need to show you the profiles right, so the profiles gets mapped over.
+
+00:20:28 - 00:21:25 Unknown Speaker:
+
+Here is coming like this, but these are not the account that we we have to search it. Basically, whatever is there in, like, you know, the one that I have said it to you, that is even right. Yeah. So those are confined over here. It doesn't matter like this is the one that I have sent it to you, right? Resilumi PRD Yes, yes, right. So just check the host If you are using certain different post for sending the RESI file, use the same host. Can you do one thing? Uh, just place a blank file again today, but Jason would try to pull it from there. The file names would remain same. You should not be sending any different file name, just create a blank file.
+
+00:21:25 - 00:22:48 Unknown Speaker:
+
+We just need to see the connectivity, whether he is able to download the file or not at his site. Okay, the file name remains there where it is, ever you remember the file name, or I have to check that thread again. Yeah, this is the one. So your file name should be this one, you should not be making and creating any other file, and you should be using that Lomi PRD one, okay. I'll send it to you. And Sachin, I just added the actual host we use in production in the Slack thread. With the same... Yeah, you can use the same and there's no problem with this FS gateway American Express. Did I send you the intro one? Is that my bad? Okay, I can test the, yeah, you can go ahead and test with this one, then go ahead and test this one.
+
+00:22:48 - 00:23:59 Unknown Speaker:
+
+Intra is, you know, I think it might be for, you know, internal communication between the MX teams. Yeah, okay, so you can use the same one and then you need to upload that file using that Lumi PRD user ID, Okay. I am doing it right away. Right, the one that we are using for this one also. I am putting. So just use that, upload the file and just confirm it to JSON and then JSON can just try to fetch the file. Although the file would remain blank, that is fine with that. Can you ping me the name? I will ping it to you and check the slack. One second, stop. Okay, nothing from my side, anybody having any query? Then stay back, someone, you can stay back, and then you can stay back, you guys can stay back.
+
+00:23:59 - 00:25:18 Unknown Speaker:
+
+Yeah. Anyone having any other questions? I just want to check with someone regarding that issue. Then you can see, I can see probably you guys will drop up. I'll start with Suman. Suman, now tell me, do you have still query with respect to the implementation? No, Sachin. This one, for the history, right, you said. You're asking history table, it's fine. Now I will do it. It's like a PR and I will send to the summit. Summit will approve. That is no problem. The person who has helped you out, reach out to that person. Yeah, the person is the same thing. He has taken like three to four days and he said like, I will ask my senior. Mention it to him, this is E3 environment and this is blocking our release. Okay, okay, he should not be.
+
+00:25:18 - 00:26:13 Unknown Speaker:
+
+Just let him know in case required to let me know we can create an incident. Okay, this is an utmost priority because this is blocking our process to go live on E3 environment. Okay, this, this is not going to work for the. We are not going to apply a limit over there. Okay Okay You only said all the time moreover now if you put the limit and maybe need really don't have any Storage issues. So it's unlimited you can whatever you can do, but now it is First of all identify the issues right first of all identify what is the issue and then? Drop a email Don't blindly go ahead and drop a email. Because last time, what I have seen already reverted. You guys with a solution, right?
+
+00:26:13 - 00:27:12 Unknown Speaker:
+
+But you guys are still following up with him over the email on the incident, he already mentioned, Uh, with respect to the stories, and also maybe, if you remember, right? Yeah, and then we still just did a follow-up over the email. So just just make sure that once he provides certain solution, we should consider that instead of, you know, just blindly sending an email. Looping Raj again, you know, we should not look rather necessarily until unless we are not getting a solution for this. Oh so, first of all, try from your side. If somebody is not helping you. If the issue is still there, then send an email looping Raj. Yeah, okay, yeah, okay. Thanks so much. Thanks Amir. You guys can drop off Jason anything from your side. One second. I am testing it now.
+
+00:27:12 - 00:28:23 Unknown Speaker:
+
+Okay, then go ahead and then you can test it. You have to give us five to ten minutes. Uh, once we will confirm you back, and then you can just confirm us whether you are able to pull it or not. Okay, I'm testing the connection first. Yeah, yeah, you can go ahead and test the connection. Thanks, Jason. Okay, Prithvi, go ahead and, you know, just walk me through the code that you have done for this automation. Sachin, do you need me on the call? No, no, no, no, no, Shintuja. I just forget your name, but, you know, I'll just utilize this pitch. No issues and drop of 10, okay? Yeah, thank you. Thank you. Yes, Sachin, I am uploading the empty file. Is it fine? Yeah, we need an empty file only, man. Okay, fine.
+
+00:28:26 - 00:29:35 Unknown Speaker:
+
+Sachin? Hi, Sachin. Yeah. So, this is the daily dash folder. I have it, okay? It is not required when we move to cloud, but locally testing I have provided that option also. Go through the repo, pull the repo which I have given you. Now the codes have been moved to repo, correct? Okay. So from where your execution starts and all those part I need to understand and what piece of activity you are doing over there. Yeah, do you want me to go to GitHub? GitHub itself, right? It should have a working code, right? Once we have a review call with Raj, right? If he asks me, right? I have to explain him from where the, you know, things are moving. Yeah, sure, sure. Working one is there here only. So again, when I.You could have renamed this daily tag, right?
+
+00:29:36 - 00:30:29 Unknown Speaker:
+
+Okay. Why this daily tags remain? Let's apply some logic, right? When we are writing quotes. If you want me to rename it to something else, I'll do it. Rename it, man. Rename it, right? It's not a daily tag, correct? But what is the plan? As soon as we create, there is an entry we need to process. I thought it was daily run only. Once in a day. No, no, no, no, no. Look, daily run was because we were creating those daily jobs over there, right? You can rename it just like DAX, right? If it is containing the DAX, right? And it's not only DAX also. It's a Python folder, right? Containing the script. So, you can rename it as scripts also. Okay. Whatever, right? There are n number of nomenclature which you can use.
+
+00:30:30 - 00:31:41 Unknown Speaker:
+
+Sure, sure, yeah, these are fine. Like, you know, these are deployment Config config, JSon, these are fine, but this is, uh, you know, this doesn't look good. Okay, we can, you know, refactor this later. First of all, go and where from where your education starts starts here. So this is the dance script, okay? It internally has the wrapper config, using which slowly, man, slowly, man. Uh. So this is your very first file which would get executed, right? This equal generation dot PY. So leave those import statement, hold on, go up now this, scroll down a bit and there is a directory and these are the path you are importing the scripts path, right? This runs SQL generation wrapper.py. This is a different Python file. Line number 49. Yeah, wrapper script would call this.
+
+00:31:43 - 00:32:47 Unknown Speaker:
+
+Can you show me that runs SQL generation? Show me that runs SQL generation wrapper. What is that Python file is all about? So what this does is it takes different types like locally if you want to run you can run it in Airflow using CSV file. This is not needed but I created that as well. But currently I am using this one only where we pass the GCP project and the table name using which it will fetch the data and process it. So different options but internally it will call the. Generate SQL script. Generate SQL for checks. Then you have to make me understand. If you just go ahead like this, right? But how would I understand what I'm doing? How to import this directly? He done that only.
+
+00:32:47 - 00:33:54 Unknown Speaker:
+
+He imported this one in this SQL generation tag.py, which is his main file. This one I referred inside my DAG. This DAG calls the wrapper because wrapper takes different types of inputs. Based on the input type, it calls the generated SQL for checks. So I have to do some refactoring about placing them into a folder and generation of the script is actually generated SQL checks file is the key file that generates SQL. Let's not go here and there. Let's go one file by one file. What you are trying to do with this file? Make me understand. Post this import statement. This one, the try block, import storage, has jcp. Do we really need this? And what this piece of code is doing? This is required. Credentials are required to connect to the this one Bitcoin big query tables.
+
+00:33:54 - 00:35:05 Unknown Speaker:
+
+No, man. We are directly connecting to the we have connection object at the airflow level, we do have a connection object, why we are trying to create another connection object. Make this piece of code, uh, understandable to us, right? Once you review it, right? So now you have to tell me, Uh, you know what you are trying to do over this file? Okay, so give me, uh, time tonight. Okay, tomorrow morning I'll refactor. Okay, maybe some unnecessary code is there? Okay, that I'll remove it. Okay, and then I'll review it with you once again. Okay, okay, knowledge. But we need to close. Uh, tomorrow. Okay, okay, okay, no problem. Thanks. Uh, Jason. Uh. Able to establish the connection.

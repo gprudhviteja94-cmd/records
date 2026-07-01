@@ -1,0 +1,227 @@
+2026-03-05 Deployment, Integration, and Migration Challenges Stand Up 6pm
+
+Creation Time: 2026/3/5
+
+
+📅About Meeting
+
+  • Date & Time: 2026-03-05 18:00 (Duration: 1573 seconds)
+  • Location: Virtual meeting
+  • Attendee: Richna, Sachin, Sindhuja, Anand, Samir, Ayyappa, Kundan, Jason, Prithvi, Suman (absent), ANSI (represented via updates), others (unnamed attendees)
+
+
+📒Meeting Outline
+
+
+Deployment & Environment Promotion
+
+  • E1 → E2 → E3 promotion The configuration PR for the lower environment was merged and deployed to E2 (Sachin). There is a lag between environments; current status is E2. Next steps: promote BPMN and Java codebase to E2, complete E2 testing, then raise PR for E3. If E2 testing completes by tomorrow morning, the E3 PR can be raised the same day for review and approval.
+  • E2 testing coordination Sachin will coordinate with Kundan for verification using data submission and UI checks. Kundan to support RFC deployment. Ather has moved changes to E2; some lag remains.
+  • SFT profile blocking Access to SFT profile is blocking some pipelines (notably Raze MX customer data transfer). Jason / team are chasing SFT approvals. Once SFT profile is provisioned, pipelines can be moved to E3.
+
+
+Insurance / Panda Libraries Blocker
+
+  • TFC build & Panda libraries ANSI reported a JAR compatibility issue for Panda libraries used in textile crop creation. Panda libraries are not supported in the current Airflow environment; those components must run in a different server/environment. ANSI is collaborating with the platform team to resolve this. This is a blocker for that portion of the insurance work.
+
+
+API Integration & Self-Serve Automation
+
+  • API integration to ACE Control Center / DPM Entities Sachin to coordinate with Kundan on API integration that will call ACE Control Center for DPM entities. Some front-end/API changes were requested from the UI side; third party changes needed before end-to-end can be demonstrated.
+  • Self-serve demo Team aiming to demo the self-serve automation (end-to-end) possibly tomorrow post-lunch; if not feasible, plan for Monday. The demo will show at least one flow end-to-end (UI → API → DB → action).
+  • Data ingestion automation Data ingestion automation job updated to allow email configuration per table (emails picked from config file). First table done; remaining tables to be added.
+
+
+Data Migration & Transformation Issues
+
+  • Use-case level data migration Samir detailed migration work: three initial use cases chosen. Identified issues:
+    • Missing mandatory timestamp/run_date in some records causing SQL failures.
+    • Where-clauses with "none" values causing failures.
+    • A column used in the onboard matrix is storing program IDs as alphanumeric strings; downstream aggregation (mean/average) expects numeric types. For metrics that are counts, those should be handled as counts rather than mean. Samir will gather detailed examples and follow up with the group. Team to review and adjust queries/transformations or convert data types where required.
+
+
+Loyalty Status / Metadata Registration / Downstream Tables
+
+  • Tables planned: history, summary, loyalty status Jason outlined pipelines for MD registration / loyalty status. Clarified:
+    • History table: full event/history of loyalty status changes.
+    • Summary table: reduced view containing venue ID and final eligibility status to ease downstream consumption.
+    • Loyalty status table will also exist and be used by product on RESI side. The summary table is intended to centralize logic so downstream teams don’t need to implement their own summarization. Jason will share the summarization query and SOP/documentation after the call for leadership review and for others to present the rationale.
+  • Documentation need Stakeholders requested clearer documentation (SOP) and diagrams (similar to Quantro diagram) to explain business logic and use-case purpose (e.g., AFC checks, tenure logic). This will help when presenting to leadership.
+
+
+QA / Alerts / Email Grouping
+
+  • ICM alert grouping issue It was flagged that ICM alert emails are not grouped at table/use-case level as per intended pattern. Currently alerts require partner team manual aggregation. Team agreed to identify which alerts to club; Rachna offered to set up a short call to brief and prioritize grouping. Resource allocation to fix will be identified after that call.
+
+
+Individual Status & Support Items
+
+  • Samir Working on migration fixes and will demo progress post-DSU; needs a short follow-up session to show fixes.
+  • Anand / Rajna / Ration Working on PRs; Razy PR raised and awaiting approvals.
+  • Ayyappa Supporting Q-Track contract project: data modifications and DB updates, assisting Prithvi with data movement and duplicate checks.
+  • Prithvi Working on automation for description generation and dedup checks; requires data movement to test tables.
+  • Kundan Supporting deployments, RFC allocation, and API integration coordination.
+  • Jason Working on SFT approvals and E3 movement; loyalty status pipelines; will share queries and documentation.
+  • Sachin Coordinating E2 verification, API integration, and data ingestion monitoring changes.
+
+
+📋Overview
+
+  • E2 configuration merged and deployed; promotion to E3 pending successful E2 testing.
+  • BPMN and Java codebase must be promoted to E2 before E3 PR can be raised.
+  • Panda libraries/JAR compatibility blocks certain insurance/textile flows; requires running those parts in a different environment; ANSI working with platform team.
+  • API integration and self-serve end-to-end demo in progress; coordination between Sachin, Kundan and front-end changes required.
+  • Data migration encountered missing timestamps and "none" values causing SQL failures; special handling required for alphanumeric program ID column and aggregation logic.
+  • Loyalty status design decided: history (full), summary (venue_id + eligibility), and loyalty status tables; Jason to share summarization query and documentation for leadership briefing.
+  • ICM alert emails need grouping; Rachna to run a short call to clarify grouping rules and prioritize fix.
+  • SFT profile access is blocking some pipelines (Raze MX customer data); team chasing approvals.
+
+
+🎯Todo List
+
+  • Sachin:
+    
+    • Coordinate E2 verification with Kundan and complete E2 testing by tomorrow morning (target: tomorrow morning).
+    • Coordinate API integration to call ACE Control Center for DPM Entities and track front-end changes (ongoing).
+    • Share result of data ingestion email-per-table configuration rollout (complete for first table; add remaining).
+
+  • Kundan:
+    
+    • Support E2 → E3 RFC deployment once E3 PR is raised (after E2 testing).
+    • Assist Sachin with integration verification and DB save flow for self-serve API.
+
+  • Ather / Devs owning code promotion:
+    
+    • Promote BPMN and Java-based codebase to E2 (target: ASAP / before E2 testing).
+
+  • ANSI / Platform Team:
+    
+    • Resolve JAR compatibility issue for Panda libraries or provide alternate environment execution plan (deliverable: environment / approach to run Panda jobs).
+
+  • Jason:
+    
+    • Share summarization query and documentation (SOP) for history/summary/loyalty status tables (deliverable: query + doc; time: ASAP / by tomorrow).
+    • Continue chasing SFT profile approvals and update team when available (deliverable: SFT access; no fixed ETA).
+    • Prepare RM/AL for venue loyalty status E3 deployment next week.
+
+  • Samir:
+    
+    • Finalize migration fixes for timestamp/run_date and where-clause issues; collect examples and share with the team (deliverable: list of fixes & sample data; time: post-DSU).
+    • Demo migration results in a short follow-up session (time: after fixes complete).
+
+  • Rachna:
+    
+    • Run short call to brief which ICM alerts need to be grouped and identify resource to implement grouping (time: schedule tomorrow).
+
+  • Prithvi / Ayyappa:
+    
+    • Complete data movement to test tables required for description generation and dedup checks; coordinate deployments (time: in progress).
+
+  • Anand / Rajna / Ration:
+    
+    • Follow up on Razy PR approvals and other outstanding PRs (time: ASAP).
+
+  • All / Documentation owners:
+    
+    • Produce a concise SOP and diagram for AFC, tenure logic, and loyalty status flows to support leadership reviews (deliverable: SOP + diagrams; owner: Jason + Sachin + relevant SMEs; time: ASAP).
+
+Notes: Where specific deadlines were discussed, they are noted (E2 testing by tomorrow morning; E3 PR to be raised tomorrow if testing passes). Team members should update statuses in the project channel and coordinate immediate blockers (SFT profile, Panda library compatibility).
+
+
+Transcription
+
+00:00:00 - 00:02:34 Unknown Speaker:
+
+Hello. Hi, Richna. Hi, everyone. Hi, Sachin. Hi, Sachin. Hi, everyone. Happy belated Holi, everyone. First of all, it was, you know, complete silence. I was typing something and I wonder what happened. No one is here. Okay, okay. Sindhuji, if you can get started. Exciting new screen. Yeah, I just thought we'll wait because a couple of team members are missing. But yeah, we can get started. And she's out. Her daughter is not well. So she's just out for a couple of hours to, you know, just visit to the doctor. So she won't be there. I think apart from her, rest all are there, right? Suman is not there, I think. It's a bit early for Suman. Sure. I didn't know ANSI was out. So for ANSI, she has shared me the update. Let me just share it to you.
+
+00:02:34 - 00:03:37 Unknown Speaker:
+
+So she is, you know, working on the TFC build. Okay. There was some JAR compatibility issue, which we are facing while, you know, running through the packages. You know, we have to run it on a different server for those. Panda libraries, right? So Panda libraries won't be running in the environment directly. So for that we have to go ahead with some different approach, and for that she is already working with the platform team. So this is, this is, this is, for you know, creating those, uh, crops basically in the textiles, right? So that requires some Panda libraries. And and that is not supported if we run directly in the airflow. So for that, we have to run that piece of code in a different environment altogether. So that is something being blocked right now. Okay.
+
+00:03:39 - 00:04:41 Unknown Speaker:
+
+Sure, Sachin. Thanks for sharing. Yeah, you can go ahead. Yeah, hi all. So the configuration has been merged and it's deployed in E2. We can... verify with the data submission and the data that has been submitted to SHOCK in the UI. So I'll coordinate with Kundan on this, and we'll work on that. Also, I'll coordinate with Kundan on the integration of the API to call the ACE Control Center of DPM Entities. So these are the things which I'm working on. I'll continue on this. Sure, thanks. Just one quick question, right? When are we planning? The E3 moment? Tentatively can help us on this. As I mentioned, right, the PR was just merged for the lower environment, right? Yeah, no, it's even. I just heard from Ather, actually even was not, uh, you know, when we had a daily connect on Morning, today, morning, right?
+
+00:04:41 - 00:05:41 Unknown Speaker:
+
+So we are on E2, uh, sorry, on E1 in the morning hours, so now just Ather mentioned. He has moved his changes to E2. The reason lag is there in the even environment. Okay, so now what we need to do, we need to promote the BPMN and Java based configuration, Java code base to E2. So that would be done back and then and post that. If we can complete the E2 testing by tomorrow, then we can, uh, you know, if if testing is done, then we can raise the E3 PR itself tomorrow itself, so that Sorrow can review and approve it tomorrow. One, right? Yeah, that is the only one we can take, it also with this change, the one that we are doing for this Q Track UI.
+
+00:05:41 - 00:06:37 Unknown Speaker:
+
+But if you have already collected the rest of the details, like for AFC for fee, now, help me out so that that could also go ahead. Yeah, I would suggest you go ahead with insurance, rest the three. We can cluster up and proceed later because we are still know what needs to be done for the insurance one. Okay, so there are some changes also required. Uh, I'll, I'll just let you know, uh, on those work basket configuration, so you can just complete this testing today if possible. That did you move that code to E2? Also? It just on E1 right now, those new parameters move it to E2, okay, move it to I.I know you are working some other part today. So, uh, I think that is done right now, right? Anything pending for that, correct?
+
+00:06:37 - 00:07:30 Unknown Speaker:
+
+Yeah, there's some small. Oh no, no, that part is done, so yeah, yeah, then just move this one, uh, to E2. And let's see means once you create the data, let's see if that is able to take an action and then whether we are getting the response or not. Okay, I will. I will try to close it as soon as possible. Okay, if testing is done tomorrow morning. Also, we have enough time to raise the PR for E3 and I'll allocate the RFC deployment. So that would be the same status from Kundan, it would remain same, like, you know, I had a connect with both Ather and Kundan. So this is on self-serve, on the API integration, back and API. So few of the changes I have asked a third to make the changes post his changes.
+
+00:07:32 - 00:08:21 Unknown Speaker:
+
+Then would read those requests from the UI and save the data to the database. And then, you know, that would be end to end for, at least for one of the, you know, either, to save the data. At least one flow we can showcase to you, maybe on upcoming week for self-serve. Yeah, now we can move to Samir. Yeah, hi hi team, so uh so anand like. I'm currently working on the control of this data migrating, like for the use case level side. So firstly I would like to tell you the part which Sachin suggested like where the table, whatever the table name we are getting right, like we have fixed date. That is good. So now coming to the migration part, firstly, initially we have taken three user use cases when we run that.
+
+00:08:21 - 00:09:00 Unknown Speaker:
+
+So we identified that like there are like columns where the timestamp column, which is mandatory in our core. Code prospect to that run date was missing. Like none and where some somewhere. We have seen that where classes are none, like where there is no weight classes, since where classes are like. It is taking as none and it is getting failed in the SQL. So what we have done is like, like, at least we want. We are searching for the uh, two positive, like, like, the correct one, like a happy path, uh, uh, use cases. So we have, uh, we have picked the other three, so in these three, like, almost everything is working like, uh, only like a few changes required in the where condition.
+
+00:09:00 - 00:09:40 Unknown Speaker:
+
+But like, one thing I want to like to let you know is like there is a column for a table where we are actually doing this onboard matrix. So that that column is a string time where it is a program ID, but stating it is a program ID, but like, it is a string type. So when it is falling under, like Mean HD, so what mean HD will do? Like, for lower and higher levels, there is a average function where to calculate. Yeah, in that case, I think you will probably have to first convert the data type, right? And then no, no. So here also, there is a small challenge like, let me let me show you this. So this is the column they are actually trying to do so.
+
+00:09:40 - 00:10:31 Unknown Speaker:
+
+If you see, this is an alphanumeric one, even if you, okay, actually. But what is the check on this one? This check, right? Like, like, what kind of check is this? Like? Originally? Is what I'm seeing. Not not the wonder one. Uh, yeah, yeah, what is it? Let me just gather the details and then we can share it over that group. Uh, let's, you know, uh, rest of the person to complete that is, uh, you know, update, and then we can, we can discuss on this one. Okay, okay. So when you said check means like, uh, what is the focus metric and what is the wear condition? You're asking? No, in general, what is the check, right, like? Yeah, I mean all these parameters. What exactly are you trying to check in the original query, right?
+
+00:10:31 - 00:11:51 Unknown Speaker:
+
+With that column. Is it like, are you checking the count of that? Because average anyway, I think it might be doing, right? In the current day also. Because it is alpha. It is like count actually. Okay, so then you should pass it as count, right? It will take it up as count itself. It will not go to the mean one, right? No, I think we need to connect once then. Sure, sure. Okay, yeah. Yeah, that's all from my side. Like, uh, we are fixing these issues. So yeah, like once we like, after this DSU. Maybe we need a few time, few minutes time to connect with you, like, I will showcase you how it is working. Sure, sure, yeah, yeah, that's all, uh. Signature from myself. Thank you Samir. So, I was working on the data ingestion automation job.
+
+00:11:52 - 00:12:50 Unknown Speaker:
+
+So, as asked by Sachin yesterday, I did change the email to per table basis. Now, we are picking up those emails from the config file and it can be configured as per table basis. To your story, Narmal? Yeah, I've added for the first one. I'll add for the second one. Yeah, please do, yeah. Ayyappa? Yeah, hi, sir. Yeah, so from my side, I'm supporting for the Q-Track contract project for Tishami. If anything, data modification, I'm just pitching and updating the database table. And similarly, for Prithvi also, he was working on the automation, right, the description generation. For this stagnant end of duplicate check. So he also requires some of the data movement to the test table. So that one I'm also supporting with the That one and our deployment activities also.
+
+00:12:50 - 00:14:01 Unknown Speaker:
+
+Yeah, that's all from my side, me working on that self-service automation SQL generation deployment process. So I was taking high pass and Kundan's help. Um, so I'm I'm uploading the files and I'm going to test it. I already uploaded, I like to test it. That's pending. Thank you Satchin. Uh, so, you know, before moving ahead with my status, Uh, Anand and Rajna. We are trying our best to demo the self-serve automation tomorrow itself. So we'll just keep you posted once it is ready. Maybe tomorrow either post lunch or maybe if your guys are out in the evening, then we may need to plan it on Monday. Otherwise, we'll try our best to demo it post lunch. Sure, sure. I think if we can plan it around that time itself, I think that should be fine.
+
+00:14:01 - 00:15:28 Unknown Speaker:
+
+If not, Monday is also fine. Okay. Okay. With my status, Me share my screen first with this registration. Uh, Jason is there, right? So Jason, uh, just I started working on this, uh, MD registration. So, you know, I have created one of the pipeline, but I'm a bit confused. Do we need this board table, this history and summary between this history and summary, then? The history would be containing your data history of this loyalty status, right? What about this status summary again then? So the summary is gonna be a reduction to just venue ID and the final status, and that way downstream teams don't have to build their own logic. But that would be there in this loyalty status table itself, right? Data flow means another data proc job which we need to build.
+
+00:15:28 - 00:16:40 Unknown Speaker:
+
+Yes, please, okay. And what would be the logic behind this? What would be the query for this? Or the filter criteria? Yes, do you want me to send you the the query? I was going to wait until, yeah, yeah, yeah, yeah, correct. Okay. I will share the query right after this call. Okay, okay, okay, okay. Then I'll try to close this too by tomorrow. Uh, the metadata register, this was for history. The summary would be containing only the RESI venue ID and is eligible or not? That's correct. Yep, that's correct. Uh, I'm still not getting. Why do we need a table just to store? A couple of things? They can query through this history of this table, right to downstream teams. So right now, there's specific logic that they would need to to use to summarize that into just the venue ID.
+
+00:16:40 - 00:17:40 Unknown Speaker:
+
+And is eligible. And so in order to control that for all. The teams are going to use these tables, we're just going to use this final table, and it's also going to be the table that serves the product on the RESI side. Okay, could you just help me with all these three tables or summary details, what this table is all about and what we are trying to achieve from these three tables. Yeah, because, you know, when I'm going to explain these to my leaders, they are going to, you know, bounce back with these questions. Why do I need an additional table just to, you know, check whether it's eligible or not? Because we can apply that logic over this mainstream table. Good mindset, you know, it's not going to take me a time to, you know, onboard a new table.
+
+00:17:40 - 00:18:30 Unknown Speaker:
+
+But at the same time, you know, I have to explain to my leadership when he is going to review the, you know, complete use case. So in that case, right? I'll need those briefing details like, what exactly these tables are and what is the business logic behind it, which we are trying to achieve through these three tables? Either over email, if you are trying to create a SOP document. Like, you know, few of the stuff that I would like to highlight over here, uh, going forward, like, uh, ration and Anand. Also, right, like AFC check. We have the code and all right, but we are missing the basically the main business functionality over there, right? So just for a tenure, right? If I go over here, this is just a couple of liner, right?
+
+00:18:30 - 00:19:38 Unknown Speaker:
+
+So that doesn't give us a clear picture what we are trying to achieve through this tenure. But if you view this document on which you have said to us, uh, this one, uh, the razy one, basically this one right now, this is the alert you track. Where is the Razy? One? Context like this one, right? What exactly we are doing over this one? So that would help us to, you know, explain it to the leadership in future, if required. Right? I have said these, right, you know, the conference page also, right? So you can review. And then just to let us know in case any additional you know details that we can onboard to it. Yes, those questions are, you know, coming back to us with respect to these use cases.
+
+00:19:38 - 00:20:26 Unknown Speaker:
+
+Like, if I just say MLSCRA, the next question would be like, you know what, right? Exactly? This is the last few ones, right? MLSC, and then these are the ones that we didn't really build. So that's why I think, no, no, I completely, I completely agree. Now I would say about this AFC one, right? Uh, like for AFC, we receive the code, right, we receive the code. But I have to ask and see to follow up because I'm not sure what I need to respond to. Yesterday, right? So if we have some document right from Tanisha, if you can, just check if we can, they can provide something. Some analysis that would also help us right going forward. Like if you see this diagram on in that you have built, right?
+
+00:20:26 - 00:21:24 Unknown Speaker:
+
+This gives us a clear picture what exactly we are doing in Quantro, right? So if somebody review it, they would get to know what exactly we are doing. Okay, That is one part that I was working on this loyalty status, this metadata registrations in Doja. And then, you know, I was reviewing the code and those different DPM and setup and the self-serve one that I discussed right now, right? With those reviews and all that I was working today. And the insurance one with respect to the, you know, data ingestion monitoring that I did today. Noted Sachin. I think someone just joined so he might not be having that much of update, but he's working on the DT flow. Oh, just quick update. Jason, you, you are already aware, right? That profile is being blocked.
+
+00:21:24 - 00:22:07 Unknown Speaker:
+
+I'm trying to chase the SFT team. Uh, so even I have asked for a time because Jithin is not able to approve that request, right? So they need to come up with a solution how we can get that access to that profile. So I'll keep you posted on that, number one. Second, on movement to those E3 environment, that would be possible once we have that E3 SFT profile. So again, I'll keep you posted once that SFT profile is ready, then we can move both the pipeline to the E3. Sorry, and that's blocking the loyalty status? Yeah, that is blocking the royalty. No, not royalty status would go to E3. That is not blocking, right? Okay. IT status is not dependent on the profile. So that would go through E3 for the next week, for sure.
+
+00:22:07 - 00:22:55 Unknown Speaker:
+
+Okay, uh. The blocker would be the Raze when you metadata update those five columns due to the profile number, one second is the one where we are sending you the file for the Raze MX Cust data. Yeah, okay, right. So for that we need profile, uh, profile. So those two are blocked due to that SFT. This venue value one would go to E3 next week. We'll, uh, create the you know, RM all for that awesome thank you. Yeah, so um, Sindhuja, I think, uh, someone is working on those only the venue loyalty status, and then Quanto is working with, uh, Samir, anything else, someone. If you want to add, go ahead and please add it. No such in, that's it for the ratio or resume.
+
+00:22:55 - 00:24:06 Unknown Speaker:
+
+Only yesterday we rise the PR also with us for the approvals, so now I need to check with them. Um, yeah, um, anything else. Team, um, one small thing. Yeah, yeah, go ahead, yeah, uh, so uh. I had also pinged this on our group chat in the morning. So basically for the ICM, the partner team. Because they have to, like, go through each mail and then collect all those alerts. For, you know, looking at a view of what all has failed. So this is not how our like setup was supposed to be right. Even for other use cases, how we send it is it's all like grouped at table level. And then for all the alerts that occur in a day for a particular table, for a particular use case, we send it grouped together.
+
+00:24:06 - 00:25:21 Unknown Speaker:
+
+Right? But it's not happening for ICM. Be somehow so and see your uh, like, whoever has bandwidth up, someone could have a look at that. Uh, rational, maybe let's set up a call tomorrow. Uh, just brief me which one need to be clubbed. And then I can identify the resource who can work on that on a priority. Oh, sure, that works. Yeah, thank you, Rachna. If you can stay for a few minutes, let's discuss on the short run. Okay, thank you, Rachna. The folks feel free to drop up. Samir, you can continue. Thank you. Thank you, everyone. He was ready.

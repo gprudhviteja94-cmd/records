@@ -1,0 +1,211 @@
+2026-02-24 Weekly Progress and Coordination Meeting DSU
+
+Creation Time: 2026/2/24
+
+
+📅About Meeting
+
+  • Date & Time: 2026-02-24 18:01 (Duration: 1140 seconds)
+  • Location: [insert location]
+  • Attendee: Ansi, Athar, Kundan, Shamir, Suman, Ayyappa, Prithvi, Sachin, Sindhuja, Anand, Rishna, Jason (referenced), Jitin (referenced), other team members
+
+
+📒Meeting Outline
+
+
+Weekly window / trip expansion & ASC build (Ansi)
+
+  • weekly window process Ansi implemented the weekly window process that identifies distinct trips and creates a summary row per week. Currently using dummy dataframe data because production table access is not yet available.
+  • trip-level expansion for ASC Plan to extend the expansion logic to trip-level data for the ASC build today.
+  • production issue: RACI mixed-cast DAC Investigated a production issue related to RACI (mixed-cast DAC). Analysis is complete; after testing is finished, a pull request will be raised.
+
+
+UI changes, E1→E2→E3 flow & test cases (Athar, Kundan, Shamir)
+
+  • E1/E2 changes for user story ending 1933 Athar updated E1 and E2 to show customer-impacted and financial-impacted values conditionally in the Action section when positive is selected. These selected values are now visible in the task details table and placed before justification and after classification in the UI.
+  • PR and deployment status Changes are pushed and a PR is with reviewers (sorrow and government?) for merge. After merge, Athar will test in E2, then plan E3 deployment.
+  • self-serve API & Gradle migration (Kundan) Created three APIs and migrated project from Maven to Gradle on Git; encountering build issues due to Spring Boot version incompatibility on the digital environment. Kundan notified Sachin and will connect after the call to resolve build problems.
+  • task vs test-case usage and tracking Shamir clarified that marking all tasks complete can auto-complete a user story; advised creating a test-case item (not a task) when testing remains ongoing. Test-cases cannot have hours logged. Team was shown how to add test cases in the tool and instructed to attach test-case evidence for E3 deployments.
+  • Priority validations & control process (Shamir) Working on Priority 1 and Priority 2 validation in E3 production validation. Made fixes and is retesting; expects to complete within about an hour (not confirmed). Will share validation results with business when done. Also supporting Resi users; no current Resi issues.
+
+
+Data engine automation, email templates & deployment rules (Suman / Ayyappa / Sachin)
+
+  • data engine automation Reduced error summary size by sending only necessary parts to users.
+  • email template update Updated template per Sachin suggestion and preparing deployment to A3 with help from Ayyappa and Sachin (first deployment for this member).
+  • PR approval policy for E3 Sachin: Going forward, PRs moving to E3 will not be approved unless test cases are attached. Also requested notifications about deployment/downtime events (e.g., 8:30pm downtime) to be sent to him.
+
+
+Self-serve tables, SFTP/profile, Razy status & blocking items (Sindhuja / Sachin)
+
+  • BPMN and table modifications Sindhuja updated BPMN for self-serve per review feedback and discussed table changes; will follow up with DBA for E2 table creation required for self-serve.
+  • Calls and requirements Scheduled calls with Anand (8:00) and for insurance scheduling and UMDL controls later tonight.
+  • SFTP profile creation & Razy Several use cases are blocked due to SFTP / profile creation and Razy status not moving to certification. Sachin is following up:
+    • Need UAT sign-off to create SFTP production profile; once created, the internal Amex host will be used.
+    • Raised an incident with Lumi team regarding Razy pipeline not moving to certification; awaiting response.
+    • Following up with Jitin to obtain profile maintainer access for Raisy JSON/data changes.
+
+
+Rule checks, repo & automation work (Prithvi, Sachin)
+
+  • rule checks Prithvi reviewed templates with Sachin and Kundan; approved. Progressing on three rule checks (stagnant check duplicator, missing value etc.) to complete during this sprint; expects two more in next sprint.
+  • automation repo Sachin set up the repo for the automation job that Prithvi is working on. Performed code review for Nimble MP3 use case.
+
+
+Monitoring & DAGs (team)
+
+  • production monitoring Team is monitoring production DAG executions; no errors reported today. Sachin confirmed Suman and Ayyappa are actively monitoring; others confirmed they are monitoring as well.
+
+
+Other administrative / coordination items
+
+  • E2 testing and flow to E3 Once E2 testing completes for SFTP use cases, Sachin will work with SFT team to set up E3 profiles and proceed with releases.
+  • Communication on deployments Team agrees to inform stakeholders (Sachin / Raj?) for deployments and downtimes; process clarified for notifying relevant parties.
+  • Meeting wrap & distribution Meeting was about to close; a few members remained for follow-up on distribution.
+
+
+📋Overview
+
+  • Ansi implemented weekly window process; will expand logic to trip-level for ASC; using dummy data until table access.
+  • Athar completed UI changes for user story 1933; PR pending; E2 testing and E3 deployment planned after merge.
+  • Kundan created three APIs and migrated to Gradle; facing Spring Boot build issues on digital environment; will coordinate with Sachin.
+  • Shamir working on Priority 1/2 validation for E3; retesting and will share results with business; reminded to add test cases to stories.
+  • Data engine error summary trimmed and email template updated; first A3 deployment being assisted by Ayyappa and Sachin.
+  • Sachin enforces attaching test cases before PR approval to E3 and is following up on SFTP profile and Razy certification issues.
+  • Sindhuja updated BPMN for self-serve, coordinating table changes and DBA for E2 table creation; calls scheduled for further requirements.
+  • Prithvi progressing rule checks and automation work; repo setup completed.
+  • Production DAGs monitored; no errors today.
+  • Blockers: SFTP profile creation/UAT sign-off, Razy certification state, Gradle/Spring Boot build issue.
+
+
+🎯Todo List
+
+  • Ansi:
+    
+    • Expand weekly window logic to trip-level for ASC build — due today.
+    • Raise PR for RACI mixed-cast DAC fix after testing — target: after local testing completes.
+
+  • Athar:
+    
+    • Test merged changes in E2 for user story ending 1933 — after PR merge (no explicit deadline).
+    • Proceed with E3 deployment if E2 tests pass.
+
+  • Kundan:
+    
+    • Resolve Gradle/Spring Boot build issues for self-serve API migration with Sachin — connect after the call (no explicit deadline).
+    • Ensure test cases or testing tasks are added to user story (if pending).
+
+  • Shamir:
+    
+    • Complete Priority 1/2 validation testing and share results with business — expected within ~1 hour from report.
+    • Attach test case evidence for anything going to E3.
+
+  • Suman / Ayyappa:
+    
+    • Assist deployment to A3 (email template and data engine change) and help with first-time deployment steps (with Sachin).
+
+  • Sachin:
+    
+    • Follow up with Jitin to get profile maintainer access for Raisy JSON/data changes — unblock profile creation.
+    • Follow up with Lumi team on why Razy pipeline didn't move to certification (incident raised).
+    • Help Kundan debug Gradle/Spring Boot build incompatibility.
+    • Do not approve PRs to move to E3 unless test cases are attached (enforce this going forward).
+    • Coordinate with SFT team to create E3 SFTP profile after UAT sign-off; send email to request UAT sign-off.
+
+  • Sindhuja:
+    
+    • Follow up with DBA for E2 table creation for self-serve (reach out already done) — continue follow-up.
+    • Continue requirement discussions (insurance scheduling, UMDL controls) and report outcomes.
+
+  • Prithvi:
+    
+    • Complete remaining rule checks this sprint (target: three checks completed this sprint; two more next sprint).
+    • Continue automation work in the repo set up by Sachin.
+
+  • Jason (action for Jason to respond):
+    
+    • Provide UAT sign-off for SFTP profile creation (Sachin to email Jason).
+
+  • All team members doing E3 deployments:
+    
+    • Attach test cases (evidence of testing/AT sign-off) to the story before PR approval to E3.
+
+Notes:
+
+  • Owners and deadlines not explicitly specified for some items; please update the tracker with precise due dates where needed.
+  • If any attendee's name or role needs correction in the Attendee list, update before distributing.
+
+
+Transcription
+
+00:00:06 - 00:01:31 Unknown Speaker:
+
+I'm checking my screen. Just give me a minute. Yeah. Ansi, can you please start with your updates? Where we have the weekly window process which identifies a number of distinct trips and then it creates a summary row for each week. So that part I implemented and since I don't have this table access still completed, I'm using some dummy data in the data frame which the code expects as a query result. So I'll be wishing the expansion logic to the trip level data today for the ASC build. And apart from that, there is one production issue for the RACI, a mixed-cast DAC. So I've analyzed it. Once testing is completed, I'll be raising the poll request for that. Yeah, that's the update from my side. Thank you, Ansi. Athar? Hi, all. Good evening.
+
+00:01:32 - 00:02:40 Unknown Speaker:
+
+So today I worked on the user story ending with 1933. I have updated the E1 and E2 problems, basically the customer impacted and the financial impacted. These fails are conditionally shown went through positive selected in the Action section. I have also ensured that these selected values are now visible in the task details table. And the UI changes are also aligned with the existing structure, where this value has to be shown before the justification and after the classification. These changes are post and I have raised up here. It's currently with sorrow and government for this beyond merge. Once those changes are merged, I will test it in E2 and if everything works fine, we'll proceed to E3 deployment. That's all from me, thank you. I was working on this self-serve API development. So I created the task.
+
+00:02:41 - 00:03:45 Unknown Speaker:
+
+So you can see if you expand that. So I created the three APIs. And now the, earlier I created on Maven. Now actually the project has been created on Gradle side on the Git repository. So I'm just trying to migrate it, getting some build issue. So I'm trying to fix that one. I tried multiple ways, but this Spring Boot version is not supporting there on the digital side. So I already informed Sachin. So after this call, we'll connect and we'll try to fix that. Thank you. Shamir. Just a call out. Kundan, why did you mark that as completed, the true positive one? The task is completed, not the entire. Automatically, if all your tasks are completed, the user story will get marked as complete. So if you have something still pending, then create that task and move it to, like in progress.
+
+00:03:45 - 00:04:56 Unknown Speaker:
+
+I thought you must have finished it okay, no issues, I've just put one testing that's happening. Then just add test cases to the story or touch. So I hope you all know how to create it. It's quite simple, like in our child itself. You'll get. You can choose test case type here. Okay, instead of a task, you choose test case. Okay, got it, got it. I tried this out. But can we add hours to that? I was not able to add hours, you can't add hours. It's it's like test case. Like, I can show you an example of, uh, something. I mean, sorry to digress, but I'll just show quickly how it's done. In the Alpha, for example, if you see here, right, so it. It appears this way though, you can add a test case, but it'll not have any.
+
+00:04:56 - 00:06:02 Unknown Speaker:
+
+Uh, so test case is something like all the scenarios that you've tested, right? You don't need. You'll have a testing task. Attach those test cases. Okay, got it. Okay, yeah. Okay, Kundan, anything else from your side? Okay, Shamir, yeah, you can proceed. So, I am currently working on the control for the Priority 1 and Priority 2 validation in E3 production validation. So like, uh, I think like, maybe in one hour I may be complete this validation. Uh, since, like, I have I have made a fix and, uh, retesting the entire process. So I have, like, I'm not confirming yet anything in the validation. 48, like, I want to complete a test, like all the scenarios, uh, maybe. Once I'm done, I will share the results with the business team. And Sachin. Okay, um, again for you Shamir.
+
+00:06:02 - 00:06:52 Unknown Speaker:
+
+Anything that's going to E3. Before that, you will have to add a test case. Okay, yeah, sure, from next step, like from this time, I will add the test cases. You can, whatever you've tested, attach it here to the story. And for E3, I'm sure you would have received a new AT sign off. You can also attach that evidence into the same test case. Yeah, so, and yesterday I have a.I just brief him on the control process like what are the changes we have done and what are the requirements for the Priority 1 and Priority 2. So today also I will connect with them for one hour and I will share the morning call too. Apart from this, I am working on the Resi support. Last week I have supported further issues for Resi users.
+
+00:06:53 - 00:08:09 Unknown Speaker:
+
+Currently we are not facing any issues with Resi. Yeah, that's all from me. Thank you. Yeah. Hi, . So I was working on the data engine automation part. So for the error summary, the summary is coming too big. So I just that part and send only the necessary part to the user. Apart from that, had changed the email template, as suggested by Sachin. But now I'm deploying it to A3, I'm taking help from Ayapa and Sachin also because it's my first deployment. So, yeah, same. So I mean, I don't want to repeat it for everyone, anything that is going into A3. Please add test cases. I mean, it will help you guys out, only like to keep track of something. Uh, you know, if, um, there is an issue with E3 deployment, okay, I'll take care next time.
+
+00:08:09 - 00:09:02 Unknown Speaker:
+
+Onwards will not approve the PR to move to E3 until unless the test cases is attached. Yeah, and um, just um again, like, sorry for digressing, but when these E3 deployments are happening, right? Um, do you also like, inform Raj Sachin, like in UIC, do you? Uh, as of now, it is the reason being, you know, we used to take care the DaG schedule, run time, right, and the Q track UI right. That is still not, you know, complete being used. Uh, on the product team, uh, like yesterday. Also, there was a down time at 8 30 p.m. we are not intimating it. Uh, I mean, just keep let me know in case you need those notifications, so I'll start sending those to you. Yes, sure, such, and I think that would be helpful.
+
+00:09:02 - 00:09:57 Unknown Speaker:
+
+Yeah, okay, okay, these one like, you know, on these, uh, data quality issue. And we are already taking care, like, you know, if some tag is scheduled to run, right? Suppose at 6 p.m. We are not doing a deployment, but yeah, for is I? I need to intimate you? Because that takes almost an hour to, uh, complete the deployment future if we are having any deployment. Yeah, okay, Cinderella, a point taken, I'll take care of that. Yeah, thank you. Uh. I worked on today the story number ending with the one, nine, four, three. So I have created a task on the contour use case related one. So yesterday I got the details from the Uh Shamir, the basic details of the control, so that one. And along with he shared the repository link and video recorded sessions.
+
+00:09:57 - 00:10:59 Unknown Speaker:
+
+So that one today I have gone through and code details as well. Yeah, so today I think we have a call schedule with Anand at eight o'clock. Maybe we'll get more details on the priority three tasks on that. Yeah, and apart from that one, uh, today, I just monitored the some production daily. DAx execution. Uh, there is no errors, so currently, yeah, today. Uh, dax. Yeah, that's all about from me. What about rest of the folks? You're monitoring whether they are also monitoring those DAGs or not? I know Suman and Ayyappa, you guys are doing it actively. What about rest of the folks? Yes, Sachin, we are monitoring. Okay, okay. We can go ahead and send the link, that is. Thank you. Yeah. Prithvi? I reviewed the templates with Sachin and Kundan in the morning and they are okay with that.
+
+00:10:59 - 00:12:10 Unknown Speaker:
+
+And I'm making a progress. So almost three value, three rule checks I'm completing in this print. And yeah, so maybe two more would be better for the next prints. I updated a stagnant check duplicator and missing value. Those three I'll be doing in this print. Thank you. Sachin? I started with the, you know, raising the engagement request for the APC check, which was required for the APC use case. That has been done. I'm waiting for the, you know, input if we receive something from the person who has asked us to raise the engagement. I'll do a follow-up for that one. Did the code review for Nimble's MP3 use case. Okay, and then set up the repo for automation job which Prithvi is working on. Update on Raisy is that JSON for first of all that data changes, right?
+
+00:12:10 - 00:13:06 Unknown Speaker:
+
+So I'm following up with Jitin to get that profile maintainer access that we need to get it right. So that is kind of blocked due to that. Gives us the access we won't be able to move prior to those palladium environment. So for that, I am doing a, you know, follow-up with Jitin. Second is on that residue, a new status table where even ingestion is done. But we are waiting for the certification and I did followed up with the LDOT team yesterday, but as I did not receive any update from them. So today I have raised an incident with the Lumi team to check why the pipeline did not move to the certification states. Those are Razy update, Uh, and and the DT flow is blocked due to that. Okay, uh.
+
+00:13:06 - 00:14:03 Unknown Speaker:
+
+With respect to the profile creation, as you have already confirmed, uh, the E2, you are able to pull the file from there. Uh, if I just shoot a email to Jason to get the UAT sign up so that I'll work with the SFT team to set up a 3 profile. And then we can try to release it. This print itself, uh, apart from that. Sindhuja. I have worked on the BPMN modification, which was suggested by the hours in yesterday's review. Call for the self-serve one, and had a discussion with an. And then there's now also, you know, some table modification, uh, for which I'll get the input from them, uh, tomorrow, uh, to take a call on that? Uh, I have to, you know, again, uh. Follow up with the DBA team So that tells that our pipeline for today's is that, uh.
+
+00:14:03 - 00:15:45 Unknown Speaker:
+
+I have to do a follow-up for the E2 tables creation for the self-serve with the DBA team, for which I already reach out to them. Then for the insurance scheduling, I have a call, uh, just post this call. And then a requirement discussion for the UMDL controls at night. Yeah, those are the. Thank you. Yeah, I got it, yeah, okay, so I, I, you know, I'm expecting, uh, uh, EPA and Uh Suman to come to a flow. Post today's discussion. So that, you know, they can start, uh, taking, uh, the build for the party we are in that call. Yeah, yeah, yeah, not knowing that. For you, it might be 9 30, for us, it's 8 p.m. Okay, able to understand from JSon any, any, uh, questions from your side on Daisy, because, you know?
+
+00:15:45 - 00:16:35 Unknown Speaker:
+
+Couple of use cases is completely being blocked right now due to SFTP, and one is for the certification. And then the other one where we are trying to just send the SFT file. So for that, uh, I just need to work with, uh, with the SFT team. To, you know? Create a product profile so that we can move the code base to the production environment. For that profile in production, what host will we be using? Will we be using the external host or the internal Amex host? It would be internal Amex host only. The way you are able to connect to this lower environment, right? The SFT gateway, the test environment. Similarly, we would have a inter... I'll share you the host. But until and unless I create a profile, you won't be able to test the connectivity.
+
+00:16:36 - 00:17:29 Unknown Speaker:
+
+That is the reason I was asking to complete the E2 testing so that I'll take it forward. With the SFT2 to set up a E3 profile. You would be able to do it. JASon Right, even the Raze, right, that is coming through the same host. Uh, yeah. So the the testing for low environments is when we're sending data to MX, that's an external host, it's not external. Think SFT is external, it's still internal to Dynamics. So you just, you just need to pull the data from SFT. Right right now, what you are doing in Razy's table, right? You are pulling the data, right? Sorry, pushing the data, correct. Yes, already, user raise the venue, right, you're just pushing the data to SFT. So similarly, what we would be doing, we would be sending that data to that SFTP, and then you just need to pull it.
+
+00:17:29 - 00:18:15 Unknown Speaker:
+
+The way you have did it for U1 and E2, right? But there are different hosts, is what I'm saying. Yeah, yeah, different hosts, different profile. And in order to get create those profile. I need a UOT sign up from you for which I would be sending an email shortly to you. Okay, that sounds good, yeah, so that can be closed. But for these two user story where we are updating the metadata and, you know, trying to create the DT flow, those are being blocked. So in case you have anything else that need to be taken into clarity, just do let us know. We can plan accordingly. Sounds good. I'll have more for you tomorrow. Okay, okay, okay. So I'll wait for your input maybe tomorrow and then we'll, you know, assign this to the respective folks.
+
+00:18:16 - 00:18:49 Unknown Speaker:
+
+Perfect. Yeah, thank you. Anand, any questions from your side? No, Sachin, I think. Sounds good, yeah. Yeah, Rishna, do you have anything? No, nothing, Sachin. All good. um okay then probably we'll end the call thank you everyone can we discuss on the distribution yeah hold on hold on uh yeah uh you guys can stay back
