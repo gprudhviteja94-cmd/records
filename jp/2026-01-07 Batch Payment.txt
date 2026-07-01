@@ -1,0 +1,40 @@
+Meeting Summary: Modify Payment Wrapper API Design Discussion
+Context
+This was a technical design/debugging session between what appears to be a senior engineer/architect (giving direction) and a developer (Rahul), working through the design of a "Modify Payment Wrapper" API for a batch payment system. The first ~8 minutes involved browser/tooling troubleshooting (Chrome/Firefox crashing while trying to inspect large HAR/network files) before the substantive discussion began.
+Core Problem Being Solved
+The team is building a wrapper API that needs to return payment data in a specific "section-based" response format (matching the existing BAU "Modify Payment" API structure) for a payment queue/batch UI. The complexity comes from needing to merge data from two different sources:
+
+Payment transaction tables — the source of truth once a payment is actually submitted (normalized across multiple related tables: payment transaction, payment party, etc., with separate records for beneficiary, beneficiary bank, and intermediary)
+Staging tables — where in-progress edits get saved as a single flat record (not yet normalized/submitted) when a user edits a recipient in the UI drawer and clicks "Save"
+
+Scenarios Discussed
+The team worked through distinguishing several UI flows that all call the "Modify Payment Wrapper," each requiring different request/response handling:
+
+Create batch flow: A recipient exists only in staging (nothing yet in payment transaction tables). No staging UUID exists yet until the first save.
+Modify batch — first edit: User opens an existing recipient (already in payment transaction tables) for the first time in a session; no staging record yet exists for it.
+Modify batch — re-edit: User previously edited and saved a recipient to staging (clicked "Save and Close"), then reopens it via the kebab menu → "Edit." This is the key overlay scenario: the response must show the payment transaction table data overlaid with whatever changes are sitting in staging, since nothing has been submitted yet.
+
+A recurring point of confusion/clarification was around what fields matter: item ID (= payment transaction ID), batch ID, and staging UUID, and when each is generated or required in the request.
+Key Technical Debate: How to Generate the Overlay Response
+Two approaches were discussed for producing the merged/overlaid response:
+Option A — Static mapper (what Rahul had built): Call the existing BAU Modify Payment endpoint to get the standard section-formatted response, then apply a custom/static mapper to overwrite specific fields with values from the staging record. Downside: requires manually maintaining field-to-section mappings, which would need separate logic per pay method/scenario and wouldn't scale well.
+Option B — Reverse mapper approach (preferred by the lead):
+
+Build/derive a payment transaction object (in memory) — for the "modify" case, by taking the existing DB object and overriding it with staged values; for the "create" case, by constructing a transaction object entirely from staging data, using "driver fields" (pay method, recipient country, currency, originating account/branch, etc.) to determine which reverse mapper logic applies.
+Then reuse the existing reverse mapper logic (already used internally by the BAU Modify Payment endpoint to convert a DB payment transaction object into the UI's section/field response format) rather than the actual DB-querying part of that endpoint.
+This avoids maintaining duplicate mapping logic for create vs. modify scenarios and correctly handles pay-method-specific mapping variations.
+
+This mirrors an earlier team decision (referenced from a prior discussion with "Pankaj") that data should not be stored/formatted on the frontend, due to scalability/performance concerns — all structuring must happen server-side using the reverse mapper.
+Outstanding Confusion Points Clarified During the Call
+
+One API being inspected (returning multiple recipient records for a staging UUID) was determined to be a testing/debug utility, not something actually called by the UI — it didn't match the documented staging save API in Confluence.
+The team confirmed that simply calling the BAU modify endpoint with just a transaction ID returns unmodified data (no staging overlay) — that's expected/correct BAU behavior, not a bug.
+Rahul had been unclear on whether the override happens before or after generating the structured response — clarified that it currently happens after (via static field overwrite), whereas the lead wants the override baked in before invoking the reverse mapper, by modifying the payment transaction object itself.
+
+Action Items (assigned to Rahul)
+
+Locate and study the existing code path in the BAU Modify Payment flow where a payment transaction object (from DB) gets converted into the section-based UI response — identify exactly where/how the reverse mapper is invoked.
+Rework the "modify" (re-edit) flow to: fetch the DB payment transaction object → override values using staged data → pass through the existing reverse mapper (instead of the current static mapper approach).
+Design and implement the create flow, which is more complex since no DB record exists yet — construct a full (or minimally sufficient) payment transaction object purely from staging data, including necessary driver fields, then run it through the same reverse mapper logic.
+Ensure both create and modify flows share the same reverse-mapping mechanism rather than maintaining two separate mapping approaches.
+Deliver both flows (create + modify via reverse mapper) by that night for review, given time pressure ("needed to be ready this week").
