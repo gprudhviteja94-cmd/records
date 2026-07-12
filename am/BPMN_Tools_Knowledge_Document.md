@@ -1,6 +1,6 @@
 # 📘 BPMN & CMMN Tools — Comprehensive Knowledge Document
 
-> **Source:** Synthesized from ACE Bootcamp Day 2 (BPMN/CMMN Deep Dive), Process Management Overview, Automation Naming/Versioning/Triggers, BPMN Framework Config sessions, and project implementation meetings (Jan–Jul 2026).
+> **Source:** Synthesized from ACE Bootcamp Day 2 (BPMN/CMMN Deep Dive), Process Management Overview, Automation Naming/Versioning/Triggers, BPMN Framework Config sessions, and 20+ project implementation meetings (Jan–Jul 2026).
 
 ---
 
@@ -8,27 +8,27 @@
 
 ### What is BPMN?
 **BPMN (Business Process Model and Notation)** is an industry-standard visual language for modeling business processes. Within ACE:
-- BPMN defines **repeatable, predictable, sequential** workflows
-- Workflows are designed in **ACE Studio Composer** and executed by **ACE Engine**
-- A "process" is a business flow specifying ordered activities from start to completion
+- BPMN defines **repeatable, predictable, sequential** workflows.
+- Workflows are designed in **ACE Studio Composer** and executed by **ACE Engine**.
+- A "process" is a business flow specifying ordered activities from start to completion.
 
 ### What is CMMN?
 **CMMN (Case Management Model and Notation)** is for **semi-predictable, event-driven** workflows where:
-- The sequence of activities is not fixed
-- Activities are triggered by data/event conditions (sentries)
-- Cases can be long-running (30/60/90+ days)
-- Parallel activities and human decisions drive the flow
+- The sequence of activities is not fixed.
+- Activities are triggered by data/event conditions (sentries).
+- Cases can be long-running (30/60/90+ days).
+- Parallel activities and human decisions drive the flow.
 
 ### When to Use Each
 
 | Characteristic | BPMN (Process) | CMMN (Case) |
 |---|---|---|
-| **Flow type** | Directed, sequential | Event-driven, dynamic |
-| **Predictability** | Predictable — steps are known | Semi-predictable — depends on conditions |
-| **Duration** | Short-running | Long-running (30/60/90 days) |
-| **Automation level** | Fully automatable | Human-centric with automated subprocesses |
-| **Execution** | All steps execute in defined order | Not all plan items must execute |
-| **Best for** | Routine processes, batch jobs | Disputes, fraud, applications |
+| **Flow type** | Directed, sequential. | Event-driven, dynamic. |
+| **Predictability** | Predictable — steps are known. | Semi-predictable — depends on conditions. |
+| **Duration** | Short-running. | Long-running (30/60/90 days). |
+| **Automation level** | Fully automatable. | Human-centric with automated subprocesses. |
+| **Execution** | All steps execute in defined order. | Not all plan items must execute. |
+| **Best for** | Routine processes, batch jobs. | Disputes, fraud, applications. |
 
 ---
 
@@ -38,10 +38,10 @@
 
 | Shape | Type | Description | Icon |
 |---|---|---|---|
-| **Service Task** | Automated | Executes business logic (API calls, system integrations, data processing) | ⚙️ Gear icon |
-| **User Task** | Manual | Work assigned to a human (CCP, analyst, operator) | 👤 Person icon |
-| **RPA Task** | Automated | Robot Framework script executes — web, mainframe, or desktop automation | 🤖 Robot icon |
-| **Process Task** | Orchestration | Invokes another BPMN subprocess (sync or async) | ▶️ Arrow icon |
+| **Service Task** | Automated | Executes business logic (API calls, system integrations, data processing). | ⚙️ Gear icon |
+| **User Task** | Manual | Work assigned to a human (CCP, analyst, operator). | 👤 Person icon |
+| **RPA Task** | Automated | Robot Framework script executes — web, mainframe, or desktop automation. | 🤖 Robot icon |
+| **Process Task** | Orchestration | Invokes another BPMN subprocess (sync or async). | ▶️ Arrow icon |
 
 ### 2.2 Events
 
@@ -49,55 +49,67 @@
 
 | Event | Description | Use Case |
 |---|---|---|
-| **Normal Start** | Process starts immediately when invoked | API-triggered flows |
-| **Timer Start** | Process starts on a schedule (date/duration/cycle/cron) | Daily/weekly batch jobs |
-| **Signal Start** | Process starts when an external signal is received | Waiting for payment confirmation |
+| **Normal Start** | Process starts immediately when invoked. | API-triggered flows. |
+| **Timer Start** | Process starts on a schedule (date/duration/cycle/cron). | Daily/weekly batch jobs. |
+| **Signal Start** | Process starts when an external signal is received. | Waiting for payment confirmation. |
 
 #### Intermediate Events
 
 | Event | Description | Use Case |
 |---|---|---|
-| **Intermediate Catch** | Process pauses, waiting for an event | Waiting for external input mid-flow |
-| **Signal Intermediate** | Process waits for external signal then resumes | Async payment confirmation |
-| **Timer Intermediate** | Process waits for a specified duration | Wait 5 min before retry |
+| **Intermediate Catch** | Process pauses, waiting for an event. | Waiting for external input mid-flow. |
+| **Signal Intermediate** | Process waits for external signal then resumes. | Async payment confirmation. |
+| **Timer Intermediate** | Process waits for a specified duration. | Wait 5 min before retry. |
 
 #### End Events
 
 | Event | Description | Use Case |
 |---|---|---|
-| **Normal End** | Process completes normally | Successful flow completion |
-| **Terminating End** | Aborts ALL parallel flows immediately | When one branch completes, kill others |
-| **Error End** | Process ends with a specific error | Unrecoverable business failure |
+| **Normal End** | Process completes normally. | Successful flow completion. |
+| **Terminating End** | Aborts ALL parallel flows immediately. | When one branch completes, kill others. |
+| **Error End** | Process ends with a specific error. | Unrecoverable business failure. |
 
 #### Boundary Events
 
 | Event | Attaches To | Description | Use Case |
 |---|---|---|---|
-| **Error Boundary** | Service Task | Catches specific errors from the task | API failure → retry or escalate |
-| **Timer Boundary** | User Task | Fires after a timeout period | SLA breach → send reminder |
-| **Signal Boundary** | Any Task | Fires when external signal received | External cancellation notification |
+| **Error Boundary** | Service Task | Catches specific errors from the task. | API failure → retry or escalate. |
+| **Timer Boundary** | User Task | Fires after a timeout period. | SLA breach → send reminder. |
+| **Signal Boundary** | Any Task | Fires when external signal received. | External cancellation notification. |
 
 ### 2.3 Gateways
 
 | Gateway | Symbol | Description | Use Case |
 |---|---|---|---|
-| **Exclusive (XOR)** | ◇ | Routes to ONE path based on condition | If payment_failed → manual else → end |
-| **Parallel** | ◇+ | Routes to ALL paths simultaneously | Send email AND update DB simultaneously |
-| **Inclusive (OR)** | ◇○ | Routes to ONE or MORE paths based on conditions | Multiple optional steps |
+| **Exclusive (XOR)** | ◇ | Routes to ONE path based on condition. | If payment_failed → manual else → end. |
+| **Parallel** | ◇+ | Routes to ALL paths simultaneously. | Send email AND update DB simultaneously. |
+| **Inclusive (OR)** | ◇○ | Routes to ONE or MORE paths based on conditions. | Multiple optional steps. |
 
 ### 2.4 Sequence Flows
 
 | Type | Description |
 |---|---|
-| **Normal Flow** | Default path between nodes |
-| **Conditional Flow** | Flow with a condition expression (diamond on start) |
-| **Default Flow** | Fallback path when no conditions match (slash mark on start) |
+| **Normal Flow** | Default path between nodes. |
+| **Conditional Flow** | Flow with a condition expression (diamond on start). |
+| **Default Flow** | Fallback path when no conditions match (slash mark on start). |
 
 ---
 
-## 3. Error Handling Patterns
+## 3. Validation & Exception Handling Patterns
 
-### 3.1 Error Boundary Events — Deep Dive
+### 3.1 Mandatory Validation Bundles
+Per leadership guidelines, every BPMN workflow model must incorporate two standard validation bundles:
+1. **Input Validation Bundle:** Validates that mandatory parameters are passed and throw business exceptions if missing.
+2. **System Exception Handling Bundle:** Gracefully intercepts platform exceptions (e.g. database, network timeouts) to prevent abnormal execution termination and output diagnostic info.
+
+### 3.2 UI Request Validation (`ValidateRequestForm`)
+For processes triggered by UI inputs, a validation service class `ValidateRequestForm` is executed before service tasks:
+- **Mandatory Fields Check:** Automatically parses human task input/output variables (such as Table ID, Variable ID) and asserts that they are non-empty.
+- **Template-Based Branching:** The service matches UI requests containing a template number (**Templates 1 to 4**). Validation rules and constraints (e.g. allowed numeric margin values) branch based on the specified template.
+- **Null Handling:** Some fields are marked as `null allowed` in the design requirements. The validator checks these explicitly to mark them valid.
+- **Post-Validation flow:** On success, transitions to operations such as sending emails, which include built-in retry profiles. On validation failure, a business exception is thrown to abort the process.
+
+### 3.3 Error Boundary Events — Deep Dive
 
 Error boundaries are the **primary mechanism** for handling recoverable errors in BPMN flows.
 
@@ -112,20 +124,20 @@ graph LR
 ```
 
 #### Configuration
-- Each error boundary has an **error code** and **error name**
-- Multiple boundaries per task → different errors → different recovery flows
-- **Naming convention must be standardized** across the portfolio for consistent reporting
+- Each error boundary has an **error code** and **error name**.
+- Multiple boundaries per task → different errors → different recovery flows.
+- **Naming convention must be standardized** across the portfolio for consistent reporting.
 
 #### Key Rules
 
 | Rule | Details |
 |---|---|
-| **One or many** | A single task can have multiple error boundaries (up to N) |
-| **Error-specific** | Each boundary catches a specific named error, not all errors |
-| **Recoverable only** | Use boundaries only when there's a reasonable next action |
-| **User tasks** | Error boundaries on user tasks are **not meaningful** (users don't throw exceptions) |
+| **One or many** | A single task can have multiple error boundaries (up to N). |
+| **Error-specific** | Each boundary catches a specific named error, not all errors. |
+| **Recoverable only** | Use boundaries only when there's a reasonable next action. |
+| **User tasks** | Error boundaries on user tasks are **not meaningful** (users don't throw exceptions). |
 
-### 3.2 Retry Patterns
+### 3.4 Retry Patterns
 
 ```mermaid
 graph TD
@@ -141,12 +153,12 @@ graph TD
 
 | Parameter | Recommendation |
 |---|---|
-| **Retry count** | 3-5 attempts |
-| **Backoff strategy** | Exponential (1min → 2min → 4min) or fixed |
-| **After max retries** | Escalate — email notification, create work item |
-| **Logging** | Log each retry attempt with error details for RCA |
+| **Retry count** | 3-5 attempts. |
+| **Backoff strategy** | Exponential (1min → 2min → 4min) or fixed. |
+| **After max retries** | Escalate — email notification, create work item. |
+| **Logging** | Log each retry attempt with error details for RCA. |
 
-### 3.3 SLA Enforcement with Timer Boundaries
+### 3.5 SLA Enforcement with Timer Boundaries
 
 ```mermaid
 graph TD
@@ -160,9 +172,9 @@ graph TD
 ```
 
 **Timer boundary on user tasks:**
-- Initialize timer when task is created/assigned
-- On breach: send reminder, or release task back to work basket for reassignment
-- Can chain multiple timers (1hr reminder → 4hr escalation → 24hr auto-close)
+- Initialize timer when task is created/assigned.
+- On breach: send reminder, or release task back to work basket for reassignment.
+- Can chain multiple timers (1hr reminder → 4hr escalation → 24hr auto-close).
 
 ---
 
@@ -172,13 +184,13 @@ graph TD
 
 | Shape | Description |
 |---|---|
-| **Case Model** | The root container/definition for the entire case |
-| **Stage** | A group of tasks/processes activated by conditions |
-| **Human Task** | Manual activity assigned to a person |
-| **Process Task** | Invokes a BPMN subprocess (reference by name) |
-| **Milestone** | A marker showing progress/achievement in the case lifecycle |
-| **Entry Sentry** | Condition that must be TRUE to activate a stage/task/milestone |
-| **Exit Sentry** | Condition that triggers completion/exit of a stage |
+| **Case Model** | The root container/definition for the entire case. |
+| **Stage** | A group of tasks/processes activated by conditions. |
+| **Human Task** | Manual activity assigned to a person. |
+| **Process Task** | Invokes a BPMN subprocess (reference by name). |
+| **Milestone** | A marker showing progress/achievement in the case lifecycle. |
+| **Entry Sentry** | Condition that must be TRUE to activate a stage/task/milestone. |
+| **Exit Sentry** | Condition that triggers completion/exit of a stage. |
 
 ### 4.2 Sentries (Conditions)
 
@@ -190,10 +202,10 @@ PSA.CustomerVerified == true
 
 | Aspect | Details |
 |---|---|
-| **When evaluated** | On every case data update |
-| **Language** | MVEL (Java-like syntax, simplified) |
-| **Complexity** | Can be simple (1 attribute) or complex (multiple attributes, AND/OR) |
-| **Result** | Evaluates to true/false → triggers associated plan item |
+| **When evaluated** | On every case data update. |
+| **Language** | MVEL (Java-like syntax, simplified). |
+| **Complexity** | Can be simple (1 attribute) or complex (multiple attributes, AND/OR). |
+| **Result** | Evaluates to true/false → triggers associated plan item. |
 
 #### MVEL Condition Examples
 
@@ -238,23 +250,6 @@ graph TB
     B --> E
 ```
 
-**Key behaviors:**
-- `Collect Applicant Details` has **no sentry** → auto-starts when case is created
-- `Handle Rejection` stage has a sentry waiting for `approved == false`
-- `Fulfill Application` stage has a sentry waiting for `approved == true`
-- Within Fulfill: `Communicate Customer` waits for `account_created == true`
-- **Not all plan items execute** — if rejected, fulfill stage never fires
-- **Milestones** track progress without affecting flow logic
-
-### 4.4 BPMN ↔ CMMN Interplay
-
-| Rule | Details |
-|---|---|
-| **Case → BPMN** | Cases CAN invoke BPMN subprocesses via process tasks |
-| **BPMN → Case** | Processes CANNOT embed cases (different standards) |
-| **Subprocess reference** | Process tasks reference a BPMN asset name available in the environment |
-| **Reusability** | Define BPMN subprocesses once, reference from multiple cases |
-
 ---
 
 ## 5. ACE Studio Composer — Design Workflow
@@ -263,40 +258,18 @@ graph TB
 ACE Studio Composer is a **web-based** visual design tool for creating BPMN and CMMN definitions.
 
 ### 5.2 Creating a BPMN Process
+1. **Create New BPMN** → Opens canvas.
+2. **Add Start Event** → Drag from palette.
+3. **Append Tasks** → Click task icon to auto-connect with arrow.
+4. **Configure Task Type** (Service, User, RPA, Process).
+5. **Add Gateways** and define condition expressions.
+6. **Add Boundary Events** (Error/Timer boundaries).
+7. **Add End Events** and configure input/output context variables.
+8. **Save & Publish** to assets.
 
-**Step-by-step:**
-1. **Create New BPMN** → Opens canvas with palette
-2. **Add Start Event** → Drag from palette or click
-3. **Append Tasks** → Click task icon to auto-connect with arrow
-4. **Configure Task Type:**
-   - Select: Service Task, User Task, or RPA Task
-   - Name the task (e.g., "Get Payment Details")
-5. **Add Gateways** → For conditional branching
-6. **Define Conditions** → Set gateway condition expressions
-7. **Add Boundary Events** → Drag error/timer onto tasks
-8. **Add End Events** → Normal or Terminating
-9. **Configure Properties** → For each task: inputs, outputs, work basket assignment
-10. **Save & Publish** → To assets for deployment
-
-### 5.3 Creating a CMMN Case
-
-**Step-by-step:**
-1. **Create New CMMN** → Opens case model canvas
-2. **Add Plan Items:**
-   - Human Tasks (manual actions)
-   - Process Tasks (reference existing BPMN)
-3. **Group into Stages** → Drag to create stage containers
-4. **Add Entry Sentries** → Click diamond icon on stage/task border
-5. **Configure Conditions** → MVEL expressions in properties panel
-6. **Add Milestones** → Track progress markers
-7. **Set References** → For process tasks, specify which BPMN to invoke
-8. **Save & Publish**
-
-### 5.4 Service Catalog
-- **228+ reusable tasks** available in the catalog
-- Create reusable service tasks used across multiple processes
-- Register RPA scripts in the catalog for cross-team reuse
-- Tasks include: input parameters, output parameters, execution config
+### 5.3 Service Catalog
+- **228+ reusable tasks** available in the catalog.
+- Tasks include: input parameters, output parameters, execution config.
 
 ---
 
@@ -322,31 +295,7 @@ graph TB
     C -.-> |"references"| E
 ```
 
-### 6.2 Human Task with SLA Pattern
-```mermaid
-graph LR
-    A["Start"] --> B["User Task:<br/>CCP Action"]
-    B --> |"Completed"| C["Next Step"]
-    B -.-> |"Timer: 1h"| D["Send Reminder"]
-    D --> B
-    B -.-> |"Timer: 24h"| E["Auto-Escalate"]
-    E --> F["Manager Task"]
-```
-
-### 6.3 Parallel Processing with Gateway
-```mermaid
-graph TB
-    A["Start"] --> B["Parallel Gateway<br/>(Split)"]
-    B --> C["Update Database"]
-    B --> D["Send Notification"]
-    B --> E["Log Audit Trail"]
-    C --> F["Parallel Gateway<br/>(Join)"]
-    D --> F
-    E --> F
-    F --> G["End"]
-```
-
-### 6.4 Async Signal Wait Pattern
+### 6.2 Async Signal Wait Pattern
 ```mermaid
 graph LR
     A["Start"] --> B["Send Payment<br/>Request"]
@@ -360,9 +309,6 @@ graph LR
 ## 7. Project-Specific BPMN Implementations
 
 ### 7.1 DQ Rule Onboarding BPMN
-
-The team uses BPMN for automated DQ rule onboarding:
-
 ```mermaid
 graph TD
     A["Timer Start<br/>(Scheduled)"] --> B["Poll DQ_repository<br/>for status=pending"]
@@ -376,197 +322,78 @@ graph TD
     I --> J["Generate Reports"]
     J --> K["Update Output Folder"]
     K --> L["Raise PR"]
+    K --> M["Migrate to ACE Table<br/>(Flags: complex=false, approve=true)"]
     L --> D
+    M --> D
 ```
 
-**Implementation details:**
-- Entry: `sql_generation_dag.py` using Airflow taskflow pattern
-- Template strategy: 4 of 5 check types templated (duplicate, missing, stagnant, valid value); threshold partially covered
-- ~1,500-1,600 rules across 300-400 tables
+- **Core script:** `sql_generation_dag.py` utilizing the Airflow TaskFlow pattern.
+- **SQL Consolidation:** Automatically appends `UNION DISTINCT` query blocks to table-level files rather than creating new files per check, minimizing PR merge conflicts.
+- **Table Syncing:** Replicates DQ Repository records to the ACE front-end input table. Maps Use Case Names to IDs (e.g. `RESI` to `1`, `benefits` to `16`).
 
-### 7.2 Bulk Alert Update BPMN
-
-```mermaid
-graph TD
-    A["Upload Excel<br/>(Control Center)"] --> B["Validate File<br/>(Header Check)"]
-    B --> C{"Valid?"}
-    C --> |"No"| D["Return Error"]
-    C --> |"Yes"| E["For Each Row"]
-    E --> F["Update Alert<br/>Status in Q-Track"]
-    F --> G{"More Rows?"}
-    G --> |"Yes"| E
-    G --> |"No"| H["Generate Report"]
-    H --> I["End"]
-```
-
-### 7.3 ACDV Dispute BPMN (Simplified)
-
-```mermaid
-graph TD
-    A["Start:<br/>Dispute Received"] --> B["Check Eligibility"]
-    B --> C{"Eligible?"}
-    C --> |"No"| D["Send Rejection"]
-    C --> |"Yes"| E["RPA: Retrieve<br/>Account Data"]
-    E --> F["Verify Consumer<br/>Info (Name/Address)"]
-    F --> G["Check Account<br/>Status (GCBR)"]
-    G --> H["Compute Response<br/>Code"]
-    H --> I{"Dispute Valid?"}
-    I --> |"Yes"| J["Process Chargeback"]
-    I --> |"No"| K["Send Merchant<br/>Response"]
-    J --> L["End"]
-    K --> L
-    D --> L
-```
+### 7.2 ACDV Dispute Validation Flow
+The ACDV dispute handling process consists of complex validation and aggregation rules:
+1. **Eligibility Check:** Evaluates account formats (empty, starts with `61`, or invalid combinations of lengths 13/16 are business-exceptioned).
+2. **GCBR Retrieval:** Queries GCBR for account information and override parameters to formulate search requests.
+3. **SOR Aggregation:** Retrieves account details from **Triumph** (GAR master details) and unbilled balances from **GAR**.
+4. **Bankruptcy Search:** Uses the **ACON** utility to convert the account number to a secure token and fetch collector/bankruptcy flags.
+5. **Special Comment Code (SCC) Filter:** Universally filters out SCC `"AH"` sold accounts (for all brands, expanding brand-specific rules for Costco/JetBlue).
+6. **delinquency check:** Evaluates Dispute Codes (e.g. `111`), DOFD, and canceled status.
+7. **Satisfactory Deletion Check (7-Year rule):** Compares Triumph cancellation date (`FF30`) to current date; rejects if delta > 7 years.
+8. **e-OSCAR Consumer/Account Verification:** Performs validation on DOP, SSN, ECOA, credit limit, and Care enrollment. Matches against e-OSCAR data and marks fields as "changed" or "same".
+9. **ACDV Response submission:** Computes response codes (01 = no change, 21/22/23 = change classifications), builds audit trail notes, and submits response to e-OSCAR.
 
 ---
 
-## 8. BPMN Runtime Framework
+## 8. BPMN Runtime Framework & Promotion
 
-### 8.1 Framework Architecture
-- The project maintains a **BPMN runtime framework** that executes BPMN configurations
-- The codebase contains **service bundles** and **framework configuration**
-- BPMN definitions are designed (in Composer) and then executed by this framework
-- **BPMN is different from DAG** — team explicitly clarifies this during onboarding
+### 8.1 Runtime Framework Architecture
+- The runtime framework executes published BPMN configurations.
+- **BPMN is separate from DAG:** BPMN executes workflow models; DAGs (Lumi/Airflow) schedule and manage BigQuery pipelines.
 
-### 8.2 Local Development Setup (IntelliJ)
-1. Clone the framework repository (branch shared via Slack)
-2. Open in IntelliJ IDEA
-3. Configure run configuration:
-   - Select correct Java version (Java 21)
-   - Set main class (Spring Boot application)
-   - Add VM options (shared securely via email/Slack)
-   - Set active profile
-4. Some config values are **secrets** — never committed to code
-5. If IntelliJ hangs: **File → Invalidate Caches / Restart**
+### 8.2 Local Setup (IntelliJ)
+1. **Java Version:** Set to **Java 21**.
+2. **Main Application:** Spring Boot main class execution.
+3. **Arguments and Secrets:** Add VM active profile options. *Important: Secret keys must be obtained via secure channels (Slack/Email) and never written to files.*
+4. **Performance:** Run **File -> Invalidate Caches / Restart** if IntelliJ hangs.
 
-### 8.3 Two Composers
-| Tool | Purpose |
-|---|---|
-| **ACE Composer** | Design BPMN/CMMN flows for ACE Engine |
-| **Lumi Composer** | Design DT (Data Transformation) flows for Lumi pipeline |
+### 8.3 Git CI/CD Promotion Process
+```mermaid
+graph LR
+    Dev["Dev Save (Composer)"] --> GA["GitHub Actions Build"]
+    GA --> E1["E1 (Dev)"]
+    E1 --> E2["E2 (QA Validation)"]
+    E2 --> E3["E3 (Pre-Prod RFC)"]
+    E3 --> Prod["Production"]
+```
+
+- **E2 Success Rule:** Before requesting promotion to E3, you must execute at least one successful process instance in E2 and record the Instance ID as proof.
+- **RFC Rule:** E3 deployment requests require a formal RFC submission containing validation evidence, backup plans, and approvals at least **48 hours** before the scheduled window.
 
 ---
 
-## 9. Naming Conventions for BPMN Assets
+## 9. Naming Conventions
 
-### 9.1 Process Naming
+### 9.1 Asset Naming
 ```
 ACES_<BusinessFunction>_<major>.<minor>.<patch>
 ```
 
-**Examples:**
-- `ACES_FraudDispute_1.0.0`
-- `ACES_PaymentProcessing_2.1.0`
-- `ACES_KYCRefresh_1.0.3`
-
-### 9.2 Error Naming
-Standardized error names across all BPMNs enable portfolio-level reporting:
-- `ERR_API_TIMEOUT` — downstream API timeout
-- `ERR_DATA_INVALID` — input data validation failure
-- `ERR_SYSTEM_UNAVAILABLE` — external system down
-- `BIZ_ACCOUNT_CLOSED` — business exception, account already closed
-
-### 9.3 Versioning Rules
-| Change | Version | Example |
-|---|---|---|
-| Breaking change | **Major** | 1.0.0 → 2.0.0 |
-| New feature, backward-compatible | **Minor** | 1.0.0 → 1.1.0 |
-| Bug fix | **Patch** | 1.0.0 → 1.0.1 |
+### 9.2 Error Standard
+- `ERR_API_TIMEOUT` — Downstream API timeout.
+- `ERR_DATA_INVALID` — Validation failed.
+- `ERR_SYSTEM_UNAVAILABLE` — Backend unavailable.
+- `BIZ_ACCOUNT_CLOSED` — Business scenario: closed account.
 
 ---
 
-## 10. Key Technical Details
-
-### 10.1 Process Context (State)
-- Every process/case carries **context** — data attributes that flow through the lifecycle
-- Context is initialized with input data at process start
-- Tasks can read and update context
-- Sentries (CMMN) evaluate context attributes
-
-### 10.2 Correlation Keys
-- Unique business identifier for tracking process instances
-- Used to search/filter instances in Control Center
-- Example: Order ID, Dispute ID, Account Number
-
-### 10.3 Work Basket Configuration
-- Define work baskets per team/function
-- Assign user tasks to specific work baskets
-- Control who can pick up work (security configuration)
-- Filter tasks by lifecycle state (Ready, Reserved, In Progress)
-
-### 10.4 Signal vs Timer vs Error
-
-| Mechanism | Trigger | Direction | Use |
-|---|---|---|---|
-| **Signal** | External notification | Outside → Process | Async confirmations |
-| **Timer** | Clock/duration | Internal | SLA, retry delays |
-| **Error** | Task failure | Internal | Exception handling |
-
----
-
-## 11. Common Pitfalls & Lessons Learned
-
-> Based on project meetings and deployment incidents:
+## 10. Common Pitfalls & Lessons Learned
 
 | Pitfall | Lesson |
 |---|---|
-| **Missing error boundaries** | Always add error handling — unhandled errors terminate process abnormally |
-| **No retry logic** | Downstream APIs fail intermittently; add 3-retry with backoff |
-| **XCOM variable leak** | Always clean up XCOM variables after process completion |
-| **Naming inconsistency** | Standardize error names across all BPMNs for reporting |
-| **Manual Composer uploads** | Never manually upload to Composer storage; use CI/CD via deploy-config |
-| **E2 testing skipped** | Must run at least 1 instance in E2 and record instance ID before RFC |
-| **Large monolithic JSON** | Don't store all config in one JSON file; causes PR merge conflicts |
-| **Resource initialization** | Don't initialize BigQuery/DB connections before validation checks |
-| **Terminating vs Normal end** | Use Terminating End only when you want to abort all parallel flows |
-
----
-
-## 12. Quick Reference: Supported BPMN/CMMN Shapes in ACE
-
-### BPMN
-
-| Category | Shapes Supported |
-|---|---|
-| **Tasks** | Service, User/Human, RPA, Process (subprocess) |
-| **Start Events** | Normal, Timer, Signal |
-| **Intermediate Events** | Timer, Signal, Message (catch) |
-| **Boundary Events** | Error, Timer, Signal |
-| **End Events** | Normal, Terminating, Error |
-| **Gateways** | Exclusive (XOR), Parallel, Inclusive (OR) |
-| **Flows** | Normal, Conditional, Default sequence flow |
-
-### CMMN
-
-| Category | Shapes Supported |
-|---|---|
-| **Containers** | Case Model, Stage |
-| **Tasks** | Human Task, Process Task |
-| **Markers** | Milestone |
-| **Conditions** | Entry Sentry, Exit Sentry |
-| **Language** | MVEL for condition expressions |
-
-> **Note:** ACE supports a **subset** of the full BPMN/CMMN specs. The subset covers all enterprise needs. If gaps are found, ACE engineering can add support since they built the platform.
-
----
-
-## 13. Glossary
-
-| Term | Definition |
-|---|---|
-| **ACE** | Automation and Case Ecosystem |
-| **BPMN** | Business Process Model and Notation |
-| **CMMN** | Case Management Model and Notation |
-| **CCP** | Customer Care Professional (human operator) |
-| **Sentry** | Event-driven condition trigger in CMMN |
-| **MVEL** | Expression language for CMMN conditions |
-| **Work Basket** | Queue for human tasks |
-| **Deployment ID** | Logical name for infrastructure grouping |
-| **RuleAssist** | ACE's Drools-based business rules engine |
-| **Mod** | Reusable component registered in Mod Shop |
-| **CRD** | Custom Resource Definition (input/output schema) |
-| **OASIS** | Open standard for human task lifecycle |
-| **Robot Framework** | Python-based RPA scripting language |
-| **Process Task** | A task that invokes another BPMN subprocess |
-| **Correlation Key** | Business ID for tracking process instances |
-| **EDPP** | Enterprise Data Protection & Privacy |
+| **XCOM Memory Leaks** | Emitted data logs in Airflow compile. Always flush XCOM variables after completion. |
+| **Hardcoded configurations** | Store metadata (like allowed margins/use case IDs) in database configuration tables rather than static code. |
+| **Personal ADSID Decryption** | Never decrypt production PII data using personal ADSIDs (June had 62 flagged views). |
+| **Scratch Tables Pollution** | Clean up temporary folders and test tables in Dev and QA post-execution. |
+| **Timer Boundary on User Task** | Timer boundary triggers are highly effective for SLA monitoring, but never attach an Error Boundary to a User Task. |
+| **Skip E2 Runs** | You cannot raise an RFC for E3/Production without registering a successful instance ID in E2. |
