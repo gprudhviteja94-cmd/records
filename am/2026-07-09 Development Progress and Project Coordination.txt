@@ -1,0 +1,231 @@
+2026-07-09 Development Progress and Project Coordination
+
+Creation Time: 2026/07/09 11:28
+
+
+📅About Meeting
+
+• Date & Time: 2026-07-09 11:28 (Duration: 1982 seconds)
+• Location: Virtual (screen sharing and remote connection)
+• Attendee: Saravich, Kundan, Vargav, Sameer, Sachin, Patrick, Nirmal, Athar, and others
+
+📒Meeting Outline
+
+Development and Testing Progress
+
+• Local Testing and MongoDB Usage  
+  Discussion on ease of local testing and sharing scripts for exporting data from MongoDB. Saravich demonstrated MongoDB usage and agreed to share scripts and tools like MongoDB shell and Compass. Requests for temporary MongoDB access need to be raised and coordinated with the staging environment.
+
+• Code Review and Best Practices  
+  Saravich reviewed Java code, praising good practices in nomenclature, variable naming, indentation, and logging. Suggested breaking large methods (e.g., Resolve method) into smaller methods for clarity and maintainability. Encouraged replicating these practices in Python code. JavaDocs addition was recommended for better code understanding by others.
+
+• Deployment and Testing Coordination  
+  Deployment started after removing bulk changes; testing to follow. Confirmation required post-deployment for testing. Mockup JSON for user resource access was approved. Emphasis on testing before further changes.
+
+Project Phases and UAT Preparation
+
+• Development vs UAT Status  
+  Clarified that the project is still in the development phase, with end-to-end completion expected by the end of the month. Code has been moved to UAT but full testing and integration with other teams are pending.
+
+• UAT Ownership and Communication  
+  Patrick was reminded to drive UAT process, coordinate with Rachna via tech channel, and ensure sign-off. Nirmal is backup for Patrick. Emphasis on reducing unnecessary leadership emails and focusing communication on relevant stakeholders.
+
+Data Management and Query Analysis
+
+• Table Usage and Data Storage Practices  
+  Vargav was instructed to avoid creating tables under 'data' schema to prevent memory issues; use 'temp' schema instead. A list of created tables must be sent to the dev group for cleanup. Queries were reviewed to identify failure cases in data quality (DQ) results, focusing on specific tables like CSP model score CM13 and GMS transaction identifier for analysis.
+
+• Analysis and Deployment Deadlines  
+  Vargav to complete analysis and deployment today, using the development environment for analysis and inserting data under the temp folder. Close coordination with Sameer and others to resolve open issues and prepare for transition as Anand moves out.
+
+Framework and Integration Planning
+
+• Callipra Framework and API Integration  
+  Kundan to finalize analysis of eight-dimension framework and then move to Callipra integration. Discovery and integration work to be completed before full framework transition.
+
+• Future AI Agent and RAG Implementation  
+  Post framework completion, focus will shift to implementing Retrieval-Augmented Generation (RAG) using AI agents as part of the project pipeline.
+
+Team Coordination and Knowledge Transfer
+
+• Interns and Knowledge Sharing  
+  Concerns raised about incomplete knowledge transfer from Anand to interns. Emphasis on clarifying queries and ensuring proper understanding of codebase and algorithms used. Scheduled follow-up on Monday for query resolution.
+
+• Task Management and API Implementation  
+  Sachin to implement API under task management module, not business rules. Nirmal to assist and potentially complete API implementation quickly. Deployment to production planned for early next sprint after platform and SRA reviews.
+
+• Vault Configuration and Security  
+  Patrick to add username/password to RAZI vault for testing and close configuration today.
+
+Communication and Process Improvements
+
+• Email and Communication Practices  
+  Reduce large email distributions to leadership; focus on relevant stakeholders to avoid confusion. Post updates on tech business channel tagging Rachna instead of Anand.
+
+• Status Updates and Monitoring  
+  Weekly status updates are repetitive; deployment to E3 environment needed to progress. Sachin confirmed ingestion success and data visibility.
+
+• Meeting and Follow-up Scheduling  
+  Plans for calls to clarify doubts, code walkthroughs, and coordination among team members. Athar to reconnect after his call for further queries.
+
+📋Overview
+
+• Local testing facilitated with MongoDB scripts and tools; access requests to be raised.
+• Java code reviewed positively with suggestions for modularization and documentation.
+• Deployment underway; testing to be confirmed post-deployment.
+• Project still in development phase; UAT planned by end of month with multiple teams involved.
+• UAT process ownership assigned to Patrick with backup support from Nirmal.
+• Data storage practices emphasized to prevent memory issues; cleanup of tables under 'data' schema requested.
+• Vargav to complete data analysis and deployment today using temp schema.
+• Callipra framework and API integration scheduled after eight-dimension framework completion.
+• AI agent and RAG implementation planned as next pipeline steps.
+• Knowledge transfer and query resolution prioritized, especially for interns.
+• API implementation to be done under task management; deployment planned for next sprint.
+• Vault configuration for RAZI to be completed by Patrick today.
+• Communication streamlined to avoid unnecessary leadership emails; updates to be posted on tech channel.
+• Monitoring and status updates ongoing; ingestion confirmed successful.
+• Follow-up meetings and support sessions scheduled as needed.
+
+🎯Todo List
+
+• Saravich:  
+  • [ ] Share MongoDB export scripts and tools (MongoDB shell, Compass) with the team.  
+  • [ ] Add JavaDocs to reviewed code for better understanding.  
+
+• Patrick:  
+  • [ ] Add username/password to RAZI vault and complete configuration testing today.  
+  • [ ] Drive UAT process, coordinate with Rachna via tech channel, and secure UAT sign-off.  
+
+• Vargav:  
+  • [ ] Complete data analysis on failure cases using temp schema in dev environment today.  
+  • [ ] Send list of tables created under 'data' schema to dev group for deletion.  
+  • [ ] Deploy code to dev environment inserting data under temp folder.  
+
+• Kundan:  
+  • [ ] Complete analysis of eight-dimension framework and prepare for Callipra integration.  
+  • [ ] Connect with team for query clarifications on Monday.  
+
+• Sameer:  
+  • [ ] Prioritize closing open issues on univariant implementation.  
+
+• Sachin:  
+  • [ ] Implement API under task management module.  
+  • [ ] Confirm data ingestion and monitor status updates.  
+
+• Nirmal:  
+  • [ ] Assist Patrick in UAT process and API implementation as backup.  
+  • [ ] Test deployment changes with Athar post-deployment.  
+
+• Athar:  
+  • [ ] Coordinate with Nirmal for deployment testing and follow-up.  
+
+• All Team Members:  
+  • [ ] Post relevant updates and status reports on tech business channel tagging Rachna, not Anand.  
+  • [ ] Avoid sending large email attachments to leadership; limit recipients to core stakeholders.
+
+Transcription
+
+00:00:00 - 00:01:13 Unknown Speaker:
+
+It is easy for me to test it locally in case I am making some changes. Yeah, yeah, so earlier I think you said you had some scripts that will export that. Can you share those scripts? Okay, can you share your screen and show me that MongoDB will help you with it? Okay, I need a minute to connect. Oh, you are logging in from mobile, is that? No, no, no. I need a minute to connect to MongoDB. Yeah, no problem. So, you are in Bangalore, is it? No, no idea. No idea, okay. So, anything, any other issues we are facing with respect to UAT? I mean, one issue that I saw, I mean, I worked on it, you reviewed and closed it. No, I mean, see, we are not in UAT. Apparently, it's still in dev only.
+
+00:01:14 - 00:03:27 Unknown Speaker:
+
+Sorry? Like, we are not in UAT, okay? Like, we are still in dev phase. Okay, okay. So, when are we planning to move to UAT? I mean we have moved the code and on to UAT but like end to end is not yet completed in dev. So maybe I think by probably end of this month or something we are planning to UAT. So there are at least two or three more teams involved in this process so maybe we are ready but those streams are not so, yeah. Okay, okay. And for temp, MongoDB, do I have to raise any request? Yes. Yeah yeah please share that i'll raise that in christmas stage i'll share for stage okay yeah um. There should be some option to export. Okay, I will check it in net and I will try to find it.
+
+00:03:27 - 00:05:01 Unknown Speaker:
+
+MongoDB shell, compass you are using, right? I will share it with you. Okay, sure. Thank you. Java code, you know, as I am familiar with, right? I can see that those have been written with a good practice, the nomenclature and all, Saravich maintained. And one more thing, try to, you know, break these into pieces of method, you know? Suppose it is Resolve, right? See how big the Resolve method is. Yes. Right? So, the thing you are checking over there, whether it is an admin or not, you can move that part in a method. Right? And if it returns the admin, then call another method. Okay. Got it, right? Yeah. That's something you can do. Then these are resource API. These all are good, man. Like the way you have even used those you know variables name, right?
+
+00:05:01 - 00:06:29 Unknown Speaker:
+
+Those are also good and indentation and all. Sab kuch sahi hai, logger bhi sahi hai. Isse same ko replicate karo when you are writing code in Python. I have merged your PR. Just start the deployment. Right now I have started the deployment after removing all the bulk changes. Once test is done. I am not asking for this change. First of all we need to test that one already. Yeah, whenever we deploy it. And this user resource access jSon You have created the mockup jSon that I have asked you, right? Yeah, that's fine. Yeah, I have approved your PR. Just one improvisation. And I start adding the Java docs that if someone else tomorrow wants to understand that code, they can understand it. Okay. Once the deployment is done, just confirm me so that we can test it out.
+
+00:06:29 - 00:07:43 Unknown Speaker:
+
+Okay. Kundan, again, I don't have much to discuss with you. You have already set up a call, right? Let's check the touch now. Confirm me on this 8-dimension one. Right, whatever doubts you have, let's connect in the evening to close it out, just like last time, right? Um, you should come back with a pressure. So once your analysis is done, let's have a connect at 4 or 4 30 whenever you find it okay. Just one thing we can walk through the code that is fine, okay, but the thing is if. There are around 1400 lines of code. That is the reason I have given you two days. I am going through that line by line. The problem is once we get the real data, we will face that problem. I can understand that part.
+
+00:07:44 - 00:08:58 Unknown Speaker:
+
+Right now my intention is at least have a 70-80% of understanding of that code. Okay, okay, got it. Okay? And those are the reason when I told you, right? I need somebody who can execute it at a faster manner. Okay. And as Nirmal is doing quite well in the AS side, right? So, we have backup, right? Like, even you are not there, he can fix it. Okay. So, you can focus on that part and then I will utilize Nirmal on rest of the Java initiative that we are doing. So, you can just focus on that one right. So, spend time right and then get back to me if you feel like it would be too early at 4 p.m. then we can connect at 6 30. Okay. And for Callipra, uh, the framework that you were building, right?
+
+00:08:58 - 00:09:50 Unknown Speaker:
+
+We have figured out some API. I want a point of contact. But until unless that integration and all would be done, the framework will still continue rating those constant file. So, once you are done with these eight elements and you need to jump into that Calibra integration also, maybe we can plan it out for the next thing. By that time, let me complete the discovery and the integration. Okay. Now, Vargav, can you just quickly run the query and show me which table you have picked up? Again, your part is important. Yes, sir. Do you have BigQuery handy in front of you right now? Yes, sir. Can you run it quickly? I would like to see which is the table you are picking. The reason I am telling, I hope you were there in yesterday DSU ball night.
+
+00:09:51 - 00:10:55 Unknown Speaker:
+
+So, as you know Anand would be moving out, right? Even I need this multi-variant to be closed by end of this week, both for you and Sameer. Sameer, the cut over, we can still walk it out with Rachna, okay? Yes. But the univariant, whatever... open issues are there we need to close. So, let me set up a call with Anand tomorrow in the morning time based on his availability, but by that time Vargav even if you need to stretch, stretch a bit, but close those implementations. This is the table. This is the table, but can you write down a query to take your result and just. Show me, where is the you know, true cases are there? No, I, I really don't need to check this table, right? You can go ahead and show me in the DQ results.
+
+00:10:55 - 00:11:53 Unknown Speaker:
+
+And man, I have asked you, right. Don't create this table under data. Why we are still getting created. I haven't created any tables, actually. It's already there. Okay, and do you have a list of table that you have created under data? For this particular table, I haven't created any session. No, no, no. When did you started the implementation? From that time till now, right? Whatever table that you have created, do you have that list? Yes, I have that session. Can you send that list to F4 on the dev group and ask him to delete it from all the environment? And then you should be using only Dot temp, not dot data. Okay, otherwise we would run out of memory, right? These are warehouse table with use number of records. Okay, that is the reason they are providing that warehouse right.
+
+00:11:53 - 00:13:12 Unknown Speaker:
+
+Not to store large set of data in your use case bucket that is having some memory and we would end up out of memory. Then, just like logs, right? There was a.Similarly, if we are storing the records under dot data we would end up you know not having memory write down a query to the dq results. So, let us start from dq results where result equals to. From dq results. Yeah, from dq result. No, this would not run like this you have to just control z, control z, control z, control z. Control z control z go to your previous pairing control z control z yeah. So, just replace this dq this yeah to dq result that is under data only I think. Yeah, dq results where. Result equals to fail. FAIL. And do a count star.
+
+00:13:15 - 00:15:20 Unknown Speaker:
+
+No, first of all, write down distinct table name. That is fine. Distinct table name. Yeah, correct, correct. Over there only. Select distinct table underscore name. FAIL. No, in the same query. Select. Then, instead of star, write down distinct table name. I hope it's table name for this one, right? Can you guys someone confirm it's table? Underscore name? Comma count star, where the result equals to fail. Fail would be within, uh, single quote, and then group by table name. Run this one, so CM11, we got the number. This is surprising. Basically, how did we come to this? Just remove this query updated. So, which is the table that you picked up? Again, this is again used data, man. Pickup may be CSP model score CM13 with 155 record. Oh, this one? Yeah. Okay.
+
+00:15:21 - 00:16:29 Unknown Speaker:
+
+That comes into a mid-range, right? 155 record we can still analyze. Or if you feel even 155 is used, then go with GMS transaction identifier. Okay. Either this or this one, okay. Whichever, like, you know, you need to analyze those all 155 records, right? Yeah, yeah. So if you feel 155 is still big for a POC, then go for the GMS transaction identifier. Or even BED, BD fulfillment. Okay. But I would suggest, I think, GMS transaction identifier. Appa is not there and see can you confirm for which table there are failure that we used to receive on a frequent basis? Apart from this CSP model score 11 any observation If no No, then go ahead with the CSP model score cm13 Varga Okay, And now again, let me clarify the expectation is you're all alone.
+
+00:16:29 - 00:17:15 Unknown Speaker:
+
+Analysis should be done today itself, the deployment. If it is required to move to E3, please make sure you are moving it to E3 itself today and have a set of record today. Only Anand is there till made up August. Okay, but he is not going to support us, he is going. He is there just for the product partners, like for Rachna or, you know, the team that they have, not for us. Because a transition, right? So, in the transition phase if Rachna need some input from Anand, Anand will pitch in and then help Rachna, but not to us. .  Our point of contact would change from Anand to Rachna ok. So, please make sure to close this today, so that we can have  a connect with. .
+
+00:17:16 - 00:18:10 Unknown Speaker:
+
+So, I create temp folder  in temp folder in development shall I analyze  and  then move  it to production  right. . You can do you can do the analysis. Analysis on Dev Environment Also go ahead and deploy the code to the Dev environment. Just make sure you are inserting the data under Temp folder. Okay, if you have any query, connect with Samir and close it out. Okay, okay, okay, and one more thing, post this is done. Varga. You need to start, you know, progressing on that, Kris again. The interns are there till 17. So, you might have heard about the story, right? Somebody passed the information, it was truncated at senior level, then at the late level, then when dev reaches, right? It would be 40% of the input. So, same is happening with us.
+
+00:18:11 - 00:18:58 Unknown Speaker:
+
+Puna has some setup instruction which has been passed to Anand. Now, Anand has stated something to those interns. They have implemented, right? And I feel Antrich is not able to explain in a proper way. Okay, right, at least if I compare between Charmian and Rich, right? Charm is still able to. You know, give the input which we have asked. But you know, just this is code bus, just go through this one, right? So whatever query you have with those, uh, you know, code base, let's clarify that on Monday, I'm just giving you tomorrow's date just for this control. Once this is done, your focus should be on that Kris and this Kris CD framework. Uh, these eight dimension, these all are of highest priority task.
+
+00:18:58 - 00:20:06 Unknown Speaker:
+
+Because once we are done with this, then we need to implement a rag using the AI using, you know, we need to create our agent and all. So those are also again in pipeline. Okay, okay, yeah, and then one thing as this, you know, the interns are living, right? So can we get the? You know, the overall requirement, you know what is the how, how they can, they have, they have already given that overall requirement, right? No, where is the query with respect to the requirement? Connect with me, I'll give you the walkthrough even before jumping into that CD framework. Didn't I explain you? Yeah, Okay. That is something, you know, it might be with Rajendra and Purna. Means you might come up, man, why did I choose that algorithm, right?
+
+00:20:07 - 00:21:05 Unknown Speaker:
+
+Right, so even Anand doesn't have that answer. Even for the quantum, we have five or six set of algo that we are using, like prime, plus, right, mean, median and all. Why did you choose that? That is something. We never get an answer for that. For the 8th dimension, I want to ask something. So, I will connect with you. Yeah, we can connect on that separately. Sameer, same goes for you. Please wrap up that univariant on a priority. And one more, did you check the data? Yesterday, Sameer posted that run. Sachin, I don't have access to that. Ma'am, that is a warehouse table, Samit. Don't tell me that. It is the loyalty status. That is a warehouse table. Okay, okay, okay. Just check and confirm me on an immediate basis. Right now, I will check, okay?
+
+00:21:05 - 00:21:59 Unknown Speaker:
+
+Right away. Okay. N.C., do we have new entry to that list? Right now, no, Sachin. I checked. We don't have any new entry. Just post that into the tech business channel, mentioning that and going forward, right? Start tagging Rachna, not Anand. Okay, uh, hi, Rachna. There are no entry to be picked up for the CD implementation. So then you can focus on your products and issues that you are working on currently. Okay, but but make sure you post that on that tech channel. Don't forget that because I think I was showing that to seven yesterday, right? So they were into impression, right? Like, why the processing is being slowed down? Okay, see, uh, let me tell you. And one more thing I have seen that, you know, the email sent by UH, yesterday, uh.
+
+00:21:59 - 00:22:52 Unknown Speaker:
+
+Tagging Poona and Rajendra for UIT, right? We really don't need to share the result to Poona and Rajendra, right? This was I was talking. We really don't need such a huge audience over here tagging leadership. It is just the validation, right? So when you are sending these emails, send it to Anand and Rachna and then keep us, myself, Sravan and Suman, Ayyappa and who else? Yourself. That much. Okay. These are, you know, unnecessarily we are sending these attachments and all to the leadership. They are not bothered about this, right? They're bothered with respect to the number of results that we are providing. Again, like, you know, this question would come to us. Why take your result test table? Suppose Purna reverted on this. Who is going to answer this?
+
+00:22:52 - 00:24:12 Unknown Speaker:
+
+I already communicated this to Rachna, but, you know, please understand what exactly we are sending. So when you are connecting with, you know, Ayyappa just cascaded the same information to him, right? So now this was like why we are slow down on the role builds. Okay. So I already told them that no rules were added to the site for the implementation today. Okay. And I already told them that, you know, I don't want to, you know, cascade the wrong information. Otherwise it would be escalated to us. So please make sure immediately post a message with this tech business challenge that there are no rules to be picked up from the Excel sheet. Okay. Okay. Okay. Okay. Okay. Okay. Email also when you're sending it to LEADERSHIP. This creates a confusion among them because they would be having an impression, right?
+
+00:24:12 - 00:25:08 Unknown Speaker:
+
+That these many number which I mentioned yesterday, right, these are live, basically. But actually, it is not time and there is a dependency, though. That is something we can work out with the business partner, not the leadership. Okay, okay, and. Sachin, ingestion was happened yesterday and I am able to see the count. Okay, excellent. Thank you. So, Patrick, for you man, first of all, where are we with that RAZI vault configuration? You know, Sachin, we have to add that username password into the vault so that I can test it. I asked you for the variable. I did not get it. So let me form the variable. Let me add it and then I'll send it to you. Test it out. Close it today. In case of any issue, just do let us know immediately.
+
+00:25:08 - 00:25:59 Unknown Speaker:
+
+That is number one. Second, check with Rachna on the tech channel, not individually. On the tech channel, just ping her. Just ask for her availability for the UAT. That is something your responsibility to drive the UAT and close it to get a sign up from the Rachna. I'll not be following up again, I am repeating it for you, that is something you, you own that process, you are the module lead for that process. Okay, Nirmal is there just to backfill you, like, in case you are on leave or something, right, then Nirmal can take it up and then drive that. But, but. End of the day, you are the lead for that automation. Okay? So, please make sure to ensure that that automation starts running on the production environment. Okay. Sure, sir.
+
+00:25:59 - 00:26:53 Unknown Speaker:
+
+Because the same status is being passed, right? You are seeing that the weekly status, right? It is being seen if I refresh it from Sindhuja, right? It is the same status which is being passed, right? UAT is in progress. UAT is in progress, right? Someday, Puna or Raj would ask this, right? If I go again. U18 progress if you see this one. This is being repeated from last one to two month now if I go to backtrace the previous emails, right? So this needs to be deployed to E3 now. Yeah, sure, okay. And uh, that is one crazy one, this one, and then the API implementation. I have explained it to Nirmal, but in case you have doubt, feel free to reach out to me. I'll re-explain it to you again, just to give you a heads up.
+
+00:26:53 - 00:27:43 Unknown Speaker:
+
+If I give it to Nirmal, he can wrap it up within a day or two, okay, but as you are new, you can take your time. But that is again a important initiative which needs to be moved to production environment. Uh, maybe not by end of this print, but, uh, starting next print earlier, starting earlier, week of the starting next print. Because that's required a platform review, SRA review, which I'll do it from my side. But main time, please make sure you complete the API implementation and test it out. At least on even. There is no dependency on that. Yeah, and Sachin, he told me to add it inside the USCD, or a score is also fine. Yes, core services is there, right, can I add there? No, I mean A-score services that repo owned by the platform team.
+
+00:27:43 - 00:28:33 Unknown Speaker:
+
+That is your consider that is the object class. You need to build a wrapper out of it. A child class of that which would run with that dependency. A-score is your platform above which you need to implement that one. I have the task management and business rules is what he is saying. No, no, no. We don't want to implement it in the business role. It will be in task management. That needs to be done under task management. Okay, fine. I'll implement it. Okay. And, Athar, just have a... Yeah. I just need to drop off for a call, guys. I have a call at 12. Okay. So, in case you have queries with me, we can connect at 1. Okay. Thanks. Yeah. Okay. Athar, I have asked for some changes to Nirmal. Let the deployment done.
+
+00:28:33 - 00:31:54 Unknown Speaker:
+
+Test it with him. Otherwise, you have to chase Bhagwan today. Got it. Sure. Okay. Then let me know once that is when we can test it. Yeah, once the deployment is done, Nirmal and Athar, we can connect it to L30. Okay. Okay. Yeah. Thank you, guys. Thank you. I will go now. There are no calls now. You can buy all these things. You can buy curry.
+

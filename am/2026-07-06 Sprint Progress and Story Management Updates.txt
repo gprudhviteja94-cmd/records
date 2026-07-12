@@ -1,0 +1,283 @@
+2026-07-06 Sprint Progress and Story Management Updates
+
+Creation Time: 2026/07/06 18:00
+
+
+6099043445773570048📅About Meeting
+
+• Date & Time: 2026-07-06 18:00
+
+• Location: Virtual Meeting
+
+• Attendee: Jason, Sachin, Anand, Barkha, Ananth, Appan, Sindhuja, Rachna, Prithvi, Aman, Siddharth, Athar, Kundan, Shravan, Pundan, Swin, others
+
+📒Meeting Outline
+
+Sprint Progress and Story Management
+
+• Story Status Updates and Rally Usage
+  The team discussed the first-time use of Rally for managing stories. Members were instructed to move their stories from "To Do" or "In Progress" to "Done" to facilitate acceptance by Anand and Jason. It was clarified that closing subtasks does not automatically close the parent story; stories must be manually marked as complete. Missing acceptance criteria or descriptions prevent stories from being marked complete. Logging hours on subtasks before closing was emphasized.
+
+• Story Acceptance and Demo Updates
+  Barkha shared progress on multivariate checks and tagging tables, with demos already done last Friday. Anand confirmed acceptance of SQL-related stories and single variant validation fixes. Appan reported onboarding 35 DQDs out of 96 and ongoing production support deployment activities. Shravan and others updated on CD checks, bulk data migration, and threshold check types, with plans to move to production after validation.
+
+• Issues with Story Closure and Logging
+  Several members, including Sindhuja and Pundan, faced challenges in marking stories as complete due to confusion between subtasks and stories. Guidance was provided to filter views to show only stories and ensure all acceptance criteria and descriptions are updated. Logging hours on subtasks remains mandatory.
+
+Transition and Ownership
+
+• Insurance Table Ownership Transition
+  Aman explained the transition of insurance table ownership to Kumar and Jatin Gambhir’s team, with support planned for one sprint before full handover. It was agreed that Kumar’s team would eventually accept stories, with offline discussions planned to finalize the process.
+
+• Support and Production Environment Updates
+  Issues with data visibility on UI due to API problems were reported and escalated to Saurabh’s team for priority fixes. Bulk accent and threshold check types were updated and scheduled for execution post-call. Metadata pipeline setup is mostly complete; only SFTP profile mapping remains, which is a quick task pending input from the SFTP team.
+
+UI Enhancements and Code Deployment
+
+• UI Changes and Feedback
+  Siddharth demonstrated UI changes including new cards for Restringer and descriptive texts for DQ rules. Suggestions included removing the word "existing" for clarity and using radio buttons instead of dropdowns for binary choices. Back button added for easier navigation. Code refactoring and deployment to U1 environment planned for testing.
+
+• Code Deployment and Testing
+  Aman confirmed code push to repository and testing completion, with plans to move changes to production after validation. Discussions on enabling business certification textbox and formatting were held.
+
+Training and Tool Usage
+
+• Rally and Jira Training and Usage
+  Aman and others discussed challenges with Rally and Jira usage, including story acceptance and filtering. Training links were shared for those who had not completed them. It was emphasized that stories must be marked complete for acceptance and proper tracking.
+
+• SQL Query Execution and DAG Runs
+  Rachna provided guidance on running specific DAGs for validation without full deployment, suggesting use of utilities to run SQL queries directly via XCOM variables. Coordination with Kundan was advised for technical support.
+
+📋Overview
+
+• Team members need to move stories to "Done" status manually; subtasks closing does not close stories automatically.
+
+• Acceptance criteria and descriptions must be complete to mark stories as done.
+
+• Logging hours on subtasks before closing is mandatory.
+
+• Insurance table ownership is transitioning to Kumar’s team, with support planned for one sprint.
+
+• API issues affecting UI data visibility are escalated for urgent resolution.
+
+• Metadata pipeline setup is nearly complete; only SFTP mapping pending.
+
+• UI improvements include clearer labels, navigation enhancements, and input controls.
+
+• Training on Rally and Jira is essential for smooth story management.
+
+• SQL query execution can be optimized using utilities and XCOM variables to avoid full deployments.
+
+🎯Todo List
+
+• Barkha:
+
+  • [ ] Modify token list columns and rerun multivariate checks after input from table owner (ASAP)
+  • [ ] Wrap up related stories and coordinate demo acceptance
+
+• Anand and Jason:
+
+  • [ ] Accept completed stories in Jira once marked done (Ongoing)
+  • [ ] Review and accept metadata pipeline story after SFTP mapping completion (End of sprint)
+
+• Appan:
+
+  • [ ] Continue onboarding remaining DQDs and complete production support deployment (Next sprint)
+
+• Sindhuja:
+
+  • [ ] Close pending stories after updating acceptance criteria and descriptions (Immediate)
+  • [ ] Follow up on API issues with Saurabh’s team and escalate in GCS call if needed (ASAP)
+
+• Prithvi and Pundan:
+
+  • [ ] Move stories to "Done" status and notify for acceptance (Immediate)
+
+• Aman:
+
+  • [ ] Accept insurance production support stories for current sprint (By sprint end)
+  • [ ] Coordinate transition with Kumar’s team and confirm POC (This week)
+
+• Siddharth:
+
+  • [ ] Push UI changes to U1 environment and confirm testing completion (ASAP)
+  • [ ] Implement radio button for fifth question and finalize UI descriptions (ASAP)
+
+• Rachna:
+
+  • [ ] Run query to update DQ repository with correct portfolio DL and remove Aman (ASAP)
+  • [ ] Verify ICMB bulk email and DQ results table issues and update team (ASAP)
+
+• Kundan:
+
+  • [ ] Assist with SQL query execution utility and XCOM variable setup (ASAP)
+  • [ ] Execute threshold check type dump post meeting (Today)
+
+• Sachin:
+
+  • [ ] Share metadata setup links with Jason and coordinate review (Immediate)
+  • [ ] Ensure logging of hours on subtasks by all developers (Ongoing)
+
+• Team Members:
+
+  • [ ] Complete Rally/Jira training and follow correct story closure process (ASAP)
+  • [ ] Log hours on subtasks before marking as done (Ongoing)
+
+Transcription
+
+00:00:00 - 00:01:53 Unknown Speaker:
+
+Thank you. Hey, hi Jason. Hey Sachin, how's it going? Yeah, it's all good. Hi everyone. Hey, hi Anand. So team, I think this is the first time we are using Rally. Can you guys please move your storage to done state? Right now, there are lots of things which is still pending in, in progress or to do. Like a tell, you have couple of stories in focus and see you have one in to-do list, One in in progress. And please start getting it move so that then we can have a word with Jason and on and So till the time, you know. Sindhuja, folks are updating their stories, right? Can we plan for the next sprint? We have a planning meeting tomorrow, right, Sachin, for that. Oh, okay. Okay.
+
+00:01:54 - 00:03:23 Unknown Speaker:
+
+I think whoever's at least marked them as complete, They can start with the demos and explanations and Jason or Anand can accept them. Barkha, would you like to go first? Yeah, hi. So in the sprint, I worked on multivariate checks on CM11KB. So I initially worked on a single model ID and then. I worked on our model like this. So based on the input from Manan, I'm going to modify our tokenist to a few of the columns. Then finally I will again rerun the multivariate check on the particular table. And also I created a tag for the particular table. And once I get the input from the particular table owner, then I'll be able to wrap it up as much as possible. Is there nothing to demo on the same particle that you can show the product owners?
+
+00:03:25 - 00:04:50 Unknown Speaker:
+
+We did it last Friday, so that is okay. Okay, and then are you okay to accept all the three stories? Yes, yes, I'm already having a discussion with them, okay, so I have supported. Like, uh, like, make that SQL, uh, like as per the model ID to run in a uh, along with, like. When we trigger the time, it should trigger this book query, right? So I have all those code changes as well for SQL. And as well as like, I worked on the single variant, uh, uh, validation issues, uh, where we have found some, so I'm fixing all this. Done that, yeah, so on Friday we have a demo with Anand, also like, So, yeah. Yeah, that's all from my side. Ananth, you could accept him, right? Yeah. Okay. Hi, Appan.
+
+00:04:56 - 00:06:28 Unknown Speaker:
+
+So for this print, I just started working on the CD checks. So this one we have onboarded with total 96 DQDs so far. So today we are about to onboard 35 DQDs. So that is in progress. So apart from that one, there is a production support user story. So that is the deployment activities I work on. The rest of you are you facing any issues in closing them even my one market has done how it could go in to do i don't know how i think maybe sometimes also. Same for me and Sue. Such an interesting, some of your subtasks are not closed or something. Or you only closed your subtask and not the stories. So what you have closed is your subtask. So this is not like a rally where if you close your subtask, your story will automatically get closed.
+
+00:06:28 - 00:07:34 Unknown Speaker:
+
+You have to click on the story and mark it as complete. Let me do that. Let me see. How much have you said I am first for exile? Yes, Sunuja. We just wait for the next attempt to close their stories. Yeah, Sunuja, can you scroll up a little bit? Even I am a little confused with this type of closing them. Because I am in for ANSI, right? You see two stories, I think, 2025, 2018, right? But I do see a lot of subtasks as well. So in your view, right, can you go on type and filter out that you only want to view the story, not the subtasks. So if you click on subtasks, everything will be seen and that's like a little confusing. So that you only see the story in you.
+
+00:07:34 - 00:08:49 Unknown Speaker:
+
+And Nancy, I think the same with you. So in JIRA, after you close your task, you go to, for everyone that's struggling, right? So you go to your story this way and... Yeah, So here on whatever you see an in progress, you to mark it as completed. This is at the story level and not this sub task level. One of the issue I am saying is that you are not even able to mark it as completed. If there is a acceptance, criteria is missing, correct and Description is missing. So please make sure even those are being updated. Yeah, and for Anand and Jason, once the stories are marked as completed automatically and use it called accepted will appear on status. So you guys have to go and click to accept it if you're okay with the story and if you want rework on it, it goes back to progress.
+
+00:08:55 - 00:09:59 Unknown Speaker:
+
+Is everyone clear about what they're supposed to do? I am okay, Sundejo. Can you refresh for me? There is just one that I need to update. I think Arthur, do you... You mentioned something. Marked by me as accepted. No, right, no, no, I.I just did that. So I think that's fine, right? This is the correct. Yeah, it's fine. I just got scared that I was checking, right, like, if I accidentally saved it, can you? Can you just request for me once? Oh yeah, it's actually smart test completed. Okay, so let me, uh, give that, uh, you know, overview to one and so on. For this AI onboarding, you know, eight dimension, we have initial call with Charmy and the CD framework that we implemented.
+
+00:10:00 - 00:10:50 Unknown Speaker:
+
+So those are the piece of work that we did on and then, you know, the today's call for that KRI is in all right. With respect to the Colibra and Manta, we are still searching for those API. I still need to check with Raj on that, like we did not receive any input on that as of now. That is one. Okay. And the SME support has used Jira like, you know, the rest of the use cases like onboarding those roles for the CD framework code reviews, some of the platform issues and, you know, enabling that self-serve UI to the production environment. I did not able to create multiple tasks for this as this is the very first time we moved to the Jira right. Uh, so those are not being briefed over there, but those are the multiple things I supported with the SME support.
+
+00:10:50 - 00:11:57 Unknown Speaker:
+
+And then that's a case for razy razy. You are aware, Jason, with respect to the issues that we are facing over there in E2 environment, right? So we did created the ticket today. Also, I reverted the T insurance. We need to check with Aman, so there is one metadata change which is already being done from our side. Okay. Sandusha, I still have one question, right? So, even though I have moved the two stories to accept it, if I can just open the subtask view, right? Those subtasks are still in done. So, should I do something about it? These are from the same story. Which stories have you moved to accept it? Sachin. I completed all the subtasks, Anand. I can see that in my dashboard. I don't know what is going wrong.
+
+00:11:58 - 00:13:02 Unknown Speaker:
+
+Yeah, so these eight dimension subtasks, right? Not that one. I don't know. I got it. I'm just checking like it fails. Yeah, so for subtasks, I think that's all. Once the developer marks it as completed, I don't think you have to do anything as it's on the phone now. And also, I hope all the developers are logging their hours. So, such in like, you know, right? So, previously, remember for every task, you guys would get like the number of hours spent. So, before you close your task, you have to log your hours. I got it and I have given it for subtask, but the confusion was with respect to that, you know, user story and subtask. So few of them are missing. I got your point, but for few of them. You can see that.
+
+00:13:02 - 00:14:23 Unknown Speaker:
+
+I logged the number of hours also if you can go to the incidents of someone else, right? I already did those logging hours. Yes, I think the logging hours happens only as a subtask, like how it used to happen for a task in REST. Yeah, yeah, correct, okay. So I think if anyone has missed it out, right? Like, please do it like, I'm sorry, do see them in done. But I don't have to do anything, right. That's the yeah, I think, yeah, yeah, you don't have to do anything. Yeah, okay, um, Sachin, any other updates from your side? Uh, no, no, nothing for my side. Okay, uh. So Jason, you got it right? How to accept the user story in Jira? Has Jason dropped off? I think he mentioned that he's facing some connectivity issues, so he'll do it in an hour.
+
+00:14:23 - 00:15:33 Unknown Speaker:
+
+Okay, um, no shoes. I'll connect with him. Um, yeah, Shravan, you just have AC story, so we'll just skip because Jason is not here. Done, completed, everything, uh, the CD shakes up. In this point I have worked on and the RESI, one social, we have to work with that one, the SFT, the file. Yeah, that that would take 15 days, right? So I'm still working, maybe next week you would be getting that laptop file, so. As your metadata setup is ready, we can get the story accepted and maybe... Yeah, metadata setup is ready, Sachin. Did you get that, Jason? No, the SHA-1 is already taken. SHA-1, we have mentioned it. No, can you just review with Jason once? Maybe download the metadata, send it to him, and just check with him if everything is okay or if there are any changes required.
+
+00:15:33 - 00:16:32 Unknown Speaker:
+
+Make that change. Otherwise, only the SFT mapping would be required, right? Which we can do it. Uh, later. Okay, I will do it. Uh, so no need to even do that, just send him the uh links, uh. You can directly check on Lumi Portal itself. He knows how to give him, give him the additional access additional owner. Okay, okay. So this one I have mentioned, like the whole, that one in the zero, the other task I have did, the completed, and this one, uh, I have put like a hold in the RG one. So should this story be moved to next print? No, no, uh, that's what I'm mentioning. He did that metadata pipeline setup, it's already being done. Only part which is missing is the, uh. Mapping of the SFTP profile.
+
+00:16:32 - 00:17:37 Unknown Speaker:
+
+And that would be done once we get a SFT profile from the SFT team. And that is a five minutes job, right? So ideally, we should just get this story accepted. And maybe with a production support ticket for the next print, he can just update that, or even we don't need a ticket. I'll I'll configure that SFT mapping on those pipelines. The major piece of work, right, 95% of the work has been done if he has already set up the metadata. It's only the last part where he just needs to plug in the profile, that's it. Okay, then I will do the, I will mention this one is also completed, Sachin. Yeah. Okay, that's completed. Mark it as completed and deduct it and accept it from JEE. Okay. Swin, are you facing any difficulties in working your studies as completed?
+
+00:17:37 - 00:18:48 Unknown Speaker:
+
+Yeah. So, with respect to the story completion, I am done with the EOD is one thing pending. That we are going to close it tomorrow morning. With Rachna's help. And Vault setup, code wise, everything is done for the FTP file transfer. One only testing is pending, so that currently busy with this one self-service one. Once that is done, then I will work on the Vault thing as well. So, both of your stories, a part of it has to be carried over to next steps. Sachin, what would you say? I mean, with respect to me, it's done. Only the UAT, Rachana was not available last week. So, that's why it's pending. So, I hope it will get closed tomorrow morning. If you get review comments from the UAT testing with Rachana, how would you address them?
+
+00:18:50 - 00:19:45 Unknown Speaker:
+
+No, everything is done. Only she wants to see if things are going smooth or not. That's it. Review comments. We had a call in the morning also today. She confirmed what is the requirement and we have given her a clear picture. So, only thing is she wants to see if it is running in A2 environment once. That we are planning to showcase tomorrow morning. Yes, Induja. I am pretty much aligned on that we should be alright. Just mark your stories as done. Yeah, I'll do that. Right, so that Rachna would accept. And under the production support of Rachna, he did those bulk data migration from Lumi to Ace. Okay, okay, sure. So even we moved our threshold check type also today, marking those as a complex check.
+
+00:19:46 - 00:20:49 Unknown Speaker:
+
+It is just that one dump is required to put into the is which I will ask Kundan to execute it post this call. So, Even you would be able to view the threshold check type on the UI from tomorrow onwards on the Even environment. And once all these rules are aligned, I will start moving it to the production environment. Sure, Sachin will let you know about that. Okay. So, Prithvi, just mark those stories first of all to done status. Then only Rachna would be able to accept it. Yeah, I will update it. Yeah. Payment. Yeah. So, in this print, the bulk update part is done. The IoT is also done. And for the API for access, because it's a security API, so it is taking time for me. And there is a lot of setup to wait.
+
+00:20:51 - 00:22:07 Unknown Speaker:
+
+It's not like a state-of-the-art API to implement. So that's why I still got the LTAB part. It is working now. But some of the APIs are requiring certification access. So that part I'll set up today with the help of Kundal. What about the story that is in progress? This is the one I am talking about. The ABI for access data. The security access data. Section 2. Is this story being accredited for actual enforcement? Yes, Sindhuja. And just to give you a heads up, this is a kind of POC that we are doing, so it may take some time. The reason being there is a connectivity testing that we need to do through the LDAP and we may come up with multiple issues for this. He actually took more time in UAT storage compared to this API access.
+
+00:22:09 - 00:23:19 Unknown Speaker:
+
+Otherwise we could have shown a better progress on this API one. But but if this API is going to take a time, this is you know bit up you see that we are doing it's. Yeah, because look, UAT might be done within half an hour, but in order to prepare for the UAT, he did work continuously on that. You know, there are multiple blockers to sort out. There are some improvements. So he did that. I'll take that responsibility. And there is a, you know, issue, Anand, that I have highlighted. So we have intimated this to Saurabh and team. And even I have tagged Work One and say it to fix that on priority, so that once we get a sign up, we will move it to the production environment.
+
+00:23:19 - 00:24:27 Unknown Speaker:
+
+The data, those, the data, those are not coming in the UI. If you remember the the UID we were having last Friday, right? This is bulk accent, bulk accent, so the data were not being visible on the UI, if you remember, right? So there is a API issues from sort of steam. The one that you are mentioning right, even we cannot show it to Poonam until unless we. Correct. So, that is we already intimated to Saurabh Dutta and team. Yeah. So, most probably they should fix it and then post that will have a reconnect with you to move it to the production environment. Okay. Okay. So, we have an idea by when we will do. Is chasing them so most probably please check if we can you know get it done today and if required just look in sindhuja so that she can also you know accelerate it in the gcs call also okay.
+
+00:24:35 - 00:26:30 Unknown Speaker:
+
+Can you mark this properly and then live in? Yes, sir. Okay. Are you done? No, I'm not. I'm here, right? Hey, hi. Hi, Siddharth. Hi, Siddharth. So, this CD is playing by one of his fans. And, uh... Yeah, so this CD framework is done. So I already pushed the code in the repository, already tested on .  Already,  I think, the demo has been completed with . They want  to just validate  the  data on production,  so  we are just moving those  changes to the broadside. So I already connected with . So I will connect with him after this call and move this one to prod. Can you mark your stories as completed? Uh, yes, I have to restart the system. Okay, so this is getting hanged. Okay, so after that, I will, you know, after this call, I will talk, Yeah, hi all, yeah, hi.
+
+00:26:30 - 00:27:39 Unknown Speaker:
+
+So I think my story is coming later, but I'll just share my screen. To give out them of the UI changes, which has been done in the current spread. Let me know once my screen is visible. It's visible. So Ananth, to start with, I have added a new card for Restringer, where the forms will be coming in. And just to give a word, like, I've added some description to each of the card. These are like, not the ones so like shared by you. Just added to give you a few of it. Maybe with the changes you've mentioned, we can add the exact meaning on something we would represent as per the business. And one more thing, I was suggesting, can we remove this word existing so that everything would be in a one line?
+
+00:27:39 - 00:28:57 Unknown Speaker:
+
+Okay, so currently we'll see all the other titles, which I would say is a single line, okay, it might look similar. Yeah, I don't think I don't think right if we are modifying right they would know It's basically they are modifying the existing one, right? No one is going to modify the newly created one, right? Then I think we can keep it new or modify DQ checks. That is not a problem, Rachna. Those are really being alert. This one, fourth one, approve new DQ rule. That's something we can mark it as. Instead of DQ checks, DQ rules. And anyhow, approve page would be visible only to you or whoever is the product owner. It would not be visible to the end users. Right. So they would be viewing three tabs. Register new rule.
+
+00:28:58 - 00:30:26 Unknown Speaker:
+
+View or modify rules, then review DQ, that's it, and and the approve new DQ checks. Or the report that we are going to build for the upcoming. And next. Pin, right, that would be visible only to you guys. So should I remove this and after this descriptions, you can just provide me those, I'll update it. So, once we click on any of the bars, I have just added the title for that page and also a back button. Initially, we used to navigate through home button but new user might get confused. So, that's the reason I have added a back button where the user can simply click and go back to the main dashboard. So, here we have given the table name another feature. We need to put I'm just testing it.
+
+00:30:26 - 00:31:27 Unknown Speaker:
+
+So I'll just put some loader Something existing textbook doesn't have that. So just looking for a valid UI Content where we can just show a pop-up or or something which loads that data Hey, Can we? Okay, Aman is there? Okay, okay, you can wrap up then then we'll connect. Yeah, I mean, I hope you have five minutes. So first page will be having all these descriptions. One thing I want to discuss this rule description. Do we have to show it here or in the next page? No, no, no here, only because this is getting formatted over here, only, right? So that is okay, yeah. So once we have all this data, we'll be going to the next page and we'll have this business certification. So the text box will be as discussed with.
+
+00:31:27 - 00:32:15 Unknown Speaker:
+
+Sachin will be enabling to the last. Since it is in the other branch, so currently will not be able to show. But it will be stretching a bit to the covering. The whole page. Okay? And then the user can add this business certification and submit those data. One modification in this, one other. I think the last question, you can put it as a drop down of yes, so okay? The fifth one should be. What should be the value for those yes or no, yes or no? Okay, just revert on that same email. Can we give a radio button in that case? Because if we have only two options, it's preferred to give a radio button instead of a drop down, okay. Cut it. Make sure that button stays within the layout. Yes, yes.
+
+00:32:15 - 00:33:27 Unknown Speaker:
+
+That changes has been done but it's in the other brand. So, I'm showing it locally. I'll just do a code refactoring and just push those changes in even for you to test also. Sure. And I thought we'll just revert it so that we'll document that. As discussed in today's demo, we are just reverting the fifth question as a radio button as usual. Anything else? No, that's all. And for the DQIM, right, Anand, click on review DQIM. You have already seen that feature, right, that bulk processing. So that has been demoed already. Athar, you had to change this as well, right? Select it by default. By default, yes. I'll just push all these changes in U1 and verify it and give you a confirmation. Maybe we can just test in U1 then. Okay. Okay, that's a confirmation.
+
+00:33:27 - 00:34:41 Unknown Speaker:
+
+Thank you. Thanks. Sindhu ji, can we go for Aman first? Yeah, sure. So, there is just one user story, Aman, and I told you because the rally might be new for you also. So, there is a user story. I hope you have gone through that rally spaces training. Jira space. Jira space, right. Have not done the trainings actually, but I can. I mean, I can see. I just quickly share my screen, right? I can, so this is the page which I can see and I just need to select this. Right. No, no, no, move to down, right. Is that the case in which I am not here? How to accept this one? On the top top right, there is a column, there is a row with type, row with type okay, type. Yeah, yeah.
+
+00:34:41 - 00:35:57 Unknown Speaker:
+
+Just filter by story, story, story, yeah. And next to that you can see something called group stories that is highlighted group stories is there? Click on that. Yeah, just make it as a sign, me, so that it's easier for you to figure out what is assigned to Sachin. Yeah, now click on this story which is in insurance production support. Yeah, and just, uh, drop down the top. So Amin, before you drop up, just one question. As the transition is being happening, right, who is going to take care of insurance from the product standpoint? Like you were doing that, right? Yeah, so from now on, it will be the same like as we did for Rezi, right? So it's going to be Kumar and Jatin Gambhir is on the email, his team.
+
+00:35:57 - 00:36:57 Unknown Speaker:
+
+Now from his team, who will take the lead? That I don't know. Give us the POC. But yeah, so they will be transitioning the ownership, like the table ownership for the upcoming sprint, right? And you know, we are going to support. So can we accept, like, uh, it would be you, at least, to get, you know, accept that story? At least for the upcoming sprint? And then maybe once Kumar pictures, then we can start working with him. Sure, okay, I think if we, uh, so the next sprint. We plan starting from this transition, right? We plan to complete this transition by end of this week. Post that, I mean, coming week they will be supporting. So I mean, if that's the case, I think it's better that they, uh. Basically.
+
+00:36:57 - 00:37:44 Unknown Speaker:
+
+Kumar's team will accept the stories, but we can talk on that offline, maybe with them, and then finally come to conclusion. So so should I create a stories or not? That is something I need to check, because we need to get that stories accepted right at the end of the sprint. So even if they are not going to accept it, if you can support us for one sprint, right? And post that. If they are not, uh, you know, creating a story, then we are not going to support for insurance. Okay, sure, I mean, that's, yeah, acceptance should not be, anyways, it's a production support, so we I can write exactly, yeah, maybe a one story pointer and post that. If they are not joining and all right, uh, then we might stop doing that until unless we get a support from their side.
+
+00:37:52 - 00:39:13 Unknown Speaker:
+
+Pundan and Prithvi's stories are not yet moved to done. Rest all have been accepted. Pundan mentioned that he would be doing a bit late. Pithvi, what is the challenge with you? What was the problem? Why you are not able to move your stories to the complete state? If you are facing challenges, you can share your story, right? No, no, it's not challenges. I actually not got the link. Can you share that link with me? Oh man, great, great. You haven't completed this training then? No. Let me share you the link. It is being filtered with my name. Can you give your updates in the meantime? Just refresh it with your name. It is with my name. Just refresh it with yours.
+
+00:39:19 - 00:40:46 Unknown Speaker:
+
+So in this print I was working on, one story was the UMDL, I was doing few decursions were also built and I was doing the E3 validation and there were some failed results. So I had connected with Rachna and she had asked to analyse those failures, so I did that and I had shared the results with Rachna. So that is for review. And I also worked on the CD checks. So last week I had worked on 37 RDQ rules moved to E3 and the validation was also done. And today I have worked on 29 new DQ rules and will be pushing the code to E3 and doing the validation. Yeah, so those were the things I worked. Yeah, so once you mark them as complete, get them accepted and then notify me and such and all.
+
+00:41:10 - 00:42:47 Unknown Speaker:
+
+Can you check mine? It's same for you. Let me do this time for them, Sindhuja. And maybe going forward, they should be doing it. Shastak Shandi. Anything else? I don't think I'm able to open their stories also. I think we feel you did completed this subtask not the user story So one of them is being done Your production support somehow I am not able to open I don't know why. No, your production support I am not able to open. Let me check for Kundan's one. You might need to do it by your own. For Kundan... Can you check for me? No, no, again you also take the same. You just mark your task as completed, not the stories. One of them I just marked it. Yeah, same, you just completed your stories and can you check?
+
+00:42:47 - 00:44:08 Unknown Speaker:
+
+Uh, it would be done for Kundal one for P3, yeah, one. I am not able to open for P3. Okay, now it's opening, give me a second. Okay, done for P3 also on it. Okay, I'm just waiting for it to. Yeah, yeah, should it should be? So Cindy? We may need to follow up this. JSOn for the R. G. Stories. The 3-1. I can still see that production support is still not being accepted. It was the data migration he was doing. One story for Prithvi is still pending. Queue track production support. Can you just refresh it once because it's clear from my queue. Give me a second. Yeah, yeah, correct. Just before we close, Rachna is there, right? Yeah. Hey, Aipat, did you see the message from Rachna? Regarding this.
+
+00:44:21 - 00:45:16 Unknown Speaker:
+
+So you need to take your repository for all the RDA records. I think RDA, there was only Amanula's name in there. That needs to be updated to this portfolio and all this. Can you run a query quickly on the production environment for the DQ repository? Use case is RPA, right? Yes. Okay. Currently, it was previously only Aman was only there, right? Correct. Yeah. So, we need to replace with that particular DL, right? Yes. Yes. Yes. And remove Aman. He is not required. Yeah. Yeah. The DL will update. Yeah. Update that DL. Okay. On the API environment. Please check on that ICMB bulk email also. I don't know if that teacher has worked till now because every time I'm seeing the same thing. Yeah, sure, Rachana. I will cross it once again.
+
+00:45:16 - 00:46:09 Unknown Speaker:
+
+Those mailings, getting the DQ results table or DQ test table, I will check and update once. Yeah, I'll just check. Yeah. Hi, Sachin. I have a one and all. Hey. Rachana. Hello. So you mail me like R42-1, you need to be run on July 3rd and July 1st try. Actually what is happening is we have added some other rules in the same DQID. So you can take it on your ADS if you have the access to it. I just need to see the results, not concerned with the finals. Once we have validated the results, then you can move it to E3. You don't need to run the entire DAG also. Okay, just only that DAG? Only that code path should be fine.
+
+00:46:10 - 00:47:07 Unknown Speaker:
+
+Okay, and having a curiosity, we need to share too, how we need to run the DAG dates, like in the past one, the July 3rd. Because what I have shared, because I am getting only the absolute value zero on July 2nd, July 3rd we have added some other rules in R42. The CTE one. So we are not... we are not supposed to move while the complete validation. Just do one thing like you can test it on your ads, right? Don't run it via the service ID, like, just take that code patch and run it on BigBerry or Ads ID login. Okay, yeah, just replace the dates and then you can run it on your end. And then let me know if the results are not, so you can share that.
+
+00:47:07 - 00:48:08 Unknown Speaker:
+
+Yes, even if I do have one utility that is used to run only the SQL query. So, even you can leverage that utility. No, he has not learned to call it. So, if for one change you can go into that utility, the way Kundalini CDFM works, introduce a flag in the XCOM variable where we can pass the SQL query directly. To the XCOM and then just execute it. So that you don't need a multiple deployment every time. Just connect with Kundan. He would let you know what to do. Kundan, you will know right what I am talking about. Yes. In case you have any doubt, just reach out to me. Yeah, absolutely. Thank you. Thank you.
+

@@ -1,0 +1,308 @@
+2026-07-10 Project Progress Update and UI Enhancements Discussion
+
+Creation Time: 2026/07/10 11:01
+
+
+📅About Meeting
+
+• Date & Time: 2026-07-10 11:01 (Duration: approx. 62 minutes)
+• Location: Virtual Meeting
+• Attendee: Sachin, Atharv, Rachna, Prithvi, Samir, Nirmal, Sindhuja, Kundan, Anand, and others
+
+📒Meeting Outline
+
+Project Progress and Demo Readiness
+
+• Demo Status and Test Cases Documentation  
+  Sachin confirmed that the demo environment is ready except for pending changes related to column names. Prithvi is tasked with documenting 60-70 bulk test cases, including 1-2 screenshots, to assist in creating the RFC for deployment. The document will also cover self-serve UI changes like role creation and approval workflows.  
+• UI Enhancements and Loading Performance  
+  Rachna shared UI updates including renamed card names, new data quality (DQ) rules, loader addition for tables, and back button improvements. Concerns were raised about slow API response times (~30 seconds for 2.2 MB data). Suggestions included backend pagination and conditional loading only after user input, but Sachin advised against delaying data fetch to avoid bypassing database indexing. The data source shift from ACE to LUMI network was noted as a factor affecting performance.  
+• Rule Creation and Modification Workflow  
+  Discussion on simplifying UI for rule creation with radio buttons distinguishing normal and custom checks. Custom checks would open additional dropdowns for check types and editable fields, improving user experience and reducing confusion. Business justification and rule review pages will be expanded and formatted better for clarity. Editing capabilities on approval pages were proposed to allow quick fixes of minor errors before final approval. Tracking of modifications and last modified by info was requested for audit purposes.  
+• Next Steps for UI Changes  
+  Rachna will create user stories for the proposed UI changes, which will be picked up in the next sprint. Atharv will communicate for sign-off on the current UI for production readiness.
+
+Data Quality and Code Improvements
+
+• DQ Script Enhancements and Production Deployment  
+  Prithvi demonstrated fixes in the DQ script to handle variable names and filtered criteria correctly, including percentage handling improvements. The script is ready for production deployment pending UAT sign-off from Rachna. Deployment is planned for next week with RFC submission after UAT approval.  
+• Code Review and Performance Optimization  
+  Sachin emphasized the need for peer code reviews and encouraged team members to proactively improve existing codebases rather than blindly following initial implementations. He highlighted the importance of flushing XCOM variables after process completion to avoid memory issues and requested Varga and others to send table lists for cleanup. A utility method for flushing XCOM variables is being developed for team-wide use.  
+• BPMN Validation and Exception Handling  
+  Sachin instructed the addition of two bundles in BPMN: one for validating mandatory input parameters (throwing business exceptions if missing) and another for handling system exceptions gracefully to avoid abnormal process termination. Reference to existing validation bundles was provided, and coordination with Nirmal was suggested for implementation guidance.
+
+Security and Compliance
+
+• PII Data Access and Monitoring  
+  Sachin raised concerns about unauthorized access to PII data in production, referencing a report showing 62 instances of PII data views in June. He stressed personal responsibility for data access and warned that access might be revoked if misuse continues. He reminded the team to avoid decrypting data with personal ADSIDs and to adhere strictly to security protocols.  
+• Environment Hygiene and Data Handling  
+  The team was reminded not to create unnecessary files or tables in any environment (dev, QA, production). Sachin plans to coordinate cleanup activities post-lunch. He also emphasized the importance of flushing context data after execution and avoiding storing excessive data in XCOM variables to prevent performance degradation.
+
+Coordination and Scheduling
+
+• Upcoming Calls and Meetings  
+  • 12 PM call with Rachna on Kibana dashboard  
+  • 1 PM call with Charme for eight demands in check discovery (rescheduled to Tuesday due to unavailability)  
+  • Coordination with Anand for Monday availability to close implementations, with fallback to late evening if needed  
+• User Story and Ticket Management  
+  Sindhuja will coordinate with Casey to create user stories in JIRA for PRESI, Arun (database structure for self-serve UI), and Krishnan (environment implementation).  
+• Deployment Planning  
+  Prithvi to prepare test case documentation and UAT sign-off for production deployment next week. Atharv’s RFC to deploy planned for Tuesday; Prithvi’s for Wednesday.
+
+📋Overview
+
+• Demo environment is ready with minor pending column name changes; bulk test cases documentation in progress for RFC preparation.  
+• UI improvements include loader addition, back button update, and rule creation workflow refinement with radio buttons and dropdowns for check types.  
+• API response time is slow due to large data and network factors; backend pagination considered best approach.  
+• Code quality and peer review emphasized; utility for flushing XCOM variables under development to improve memory management.  
+• BPMN process to include input validation and system exception handling bundles.  
+• Security concerns raised over PII data access; team reminded of compliance and data handling best practices.  
+• Coordination of meetings and deployment schedules finalized; user stories to be created in JIRA for upcoming tasks.
+
+🎯Todo List
+
+• Prithvi:  
+  • [ ] Document bulk test cases with screenshots for RFC, ASAP  
+  • [ ] Prepare UAT test case documentation and coordinate UAT sign-off with Rachna, by next week  
+• Rachna:  
+  • [ ] Create user stories for UI changes (custom check type, dropdowns, business justification page, approval page editing), ASAP  
+  • [ ] Provide UAT sign-off for DQ script deployment, ASAP  
+• Atharv:  
+  • [ ] Communicate UI sign-off and coordinate with Rachna for production readiness, ASAP  
+  • [ ] Implement UI changes as per user stories in next sprint  
+• Sachin:  
+  • [ ] Follow up on API performance improvements and backend pagination feasibility, ongoing  
+  • [ ] Coordinate cleanup of XCOM variables and environment hygiene post-lunch  
+  • [ ] Check with Nirmal on updating human task variables for modification tracking  
+• Varga:  
+  • [ ] Send list of created tables and .data files for deletion to Ayapa, ASAP  
+• Samir:  
+  • [ ] Finalize data analysis report and confirm readiness for call with Anand by 1 PM  
+• Sindhuja:  
+  • [ ] Coordinate with Casey to create JIRA user stories for PRESI, Arun, and Krishnan, ASAP  
+  • [ ] Update status count of DQ IDs (current 79, may increase to 81) by 7 PM IST  
+• Nirmal:  
+  • [ ] Assist with BPMN validation bundle implementation and provide guidance to team  
+• Kundan:  
+  • [ ] Join Kibana dashboard call and assist with monitoring and cleanup activities  
+
+This summary captures key discussions, decisions, and action items to ensure clarity and alignment for all team members.
+
+Transcription
+
+00:00:00 - 00:01:30 Unknown Speaker:
+
+No, no, I tested it in E1 also. Now, it works, Sachin. Now, it works. Only thing is that few changes that we did with respect to column names, that thing only pending. Otherwise, for demo, we are good. Okay. Or you can even stop it for now because demo, we don't need it. Okay now let her join and here i have started. For bulk, the test cases that you have created, right? Make a document for that. So that would help us to create a RFC also. And attach some screenshot over there. Correct. I have written on this. I have just taken a note of everything. Currently, 60 to 70 test cases are coming. So I am just formatting that. Just checking if we can reduce it or... Just check if we can reduce it or...
+
+00:01:30 - 00:03:03 Unknown Speaker:
+
+Just check if we can reduce it or... Just check if we can reduce it or... Just check if we can reduce it or... with test cases or screen shot, I don't need a lot. Maybe 1 or 2 screen shot will help me to create RFC because RFC, I told right, without now using business sign up, we won't be able to create the RFC. Sure, then I'm creating a document. Correct two things. For bulk, there will be another document, and you have one more change, right apart from bulk. Self-serve. Creating a role, approving it. And then and Sachin, when can we discuss on that? In progress because UI part is done. I think we should proceed on this in progress. I am showing you right now. When the user selects in progress, let me say my state.
+
+00:03:05 - 00:04:20 Unknown Speaker:
+
+I don't know why we don't call another API. Just for in progress, just check this one. Because if you go to this AS control center, the walkthrough that I was giving to both of you yesterday. Yeah, so here we are using Bhagwan's API. Yes, I understand. So, analyze this part, the data we are getting from Bhagwan, right? Are we getting the same data here? Can you just analyze this? We are getting the same, but we are converting some of the status, right? There is a conflict somewhere. I have already shared it. We'll discuss it later. So we can start with your proceeding, Atharv, till the time Trithvi's deployment is going on. He won't be able to demo it right now until and unless the deployment gets done. Can we start?
+
+00:04:21 - 00:06:51 Unknown Speaker:
+
+I think the person is facing some issue, audio issue or something. Yeah, although she is being shown as, you know, joined the meeting, but I don't think she is there right now. Yeah. Hi, Richard. Oh Rachna, we can't hear. Not sure if you are able to hear us. Hi everyone, sorry for being late. I was having issues with my laptop. Let me quickly share my screen. Yeah, sure. Is it visible? Yes. Okay. So, as discussed, I have renamed this card name. I've added new DQ rules and then... remove the word existing and I will take your rules. Okay, okay, yeah. As I mentioned last time, the descriptions which we are seeing that is currently just some mock-ups which I have just added. So once the exact ones, I'll update this. Yeah, yeah, sure.
+
+00:06:51 - 00:07:46 Unknown Speaker:
+
+And once the user clicks on New Ratio, we are adding a title and a back button also because initially we were using a home button. This will give a clear picture. We have also added a loader for table Okay, so while the time the table data is loaded, a loader will be shown. With this field as a discipline, so let me just select it. Yeah, just one thing, um, is that issue like, resolved, or you're trying to resolve that? Uh, loading time taking too long? Because actually yesterday we were demoing this to corner. He was asking to see some features and then he was like, this should not take so long. Like it's hardly 5000 tables or so. Yes, but the API response, what we see from the year, it's like 2.2 MB of data coming in in the API response.
+
+00:07:46 - 00:08:42 Unknown Speaker:
+
+And on an average, it is taking 30 seconds. So, Sachin, maybe we can just work around with some data things to reduce this. Because from the UI, I guess, we will not be able to do that. No, even from backend, right? This is something not related. If I can give you like a pagination type of thing, right? Because if the user searches it, right? Correct. Suppose they search for customer 360 and it would be sitting on your 20th number of page, right? And how can you? One more thing, Uh, was suggesting here, like, uh, when we have not started searching, then it should not start loading, uh, everything, like, because, uh, that's taking time, right? The moment we open this page, it's not one thing, I'll explain you. So in that case, this filter part will not work.
+
+00:08:42 - 00:09:27 Unknown Speaker:
+
+Let's say the main no, no, no, so, uh, I'll, I'll let you know what he was saying. I am not sure if this is doable or not, but just asking your advice on this. So what he said is like, when we load this page before we have typed anything in the table name, then at that time it should not start fetching the tables. Because then, instantly after opening the page, it is buffering for a lot long time, right? So instead, like whatever this search is happening, like, once I have typed, say, Ga. Then it should start searching on the back end like whatever. No, Rachna. No, Rachna. I would not advise for that. No, I would not advise for that because when you search for a GA, right?
+
+00:09:28 - 00:11:14 Unknown Speaker:
+
+The API would go to the database and it would search with that key of GA. Correct? Right. So it would bypass the indexing also which is being applied to the table. So in that case your load would become more slow okay okay okay got it. So Sachin, is there any way to reduce that buffering time? It was not happening earlier. That is also our concern. Why is it happening suddenly? Earlier it was working fine. Did you check in production or in the lower environment? Check in production. Yesterday I checked in production. It's taking 30 seconds. 30 seconds is expected, right? When we are loading the page. 30 seconds is something we can expect right uh and one more thing we need to understand right. Another thing is that this is getting travelled from the ACE network to the LUMI network.
+
+00:11:15 - 00:12:27 Unknown Speaker:
+
+I am not bringing data from the ACE database, I am bringing it from LUMI. That's what we tried to explain to Purna yesterday. Anand was also there on the call. But he was pushing it a lot. Basically, Purna was like, he calibrated our enterprise-wide tool, that it's working at other places, why it's not working here. So, he got a bit pushy about that. So, just thought of checking. I'll check if we can improvise the API response. I will let you know, I will not confirm you right now but we will check if there is a work done. So once we will select the value based on that the variable name will be fetched and the flow is. The rule description will be created and you can go to the next page.
+
+00:12:28 - 00:13:35 Unknown Speaker:
+
+Here we have the text box for the first four minutes. So basically yesterday Poona wanted a demo for this. So we showed him this. And here also he has suggested some changes. So I'll let you know what those are. I'll also send it over mail. So, first he was saying that let's not keep the text boxes so big. Maybe we can halve it. Like everything is coming in the page at one go, right? Now there are big text boxes so it looks a little like too much info to be filled. So, the first one is fine. Second is also fine. How is data quality maintained? Yes, this is fine. Yeah, for the fourth option, he has suggested a drop down. So similar to how we are doing on that part, right, issue management part that what is the monetary impact in which we had given a drop down.
+
+00:13:36 - 00:15:01 Unknown Speaker:
+
+Less than $100 and etc. So for that type, we will have a drop down with 3-4 options. So, that I will provide you like what to put in the options. So, Rachna, I would request you, you know, create a story, right, and then place the requirement there and then Arthur would pick it up in the next print. Okay, sure. Because this one, as you have suggested, right, we already implemented this one, right? Correct, correct. Yeah, yeah. I also like, Got to you yesterday. Yeah, okay. And even I would suggest when we are creating this one, just check with food now. Uh, can you go back uh, uh, uh for a simple rule or a complex rule? So if you? Uh. If you just select it as a complex full to your rule description and it would be an editable full uh, user can put, uh.
+
+00:15:01 - 00:16:02 Unknown Speaker:
+
+Anyone else able to hear? Yes, we can hear you. There was a small lag. Yeah, am I? Am I audible now? Yes, yes, so what I was mentioning right now over this page, right? Let's keep a radio button off. Complex Check and Normal Check So when you just select it as a normal check, by default it would be normal check, right? User doesn't need to, uh, change that, so if it is a normal check. This is basically like, here we are not giving complex check because here we already have this fixed fields, right? If the user is able to fill his role within this, then it's okay, like it's anyway, simple check only for us. For complex you don't want to create a ui. For complex we were going to add this check type in the drop down from our last discussion.
+
+00:16:03 - 00:16:54 Unknown Speaker:
+
+Okay, so if they select a complex check type, then in which category will it go? Will it go to missing value or threshold? Then how will you determine that? That is also true. That is why I am saying, let's give a radio button. By default, you know, simple check type. Actually, certain of those users, like they are not... they will get confused on the level of functionality in QPath, what to fill in it. Then every time someone is onboarding, they will ask questions. So we were thinking that we don't give it from the user side. If they are able to fill it in, then we will treat it as a simple check. If they are not able to fill it in, then maybe we can do one thing instead of calling it a complex check.
+
+00:16:54 - 00:17:53 Unknown Speaker:
+
+In the drop down of check type, we write custom check. Then when they select custom check, we will give a drop down of check type in that. In which these values will come and then the rest of the free text box will come, right? Because we can't take more details from them other than table variables. Let's not make it complex at the UI end. If you want to create a custom check, then maybe we will give a radio button here or come up with a different thought process as you want to do. Once you select that custom check, then we will make this altogether a different page or the way you want. I think that also works. As you are saying that the check type will remain in that, so you have to make that custom inside the missing value check.
+
+00:17:53 - 00:19:00 Unknown Speaker:
+
+So once they click on it, it will change. Yes. But it also works. Yeah, that is better actually. Because for check type, we have a database mapping. Right? This is a good idea. I agree. We can give that radio button in the top right. So then what it will change is, the table name, variable name will remain the same. Check frequency, team, email will also remain the same. The fields other than these four will become a combined custom field. Correct. Where they can write what they want. Yes, you can tell us that. Then we will make that one change. Right, right, sure. So even add that to that next user story. I mean for the next client, so other can work on that. Yeah, sure, sure. Okay. Okay, now go to the next page, Ather.
+
+00:19:01 - 00:20:34 Unknown Speaker:
+
+And this is good that you are preserving these details. You are not flushing out just back button images. Yeah. Okay, don't register successfully. Yeah. So this is the one. Okay, I'll just check. Sorry. I've just submitted it. I'll just check on that. Sure, sure. When we approve, we need to register it with a use case. Correct. Correct. So, if it is existing, there will be a drop-down which you can select. But if there is no value in the drop-down, then we should allow you to register the use case and both will go together. One more thing, Sachin, for the modify part, the four new rules which we, the four new justifications which we are creating it. So that has to be shown in the same modify page. Because here we are showing up of Okay, Alex, kind of.
+
+00:20:34 - 00:21:33 Unknown Speaker:
+
+So this is the one modifier right now, we have created the four new justifications. You have submitted the rules, business justification and all, right? When you will modify the rule, right? Here, the next page should be of business justification, correct? Correct, correct. Yes, yes. So, we will also need that in the next user story. So, these are the pointers that we may need to take up. Yes, yes, I am just going to zip down, yes. Athar, I agree, right? There will not be an update page here, there will be a next page here as well. If you want to increase the pop-up, you can expand it. Okay. Yeah, that would be better. Same thing I would suggest for that also. Rule review wala jo tha na, wo bhi kaafi compress ho raha hai.
+
+00:21:33 - 00:22:27 Unknown Speaker:
+
+Haan, haan, usse bhi thoda bada karo. Wo toh aur clumsy dikh raha hai Athar waha pe. I'll format it in a table format or something. I'll look into that. Jaise hi yaha pe dikh raha hai na Athar. If it looks the same over there, it will look better. It is still clumsy over there. There is a problem with the real-time editing. Yes, correct. I agree. I agree. Let me figure that out. We'll show something like this only, like a label and a text box with that pre-filled data. There shouldn't be any table or something. I'll look into that. Let me just come up with some UI mockups for that. Actually, what I was thinking, when we get that approved request, right? So just in case we want to make a few changes, so if we can give the same thing with edit access, I think that also works.
+
+00:22:28 - 00:24:45 Unknown Speaker:
+
+Because just maybe the partner has put a very small syntax error in the SQL, right? So at least we can check it on our end and modify their own. Okay so basically anything small like formatting kind of things that user might have incorrectly output. I think these three fields we can keep it fixed. Rest you keep it editable as you are showing now. Same, you have to do it on the approval page also. So, in that case, the admin, user or whoever has the access to approve or reject, can edit all the fields in the basically in the approved page for that particular rule. Correct, correct, because this will save us a lot of time. Flow, right? Okay, so Sachin, are we going to keep a track of this?
+
+00:24:45 - 00:26:35 Unknown Speaker:
+
+Also, like, who modified or last modified by someone, because is there an option to update the data of the human task? You got my point, right? Nirmal, check this part whether we can update the variables of human task or not. Just check that part and confirm me. Okay. Okay. I'll get back to you on this, Rachna. But that should not be a blocker for you to make the change. It's just that the way Atharva was mentioning, right? That 1% user added, but he wants to make it 5%, right? So, is that tracking possible or not? Got it. Okay, uh, anything else right now on this part? No, this is fine searching here. Okay, so, uh, so Ather would just send you a communication to you know, uh, get a sign up for this UIt, you know production, maybe at least, you know page and all right.
+
+00:26:35 - 00:27:45 Unknown Speaker:
+
+And then, uh, the changes that you are proposing, right? We will pick it up in the next print because he's already having other works for this print, right? So we can plan it out. Yeah, yeah, okay, okay, okay. I just sent an email, uh, mentioning the point, and did you noted what are the changes that we discussed? Uh, no, I'll just note it down and we're just sharing it, so I'll just. Okay. Pithy, you can go ahead. I'll just ask him to skip the DSU for today. Yeah. Can you see my screen? Yes. Yeah. So, I actually ran it for a few more records. Same record setup now. Okay, we can even run for a few more, um, custom DQids as well. Okay, I modified the script to take, uh, import the DQids and generate the output queries.
+
+00:27:45 - 00:28:59 Unknown Speaker:
+
+So I so I have done those changes. Um, let me show you the report that is generated now, okay. Yeah, so last time the one where the variable was not there that was failing, right? So I fixed it. Now it will not take, it will not look for that variable name. It will see if it is there in the description, it will pick it. If it has filtered criteria as well, it will pick that one also. Okay. Okay, and the percentage thing you are asking, right? Yeah, it considers. Yes. Um, percentages, okay, uh, whatever is the input, zero one or zero point? Okay, so now you have made it less than equal to right? Yeah, I just wanted to check that. Yeah, yeah, yeah, that's nice. So those are the changes. I remember we discussing that car.
+
+00:28:59 - 00:30:13 Unknown Speaker:
+
+And not between not in, uh, it's the same, basically same, no changes it, not in. Okay. Yeah. Yeah. We can even pick a custom one if you want to run it and see, we can run it the right way. A particular query or DQID if you want to run. Okay, okay. Okay, I think I'm good with this. Can you go to another percentage one? Or even same one works as want to see something there. Yeah. Okay so okay so uh if i input 10 it will show up as less than equal to 10 is that correct yeah yeah okay okay yeah this is fine. Yeah, any other ones remaining? Those were the two questions you raised in last call, Rachna. If you want to run a specific one, we can run it on the...
+
+00:30:13 - 00:31:09 Unknown Speaker:
+
+I think I'm good with this. Yeah, this looks fine. So we can move this to production, Rachna, then? Yes, yes. So, Prithvi, just prepare a document. Just take a reference how a theory is doing. Capture the test cases that we have covered as part of this UAT. And then let's send UAT sign up to Rachna. And once we receive that, I'll help you with the RFC to deploy to the environment. Okay, sure. And would that be next week, Sachin? Yeah, that would be next week. Because once you provide a sign up today, it would go most early on Wednesday. Ather one can go on Tuesday. Because I have one RFC for one of the changes. So his one would go on Tuesday. But this Prithvi one would go on Wednesday.
+
+00:31:10 - 00:33:06 Unknown Speaker:
+
+Once you provide us a sign up today, we need at least a couple of days approval for details. Okay, no problem. Okay. Any other question? No, we are good, Sachin. Thanks, Sachin. Sachin, thank you. Shall we continue? I wanted to review that code changes. Let's join the DSU. We can discuss over there. Sure. Thank you. Okay finally congratulations for getting the sign off so just prepare the test cases to move it to the production environment. Is he not available at 3 p.m. or 2.30? 2.30 it is available. 3.30 is like something, like some calendar. Some meeting is there. Is he at his table? Okay. Okay. Kundalini is there. Okay, uh, so other um uh, do you have any question? Uh, that part? We can discuss that in progress one, right? Apart from that, do you have any challenges?
+
+00:33:06 - 00:34:52 Unknown Speaker:
+
+No system? Okay, okay, UI changes looks good, the only thing is. I'll let you know if it's feasible. I'll connect with you at 1.30. Okay? Sure. By 1.30, you'll be free, Athar? Yes. I'll be free by 1.30. Okay. I'll ping you. Okay. Just a second. Hello? Samir, first of all, even before setting up the call with Anand, are you ready with those data analysis and is it being fixed and did you run that process? Samir, you are on mute. I have run the process, Sachin. There are one or two here and there that should be changed, but we are good to go for the call, Sachin. Now, Out of 93... how many we were able to close it out? Yeah, I'm generating the report such and I think, uh, we all the risk per account history got, uh, resolved such and so I think it should.
+
+00:34:52 - 00:36:00 Unknown Speaker:
+
+Half of the out of 93. I think I.I will count it and let you know because I really don't want to go, uh, you know, with a half-hearted information to one end. Yeah, yeah, I got it. I'm just generating a report and I will get back to you. Okay, okay, there is a call at 12 with Rachna on that Kibana dashboard. Okay, so please make sure to join that number one. Second, we have call at one with Charme for that eight demands in check. Discovery. That call do we need? Today Monday? They are not available. No, the point is we don't have anything right now means we are good to go post. Going through those code, you are clear, right? That's what you are trying to. We don't have any query, right, correct?
+
+00:36:00 - 00:37:24 Unknown Speaker:
+
+So let me move it to Tuesday, then. That we will handle it. Tuesday 5pm, 5 Anand is not there, 5.30. Mentioned around that we would be closing the implementation by Tuesday so please say you know fast track this in that case okay hmm so that is not required so now Samir we are having you know 1 p.m. Slot available to connect with Anand. Now. You need to tell me whether you are ready or not with respect to your results by 1 p.m, right? Like, just give me 15 minutes such. And I'm just generating that report. Like, but like, the changes are made, uh, that is in the data I can show, but like, you just generating the report session for that. Uh, a 93 fix where I have mentioned, um, take it, okay, uh.
+
+00:37:24 - 00:38:25 Unknown Speaker:
+
+Then set up a call at 2 2 30 whenever she's free, or like, 3 30, 3 30. I might not be available. That's the challenge. Three, three, it is available, then go for the three three I can join. Okay, okay, take your summit. Done, Kundan done, Ather is done. Where is that? Where did he drop? Top man? He asked him to resign and share your updates on that channel. Okay, uh. Just, you know, confirm me once you are done with your implementation. Because then we need to check with Anand for his Monday availability only. Although he is going for a farewell, right? We need to check even if he is available late evening. We need to close it out on Monday only. So, let us have a review with your process today itself. Okay.
+
+00:38:25 - 00:39:26 Unknown Speaker:
+
+Sure, sir. I will finish it by then. Now, before moving to Nirmal and Pithvi, because that is going to take time. Number one like, Um, this is a, you know, email that we received from Rajendra yesterday. And again, like, you know, it is not to point any individual. But this is something, you know, I'm not expecting from any one of you. And now earlier, as I stated, If anything goes wrong, he would chase me. And that's what's happening over here. Okay. This is with respect to the PII data access. So these many instances, somebody has viewed 62 PII data over the production environment. Apply yourself with two records. And this was the report for the previous month. That means for the month of June. Right. I already clearly called it out multiple times.
+
+00:39:27 - 00:40:27 Unknown Speaker:
+
+None of you are... you know, all of you have the access, right? And we are working for the financial organization. You already know, MX is a financial organization now. Earlier, I was to, you know, help you guys with taking up the responsibility. But I'm not going to own it going forward, right? I'm going to tag those individuals who are going to, you know, because you have access, right? I can't. Keep a monitoring on you guys. What what data you are viewing over the production environment, right? That is not practically possible as you guys are already having those access Okay, and this is something I am going to convey to Raj also on upcoming Monday call to him Okay, if he required he can remove remove your access you guys might struggle with your User stories implementation, but I am NOT going to own this anymore.
+
+00:40:27 - 00:41:29 Unknown Speaker:
+
+Okay, I have told you with respect to the it's not a paper for you, right? Please don't feel like you know, I'm just pointing, pointing it to you. But I just want to reiterate to each individual who are working for the U.S. Consumer. I have asked n number of time one of the instances that I have shown in this XCOm valuable, right? Which I was just reviewing with. Ayapa Okay, what is this man? What is this? Why we have so large data set? What if your composer crashed tomorrow, Infra team would come and then they would come back? Mentioning that, why you are putting so huge data in? The XCOM variable, XCOM Variable has been defined to process your execution once your execution gets over. You need to flush this data out of these XCOM environment.
+
+00:41:32 - 00:42:19 Unknown Speaker:
+
+These are data getting stored into your database. And I am not going to teach you guys on these basic, you know, programmatical handling that you need to take care when you are writing a code. Although we are reviewing, right, but peer review was not happening. That is number one, right? Nobody has. Ever come like, you know, I get it reviewed from my app or from Kundan, and then I am reviewing it with you. That is something I have asked already, but that was never been happening. I haven't seen that part was being done from any one of you. Or else, let me change the settings to at least have a couple of review before it move to the production environment. Let me change that setting. Otherwise you are not going to get that, you know, moving to the production environment.
+
+00:42:19 - 00:43:24 Unknown Speaker:
+
+But these are basic program skills, with all of you having a quite good amount of experience, you should take care. Okay, I have bunch of tasks in my bucket, I won't be able to monitor these activity all together. Number one is the memory one. Right? Varga, I did not get the table list from you as of now. I have asked you yesterday, right? Whatever table that you have created and the Dot data, send it to AirPA so that he would delete it. That task was yesterday, right? Understand why, you know why these mails are floating, right? Yeah, right. This is with respect to the memory, with respect to accessing PII data, and on PII data number one. If you even do a select star on the table containing the PII records, you are going to see the encrypted key over there, not the actual record.
+
+00:43:24 - 00:44:26 Unknown Speaker:
+
+These gets flagged when you try to decrypt it and view the data over the principle. And that is the reason I have created that utility, right where we can run, execute, and view the result. Correct. You are not supposed to execute those query by your own. And this is Sameer again, like you are working for Quantro, right? Lots of query you are running. So please make sure you are not decrypting anything with your ADSID. No, not right, because you are handling the bulk of data at your end. Same goes for the ACe environment. Kundan You have the credential, Nirmal, you have the credentials. Okay, please make sure you are not touching ASDP with any you know update query or insert query until unless I given you a sign up for that.
+
+00:44:26 - 00:45:16 Unknown Speaker:
+
+Everything is being monitored, and I have shown Kundan, at least to you, right? How it is getting monitored. In the production environment, they have that recording system being turned on. So, please be careful when you are touching any confidential details of the organization and as I stated I am not going to take that ownership going forward. Earlier somehow I used to explain like you know team is working on the production environment they need to run the query validate the query, but we have a work around for that. But post that also if somebody is not abiding to those rules and regulation of the organization. Even like, you know, if you are placing some details on the GitHub, Copilot or the chat GPT with any confidential information over there, you are going to be held accountable for that.
+
+00:45:16 - 00:46:13 Unknown Speaker:
+
+At the end of the day, I am also working as an employee, right, so I can't monitor each individual who is doing what, right? As you have the access, please make sure. Number one, you're not messing up the environment. It's not your number one, whether it's dev, QA or production environment. Don't create unnecessary file over the environment. Don't create unnecessary table over the database. Although you have access, these activities should be stopped immediately. And Apple, let's connect post-lunch to clean up at least the production environment. The variables has been done. For the XCom variable, I have already asked Kundan to flush it out, he would be moving those code. But rest of the folks, like whoever is working, Samir, I did not see. Like, you know, whatever details you are storing on the XCOM.
+
+00:46:13 - 00:47:07 Unknown Speaker:
+
+It would be your responsibility to analyze the control code base wherever you are passing the context data. Make sure once your process gets over, you flush the contact that XCOM variable post your execution is over. Sure, So, I am writing a utils. So, you know once I will be done. So, everyone can you know just consume that one. Yeah, that can be for framework Kundal, right. So, they need to just copy that. No, they can they can just pass the parameters again, ok. Your code base is different, quadro code base is different, right. So it is not unlike an API call or something which can be consumed by different repos. So they need to copy that utility in their code base. Correct, correct. They have to. Just do one thing. Create one method, right?
+
+00:47:08 - 00:48:03 Unknown Speaker:
+
+And add that method to all the processes. Yes, that's what I am saying. I am writing a utility. You guys have to just include that one. And you know, as you all are experienced, right? I'm not seeing anyone coming up with any performance improvement. Or, you know, somebody Mr.X has written like code like this, right? When Mr.Y is picking up that one, nobody come back with. Man. I have refined this part of code right the way it has been written. We are just going blindly with that. I'm, uh, I think I have told this to Nirmal, right? When the bunch of code has been written by Kundan, he was into a hurry. I have utilized him most of the cases. When we have a critical implementation and to at least run the flow the way it is right.
+
+00:48:03 - 00:48:50 Unknown Speaker:
+
+Even for the CD framework, right? We just given him a five days to complete the implementation so he may not get time to. You know, write a complete, refined code, but when somebody acts, is touching that code, why we are not utilizing our skills to improvise those codes? Like Nirmal side? I have seen he is writing a good amount of code in Java site that is good the way he is writing, right? But, like Varga, you are a Python expert, right? So when even you sees those quantro, right? I did not seen that. Any, you know, improvement that you have come up with yourself on those codes. Or regarding the univariate, right? Yeah, regarding the univariate, the way it is being implemented, it is not final, right?
+
+00:48:50 - 00:49:37 Unknown Speaker:
+
+Whenever we are getting a chance, like for you right now, when we are working for the CD framework, you are touching most of the SQLS file. Why we are not moving those SQLS file from composer to the use case bucket folder? You are not going to get another opportunity right to move those SQLS file from composer to that project use case bucket. Yeah, so these are the thing, man, like, you know, I should not be teaching you guys. You all are almost 10 years of experience, 10 plus years of experience, right? You would come to a, you know, senior technical lead or architect level in next couple of years. So why we are not? Why, you know, there is always this task has been. Let me just wrap it up. We need to come up from that mindset.
+
+00:49:37 - 00:50:40 Unknown Speaker:
+
+Okay, Aipa, do we have any new CD for today's date? Yeah, total four such in today. And what about those two? What was the issue with those two? That one has some script having some different way of methodology created such actually. There is a JavaScript they are calling I think so. So that's why we are getting some syntax issue. It's not a plain SQL query. So on top of that one they are calling some JavaScript functions actually. Did we hear back from Sravan on that? I didn't get any update from Sravan but I got an information from Soman. He mentioned we need to test this one in E1. He pushed the code he mentioned. But what coding changed I need to look into that one. Because I don't see any much changes actually.
+
+00:50:40 - 00:51:37 Unknown Speaker:
+
+As this he mentioned. And even Shravan also he confirmed that we are using the CDE actually. So that command. So that is working fine he mentioned. Just check it out. If you're not able to get out to let me know immediately So man has sent I think he has sent six and ten DQ ID. That's okay the PR Okay, the PR is already much, right? So even though 16 is more put, correct? Today such a 60. Yeah. Look this is what this guy's has said. Didn't you seen this one? Can you share the screen? Yeah, this is the one. Oh no, no, it's not a DQID six, not such in that is DQID number is six actually. Okay, okay, so that is the incremental one, so that's it. Okay. So we have four only, right?
+
+00:51:37 - 00:52:24 Unknown Speaker:
+
+Yeah, four only. Yeah, the requirement is we got two more, so that's why total count is four. And then what is the total count for this week? Just share it with us in your status right now. So this week from Monday onwards I have counted such in 77. So today we will add 4 right so it will come under 81. And after reducing those 2? Reduce that two number also where we are facing challenges. No, no, no, not reduced actually. So, because we want to move that one also, right? So, no, reduce that as it is still having challenges, right? We need to test it out. So, mark it as 79 then. Keep those two for the next week then. If you are able to sort it out today, we will include those couple of numbers maybe next week.
+
+00:52:25 - 00:53:19 Unknown Speaker:
+
+Okay, sir. Yeah, sure. Or just keep Sindhuja posted, because Sindhuja would be sending the status by six or seven, right? So by that time, if you're able to sort it out, then just intimate Sindhuja. To increase that number to 81. Sindhuja just to uh to your notes right the number right now is 79 right and then um it may increase to 81 by end of the day yeah yeah just text me before 7 pm isd. I will update. So don't forget, right now I will be considering 79. But in case if those two are also sorted out, you can just revert on the same message mentioning to tagging Shinduja that the number is 81. Okay, sure. Thank you. Now, with the slight changes in your BPMN, I will modify that one and then I will give it to you.
+
+00:53:19 - 00:54:24 Unknown Speaker:
+
+One more thing I need from your side is that understand this one, right? The BPMN that I have given to you yesterday, the very first bundle you have to do the validation, right? The input parameter that we are receiving. So this is a validate bundle, okay? This one, okay? What validation I need, we are passing these parameters as an input parameter, right? Which would come from the UI. Yeah, these work basket right? The status and the result filter correct. Okay, now, suppose someone tried to, you know, call your API without passing this work basket name correct. Yeah, then. In that case, this should throw a business exception. Okay, okay, I'll just modify this one and then this would be with one more bundle. Okay. I will modify and then send it to you for this one.
+
+00:54:25 - 00:55:27 Unknown Speaker:
+
+Okay. That is a slight deviation. So this validation, this is something existing or we have to add this code for that? You have to write that code. You have to write the code for that. Okay. That is number one. This is for business validation. Another bundle you have to create that is a common utility to handle any kind of system exception. Okay, suppose you are doing something, you got a null pointer exception, or, you know, some different type of system exception, right? Then this should terminate your process smoothly instead of abnormal termination. Okay, so these two bundle would be again introduced over here, and even even this email in case you have a issue with this email, even this would call this bundle. Okay, so I'll just improvise this and then I'll send it to you in, uh, next up an hour.
+
+00:55:27 - 00:56:39 Unknown Speaker:
+
+Okay, okay, yeah. So just these two. Just consider this one. First of all, it would verify your, uh, verify, and then it would call that API also. Okay, validate bundle, validate input, user input, validation bundles. Last, get a record details. Okay, because anyhow, UI would be marking those as mandatory at their end. So most probably you are not going to get these as null. Okay, but still to have a secondary check at your end, right? And once you get all the data right for that work basket, once you call those right, pass those to the contact shelter to this, send email report. And then, once your email functionality is done, flush the context data. Okay, okay, again, near well to your point. Also, wherever you did the implementation, please make sure you are flushing the context data at the end of the processing.
+
+00:56:43 - 00:57:43 Unknown Speaker:
+
+Or even you don't need to put those into the context data you can pass through the this app data also, that is also fine. Okay, because and the way it is being defined, don't change it. Okay, Java class you may want change, you can change the Java classes name, but don't change the flow and all those diagram. Okay, and even if failed and terminate, I am not bothered, I can re-trigger it. Okay, and it would not be a schedule based because this is whenever user requires this, then they can trigger the event. Right now, Sachin, as you said yesterday, this one, I mean, yesterday you said we have to get that input information through context, right? So I have done that. Your page changes, that would be, that would be through context.
+
+00:57:43 - 00:58:55 Unknown Speaker:
+
+If you have done through the context. That is not a problem, just makes your post sending the email you first the context. Yeah, sure, don't keep those over that. And regarding that validation, even validation bundle has been written somewhere, if not here. Business rules. Look, this is self-serve. Okay. Kundan and... What's his name? Nirmal. He's in task management. He's not in task management. He's in self-serve, right? He was in task management. But he's being validated. He's being validated? Yes. Bundle? What is the bundle? Validated request? Yes, validated request. Look, validated status he's doing, right? In this, validate status, look, if this task status is blank, right? Just throw a business exception with a reason. You just need to implement this, uh, a method like this by three.
+
+00:58:55 - 00:59:48 Unknown Speaker:
+
+Yeah, okay, so refer this one if you and better, just have a connect with Nirmal. Now he is having good hands, all right, so he would be able to guide you. Yeah, and give me, give me some time. Uh, Kundan, can you jump into that Kibana call? I'll be just back in next five minutes. Okay? And uh, I need this. Yeah, yeah, you were checking for something? Uh, yeah, actually regarding that security bridge which has happened yesterday, right? So, like, you know, Raj was chasing me for this, so I was just mentioning this to the team. Even you do have credential for the age database, right? So please make sure you are not touching any PII sensitive information. No, no, I don't have the credential. I'm not working on these setups, I only have for this one, like the back end.
+
+00:59:48 - 01:00:48 Unknown Speaker:
+
+Yeah, whatever, right? So please make sure you are not accessing any of the PII. Okay, okay, that was the information I was sharing to the team, right? So I just thought of to include you over Okay, okay, uh, who left? Uh, Nirmal? Let me complete that equivalent dashboard call. After that I will call you to see the API issues. 421 is coming in RTM regarding that. Okay. Okay. Okay. Okay. Sindhuja, anything from your side apart from the status? Yes, Sachin. There is an email, right, that you want me to create a ticket. But I think they have also migrated to JIRA. So, do you have that information handy? We need to just give them a user story in our dashboard, right? No. So in our feature, we created on their board.
+
+01:00:50 - 01:01:52 Unknown Speaker:
+
+Can you check with Casey in that case? I'm not sure on that. Okay. Yeah. I'll initiate a group chat with you on how you are. Yeah. Okay. You may need to create three user stories in the job, one for one for PRESI, one for Arun. Arun is creating a database structure for self-serve UI, so he may need a user story. And one may be for Gris. For implementing those to the environment. So you can create a group with Let me give you the folks. One is Presi, you know, right? And one is, I don't know, only Krishnan. Okay, okay, okay. Sachin, Sachin. Uh, so Anand is busy at three, Sachin, Uh. He was not sure earlier. But like, how can like 330 you are busy? Three, he's actually busy. 230 slot is free.
+
+01:01:52 - 01:02:18 Unknown Speaker:
+
+Can I book that for? Yeah, yeah, and like, maybe like, if you have 10 minutes, like once you are free, please. Yeah, I'll helping you because, uh, right now, like, you know, I have to jump into that given and ask what call? Okay, so I'll helping you. Yeah, you will normal, okay, give me some time. Yeah, yeah, thank you bye.
+

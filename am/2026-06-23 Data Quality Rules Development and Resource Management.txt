@@ -1,0 +1,236 @@
+2026-06-23 Data Quality Rules Development and Resource Management
+
+Creation Time: 2026/06/23 18:05
+
+
+📅About Meeting
+
+• Date & Time: 2026-06-23 18:05
+• Location: Virtual Meeting
+• Attendee: Anand, Sachin, Rachna, Sindhuja, Kundan, Vargav, Sameer, Ayyappa, Sravan, Prithvi, Suman, Jason, Rajendra, Poonam, and others
+
+📒Meeting Outline
+
+Data Quality (DQ) Rules and Critical Data (CD) Framework
+
+• DQ Rules Development and Capacity Planning  
+  The team discussed the creation of approximately 400-500 simple DQ checks across 100 CDs with around 8 dimensions each. Manual effort is required to create these DQ roles, and automation is currently limited. Anand is testing configuration on E3 and expects confirmation by Friday. The UI tool might help automate SQL code generation but manual input remains necessary. The timeline for completing 400 checks in one week is unrealistic; a target of 50-60 checks per week is more feasible with three resources (ANSI, Suman, and Ayyappa) involved.
+
+• Assignment and Progress on CD Framework  
+  Kundan and Vargav are handling the CD framework build and validation, split by API and SQL tasks respectively. The framework is expected to be completed by the end of the week. Kundan was advised to implement a fallback to CSV data if the Lumi API remains blocked due to environment configuration issues. Anand will provide the required table list for metadata extraction. The API blocker has been raised as a Jira ticket and communicated to relevant stakeholders.
+
+• DQ Rules Onboarding and Deployment  
+  Once DQ rules are received from Anand’s team, ANSI, IFR, and Suman will onboard them into the framework. Around 100 DAGs or 50 DAGs supporting 100 roles are expected. The onboarding should be completed within two to three days and moved to production. This requirement is driven by EVP-level priorities.
+
+Project and Resource Management
+
+• Sprint Planning and Story Pointer Allocation  
+  The team reviewed story pointer assignments: Kundan and Vargav share the CD framework build (approx. 5 story points each), Sameer’s build capacity is increased for DAG implementation, and Prithvi is assigned production support and UAT tasks with fewer story points for self-serve features. Kibana dashboard work is deferred to the next sprint due to lack of expertise and resource availability.
+
+• Resource Capacity and Task Assignments  
+  Anand confirmed full capacity for most team members except Arthur and Shravan. Sravan is dedicated to the Snowflake to Lumi data migration and discovery work, pending requirements from Jason. Suman currently has no major tasks and is assigned CD checks. Ayyappa agreed to support dashboard configuration.
+
+• UAT and Production Support  
+  UAT for new use cases will start tomorrow with Prithvi leading production support for DQ checks. Rachna will set up regular UAT calls. Nirmal and Athar continue bulk processing and PIB support.
+
+Data Migration and Environment Updates
+
+• Resi Tables Migration and Access Control  
+  Three out of five Resi tables have been migrated to Lumi; two are in progress. Full production go-live is pending IIQ group approval for access control changes. Impact notifications will be sent once live. Sravan is tasked with managing this migration.
+
+• API and Environment Blockers  
+  The Lumi API call for sensitive data metadata is currently blocked due to environment configuration. A Jira ticket is raised, and alternate CSV fallback is implemented to avoid deployment delays.
+
+Automation and Future Enhancements
+
+• SQL Generation and UI Automation  
+  The UI tool for SQL generation is critical for efficient DQ rule creation and testing. Thorough testing is required to ensure the application meets expectations and supports automation goals.
+
+• LLM and Custom GPT Integration  
+  Discussions are ongoing between Raj and Bhuvan on running LLM and custom GPT directly in production to generate DQ checks. The code will be shared post-implementation for further integration.
+
+📋Overview
+
+• The team acknowledged the large volume of DQ checks and the manual effort involved, setting realistic weekly targets and resource assignments.
+• CD framework build and validation are progressing with clear task division and contingency plans for API blockers.
+• Kibana dashboard work is postponed due to resource constraints; focus remains on critical framework and UAT tasks.
+• Resi table migration is near completion but pending access control approvals; impact communication planned.
+• Environment blockers for API calls are managed with Jira tickets and fallback solutions to avoid deployment delays.
+• UAT for new use cases is scheduled to start immediately, with production support assigned.
+• Automation via UI for SQL generation is emphasized to reduce manual workload and improve efficiency.
+• Future integration of LLM and GPT for rule generation is under discussion for enhanced automation.
+
+🎯Todo List
+
+• Anand:
+  • [ ] Confirm E3 configuration testing results by Friday.
+  • [ ] Provide table list for metadata extraction to Kundan.
+  • [ ] Share DQ rules with ANSI, IFR, and Suman for onboarding within 2-3 days.
+  • [ ] Coordinate with Raj and Bhuvan on LLM and GPT integration plans.
+
+• Kundan:
+  • [ ] Complete CD framework build and validation by end of the week.
+  • [ ] Implement fallback to CSV data if Lumi API remains blocked.
+  • [ ] Support PIB and self-serve features as needed.
+
+• Vargav:
+  • [ ] Continue SQL-related CD framework build tasks.
+  • [ ] Support multi-variant discovery implementation.
+
+• Sameer:
+  • [ ] Increase build capacity for DAG implementation.
+  • [ ] Create DAGs for production environment based on finalized code.
+
+• Prithvi:
+  • [ ] Lead UAT for new use cases starting tomorrow.
+  • [ ] Provide production support for DQ checks and self-serve features.
+
+• Rachna:
+  • [ ] Set up regular UAT calls for new use cases.
+  • [ ] Coordinate with Anand and team for production support tasks.
+
+• Sindhuja:
+  • [ ] Assign CD checks stories to Ayyappa and Suman.
+  • [ ] Manage sprint planning adjustments including deferring Kibana dashboard to next sprint.
+
+• Sravan:
+  • [ ] Focus on Snowflake to Lumi data migration and discovery work.
+  • [ ] Clarify requirements with Jason and adjust task assignments accordingly.
+
+• Sachin:
+  • [ ] Monitor Resi tables migration progress and IIQ group approval.
+  • [ ] Coordinate impact notifications post go-live.
+
+• Jason:
+  • [ ] Provide clarity on Snowflake to Lumi migration requirements.
+
+• Team (General):
+  • [ ] Test UI SQL generation thoroughly to ensure automation effectiveness.
+  • [ ] Monitor and manage API environment configuration blockers actively.
+
+Transcription
+
+00:00:00 - 00:01:07 Unknown Speaker:
+
+There will be there, but not for the okay. So, so you want those story to be picked up from the framework part, not from here, right? No, from the new use case part. Probably you can build it over there. Okay, okay, okay, can you? Can you go to the new use case features in that case? And, uh, the Cinderella, please consider the. You know, the capacity is, and she's working with a H2O pointer. Yeah, I think except Arthur and Shravan, everybody has full capacity. Okay, and Ananda when we would be getting these DQ role because. If we can get it in advance, right, we can start working on those. Right, Sachin. I mean, the team is currently working on it. They have a few rules, 10-20 rules or something. So, I think... Yeah, those can be...
+
+00:01:07 - 00:02:02 Unknown Speaker:
+
+My first day, probably, I think I can give you some results on this one. Okay. Tomorrow also, we are quite occupied. I think pretty much the entire... We have this AI fair kind of thing going on. Rachna and I both are involved in that. Okay, okay, yeah, so just copy the yeah, just copy this one, and in in place of UMDL, just write down a placeholder. No, you can just mention CD objects and mark it as a CD, and even assign the same story pointer to Apple. Because the number we are expecting. AnAnD First of all, so. Sachin, I think as Poonam was mentioning, about 100 checks is initially what he was coaching. But at least for 100 variables, I think we might go in the next, this week, next week and the week after that, right?
+
+00:02:02 - 00:02:56 Unknown Speaker:
+
+So 100 CDs and we are targeting like 8 dimensions for each CD. So I'm not saying it will be like 800 checks, but it could be. In that range is what I'd say like at least like 400-500 checks will be there. But all are like very very simple kind of checks. Okay. Why do all the SQL queries as well such a like? Rachna I get your point but we need to create those many DQ roles right? So that would consume time for creating 400 DQ roles because that is a manual effort. There is no automation behind it, right? So although you would be giving those right, we have to frame those DQ ID and the mapping with respect to the DQ repository tables, right?
+
+00:02:56 - 00:03:45 Unknown Speaker:
+
+That's what I was also thinking like, if we use our UI for this, right, would it not do the automation part as well? At least to get the code? We are still in the phase of testing. ANAND So like that sequel Generation, right? Which you have mentioned, Yeah, yeah, because otherwise there's no point in us saying we are live. Also, right? Okay, let's see, because those are very, very simple checks, right? So I think we can test out using the UI also, if you want, using the same checks. Yeah, we can go ahead with that. Anand It's just that I need to test out those. You know, the configuration which is still going on on the E3, right? By Friday, I can confirm you.
+
+00:03:45 - 00:05:13 Unknown Speaker:
+
+And even if you're putting those 400 DQ, right, that is a manual input that you have to place into that UI also. Correct. That's true. Just give me a second. I'm just getting a call with Raj. I'll just give you my heads up with respect to this spin planning. Just give me five minutes. Hello. Okay, so that's what Anand I was mentioning, even if it is a 400, right, even if you go via UI, that's again somebody need to make a, you know, manual entry over there also. Yeah, that's true, yeah. Yeah, so however it, you know, it goes right, okay, let's plan it out, like, I mean, One weeks, practically, I would say not possible with 400 and all those checks, right? And even if we include a whole team members right, that would be lots of right, right?
+
+00:05:13 - 00:06:08 Unknown Speaker:
+
+I mean, I think that 400 in one week is definitely not the expectation. Also, we will be probably, I think, going about like, I think 50, 60 or on. Yeah, yeah, 50, 60, yeah, maximum from our side. From requirement standpoint. And how many of them are you able to get deployed? I think that's up to you. I think I don't think like more than again. Like I said, right, Poonam was asking for 100, but definitely, I think not more than 100 is definitely 100. I can still plan like ANSI, Suman and IFA. I can include 3 resources, so if I consider 30 per resources also it would be around 90. Yeah, OK, and it depends on their speed, O. K. So, Sindhuji, just assign that same CD checks to Ayyappa with 5-story pointer and even to Suman.
+
+00:06:08 - 00:07:07 Unknown Speaker:
+
+Suman, I don't think you have anything in your pocket, right? As of now, no. And YouTube One is going on. That is just a production support that you need, right? And Rezi, anyhow, you just need to create a table. So, I still need... Okay, the Rezi, we need to work with the SFT. SFT I will work on it. Leave that part to me. What else on your plate? No, except this one, nothing. As of now. Okay. The RISI one, the last week I created the three tables, the mapping, the metadata setup I have done. Okay. So right now I'm, uh, you know, starting with three resources on him, okay, and in case required, we'll pull few more resources over this. Yeah, based on, you know, the number of rules we are getting.
+
+00:07:07 - 00:08:13 Unknown Speaker:
+
+Because because if we start keeping everything right, then we might end up wasting the resources capacity over there. So maybe three resources for timing, and then once we get the requirement, we will figure it out. Let's get back to the main dashboard. So I think ANSI is done. Can you go back to the dashboard once? Athar is done because we have planned it out. Kibana dashboard should not be assigned to Kundan. Can we park this Kibana to the next print on it? Because I think, you know. As ANSI capacity is also being blocked, how much prioritise this Kivana right now? Yeah, I think it should be fine. It should be fine. Yeah, then let's move this Kivana to the next print, Sindhuja. Because, you know, ANSI doesn't have that expertise and then we might not end up completing that task.
+
+00:08:13 - 00:09:25 Unknown Speaker:
+
+Let's move to the next print and be with Kundan only. So for Kundan, 5 story is the framework and then we need to do those validation, right, so give him that validation task with 3 story pointer. That complete framework should be done, same CD framework built and validation. You mean, yeah, just check this feature. If we have a validation feature, then story, then assign that story to him and Kundan. As I intimated, this needs to be done by end of this week. I know there is Anan just to give you a call out, right? Uh, right now that API call is being blocked. Okay, because that requires some environmental configuration, okay, uh. So we already raised that Jira ticket for that, uh, to configure that part, and we'll keep you posted. That is a blocker.
+
+00:09:25 - 00:10:14 Unknown Speaker:
+
+I'm just calling it out right now, so, The CD framework to call those API that tell Lumi API to face the metadata for identifying sensitive data element. I'll suit a mail to you keeping Kuna and Rajendra on the loop. So that even you would be aware of this. Yeah. Does this affect our UI screen as well? No, no, no. Look, UI is calling from the ES perspective, right? So, the configurations that were coming there, we already did it. Right now, this API is from the Lumi environment, right? So, environment. For that, we already raised that data. I'll drop a mail so that, you know, in case there is a slight delay of one or two days or whatever the platform team takes, right? At least, Poonam would be aware with that.
+
+00:10:14 - 00:11:08 Unknown Speaker:
+
+In case, the alternate route, what we are going to do, the same way the way Antrix has done that CSV file, right? So, Kundan just not rely on that API call if else condition and if you are not getting the response from the that API till the time it is being blocked right, please make that CSB call then pull the data from that CSB. Ok, got it. And Anand if you can give us the you know table list right, I will pull all those metadata through that API and then we will populate that to that CSB file. So, that you know E3 deployment should not get blocked due to that. Real time would be done once that API issue gets sorted out. Once that will sorted out we will point out for the API.
+
+00:11:10 - 00:12:27 Unknown Speaker:
+
+Apart from that I do not feel any other blockers are there only that API call is been blocking us. Sameer even I think we are good. The discovery validation in the build Nirmal again UAT and this API, we are good, so even nirmal is covered up. Uh, give my upper one production support story where he need to, you know, move those DQ checks, uh, DQids and all, uh. So at least the rule, the one that you already identify. Anand right, we can give it to A to start onboarding those to the environment. And these all are simple role, right? As you mentioned, correct, correct. Yeah, okay, so f is done with we. Yeah, give him one UAT. So, Rachna, can we start the UAT from tomorrow for the use case that P3 has done?
+
+00:12:28 - 00:13:26 Unknown Speaker:
+
+Right, right. We can, yes. Okay. So, I will set up again a regular call. So, now we are reduced with only four templates. As the description has been finalized, right? So we should be able to mention this. Uh, I will be on leave for a few days starting this Friday. Yes, yes, next Wednesday. Okay, then let's close it out. Uh, tomorrow and one day after tomorrow, then, okay, I'll set up a call tomorrow and day after tomorrow. One UAT call for Prithvi and give him that production support for time being. I'll see if there is something else that I can help him with, then we'll assign it to him. And Sravan, you would be dedicated for the AC initiative, the snowflake to Lumi, and the discovery and the work. So I'm not providing the capacity over here for you.
+
+00:13:30 - 00:14:43 Unknown Speaker:
+
+But again, we don't have the requirements yet, right? I'll set up a call today with Jason, right? And let's chase it out. Like, if he doesn't have the requirement, then we'll move you to some, some other task. Then okay, okay, crazy. That template have been finalized, or it's still being processed. Sorry, what template? The onboarding that we were doing, right? The new metadata onboarding. The new three tables, right? Yes, yes. Those have been done by us. Okay, okay. So we really don't have anything on that RISI if it doesn't come up with those requirements, right? Exactly, exactly, yeah, yeah. Like I don't want a repetition of last one, that's why. Hmm, okay, okay, then then let's discuss with Jason, otherwise I'll pull you to some other task. Then. We need that clarity today.
+
+00:14:43 - 00:15:50 Unknown Speaker:
+
+We can't, you know, delete. So E2 integration testing would still remain with you. Uh, seven, Okay, okay. And yes, he wants to go for the E3 promotion. And then let's, uh, see if if we have anything else to discuss with him, and uh. We really don't have any other new stories, right, Rachna and Anand, for new use case, correct? Yeah, for new use cases, no. Okay. So bulk processing, Nirmal is curbering along with Athar. Can you go to the features one, Sindhijan? Let me just check it. Can you go to the top? DQIM enhancement bulk update we have already considered, self-serve we already considered. Okay, so self-serve some PIB support right, so those would be provided by Kundan and Athar. Okay, although the story has not been assigned to them, but they would be doing that support over there.
+
+00:15:50 - 00:16:52 Unknown Speaker:
+
+Okay. CD as I told right, ANSI, AIPAS, SUMAN, they are already engaged over there and the build part is already with Vargov and Kundan. How many story pointers assigned to Vargav Singhuja? Can you go back and check? So he would be still working on that one? Yeah, we've not assigned anything to him this plan, so CD Framework field assign it to him also. And then this multi-variant discovery would continue with him also because he has figured out some solution. So let him continue out of Shamir's bucket and move to Vargav. Yeah, we can do that. We can do that and increase the build capacity for Samir. Samir can start working on the implementation. Samir, I already told you, right, the DAG implementation and all. So, Anand, the plan is the one that you are reviewing with Vargav yesterday, right?
+
+00:16:52 - 00:17:47 Unknown Speaker:
+
+So, what I have suggested him, Few changes with respect to... you know, the length and all that you have considered, right? And then the data that he has given us, those are for Dev and value. OK, OK, OK, so what? I have asked him. Once you finalize that changes, which Anand has suggested, OK, just give that code, you know, that code base to Samir, and Samir would create a DAG to run those in the production environment. And then once we have that result, we'll share that result with you to have a final review. And if that framework works, then we'll start incorporating that for the other tables also, in case, you know, we don't need any changes. Yeah, okay, okay. So his build capacity increases build capacity to Samy's build capacity to fly.
+
+00:17:48 - 00:18:44 Unknown Speaker:
+
+But initial estimate was 3, right? No, no, no. Now we got some, you know, we are able to move forward, right? And that is the reason that we are increasing that build for Sameer. Okay. And for CD framework build, it's like a 10 SP now because we have two resources with five story pointers. Is the build that big? And will they be able to coordinate my calls, both of them are doing it at the same time with the same sprint? Yeah, I have divided different part like API part, Kundalini's handling while the SQL's calls are being handled by Vargav. It's not really 10 story pointer, you can reduce Vargav 1 to 3, the framework build. And discovery again you can reduce to 3, 2 story pointer we can see where we can fit Vargav.
+
+00:18:45 - 00:19:58 Unknown Speaker:
+
+So can we pull back the Kivana story because I see Prithvi is three months there. No, Kivana, nobody is having expert. Nirmal could have done it but Nirmal is busy with some other stuff. It is related to elf and Prithvi, did you work on elf earlier? Kivana, I worked not on elf. Okay, then then we don't have expertise right now to whom I can assign this. Pretty so much is from completely from data engineering. One has joined recently, right? So he's a pretty pressure, we need to teach him on those. How much work is left in the bulk update? Just the mail part of the report. I just need to configure that. Everything else will be working. But you again have a fresh build for that API for access, right? I'll check this out, Sindhuja.
+
+00:19:58 - 00:20:55 Unknown Speaker:
+
+But right now, I don't feel any of the depth to whom I can assign the Kibana right now. Again, Vargov comes from data engineering background. Sameer, same. Ayyappa, Ayyappa, did you work on that L part? You were in Ace, right? Yeah, yeah, Sachin. From the dashboard perspective, I have done with manually, like a configuration point of view. It is a configuration only, man. Will you be able to pick it up? Yeah, sure, Sachin. Maybe I can have a look at that. Check this one synergy internally and then then I'll let you know. Because I'm not getting that confidence right. And I really don't want to put those story pointer where there would be no work. Okay, so I'll, I'll check and I'll get back to you on this. And how much will be your SME support?
+
+00:20:55 - 00:21:45 Unknown Speaker:
+
+SME support may be two story pointer. Because I have to close some other Brazil initiative. So, Just myself and seven would be on crazy, and even I would need one story pointer for insurance. Just to, you know, get them the required support. And this eight dimension. Anand, I would like to know what exactly is the expectation? Is that the same that Manta Polypra integration with the AI's related, that's different? So these 100, 400 checks that we are seeing, right? That is currently being generated by this custom GPT and one script that JARME has currently. So once we have done with that, right, and you have implemented these checks and everything, I think the following month probably we can share you that code and then you guys can implement that.
+
+00:21:45 - 00:22:57 Unknown Speaker:
+
+So I think Raj and Bhuvan are also having some conversation on this, how can you run the LLM and the custom GPT directly from production, right? So I think that has to be figured out as well. Okay, okay. Prithvi, we really don't think that he would need 5 story pointer on this self-serve. Prithvi, you did work on these Java related codes also, right? Sorry, what? Java stuff you have worked, you have the Java expertise, right? Yeah, I'm a job and a score set up is ready in your system But I can do it tomorrow Then let's do that one then I'll spit split your work and on animals work them If we close the UAT by Thursday, then maybe that API you can build and then I'll pull them into the given hour Okay, okay, yeah.
+
+00:22:59 - 00:24:00 Unknown Speaker:
+
+Yeah, so Aaryan, please let me know, like, can you go back to feature once more, Sindhuya? So we covered up this AI, Quantro, Ivana, new use case, rule modification. Can you scroll down? From our side, that's it, yeah. Yeah, from your side we are done and then Resi I know anyhow what is coming up so we can discuss with Jason today. One quick thing on Resi Sachin, those Resi files that were directly getting ingest to Resi user and all those tables, right? Have they been moved to Lumi now directly? Yeah, yeah, yeah. They have been moved but he is not marking it as full place live because he wants to change the access part of it. Okay. Okay. But you are saying those are now no longer going to corner store and getting hydrated, right?
+
+00:24:00 - 00:24:47 Unknown Speaker:
+
+I asked the same case to him yesterday. Can we now decommission those to the corner store? So, right now he was waiting for that IIQ approval. Okay. So, out of those five tables, three have already been migrated. Couple of them are in pipeline. Okay. It is that the IIQ group, right? From where you used to give the access to the users to query those tables, right? He is creating all together a different IIQ group. Yeah, right, because I think there was some conversation with the control management team. They wanted to get some more arteries. Actually, like, they reached out to me as well, so that's why I think he's doing it. Yeah, yeah, okay. So that is the reason those are not full-face live. And even, you know, now, we have changed those.
+
+00:24:47 - 00:25:41 Unknown Speaker:
+
+Table name, also a bit different from RAISI User, its global dining RAISI user. OK, but like, I hope you sent out like, impact notification, we will do that once this is full phase live, we would send out impact notification. Because even the RAISI MX table which is running that would get impacted, that ODL job because it is pulling right. There are multiple use case we are using, those are going to get impacted. Yeah, correct. So, once he confirm us, Jason confirm us, then we can mark it as live. From our side, we are done. Just keep an eye on those two tables also that you are mentioning, right? Because I think since it's almost like June and they will start chasing you otherwise. I know, that is the reason I set up a call yesterday also.
+
+00:25:41 - 00:26:33 Unknown Speaker:
+
+I was and Stravan was there. I was intimating him the same that we are now end of second quarter. But he is waiting for that. Uh, even we can go live, right? That IIQ group we can reconfigure later. Also. It's not that, you know, once the pipeline moves to YouTube, you can't move. Uh, can't make a edit. That can be done also later on. But, uh, you know, until unless we get the confirmation from him. Let that go in first. And then going live would make sense. Yeah, people would reach out for access, yeah, exactly what he wants to. Yeah. He wants to fix. So, that is why I think he is doing that. That is fine. Right. So, Sravan, you can focus on that, you know, data migration from Snowflake to Lumi. Right.
+
+00:26:33 - 00:27:27 Unknown Speaker:
+
+Let us understand the requirement from JSON today. Let me set up a call at 8.30 and then I will give you that five-story pointer for that to do a discovery and the implementation. Okay. Okay. Sure. Yeah. And Sachin, just for my knowledge, the CD stories that you have assigned, so what are we currently going to work on in the CD framework in this front? CD is the, so right now, the overview that I was giving to you, right? So, the code is already being set by Amtrix and Anand. Okay. They have already implemented it. But a few of the areas, those have been static. Right, the way I was explaining you, right, we need to figure it out. Uh, Polybra API, right? So for Polybra, they have a dump operator, which we are storing into our use case folder right now.
+
+00:27:27 - 00:28:12 Unknown Speaker:
+
+But that is a static data. We need to make it dynamic, so we need to figure out that part, so that is something discovery, you and me anyhow, we are going to do it. But right now, what Kundan and Varga are doing, they are making that, as is implementation. The way product team has given them. They are just converting it to a tag to run those flow. Okay, okay, and what we are doing right now? Even the metadata for sensitive data element that has been also in a CSV file, okay, so instead of taking it from the CSV file. We already have our API, so I just asked Kundan to implement that API. But right now that that has been blocked because there are some infra changes that is being required. Okay, so that is one part.
+
+00:28:13 - 00:29:25 Unknown Speaker:
+
+And whatever static data is there, we need to put it into our use case folder and make a big query call to pull those records. Once this framework is ready, okay, we are going to. As I told you, right? The final output for those is that you identify the critical data element, right? We need to create a DQ rules for those critical data element, so those rules would be created by Anand and team. And then we need to onboard those rule to the framework, where those rules can run and give you a result like fail or, you know, pass. So when we are going to introduce those new rules, ANSI, IFR and Sumar are going to onboard those to the framework. So we need to create 100 DAGs for those roles or maybe 50 DAGs to support those 100 roles.
+
+00:29:25 - 00:30:14 Unknown Speaker:
+
+So there are a bunch of tasks and NCF and Suman. I would take care of the access but once you receive 30 new DQ roles, that is the expectation. Okay, that should be done within two to three days and it should move to the production environment. I have already communicated to all of you. It's a requirement from EVP, not even from Tourna, not even for the VP, it is from EVP. And then so, when you have seen that critical direct, even Raj is chasing you for that, okay, so do we have the clarity for what sort of rules will be implemented? No, no, no, I I told you, right, that is something we need. Uh, even right now I am asking, Anand, right, give me those okay, okay, okay.
+
+00:30:14 - 00:31:21 Unknown Speaker:
+
+Providing it in this brand, in this via the Excel or that. Uh, UI, and with we now now your SQL Uh template going to play a very crucial part like that should run through the UI. So please make sure you test is thoroughly so that we can get the SQL generated as per their expectation. So you know, the SQL generation, the UI, that we have built, these are going to play a picture now. Please make sure these applications runs when we require it. Otherwise, no use of the effort that we have put in the last BI. OK. okay thank you guys bye hey sachin i i need you sorry is he here i'm not sure thank you
+

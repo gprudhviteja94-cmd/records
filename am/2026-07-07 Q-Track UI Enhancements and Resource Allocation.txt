@@ -1,0 +1,230 @@
+2026-07-07 Q-Track UI Enhancements and Resource Allocation
+
+Creation Time: 2026/07/07 18:01
+
+
+📅About Meeting
+
+• Date & Time: 2026-07-07 18:01 (Duration: approx. 41 minutes)
+• Location: Virtual Meeting
+• Attendee: Anand, Sindhuja, Athar, Sameer, Suman, Jeppa, Ansi, Kundan, Vargav, Nirmal, Prithvi, Jason, Sachin, Raj, and others
+
+📒Meeting Outline
+
+Q-Track UI and Self-Serve Enhancements
+
+• Q-Track UI Creation and Backlog Status  
+  Discussion started with the status of Q-Track UI creation. It was clarified that the Q-Track UI is not currently visible in the backlog, possibly because it has been released to production. New enhancements like creating a new page and access API are underway, mainly handled under the self-serve module (DQIM). Validation and implementation remain, with small testing and UAT planned before deployment to the E3 environment.  
+• Story Creation and Sprint Planning  
+  Multiple stories will be created: one for environment promotion, one for UAT, and one for E3 deployment, each estimated at one story point. Bulk update features require stories for SRE review and launch, also estimated at one story point each. Prioritization and assignment were discussed, with Anand and Cindy involved in deployment and review tasks. Some stories may be parked for the next sprint due to potential challenges.  
+• Complex Rule Handling and Data Migration  
+  Athar presented the handling of complex threshold check types, which require editable rule description fields as opposed to auto-formatted SQL for simple checks. A suggestion was made to add a complexity selector (simple/complex) in the rule creation UI to accommodate this. Existing rules were migrated accordingly, with further incorporation planned for the next sprint. Data discrepancies in a few records are being verified before final migration by the end of the week.
+
+Rule Modifications, New Use Cases, and Resource Allocation
+
+• Rule Modification Backlog and New Use Cases  
+  It was confirmed that there are no pending rule modification items in the backlog, but a new use case involving approximately 300 checks is ongoing, with about half completed. The team discussed resource needs, with Anand requesting three resources to handle the workload, including EPA and CN.  
+• Sprint Capacity and Story Assignments  
+  Story points were allocated across team members for various tasks: 8 story points each for CD migration tasks assigned to Suman, Jeppa, and Ansi; 5 story points for KRI implementation to Kundan; 3 story points for multivariant POC to Vargav; and multiple story points for validation and API tasks to Sameer and Nirmal. Prioritization emphasized closing POCs and handling dependencies efficiently.  
+• Cutover Planning for Threshold Checks  
+  Discussion on the cutover plan to stop running threshold checks on Q-Track and start triggering email alerts from Control. The easiest approach suggested was inserting data directly into the DQ results table to maintain pipeline consistency. Design work will proceed in parallel with validation.
+
+Data Migration, Pipeline Updates, and Discovery Initiatives
+
+• Data Pipeline and Entity Discovery  
+  Jason and others discussed the need to re-ingest pipelines with new IIQs and to prioritize data transfer initiatives from Lumi to Snowflake and MariaDB. It was agreed to create user stories for these tasks and plan calls to finalize requirements and priorities.  
+• PI Sprint Planning and Discovery Completion  
+  The team acknowledged limited sprints left in the PI and emphasized completing discovery tasks within this timeframe. Implementation work will follow in subsequent sprints. Coordination with the SFT team and infrastructure setup was highlighted as pending items.  
+• Cornerstone Decommissioning Use Cases  
+  Sravan raised the topic of cornerstone decommissioning use cases. It was clarified that most use cases are owned by Aman’s team and that the current team’s responsibilities are limited to Razy, which has been migrated. Further follow-up with Purna and others is planned to clarify ownership and next steps.
+
+📋Overview
+
+• Q-Track UI enhancements are progressing with new stories created for testing, deployment, and environment promotion.
+• Complex rule handling requires UI changes to support editable fields for complex checks; implementation planned for next sprint.
+• Resource allocation and story point distribution were finalized for multiple ongoing tasks including CD migration, KRI implementation, and multivariant POC.
+• Cutover plan for threshold checks involves stopping Q-Track runs and switching to Control-triggered alerts, with design work initiated.
+• Data migration and pipeline re-ingestion initiatives prioritized, with user stories to be created and discovery work targeted for completion within the PI.
+• Cornerstone decommissioning use cases require clarification on ownership; most work is outside the current team’s scope.
+• Coordination and follow-up calls planned to finalize requirements and ensure smooth progress in remaining sprints.
+
+🎯Todo List
+
+• Mashamil & Anand:  
+  • [ ] Schedule 30-minute call to discuss Cointreau model details (ASAP)  
+• Sindhuja & Anand:  
+  • [ ] Create new user stories for Q-Track UI enhancements: environment promotion, UAT, E3 deployment (Sprint 1)  
+  • [ ] Groom requirements for complex rule handling and plan implementation for next sprint  
+• Anand & Cindy:  
+  • [ ] Assign and prioritize stories for bulk update SRE review and launch (Sprint 1)  
+  • [ ] Manage E3 deployment for bulk update feature (Sprint 1)  
+• Athar & Anand:  
+  • [ ] Verify data discrepancies and finalize data migration for threshold check types (End of week)  
+• Suman, Jeppa, Ansi:  
+  • [ ] Execute CD migration tasks (8 story points each) (Sprint 1)  
+• Kundan:  
+  • [ ] Work on KRI implementation (5 story points) and Kibana dashboard (Sprint 1)  
+• Vargav:  
+  • [ ] Complete multivariant POC (3 story points) (Sprint 1)  
+• Sameer:  
+  • [ ] Handle validation and vault configuration stories (2 story points) (Sprint 1)  
+• Nirmal:  
+  • [ ] Complete API implementation for email config bulk update (5 story points) (Sprint 1)  
+  • [ ] Complete LDAP API and UI visibility tasks (7 story points total) (Sprint 1)  
+  • [ ] Implement true positive/false positive API (5 story points) (Sprint 1)  
+• Jason & Sindhuja:  
+  • [ ] Create user stories for Lumi to Snowflake data transfer and pipeline re-ingestion (Sprint 1)  
+  • [ ] Schedule call with team to finalize Razy requirements and PI goals (Within 2 days)  
+• Sachin & Anand:  
+  • [ ] Plan cutover design for threshold check migration from Q-Track to Control (Sprint 1)  
+• Sravan:  
+  • [ ] Follow up with Purna and Anand on cornerstone decommissioning use cases and ownership clarification (ASAP)  
+• All Team Members:  
+  • [ ] Monitor sprint progress and update backlog as needed to ensure timely delivery and avoid bottlenecks.
+
+Transcription
+
+00:00:03 - 00:01:13 Unknown Speaker:
+
+Before we get started, quick observation on Cointreau or we would like to take it later. I mean, if it's a small thing, we can quickly discuss it, yeah? Yeah, yeah, it's a small thing. Sameer, just give us a minute. Is it the same thing that I just saw it on the group as well? Is that the same thing? Yes, yes, yes. Can we look at what's the end of the call and such? Yeah, I think rather let's take it up to the model itself. Mashamil, you can set up 30 minutes with me on this. Okay, okay. Yeah. Anytime, I think between 4 to 5, 5.30, you can keep the call. Sure, sir. Sure. Yeah. We can go ahead, Santhuja. Okay. Shall I start with Q-Track UI creation? Yeah, we can.
+
+00:01:25 - 00:02:46 Unknown Speaker:
+
+It's 20 i think it's not um in the autumn can we search using 26.3 probably is the name supposed to be this way copy of you know that is a new use case that is all created not qtag ui. No, no, I'm just asking because I saw the name should not be like that. Yeah And I don't see a cute track UI. I only see DQI. I think the sensor with. There are no items in the backlog for this feature. That should not be the case. It might be unlike, you know. It has been released now, right to the production environment, so okay, everything has been taken care, right? It's just the new enhancement that we were working on, right, like creating that new page or the access API, which normal is working, right?
+
+00:02:46 - 00:03:45 Unknown Speaker:
+
+So those are basically the new one. So I think we need to create a task for those and the for the new page we are taking care of in the DQIM. Uh, your feature, right? Not DQIM, on this self-serve, right? That is a part of self-serve, right? No, but it's the main page. I think in the DQIM, can you open it, Sunduja, once? Probably, it will be there, I think. Is this the one, DQIM? Yeah, yeah, yeah. Just check this one. Yeah, there are a few items in the backlog, yeah. Oh, no, no, but this does not have that new page one, right? The new page one, I remember creating it. So, I mean just the validation and implementation is left in that? Yes, correct. Okay, okay. We'll create new stories then. Yeah.
+
+00:03:46 - 00:04:44 Unknown Speaker:
+
+It just, you know, let us know, right? Anything pending from the UI side on that self-serve? The one that new page you were creating, right? That's done, right? Yeah, that's done. Just a small testing is needed. Yeah, anyhow, that would go through a UAT and then release to the E3 environment. That's something we can take care. So that part, Anand, we can wrap up in this sprint. So maybe we can have... So there is no back-end changes required, it's just the UI so we can park. One story, uh, for the environmental promotion, one story for UAT. Again, it's not a major change, right? It's just the piece of fling, and maybe one story for the E3 deployment. Okay, okay, uh, so those three story pointed to a third, uh.
+
+00:04:44 - 00:05:51 Unknown Speaker:
+
+Because even Bag and doesn't have any dependency, he can deploy those code to E3 also. I can just help him with RFC. That is done for a third on this bulk update, right? Uh, we can target for a launch. Uh, so here I would need a couple of stories. One is for SRE review. UAT is already done, right, so one story maybe for SRE review, and, uh, one for the launch one. Once the tissue gets sorted out from the Soros team side, right, we can proceed with the E3 deployment for this. Also. Bulk update Okay, so maybe one story, uh, pointer for me for that SRE review, and one story for the launch. Okay, launch. You can assign it to me, Uh, Cindy. And from this one, Athar, you can pick it up this one, status in progress.
+
+00:05:56 - 00:07:14 Unknown Speaker:
+
+No, no, go below. Anand, just let us know the priority. And E3 deployment, you can assign that to me also, the bug update. Any other? Story from here? No, no, okay. What is the story pointer for both of them? Both? Both would be one story pointer. It would be just a follow-up required. Uh, review call is required, so one one story pointer is sufficient. And uh, now, Anand, you need to let us know which is the priority? One this status in progress field Uh, fix on the table, name, status. One. Definitely, I think. Discovery, Build, validation, launch, all four assigned to it. Yeah, these are all two. Uh, you can just, uh, you know, work with me. We'll sort it out. I have a walk around, so let's work on this.
+
+00:07:14 - 00:08:28 Unknown Speaker:
+
+Okay, one one story pointer to each a launch. You can keep it for next print because there are challenges. We need it later, just park it for the next print, Uh, Sindhuja launch one. We'll try to get it close on, okay, but in case there are hurdles, then we'll, we'll let you know. Yeah, because I really don't know like there might be challenges for this. So we'll we'll take this print at least to do the analysis and get done that very soon, yeah, It's just the data migration is remaining. I'm working on that part. It's just RFC is required to promote the data. So if you go to the even environment, now you would be able to view the threshold check type data also. Athar, if you can just bring up your screen.
+
+00:08:28 - 00:09:25 Unknown Speaker:
+
+Sindhuji, it would take just a couple of minutes. I'll just present it to Anand. Go to the crazy type and just show him that so what we did we marked all the threshold check type as complex Okay, And for the complex check type, you are going to view a editable role description field. That's only the difference, which is not getting formatted from the UI. So for the rest of the. There is two to three, three to four records having a data discrepancy, which I have asked Prithvi and Ayapa to verify. From the Production Environment DQ repository. Once they close this today, uh, we will try to move these data by end of this week to the production environment. Okay, and then only we are not moving the UMDL and the CD roles right now of the UI, that's fine, that's fine.
+
+00:09:25 - 00:10:24 Unknown Speaker:
+
+Yeah, yeah. So if you see these are complex, right? The average of value, so if this is the case, right, you can see this role description would be identifiable field. Okay, okay, got it, yeah. So even if they wants to update it, they can update it. Uh, it, just that the case the SQL will not be formatted, uh by by default, right? So that is something we need to take care manually for the complex check. One suggestion I can provide you can you go to that bunker? We say, and click on Add, add new rule, Add new rule. Okay, one second, it would be here, okay, new page. Uh, so here on. And we can provide a flexibility to the user to select whether it's a, you know, complex or non-complex if they select it as a complex one.
+
+00:10:25 - 00:11:20 Unknown Speaker:
+
+Yeah, in the check type itself, probably we can add that, right? No, check type is different check type, right? Not a complex and non-complex. These are the check type. We may come up with a rule complexity, right? Simple or complex. If they select a simple one, the rule would form automatically. If they select it as complex one, then we would provide them an editable rule description field. Okay, okay, so that is that, that input, something we need from you. Yeah, that's what I was thinking, right? If it's a complex here, then we have to provide them additional fields as well. Uh, so so that is something, right, that is something. Once you come up with a template, we will incorporate that one for time being, just to migrate the existing rule.
+
+00:11:20 - 00:12:12 Unknown Speaker:
+
+We, we did that, that's fine, that's fine, yeah. Okay. Yeah, thanks, Athar. We will take the input from Anand in this sprint and then maybe next sprint we can incorporate that complex part. Yeah, probably like we can use the same Excel template or something, but we can provide that as an option for that person to upload or something like that. Okay. Sindhuji, you can bring back your screen. We can groom those requirements in this sprint, Anand. And maybe the implementation author can take it up in the next sprint. Yeah. So I think from this part, we are good, right? We are just leaving this table filtering and all, right? That's something we can plan it out later. Yeah. Sindhuja, how many sprints we have left now?
+
+00:12:16 - 00:13:20 Unknown Speaker:
+
+In the PI, yeah, in the PI, leaving this, we have two more sprints, okay, so we still have bandwidth to close this one. Okay, okay, then, uh, let's move to the next feature. And I think we covered up author with most of the requirement. Uh, let's go to the next point, all right? Or should I give more? I think he should be done now, whatever UI part is there, uh, because self-serve, uh, we just need to give him one deployment and all right. So as that is not having a right nothing. Can you check the previously completed ones and we can probably clone that one itself. I'll have to see where the previous story came from. It's different from the rally. Otherwise, I'll check if there is a feasibility. I'll create the user story here itself.
+
+00:13:22 - 00:14:22 Unknown Speaker:
+
+Okay. Yeah. We'll just come back to that later, Anand. Even I have to figure things out. That's fine, Sindhuja. It's new to everybody. Shall I go to Q-Track new rule modification? Yeah, so for that one, you can just go ahead and assign these. Okay, again, for this one also, we need those story. So, Anand, what is the number of rules we are expecting? It is still 300, 400? No, that again we are considering within the new use case one, right? This is the rule modification one. Okay, okay. Yeah, this is a different feature. Rachna, do we have any role modifications in backlog? No, I don't think so. We don't have role modifications. We have one new use case which I have forwarded to you. Okay. This one we can skip, Sandhuja. This is not required.
+
+00:14:23 - 00:15:14 Unknown Speaker:
+
+Not required? Okay. Yeah, yeah. We can go to the next one, the new use case one. Anand, for CD, are we expecting those 300 roles again? Like we migrated 131, right? So are we expecting 200, 300 more rolls, maybe 150 rolls for this sprint? I believe so, yeah. Because right now, let me just get the count right. So we already have created about 255 checks, out of which I think 131 are done, right? Yes. We still have like 100 checks to complete, yeah. So I think, we can, we can think about like 300 checks in total. So yeah, we're halfway there. Yeah, then, then, uh. Anand, I need three resources as I am, uh, you know, including them right now, EPA and CN.
+
+00:15:14 - 00:16:25 Unknown Speaker:
+
+SUMAN Yeah, they would be having those complete eight story capacity assigned to those, uh, CD, Microsoft that works, that works, and the new use case, uh, uh, we can assign it to seven. You do have bandwidth, right? Because we are still not, particularly with some of the, you know, Regie initiative, right? Okay, new use case. Also, there are no items. Is this correct? No, the problem is same. Sindhuja Everything has been picked up okay, and you really don't have anything in the backlog. As it is a migration from rally to, uh, you know, this zero. Yeah, okay, we did picked up everything from there, so we may need to create a backlog. I'm not able to figure out where to go. I'm taking a note down, let me put into the tech channel.
+
+00:16:25 - 00:17:57 Unknown Speaker:
+
+So for Athar, uh, we are left with self-serve. And, uh, no, not self-serve. Uh, yeah, self-serve. Uh, new new new ad page. So he would need, uh, validation one story, uh, launch one story, and maybe, uh. One more story we have thought of, right? Yeah, environment promotion you mentioned. Okay. And there's three he has already, right? So I'm not adding him to there. Now, if I go to next is Suman, Jeppa, and Ansi, they would be getting those eight story pointer for that city migration. Eight SP for 3D neural migration. Uh, now next is, uh, right, so Kundan would be working on again. We just need to check the story. Uh, KRI implementation, okay, uh, maybe five story pointer and three SP for this CD.
+
+00:17:57 - 00:19:32 Unknown Speaker:
+
+From framework promotion to E3, E3, again, that validation, uh, environmental promotion and then launching, Uh, Kibana is still left, right? Yeah, we'll see, according to. I think no. I think I think CD framework is almost done. So let me pull Kundan for that Kivana dashboard, because he can. I.I don't want, you know, that, to be getting stuck for a longer time. And then I would include Varga on that KRI implementation. Two story pointer. Vargav, where are we with multivariant? Vargav is there. I don't see him online. No, no, he is not there in the call. Maybe three story pointer for multivariant. Yeah, but we'll try and see if we can close that, Sachin. At least the POC, right? In this sprint. Yeah, yeah, Anand. I think they made the changes, right?
+
+00:19:34 - 00:20:36 Unknown Speaker:
+
+A few changes that we were having that discussion last time, right? To make it... Yeah, but he was, I think, trying to explore with Rohit as well just to see, get some more context about those variables, right? Yeah, but I think that's what I'm saying, right? Let's not wait upon somebody like that. You can easily move to another table, which is more easily, you can infer the details from it, right? Okay, okay. Yeah, don't wait upon, I think, somebody else like that. Okay. Okay, we'll close this on in the POC at least for the sprint. And then Sameer with... validation. With three story pointer, I need to give him two story pointer for Raze. The tissue is still going on there and I need somebody to look into it and three story pointer for that multivariant.
+
+00:20:36 - 00:22:03 Unknown Speaker:
+
+Close this one. Here is the E2 ENV issue. Now, Nirmal would continue one with that API implementation for that email ID, right? To send that email to the respective folks for that bulk update. The one that we were discussing, right? Yeah. API for email config bulk update. Maybe three story pointer and five story pointer for the API, uh, he's working for from LDAP for the UI visibility, Icon Visibility, um, with we with two story pointer for UAT. I hope we should be able to close, uh, by tomorrow on this. And now tell me, uh, do I need to prioritize that reporting? Uh, that true, positive, false positive? Oh, right, right, let's take that up. Yes, yes, then let me give him five. Let's target the API first, if we can get good.
+
+00:22:03 - 00:23:22 Unknown Speaker:
+
+Yeah, UI integration, right, I'm not getting. I'm not creating the, uh, UI interface. What I'm going to do is that, uh, whenever we are passing the dynamic dates to that API, right? It would process that and send you an email as an attachment over an email. Yeah, that's good, okay. 5SP for blue class false positive bulk or the dump is dump and one st, or raise the vault configuration. Uh, uh, between the one that we have, uh, discussed, okay, one, left, one, two, three, four, five, six, seven, eight, nine, right? So seven. You are already having those Reggie user stories, right? Yeah, I didn't check, actually. Okay, uh, can we check the uh? So Anand, I think for from your site? Uh, anything left? Uh, one thing. Uh, Sachin for Shamir, right?
+
+00:23:23 - 00:24:07 Unknown Speaker:
+
+Can we also now think about the cutover part? So let's just say we validated all those control checks and runs and everything right, and most of them seem fine now. So now what we want to do is for all those specific checks that we threshold checks that we migrated from Q track to control. We have to stop running it on Q track and then make sure, uh, the control results actually trigger the email alert. And then go on to Okay. Then then let me remove the multivariant, let him work on that, let, uh, focus on multivariant. Yeah, right, let's start with the design for such enough that, like, how? Yeah? The easiest way is like, we can, uh, start inserting data to direct DQ results table.
+
+00:24:07 - 00:25:27 Unknown Speaker:
+
+Also, right, so that the rest of the pipeline works the same way, that is the easiest way. I think. All right, let him, yeah, let him complete the validation for Quantum. Meanwhile, I'll open the design part, yeah, and then let's discuss it once, and then we can think of how to implement it. Okay, so multivariant. Let him anything else that he wants to add. Um, let me just check once quickly, if you can see, like if we have covered up everything. And then we'll move to the lazy part. Yeah, and the second thing is such in the AI ones, right? I think the eight dimension one, the Charmy, give some heads up. Okay. Charmy one, right? Yeah. Eight dimension checks. Nirmal, will it take 5 SP for LDAP? 5 SP? No, it won't take 5 SP.
+
+00:25:28 - 00:26:38 Unknown Speaker:
+
+Then I am adding the AI one. Okay. No, tell me man, if you are not confident, you know, you are creating those in the backlog, right? And ultimately, you are not able to... deliver it on time, because if we don't have bandwidth, we really need to. You know, spoke about it. We should not be, you know, just, uh, you know, just creating a backlog with ourself. And then ultimately we would end up with the speed that we are executing, right? Do you think that you would be able to drive it along with Suman for those number of roles, migration or you need NC help? Also because I can see Kundan is jam-packed, right? Okay, then let me no, just confirm, yeah. Will you be able to drive it along with Suman? Or you need another resources.
+
+00:26:40 - 00:28:12 Unknown Speaker:
+
+Because look, the number of roles is going to get increased, right? We have to set a target of 100 for per week. So, I don't think that is possible. Leave it. Let all three of you work on that. Sameer, again, there is a work. Vargav. Vargav. Nirmal is again having a work. Prithvi. Prithvi on that KRI implementation. Let me shuffle one thing, Anand. True positive, false positive, Nirmal quickly can do it because he has already done it. Okay. Let me pull Prithvi to that implementation which Army is doing. Okay, sure, yeah, and then this true positive, false positive, along with that, uh, 5SP. I need to think, like, who, can, you know, close it? Because, I know again, would be chasing us for that implementation, let me do one thing, KRI implementation, let me give it to Varga.
+
+00:28:12 - 00:29:21 Unknown Speaker:
+
+While I'll pull Kundan to that eight dimension one, okay, so that, uh, and and that eight dimension one is not having any dependency on this CD framework, I believe. ANAND Yes, I got a call from Buddha. Come again, this uh, this uh KRI implementation. CD framework doesn't have a dependency with that of uh, okay, that eight demands in one, right? That is all together, uh, separate. Yeah, it's different, it's different. Yeah, at least that's how it's different. Yeah, did you started on that carry? Or you are just analyzing it? Oh, just analyzing it, such in, okay, so in between, uh, I moved to this data migration and all going through the code only, that's okay. Uh, let me assign you the eight dimension one, then let Varga to work on that KRI implementation.
+
+00:29:21 - 00:30:27 Unknown Speaker:
+
+Okay, so that with three. And let Bhargav to work on this KRI. Okay, anything else Anand? No, Sajjan. Okay. Jason, can you get started on that easy? Sajjan, so I'll probably drop off, but you ping me if you need help with the stories, right? I'll be logging off at 7, but once I'll be back at night. Uh, back right? And I can help you with creating the story, so if you need any help, just let me know. I can create a few stories as well wherever you need some more information. Okay, okay, thanks, thank you. Uh, thanks, Anand. I hope, uh, everything's been covered from your side. Also, that one use case, right? Which you have asked, right? I'll assign it to seven. He can just close that out. Anything else that you would like to prioritize?
+
+00:30:27 - 00:31:25 Unknown Speaker:
+
+No, no, I think we are good, Sachin. Take care. Okay. Thank you. Jason, Sindhuji, if you can bring up your screen. So, Jason, a few things we already taken into consideration. One is the environmental issue, right, which we are chasing the team, right? So, that part, the two-story pointer, I have assigned it to Sameer because, you know, that needs a bit more intervention with the resources. So that would be taken care by Sameer. And one part we are doing on the vault configuration that is reading the secrets from the vault. Okay. For the new use case. So that is with Prithvi. Okay. Now apart from that, you might have those pipeline which Suman built, right? That is sitting just for the SFT migration. So that one configuration I will take up as my SME story.
+
+00:31:25 - 00:32:42 Unknown Speaker:
+
+So I'll wrap it up. Uh, once that profile is handed over to us from the SFT team, right? Uh, now, apart from that, we have that talk migration where we need more input from your side, right? We are still waiting on that. Uh, seven, if you can clarify, like, where we are exactly on that. So for talk, I think, uh, Jason, first of all, uh. The entity, what do you say? We still have to look for those entities, right? Those haven't been signed off in E1, E2. Entity discovery. Got it. Yes. Yes. The second part is the infra setup. That is something that we still have to... you know, get together with, uh, I think you've been to somebody's, uh, some Poc's name. Yeah, um, okay, I.I guess I need to create the stories for all of those issues here.
+
+00:32:42 - 00:33:41 Unknown Speaker:
+
+Like Jason, if we can connect for next couple of days, right? Uh, I'm, I'm pretty. Uh, you know, I'm still not, uh, pretty sure what exactly stays. We are right. And what is the expectation? Because as Sindhu sir stated, right, we are left with couple of sprint only, right? So I would not like to see this PI going as, you know, nothing went for Razy, right? Although these are discovery pages, but a few of the stuff, like we were having a discussion, like, you know, sending the file from Lumi to YSFT to the Snowflake, right? Yep. Why don't we start those initiatives at least? That makes sense. Okay. Right. Or even to the MariaDB, right? So at least if we can, you know, let's have a call today or tomorrow whenever you have some bandwidth.
+
+00:33:42 - 00:34:40 Unknown Speaker:
+
+Let's plan it out, like, you know, what are the initiatives we need to prioritize and wherever there is no blocker, right, at least we can close those implementations until A2 environment, till the time we are getting, you know, A3 environment provisioned for us. Yes, okay. Because for this sprint, I feel like, you know, nothing major more for AZ. Got it. So there is. Yes, maybe we don't do anything for this sprint, but I just want to flag that we will need to re-ingest all the pipelines that we had worked on with new IIQs. Okay, so that would be a minor change. So even if we have nine or ten tables, right, we just need to modify that we can do it, you know, maybe within a day itself. And just the testing is required and just the promotion.
+
+00:34:40 - 00:35:31 Unknown Speaker:
+
+So I don't think that would be a, you know, major change. Even if, you know, Sravan doesn't have bandwidth, I can do that. And what else, like, you know, like, you know, transferring the data from Lumi to Snowflake or if you want to show something to others, right? Yeah, I will create that user story for transferring data from Lumi to Snowflake. And I think that could be our priority. Board for the sprint? Okay, okay, okay, let's do that then, and then maybe I'll set up a call tomorrow. Let's, you know, understand what we are trying to achieve in this PI, and the goal for, uh, end of this year. Uh, we need to block it out so that at least the discovery should get over in this PI, uh, and then we can.
+
+00:35:31 - 00:36:26 Unknown Speaker:
+
+I just closed those all implementation. Because if you remember we were having that discussion, right, even the transformation of data from one of that system, right? We were having a discussion with Rosny and all right. And then suddenly we stopped. We did not had a further communication on that. Also, I think that's the entity discovery part. Yeah, entity discovery, right? So we, we, even we did not, you know, followed up or proceed with that part. Also, we can take up that part. Also. Like, you know, even if discovery is required, someone can do that discovery, and then we can, at least if we can close the discovery. This print right, then we can assign it to Suman in the next print to do the implementation. Okay, let me set up a call tomorrow.
+
+00:36:26 - 00:37:19 Unknown Speaker:
+
+Jason now, uh, uh, with you and seven, and let's finalize the raze requirement for next coming 3PI. Meanwhile, whatever you feel as the priority, as you have stated, those IAQ group change and all right, that's not like data transformation, just create those user story. And for time being, as I need to, stubborn, Okay, okay, I will do that. Yeah, okay, uh. Anything, Sravan, you want to discuss apart from this? Just one thing. Did you have a chance to connect with Purna on those use cases which Raj had sent yesterday for cornerstone decommissioning? No, no, no. That is something we need to check with them only, right? First of all, I need to get those lists. What are the use cases? He is pointing it out. Right? Once he saw those use cases.
+
+00:37:19 - 00:38:15 Unknown Speaker:
+
+Then we can let them know who owns it. For analytics, I am pretty sure it is being owned by Aman and team. Aman and these people owned it. So there were two use cases which were under the last name, right? Yeah, so that's what I mentioned it to you yesterday, right? I am not clear with the one more which is this one. CSREWYN. Right, so that is something we need to check with that fork only. What are the use cases pointing it out? If it is a different, uh, use cases which we don't handle, then we need to redirect him to the Omen team. Okay, okay, so, uh, like, since it's under Purna's ownership, he might be aware, right? For that use cases, he or someone with an esteem. No, no, it's, it's the use case, right?
+
+00:38:15 - 00:39:24 Unknown Speaker:
+
+I'm not sure. Let me send this communication to Anand and ohm, let them come back on this. Okay, uh, yeah, let me know if I need to follow up on anything. Because, uh, Raj wanted to know if anything is, uh, in our bucket and we need. No, no, I'm, I'm pretty sure this is not sitting in our bucket. Because we were having only Razy, which is live in the cornerstone, and even now we have migrated those table, right? It's just the IAQ group. Once we chase that one, then we would be all done for the cornerstone. So none of the rest of the use cases we own AIZA has been decommissioned, so nothing is being active in the cornerstone for us right now. Okay, cool, and I think I'll still have bandwidth after this.
+
+00:39:24 - 00:41:06 Unknown Speaker:
+
+Uh, crazy things, because I don't think we'll be able to. No, no, no one use case is being, uh, given to you, right? Yeah, even after that use case, so you have discovery, you have sufficient work. I'll tell you you're not viewing that picture. I know there are lots of work even in your bucket. Okay, cool, so I'm just doing a CC to you, okay, on that same channel. Let's see if they come back with an answer to this. Oh man, I posted into the wrong group, I'll forward it to them. Okay, any question? Anyone else? If no, I think we should be good to close the call. Okay, then. Oh, thank you, thank you, thank you.
+
