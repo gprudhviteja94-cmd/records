@@ -1,113 +1,92 @@
-2026-05-28 AI ఏజెంటిక్ డెవలప్‌మెంట్ మరియు ఆర్కెస్ట్రేషన్ చర్చ
+2026-05-28 AI Agentic Development and Orchestration Discussion
 
 Creation Time: 2026/05/28 21:00
 
 
-📅మీటింగ్ గురించి
+📅 Meeting Overview
 
-• తేదీ & సమయం: 2026-05-28 21:00 (వ్యవధి: 3425 సెకన్లు)  
-• స్థలం: వర్చువల్ మీటింగ్  
-• హాజరైనవారు: Srikant, Pawan, Kishore, Damir, Govardhan, Isha (అనుకుంటున్నారు), Vinod, Dinesh, Ritu, Madan, Ram, Rajan, మరియు ఇతరులు
+* Date & Time: 2026-05-28 21:00 (Duration: 3425 seconds)
+* Location: Virtual Meeting
+* Attendees: Srikant, Pawan, Kishore, Govardhan, Damir, Isha, Vinod, Dinesh, Ritu, Madan, Ram, Rajan, and others
 
-📒మీటింగ్ అవుట్‌లైన్
+📒 Meeting Outline
 
-AI Agentic Development and Orchestration Framework
+### AI Agentic Development and Orchestration Framework
 
-• AI Factory మరియు Agentic Development పరిచయం  
-  Lalita టిమ్ వారి AI Factory ప్రాజెక్టును పరిచయం చేసింది, ఇందులో agentic processes ని డెవలప్‌మెంట్ టాస్కుల కోసం సృష్టించడం జరుగుతుంది. ఈ AI ఆధారిత agentic సొల్యూషన్స్ ప్రొడక్షన్ ఎన్విరాన్‌మెంట్స్‌లో అమలు చేయాలంటే AARB (Architecture Approval Review Board) ఆమోదం అవసరమని చర్చ జరిగింది. GitHub Copilot వంటి అన్ని AI కోడ్ జనరేషన్ టూల్స్ కి AARB ఆమోదం కావాలా అనే విషయంలో కొంత గందరగోళం ఉంది. ప్రస్తుత AI VLC orchestrator డెవలప్‌మెంట్ ఎన్విరాన్‌మెంట్ కోసం మాత్రమే ఉద్దేశించబడిందని, జనరేట్ చేసిన కంటెంట్లు ప్రొడక్షన్‌కు వెళ్ళడం వల్ల AARB ఆమోదం అవసరం లేకపోవచ్చు అని స్పష్టత ఇచ్చారు. మరింత స్పష్టత కోసం ఎదురు చూస్తున్నారు.
+* **AI Factory & AARB Approval Discussion:**
+  The team discussed Lalita's team's AI Factory project, which creates agentic processes for development tasks. There was a debate regarding whether AARB (Architecture Approval Review Board) approval is required to deploy these agentic AI solutions in production. Clarification was offered: because the current AI VLC orchestrator is used solely in developer non-prod environments, AARB approval might not be necessary since only the generated code moves to production (similar to GitHub Copilot/Codex usage). Further clarity is being sought.
+* **Agentic Use Cases Demonstration:**
+  Pawan presented a working use case where an AI agent automatically modified a UI dropdown element from single-select to multi-select. The agent handled all frontend UI changes, backend API updates, and MongoDB schema mapping (which was identified as a varchar column and kept as comma-separated values) without manual intervention.
+* **Agent Creation & Configuration (ADAS):**
+  Pawan's bootstrap application (ADAS - Agentic Development Assistant System) creates about 13-16 default agents for generic development activities (frontend, backend, testing, DevOps). Custom agents, such as a Figma agent to generate UI and API code from design inputs, can also be plugged in. The orchestrator coordinates these agents across multiple stages (foundation creation, connectivity, coding, testing, and quality gates).
+* **Context Awareness & Memory:**
+  The system creates a memory/context file for each agent based on user prompts and project-specific guidelines. This allows agents to learn and conform to individual developer coding styles, enabling reuse across various projects and teams.
+* **Integration and Scaling Plans:**
+  Plans were discussed to onboard new users via guides and training sessions, alongside showcasing the tool to the broader Optomarex group. The team aims to establish a generic, pluggable framework that can be adopted across multiple organizational teams.
 
-• Agentic Use Cases డెమోన్స్ట్రేషన్  
-  Pawan agentic ఫ్లోల వర్కింగ్ ఉదాహరణలను పంచుకున్నాడు, అందులో ఒక నిజమైన use case గా dropdown UI ఎలిమెంట్ single-select నుండి multi-select కి మార్చబడింది. ఆజెంట్ UI మరియు బ్యాక్‌ఎండ్ మార్పుల్ని, MongoDB స్కీమా సర్దుబాటు సహా, పూర్తి ఆటోమేషన్ తో హ్యాండిల్ చేసింది. ఈ ఉదాహరణను టీంకి చూపించనున్నారు.
+### Development Process and Best Practices
 
-• Agent సృష్టి మరియు కాన్ఫిగరేషన్  
-  Pawan అభివృద్ధి చేసిన bootstrap అప్లికేషన్ వివిధ డెవలప్‌మెంట్ కార్యకలాపాలకు (ఫ్రంట్‌ఎండ్, బ్యాక్‌ఎండ్, టెస్టింగ్, DevOps) సుమారు 16 మంది జనరిక్ ఏజెంట్లను సృష్టిస్తుంది. UI కోడ్ జనరేషన్ కోసం Figma ఇంటిగ్రేషన్ వంటి ప్రత్యేక అవసరాలకు కస్టమ్ ఏజెంట్లను కూడా జత చేయవచ్చు. orchestrator ఈ ఏజెంట్లను ఫౌండేషన్ క్రియేషన్, అంతర్గత కనెక్టివిటీ, ఫ్రంట్‌ఎండ్ డెవలప్‌మెంట్, బ్యాక్‌ఎండ్ డెవలప్‌మెంట్, టెస్టింగ్ వంటి అనేక దశల్లో సమన్వయం చేస్తుంది. కోడ్ స్టాండర్డ్స్ కోసం quality gates నిర్వహిస్తుంది.
+* **Workflow Improvements:**
+  The current waterfall model was debated. The team suggested exploring Test-Driven Development (TDD) and test automation to improve code quality. The orchestrator enforces step-by-step workflow stages, offering human-in-the-loop approvals before transitioning, which lets developers adjust prompts dynamically.
+* **Input Quality & Product Owner Coaching:**
+  Detailed, clear requirements from Product Owners are critical to minimize AI hallucinations and output errors. Kishore noted the need to coach POs to write better acceptance criteria and technical details. Integrating AI functionalities inside tools like Rally and Jira was also discussed.
+* **AI Tooling Costs & Limits:**
+  Concerns were raised regarding rising costs, daily limits, and licensing restrictions of tools like Codex and GitHub Copilot, which impact developer productivity.
 
-• కాంటెక్స్ట్ అవేర్‌నెస్ మరియు మెమరీ  
-  సిస్టమ్ ప్రతి ఏజెంట్ కోసం యూజర్ ప్రాంప్ట్‌లు మరియు ప్రాజెక్ట్ స్పెసిఫిక్ వివరాల ఆధారంగా మెమరీ/కాంటెక్స్ట్‌ను నిర్మిస్తుంది. ఇది ఏజెంట్లు వ్యక్తిగత డెవలపర్ కోడింగ్ స్టైల్స్‌కు అనుగుణంగా మారడానికి, ప్రాజెక్టులకు మళ్లీ ఉపయోగించుకునేలా అనుమతిస్తుంది. ఇది ఇతర ప్రాంతాలలోని ప్రాక్టీసుల నుండి ప్రేరేపితమై ఉంది, అక్కడ ఏజెంట్లు ఉన్న కోడ్‌బేసెస్ నుండి నేర్చుకుని సुसంగతిని కొనసాగిస్తాయి.
+### Vulnerability Management & CPM Integration
 
-• ఇంటిగ్రేషన్ మరియు విస్తరణ ప్రణాళికలు  
-  కొత్త యూజర్లను డాక్యుమెంటేషన్ మరియు ట్రైనింగ్ తో ఆన్‌బోర్డ్ చేయడానికి ప్లాన్లు చర్చించబడ్డాయి, అలాగే Optomarex పెద్ద టీంకు పరిష్కారాన్ని ప్రదర్శించాలనుకున్నారు. సంస్థలో అనేక ప్రాజెక్టులు, టీమ్స్ ఉపయోగించుకునే జెనరిక్, ప్లగ్‌ఐనబుల్ ఫ్రేమ్‌వర్క్ సృష్టించడానికి యత్నిస్తున్నారు. Sapiens మరియు CPM టీమ్స్ తో సమన్వయం కలిగి బెస్ట్ ప్రాక్టీసులను క‌లిపి యూనిఫైడ్ ఫ్రేమ్‌వర్క్ నిర్మాణం జరగనుంది.
+* **AI DLC Orchestrator for Vulnerability Remediation:**
+  Damir demonstrated a CPM (Critical Patch Management) AI DLC orchestrator that scans for security vulnerabilities, plans patching strategies, automatically updates repositories, and leaves an audit trail. It uses established coding standards (ASaM skills) as a baseline. The architecture mirrors the agentic framework but specializes in security fixes.
 
-Development Process and Best Practices
+### Collaboration & Next Steps
 
-• వర్క్‌ఫ్లో మరియు ప్లానింగ్ మెరుగుదలలు  
-  ప్రస్తుత వాటర్‌ఫాల్ మోడల్ (ప్లాన్ → డెవలప్ → డిజైన్ → టెస్ట్) చర్చించబడింది. క్వాలిటీ మరియు సమర్థత పెంచేందుకు Test-Driven Development (TDD) మరియు ఆటోమేషన్ టెస్టింగ్‌ను అన్వేషించాలనే సలహా ఇచ్చారు. orchestrator వరుసగా వర్క్‌ఫ్లోని అందిస్తుంది, ప్రతి దశ ముందు మానవ సమీక్ష మరియు ఆమోదానికి ఆప్షన్ కల్పిస్తుంది, తద్వారా ప్రాంప్ట్స్ మార్పులు చేసుకోవచ్చు.
+* **Unified AI Framework Development:**
+  The team agreed to merge the agentic development framework and the CPM orchestrator into a single, generic, pluggable development framework. A 1-hour follow-up meeting is proposed for tomorrow (7-8 PM IST) with key stakeholders (Ritu, Madan, Ram, Rajan) to establish an integration roadmap.
 
-• అవసరాల వివరాలు మరియు ఇన్‌పుట్ క్వాలిటీ  
-  ప్రొడక్ట్ ఓనర్స్ నుండి స్పష్టమైన మరియు వివరమైన అవసరాలు AI ఆధారిత డెవలప్‌మెంట్ విజయానికి కీలకం అని గమనించారు. comprehensive acceptance criteria మరియు technical notes ఇవ్వడానికి ప్రొడక్ట్ ఓనర్స్‌కు మెరుగైన కోచింగ్ అవసరమని గుర్తించారు. Rally, Jira వంటి టూల్స్ లో డీటెయిల్డ్ యూజర్ స్టోరీలు మరియు టాస్కులు నిర్వహణ గురించి చర్చించారు, అలాంటి ప్లాట్‌ఫారమ్స్ లో AI ఫంక్షనాలిటీలను ఇంటిగ్రేట్ చేయాలని సూచించారు.
+📋 Summary of Key Takeaways
 
-• AI టూల్స్ ఖర్చులు మరియు వాడుక పరిమితులు  
-  Codex, GitHub Copilot వంటి AI టూల్స్ పెరుగుతున్న ఖర్చులు, లైసెన్స్ తొలగింపు, రోజువారీ వాడుక పరిమితుల గురించి ఆందోళన వ్యక్తం చేశారు. ఇవి డెవలపర్ ఉత్పాదకత మరియు టూల్ అంగీకారంపై ప్రభావం చూపుతున్నాయి.
+1. The VLC developer assistant operates in non-prod only, so it does not require AARB approval; only business-facing production agents do.
+2. Pawan demonstrated automatic UI & backend updates for a multi-select dropdown use case.
+3. The bootstrap app (ADAS) spawns 13-16 specialized agents managed by an orchestrator in waves.
+4. Memory/context files let agents match developer coding styles and carry context across repositories.
+5. Damir's CPM orchestrator automates vulnerability patch management with audit logs.
+6. The team is moving towards TDD, automated testing, and human-in-the-loop check gates.
+7. Clear requirements decrease AI hallucinations; POs will be coached to write richer Rally/Jira stories.
+8. Framework consolidation between Pawan, Damir, and Govardhan will yield a unified framework.
 
-Vulnerability Management and CPM Integration
+🎯 Todo List
 
-• AI DLC Orchestrator for Vulnerability Remediation  
-  Damir CPM (Critical Patch Management) కోసం రూపొందించిన AI DLC orchestrator ను ప్రదర్శించాడు, ఇది సెక్యూరిటీ లోపాలను గుర్తించి, రీమిడియేషన్ స్ట్రాటజీలను ప్లాన్ చేసి, ఆటోమేటిక్ గా కోడ్ రిపాజిటరీలను అప్డేట్ చేస్తుంది. ఆర్చిస్ట్రేటర్ ఆడిట్ కోసం ట్రయల్ ట్రైల్ వదిలి, ASaM స్కిల్స్ ను కోడ్ క్వాలిటీ మరియు సెక్యూరిటీ స్టాండర్డ్స్ కోసం బేస్‌లైన్ గా ఉపయోగిస్తుంది. ఇది agentic development framework కు సమానమైన విధానం కానీ సెక్యూరిటీపై దృష్టి కేంద్రీకరించింది.
+* **Pawan:**
+  * [ ] Prepare and share a detailed demo of the multi-select dropdown use case.
+  * [ ] Provide a step-by-step setup walkthrough for agent creation and orchestrator usage.
+  * [ ] Collaborate with Damir and Govardhan to unify the agentic and CPM frameworks.
+  * [ ] Explore human-in-the-loop checkpoints and wave confirmation enhancements.
 
-• బెస్ట్ ప్రాక్టీసెస్ మరియు స్కిల్ డెవలప్మెంట్  
-  కోడింగ్ స్టాండర్డ్స్, డిజైన్ నిర్ణయాలు, సెక్యూరిటీ మార్గదర్శకాలను AI స్కిల్స్ లో చేర్చడం ద్వారా పునరావృత తప్పిదాలను నివారించడానికి చర్చించారు. orchestrator క్వాలిటీ అష్యూరెన్స్ కోసం హ్యూమన్-ఇన్-ది-లూప్ ఇంటర్వెన్షన్స్ ను మద్దతు ఇస్తుంది.
+* **Damir:**
+  * [ ] Share best practices and a detailed demo of the CPM AI DLC orchestrator.
+  * [ ] Work with Pawan and Govardhan to consolidate the frameworks.
+  * [ ] Participate in the follow-up planning meeting.
 
-సహకారం మరియు తదుపరి దశలు
+* **Govardhan:**
+  * [ ] Deploy and test the AI orchestrator on the RRF project and share feedback.
+  * [ ] Help identify gaps and technical requirements for the consolidated framework.
+  * [ ] Schedule the upcoming planning and integration meeting.
 
-• క్రాస్-టీం సమన్వయం మరియు యూనిఫైడ్ ఫ్రేమ్‌వర్క్ అభివృద్ధి  
-  참석ులు agentic development, CPM, position side నుండి వేరువేరు use cases ను సమీకరించి generic, శక్తివంతమైన, ప్లగ్‌అనబుల్ AI development framework నిర్మించడం అవసరం అని ఒప్పుకున్నారు. Ritu, Madan, Ram, Rajan సహా కీలక భాగస్వాములు పాల్గొనే ఒక గంట పాటు ఫాలో-అప్ మీటింగ్ నిర్వహించాలని ప్రతిపాదించారు, ఇంటిగ్రేషన్ వ్యూహాలు మరియు మిస్ అయిన అంశాలను చర్చించడానికి.
+* **Kishore:**
+  * [ ] Organize and set up the 1-hour follow-up meeting with stakeholders (Ritu, Madan, Ram, Rajan).
+  * [ ] Support precision/pricing teams with onboarding and framework adoption.
+  * [ ] Coach Product Owners on writing descriptive user stories and acceptance criteria.
+  * [ ] Explore integrating AI features within Rally and Jira.
 
-• డాక్యుమెంటేషన్ మరియు ఆన్‌బోర్డింగ్  
-  కొత్త యూజర్లు మరియు టీమ్స్ సులభంగా సంతృప్తి చెందేందుకు పూర్తి డాక్యుమెంటేషన్, ఆన్‌బోర్డింగ్ గైడ్స్, ట్రైనింగ్ సెషన్ల అవసరం ఉంది.
+* **All Team Members:**
+  * [ ] Review the agentic development and CPM orchestrator demos and provide feedback.
+  * [ ] Document detailed project-specific use cases for the consolidated framework.
+  * [ ] Participate in integration and roadmap planning calls.
 
-• Human in the Loop మరియు ఇన్క్రిమెంటల్ వేవ్స్  
-  ప్రతి వేవ్ వద్ద మానవ ధృవీకరణకు ఆప్షన్ ఉండాలి, తద్వారా దశలవారీగా మెరుగుదలలు మరియు లోపాల సరిదిద్దుబాటు సాధ్యమవుతుంది.
+* **Meeting Organizer (Govardhan / Kishore):**
+  * [ ] Schedule the detailed follow-up meeting for tomorrow (proposed at 7-8 PM IST).
+  * [ ] Invite key stakeholders and draft the agenda (framework consolidation, roadmap, use case alignment).
 
-• అవసర ఇన్‌పుట్లు మెరుగుపర్చడం మరియు హల్యూసినేషన్స్ తగ్గించడం  
-  Rally యూజర్ స్టోరీల మాదిరిగా సంపదైన, వివరమైన ఇన్‌పుట్‌లు ఇస్తే AI ఏజెంట్ల హల్యూసినేషన్స్ మరియు అనవసర మార్పులు తగ్గి అవుట్‌పుట్ నాణ్యత మెరుగుపడుతుంది.
-
-📋సారాంశం
-
-• AI Factory agentic development ప్రొడక్షన్ కు AARB ఆమోదం అవసరం; ప్రస్తుత orchestrator డెవలప్‌మెంట్ కోసం మాత్రమే.  
-• మల్టీ-సెలెక్ట్ dropdown UI/bakend మార్పును agent ఆటోమేటిక్ గా చూపించారు.  
-• Bootstrap అప్లికేషన్ అనేక జనరిక్, కస్టమ్ ఏజెంట్లను phased waves లో orchestrator ద్వారా సమన్వయం చేస్తుంది.  
-• ఏజెంట్లు మెమరీ/కాంటెక్స్ట్ ద్వారా డెవలపర్ స్టైల్స్ కు అనుగుణంగా మారతాయి, ప్రాజెక్టులలో పునర్వినియోగం కల్పిస్తాయి.  
-• యూజర్లను ఆన్‌బోర్డ్ చేయడం, ప్రాసెస్ డాక్యుమెంటేషన్, పెద్ద టీమ్స్‌కు పరిచయం చేయడం ప్లాన్లు.  
-• వాటర్‌ఫాల్ మోడల్ నుండి TDD, ఆటోమేషన్ టెస్టింగ్ వైపుకు మార్పు చర్చ.  
-• ప్రొడక్ట్ ఓనర్స్ నుండి స్పష్టమైన అవసరాలు, Rally/Jira ఇంటిగ్రేషన్ పై దృష్టి.  
-• AI టూల్స్ వాడుక పరిమితులు, లైసెన్సింగ్ కారణంగా ఉత్పాదకతపై ప్రభావం.  
-• Damir CPM AI orchestrator ద్వారా ఆటోమేటిక్ వల్నరబిలిటీ రిమిడియేషన్, audit trails తో.  
-• క్రాస్-టీం సహకారం ద్వారా generic AI development framework నిర్మాణం.  
-• కీలక భాగస్వాములతో ఫాలో-అప్ మీటింగ్ ప్రతిపాదన.  
-• హ్యూమన్-ఇన్-ది-లూప్ checkpoints మరియు సంపదైన ఇన్‌పుట్లు AI అవుట్‌పుట్ మెరుగుపరుస్తాయి.
-
-🎯టుడూ లిస్ట్
-
-• Pawan:  
-  • [ ] Agentic ఫ్లో డీటెయిల్డ్ డెమో, మల్టీ-సెలెక్ట్ dropdown use case తో తయారుచేసి పంచుకోవడం.  
-  • [ ] Agent సృష్టి మరియు orchestrator వాడుకకు స్టెప్-బై-స్టెప్ సెటప్, వాక్‌థ్రూ ఇవ్వడం.  
-  • [ ] Damir, Govardhan తో కలిసి బెస్ట్ ప్రాక్టీసెస్ గుర్తించి frameworks ఐక్యపరచడం.  
-  • [ ] హ్యూమన్-ఇన్-ది-లూప్ వేవ్ కన్ఫర్మేషన్స్, వర్క్‌ఫ్లో మెరుగుదలలపై అన్వేషణ.
-
-• Damir:  
-  • [ ] CPM AI DLC orchestrator డీటెయిల్డ్ డెమో ప్రదర్శించి బెస్ట్ ప్రాక్టీసెస్ పంచుకోవడం.  
-  • [ ] Pawan, Govardhan తో సమన్వయం చేసి CPM, agentic development frameworks ఐక్యపరచడం.  
-  • [ ] ఫాలో-అప్ మీటింగ్‌లో భాగస్వామ్యం అవ్వడం.
-
-• Govardhan:  
-  • [ ] RRF ప్రాజెక్టులో AI orchestrator వాడి ఫీడ్‌బ్యాక్ ఇవ్వడం.  
-  • [ ] generic framework అభివృద్ధికి గ్యాప్‌లు, మెరుగుదలలు గుర్తించడం.  
-  • [ ] ఫాలో-అప్ మీటింగ్ షెడ్యూల్ చేసి అన్ని స్టేక్‌హోల్డర్స్‌ను ఏర్పాటు చేయడం.
-
-• Kishore:  
-  • [ ] కీలక భాగస్వాముల (Ritu, Madan, Ram, Rajan సహా)తో ఫాలో-అప్ ఒక గంట మీటింగ్ ఏర్పాట్లు చేయడం.  
-  • [ ] ప్రైసింగ్, ప్రెసిషన్ టీమ్స్‌తో కలిసి ఆన్‌బోర్డింగ్, framework అంగీకారం మద్దతు ఇవ్వడం.  
-  • [ ] ప్రొడక్ట్ ఓనర్స్‌కు వివరమైన అవసరాలు, acceptance criteria ఇవ్వడంలో కోచ్ చేయడం.  
-  • [ ] Rally, Jira లో AI ఫంక్షనాలిటీల ఇంటిగ్రేషన్ అన్వేషించడం.
-
-• అన్ని టీం సభ్యులు:  
-  • [ ] ప్రస్తుత agentic development, CPM orchestrator డెమోల సమీక్ష చేసి ఫీడ్‌బ్యాక్ ఇవ్వడం.  
-  • [ ] AI ఆధారిత డెవలప్‌మెంట్ కోసం డీటెయిల్డ్ use cases, అవసరాలు సిద్ధం చేయడం.  
-  • [ ] రాబోయే డీటెయిల్డ్ ప్లానింగ్, ఇంటిగ్రేషన్ మీటింగ్స్‌లో పాల్గొనడం.
-
-• మీటింగ్ ఆర్గనైజర్ (Govardhan లేదా Kishore):  
-  • [ ] డీటెయిల్డ్ ఫాలో-అప్ మీటింగ్ షెడ్యూల్ చేసి సెటప్ చేయడం (తదుపరి రోజు, 7-8 IST ప్రతిపాదించారు).  
-  • [ ] సంబంధిత స్టేక్‌హోల్డర్స్‌ను ఆహ్వానించి use case consolidation, framework integration, roadmap planning అంశాలను అజెండాలో చేర్చడం.
 
 Transcription
 
