@@ -1,0 +1,58 @@
+> Meeting Date: 2026/07/27 08:07 - 2026/07/27 08:29
+
+> Meeting Location: <Unknown>
+
+> Attendees: Speaker 1, Speaker 2, Speaker 3, Speaker 4, Speaker 5
+
+
+Meeting Agenda and key Content
+
+Agenda Overview:
+
+• Discussion on API for updating file name in MongoDB
+• Clarification on API development for on-prem RRF process
+• Identification of MongoDB collection and fields for update
+• Discussion on unique identifiers for scenarios
+• Sync process between on-prem and cloud for RPT batch
+• Spec file update process for new APIs
+
+Key Points:
+
+• API for updating file name in MongoDB:
+    • The API is to update a file name in the MongoDB database.
+    • The API is for the on-prem RRF process.
+• MongoDB collection and fields for update:
+    • The collection will be "repricing request form" (RRF code document).
+    • Fields to be updated are in the "scenario dtu" and include "pi or petty reports run", "rpt reports location", and "reports".
+• Unique identifiers for scenarios:
+    • "quote id" will identify the quote.
+    • "id" within the scenario object will uniquely identify a scenario.
+• RPT batch process:
+    • RPT batch is currently not using MongoDB.
+    • The RFF request will be raised on the cloud UI, but the RPT process will run on-prem for the next four months.
+    • George will use the API to update the RPT fields.
+• API Controller and Spec File:
+    • A new controller should be created for the on-prem process.
+    • The spec file in HCP console needs to be updated for new APIs.
+
+Controversial:
+
+• There was initial confusion regarding who was working on the API for updating the file name in MongoDB, with one participant stating they were not working on it, despite being told otherwise.
+• There was uncertainty about whether the on-prem process would have the "scenario id" for unique identification.
+• There was a question about how George would refer to data needed for his process if the request is generated on the cloud UI.
+
+Resolutions and Action Items
+
+Action Items:
+
+• Pavan:
+    • Needs to create a new controller for the on-prem process.
+    • Needs to update the request once and share it in the group for confirmation.
+    • Needs to start implementing the API after confirmation.
+    • Needs to connect with Mahesh to update the API spec document.
+• Mahesh: Needs to update the API spec document.
+• Aflin: Needs to connect with another participant to plan for CPM consumer spring upgrade product deployment.
+
+Meeting Summary
+
+The meeting focused on developing an API for the on-prem RRF process to update RPT details in MongoDB, including identifying the collection and fields, and establishing unique scenario identifiers. Discussions also covered the sync process between on-prem and cloud for RPT batches and the need to create a new controller and update the spec file for the API. Action items were assigned for API implementation, spec file updates, and further planning.

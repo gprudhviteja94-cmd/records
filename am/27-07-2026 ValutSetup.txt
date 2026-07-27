@@ -1,0 +1,95 @@
+> Meeting Date: 2026/07/27 07:01 - 2026/07/27 08:04
+
+> Meeting Location: <Unknown>
+
+> Attendees: Speaker 1, Speaker 2, Speaker 3, Speaker 4
+
+
+Meeting Agenda and key Content
+
+Agenda Overview:
+
+• Integration of IDAS for authorization tokens
+• Lumi API access and two-way authorization
+• Email functionality for monthly jobs
+• Multi-variant production deployment
+• Cleanup activities for tables
+• Code changes for static imports
+• Vault configuration and JWT token generation
+• GCP service account setup
+• Loyalty status table data extraction and CSV creation
+
+Key Points:
+
+• Authorization Token Integration:
+    • The integration for authorization tokens needs to be done through IDAS.
+    • A user story with five story points (40 hours of task) is assigned for this.
+    • The problem is that a JWT token is needed to connect to the IAM server that GCP has.
+    • For a two-way authentication, a record needs to be registered in IDAS.
+    • If an API requires authentication, then an IDAS request is required.
+• Lumi API Access:
+    • Lumi API access requires two-way authorization.
+    • An example of customer 360 API was given.
+    • Lumi API will provide all tables within its scope.
+• Email Functionality for Monthly Jobs:
+    • The email functionality for monthly jobs needs to be ready.
+    • The implementation should include sending an email if jobs are running, and also if no jobs are scheduled for the day.
+    • Email communication should not be sent to any partner yet.
+• Multi-variant Production Deployment:
+    • Two tables are ready for production deployment today.
+    • The RFC for deployment should start at 1 PM.
+    • Deployment should be done with help from Samir.
+• Cleanup Activities:
+    • Cleanup activities for 50 pending tables need to be closed today on priority.
+    • Seven tables from a shared group can proceed for E3 deletion.
+• Code Changes for Static Imports:
+    • Static imports in the code have been refactored.
+    • The use of `*` for imports is not the correct way of writing code.
+• Vault Configuration and JWT Token Generation:
+    • Vault configuration involves interacting with airflow DAG to get credentials.
+    • Certificates have been renewed for all environments.
+    • The PRC group needs to be an ADPRC group, not a GCP PRC group.
+    • A client needs a generated signed JWT key from Cloud IAM to connect to Vault.
+    • The setup for username and password in Vault was done through UI.
+• GCP Service Account Setup:
+    • Service account details were provided during the CAR request.
+    • The access will be granted by the Vault team.
+    • A Jira ticket needs to be raised to the Lumi team to onboard the Vault connective setup in the Lumi project.
+• Loyalty Status Table Data Extraction:
+    • Data from the `loyalty status` table (warehouse table under `explumi`) needs to be extracted.
+    • The last day's data (previous day data) needs to be fetched.
+    • The columns to pick are `dominions` and `timestamp`.
+    • A CSV file needs to be created and sent to SFTP.
+
+Controversial:
+
+• There was a disagreement on the time required to implement the email functionality, with one participant stating it should take two hours and another requesting a couple of days.
+• There was a disagreement on whether an RFC is needed until 11 PM for multi-variant deployment, with one participant questioning its necessity for today's date.
+• There was a disagreement on whether the Vault connective setup in the Lumi project was already done, with one participant stating it was enabled and another indicating it might not have been done.
+
+Resolutions and Action Items
+
+Action Items:
+
+• Samir:
+    • Set up a call with Krishna around 4 PM to align on the cutover.
+    • Deploy the multi-variant code to E3 and validate it.
+• Kundan:
+    • Complete the email functionality for monthly jobs by tomorrow morning.
+    • Make sure the email functionality sends alerts daily, both when jobs are running (to partners) and when no jobs are scheduled (internally).
+    • Ensure email communication to partners is conditional and only goes to CCs in the else condition.
+    • Fast track the cutover.
+    • Prepare documentation for discussion with Mani.
+    • Make sure the code changes for static imports are correct and avoid using `*` for imports.
+    • Deploy the code to the E1 environment for testing the JWT token generation and Vault connection.
+    • Extract the last day's data from the `loyalty status` table (columns: `dominions` and `timestamp`), create a CSV file, and send it to SFTP.
+• Arthur:
+    • Stay back for a discussion on a plan change by Kunal.
+    • Work on cleanup activities for tables until new tasks are assigned.
+    • Proceed with E3 deletion for the seven tables from the shared group.
+• Unspecified executor:
+    • Raise a Jira to the Lumi team to onboard the Vault connective setup in the Lumi project.
+
+Meeting Summary
+
+The meeting covered discussions on API integration, email functionality for monthly jobs, multi-variant production deployment, and cleanup activities. Key points included the need for IDAS integration for authorization tokens, two-way authorization for Lumi API access, and the implementation of email alerts for job statuses. Action items were assigned for deployment, code changes, and data extraction, with some disagreements arising regarding task timelines and the status of certain integrations.
