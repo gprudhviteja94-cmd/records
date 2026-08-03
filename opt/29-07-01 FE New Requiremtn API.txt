@@ -1,0 +1,904 @@
+00:00:00-00:00:02 Speaker 1
+Confluence. So.
+
+00:00:04-00:00:10 Speaker 2
+See, I have not gone through the complete flow because you are working. If you can give us.
+
+00:00:11-00:00:51 Speaker 1
+What I'm trying to say, to be honest, there is no progress, you know, beyond whatever probably was the state, right? Because I don't think we got into too much of a detail on a.Patch, template discussion and on a high level, the only thing Armando told us, right? It will be very similar to basically the batch payment flow. Only in terms of the flow of how that create batch works, it will be very similar to how create batch payment flow works. For the template also, the only difference being template has got those additional fields about allow edits or not, right? So first question.
+
+00:00:51-00:01:00 Speaker 2
+Basically single template, single many template also has allow edits, right.
+
+00:01:00-00:01:11 Speaker 1
+Correct? So that is what he has, he said. I'm just asking if you refer to the conference, if there is anything else to it. That's why I asked the question.
+
+00:01:11-00:01:31 Speaker 2
+With respect to confidence. We have not gone through, but we implemented, as you said, allow edits, we implemented, and then the we implemented. With respect to save and submit, that's it. We have not gone through the complaints, to be frank.
+
+00:01:33-00:01:33 
+Okay.
+
+00:01:34-00:01:52 Speaker 1
+And did you just, I mean, also try in the BAU Ember UI the creation of a, let's say, single beneficiary template for ACH, CR or DR, and then see what other calls are being made, like pre-validated and those kind of things, or no?
+
+00:01:54-00:02:08 Speaker 2
+Yeah, same thing. Whatever the validations that are happening with respect to subnet single BNI template, same validations we have added in the batch template also at a BNI level.
+
+00:02:14-00:02:14 Speaker 1
+Okay.
+
+00:02:15-00:02:16 
+Okay.
+
+00:02:23-00:02:34 Speaker 2
+No, no. What is the ask? You wanted to review this pull request or you wanted to go through the flows and see what is pending and what can we plan for next month? Both. Okay.
+
+00:02:38-00:03:12 Speaker 1
+Because the thing is, see, batch payment, right, for create and modify, right, last week we changed the responses a little bit, right? We made it similar to basically the ITC one to some extent, right? And I think that confluence, our confluence, we updated. I believe Yogesh, and I mean, I don't know both, or just Yogesh. Discuss this with Kuvar also for the responses, right, because Photon team is going to integrate, correct? Yeah, that we discussed, so on the similar lines.
+
+00:03:17-00:03:17 
+Okay.
+
+00:03:17-00:03:28 Speaker 1
+The response, etc. Structure, I think for template also may have to change a little bit to kind of make it a little bit consistent, right?
+
+00:03:28-00:03:36 Speaker 2
+I'm not sure what changes they have done with respect to create the batch payment flow.
+
+00:03:36-00:03:46 Speaker 1
+Yeah, so I think, can we just understand that? Yeah, absolutely, uh. I think you guys updated the Confluence.
+
+00:03:47-00:03:48 
+Yeah.
+
+00:03:52-00:04:07 Speaker 1
+Okay. That is only for the response, right? So maybe you may have to do a little bit more change. But have you also documented the current response that it generates from the templates, the save and submit?
+
+00:04:08-00:04:11 Speaker 2
+No, no. I don't think we have done it.
+
+00:04:13-00:04:14 Speaker 1
+Okay.
+
+00:04:15-00:04:18 Speaker 2
+If you have a conference space, please share it with us. We'll update it.
+
+00:04:20-00:05:08 Speaker 1
+Basically, you make the one where you updated the modify payment wrapper, right? Create a similar page within that and put it there for the template API, right? Save and submit. I'll pull out one second. Okay, but oh, uh, let's quickly go through the code now quickly.
+
+00:05:08-00:05:22 Speaker 3
+Hey Jeevan.
+
+00:05:22-00:05:54 Speaker 2
+Are you ready now? Okay, still, it's not working. Okay, let me okay. This is with respect to UH, web module role. So we added we his headphone there is some issue.
+
+00:05:54-00:05:59 Speaker 4
+So he's trying from mobile also is not able to do so. Maybe you can continue.
+
+00:05:59-00:06:10 Speaker 2
+Oh, that's fine, yeah. So, there are two methods, okay, that is save and submit. Two methods are already there. They are overloaded to support both single BINI and multi-BINI.
+
+00:06:13-00:06:25 Speaker 1
+So, do we have, when you say overloaded, do we have currently two different endpoints? Okay, I meant the same endpoint itself.
+
+00:06:25-00:06:29 Speaker 2
+We will take both the single BINI and the multi-BINI template.
+
+00:06:32-00:06:48 Speaker 1
+Request Okay, how do we differentiate the multibany or the batch one compared to single? Because we have to make sure the change? If we do right, we do it with the our batch toggle check on so that it doesn't impact the single one.
+
+00:06:48-00:07:01 Speaker 2
+Okay, so for that, we have added a method okay here to see if all template fields not equal to null. And this one is multibany. If it has more than one bini, then it is considered as a multi-bini.
+
+00:07:01-00:07:13 Speaker 5
+So, before this Bangda, I mean, this submit template, is this the BAU code? Or this is the new entry? Yeah, this is the BAU code? Yes, submit template, right? Can you? Yes, okay.
+
+00:07:13-00:07:21 Speaker 1
+See, uh, one major thing to remember, just a second.
+
+00:07:21-00:07:29 Speaker 5
+So let me finish. So this path variable, right? This product code is why this is changed.
+
+00:07:29-00:07:44 Speaker 4
+Go ahead and get template Workflow response right, as you see line number 407. So it is needed.
+
+00:07:44-00:08:00 Speaker 2
+Yes, this batch one we wanted to check. No, we wanted to check if that product code is eligible for, Uh batch or not. Right? The only Ach only we are going to support, right?
+
+00:08:00-00:08:27 Speaker 1
+No, no, no, not this way. Very fundamental thing. So something to what he raised is correct, right? See the first of all, Bau should be like such interface change right on the request, mapping, etc. We should not do. And if we have that, then we better create a new endpoint, right? See, it cannot be a change on existing like this, okay, Because this is a breaking change for existing, right?
+
+00:08:28-00:08:31 Speaker 6
+The product code was already there.
+
+00:08:31-00:08:32 Speaker 2
+It's already there. We can use it.
+
+00:08:33-00:08:36 Speaker 6
+It was never being extracted from into a variable.
+
+00:08:36-00:08:37 Speaker 2
+Right, right. Yeah.
+
+00:08:39-00:08:43 Speaker 6
+So now they have extracted that value. It was already there. It just never was used.
+
+00:08:44-00:08:46 Speaker 2
+See, it's a path variable.
+
+00:08:46-00:08:55 Speaker 6
+Yeah. In the path, they were already sending it, but they were not extracting it. Now he has extracted it and he is using it for that check.
+
+00:08:56-00:09:57 Speaker 1
+Okay. Second point. Okay. Maybe again, we could potentially not use it from here, but rather use it from the actual fields which represents the product code, right? Because this is the endpoint thing is still UI-driven and the real check that we want to do is on the real product value that is coming in the fields, okay? Correct? Again, I would want to compare this with single, not single. Sorry batch request that we have for payment, versus a similar request for this template, right in terms of the structure. So if you, I don't know, have you seen the Yogesh had put in documented that request? Right for save and submit for batch payment creation on the confluence, where there is a separate like sections about the beneficiaries. Right, where you have added or modified categorization, etc.
+
+00:09:57-00:10:19 Speaker 1
+And deleted. Have you seen that for batch payment creation? Because, ideally, we would want to keep the template bits as much as aligned to that, also right, so that UI also is relatively consistent. They don't have to have too many different logic for template, batch template and batch payment, right?
+
+00:10:23-00:10:23 
+Okay.
+
+00:10:23-00:11:02 Speaker 1
+So, have you looked at it or currently you just assumed there will be multiple set of sort of requests and each one will represent a batch or something. Is that how you have considered? Like there is a block of fields for individual payment, right? Or maybe individual... because if it's a current endpoint, right, it must be like that, right? In a single Benny, it will be all set of flat fields, a field map that technically represents one payment, right? For one Benny yes, and for multiple you have. You assume that it's going to be array? Is that how you have done it?
+
+00:11:02-00:11:07 Speaker 2
+Yeah, it is array, right? So it is, uh, I mean.
+
+00:11:07-00:11:17 Speaker 1
+This interface is always says array in. In reality, when it is single, you only get one element in it. Right? Today in the Bau amber screens, correct.
+
+00:11:17-00:11:34 Speaker 2
+Right? Yeah, single template, batch template. Yes, one one will come. Now we are validating if it is more than one. Huh?
+
+00:11:34-00:11:56 Speaker 1
+I mean, there is, I know, I know, I know, I saw, I'm saying these. These pieces may have to change because we would want the request structure to be very similar to the batch payment one. No is what I'm trying to say. So that, okay, these things, these things have to probably change so that it's aligned and like with the batch payment thing. Except maybe for template, there will be additional fields, right?
+
+00:11:56-00:12:05 Speaker 2
+I'll check with batch payment, create flow. How are we actually validating that?
+
+00:12:07-00:12:35 Speaker 1
+See, there are, by the way, so there is a newer version that is checked in. I mean, sorry, it's going to be merged today. The create from the batch create one. When I say newer version, backend code, not the interface. The request response should be similar. So this is the payment one. I don't know if it is up to date. Yeah, I hope so. And double check with Yogesh, but I think so because I'd asked him.
+
+00:12:37-00:13:27 Speaker 5
+Yeah, so Vankata, just have one request, right? I know, like, with all the good intentions, this has been refactored. Or like to cater the Multivani? But it will really helpful for the reviewer. And I mean, from the existing right Bau impact perspective, we just branch out, okay, don't change any existing logic, right? Or the methods, just branch out. Look for your attributes. If that is matching, then whatever you want to do it in that way, right? It will be easy to toggle on, toggle off, right? If something is failing, right? So I can see, right? The renaming the method name, so changing the attributes right will really difficult to review it. What is exactly is getting changed? So whatever is there, let it be there, just figure out.
+
+00:13:27-00:13:45 Speaker 5
+Okay, for your, if it's just a multi banner or template right for the batch, then create your service. And whatever you want to do, our method you do it in that way will be neat and clean. I know there may be some duplicate code, but that is still fine. We are not breaking anything for the view, or we are not changing anything.
+
+00:13:45-00:13:55 Speaker 2
+We are not renaming the method, but, uh, only the input. See, this should not impact the contract. Okay, uh, because it's already coming.
+
+00:13:55-00:14:25 Speaker 1
+No, no, this, this won't be correct, I'll tell you why. The actual product code will come from the underlying field, there will be a field that product code you ignore for a minute. Okay, that is mainly for your navigation, right? But the actual product code will come from the set of fields, right? There will be another field ID against which the value will also be there. So we should leverage that and not use this for as a product code. Okay, because that's the correct one.
+
+00:14:25-00:14:26 Speaker 5
+All templates field.
+
+00:14:26-00:15:21 Speaker 1
+Okay. So, you definitely have, that's what I'm saying. Let's, in terms of the, I was actually waiting for Yogesh's, to be honest, the PR to be merged before you finalize this because in the newer version of the implementation, right, whatever for the batch payment creation, The mechanism we are leveraging to say, you know, basically use the information from the request, the all in underlying payments right, and create the batch record out of it, etc. That is something we want to reuse, right for the batch template also, so without even seeing the batch template implementation. I was just a little bit keen on looking at the I mean, have. Have that one ready for you to review and change a little bit so that we can keep both of them on a similar lines as well as you can, like, if there are patterns or mechanisms with that we want to leverage, we leverage.
+
+00:15:21-00:16:14 Speaker 1
+And plus, it will also give us the visibility into some level of like, I don't know, validation, etc. That is being done on, say, the payment. How we're implementing. And we could do the same for templates, also the exact same potential validation if they're applicable in the same way. Right for the batch, I'm talking about, okay, okay. So I think there will be like a little bit more refactoring that will potentially go into this. And I think once you review the batch, the request response, right, that should be the mechanism for template. Also, like, it should be very much similar, so that. They are not very different. Like all the actual mechanism of the code implementation as well as all the actual field key that we are using from UI should mean the same, et cetera.
+
+00:16:14-00:17:02 Speaker 1
+There shouldn't be any like different way of reading. Say for example, if you're reading product from the map path versus we are reading it from the actual field from within the request body, right? So those kind of discrepancies shouldn't be there. I'm just trying to say. So that's something we need to make sure that it's aligned, right? That is why I was waiting. But anyway, so currently two obvious difference we understand, right? Product code, you have to read it from the request set of fields. So that you will change. The batch toggle is a separate one. And currently how we are differentiating from the main request, the batch, it's a batch request kind of thing is based on a specific section about the beneficiaries with a specific field ID or field key, right?
+
+00:17:02-00:17:38 Speaker 1
+And I think for template, we need to use the same, we need to follow the same structure as far as request response sort of goes right and same logic to derive. And then do our call to batch service or whatever, which does the batch related stuff right. And internally, it can leverage. Like, obviously for individual, some of the individual stuff would be the way to go. Okay, okay. So we are looking at the web right now. Webs, I mean, in the service, can we go to quickly service like how we are doing stuff?
+
+00:17:39-00:17:51 Speaker 2
+Yeah. We added the save batch template and submit batch template. And these multi-thinning template is available. These three methods we added in service.
+
+00:17:52-00:17:56 Speaker 1
+Okay, go to IMPEL.
+
+00:18:04-00:18:11 Speaker 2
+And submit it will actually trigger that mod event. That is only the difference, otherwise it's the same per save and submit.
+
+00:18:11-00:18:26 Speaker 1
+So on the save. We are basically directly persisting, I mean, so, first of all, uh, okay, we are directly persisting in the database tables. Is it? Yeah, template template Benny and Template Party?
+
+00:18:26-00:18:29 
+Yes, okay.
+
+00:18:29-00:18:41 Speaker 1
+Um, and how are? And we must be calculating the like the stuff for the template record, right? Like total, Benny, the aggregated amount, etc.
+
+00:18:41-00:18:51 Speaker 2
+Aggregated amount. No. Right now, we are not updating the template table with that information.
+
+00:18:51-00:19:04 Speaker 1
+But actually, I don't know. I think it must be stored, the amount, etc. Characterised to get acquired. And since you were taking that array of individual, I mean, sort of transaction equivalent.
+
+00:19:04-00:19:16 Speaker 2
+Yeah, input is that that amount field that doesn't come from the front end. Is it not a UI field? Total amount? Actually?
+
+00:19:16-00:20:32 Speaker 1
+Okay, that total amount actually should come from UI also, but UI will also need it in some other form. Okay, that will be based on our get beneficiary list stuff, I think. Okay, that is one part. What are the other fields that come in the request? Like, is it the allow edit stuff? Because allow edit is something I didn't completely follow. There were some database references and stuff, right? There's a database tables where some I think, I don't know, that restriction or something that even you had shared. Can you explain that, even in the single when you how it works? And then we come to this?
+
+00:20:32-00:20:36 Speaker 2
+So, with respect to signal.
+
+00:20:36-00:20:37 Speaker 1
+Many, uh.
+
+00:20:37-00:20:40 Speaker 2
+In edit edit flows where you are saying, no.
+
+00:20:40-00:21:23 Speaker 1
+No, no, no template flow create only, but you have allow edit configuration for certain fields, right? So, first of all, how how do we store that information in the database table? But. Before that, how do you get it in the request, right? Because from request only, I think we propagate that to database tables for the template-related records, correct, somewhere. And how do we interpret that? Because I think it was not like a column in the template table or something, but there was a specific field reference in a different table where you say that this template has got these many fields.
+
+00:21:24-00:21:24 Speaker 2
+Yeah.
+
+00:21:24-00:21:31 Speaker 1
+For allow edit value, something like that, right? That I saw, but I never understood that. So I wanted to know if you already understood.
+
+00:21:31-00:21:43 Speaker 2
+So it actually parses during submit. Multi Benny, there is a map to your spent method is there. Okay. So there is something called Benny edit default AM is there. Okay.
+
+00:21:44-00:21:44 
+Benny.
+
+00:21:57-00:22:05 Speaker 2
+So, at per recipient level, we will verify if the amount field is editable. Okay. And then.
+
+00:22:15-00:22:31 Speaker 1
+No, this. So, first of all, you have constant bending at the default amount. Okay. And then you have this ref restrict. Column What is that reference? RSTRC column Something down, right.
+
+00:22:31-00:22:37 Speaker 2
+This one right now.
+
+00:22:37-00:22:45 Speaker 1
+The line above that right, 71, right, the drift restrict column. How it works?
+
+00:22:45-00:22:50 Speaker 2
+No, no, we are reading it from the table. But what?
+
+00:22:50-00:22:57 Speaker 1
+That's what I understand. I want to understand what is the table and how it is related to the template table record.
+
+00:22:57-00:23:32 Speaker 2
+No, that is a column, and template restriction column is there, there is one. Columns. Uh uh, Rahul, Okay, at Parbeni level. Uh uh we. Uh, we write it, uh. Template PMPEL RSPRC column. Only one will column is there in template many table. So that we will read it and we will verify if that field is editable or not.
+
+00:23:32-00:23:46 Speaker 1
+No, but which set of field are considered is something. How do you know for that particular template, like which fields are applicable? How do you determine?
+
+00:23:46-00:23:59 Speaker 2
+So we have editable? That particular column is there at what is editable and what is not editable. Using that, we will see.
+
+00:23:59-00:24:19 Speaker 1
+No, no. But can you show me an example in the database to understand? This is what I'm asking, where it is and what does it? How? I mean, what? How? Is related to the template record to which tells us, Okay, these are the fields for which that allow edit configuration is allowed, and these are the values.
+
+00:24:25-00:24:30 Speaker 2
+Even you have idea what table he dropped.
+
+00:24:30-00:24:31 Speaker 1
+Man.
+
+00:24:31-00:24:39 Speaker 4
+Even I'll ask him, you're asking for allow it? Yeah, I love it.
+
+00:24:54-00:24:57 Speaker 2
+Actually, he did a few of the changes.
+
+00:25:26-00:26:13 Speaker 1
+While he gets it. Sorry, I don't want to take up your time, Ashutosh and Krishna. So on the template, is there anything else that will go in during such creation, etc.? I mean, I haven't looked at the confluence and all. But, you know, from single like such, is there a validation that separately needs to happen the way we are doing it for? Individual recipient I think will still happen, right? Whatever validation we were doing in payment, right, pre-validate stuff in the drawer and all that, that those kind of things will happen, right? But at the end, during submission, will there be any other checks that need to happen with respect to, for example, entitlement, etc. Or something?
+
+00:26:13-00:26:42 Speaker 5
+Template Template will have its own separate pre-validated method, right, or the same existing one that we are trying to. I don't know. Like, logically, I'm thinking existing one only. But how will I reuse? I mean, for a template, probably we don't check upfront this when I look up. That we do check during the payment creation. That's what I remember. I mean, we can double check.
+
+00:26:43-00:27:03 Speaker 1
+But here we need to do the other way around. Here we need to actually still do it, right? In the pre-validate. See, We don't prevent the user from going ahead, but we do it. And let's say we want to make sure that. Until some of those validations are successful, user cannot go ahead with the navigation. Right? They cannot. Yeah, I mean, staging and all right.
+
+00:27:03-00:27:28 Speaker 5
+Yeah, yeah, just double check, right? What all are the validations? Maybe right for template may not be that strict? Uh, validations that might have, right? I mean, because there is a allow, it is also here, maybe, let's say. Oh, when I am creating a template, I don't know if the validations related to the limit or get triggered or not.
+
+00:27:31-00:28:25 Speaker 1
+No limit, etc. May not. You're right. I don't know. Limit, etc. Most likely won't. Limit won't doesn't make sense unless you create a payment, right? Correct. Yeah. So maybe a different set of values. Yeah. But what about the entitlement stuff and all like during, yeah, that that is applicable, all, all. So, currently, you haven't done anything on the entitlement, right? You're not checking any entitlement. No, in this from the web service you have written your service, but there is no entitlement. No, we have not verified any whether the user has it or not. So you may you how we need to. I think you name, you may need to look at existing, I mean, are you saying that existing? Uh, submit call for template also doesn't have it.
+
+00:28:25-00:28:40 Speaker 2
+No, no, that will have, but, uh, if we are using same contract, same endpoint. Yes, same thing should be applicable for this one also. But if you want to have a different entertainment created for batch template, then we need to add that one.
+
+00:28:41-00:28:50 Speaker 1
+No, no, no. That is not my question. See, you have written a new service and a new method, right? In the service. In that service implementation, do you check for entitlements?
+
+00:28:53-00:28:55 Speaker 2
+No, no. Not in service, right?
+
+00:28:56-00:29:04 Speaker 1
+Not in service, right? But in the behavior code, in the template. No, web doesn't, endpoint doesn't check for entitlement, right?
+
+00:29:05-00:29:06 Speaker 2
+What is that?
+
+00:29:08-00:29:51 Speaker 1
+When I say entitlement, don't get confused with the web method call related entitlement. I'm talking about the user entitlements which comes from admin center. I'm talking about those. If the BAU single template in save or submit call, if it is checking for certain entitlement, whether the incoming user in the request has those entitlement or not, etc. Before you persist it, those kind of checks, If the BAU is doing for single BNI, the equivalent one, we need to do it for batch in a very similar way for batch, right? But we need to do it. Like, I don't think you have looked at and compared the two, right? You haven't looked at it. Most likely is what the impression I'm getting.
+
+00:29:51-00:29:52 Speaker 2
+No, no, I have not seen that.
+
+00:29:53-00:30:44 Speaker 1
+No, no. So you should do that and find out any such, like, this is just an example. Okay. Any, any, any such thing that you find in say BAU code, right? Before it gets persisted to the tables, right? We need to have an equivalent mechanism sort of implemented here. And that is what I was saying, right? See, now Yogesh has done some things for the payments thing. Right? For save submit implementation, where certain validations are invoked. Because in the BAU also it's happening for single payment, etc. So I'm saying, we here. Also, you need to do the very similar comparison and basically, you know, put those checks here. Or at least ask the question whether we need to do it or not, right before we decide that way. If you find anything.
+
+00:30:44-00:30:54 Speaker 1
+Because we'll have to definitely do that comparison to make sure that we don't sort of introduce any specific gap in our batch implementation, right?
+
+00:30:54-00:31:00 Speaker 2
+Okay, so.
+
+00:31:00-00:31:25 Speaker 1
+And check entitlement is one. Any other validation or validator there is a locatable factory, or like you may come across a locatable thing, right? There are a bunch of validators that do get called for, like payment. But in template. They may or may not. I don't know. If they are not, then potentially I think we are okay, but if they are, then just make a point. We need to basically decide how we want to do it, what all needs to be applied and how right for templates?
+
+00:31:25-00:31:42 Speaker 5
+Okay, right, so so Vangatta. How? I mean, as part of the request, you are just extracting, I mean, as part of the summit, you are extracting the information. Then mapping it to the certain objects. Template template vanny right and the template parties, and directly you are inserting it, right?
+
+00:31:42-00:31:44 
+Yes, including what is it?
+
+00:31:44-00:31:52 Speaker 5
+Or you are going via the existing workflow, you are calling the submit one, existing submit one, or you are just updating no.
+
+00:31:52-00:31:56 Speaker 2
+No new one, new flow. We are going through new service classes.
+
+00:31:57-00:32:19 Speaker 1
+So, directly new service and new persistence, because the new DTO, I mean, not DTO, but the entity hierarchy, right, from template to template Benny to template party without, yeah, without the other one, which is template to template party, right? So, you will have, template will have two different one-to-many, right? Existing one-to-many relations will be in this case.
+
+00:32:19-00:32:58 Speaker 5
+It has to be. So, in this case, we have to thoroughly look, right, what all, I mean, the things in existing BIU, right, for the individual template is being done, right, related to the validation, related to the limit calculations, if it is there, or related to, I mean, any other thing. Also, how we are handling the India template in this, we are done, or that is next. What do you mean? India template. India template, yeah. IPDL. We have to call, yeah, IPDL.
+
+00:33:01-00:33:03 Speaker 2
+IPDL, no, we have not done that.
+
+00:33:04-00:33:13 Speaker 5
+Okay. So, we are not using the existing one, right? Yeah, so we have to take care of it, I mean, very carefully.
+
+00:33:17-00:33:22 Speaker 2
+But even IPDL should be considered, right? I thought we can pick it in next print.
+
+00:33:23-00:33:26 Speaker 5
+Whatever. We need to do it.
+
+00:33:26-00:34:08 Speaker 1
+We need to do it. You won't be able to do it in a day for sure. Even the other changes that I talked about, I don't think you'll be able to analyze and complete it tomorrow by any means. You definitely have to have stories in next print to cover those. Also, This is the creation for persistence submission. And the idea behind completing this was that some of it will be used in the implementation of the other APIS. Is it to get beneficiary list and the the drawer painting etc. Or UI.
+
+00:34:08-00:34:14 Speaker 2
+Because draw painting again, it's modified flow, right?
+
+00:34:16-00:35:08 Speaker 1
+Correct, but the code will be totally different. Only the logical, there is an analogy, but the code will be different because the tables are different. Everything is different, right? It should be very similar to the scenario that you have for payments, but it should be a separate code piece for templates altogether, right? Because the underlying template tables are different than the payment table, for example. Staging part will be similar, same. We leverage the same staging table and all. So those services, those records will be same, But everything else right in in that wrapper equivalent would be different. No, because the allow edit thing is also going to come into play here in template things, and not in the payments. Right? For all of those. Both the APIS, the modified payment wrapper equal, modified template, whatever versus the uh, get beneficiary thing also correct.
+
+00:35:08-00:35:11 Speaker 2
+Yeah, okay.
+
+00:35:13-00:36:08 Speaker 1
+I mean, you are aware about the basic set of backend APIs that's going to be integrated with UI for batch payment creation. If not, I would say spend some time with 10-15 minutes with Kuver also and Jagan so you know the flow more or less once again. And also at each point in that flow, you'll be able to see which API is being called for payment. Try to do the same logically in your mind for template flow and see what is applicable, what is not, and also do the same exercise with one template in the BAU Ember screen flow, right? What all things are happening? That way you can be sure, okay, what's happening in the uplift batch payment, what's happening in the Ember template, so you can decide what has to happen in the batch template also that way, okay?
+
+00:36:09-00:36:22 Speaker 1
+Okay. I mean, Because we want to sort of come, take an informed decision as to what we cover, what not, and we then get a confirmation from product also, right? That this is all we are covering, etc.
+
+00:36:26-00:36:36 Speaker 2
+So, Ram, yeah, I'll see that. Maybe, but you are going to assign those stories for those, for next print, shall we create it ourselves?
+
+00:36:38-00:37:43 Speaker 1
+See, I... had some stories sort of on a very high level against the batch template creation epic. You can have a look and if you want to reuse some of it for the respective part, that is fine. But I don't have many on the new one. For example, the save submit thing that we the way we talked about, right? The implementation, whatever needs to happen. So I don't have those. So you'll have to create those. And if you basically, let's say reuse any of it, right? So I'll post this table that I have. Let me know like what you can reuse and what new you can do. If any of these, let's say you're not picking. Then that is fine. Actually, I may have more than this. Actually, the epic may have more.
+
+00:37:43-00:38:00 Speaker 1
+This table is my other plan, but I don't think it is the final version. There were a bunch on a high level I had created. But if those don't make sense, that is fine. As long as you create new ones with the meaningful ones, then we can cancel some of those. That is fine.
+
+00:38:06-00:38:17 Speaker 2
+So, then I'll pick few and I'll inform you what we are actually looking for next print from this list. Okay, I'll see them.
+
+00:38:19-00:38:20 Speaker 1
+Okay.
+
+00:38:26-00:38:34 Speaker 2
+So, can I create a separate endpoint for these new batch templates, Rahul, or you still recommend using it, but don't modify the...
+
+00:38:36-00:39:05 Speaker 1
+I mean, if you're not sure, create a separate one for now and then PR review and we'll decide how to put it in, right? Let's say. Okay. Or else basically existing endpoint, you have that determination that this is a batch request and as I said, the sample should, the reference should be a logic in the batch payment and if that is the case, you just call a different service and that's it. You literally branch out. You don't change existing in that method that way and put a toggle check that way. On top.
+
+00:39:05-00:39:36 Speaker 2
+Okay, same endpoint, but yeah, right now also we are doing same thing, only we. We are doing same thing, but in a different method, we are doing that. Validation. Okay, fine, I will, I'll see, maybe like in the endpoint method itself, I'll put that. If else condition. If it is a batch, then we will go to that service call otherwise existing service.
+
+00:39:36-00:40:51 Speaker 1
+Yeah, I'm just trying to some. I'm just typing the summary points for you, okay, so that it is little helpful. Then, uh so these two then check existing. Okay, allow edit, then okay check. Uh okay.
+
+00:40:51-00:42:51 Speaker 5
+I'm dropping here. Yeah, okay.
+
+00:42:51-00:43:33 Speaker 1
+Guys, I have put in some the points, uh, what we need to do right as, uh, this thing, starting point for these. Yeah, in the chat, right? Whatever we discuss so that you have better idea about, like how we need to do right. And I would say, for the sprint, right? Uh, also, you know, consider the how, the so, for example. Just like batch payment creation, right? There is a separate set of API for get beneficiary list, right? For payment, for to populate the payment queue grid. We'll need something similar for template, right?
+
+00:43:35-00:43:36 Speaker 2
+Okay.
+
+00:43:38-00:43:53 Speaker 1
+Okay, that is something similar. So, Uh, you'll have to also number to start looking at the UI, right? So there is a payment queue card thing, right, that, are you aware?
+
+00:43:53-00:43:59 Speaker 4
+Yeah, a payment queue. I have seen the payment grid should have been done.
+
+00:43:59-00:44:04 Speaker 2
+Uh, by fun. So we need to support them.
+
+00:44:04-00:44:13 Speaker 1
+That's what I'm coming at. I'm not talking about the UI development program, I'm talking the underlying API for it to populate the grid, right?
+
+00:44:14-00:44:16 
+Yeah, even I was saying something was done.
+
+00:44:16-00:45:02 Speaker 1
+Yeah. So the backend implementation API is get beneficial list API endpoint. Now. That one is obviously for payments, right? But equivalent one we'll need for template. And the reason I say equivalent and not the same is because the underlying database tables, right for different flows, will be different, like on the create flow. I think it's the same staging table only, so I think it can be same. But when you talk about modify or view template flow, right? Then that underlying tables will be template tables, not the payment tables. So that is how it will differ. The the UH implementation, right? So that is for the payment queue, now for individual item in the payment queue. There is a drawer that opens and the user has to fill in and all right data, and then user can be.
+
+00:45:02-00:45:11 Speaker 2
+Why don't we sit with front-end team once and list all those. You need to sit with Kuver. Okay, fine.
+
+00:45:11-00:45:59 Speaker 1
+I thought you were doing it already. Kuver is basically sort of coordinating with Photon, and for Photon Team, he has captured different endpoints for the UI screen in a separate confluence. With sample request response from our page to another page, so that for Photon Team, it is independent. So same logically... You and Naba can also have a quick look and understand in 10 minutes. It won't be much, right? At which point in the flow, what all API sort of gets called, what kind of thing is expected. Equivalent for templates, we need to think. Because you can feel the flow from user perspective should be very similar to what product has already told us. It's only the underlying data is going to be using different tables and different services and all.
+
+00:45:59-00:46:54 Speaker 1
+So a lot of mechanism that we have implemented in payment, we want to keep it similar to templates. I mean, sorry, whatever we want to implement in template, we should keep it similar to payments in terms of mechanism of implementation also, so that it's aligned and very similar in nature, right? Complexity partly will come with IPDL, whatever, for both staging and the payment queue also, right, for the get beneficial list. So technically, whatever has been implemented, equivalent, let's say we do, that is fine, right? Equivalent one for the templates with underlying mapping etc. Doing different, right? So we can just literally follow to keep it similar. Okay, for the starting point, right? It shouldn't, I mean, literally. We'll let's say copy, sort of duplicate, but that's fine, right? We'll. We want to have the same sort of mechanism, just the underlying mapping tables would be different, etc. There and now, right, that way.
+
+00:47:03-00:47:17 Speaker 2
+Okay, um, what in what needs to be developed? Okay, with respect to batch template flow, and then what is implemented? Uh, we can list that is completed, we can say it's completed and what is pending. See, yeah.
+
+00:47:17-00:47:36 Speaker 1
+What I'm saying is you need to start the separate thread where individual can I work on individual parts? So, like one person can focus on save and submit, one person can focus on that get beneficial list, the third person can focus on the wrapper. AP Modify payment equivalent for template. The drawer thing that.
+
+00:47:36-00:47:37 Speaker 2
+Oh yeah.
+
+00:47:37-00:48:23 Speaker 1
+So all three can, or you three at least, should be able to work to some level in parallel, so that you know the fundamental tables and whatever. It's going to be same for templates, but the equivalent code you need to take care of is going to be different for templates, right? But what I was going to show you, right? A number. See under this uplift new updated API. We have tried to capture the different request responses here. Right? Okay, and there is a batch modif the payment queue we are talking about. This is for the. There is a difference slightly difference in the View versus Modify equivalent, which Modify is going to be used in both Create and Modify. But View is only batch details view, right.
+
+00:48:23-00:49:20 Speaker 1
+I'm assuming Template will also have a similar thing, this is only a read-only version, etc. And all. Okay, okay to get beneficial list. And then the, uh, modify. Payment within the batch is the new wrapper endpoint that basically Venkata has implemented for the drawer thing for individual payment modification. Right? The request response from whatever right different scenarios is here, similarly staging. We have these staging APIs also during create flow, modify flow, different scenario, different request response. We will follow similar for template also. And once you understand that staging table, you will understand that it should be the same API should be reusable. There's a separate type variable which says template instead of payment that needs to pass in the request. I think everything else most likely can be reused as is for staging.
+
+00:49:20-00:49:48 Speaker 1
+So for staging, I'm not anticipating like significant change, but if I should, sorry. But if you find anything small, then maybe we need for templates. Let's say if you miss something in some scenario somewhere, we just need to fix that so that it works in both. But this is the one that, uh, we are trying to use it as a reference. And I think one has created a separate one for photon for the respective like flow, which is better like copy of this, but that is, it is logical to the UI flow, right?
+
+00:49:48-00:49:50 Speaker 4
+Got it.
+
+00:49:54-00:50:45 Speaker 1
+Okay. So Venkat, that way I would say create three set of stories and start on some. And then there is a remittance thing, etc. That Mubashira is currently working for the payment one. Staging has the flow. And she is also writing a similar wrapper for remittance. Again, once that is done, we may potentially want to copy that for templates in the logical copy of it. But certain data coming from like template. Because I'm assuming template will also have some remittance child table. Just like party, right? By any level, I think we need to check. Is there a table? Is there a table for that? Actually, sorry. My bad. Remittance is not applicable for template. Sorry. In fact, it's simpler. I think it is only for payments. Only when you create a payment out of it, then it becomes applicable.
+
+00:50:46-00:51:02 Speaker 1
+Template, I think, doesn't have it. Sorry. My bad. Because remittance is very specific, I think. Payment level it's specific template, may it is, it cannot be a template, I think, which is good in a way. We will not have a complexity to handle.
+
+00:51:02-00:51:04 Speaker 2
+Right? No complexity, yeah.
+
+00:51:04-00:51:36 Speaker 1
+But, uh, IPDL etc, right? Uh. I think we'll use in the same way because most of the staging etc. Will be same. Reused as this for template also, so at least that part will be simpler. The the only thing is in the BAU template IPDL how it is stored in WP. Something you need to figure out, okay, because that will impact your like, get, beneficiary list or even the drawer thing, right?
+
+00:51:36-00:52:08 Speaker 2
+Okay, okay.
+
+00:52:08-00:52:15 Speaker 1
+I have put in those points, so you then start creating those stories for the next. Okay, yeah.
+
+00:52:15-00:52:16 
+Okay.
+
+00:52:16-00:52:32 Speaker 4
+I was, I was seeing, uh, this payment, batch payment. For Yogesh PR. So, I see even he has also reused safe payment, summit payment only, the BAU one.
+
+00:52:32-00:53:27 Speaker 1
+Correct, correct. I would think so. The only difference is the BAU one will use BAU table structure underneath for persistence. So, that we cannot do. So, that is where the change is, right? So, instead of touching the BAU, Find out what part can be reused and what can. We just sort of take it over and maybe have a different version of that. Because in the BAU object mapping, wherever it goes, it would be the current table structure and the current object hierarchy. From template to template Party directly, right? But in our case, it will be Template, Template Benny and Template Party, right. So, I mean, persistence wise, see if there are too many things that are currently working with the BAU equivalent object structure, like validators and whatnot.
+
+00:53:27-00:54:12 Speaker 1
+We may want to reuse that, right, but we just have to be careful that okay. Before, for persistence, we use a different table structure, but for the object creation for getting such validations. And we may even temporarily convert the request payload into the older table, I mean, not table, only table specific entity objects. If there are a lot of logic, that is business logic that is written, right? Which relies on the current object structure within template and template party, then we may want to reuse that part of it. But when it finally comes to persistence in database, definitely we need to use the new. And I mean, it goes both ways. In certain logic, if you're reading it back from database, et cetera, you'll have to do the same.
+
+00:54:14-00:54:25 Speaker 1
+So you'll have to look at the code and figure out what the BIU stuff. Is doing, and how which part can be used, and how we can reapply. Some of logically here because.
+
+00:54:25-00:54:30 Speaker 4
+And for entitlement, are we giving anything for batch? Entitlement?
+
+00:54:30-00:54:38 Speaker 1
+No, no, free form. Create whatever is the same one for batch, also same one.
+
+00:54:38-00:54:39 Speaker 4
+Same one.
+
+00:54:39-00:54:40 Speaker 1
+So there's no different for batch.
+
+00:54:40-00:54:46 Speaker 4
+So if they are, they are checking for create template. So we have to do the same.
+
+00:54:47-00:54:53 Speaker 1
+We, same same we, we follow. Yeah, yeah, for batch, there's no separate one, it's the same one, but we have to implement that check. No, currently, I think it does. It's not there.
+
+00:54:53-00:54:56 
+So okay.
+
+00:54:56-00:54:58 
+Okay.
+
+00:54:58-00:55:19 Speaker 1
+All good, anything else. Okay.
+
+
+## 📅About Meeting
+
+* **Date & Time**: 2026-07-20 17:05
+
+* **Location**: Virtual Meeting
+
+* **Attendee**: Speaker 1 (Ram), Speaker 2 (Venkata), Speaker 3 (Jeevan), Speaker 4 (Ashutosh), Speaker 5 (Rahul), Speaker 6 (Krishna)
+
+## 📒Meeting Outline
+
+### Batch Template API Development and Alignment with Batch Payment Flow
+
+* **Current Progress and Similarity to Batch Payment Flow**\
+  The batch template creation flow is intended to closely mirror the batch payment creation flow, especially in how batches are created and managed. The main difference is the inclusion of additional fields in the template, such as "allow edits." However, no significant progress has been made beyond initial implementation of "allow edits" and basic save and submit functionalities. The team has not yet reviewed complaint handling or entitlement checks.
+
+* **Request and Response Structure Consistency**\
+  Recent changes in the batch payment API responses (to align with ITC standards) necessitate similar updates for the batch template APIs to maintain consistency. The current template API responses have not been documented yet, and it was agreed that the team will update Confluence with the current state and align the template API responses with batch payment responses.
+
+* **Endpoint Design and Backward Compatibility**\
+  There was a discussion about whether to create new endpoints for batch templates or reuse existing single template endpoints with toggles. The consensus leaned towards creating separate endpoints or branching logic within the same endpoint to avoid breaking existing BAU (Business As Usual) flows. The product code should be derived from the actual request fields rather than path variables to ensure correctness.
+
+* **Validation and Entitlement Checks**\
+  The batch template flow currently lacks entitlement checks and some validations present in the BAU single template flow. It was emphasized that entitlement and validation logic from the BAU flow must be reviewed, understood, and incorporated appropriately into the batch template flow to avoid gaps. Some validations like limits may not apply to templates, but entitlement checks definitely should.
+
+* **Database and Persistence Layer Details**\
+  The batch template data is persisted in new tables: Template, Template Benny (beneficiary), and Template Party. The aggregated amount and total beneficiary count are not currently updated in the template table but should be included. The "allow edit" configuration is stored at the beneficiary level with a restriction column indicating editable fields. The exact database table relationships and how these restrictions map to templates need further clarification and examples.
+
+* **Reuse of Existing BAU Logic and Code**\
+  There is potential to reuse existing BAU validation and business logic by mapping the batch template request payload to existing entity structures temporarily for validation purposes, while persisting data in the new template tables. This approach requires careful analysis to avoid breaking existing flows.
+
+* **Parallel Development and Story Creation for Next Sprint**\
+  It was agreed to split the batch template development into parallel workstreams: save and submit, get beneficiary list API, and modify payment wrapper equivalent for templates. The team will create detailed user stories for these tasks for the next sprint, reusing existing high-level stories where applicable and creating new ones as needed.
+
+* **Integration with UI and Coordination with Frontend Team**\
+  The backend APIs for batch templates should align with the UI flows already documented by the Photon team. The team will coordinate with frontend leads (Kuver and Jagan) to understand the UI flow and required API calls, ensuring the batch template APIs support similar user experiences as batch payments.
+
+* **Staging and Drawer Functionality**\
+  The staging tables and drawer UI components used in batch payments will be reused for templates with minimal changes. The drawer modification API for individual payments has an equivalent planned for templates.
+
+* **IPDL and Remittance Considerations**\
+  IPDL (India Payment Data Layer) integration is pending and will be addressed in the next sprint. Remittance functionality is not applicable to templates and is only relevant for payments.
+
+### Documentation and Knowledge Sharing
+
+* **Confluence Updates and Documentation**\
+  The team will update Confluence with API request and response structures for batch templates, similar to the batch payment documentation. This will aid in review and integration by the Photon team.
+
+* **Code Review and PR Management**\
+  Ongoing PRs related to batch payment and template flows will be reviewed carefully to ensure consistent implementation and avoid breaking changes.
+
+## 📋Overview
+
+* Batch template creation flow is designed to be similar to batch payment flow but requires further development and alignment.
+
+* API request and response structures need to be documented and aligned with batch payment APIs.
+
+* Separate endpoints or branching logic should be used to avoid breaking existing BAU flows.
+
+* Entitlement and validation checks from BAU single template flow must be reviewed and incorporated into batch template flow.
+
+* Data persistence uses new template-related tables; aggregated fields like total amount need to be handled.
+
+* "Allow edits" configuration is stored at beneficiary level with specific restriction columns; database relationships need clarification.
+
+* Existing BAU validation logic can be reused with careful mapping to new entities.
+
+* Development tasks should be divided among team members for parallel progress; new user stories to be created for next sprint.
+
+* Coordination with frontend team is essential to align backend APIs with UI flows.
+
+* Staging and drawer APIs will be reused with adaptations for templates.
+
+* IPDL integration pending; remittance not applicable for templates.
+
+* Confluence documentation updates are necessary for clarity and integration support.
+
+## 🎯Todo List
+
+* Venkata:
+
+  * [ ] Review batch payment create and modify API request and response structures; align batch template APIs accordingly.
+  * [ ] Update Confluence with current batch template API request and response details.
+  * [ ] Analyze BAU single template entitlement and validation logic; identify applicable checks for batch template flow.
+  * [ ] Clarify and document database table relationships for "allow edits" configuration with examples.
+  * [ ] Create and submit PR for batch template save and submit functionality with proper endpoint design (separate or toggle-based).
+  * [ ] Coordinate with Kuver and Jagan to understand UI flow and required backend API support for batch templates.
+  * [ ] Create detailed user stories for next sprint covering save & submit, get beneficiary list API, and modify payment wrapper equivalent for templates.
+  * [ ] Investigate IPDL integration for batch templates and plan implementation for next sprint.
+  * [ ] Implement entitlement checks in batch template service methods as per BAU logic.
+
+* Ram:
+
+  * [ ] Provide Venkata with existing high-level user stories and assist in identifying reusable stories or gaps.
+  * [ ] Support review of batch payment API changes and ensure documentation is shared with the team.
+  * [ ] Assist in clarifying persistence and validation logic reuse strategies between BAU and batch template flows.
+
+* Rahul:
+
+  * [ ] Review endpoint design proposals and advise on best practices to avoid breaking BAU flows.
+  * [ ] Support code reviews for batch template PRs focusing on clean branching and minimal impact on existing logic.
+
+* Ashutosh & Krishna:
+
+  * [ ] Assist in clarifying "allow edits" database implementation and provide examples to the team.
+
+* All Developers:
+
+  * [ ] Collaborate to split batch template development tasks for parallel progress.
+  * [ ] Review Photon team’s Confluence documentation on UI flows and API calls to ensure backend alignment.
+
+
+Meeting recording 29
+7/30 15:52 | 00:12:12
+Speaker 1
+00:00:00
+Screen. Is it new screen? No.
+Speaker 2
+00:00:03
+No. Basically, like inside the pricing selection, we want to add these four fields.
+Speaker 1
+00:00:08
+Okay. Okay.
+Speaker 2
+00:00:11
+And on the basis of this, like so if this is known, then in this case these three fields will be disabled. And also like if so, on the basis of this field, the network selection will also get updated. So if I refresh this page。
+Speaker 2
+00:00:30
+So on the pricing selection, so first, like and this functionality will get enabled only on commercial. So if we select commercial here, then only these four fields will get.
+Speaker 1
+00:00:44
+So when the L will be chosen as commercial, then those four fields will get appended. Is it? Can you just paste those four columns?
+Speaker 2
+00:00:58
+Yes, these programs. So basically, like on front end side, I'll be working on this. And on back end you need to handle the functionality. I mean the API changes.
+Speaker 1
+00:01:11
+Okay. Can you yeah let me take a screenshot of these columns. Okay.
+Speaker 2
+00:01:19
+So basically, like, I had a discussion with ganesh and like, I.
+Speaker 2
+00:01:27
+There should be if these newly added columns, I mean, newly added schemes. So like ah so he told me。
+Speaker 1
+00:01:34
+Like until he would make an apa call to the backend, is it?
+Speaker 2
+00:01:40
+No, basically. So what we are doing, like so we are already handling all these things. So what I'll do like on the basis, on the UI basis only, like when they select the commercial, I'll show all these newly added field here. Okay. Yes. But where I mean back end, which is this. So if you can see。
+Speaker 1
+00:02:07
+Like accept those new four fields. Yes.
+Speaker 2
+00:02:09
+Yes, that can. API should accept these four fields and they will get added inside this pricing selection.
+Speaker 1
+00:02:18
+Can you? Okay. Forward with this too? Okay. And even the API details. Yeah.
+Speaker 2
+00:02:23
+So as for ganesh, like it should be inside pricing selection.
+Speaker 1
+00:02:26
+Okay. Okay, fine then, yes.
+Speaker 2
+00:02:29
+And another thing that, as you can see like right now, the network id, we are having this value for the network. But if we select yes here。
+Speaker 2
+00:02:42
+Then this value will also get updated with the new levels. So yes, so right now, like we only have one option.
+Speaker 1
+00:02:52
+And also with respect to the back end, right? it's happening only in the front end, right?
+Speaker 2
+00:03:00
+But from back. And like I knew this value. I don't have this value epsilon container as a form.
+Speaker 1
+00:03:07
+So what is this form? First of all, is it on figma screen?
+Speaker 2
+00:03:13
+No. Basically, like so we don't need sigma sigma project, because it's just a UI change and some back end changes. So sigma is not available.
+Speaker 1
+00:03:25
+This is fine. No, no. I'm just asking, what is that other from rrf farm? I have not seen this screen actually anyway, this is existing BA user.
+Speaker 1
+00:03:38
+This screen is bau. Yes, yes。
+Speaker 2
+00:03:40
+Yes. So if you go to this new, and so if you go to this new and underwriting research, then and if you select pricing selection and it is already built on this URL, so you can access this.
+Speaker 1
+00:03:56
+Can I expect that story is updated with all these details so that I can be more cautious on what changes I'm making?
+Speaker 2
+00:04:05
+So basically like earlier where we were handling back end things so you can discuss with him regarding this.
+Speaker 2
+00:04:16
+So but we needed like on when we select this as a yes, that time I'll call some sort of API where I needed the value for these two com network it and network ninety and one more, network ninety isa and network ninety isa as well.
+Speaker 1
+00:04:35
+So if I select, is it for a particular?
+Speaker 2
+00:04:43
+Yes for conversion only. This netapp functionality will enable as this will be hidden understood. So if you select carvin here, so this is our old APP. And this is our new APP. But。
+Speaker 1
+00:05:00
+But we are taking references from olap and you need to go on stage in order to see all these things on there. it is not available as of now. So if you select carbon here and go to pricing selection, then you, as you can see that two more fields has been added here and network ninety ise.
+Speaker 2
+00:05:20
+So for these。
+Speaker 1
+00:05:21
+Also, like as you can see, like the value has been changed。
+Speaker 2
+00:05:25
+CI board net APP overrides something like this. But I think this。
+Speaker 1
+00:05:31
+This I can handle on content because it is similar to the network thirty and network ninety only changes。
+Speaker 2
+00:05:39
+The CI text.
+Speaker 1
+00:05:41
+Otherwise it is similar to this network it and network ninety.
+Speaker 3
+00:05:47
+Okay. Okay. Yes.
+Speaker 2
+00:05:49
+So earlier。
+Speaker 1
+00:05:49
+How we were handling. Let me tell you that also.
+Speaker 4
+00:05:53
+So if you so earlier。
+Speaker 1
+00:05:56
+We are calling a network API。
+Speaker 2
+00:06:00
+In this network API, we are running everything. So.
+Speaker 2
+00:06:20
+Yes. So as you can see。
+Speaker 1
+00:06:21
+Like in so we are calling this net network API. And in this network API, we are having values for carbon carve out option.
+Speaker 2
+00:06:29
+So if I open this。
+Speaker 2
+00:06:35
+So as you can see。
+Speaker 1
+00:06:36
+Like in API, we are sending lob. So like for the commercial lob。
+Speaker 2
+00:06:43
+This is the values. And for the exchange medicare id, medicare D。
+Speaker 1
+00:06:53
+Exchange medicare. So like this, I think we have to add one more object here.
+Speaker 2
+00:07:00
+For the nedar. Okay.
+Speaker 3
+00:07:02
+What is that? Apa? This networks.
+Speaker 4
+00:07:07
+Okay.
+Speaker 3
+00:07:07
+Paste that API name.
+Speaker 5
+00:07:10
+So it's apa slash.
+Speaker 3
+00:07:12
+We want slash networks. Okay.
+Speaker 2
+00:07:16
+On modifo.
+Speaker 1
+00:07:17
+I think you need to discuss driver here under each and everything. So here's an idea like how we should handle this type of functionality。
+Speaker 2
+00:07:25
+From that end.
+Speaker 1
+00:07:26
+And one. And also like so as you can see, like so inside the cave, we have passed this lov。
+Speaker 2
+00:07:34
+Right?
+Speaker 1
+00:07:35
+So I think we need to add one more object like this. But the problem is that like how we will identify like so right now。
+Speaker 2
+00:07:43
+Like what we are doing。
+Speaker 1
+00:07:45
+We have passed different different roes values. And on the basis of this, like we are doing filtering on content. Like suppose if users like commercial, then we need to show these type of values in network. And if there's like something else, suppose action, then we have to show these values。
+Speaker 2
+00:08:05
+Which is related to exchange.
+Speaker 1
+00:08:07
+But then now the problem is that like for commercial, what we need to do, I think we need to pass some more extra keys which will tell to the front end. Like this is related to netapp. Otherwise, if we add one more object,
+Speaker 1
+00:08:25
+I mean suppose for the commercial AB copy, paste this, then this value will also get added for default lob for commercial.
+Speaker 2
+00:08:38
+But yes.
+Speaker 1
+00:08:39
+So I think we need to do something with this. So like there should be only why。
+Speaker 5
+00:08:46
+Is this API once okay? Because you know that I joined recently to this project. So let me unleash this API and see where I how this commercial will be right now. Commercial is not there, is it in the list?
+Speaker 1
+00:09:01
+It is like whatever nov is present here, they are coming inside the network as well. So like if we select in commercial here, then if you open like so, the option is coming like this. And if you select something else, then the network will get updated with respect to that loe value。
+Speaker 2
+00:09:22
+As you can see here. Okay。
+Speaker 3
+00:09:24
+Okay.
+Speaker 2
+00:09:30
+I think. Yes.
+Speaker 1
+00:09:31
+As you can see, like for this medicare deal, like we're only having. Okay.
+Speaker 3
+00:09:37
+Okay. Network. That is one thing. Okay, fine.
+Speaker 2
+00:09:47
+Yeah.
+Speaker 3
+00:09:47
+And after this。
+Speaker 5
+00:09:49
+When you are submitting for commercial, I should end up taking those four new fields also, right?
+Speaker 1
+00:09:56
+Yes. Yes, yes, yes. You need to update the API as well.
+Speaker 1
+00:10:00
+So get API and the post apa both.
+Speaker 2
+00:10:02
+The question is yes. Yes. Okay, got it. Yes. Yes.
+Speaker 3
+00:10:06
+You need to add these four keys inside this presentation.
+Speaker 4
+00:10:19
+I think this is what we are looking。
+Speaker 5
+00:10:22
+For for this net APP functionality. Sure。
+Speaker 1
+00:10:25
+Sure. Yes, I'll do this. Okay. If any help is required, I'll.
+Speaker 6
+00:12:11
+I.
+
