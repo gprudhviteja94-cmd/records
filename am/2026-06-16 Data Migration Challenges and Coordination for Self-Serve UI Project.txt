@@ -1,0 +1,2009 @@
+2026-06-16 Data Migration Challenges and Coordination for Self-Serve UI Project
+
+Creation Time: 2026/06/16 12:53
+
+
+📅About Meeting
+
+• Date & Time: 2026-06-16, 12:45 PM onwards (approx. 1 hour 22 minutes)
+• Location: Virtual meeting (screen sharing and calls)
+• Attendee: Sachin, AYAPA, Prithvi, Kundan, Nirmal, Sameer, Author, Athar, Rachana, and others
+
+📒Meeting Outline
+
+Data Migration and Table Structure Issues
+
+• JSON Object Field Change and Code Updates  
+  Discussion began with a query about whether code changes were made to accommodate a field changed to JSON objects. AYAPA and others confirmed that the business justification field needs to be changed from string to JSON object in the database schema. Attempts to alter the data type directly in BigQuery were unsuccessful, so it was agreed to keep it as string for now and convert to JSON in the application layer.
+
+• Data Migration Challenges and Incorrect Data  
+  There was confusion about the source of data and incorrect data being migrated, including unexpected entries like "airline free credit" which do not belong to the current use cases. The team identified that some data was mixed up with Quantro data, which is unrelated to the self-serve UI project. It was clarified that the DQ artifacts table being used is actually for Quantro, not for the self-serve project, causing confusion and errors.
+
+• Table Creation and Missing Tables  
+  AYAPA admitted missing the creation of a required clone table of the DQ repository for the self-serve UI, which caused delays and confusion. It was confirmed that the DQ artifacts table is an old table for Quantro and not suitable for current migration needs.
+
+• Data Consistency and Mapping  
+  The team discussed the need for data consistency between the IS database and the LUMI system, emphasizing that only about 230 "OK" records should be migrated, excluding threshold checks and complex records. The importance of mapping fields correctly and ensuring the data format matches the target schema was highlighted.
+
+• Automation and Queries for Migration  
+  AYAPA shared the insert and update queries used for migrating data, with some fields removed due to absence in the target table. Prithvi and others discussed the need for a streamlined approach to avoid manual updates and to automate the migration process as much as possible.
+
+Use Case and Data Validation
+
+• Use Case Identification and Validation  
+  The team ran queries to identify distinct use case names and validate the data against production environment records. They confirmed the presence of 286 records excluding threshold checks, with 230 marked as OK and 56 as complex or duplicates to be handled separately.
+
+• Data Format and API Calls  
+  Issues with UI calling unnecessary APIs on modify actions were discussed. It was clarified that no API calls should be made for certain UI operations, and this was a UI issue to be fixed by the UI developer (Author).
+
+• Data Format in SFTP and JSON Usage  
+  The data transfer via SFTP was discussed, emphasizing that the file should be in JSON format rather than CSV or pipe-delimited to avoid parsing issues. The team agreed to use JSON files for data transfer and processing.
+
+Coordination and Next Steps
+
+• Responsibility and Deadlines  
+  Sachin emphasized the urgency to complete the migration by 4:00 PM the same day to allow verification and subsequent steps with the DBA team for production migration. AYAPA committed to completing the migration of the 230 records by this deadline.
+
+• Future Meetings and Follow-ups  
+  A follow-up call was scheduled at 5:00 PM to review progress and address any remaining issues. Sachin stressed the importance of professionalism and timely completion to avoid further delays.
+
+• General Observations and Process Improvements  
+  Sachin highlighted the confusion caused by mixing tables and data from different projects (Quantro vs self-serve UI) and the need for clear documentation and access control to avoid such issues. The team agreed to improve coordination and data validation processes.
+
+📋Overview
+
+• The business justification field needs to be stored as a JSON object, but due to BigQuery limitations, it will remain as a string with conversion handled in the application layer.
+• Data migration was delayed due to confusion over table usage; the DQ artifacts table is for Quantro and not suitable for self-serve UI data.
+• Only 230 validated "OK" records should be migrated; complex and threshold check records are excluded for now.
+• Incorrect and mixed data entries were identified and will be rectified.
+• UI issues related to unnecessary API calls on modify actions were identified and assigned for fixes.
+• Data transfer should use JSON format files over SFTP to avoid delimiter issues.
+• Migration completion deadline set for 4:00 PM with a follow-up meeting at 5:00 PM.
+• Emphasis on professionalism, clear communication, and avoiding repeated mistakes in data handling and migration.
+
+🎯Todo List
+
+• AYAPA:  
+  • [ ] Complete migration of 230 validated records to DQ artifacts table by 4:00 PM, ensuring data consistency with IS database.  
+  • [ ] Remove unnecessary fields (e.g., aggregate type name related to Quantro) from migration queries.  
+  • [ ] Share updated insert and update queries with Prithvi and Sachin.  
+  • [ ] Coordinate with Sachin for final verification and join 5:00 PM follow-up call.
+
+• Prithvi:  
+  • [ ] Provide correct list of DQ IDs for the 230 records to be migrated.  
+  • [ ] Assist AYAPA with data extraction and query updates as needed.  
+  • [ ] Ensure automation scripts do not pull data from incorrect tables (DQ repository vs Quantro).  
+  • [ ] Stay on call for coordination until migration is complete.
+
+• Sachin:  
+  • [ ] Verify data consistency post-migration.  
+  • [ ] Coordinate with DBA team for production migration after verification.  
+  • [ ] Monitor progress and conduct follow-up meeting at 5:00 PM.  
+  • [ ] Provide guidance on data formatting and migration process improvements.
+
+• Author (UI Developer):  
+  • [ ] Fix UI issue where modify action incorrectly triggers API calls for certain tables.  
+  • [ ] Ensure UI does not call APIs unnecessarily to prevent errors.
+
+• Kundan:  
+  • [ ] Write and run BigQuery queries to identify distinct use case names and validate data.  
+  • [ ] Assist in mapping and migration steps as required.
+
+• Nirmal:  
+  • [ ] Confirm handling of JSON objects in data processing and conversion to string if needed.
+
+• Team:  
+  • [ ] Avoid mixing data and tables from different projects (Quantro vs self-serve).  
+  • [ ] Use JSON format for data files transferred via SFTP to avoid delimiter issues.  
+  • [ ] Maintain professionalism and timely communication to avoid delays.
+
+Transcription
+
+00:00:00 - 00:00:06 Unknown Speaker:
+
+For one of the field, which was changed to JSON objects. Did you modify those changes in your code?
+
+00:00:08 - 00:00:37 Unknown Speaker:
+
+उhm, SFT पे जो— SFT पे जो ट्रांसफर करे हो, यार, फिर वही हो जाती है ना। मैं क्यों आपको याद दिलाऊँ ये सारे चीज़ें? हाँ, मैं कर देता हूँ, आगे कर देता हूँ। सेकंड, मैं डिप्लॉय करता हूँ। No, look— प्रॉब्लम क्या है, मतलब, मुझे समझ नहीं आ रहा। क्या प्रॉब्लम, क्या चल रहा है? सबको बॉन बीटा देना पड़ेगा, लग रहा है। सॉरी, मैं बिल्कुल भूल गया था उसके रिगार्डिंग। मैं कर देता हूँ। That's— that's what the challenge is, man, right?
+
+00:00:38 - 00:00:44 Unknown Speaker:
+
+Look, how I am remembering these n number of details being older to you, right?
+
+00:00:45 - 00:01:00 Unknown Speaker:
+
+I am now— I'll be reaching around... कितना हो गया मेरे को? 38 हो गया मेरे को, 38 years। ठीक है। So you must be younger to me, I feel like, right? तो फिर भी क्यों भूल रहे हो इतने सारे चीज़ें? And— and it is happening to each one of you, right?
+
+00:01:00 - 00:01:02 Unknown Speaker:
+
+That is the biggest surprise.
+
+00:01:04 - 00:01:19 Unknown Speaker:
+
+राइट मॉर्निंग में मैं डिस्कस कर रहा था समीर से। That's what I was pointing it out, right? Each one of you, you know, somehow not remembering what is the requirement. Uh, leave it. Can you fetch one of the use case author? Just make that change निर्मल at both the side, okay?
+
+00:01:19 - 00:01:36 Unknown Speaker:
+
+And then you have to update the DB structure in the— वहाँ पे भी करना पड़ेगा। वहाँ पे JSON object बनाना पड़ेगा उस फील्ड को। So ask Prithvi or APA to do that. Prithvi would ask someone to do it. Why this is coming? This PRJ analytics? ये किसने add किया है?
+
+00:01:38 - 00:02:04 Unknown Speaker:
+
+ये कुंदन आई guess। कुंदन, इसको delete करोगे? I'll write it back. No, no, अ- अथर्व, अथर्व, पीजी एडमिन open करो। पीजी एडमिन करो। मुझे अभी ये सारा sort out करना है। मुझे ये आज के आज migrate करने हैं। And that is the reason I— मेरी आवाज़ आ रही है क्या? हाँ, आ रही है। उस list में यही सारा कुछ था, सचिन। अरे यार, वो- वो कहाँ से उसने वो ले आया?
+
+00:02:06 - 00:02:31 Unknown Speaker:
+
+ये तो अब पता नहीं। यार, उसे छोड़ो। आप- आपने अपना common sense use करते हैं ना। उसको छोड़ दो। नहीं, मुझे जो— see, मुझे लगा ये verified data है। मुझे इसे insert करना है। उस list में उसने कैसे ये डाल दिया? Let me check this one. मैंने आपको कल ही भेजा है, right? हाँ, आपको Excel देखिए। मैं देख रहा हूँ। Are you serious? Do these brackets must create chain of checks?
+
+00:02:33 - 00:02:39 Unknown Speaker:
+
+हाँ, ये 14th number पे है। So is it one word? तो ये one word structure also. Oh man.
+
+00:02:41 - 00:03:03 Unknown Speaker:
+
+तो अब तो हमारा sequence भी बिगड़ जाएगा फिर। अभी see, drop करके करना पड़ेगा हमें। नहीं, ये 14th को अगर drop करोगे तो वो जो data भेजा है, वो— नहीं नहीं, पूरा- पूरा ही delete। नहीं, 15 रहने दो। 15, 14 रहने दो। ये ना कोई नया use case आएगा ना, उसको add कर देंगे as a 14th। Okay, okay.
+
+00:03:03 - 00:03:21 Unknown Speaker:
+
+अभी कर सकते हैं। ठीक है। नहीं, हमारे पास insert query है। आप बोलोगे तो delete करके— नहीं ना, नहीं, नहीं होगा ना। अब फिर भी, uh, you understand Hindi, right? So it's okay, right? Uh, let me know if we can continue in English. Like, if you are not comfortable, I'll— I'll switch in. Okay?
+
+00:03:21 - 00:03:39 Unknown Speaker:
+
+Uh, so leave it, Author, for time being. Because if we change this PRJ PAU— this one, right? The problem would be, uh, they have inserted some record in the— okay, can you go to this quality table rule? Can you go to this quality table rule?
+
+00:03:41 - 00:03:53 Unknown Speaker:
+
+Okay? Can you do a distinct table quality rule, man? Where there is only 9 record, Kundan, then didn't we inserted the data for this one?
+
+00:03:55 - 00:04:00 Unknown Speaker:
+
+Wait, wait, just a second. How many queries are there? There are 16 record.
+
+00:04:02 - 00:04:18 Unknown Speaker:
+
+There are more than 200 record, Kundan, for this— The use case you are telling? Use case सही है। मैं- मैं पूछ रहा हूँ table rule। अरे, ये- ये migrate नहीं हुआ है, सचिन। क्यों नहीं हुआ है फिर? हाँ, region behind वो जो query उसने बनाया था, right?
+
+00:04:19 - 00:04:49 Unknown Speaker:
+
+Excel पे। That is not the correct one. So मैं अभी migration के लिए एक automation script भी बोलता हूँ। मैं आपको बोला भी था कि आपको उस Excel से इसका data नहीं migrate करना है। आपको एक artifacts table होगा। कर, कर। Artifacts से ही कर रहा हूँ मैं। Artifacts में अभी 402 records हैं, ठीक है। नहीं तो 402 हमें नहीं pick करने हैं ना। Hey, Prithvi, you have mentioned, right, you have shared the insert query and data also to APA?
+
+00:04:49 - 00:05:02 Unknown Speaker:
+
+Yeah, I shared with him. He executed it. Uh, it has some previous records also, Sachin, that we tested as part of UAT. No, this table has those as well. No man, then drop that.
+
+00:05:02 - 00:05:16 Unknown Speaker:
+
+All the records over there. And insert only the one those need to be migrated. Understand, guys. Like, we are going to migrate those roles which would be appearing on this CUI. Then what work we did yesterday then?
+
+00:05:17 - 00:05:25 Unknown Speaker:
+
+No, it is inserted, Sachin. Only thing is, uh, you— I mean, you don't want that testing data, right? That we can delete it. Yeah.
+
+00:05:26 - 00:05:26 Unknown Speaker:
+
+Yeah.
+
+00:05:28 - 00:05:40 Unknown Speaker:
+
+But it's not— but it's not a showstopper for him. I mean, he has all the entries for him to start working on the thing. So— No, no, no, no. There should not be any dummy data. Can you share your screen?
+
+00:05:40 - 00:05:54 Unknown Speaker:
+
+Let's— you two wrap it up and then— can you— can you share your screen? No, no, it has— AYAPA has that query actually. AYAPA only executed it. But— but anyhow, you have shared that query to him, right? He said he modified few things.
+
+00:05:54 - 00:06:01 Unknown Speaker:
+
+Uh, but after that I didn't ask him to share that query back, actually. And where is AYAPA? I don't know where.
+
+00:06:02 - 00:06:05 Unknown Speaker:
+
+I think lunchbox— school pickup.
+
+00:06:07 - 00:06:15 Unknown Speaker:
+
+School pickup is— Let me give him a call. Yeah, let me call him. He should be back by now. I don't want this to get prolonged again.
+
+00:06:18 - 00:06:32 Unknown Speaker:
+
+Even if he is coming in next 5 minute, I am okay with that. Uh, Author, can you show me your screen once? Nirmal, you can feel free to drop off. Just make that change which I have asked you to do. Okay, okay, Sachin.
+
+00:06:33 - 00:06:43 Unknown Speaker:
+
+Yeah, thank you. Uh, Author, go ahead and share your screen. Yes, sure. Author, you don't need to go for a prayer, right? आपको जाना तो नहीं है आज। No, no, no, not today.
+
+00:06:43 - 00:06:56 Unknown Speaker:
+
+नहीं नहीं, Friday को shift जाना रहता है। ठीक है, okay. Uh, go ahead and— वो UI एक बार display कीजिएगा। Once then. कोई— किस- किस में data है? For which use case we have data?
+
+00:06:59 - 00:07:07 Unknown Speaker:
+
+Use case id डाला हुआ है ना, 12, uh, 4। लेकिन 12 से map है क्या ये? रुकिए। डेटा— डेटा किसमें है?
+
+00:07:09 - 00:07:28 Unknown Speaker:
+
+हाँ, 1 से mapped है। 1, 2, 3, 4। हम्म। Crazy, crazy use case। Use case airline। ओके। Airline free credit कहाँ से आ गया? ये कहाँ से उठा के लेकर के आए हैं? Airline free credit करके कुछ है ही नहीं हमारे पास। तो ये data उसके पास आया कहाँ से?
+
+00:07:28 - 00:07:40 Unknown Speaker:
+
+आपने बोला ये dump कर दो आप, जो data server ने share किया है। ये credit delta split— ये कहाँ से लेकर के उठा के लेकर के आया है?
+
+00:07:46 - 00:08:16 Unknown Speaker:
+
+Oh man, ये data ही गलत है। ये data ही गलत है, man। Okay, uh, वो बाद में rectify करेंगे। जी। ये— ये AYAPA को verify करना चाहिए था ना। Can you— can you go to your UI, Author, once? जी। Uh, airline free credit करो। Number 1 जो है, या raise ही करो, whatever it is. Now click— click on modify, click on modify.
+
+00:08:18 - 00:08:30 Unknown Speaker:
+
+Table data नहीं आ रहा है अभी हमारे पास। वो— वो table का EPI— ये आप समझ रहे हो कैसे map करनी है?
+
+00:08:35 - 00:08:55 Unknown Speaker:
+
+Table disabled आएगा ना, तो ये— ये EPI call क्यों होगा, Author? Why you are seeking for a EPI call? यहाँ पे EPI call नहीं होगी ना। Modify में आप EPI call करोगे ही नहीं ना। हमने— नहीं, modify में नहीं होगा। अच्छा, हाँ। Modify में वो data— दो चीज़ें हैं। Modify में वो क्या करे?
+
+00:08:58 - 00:09:26 Unknown Speaker:
+
+Uh, they are actually working on— Right. तो जब आप modify पे click करोगे, you should not be calling any API for this table name or variable name. जो भी आपको दिख रहा है, वो API से आप इसको लाकर के यहाँ पे paste करो। EPI call यहाँ से नहीं होगी। हाँ। ठीक है। तो ये— ये फट रहा है। ये— This is not a backend issue. This one— something you have to fix it from UI.
+
+00:09:27 - 00:09:43 Unknown Speaker:
+
+हाँ, modify में UI पर। ठीक है। Now, now, scroll down a bit. Scroll down a bit. Scroll down a bit. Bit— नीचे, नीचे जाइए। Okay, the variable is— should not be null. Not null.
+
+00:09:45 - 00:09:58 Unknown Speaker:
+
+Man, Prithvi, now here you come to a picture, right? Should not be null for more than 10% of the total records. Is that— should not be null is the phrase given by Rachana?
+
+00:10:01 - 00:10:07 Unknown Speaker:
+
+Prithvi, can you guys all— all of you be on mute?
+
+00:10:10 - 00:10:21 Unknown Speaker:
+
+Now he is not speaking. ये echo होगा, सचिन ना। Echo होगा, चलेगा। But फिर मेरे को बार-बार नहीं बोलना पड़ेगा कि unmute करो, unmute करो, बैठ के। Prithvi, you are there?
+
+00:10:26 - 00:10:27 Unknown Speaker:
+
+Prithvi?
+
+00:10:29 - 00:10:35 Unknown Speaker:
+
+Man, this is not, you know, expected. This is not the way, you know, we— we should be working.
+
+00:10:36 - 00:10:39 Unknown Speaker:
+
+Please be professional. Prithvi, you are there?
+
+00:10:45 - 00:10:46 Unknown Speaker:
+
+This is the way how we delay the things.
+
+00:10:48 - 00:10:55 Unknown Speaker:
+
+2 minutes later. Okay. Uh, can you click on the other one? Latest Lumi ingestion timestamp. ये— ये— Yes, yes, yes.
+
+00:10:57 - 00:11:11 Unknown Speaker:
+
+Go below. This description is incorrect, right? Latest Lumi ingestion timestamp should lie between— should be between last 5 days. Latest— from where we picked it up? Latest Lumi ingestion timestamp should lie between last 5 days.
+
+00:11:12 - 00:11:24 Unknown Speaker:
+
+There was no description that starts from latest, right? नहीं, नहीं। This is there, Sachin. This is the latest Lumi should be lie between one of the Rachana's template, it is.
+
+00:11:26 - 00:11:32 Unknown Speaker:
+
+It was there in the template? Yeah, yeah. Yes. Okay. Close it out.
+
+00:11:32 - 00:11:37 Unknown Speaker:
+
+Can you show me any other one? And filter condition— we are not appending to the rule description, right?
+
+00:11:40 - 00:11:41 Unknown Speaker:
+
+No.
+
+00:11:42 - 00:11:49 Unknown Speaker:
+
+No, no, no. That is not a question for you. That is not a question for you. Can you show me any other use case? Yeah.
+
+00:11:49 - 00:11:58 Unknown Speaker:
+
+Man, even if we need to sit today, go for the raisy one. Till 2:00 AM, set it. But I need this to be closed today. From all of you.
+
+00:12:00 - 00:12:04 Unknown Speaker:
+
+देखो, यहाँ पे data ही नहीं आ रहा है। Variable name नहीं है, कुछ नहीं है, right?
+
+00:12:07 - 00:12:33 Unknown Speaker:
+
+Allowed null margin percent में 5% आना चाहिए था। तो ये incorrect data migration है। नहीं, see, migration तो हुआ ही नहीं है, सचिन। वही तो मैं बोल रहा हूँ। अच्छा, अभी तक— अभी तक data ही नहीं migrate हुआ है। हाँ, कर एकदम। Problem is the, you know, the Excel sheet is there, right? वो insert query ही सही नहीं है। ठीक है, मैं समझ गया। Author, you— you have identify that issue, right? वो आप fix करो। Now, Kundan, Kundan, go ahead and share your screen.
+
+00:12:34 - 00:12:47 Unknown Speaker:
+
+हाँ, मैं share करता हूँ। रुकिए। And write down a query. Uh, write down a query in that— क्या बोलते हैं? Big query. Distinct use case name.
+
+00:12:49 - 00:12:54 Unknown Speaker:
+
+पता नहीं ये लोग कहाँ से क्या— use case name from where these guys had got it, right?
+
+00:12:56 - 00:13:10 Unknown Speaker:
+
+Nirmal, if you are able to see it. Anything you would like to check for which you have joined back? Uh, Sachin, I just uploaded the Excel sheet. It created one Word basket, and I don't have access to it.
+
+00:13:10 - 00:13:41 Unknown Speaker:
+
+आप बस एक बार check कर लेना इसको। वो Word basket मुझे भी access नहीं होगा। आप check करो, process instance बन रहा है कि नहीं। Process name पे जाओ, देखो वो बना है कि नहीं बना है। Okay, ठीक है। Main— main process जो है ना, उसमें देखो, बना है कि नहीं। हाँ, ठीक। ये— ये सब छोड़ो, Kundan, पहले जो मैंने बोला, पहले BigQuery पे जाओ। BigQuery पे एक query लिखो, distinct use case name from DQ repository.
+
+00:13:46 - 00:13:55 Unknown Speaker:
+
+You know, these steps I should not be, you know, letting everybody know, right? Uh, from where he got those use case, it is a bit surprising.
+
+00:13:58 - 00:14:15 Unknown Speaker:
+
+And that is the problem when we give access to each one of— to modify the database entry. And Prithvi, just one more call out. I hope you have changed your locations from Composer to the use case bucket. You have seen, right? Even there was a logs, and it has been flagged by the platform team.
+
+00:14:15 - 00:14:20 Unknown Speaker:
+
+So please make sure you are not putting any of your file in the Composer bucket. Sure, sure, Sachin. Yeah.
+
+00:14:22 - 00:14:23 Unknown Speaker:
+
+BigQuery पे जाओ, Kundan.
+
+00:14:25 - 00:14:45 Unknown Speaker:
+
+हाँ, सचिन, आ रहा है ये। BigQuery तो सीधे select करोगे, वो सीधे आ जाएगा। नहीं, नहीं, नहीं आता। वो आजकल पता नहीं, bucket को point करने लगा है। And now, now, look. अब अगर ये बंदा 2 बजे आएगा तो कैसे होगा काम?
+
+00:14:49 - 00:15:06 Unknown Speaker:
+
+करना क्या है आपको migration में, एक बार बताइए। अरे, वो उनके साथ— Write down a query to the DQ repository. Distinct use case name निकालो repository में। ಏನು ಪ್ರಸ್ತುತ ಕಾವ್ಯದಲ್ಲಿ ಬರಹ, ಅಥವಾ ಇಂಥ ಮೌದಲ್ಯ ಕಲ್ಪನೆ ಸಾಧ್ಯವಿಲ್ಲ. ದಯವಿಟ್ಟು ನಂತರ ಪ್ರಯತ್ನಿಸಿ. Distinct use case name.
+
+00:15:12 - 00:15:28 Unknown Speaker:
+
+Use case ही है। Right, yeah. Run this one. Once— अरे, BigQuery रुक जाओ। Nirmal, Mila— main process instance?
+
+00:15:32 - 00:15:32 Unknown Speaker:
+
+No.
+
+00:15:33 - 00:15:38 Unknown Speaker:
+
+ठीक है, वो मैं आपसे ना बाद में check करूँगा। अभी ना ये urgent है। ठीक है? ठीक है, ठीक है। I'll check that one.
+
+00:15:40 - 00:15:43 Unknown Speaker:
+
+इसमें तो ऐसा कुछ है ही नहीं। हाँ, है ना?
+
+00:15:45 - 00:16:00 Unknown Speaker:
+
+16 है। ये तो AYAPA बनता है। सारे हैं। हाँ। But— but ये airline वाला कब enter हुआ? और ये analytics वाला, ये valid— अच्छा, okay.
+
+00:16:01 - 00:16:29 Unknown Speaker:
+
+And ये analytics वाला इन्होंने add किया है insurance के लिए। समझे? हम्म। वो इन्होंने insurance के लिए insurance use case नहीं बनाकर के तो— These are common sense, right? इसका rename करना— ये— ये— ये तो AYAPA मुझे जवाब देगा ना। How could he enter a PRC group as a use case name? It's a PRC group. हाँ, correct, it's a PRC group.
+
+00:16:34 - 00:16:46 Unknown Speaker:
+
+ठीक है, then use case data is correct. And now, can you go to that artifacts table? Can you go and go to that artifacts table? No, no, no. ए— एक मिनट, एक मिनट, एक मिनट। Kundan, you are in the dev group, man.
+
+00:16:46 - 00:16:48 Unknown Speaker:
+
+Can you go to the production environment?
+
+00:16:49 - 00:17:37 Unknown Speaker:
+
+Production— ठीक है, एक बार— एक बार duplicate करो। Duplicate करो। यहाँ से मत change करो। Dev रहने दो। वहाँ पे करना है distinct— हाँ, जो— जो यहाँ पे लिखा हुआ था ना, बस copy this one और D की जगह P करो। नहीं, वो ठीक है, वो ठीक है। That is— अच्छा, वहाँ पे डाल दो। ठीक है। No, no, no, no.
+
+00:17:37 - 00:17:58 Unknown Speaker:
+
+ये D है, D point कर रहा है। P करो। अच्छा। PRJ— PRJ— P। Limit रहेगा भी तो problem नहीं है। We don't have that much of record. So run it. हाँ। ठीक है, देख लेते हैं। यहाँ पे देखिए, same है। यहाँ भी— हाँ, है तो। सारे हैं?
+
+00:18:00 - 00:18:04 Unknown Speaker:
+
+मुझे ये कुछ अलग लग रहा है। तो वो देखिए, /mgm targeting करके है क्या?
+
+00:18:06 - 00:18:32 Unknown Speaker:
+
+Excel sheet में। वो— वो BigQuery— P— P पे चले जाइए ना, D पे चले जाइए। वहाँ पे दिख जाएगा। हाँ, है ना? 12 नंबर पे है। तो ये ठीक है फिर। ये data ठीक है। Now go to the— Dev पे जाओ। Dev पे जाओ। वहाँ पे artifacts table search करो। What was that name, Prithvi?
+
+00:18:34 - 00:19:03 Unknown Speaker:
+
+एक सेकंड, रुकिए, सब नहीं पता है मुझे। हाँ, हाँ, ठीक है। दो चीज़ करना है। DQ artifacts— हाँ, इसको start करो। इसका ना एक— एक काम करो, पहले तो metadata update करो इसका। Metadata क्या update करना है?
+
+00:19:03 - 00:19:29 Unknown Speaker:
+
+हाँ, इसको close कीजिए, मैं बता रहा हूँ। इसको close कीजिए। इसमें— इसमें business justification text है ना, string में हम JSON save कर लेंगे, right? Business justification text एकदम last में देखिए। नहीं, ये BJSON होता है। ये नहीं होता। क्या होता है BJSON? BJSON data structure होता है। Bandi JSON कहते हैं उसको। String नहीं करना है, right? सीधा JSON भी, okay. It cannot be string.
+
+00:19:31 - 00:19:35 Unknown Speaker:
+
+तो यहाँ से JSON जाएगा तो string में हम तो डाल सकते हैं ना, problem क्या है?
+
+00:19:36 - 00:20:09 Unknown Speaker:
+
+फिर conversion करना पड़ेगा ना आपको। हाँ। ठीक है, आप as a string भेजोगे, फिर वहाँ पे जो migration script होगा, उसको फिर JSON भी में convert करना पड़ेगा। ऐसे data भी— अच्छा, ये BigQuery side है ना, पता नहीं वो इस— string ही रहने दीजिए। उधर ही manipulate करना पड़ेगा। अभी के लिए छोड़ दीजिए। अब इसमें— Uh, again, like he is telling that he has manipulated data and now he is unavailable.
+
+00:20:09 - 00:20:19 Unknown Speaker:
+
+यार, manipulated means मैं बताता हूँ क्या हुआ है। See, ये जो DQ repository का इसने भेजा है ना, AYAPA ने इसका ref— मैंने उड़ा दिया क्या वो?
+
+00:20:21 - 00:20:36 Unknown Speaker:
+
+No, can you— can you show me the— This is incorrect, man. ये Quantro और इसको mix up कर रहा है। हाँ, इसने जो गड़बड़ किया, मैं बताता हूँ। ये— ये Quantro का table है, man। This is Quantro table.
+
+00:20:39 - 00:20:45 Unknown Speaker:
+
+वो count वगैरह जो— जो दिख रहा है ना, those are Quantro, man. This is not the self-serve one.
+
+00:20:47 - 00:21:00 Unknown Speaker:
+
+यही share हुआ DQ repository extract करके, ठीक है? अभी जो— मैं जो migration लिख रहा हूँ, ठीक है? That is through the Python one. ये data pull करके, ठीक है? Not this one, I think.
+
+00:21:00 - 00:21:28 Unknown Speaker:
+
+यहाँ पे भी data सही है कि नहीं, I have to cross-verify। He is mixing Quantro with this self-serve. जो data आप Excel में— The thing is, Sachin, he confirmed that he tested it, okay? But मुझे— you know, there are 3-4 columns that are extra. तो मुझे पता नहीं वो insert query कहाँ चलाया उसने। क्योंकि वो तो चल रही है ही नहीं। और वो— और अब जब— जब ढूँढो, he is not there.
+
+00:21:29 - 00:21:55 Unknown Speaker:
+
+Not— not I am talking about AYAPA. ये Sravan का— Sravan का है ना ये script? उसने कहा, "मैंने test किया है।" But the thing is कि ये columns ही नहीं हैं। ये तो मैंने वो वाला दिया, आपने जो भेजा था वो— No, no, ignores— ignores— Sravan का मैंने आपको बस use case refer करने के लिए बोला था। ये data के लिए नहीं बोला है मैंने, कभी भी। हाँ, नहीं, नहीं, नहीं। मैंने उससे पूछा, "ये क्या है? " तो उसने बोला कि that is the migration script, you know, trying to write it.
+
+00:22:04 - 00:22:24 Unknown Speaker:
+
+ठीक है, ठीक है। तो ये इसका migration कैसे plan कर रहे हैं, आप मुझे बता दीजिए। Then, you know, right now मैं तो एक— No, no, no. Close this reference. Close this reference जो आपके side में दिख रहा है। वो reference को पहले close करो। आपको यहाँ से data simply उठाकर के dump करना है। Whatever data output be over here. Can you show me the description over this one?
+
+00:22:26 - 00:22:39 Unknown Speaker:
+
+Scroll करो, धीरे-धीरे, right side पे। Don't description write। ये है— No, ये— ये incorrect है ना? Aggregate type name ये कहाँ से ले आया?
+
+00:22:41 - 00:22:55 Unknown Speaker:
+
+Count, percentage, count— from where he picked it up? No, man, this DQ artifacts is incorrect table. There is a— Complex on words। Hey, Prithvi, that's why I am asking. What is that table? Sachin, even complex ones also he did it.
+
+00:22:55 - 00:23:07 Unknown Speaker:
+
+It's not only OK records. Even complex— First of all— No, Prithvi, first of all tell me what is the table name. From where you are getting that data? DQ repository. From DQ repository to DQ artifacts.
+
+00:23:07 - 00:23:11 Unknown Speaker:
+
+I have— No, no, man.
+
+00:23:12 - 00:23:26 Unknown Speaker:
+
+Oh man. You are pulling the data not from DQ repository. I have created another table for you guys, right? हाँ। What was that? That was a clone of the table which is there in the Postgres DB, in the ACE DB.
+
+00:23:26 - 00:23:44 Unknown Speaker:
+
+చెప్పినదే. సచిన్ గారు 300 డబ్బులు చేశారు. No, no, Sachin, the target is— पुलिस? I— No, man, I think— ये artifact ना, same ही table structure है, ठीक है? नहीं है, नहीं है। DQ artifacts ये Quantro का table है। See the aggregate type name.
+
+00:23:44 - 00:24:00 Unknown Speaker:
+
+Count, percentage, count— ये कहाँ पे UI पे fit होगा? ये Quantro का table है। नहीं। वो वाला table नहीं है। Hold on, guys. I— I didn't— There is a, you know, वही है problem. It's not on you, Kundan. Aggregate type we have.
+
+00:24:01 - 00:24:13 Unknown Speaker:
+
+वो— वो गलत है। That— that— that is a— this artifact is a Quantro table. That is not for the one. That's why I am searching for AYAPA. Oh, okay, okay. If you have said something else, then I am not searching.
+
+00:24:13 - 00:24:25 Unknown Speaker:
+
+And— and— and that's what I am asking you, Prithvi. From where— from which table you are pulling the data. That is my question to you. On your automatic— DQ repository। No. I have asked not to use DQ repository.
+
+00:24:25 - 00:24:39 Unknown Speaker:
+
+I have asked you to use a different table. Which is a clone of your— this one, Postgres DB table. That was not a DQ repository table, man. No, no, Sachin, tell me one thing. What is the plan?
+
+00:24:39 - 00:25:00 Unknown Speaker:
+
+We have some OK records, nearly 230 or 260. We need to copy them. Prithvi, first of all, don't you remember, you no need to pull the record from DQ repository. Your not— your automation is not going to fetch the data from DQ repository. It was supposed to write the data to the DQ repository.
+
+00:25:00 - 00:25:16 Unknown Speaker:
+
+When you are getting the data through the SFTP, what is the very first table from where you are pulling the data? For the previous date. Yeah, DQ artifacts only. No, DQ artifacts is in the table. From ACE DB?
+
+00:25:16 - 00:25:29 Unknown Speaker:
+
+No, no. नहीं, ACE DB से वो नहीं— वो नहीं pull कर रहा है। Yeah, DQ artifacts— सी, DQ artifacts— hold on, man. DQ artifacts table ही नहीं है। एक और table create हुआ है। ये लोग mix up कर रहे हैं। Oh, okay.
+
+00:25:32 - 00:25:37 Unknown Speaker:
+
+DQ artifacts is for this Quantro, not for the self-serve UI.
+
+00:25:43 - 00:25:57 Unknown Speaker:
+
+Okay. वो aggregation count and वो— Sachin, can I— can I stop for a minute? I wanted to explain what exactly— Yeah. Okay. So basically, with respect to DQ repository, we have data into all the records, including threshold check, everything.
+
+00:25:57 - 00:26:08 Unknown Speaker:
+
+But in that, we have finalized OK records up to 230 to 240 something. 260, sorry. 260 is finalized. Records are fine. I am— I am right here.
+
+00:26:08 - 00:26:18 Unknown Speaker:
+
+Yeah, let me complete, Sachin. Bothered about the— Yeah. Hold on. I am not bothered about records. First of all, the table— I am— I am more bothered about the tables which has been created by AYAPA.
+
+00:26:18 - 00:26:25 Unknown Speaker:
+
+What is that table name? It is not— ideally it is not— it should not be DQ artifacts. DQ artifacts is used for Quantro.
+
+00:26:28 - 00:26:43 Unknown Speaker:
+
+No, we— even UAT testing we were doing with DQ artifacts table, right? Then— then we were doing incorrectly. If we are doing it on DQ artifacts, then that was an incorrect table. That's— that's what he shared. I— I mean, I remember discussing with you.
+
+00:26:43 - 00:26:48 Unknown Speaker:
+
+Screen share also we checked it, right? Whether the entries— even Nirmal is not there. Nirmal also knows that.
+
+00:26:50 - 00:26:53 Unknown Speaker:
+
+Ask him to join back. Okay.
+
+00:26:56 - 00:27:01 Unknown Speaker:
+
+How— how this DQ artifacts should be run by this Quantro.
+
+00:27:03 - 00:27:17 Unknown Speaker:
+
+And ये problem— this is the biggest problem. When we are searching for a people, he is out, right? And school— school pickup, even it should take 15 to 20 minutes. If it is taking 1 hour, right? On a daily basis, then it is not acceptable.
+
+00:27:17 - 00:27:24 Unknown Speaker:
+
+That is something I have to talk to AYAPA then. We are now at 1:20, right? It's more than an hour then. No.
+
+00:27:32 - 00:27:34 Unknown Speaker:
+
+Hey, join that call, man.
+
+00:27:35 - 00:27:36 Unknown Speaker:
+
+Sachin wants to talk to you.
+
+00:27:40 - 00:27:47 Unknown Speaker:
+
+AYAPA joining the call, man? Ah, okay. I am joining. Yeah, please. Yeah, please join.
+
+00:27:47 - 00:27:51 Unknown Speaker:
+
+Yeah, please join quickly. Yeah. నీడిక్ లాంటివి లేకుండా అమ్మని టెన్షన్ పెడతాడు ఏంటి అన్నా?
+
+00:27:53 - 00:28:02 Unknown Speaker:
+
+మొదటి నుంచి మనం ఇదే అడుగుతున్నాం. Just call, right? రెండు వారాలు అయింది. Say it in the table. ఏం వచ్చలేదు అని రెండు వారాలు UAT టెస్టింగ్ పెట్టి, ఇక అంతా పిచ్చిగా.
+
+00:28:02 - 00:28:06 Unknown Speaker:
+
+బ్యాక్ ఎండ్ అయిపోయింది నాకు. అయిపోయిందా? Did AYAPA join? ఏంటండీ, జెఫ్రాన్ కాదు దానికి.
+
+00:28:08 - 00:28:09 Unknown Speaker:
+
+AYAPA you there?
+
+00:28:12 - 00:28:25 Unknown Speaker:
+
+No, no, I joined. Not all. Okay, Nirmal. Nirmal, what is the table where the SFT file— you know, write the data? In the Lumi?
+
+00:28:25 - 00:28:27 Unknown Speaker:
+
+ఆ DQ artifacts.
+
+00:28:29 - 00:28:35 Unknown Speaker:
+
+No, man. DQ artifacts should not be the table. నువ్వే చెప్తున్నావ్, నువ్వు అంటాడు ఏందన్నా. Yeah, DQ artifacts is the table.
+
+00:28:36 - 00:28:37 Unknown Speaker:
+
+No, man.
+
+00:28:38 - 00:28:58 Unknown Speaker:
+
+DQ artifacts का ये match करो, man Kundan. The data structure with respect to the— Postgres DB के साथ match कर रहा है? हाँ, वही match कर रहा है। match कर रहा है Sachin, वही मैं migration भी लिख रहा था, वही बता रहा हूँ। नहीं, but वो- वो गलत है ना? The aggregation type, right?
+
+00:28:59 - 00:29:08 Unknown Speaker:
+
+Aggregation type enem ना? ये— हाँ? हाँ, तो ये aggregation type— it would be from UI, right?
+
+00:29:10 - 00:29:11 Unknown Speaker:
+
+हाँ, correct.
+
+00:29:13 - 00:29:25 Unknown Speaker:
+
+Then how could we write it down as count and sum and all, right? Athar— That is value-wise, I am not sure, you know, why they kept it this way. Athar, can you— Athar, correct. Yes.
+
+00:29:26 - 00:29:44 Unknown Speaker:
+
+Can you check for which this aggregation type name comes in? Quantro. Man, these aggregation type are for Quantro, man. Okay, it would be a threshold check. Threshold check?
+
+00:29:44 - 00:29:54 Unknown Speaker:
+
+That I am seeing it here, in this value. We are not migrating the threshold check via UI. So you are not going to see any one of the threshold check over here.
+
+00:29:55 - 00:30:08 Unknown Speaker:
+
+AYAPA, what is the table that I have asked you to create a clone of DQ repository? Can you answer me? మెన్షన్ అప్లై అవ్వాలి. Oh, that is DQ repository test, Sachin. That one we are using even.
+
+00:30:08 - 00:30:12 Unknown Speaker:
+
+No, for the self-serve, man. The clone for this one, right?
+
+00:30:13 - 00:30:20 Unknown Speaker:
+
+Oh, for the Qtrux self-serve. Postgres DB. I have asked you to create a clone table.
+
+00:30:23 - 00:30:36 Unknown Speaker:
+
+Oh. I have said you the data structure, right, for the Postgres DB, right? And then I have asked you to create a table for that. What was the table name? No, no, Sachin, I didn't create the table, actually.
+
+00:30:37 - 00:30:40 Unknown Speaker:
+
+बहुत बढ़िया. Great. Now this is the answer.
+
+00:30:42 - 00:30:48 Unknown Speaker:
+
+Then who created this table, DQ artifacts? DQ artifacts is— I am telling n number of times. This is for Quantro.
+
+00:30:50 - 00:30:55 Unknown Speaker:
+
+So it's existing long back. Yeah, it's an existing long back table.
+
+00:30:57 - 00:31:01 Unknown Speaker:
+
+That is a mess.
+
+00:31:03 - 00:31:22 Unknown Speaker:
+
+Right? We were doing the testing from last one month, and now the answer I am hearing that the table was not being created. మరి ఏ డిలీట్ ఎఫెక్ట్స్ యాక్సెప్ట్ చేశాడు? And it was a mess from— Nirmal is writing the data to the DQ artifacts, Prithvi is pulling the data from DQ artifacts, and the table that was supposed to be here, it is missing.
+
+00:31:25 - 00:31:51 Unknown Speaker:
+
+Man, when the data would land— understand, this is where I am— I am telling all of you, right? Understand the business requirement. When the data would land to the Lumi, Quantro would run— it would pull the data to the DQ artifacts, SQL— the one automation Prithvi you are building, right? That would read the data from there, and in case there is a new entry, that would insert the data to the DQ repository table.
+
+00:31:57 - 00:31:58 Unknown Speaker:
+
+Sameer is there?
+
+00:32:01 - 00:32:07 Unknown Speaker:
+
+We have added him. Just checking. Just add him in the call. Yeah. Then what?
+
+00:32:07 - 00:32:08 Unknown Speaker:
+
+You migrated AYAPA then yesterday.
+
+00:32:10 - 00:32:26 Unknown Speaker:
+
+Oh, this one only, yeah. No, he migrated the thing that I— I mean, I requested only. So we— me and AYAPA worked together. I only given him the query, but he made few changes to it and he executed it. With respect to execution— The first— No, no, no.
+
+00:32:26 - 00:32:45 Unknown Speaker:
+
+The very first thing is that how could we, you know, mess a table creation? But Sachin, from day one you are saying DQ artifacts only with us. We were reviewing that one also that day. It was— No, no, hold on. I'll— I'll be just back.
+
+00:32:45 - 00:32:45 Unknown Speaker:
+
+Give me a second.
+
+00:32:49 - 00:32:56 Unknown Speaker:
+
+Hey Kundan, this aggregate type name is for aggregation type. ఇక్కడికి వెళ్లి. What are the values?
+
+00:32:57 - 00:33:04 Unknown Speaker:
+
+It has like sum average count and median. It is basically it will be present for threshold check.
+
+00:33:06 - 00:33:12 Unknown Speaker:
+
+And the field name is aggregation type, with the values as sum average count and median.
+
+00:33:15 - 00:33:18 Unknown Speaker:
+
+From where is this? It has been defined over there, Athar.
+
+00:33:19 - 00:33:35 Unknown Speaker:
+
+Yeah, it has been defined in the document which is shared by Rajumath. But currently I don't think we have the condition in the— అవును, అవును. Okay, threshold check. Yeah, we have threshold check, and these are the values present. It was only for the threshold check, man.
+
+00:33:35 - 00:33:50 Unknown Speaker:
+
+It is not going to be for any other changes. And— and AYAPA, how did you finalize the— what would be the aggregate type for these table, right? Are these our previous record?
+
+00:33:51 - 00:34:03 Unknown Speaker:
+
+Because Prithvi has given you— Prithvi has given you 230 records, right? Yeah, correct. So did you insert any data for this aggregation type to those records?
+
+00:34:05 - 00:34:10 Unknown Speaker:
+
+Aggregation type? No. That mention as a— this one. One second. Aggregation type, right?
+
+00:34:10 - 00:34:12 Unknown Speaker:
+
+Name, right? One second, Sachin.
+
+00:34:13 - 00:34:15 Unknown Speaker:
+
+This one I have updated query.
+
+00:34:19 - 00:34:23 Unknown Speaker:
+
+Null, I think. Very few, Sachin. I think 80, 90 are there.
+
+00:34:24 - 00:34:28 Unknown Speaker:
+
+Null बहुत कम है, right? बाकी में सारा में aggregation type डाला हुआ है, right?
+
+00:34:30 - 00:34:47 Unknown Speaker:
+
+Let me check. Filter with aggregation. Can you do a count star and can you check? Sachin, aggregation type name what we are mentioning is count based on the description, right? I have updated like count and maximum count.
+
+00:34:48 - 00:34:50 Unknown Speaker:
+
+That is for Quantro. That's where I am asking, right?
+
+00:34:52 - 00:34:55 Unknown Speaker:
+
+That's what the understanding gap which is creating these issues.
+
+00:34:57 - 00:35:00 Unknown Speaker:
+
+Those are threshold check type, man. That is for Quantro.
+
+00:35:03 - 00:35:09 Unknown Speaker:
+
+Not for this self-serve. And— Yeah, yeah. Tell me, man, why didn't you create it that table first of all?
+
+00:35:13 - 00:35:24 Unknown Speaker:
+
+Sachin, I think probably I missed out, actually. Man, these miss— you know, look, look, these are messing up, man. AYAPA, we are on 16th of June. ఏమన్నాడు? Description.
+
+00:35:24 - 00:35:27 Unknown Speaker:
+
+And the ask was almost a month back, man.
+
+00:35:30 - 00:35:39 Unknown Speaker:
+
+Sorry, Sachin, can I— I will note down the Sachin table name. Can you provide the table name? Just I will note down. Now even I need to recollect, right? Where I have messaged you over the Slack.
+
+00:35:40 - 00:35:45 Unknown Speaker:
+
+It would be in the dev group. ఓకే, ఒకసారి సమీర్.
+
+00:35:48 - 00:36:07 Unknown Speaker:
+
+సమీర్, these DQ artifacts, the table structure was the way— can you show the table structure for this Kundan once? Because if he has modified the metadata, Quantro would start failing. And that is going to create another major mess-up.
+
+00:36:09 - 00:36:18 Unknown Speaker:
+
+Okay. Yeah, dropped off. Sameer, just verify and confirm me if this structure looks good. Oh, again he dropped off. Let him join back.
+
+00:36:18 - 00:36:29 Unknown Speaker:
+
+Man, I think we— we did a mess-up to this DQ artifacts, AYAPA. Now the Quantro— No, Sachin, I will revert back. I will delete those records, Sachin. Whatever I have created. It's not about record, man.
+
+00:36:30 - 00:36:49 Unknown Speaker:
+
+Did we modify these— these database structure also? If you have modified these— Sachin, existing structure and existing data, I didn't touch it. Just I insert the data only, that's all. Use this one. So whatever the data I have inserted, I can revert back.
+
+00:36:49 - 00:36:57 Unknown Speaker:
+
+Hold on. I'm pretty sure this is— Sameer, can you confirm me, is this the data structure for the DQ artifacts?
+
+00:36:59 - 00:37:14 Unknown Speaker:
+
+DQ artifacts for Quantro, you are saying? Yes, yes. Like complex n— So in the right side we have this table also? You are not using DQ artifacts, you are using Quantro artifacts, tell me. Yeah, we are using Quantro artifacts, Sachin.
+
+00:37:14 - 00:37:21 Unknown Speaker:
+
+Not the DQ artifacts, right? No, no. We have a Quantro artifacts, we have a Quantro repository also. DQ repository.
+
+00:37:22 - 00:37:41 Unknown Speaker:
+
+You are not touching the DQ artifacts, right? Yes. Okay, then this is the table, Kundan and all, which was a clone of your Postgres SQL DB, okay? But the data which has been inserted for the aggregate type name was incorrect. That is not correct.
+
+00:37:42 - 00:37:52 Unknown Speaker:
+
+Okay, so just tell me one thing. So what we are going to do is— Delete everything. Write a— write a query to delete all the records from this DQ artifacts. Can you write down that query?
+
+00:37:57 - 00:38:02 Unknown Speaker:
+
+Delete from this one. Remove the limit. All the records.
+
+00:38:05 - 00:38:09 Unknown Speaker:
+
+I think it will ask for condition, I'm pretty sure. No, no, not needed.
+
+00:38:10 - 00:38:15 Unknown Speaker:
+
+Yeah, it will need. Or you can do the truncate. Truncate. No. No, no.
+
+00:38:15 - 00:38:17 Unknown Speaker:
+
+Drop all the records from here.
+
+00:38:22 - 00:38:27 Unknown Speaker:
+
+Does this allow? No. Okay, I will do that one, based on— wait a second.
+
+00:38:29 - 00:38:40 Unknown Speaker:
+
+అన్నా, డ్రాప్ చేస్తే అన్నీ ఓపెన్ అవుతాయి కదా? మొత్తం డిలీట్ చేసేయాలి. మొత్తం డిలీట్ చేసేయాలి అన్నా, మళ్ళీ ఇన్సర్ట్ చేయాలి. సరే, వాడు చేసుకుంటాడులే, మనకేంటి?
+
+00:38:43 - 00:38:45 Unknown Speaker:
+
+ఇది చాట్ జిబిటి వాడుతున్నాడు.
+
+00:38:47 - 00:38:48 Unknown Speaker:
+
+ఎవడరా ఈ కుందన్ గాడు?
+
+00:38:50 - 00:39:01 Unknown Speaker:
+
+BigQuery you should have written. Delete early. Yeah, because delete from table works, but I don't know why BigQuery is doing that. డ్రాప్ అంటే కాలం పోయిద్ది. టేబుల్ పోయిద్ది.
+
+00:39:02 - 00:39:14 Unknown Speaker:
+
+Truncate all the table structure. And what is the modification? He is deleting the record. AYAPA, can you show me what is the modification that you made to the data which was shared by Prithvi? Yeah, yeah, sure.
+
+00:39:16 - 00:39:19 Unknown Speaker:
+
+You go ahead and delete it. AYAPA, you can go ahead and share your screen.
+
+00:39:21 - 00:39:34 Unknown Speaker:
+
+Truncate you can do this one. It will delete all the records, actually. Because that option I— ట్రంకేట్ అని చెప్పొచ్చు, కుందన్ అని అనట్లా? In Quantro, we are using this command. ఇందాక, ఇందాక నుంచి అయ్యప్పకి ట్రంకేట్ చెయ్, ట్రంకేట్ చెయ్ అంటే కుందన్ అనుకుని డిలీట్.
+
+00:39:37 - 00:39:50 Unknown Speaker:
+
+ట్రంకేట్ లాక్ ఫ్రమ్ టేబుల్ పేరు కొడితే మొత్తం పోతాయి కదా? వాడు చేసి చెప్తున్నా, అయ్యప్ప చెప్తున్నా. ట్రంకేటే చేయాలి, లెక్క ప్రకారం. ఇప్పుడు టేబుల్ స్ట్రక్చర్ కావాలన్నప్పుడు మనం ట్రంకేటే కదా? ఓకే.
+
+00:39:50 - 00:39:53 Unknown Speaker:
+
+Yeah. Now, now share your screen, AYAPA. Yeah, yeah, I'm sharing.
+
+00:39:57 - 00:39:58 Unknown Speaker:
+
+Let me know once we are able to see.
+
+00:39:59 - 00:40:05 Unknown Speaker:
+
+Let me stop it. And— and give me a second. Nirmal, you are there. Sameer, you can feel free to drop out. Thank you.
+
+00:40:05 - 00:40:12 Unknown Speaker:
+
+Nirmal, first of all, tell me the JSON object that you are receiving, right? Is there a challenge to convert that to a string object?
+
+00:40:14 - 00:40:22 Unknown Speaker:
+
+If I don't— if I don't change the data type of that column to a JSON object? Or you want that to be a JSON object?
+
+00:40:25 - 00:40:26 Unknown Speaker:
+
+The business justification one.
+
+00:40:28 - 00:40:28 Unknown Speaker:
+
+Yeah.
+
+00:40:29 - 00:40:37 Unknown Speaker:
+
+Actually, only challenge string you do, Nirmal. Not to string you do. It will come under the quotes, right? And we store in the text.
+
+00:40:39 - 00:40:47 Unknown Speaker:
+
+While migrating— Let's— let's not do that. AYAPA, do you have a— a create table statement for this DQ artifacts?
+
+00:40:50 - 00:40:58 Unknown Speaker:
+
+This one? I don't have, Sachin, this one. Can you just— can you just create it right away? Yeah, yeah.
+
+00:41:00 - 00:41:11 Unknown Speaker:
+
+Athar, I'll ask you to join at 4 again. Let me fix this data issue first. ఏంటి ప్రశ్న? అదే డబుల్ బ్రాంచ్ చేయాలా లేకపోతే మెయిన్ బ్రాంచ్? డూబుల్ బ్రాంచ్ అన్నీ అన్నీ అన్నీ అన్నీ అన్నీ అన్నీ అన్నీ అన్నీ.
+
+00:41:11 - 00:41:17 Unknown Speaker:
+
+అదే మెయిన్ బ్రాంచ్. ఓకే, మెయిన్ బ్రాంచ్. And just fix that. మీరేం చూసి— అదే ఏం చేయాలి? ఇంకా కోడ్ రన్ చేసుకోవడానికి.
+
+00:41:17 - 00:41:22 Unknown Speaker:
+
+Get mandatory and the update. సరే, సరే. థాంక్యూ. థాంక్యూ.
+
+00:41:24 - 00:41:36 Unknown Speaker:
+
+ये Athar API पर कहता है, "वो क्या हुआ? " Anyway, he need to fix it. He was unnecessarily calling that API. I asked him to do. Yeah, but— No, no, no, no, no, no.
+
+00:41:36 - 00:41:46 Unknown Speaker:
+
+AYAPA, what you are doing exactly? Table creation. Actually table creation for this DQ only. Okay, okay. Create that.
+
+00:41:46 - 00:41:48 Unknown Speaker:
+
+Create that SQL. Create that SQL. Yeah.
+
+00:41:50 - 00:41:58 Unknown Speaker:
+
+Nirmal, even I think then if you are pushing to the DQ artifacts, leave it to this DQ artifacts table. We got that confirmation, right? So that's fine. Leave it then.
+
+00:41:59 - 00:42:13 Unknown Speaker:
+
+Yeah. I just need to make sure, like, if the JSON should not have any pipeline symbol. Because if it has, then the CSP format will be affected. Wait, wait, wait. You come again?
+
+00:42:14 - 00:42:22 Unknown Speaker:
+
+Did that JSON have any pipeline? Because I'm using the pipeline symbol as a separator for the CSP. No, no, no. Don't use pipe. That's why.
+
+00:42:23 - 00:42:36 Unknown Speaker:
+
+Same issue we've, you know, faced, I think, earlier also, right? Don't use, you know, that CSV format. That comma or that pipe or any of that delegated, right? Delimited, sorry. Yeah.
+
+00:42:37 - 00:42:40 Unknown Speaker:
+
+Convert that into the JSON and then, you know, transform it.
+
+00:42:41 - 00:42:44 Unknown Speaker:
+
+Send the JSON file, not the CSV file.
+
+00:42:48 - 00:42:50 Unknown Speaker:
+
+Got it. JSON file.
+
+00:42:52 - 00:42:54 Unknown Speaker:
+
+The file is being transferred through SFTP.
+
+00:42:56 - 00:43:05 Unknown Speaker:
+
+Eh? How come SFTP will transform the file? You— whatever file you are sending over SFTP, same file will be there, right? Yeah, yeah. Who is transforming the file?
+
+00:43:05 - 00:43:13 Unknown Speaker:
+
+అన్నా, వాళ్ళిద్దరూ ఒకేసారి కదా. Okay, you are saying without, like, without going through the CSP, I should go through the JSON.
+
+00:43:14 - 00:43:28 Unknown Speaker:
+
+Yeah, because he has— Yes, he has used a colon data containing anything, okay. ఆ తర్వాత కాల్ కరెక్ట్. So you cannot, you know, rely on that any specific delimiter and we cannot restrict them as well.
+
+00:43:29 - 00:43:31 Unknown Speaker:
+
+So go through the JSON.
+
+00:43:33 - 00:43:44 Unknown Speaker:
+
+మా సచిన్ కూడా వింటారే కదా. We already implemented the code change, so you can utilize that. అంటే మీరు పైథాన్ వాళ్ళలాగా అయితే కన్నా పడి కదా. అవును, పైథాన్ మీద నీకు నెట్‌వర్క్. ఆహా, నేను అమెరికన్ ఎక్స్‌ప్రెస్ ఉంది.
+
+00:43:45 - 00:43:48 Unknown Speaker:
+
+Sponsor area. జస్ట్ ఇలా. Sorry.
+
+00:43:49 - 00:43:52 Unknown Speaker:
+
+Wait, let me share it. It's written there. See.
+
+00:43:56 - 00:44:15 Unknown Speaker:
+
+No, first of all— hold on. First of all, whatever the data structure is there in the ESDB, right, that should reflect in the LUMI also. Code modification, we just— we can just, you know, adjust it at our end. But let's not change the data structure for this. Data structure will not change anything.
+
+00:44:15 - 00:44:18 Unknown Speaker:
+
+But the thing is, he is using CSV format, okay?
+
+00:44:19 - 00:44:25 Unknown Speaker:
+
+The problem is few of our data containing— let's say he is using pipe as a delimiter, okay?
+
+00:44:27 - 00:44:44 Unknown Speaker:
+
+And few of the data— colon data containing— मैं समझ गया, मैं समझ गया, जो the implementation the one that you have just done it recently, right? वो बाद में उसे बता देना. पहले let me fix this, this data description. हाँ, ये आप कर लो. You ping me later, मैं आपको दिखा दूँगा.
+
+00:44:44 - 00:44:49 Unknown Speaker:
+
+वो code लिखा हुआ है, आपको कुछ करना नहीं है. AYAPA, share your screen. AYAPA, share your screen.
+
+00:44:53 - 00:45:04 Unknown Speaker:
+
+Man, this is what I'm— I'm telling you, right? I should not be sitting to fix these, right? I'm expecting these to be done from your side. Hold on. There is a business justification is there, right?
+
+00:45:04 - 00:45:11 Unknown Speaker:
+
+Change that from the JSON to— sorry, from string to JSON object.
+
+00:45:13 - 00:45:18 Unknown Speaker:
+
+Business justification. Yes. You need a reference table. Let me ping you a reference table.
+
+00:45:20 - 00:45:23 Unknown Speaker:
+
+Give me a second. Okay. Yes.
+
+00:45:26 - 00:45:29 Unknown Speaker:
+
+Wait, this— let me check the data structure. Wait.
+
+00:45:31 - 00:45:32 Unknown Speaker:
+
+JSONB.
+
+00:45:35 - 00:45:36 Unknown Speaker:
+
+मैं, मैं भेज रहा हूँ.
+
+00:45:41 - 00:45:49 Unknown Speaker:
+
+అయ్యో, టేబుల్. ఐ గెస్ చేస్తానే రేపు చేస్తాను. AYAPA, open this table. It would be there in the LUMI D or LUMI P. I have pinged you one.
+
+00:45:50 - 00:45:50 Unknown Speaker:
+
+One.
+
+00:45:55 - 00:46:01 Unknown Speaker:
+
+నేటివ్ JSON. You can use JSON. BigQuery with JSON. Let— let him— let him go to this table, man. This is a LUMI warehouse table.
+
+00:46:01 - 00:46:03 Unknown Speaker:
+
+You'd get the details.
+
+00:46:04 - 00:46:09 Unknown Speaker:
+
+Enter. Yeah. Just open it. There would be a JSON object. Click on that.
+
+00:46:12 - 00:46:15 Unknown Speaker:
+
+Just see, there would be a JSON one. It would be there.
+
+00:46:19 - 00:46:19 Unknown Speaker:
+
+Oh, great.
+
+00:46:21 - 00:46:26 Unknown Speaker:
+
+హోల్డ్ ఆన్, హోల్డ్ ఆన్, హోల్డ్ ఆన్. Hold on, man. Hold on.
+
+00:46:29 - 00:46:35 Unknown Speaker:
+
+Man, somebody changed this. Great. What ID? First name, email ID. Hold on, I'll— I'll check.
+
+00:46:36 - 00:46:45 Unknown Speaker:
+
+There is another table. Let me check and then I'll confirm you. Hey, AYAPA, you directly added the schema now. What is the problem?
+
+00:46:48 - 00:46:54 Unknown Speaker:
+
+Why you are writing insert query? అన్నా, సబ్ సర్చింగ్ ఇస్— సచిన్ ఇస్ looking something. Yeah, yeah. I'm looking something. Wait.
+
+00:46:55 - 00:47:17 Unknown Speaker:
+
+అన్నా, అర్జున్ రూప్ ఫ్రీ అకౌంట్ తో ఇది నార్మల్ గా క్రియేట్ చేసుకుంటే అవ్వట్లేదు. Wait, I— అది డేటాబ్రిక్స్ మీద ప్రాక్టీస్ చేసుకుని, ట్రైస్పర్క్ అయిపోయింది. డేటాబ్రిక్స్ లో డెల్టా, లేబుల్, ఇవి కొన్ని కావాలి. And, Sachin, Kundan, this is the— అదే వేర్ హౌస్ టేబుల్ actually. It's under the DW data set actually.
+
+00:47:17 - 00:47:19 Unknown Speaker:
+
+Yeah, that is— that is under warehouse.
+
+00:47:20 - 00:47:26 Unknown Speaker:
+
+Are we going to edit this one? We have to— No, no, no. No, no, no. We can't. This is— we can't it.
+
+00:47:27 - 00:47:38 Unknown Speaker:
+
+Yeah. मैं JSON का डेटा स्ट्रक्चर देख रहा हूँ. It's a JSON only, Sachin. JSON. अगर आप उस डेटा को एडिट करेंगे ना स्कीमा पे, वो टाइप में ड्रॉपडाउन दिखता है.
+
+00:47:39 - 00:47:48 Unknown Speaker:
+
+ఆటోమేటిక్ గా లోడ్ చేసిందా? Ha, that's something I know. But I wanted to verify that data type. वरना बार-बार वो मॉडिफाई करना पड़ेगा.
+
+00:47:50 - 00:47:57 Unknown Speaker:
+
+Okay. फिर अभी— फिर अभी मैं JSON कर दूँगा और फिर बाद में पता चला कि कुछ और होगा. Yeah.
+
+00:47:59 - 00:47:59 Unknown Speaker:
+
+Okay.
+
+00:48:00 - 00:48:06 Unknown Speaker:
+
+Don't type anything here. AYAPA, left-hand side you search DQ artifacts. That's fine. No, no, no. This one— no.
+
+00:48:06 - 00:48:14 Unknown Speaker:
+
+This table creation I'm doing. Recap. Later, you can do that. Okay, that insert create statement is provided by the BigQuery. Okay, you can do that.
+
+00:48:15 - 00:48:24 Unknown Speaker:
+
+Left-hand side you search it. Where you search USCC, insurance, stuff. Search DQ artifacts. ఓకే, ఓకే. It's already there.
+
+00:48:25 - 00:48:29 Unknown Speaker:
+
+No, search it now. Why I'm telling you to search. ఓకే, ఓకే, sure. Recap.
+
+00:48:30 - 00:48:33 Unknown Speaker:
+
+Search for it. Sure.
+
+00:48:34 - 00:48:38 Unknown Speaker:
+
+Yeah, this is the one. Triple dot. Triple dot. You click it. Okay.
+
+00:48:38 - 00:48:43 Unknown Speaker:
+
+Yeah. అన్నా, wait a second. No, click on that table. Okay, sorry. Directly.
+
+00:48:43 - 00:48:51 Unknown Speaker:
+
+Directly click on the DQ artifact. Click. Yeah. See, edit schema is there. Below.
+
+00:48:51 - 00:48:52 Unknown Speaker:
+
+Below. At the bottom.
+
+00:48:54 - 00:48:59 Unknown Speaker:
+
+Yeah. Just edit it. Don't— This one we need to modify? This table? Yeah, yeah.
+
+00:49:00 - 00:49:01 Unknown Speaker:
+
+Click it. That's fine. Yeah, yeah.
+
+00:49:03 - 00:49:07 Unknown Speaker:
+
+ఆ, ఓకే. See the dropdown. What are the type you have put in? Okay. Just click on string.
+
+00:49:11 - 00:49:18 Unknown Speaker:
+
+Don't select anything else. No, no, that is— just go to that business justification. Business justification is there field. Right? Can you go to the next page?
+
+00:49:20 - 00:49:20 Unknown Speaker:
+
+Go to the next page.
+
+00:49:23 - 00:49:26 Unknown Speaker:
+
+Yeah. Business justification, just change from string to JSON.
+
+00:49:28 - 00:49:34 Unknown Speaker:
+
+Click on business— no, man. Go back to the previous page. Go back, go back, go back. Click on the bottom last one. Checkbox.
+
+00:49:34 - 00:49:44 Unknown Speaker:
+
+Checkbox is there, right? Check— click on checkbox of business justification. Select that. Yeah. Now from— from string, make it JSON.
+
+00:49:45 - 00:49:49 Unknown Speaker:
+
+Okay. It is not allowing, I think. No, man. Edit as text.
+
+00:49:51 - 00:49:52 Unknown Speaker:
+
+Just try it. It should do that. Wait.
+
+00:49:54 - 00:50:02 Unknown Speaker:
+
+मैं अभी ट्राय कर ही लेता हूँ. Edit as text— enable that edit as text. No, enable in the below. Yeah. Click on that.
+
+00:50:02 - 00:50:07 Unknown Speaker:
+
+Yeah. Now change that string to— ओह, no. यहाँ से नहीं होगा.
+
+00:50:08 - 00:50:15 Unknown Speaker:
+
+It's not allowing. Maybe we need to give the alter command for changing the data type. Yes, alter you can do. Yes.
+
+00:50:17 - 00:50:20 Unknown Speaker:
+
+Okay. What is the data type you're telling? JSON? JSON. JSON.
+
+00:50:20 - 00:50:26 Unknown Speaker:
+
+JSON. Only that one is required. Okay, okay. Business justification DX. Okay, okay.
+
+00:50:29 - 00:50:33 Unknown Speaker:
+
+One second. Oh, that's the alter command. Okay. You cannot do it from there.
+
+00:50:34 - 00:50:42 Unknown Speaker:
+
+ఆహా, okay. Let me check the syntax once. I'm pinging you. Okay, I have this handy. Just check your select.
+
+00:50:45 - 00:50:49 Unknown Speaker:
+
+Yeah. Oh, you already shared. Yeah. Take this.
+
+00:50:51 - 00:50:55 Unknown Speaker:
+
+I have given you to rename that data type. Change you need now.
+
+00:50:59 - 00:51:06 Unknown Speaker:
+
+One more I'm pinging you. Okay. Alter colon set data type वाला. That will be helpful for you. Use this one.
+
+00:51:09 - 00:51:11 Unknown Speaker:
+
+The second one I pinged you. Just use that.
+
+00:51:13 - 00:51:14 Unknown Speaker:
+
+Second one. Yeah.
+
+00:51:17 - 00:51:17 Unknown Speaker:
+
+Okay.
+
+00:51:18 - 00:51:19 Unknown Speaker:
+
+Yeah.
+
+00:51:23 - 00:51:25 Unknown Speaker:
+
+Before that, we don't— we need to select.
+
+00:51:28 - 00:51:32 Unknown Speaker:
+
+Oh, wait, wait, wait. This is not the complete one. Okay. Take this last one. Okay.
+
+00:51:33 - 00:51:37 Unknown Speaker:
+
+Because we didn't specify that table. So what you will update? Take the last one I pinged you.
+
+00:51:39 - 00:51:42 Unknown Speaker:
+
+That's the complete. Yeah. This. This. Yeah.
+
+00:51:55 - 00:52:01 Unknown Speaker:
+
+Alter colon— colon name you select. Business group you say. Business justification text.
+
+00:52:04 - 00:52:05 Unknown Speaker:
+
+C1. C1 replace it.
+
+00:52:07 - 00:52:09 Unknown Speaker:
+
+Set data type in place of numeric type JSON.
+
+00:52:11 - 00:52:13 Unknown Speaker:
+
+Caps. Just run this.
+
+00:52:15 - 00:52:26 Unknown Speaker:
+
+Wait, wait, wait. Alter table data types require the existing column require the— what is that?
+
+00:52:30 - 00:52:32 Unknown Speaker:
+
+అదే, colon set data type.
+
+00:52:40 - 00:52:42 Unknown Speaker:
+
+Alter table essence set data.
+
+00:52:45 - 00:52:46 Unknown Speaker:
+
+ఇట్ ఇస్ కమింగ్.
+
+00:52:50 - 00:52:50 Unknown Speaker:
+
+Okay.
+
+00:52:55 - 00:52:56 Unknown Speaker:
+
+షుడ్ ఐ ట్రై ఇట్ హియర్?
+
+00:52:59 - 00:53:04 Unknown Speaker:
+
+Yeah. One second. I'm checking it.
+
+00:53:06 - 00:53:14 Unknown Speaker:
+
+Explore. Go to BigQuery. Explore mode. I'm a bit surprised. Like, who did change this data type, man?
+
+00:53:14 - 00:53:16 Unknown Speaker:
+
+It might be Sameer Menon.
+
+00:53:26 - 00:53:27 Unknown Speaker:
+
+అన్నా, this one literally.
+
+00:53:28 - 00:53:30 Unknown Speaker:
+
+One second. Let me check BigQuery.
+
+00:53:32 - 00:53:37 Unknown Speaker:
+
+Okay. Change.
+
+00:53:39 - 00:53:50 Unknown Speaker:
+
+Oh, can you just use a— you know, what we are trying to do? Alter table is not working? Yeah, it's not. I think no parameter is needed. అయ్యో, it is not helping.
+
+00:53:51 - 00:53:53 Unknown Speaker:
+
+Let me check what type.
+
+00:53:59 - 00:54:08 Unknown Speaker:
+
+ఓహ్, సచిన్ అన్నా, మీరు ఇక్కడ— No, Nirmal. I asked you, right? You can feel free to drop it. You just need to take care of that JSON object which I have asked you. Just check this one.
+
+00:54:09 - 00:54:16 Unknown Speaker:
+
+Yeah. Once the data migration completed, I'll just take both the tables and update it.
+
+00:54:19 - 00:54:20 Unknown Speaker:
+
+Yeah. Okay.
+
+00:54:27 - 00:54:30 Unknown Speaker:
+
+Is it working? Yeah, I'm just checking this one.
+
+00:54:38 - 00:54:47 Unknown Speaker:
+
+సేమ్ అవుట్. It's the same only. Yeah, same only, but getting error. Yeah. It's telling to create or replace table.
+
+00:54:48 - 00:54:52 Unknown Speaker:
+
+I'm a bit worried. So let's add a new column.
+
+00:54:55 - 00:54:56 Unknown Speaker:
+
+I think JSON.
+
+00:55:00 - 00:55:04 Unknown Speaker:
+
+Just change it to string once. In place of type JSON, type string.
+
+00:55:07 - 00:55:12 Unknown Speaker:
+
+String is— it's already string, right? So after that— No, we just want— just want to check the data types.
+
+00:55:14 - 00:55:23 Unknown Speaker:
+
+Just run this. No, no, timestamp enter. Is it giving error? నో, సర్, కరెక్ట్ ఉంది. There is a problem with JSON.
+
+00:55:23 - 00:55:27 Unknown Speaker:
+
+Just type JSON. Remove this string. Type JSON. Yeah.
+
+00:55:31 - 00:55:38 Unknown Speaker:
+
+ఆ, JSON is not there, right? How come you can use it? Yeah. Okay. That's why it's not supporting.
+
+00:55:39 - 00:55:50 Unknown Speaker:
+
+Now we have to check the— I told you already, right? So you have to use the string only. అప్పుడు స్ట్రింగ్ మీ కాస్ట్ కన్వెర్ట్ అయ్యా. Because one of the table that I have given to AYAPA, right? That was even JSON.
+
+00:55:51 - 00:55:54 Unknown Speaker:
+
+అంటే, even— See, string is fine, Sachin. Okay.
+
+00:55:56 - 00:56:08 Unknown Speaker:
+
+I don't know. What is the problem in storing, you know, data in a string format? You know, whoever is consuming, they have to just convert it back to JSON. Exactly. Yeah, it's pretty straightforward.
+
+00:56:08 - 00:56:13 Unknown Speaker:
+
+So— यहाँ पे अगर आप डालिएगा ना, just string object हमें डालना पड़ेगा. Select the string object. AYAPA.
+
+00:56:15 - 00:56:19 Unknown Speaker:
+
+స్ట్రింగ్ ఆబ్జెక్ట్— Sorry, JSON object. JSON object. Key values.
+
+00:56:22 - 00:56:30 Unknown Speaker:
+
+Remove that, you know, the— just— just select this. See if you're getting any error or not. No, no, select all.
+
+00:56:32 - 00:56:36 Unknown Speaker:
+
+I don't think you will get any error. No, JSON object. You have to provide parameter.
+
+00:56:38 - 00:56:39 Unknown Speaker:
+
+Okay.
+
+00:56:40 - 00:56:46 Unknown Speaker:
+
+So— नहीं, Sachin, आप एक बार confirm कर दो, what you want. You want JSON, then वो हम convert कर देंगे. That's not a problem.
+
+00:56:51 - 00:56:54 Unknown Speaker:
+
+And even if you want in text format, even that is fine.
+
+00:56:55 - 00:57:04 Unknown Speaker:
+
+Look, anyhow, this business justification is going to be no use. Even if you— స్ట్రింగ్, right? It's string anyway. Right. Leave it as a string.
+
+00:57:04 - 00:57:09 Unknown Speaker:
+
+Okay. Now show me the data AYAPA that you have, which you have modified. Yeah.
+
+00:57:14 - 00:57:16 Unknown Speaker:
+
+And how many records quickly you have given to him?
+
+00:57:20 - 00:57:20 Unknown Speaker:
+
+50?
+
+00:57:25 - 00:57:43 Unknown Speaker:
+
+ఆ, except this one, Sachin, ఆ threshold check type, what are the data is available, right? So that one, and apart from the UMDL use case, we have recently have added some DQ rules. So that one I excluded, Sachin. Three many things I have moved, total. So it will come around 87.
+
+00:57:43 - 00:57:51 Unknown Speaker:
+
+No, no, no. Look, UMDL and all, right? Ask them to use DQ repository right now. Don't use this DQ artifacts. No, no, no.
+
+00:57:51 - 00:58:01 Unknown Speaker:
+
+Until unless— Yeah, so— While moving the data from here to there, right? So that's why I used this one. No. So what are the data that you have modified? Show me those data.
+
+00:58:02 - 00:58:04 Unknown Speaker:
+
+First of all, your aggregate type should be null.
+
+00:58:06 - 00:58:12 Unknown Speaker:
+
+While you are— ఇప్పుడు insert statement AYAPA. Okay. Download— Hey, Prithvi, can you go and unmute, man?
+
+00:58:15 - 00:58:16 Unknown Speaker:
+
+Prithvi?
+
+00:58:19 - 00:58:45 Unknown Speaker:
+
+కలర్ వచ్చాక— Sachin, you're able to see right my screen? So what I have done is, first step, I insert data into this DQ artifact table. From this, this is the WHERE clause condition I used. So here what I have done is, I selected the DQ ID, variable name, and table name, WHERE type, business pro— Man, why we are pulling the data from DQ repository? You should be inserting the data which was provided by Prithvi to you.
+
+00:58:46 - 00:59:04 Unknown Speaker:
+
+Didn't he converted those data which would map to this DQ artifacts table then? Database we— I updated, Sachin. And I have given him a query to extract the data from DQ artifacts— sorry, DQ repository, and put that into DQ artifacts table.
+
+00:59:06 - 00:59:11 Unknown Speaker:
+
+Okay. Man, we should be targeting to insert only those 230 records, right?
+
+00:59:12 - 00:59:28 Unknown Speaker:
+
+Yeah, yeah. Only those— Not 230. Only 300 that are not threshold check. No, I don't need those complex one, right? That would not fit to my object in the Postgres DB.
+
+00:59:28 - 00:59:31 Unknown Speaker:
+
+Can you show me those 230 records insert query?
+
+00:59:34 - 00:59:53 Unknown Speaker:
+
+Insert queries— no. I have given him this query only, that copies it from— because the mapping is not direct mapping, right? From this table, this column, it should go to a different table, different column. So we can— I mean, we— it's difficult to come up with a insert query also. So that's why I thought, okay, let's insert all 300 records.
+
+00:59:54 - 00:59:57 Unknown Speaker:
+
+Only 30-40 extra records are there, that's okay for now.
+
+00:59:58 - 01:00:21 Unknown Speaker:
+
+Nothing is okay, Prithvi. These data are going to get migrated to the Postgres DB production environment. No, Sachin, for testing you said you import it later. If you want to delete it or modify it, we'll do it later. We can modify— look, look, if there is 1 or 2 records are there, or even 10 records are there, we can modify writing a SQL script— SQL query, right?
+
+01:00:21 - 01:00:29 Unknown Speaker:
+
+Yeah. But not 430. Where is the SQL query? No, not 230. See, you will have another 40 extra record that are complex.
+
+01:00:29 - 01:00:42 Unknown Speaker:
+
+Now, can you— can you show me this DQ artifacts? Go to the DQ artifacts— DQ artifacts table. Can you open a duplicate one? Now tell me— go, go to the DQ artifacts AYAPA. Yeah.
+
+01:00:43 - 01:00:59 Unknown Speaker:
+
+Now look, there is a rule ID you can— hold on, AYAPA, don't change until unless I ask you to do it. Rule ID, you can map it with the DQ repository rule ID, right? Use case ID with the condition that you have given, that would be the use case ID. Yes. Right?
+
+01:01:00 - 01:01:21 Unknown Speaker:
+
+There is variable name, table name, WHERE type name, right? BUS_POC_GROUP, load_frequency, filter_criteria, filter_bar_name, right? Rule name, valid_value_text is there or not, null_valid is there or not, mean_value, max_value, aggregate— Can you see the query what I given him, AYAPA? He's showing that one actually. It is actually showing the mapping only.
+
+01:01:22 - 01:01:27 Unknown Speaker:
+
+AYAPA, can you open that query? Yeah, this one. Okay, okay. Then what is the change? Okay, okay.
+
+01:01:27 - 01:01:42 Unknown Speaker:
+
+Then what is the change, AYAPA, you did? What is the additional change that you have did? Yeah, Sachin, regarding this one, right, this— some of the fields said it is not found actually. What are the— he given query, right? So this one, it is not found.
+
+01:01:42 - 01:01:53 Unknown Speaker:
+
+Suppose example subject variable ID, right? This is not there in the DQ artifact table. So that's why I just commented those things, and I have updated accordingly. This one. Variable ID would not be there in the table.
+
+01:01:53 - 01:01:56 Unknown Speaker:
+
+Remove that one. Yeah. Remove that one. Yeah, yeah, yeah. Yeah, he did that already.
+
+01:01:57 - 01:02:02 Unknown Speaker:
+
+Yeah, table ID is not there. Remove that one. Start doing it. Let's— let's start doing it.
+
+01:02:03 - 01:02:05 Unknown Speaker:
+
+Sure. Remove this table ID, WHERE ID.
+
+01:02:08 - 01:02:08 Unknown Speaker:
+
+What else?
+
+01:02:12 - 01:02:13 Unknown Speaker:
+
+Yeah. One second.
+
+01:02:22 - 01:02:32 Unknown Speaker:
+
+Yeah. And one more is— Aggregate type name. Remove this aggregate type name. You just need to get whatever aggregate type name we are getting. It should not be count and all, right?
+
+01:02:32 - 01:02:40 Unknown Speaker:
+
+You're mixing QUANTRO with this SELFSERV. Ah, okay, okay. So I'm— I need to remove then complete one then in that case. No, no. It will— Yeah.
+
+01:02:41 - 01:02:51 Unknown Speaker:
+
+Whatever data is there, it should be inserted. Sachin, you don't need these numbers, is it? No. Why— why is it being defined over this DQ repository? No, right?
+
+01:02:51 - 01:02:56 Unknown Speaker:
+
+Okay, okay. Yeah, fine. Yeah. This is QUANTRO, guys. That's what— understand, right?
+
+01:02:57 - 01:03:04 Unknown Speaker:
+
+Yeah, yeah. AYAPA got confused this one due to QUANTRO. Okay? Yeah, yeah, yeah. Right?
+
+01:03:04 - 01:03:07 Unknown Speaker:
+
+So remove this one. This is not required. Yeah.
+
+01:03:10 - 01:03:19 Unknown Speaker:
+
+Now— What else change you guys have made? Here, I— I just cast into string actually. This one. This one. No, man.
+
+01:03:19 - 01:03:20 Unknown Speaker:
+
+Is it a string data type?
+
+01:03:22 - 01:03:33 Unknown Speaker:
+
+Yeah, yeah. Because while comparing, right, here left side table, DQ artifacts, DQ ID as a string actually, but DQ repository, that is integer actually. Okay, then— then do that. Yeah.
+
+01:03:35 - 01:03:37 Unknown Speaker:
+
+Kundan, you need to take care of this data.
+
+01:03:40 - 01:03:40 Unknown Speaker:
+
+Yeah. Okay.
+
+01:03:42 - 01:03:52 Unknown Speaker:
+
+So this is the quality rule ID. This is— this is also WHERE character. That is fine. That is fine. We need a clone of rule ID.
+
+01:03:55 - 01:04:00 Unknown Speaker:
+
+But are we mapping— Table name? No, no, the table name is not correct, so I think so. One second.
+
+01:04:04 - 01:04:05 Unknown Speaker:
+
+ఇంట్రడ్యూస్ చేయండి. దేవుడు ఉంటుంది కదా, అది?
+
+01:04:06 - 01:04:21 Unknown Speaker:
+
+Wait, variable name, root ID, it's— नहीं, देना है। Yeah, here we are not— Sachin, we are not using this rule ID actually. Because rule ID, table ID, that— those things we are removing, right? So this is also not. Yeah, yeah. Rule ID not required.
+
+01:04:21 - 01:04:23 Unknown Speaker:
+
+Next. Yeah, so— yeah.
+
+01:04:25 - 01:04:37 Unknown Speaker:
+
+కాపీ పేస్ట్ చేయాలి. But— hold on. DQ artifacts is going to pull all the details from your DQ repository table, right? Yeah, yeah. So— I— I don't need those all record, right?
+
+01:04:37 - 01:04:49 Unknown Speaker:
+
+I need— Okay, then— let— do one thing, AYAPA. You have those OK records in the Excel now. Give that in the— This one now. WHERE condition. WHERE clause condition: check in not in the threshold type, and use case not in.
+
+01:04:49 - 01:04:57 Unknown Speaker:
+
+I put like this one, Sachin. No, no. This is fine. But— but I need those only 230 records, AYAPA. Which— 230 records.
+
+01:04:57 - 01:05:05 Unknown Speaker:
+
+Okay. Prithvi is mentioning— explicitly mention those DQ ID. Okay, okay. Got it, got it. One second.
+
+01:05:07 - 01:05:15 Unknown Speaker:
+
+Prithvi, I will take that from the Excel sheet. That is fine, right? Yeah, yeah. Excel sheet what we shared— you shared with me on Friday, no? And then please— please make sure— hold on.
+
+01:05:16 - 01:05:27 Unknown Speaker:
+
+Can you please make sure that the data reflects the production data? I would not repeat it again. Yeah, it is production data only, Sachin. Yeah. Right?
+
+01:05:28 - 01:05:38 Unknown Speaker:
+
+Yeah. Which is there in your dev environment, AYAPA. Okay? Right now you are migrating from dev environment. Make sure the dev environment DQ repository table is having the production environment data.
+
+01:05:39 - 01:05:50 Unknown Speaker:
+
+Yeah, yeah. Yes, yes, Sachin. Okay. And then what he is mentioning, whatever record he has marked it as OK, you have to specify those DQ ID over here. And then run the command.
+
+01:05:52 - 01:05:57 Unknown Speaker:
+
+Only those 230 records needs to be moved to this DQ artifacts table. Okay.
+
+01:05:59 - 01:06:18 Unknown Speaker:
+
+Not all. And— and Prithvi, whatever Rachana has specified with those blue one, did we address those issues also? Yeah, yeah. With respect to OK records, she— whatever she mentioned that day, we fixed it. Two-three records she told us to check with you, but for now it's okay.
+
+01:06:18 - 01:06:22 Unknown Speaker:
+
+We'll discuss that. Two-three records. Yeah, yeah. That we can discuss. But one thing is there, Sachin.
+
+01:06:22 - 01:06:47 Unknown Speaker:
+
+One key thing we need to get it confirmed with you, basically. So what's happening is, in WHERE conditions, they are giving some strings somewhere, date somewhere, some places, numbers some places. So when we are running that, we don't know whether user will give in that format or not. Integer in, whether they'll give it in double quotes, single quotes, or give it as a number.
+
+01:06:47 - 01:07:13 Unknown Speaker:
+
+So that thing— what she told is, check with you on the logic, how we can do it. And one proposal that we both were— I mean, coming up to that day, me and Rachana was, we can have the schema of all the 220 tables that we usually use, and verify based on the column what they are giving, and format the data according to that.
+
+01:07:13 - 01:07:22 Unknown Speaker:
+
+If it is a date, we can have that in IF condition, okay, date format conversion. If it is a number conversion, we'll do it in a different way. Like that.
+
+01:07:23 - 01:07:39 Unknown Speaker:
+
+Then those logics would have been applied in the IS process where Kundan is inserting the data. Because I need the data uniqueness between the IS and the DQ artifacts table. Okay. In that case, if they are doing there, then I don't have to do it also. Yeah.
+
+01:07:40 - 01:07:55 Unknown Speaker:
+
+Exactly. That should have been. Because if— if tomorrow I need to map, right, I have 200 rules which is live in the environment, right? So those 230 records should match between IS and LUMI. The data consistency should be there.
+
+01:07:55 - 01:08:13 Unknown Speaker:
+
+Whatever input they are providing, whatever formation refactoring is required, either do it in the code and process it further. Otherwise, keep a formation like, you know, ISDB should match to the LUMI one. We can discuss that later. Let's— let's take it up later. Just keep a note of it.
+
+01:08:13 - 01:08:25 Unknown Speaker:
+
+Just do, you know, recall me when we are meeting next. Sure, sure, sure. Okay. Kundan? Yeah, we can create a— you know, we can write a map from LUMI to IS side.
+
+01:08:25 - 01:08:32 Unknown Speaker:
+
+Okay. So we will end that. Sachin, actually, I have a few observations, Sachin. Maybe once this one I will tell you. Yeah, go ahead.
+
+01:08:32 - 01:08:45 Unknown Speaker:
+
+Go ahead, AYAPA. Yeah. See, Sachin, what about the query— this one, right? Actually, what happened is, this is whatever the data it is there in the database, right, it is updating actually. Not for the inserting the data.
+
+01:08:48 - 01:09:02 Unknown Speaker:
+
+No, then write it. Okay, based on the condition. Based on the condition, right? Here we are doing the condition comparing, right, actually. We are updating the records based on the— this fields where this table matching with this column IDs, right?
+
+01:09:02 - 01:09:16 Unknown Speaker:
+
+You need to prepare an insert query, man, guys. Yeah, yeah. That's why I prepared, Sachin, yesterday. What are the— Prithvi given, right, he given the context to me. So that's why what I have done is, first of all, what are the fields are available, right, in the DQ or repository, right?
+
+01:09:16 - 01:09:20 Unknown Speaker:
+
+So that one I just mapped with DQ artifact table.
+
+01:09:21 - 01:09:44 Unknown Speaker:
+
+Okay? So then, as you mentioned, now we need to insert only 230 DQ IDs only. But yesterday what I have done is, I excluded this project and threshold check type. Then all the 287 records I inserted into the DQ artifact table. Then again, what I have done is, the next step what I have done is, based on the Prithvi query, he is updating this case condition.
+
+01:09:44 - 01:10:02 Unknown Speaker:
+
+Like, suppose if Resi is there, right, in the use case name, he's putting 1. So like that way, he's giving some use cases list of 1 to 16 he given. AYAPA, AYAPA, hear me out. There are n number of solution for a particular problem. Okay?
+
+01:10:03 - 01:10:07 Unknown Speaker:
+
+The way you feel comfortable, go ahead, execute it.
+
+01:10:08 - 01:10:16 Unknown Speaker:
+
+My end goal— my end goal is, I need those 230 records which should map to the IS database.
+
+01:10:16 - 01:10:23 Unknown Speaker:
+
+For that, I have already given you that artifacts table, which is a clone of that ISDB. Okay?
+
+01:10:24 - 01:10:30 Unknown Speaker:
+
+So go ahead and make that change. Sure, sure. I will take care of this. And only 230 records. Okay?
+
+01:10:31 - 01:10:38 Unknown Speaker:
+
+Yeah, only 230 records only, I will move it. Yes, Sachin. I understand. Okay? And— and I need this to be closer by 4:00 PM.
+
+01:10:39 - 01:10:44 Unknown Speaker:
+
+Yeah, yeah. Sure, Sachin. I will close it. Then again, I'll set up a call at 5:00 with all of you. Yeah, yeah, yeah.
+
+01:10:44 - 01:10:53 Unknown Speaker:
+
+Sure. And one— one quick thing, Prithvi. This one, is it feasible for you? Just I will check with you. So we have this query, right, actually.
+
+01:10:54 - 01:11:03 Unknown Speaker:
+
+SQL query. Yeah. So this one, I need to do the manual work, actually, each and everything, to do the updating into the query. Is there any shortcut for this one? No, no.
+
+01:11:03 - 01:11:11 Unknown Speaker:
+
+You share me that query. I'll— I'll update it and I'll share it with you. You share it. Whatever you modify now. Whatever Sachin confirmed, right, you share it with me.
+
+01:11:12 - 01:11:20 Unknown Speaker:
+
+So basically you want to— I mean, I thought actually update, and I would have done it differently. Okay, I'll— I'll create insert query and I'll share it with you.
+
+01:11:22 - 01:11:28 Unknown Speaker:
+
+Look, guys, whatever you need— No, Sachin. I will talk with you, Prithvi, separately. No issues. You can go ahead, Sachin. Hold on.
+
+01:11:28 - 01:11:36 Unknown Speaker:
+
+Hold on. We just understand, right? We are spending n number of days on this, right? Can we get it closed today?
+
+01:11:37 - 01:11:48 Unknown Speaker:
+
+Because it's not only your part, right? Once you guys are done, then I have to connect with the IS database structure, DBA team, right? They would be migrating this data to Q2 and then Q3.
+
+01:11:49 - 01:12:01 Unknown Speaker:
+
+We are already getting delayed, right? And I don't want you to be responding back to me on 7:00 PM. No, man. I need this to be done by 4:00. Because once you are done at 4:00, I need to verify those results.
+
+01:12:02 - 01:12:02 Unknown Speaker:
+
+Right?
+
+01:12:03 - 01:12:13 Unknown Speaker:
+
+So that would take time. So please make sure you close it by 4:00, max by 4:30. I am setting up a call at 5:00 again with all of you. Yes, I'm better. Okay?
+
+01:12:14 - 01:12:21 Unknown Speaker:
+
+Yeah, yeah. So we shall— I will update in the channel. Yeah, once this DQ artifact update done, right, I will update you. Yeah. Only those 230 records.
+
+01:12:21 - 01:12:29 Unknown Speaker:
+
+Okay? Yeah, 230. So Prithvi, how many complex record we are left with? Is it 70? No, no.
+
+01:12:29 - 01:12:34 Unknown Speaker:
+
+One second. Let me— It's 20. It's 22 records.
+
+01:12:35 - 01:12:43 Unknown Speaker:
+
+Then it is 250 only, man. Right? What happens to rest 50 then? So we have 230. What is the total number?
+
+01:12:43 - 01:12:52 Unknown Speaker:
+
+What is the total number? Total number is 290. One second. AYAPA, can you go to the production environment? 250.
+
+01:12:52 - 01:12:56 Unknown Speaker:
+
+I'll run it. One second. No, no. Hold on. Go to the production environment.
+
+01:12:56 - 01:13:03 Unknown Speaker:
+
+Write down a query where just ignore the threshold check type and can you give me the count? Yeah, yeah.
+
+01:13:05 - 01:13:18 Unknown Speaker:
+
+Kundan, first of all, again, you have to prepare a step to migrate the data from this DQ artifacts to that— वो, हमारे जो काम कर रहा है, उस चीज़ में। ठीक है। वो कितना टाइम लगेगा?
+
+01:13:19 - 01:13:41 Unknown Speaker:
+
+मतलब, मैपिंग मैं कर ही रहा हूँ। 290। हो जाएगा वो। क्योंकि आप करोगे तो फिर वो UI पे डिस्प्ले होगा। फिर मुझे अथर से कनेक्ट करना है। आज मुझे ये सारा क्लोज़र चाहिए। रात के 2:00 बजे, 3:00 बजे, मुझे नहीं पता, बट आज क्लोज़र चाहिए ये। 230। ठीक है। And all of you, all of you should be present today. Even if required, I'll stretch a bit. Okay?
+
+01:13:42 - 01:13:43 Unknown Speaker:
+
+Can you do a select star?
+
+01:13:47 - 01:13:56 Unknown Speaker:
+
+Select star from this table and just ignore the check type, threshold check type. Where check type not equals to threshold check type. ఆ రోజు ఎన్ని వచ్చాయి మనకి?
+
+01:14:05 - 01:14:16 Unknown Speaker:
+
+Look, if you guys can do these right, I would not be spending this much of time, you know, connecting with you, right? WHERE condition is missing, AYAPA.
+
+01:14:19 - 01:14:25 Unknown Speaker:
+
+Run this one. Count star. Do a count star. Write down a select star. Just do a count star.
+
+01:14:25 - 01:14:33 Unknown Speaker:
+
+అది ఇన్సర్ట్ చేసిన తర్వాత రన్ చేయండి. So 286, Prithvi, right? So if you are moving 230, we are left with 56 record.
+
+01:14:35 - 01:14:39 Unknown Speaker:
+
+So are we— did we need those 56 records as complex?
+
+01:14:42 - 01:14:52 Unknown Speaker:
+
+Prithvi, you are— Yeah, yeah. 286, right? Okay. So out of 286, you are moving 230. So did we mark 56 as complex?
+
+01:14:52 - 01:15:07 Unknown Speaker:
+
+Yeah. If for now you can mention it as complex, I'll find all that list. Actually, there are few records— duplicate records are there, right? That I mentioned as need to be deleted by AYAPA or something. There are nearly 6 records are there.
+
+01:15:09 - 01:15:21 Unknown Speaker:
+
+So— So it reduced to 50. It reduced to 50. 230 plus 6. And complex count from your Excel sheet only, it's around 22. Then what about rest 28 then?
+
+01:15:22 - 01:15:22 Unknown Speaker:
+
+Yeah.
+
+01:15:26 - 01:15:35 Unknown Speaker:
+
+People are not going to find it. అప్పుడు చూడగానే మళ్లీ సెపరేట్ కాంప్లెక్స్. ఆ కాంప్లెక్స్ అంతే ఉంది. When this product would launch. So basically, there is one more complex.
+
+01:15:35 - 01:15:47 Unknown Speaker:
+
+Remaining are complex. Those you— we decided not to touch them only, in the beginning. After that, we categorized complex. No. Whatever is there, give me a 56 list, marked as complex.
+
+01:15:48 - 01:15:54 Unknown Speaker:
+
+Okay. From the production environment. Okay? Sure. AYAPA, confirm me once you are done with the data migration.
+
+01:15:55 - 01:15:57 Unknown Speaker:
+
+Yeah, I'll take a call at 5:00 with all of you.
+
+01:15:59 - 01:16:05 Unknown Speaker:
+
+కాదు, కాదు. Put on the group AYAPA, okay. So— Yeah, yeah, yeah. I will. I will be deleting data, okay.
+
+01:16:05 - 01:16:17 Unknown Speaker:
+
+Sure. I'm inviting all of you too. Prithvi, AYAPA, Kundan, and— Prithvi, can you stay in this call only? Just a few minutes.
+
+01:16:19 - 01:16:24 Unknown Speaker:
+
+Why are you— You want me on this call? No, no, no. Prithvi— Prithvi won't, actually, in this call. Yeah, okay. Yeah, yeah.
+
+01:16:24 - 01:16:30 Unknown Speaker:
+
+Just a few minutes only. I'll make you the host. Give me a second.
+
+01:16:33 - 01:16:47 Unknown Speaker:
+
+I think by 5:00 PM, even if you go for a lunch for half an hour, right, 2 and a half hour are more than enough to migrate the data. వాడు update queries వాళ్లకి ఇచ్చింది. ఎగ్జిక్యూట్ చేశాడా? చేశాడు. అది మొత్తం డిలీట్ చేపించాడు కదా.
+
+01:16:47 - 01:16:58 Unknown Speaker:
+
+I mean, I'll need you, host, AYAPA. DQ artifacts లో కూడా. అవును, artifacts లో చేశాడు. Artifacts పోతే ఏంటి? మనం ముందు డేటా, మెయిన్ డేటా కరెక్ట్ గా ఉంటే, ఆడ నుంచి కాపీ చేసి దీంట్లో పోస్ట్ చేస్తాం.
+
+01:16:58 - 01:17:01 Unknown Speaker:
+
+Do you need me? I'll select all. No, no. No, Kundan. Only Prithvi is in.
+
+01:17:02 - 01:17:08 Unknown Speaker:
+
+అది పోయింది. ఎగ్జిక్యూట్ చేయలేదు. Artifacts లో. ఆ, సార్. సార్, అది నేను మర్చిపోయి మీకు update set query ఇచ్చాను.
+
+01:17:08 - 01:17:16 Unknown Speaker:
+
+సారీ, సార్, అది insert query ఇచ్చి ఉండాల్సింది. లేదు, లేదు, లేదు. ఇది, ఇది— ఇది కూడా పని చేస్తది అనుకుంటా, సార్. చూడండి, ట్రై చేశారా? కాదు, కాదండి.
+
+01:17:16 - 01:17:21 Unknown Speaker:
+
+ఇది మీరు ఇచ్చింది కరెక్టే. update query మనం update చేశాం, actually. ఇది ఓకే. update చేశాం కదా. అవును, ఇది ఓకే.
+
+01:17:21 - 01:17:35 Unknown Speaker:
+
+నాకు కావాల్సింది ఏంటంటే, నాకు కావాల్సింది ఏంటంటే, ఇలా DQ rules 230 ఇచ్చారు కదా నాకు. అవును. ఇది ఏవైనా మీ దగ్గర లాజిక్ ఉపయోగించుకుని, నాకు ఏంటంటే, ఇలా కాపీ పేస్ట్ చేయాలండి. ఇలా కాపీ చేసి, ఇలా పెట్టడానికి, పెట్టుకుంటూ వెళ్ళాలి. వన్ బై వన్, కామా కామా అని.
+
+01:17:36 - 01:17:42 Unknown Speaker:
+
+ఇట్లా కాదు. ఎందుకు, సార్? నేను అన్నీ మీకు డిక్— మీకు DQ IDs అన్నీ ఒకటే కామాతో సహా ఇస్తాను. అదే కాపీ పేస్ట్ చేయండి. ఉండండి.
+
+01:17:44 - 01:17:47 Unknown Speaker:
+
+ఆ, చాలండి. చాలు, చాలు. అలా ఇస్తే చాలు. ఒకటి అంతే. అది ఒక్కటే నాకు కావాల్సింది.
+
+01:17:47 - 01:17:57 Unknown Speaker:
+
+ఎందుకంటే నేను అది ఇక్కడ పెట్టుకోవాలండి. ఇదిగోండి, ఈ WHERE క్లాస్ కండిషన్ ఉంది కదా. ఇక్కడ పెట్టుకుంటాను నేను. దాన్ని WHERE DQID IN అని చెప్పి పెడితే, మొత్తం అది ఇచ్చేస్తాయి. ఇంకా ఈ threshold check, ఇవన్నీ తీసేస్తాం.
+
+01:17:57 - 01:17:59 Unknown Speaker:
+
+ఇంకా కండిషన్ అవసరం లేదు నాకు.
+
+01:18:01 - 01:18:09 Unknown Speaker:
+
+ఆ, ఒక్క నిమిషం, సార్. ఆ, ఒకసారి నేను లాజిక్ చెక్ చేసుకుంటాను. స్కూల్ కి వెళ్లారా? ఏంటి? ఆ, స్కూల్ కి వెళ్లి వచ్చాను అని అడిగారా?
+
+01:18:09 - 01:18:16 Unknown Speaker:
+
+అడిగాడు. మామూలుగా కాదు. ఈ వన్ అవర్ పోయేది. ఇంకా అట్లైతే, ఈసారి నేను రెస్ట్రిక్టివ్ గా ఉండాల్సిందే. ఏందో, ఏందో, సోది అంతా మాట్లాడుతున్నాడు.
+
+01:18:17 - 01:18:23 Unknown Speaker:
+
+అవును. అంటే 12:45 కి వెళ్లారండి. అంటే మీటింగ్ స్టార్ట్ అవ్వలేదని నేను ఆగాను. అంటే 12:30 కి అన్నారని ఆగాను నేను, actually.
+
+01:18:25 - 01:18:37 Unknown Speaker:
+
+ఆ, నేను ఆయనకి మెసేజ్ పెట్టి వెళ్లానండి. 12:45 కి నేను వస్తాను అంటే మీటింగ్ స్టార్ట్ అవ్వాలి కదా. నేను మీటింగ్ స్టార్ట్ అయితే, ఇన్ బిట్వీన్ జాయిన్ అవుతాను అని చెప్పాను. ఒకవేళ అంటే ఆయన టైమింగ్ కన్ఫర్మ్ చేయలేదని. కానీ 1:45 కే కాల్ స్టార్ట్ అయినట్టు ఉంది.
+
+01:18:38 - 01:18:41 Unknown Speaker:
+
+అదేనండి, సార్. 12:45 కి. 12:45 కి స్టార్ట్ అయింది.
+
+01:18:45 - 01:18:55 Unknown Speaker:
+
+తెలిసిందే కదా, సార్. ఎందుకు అనుకోవడం? ఆ, టేబుల్ నేమ్, టేబుల్ నేమ్, WHERE టైప్, టేబుల్ నేమ్, ఓకే.
+
+01:19:00 - 01:19:21 Unknown Speaker:
+
+ఇమెయిల్ ఐడి చెక్స్. టేబుల్ లోడ్ ఫ్రీక్వెన్సీ నేమ్, ఫ్రీక్వెన్సీ నేమ్, ఫిల్టర్ వేరియబుల్ నేమ్, అండర్ వేరియబుల్ నేమ్, డేటా క్వాలిటీ టైప్, నేమ్, DQ డిస్క్రిప్షన్.
+
+01:19:30 - 01:19:35 Unknown Speaker:
+
+మన దగ్గర ఆల్రెడీ అంతా ఉందండి. జస్ట్ ఎగ్జిక్యూట్ చేయడమే క్వెరీస్. మనకి వేరేది కూడా ఏం లేదు.
+
+01:20:20 - 01:20:24 Unknown Speaker:
+
+అసలు DQ రిఫర్ ఆర్టిఫాక్ట్స్ టైప్ టేబుల్ చెప్పింది ఆయన కాదు, సార్. ఊరికే ఎందో ఎందో అడుగుతాడు.
+
+01:20:28 - 01:20:32 Unknown Speaker:
+
+కాదండి. నిన్న చేసిన వర్కే మళ్లీ ఇప్పుడు చేస్తుంటుంది కదా. మళ్లీ ఏం లేదుగా. అదే. సేమ్ కదా?
+
+01:20:32 - 01:20:36 Unknown Speaker:
+
+సేమ్. కాదు. ఇది రిపీటెడ్ వర్క్. ఇది రిపీటెడ్ వర్క్ అయిందా లేదా ఇవాళ? అంతే.
+
+01:20:37 - 01:20:43 Unknown Speaker:
+
+అసలు ఆ DQ ఆర్టిఫాక్ట్స్ టేబుల్ మొదటి నుంచి టెస్టింగ్, UAT టెస్టింగ్ లో ఆయన కూడా ఉన్నాడు దగ్గర. ఆయనకు తెలియకుండా ఉంటదా?
+
+01:20:46 - 01:20:46 Unknown Speaker:
+
+అదే కదా.
+
+01:20:49 - 01:20:55 Unknown Speaker:
+
+సార్, సింగిల్ కోడ్స్ పెట్టమంటారా? ఒక్కొక్క దానికి? ఆహా, వద్దండి. సింగల్ కోడ్స్ అవసరం లేదు. ఎందుకంటే అది ఇంటిజర్ కదా.
+
+01:20:55 - 01:20:56 Unknown Speaker:
+
+కామాతో సపరేట్ చేసుకోవాలి.
+
+01:21:00 - 01:21:02 Unknown Speaker:
+
+మళ్లీ స్ట్రింగ్ అనుకోండి. మళ్లీ అవన్నీ తీసుకుంటూ రావాలి నేను.
+
+01:21:11 - 01:21:12 Unknown Speaker:
+
+పట్టిస్తున్నాడు, సార్.
+
+01:21:13 - 01:21:24 Unknown Speaker:
+
+ఆ, నిన్న భార్గవ్, భార్గవ్ ని కలిసాను ఆఫీస్ లో. ఓ, భార్గవ్. ఆహా, ఓకే, ఓకే.
+
+01:21:29 - 01:21:31 Unknown Speaker:
+
+ఓకే, భార్గవ్ కూడా వస్తున్నాడు. అయితే అడిగేయ్.
+
+01:21:35 - 01:21:38 Unknown Speaker:
+
+ఆ, సార్, చూశాను. షేర్ చేశాను. చూడండి, సార్. ఆ, ఓకే.
+
+01:21:50 - 01:21:58 Unknown Speaker:
+
+ఓకే. థాంక్స్ అండి. ఒక్క నిమిషం. అది ఇదేంటంటే, మీకు నాకంటే మీరు ఈ విధంగా ఇస్తే నాకు చాలా ఈజీగా ఉంది. అందువల్ల అడుగుతుంది.
+
+01:21:59 - 01:22:00 Unknown Speaker:
+
+ఆ, ఏముందిలే.
+
+01:22:02 - 01:22:05 Unknown Speaker:
+
+లేదంటే ఒకటొకటి కాపీ పేస్ట్ పెట్టుకుంటూ వెళ్లాల్సి వస్తదని.
+
+01:22:07 - 01:22:19 Unknown Speaker:
+
+సార్, ఒక టూ మినిట్స్ లో కనెక్ట్ అవుదామా, సార్? ఆ, ఓకే, ఓకే. నేను చూసుకుంటాను లేండి. ఇక్కడ నుంచి నేను మీరు పంపించింది డేటా వాలిడేట్ చేసుకుంటా. 230 వచ్చినాయో లేవో చెక్ చేసుకుని, నేను ఇంకా డేటా మైగ్రేషన్ చేస్తా.
+
+01:22:19 - 01:22:24 Unknown Speaker:
+
+ఆ, ఓకే, సార్. ఓకే అండి. ఇక్కడ నుంచి నేను చూసుకుంటా లేండి. మీరు రిలాక్స్ అవ్వండి. ఆ, ఓకే, సార్.
+
+01:22:24 - 01:22:27 Unknown Speaker:
+
+థాంక్యూ. ఏముందండి, ఆల్రెడీ చేసిన వర్కే గా ఏం లేదు. కొత్తగా అదే, అదే.
+
+01:22:29 - 01:22:32 Unknown Speaker:
+
+ఓకే, సార్. థాంక్యూ. ఆ, థాంక్స్ అండి.
+

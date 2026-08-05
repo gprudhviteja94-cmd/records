@@ -1,0 +1,206 @@
+2026-06-15 E3 Deployment Progress and Data Quality Updates
+
+Creation Time: 2026/06/15 18:01
+
+
+📅About Meeting
+
+• Date & Time: 2026-06-15 18:01
+• Location: Virtual Meeting (WebEx)
+• Attendee: Anand, Sindhuja, Bhargav, Nirmal, Ayappa, Sameer, Kuntal, Mani, Tim, Rachana, Sachin, Partha, Prudhvi, others
+
+📒Meeting Outline
+
+E3 Deployment and Environment Configuration
+
+• E3 Deployment Status and Issues  
+  Anand reported progress on the E3 deployment of the Seltzer portal. Initial deployment attempts faced access issues due to an RFC on the US CDO crusade, which was resolved after approval. Deployment was successful in E3, but vault configuration issues remain, which have been escalated to the platform team. Once resolved, API fetching in E3 will be functional.  
+  Mandatory fields and validation messages for self-service have been added, and integration of action buttons (accept/reject pop-ups) is underway but not yet complete.  
+• Vault Configuration and Platform Team Coordination  
+  Partha is handling vault configuration updates by replicating settings from A2 to A3 environments to resolve the current issue. He is expected to complete this within an hour despite traveling. The team agreed to initially mirror A2 configurations to avoid missing any critical settings and will address any new configurations later.  
+• Work Basket DB Integration  
+  Sindhuja highlighted the need for assistance in completing DB integrations for five new work baskets to be deployed live in A3. A call is to be scheduled, preferably on Friday, to discuss this further.
+
+Data Quality (DQ) Rules and Repository Updates
+
+• DQ Repository and Artifacts Table Migration  
+  Ayappa and team discussed the migration of DQ rules from the existing Q Track repository to a new Postgres-based DQ Artifacts table. Approximately 407 records (excluding threshold checks) have been migrated, with threshold checks adding around 900 more records. The total count aligns with expectations.  
+  The migration excludes the newly onboarded UMDL use case, which is pending deployment to E2 and E3.  
+• Bulk Upload and Automation  
+  Bulk upload scripts and CSV formats have been prepared for data loading. The team awaits internal sign-off before engaging the external team responsible for executing the bulk upload. The process is designed to be a one-time load but involves thousands of records, so automation is critical.  
+• Template and Query Updates for New Rules  
+  Ayappa is working on new templates and queries based on inputs from Rachana, targeting completion by Friday. Questions remain regarding some template details, which will be clarified with Sachin.  
+• Modification of Existing Records  
+  The team plans to allow users to modify existing DQ rules via the front end by loading data into the DQ Artifacts table. Existing records created through self-service automation are not modified currently but will be supported for updates in the future.
+
+Data Migration and Validation Activities
+
+• Data Migration Progress  
+  Kuntal reported completion of data migration for one table in the lower environment and ongoing work on another. He also collaborated with Nirmal to resolve issues related to E3 deployment triggered by scheduler changes.  
+• Critical Data Element Identification and Sensitivity Scoring  
+  Bhargav has accessed process log statements and is calculating usage scores. Access to AI information and Q-track tables is pending, which is necessary for further sensitivity score calculations. He has prepared a multivariate check framework to share with Sachin.  
+• System Process Validation and Environment Stability  
+  Sameer is validating system processes, including running dynamic JSON processes for historical data. He raised issues with deprecated content and environment instability, particularly with locks not syncing after 3 p.m., which is being escalated with ACE support.  
+• Production Changes and Cleanup  
+  Ayappa is moving MGM script changes to production, removing duplicate records, and cleaning up print statements in code to reduce log size in the E3 environment. He also updated the DQ Artifacts table in E1 with new templates and conditions based on SQL queries from Prudhvi.
+
+Communication, Scheduling, and Prioritization
+
+• Escalation Email and Bulk Email Updates  
+  Anand confirmed that the escalation email issue was fixed by adjusting the scheduler to run only on weekends to correctly calculate business days. The bulk email feature is now live, though validation is pending due to environment instability.  
+• Blocked Tickets and User Inputs  
+  Some tickets remain blocked awaiting user inputs. Jason confirmed a meeting with the Looney team to finalize requirements by end of day. These tickets will be marked as blocked accordingly.  
+• CD Framework Initiative Priority  
+  The team was reminded that the CD Framework initiative has strict deadlines and is currently the top priority, which may affect response times for other tasks.  
+• Technical Difficulties and Screen Sharing Issues  
+  Some participants faced issues viewing shared screens due to WebEx problems, which will be addressed with IT support.
+
+📋Overview
+
+• E3 deployment progressed after resolving access issues; vault configuration pending platform team update.
+• DB integration for new work baskets needs scheduling and coordination.
+• DQ rules migration to new repository table is underway with bulk upload automation planned.
+• Data migration and validation activities are ongoing with some access dependencies and environment stability challenges.
+• Escalation email and bulk email functionalities have been addressed; some tickets blocked awaiting inputs.
+• CD Framework initiative is the highest priority, impacting other deliverables and response times.
+• Communication and technical issues were noted and will be followed up.
+
+🎯Todo List
+
+• Partha:  
+  • [ ] Complete vault configuration update from A2 to A3 environments within the next hour and confirm completion.  
+• Sindhuja & Platform Team:  
+  • [ ] Schedule and conduct call (preferably Friday) to finalize DB integrations for the five new work baskets in A3.  
+• Ayappa:  
+  • [ ] Complete new templates and queries for DQ rules by Friday.  
+  • [ ] Coordinate with Sachin to clarify template-related questions post data loading.  
+• Internal Team (TBD):  
+  • [ ] Provide sign-off for bulk upload CSV and script execution approach for DQ repository migration.  
+• Jason:  
+  • [ ] Finalize user requirements with Looney team and provide updates by end of day.  
+• Anand:  
+  • [ ] Follow up on environment stability and bulk email validation, aiming for resolution by tomorrow.  
+• Bhargav:  
+  • [ ] Obtain access to AI information and Q-track tables to continue sensitivity score calculations.  
+  • [ ] Share multivariate check framework with Sachin by tomorrow.  
+• Sameer:  
+  • [ ] Continue system process validation and escalate environment lock syncing issues with ACE support.  
+• Kuntal & Nirmal:  
+  • [ ] Continue data migration and scheduler updates; coordinate with Sachin as needed.  
+• IT Support:  
+  • [ ] Investigate and resolve WebEx screen sharing issues reported during the meeting.
+
+Transcription
+
+00:00:35 - 00:02:42 Unknown Speaker:
+
+Can you hear me? We can start right? You Anand is with you. Okay, I see him here. Um, yeah, and see, can you please start with your updates and do the validation for that? Um, that is on the UMDL and on the UM, the Walmart fix. I, um, I made some analysis on the tissue. So, uh, I have to once connect with the original that maybe I'll connect with her after this DSU call. Yeah, sure, answer Thank you, yeah, hi all, good evening. So I was working on the E3 deployment of the Seltzer portal, so last Friday we tried to deploy it. But I was getting some access issue. Because we had the RFC on the U.S. CDO crusade to come from Samir. And today, after raising the access and got approved, we were able to deploy those changes in E1, sorry, E3.
+
+00:02:42 - 00:03:34 Unknown Speaker:
+
+But currently we are facing one issue related to some vault configuration, which I have already raised in the platform team, so I'm checking with them. Once the configuration is done, probably will be able to fetch the API also in E3. But from this, the invite changes are done for self-service, like I've added the mandatory field for required ones. So with respect to that, the validation and the messages which visit, that has to be shown. Also, I'm working on the integrating the buttons. So basically, the proof is it was started a day before yesterday, I mean, in the last working day. But it's not completed yet since for the Ether department. So I'm continuing on that too, where we'll be showing a single pop-up or reject and the accent, so yeah, that's all from my section.
+
+00:03:34 - 00:04:21 Unknown Speaker:
+
+We'll be closing this. Uh, just one thing. Those configuration will be updated by platform template. Yeah, I just connected with Partha now. So I've showed him the issue and even I shared him the last conversation we were going through. So I just mentioned him to just put the same configuration whatever we had in A2 to A3. Because we were facing the same issue in A2 also and team resolved in the previous chat. So he mentioned he'll be just doing it and he might be travelling from office to home in an hour. So he'll do that and let us know. I've already pinged on the group, Slack channel. Yeah, yeah, I saw that. I thought it will be from our end or from platform, just to check with him. He mentioned. So there are two things.
+
+00:04:21 - 00:05:13 Unknown Speaker:
+
+So one is, like, basically we can do through Intrabot also, where we have to look at the environment and the URL. But for now, I mentioned him, like, we might miss something. We are, like, first time doing this for E3. So just help us move all the configuration which is there in E2. If there are any new configuration or any new issue which is required, we'll be able to just move that in the upcoming days. But for now, just help us to move all the changes in E3 content. Yeah, just follow up with him. Okay, because yes, agreed, I'll follow in some day. Thank you. Also, Sindhija, one thing, as I mentioned, we would need help to get those DB integrators done for the new work basket.
+
+00:05:14 - 00:06:29 Unknown Speaker:
+
+So, that's one thing pending and once that is done, the new 5 work baskets which are there, they will live in A3. Yeah, like I said, set up a call. Generally, it's free on Friday. So, I'm not sure why after Thursday you didn't set up a call on Friday. Today I worked on critical data element identification. So I've got access to the process log statement. So, now I have queried and worked on this table to calculate the usage score and I still have to get access to the AI information table and also Q-track. So, once I have done calculating the usage score based on the process logs. So, after this, once I get the required access, I will work on the further calculation of sensitivity score and all.
+
+00:06:30 - 00:07:33 Unknown Speaker:
+
+And also my coming to the multivariate check, I have finished my preparing the framework and I will be sharing with Sachin tomorrow. So yeah, these are the two I am working on right now. Thank you. Q-track table means which table, Bhargav, you are pointing to? This which I was searching for. Are existing DQ rules from Q Track that is like, DQ, uh, repository, right? Yes, yes, yes, so you are not able to access that table. On Friday I checked, I haven't been able to, but again, I'll check today. And also the API, even when the point is, even if you don't have access, you can, you know, uh, take the you know data dump okay from the load environment and you can proceed so that it's. There will be no dependency on the table.
+
+00:07:33 - 00:08:41 Unknown Speaker:
+
+Okay, okay, okay, yeah, yeah, thank you, thank you, thank you, yeah, so uh. Today I was involved in this. Mainly on the data migration part, so one of the table data migration is done on lower environment, and for another one, I am working on that. Along with that, I was involved in this E3 deployment. There was some changes from the Nearman side. So I connected with Nirmal and then, you know, we analyzed the issue and he fixed that one and triggered that E3 deployment that is successful. So there is some change in the scheduler, one then that I think Nirmal has already connected with Sachin, so he has updated that schedule. Uh, other than that, I connected with, uh, uh. I can say all of the member, you know, and you know we.
+
+00:08:41 - 00:10:37 Unknown Speaker:
+
+We fixed a few of the issue and currently working on this magnetism activity only. That's the update. Thanks, Kuntal. Sameer? Yeah. Hi, Sindhuja. Hi, Tim. So currently, I'm working on the system process validation. So as part of that, like, we have run for four historical, uh, like, four months historical process, the dynamic JSON process. For uh, composer, like when we don't have a dedicated composer, like, uh, for this, you know? So we need, we need to understand like how this works, because, like, whatever the content is, we got there. It is showing as deprecated. So so that's why we have raised an instant to understand that process. Yeah, that's all from my side. Uh, for today, I did that. I added uh mail to the escalation and there was on some duplicate, uh. Resolve that issue.
+
+00:10:37 - 00:11:47 Unknown Speaker:
+
+And right now I'm working on the bulk of that part. Uh, the environment is not stable, I'm still trying to with the ACE people to stabilize it. Uh, the locks are not coming, so I'm talking about that, which environment you are talking about. Even after 3 p.m, the locks, uh, stopped. Okay, it's not getting synced, right? Yeah, it's not getting synced, okay. You raised it on the studio, right? Multiple other people's have based on what happened. No, you also had to raise it. Yeah. That's all. Thanks. Thanks, Nirmal. Ayappa? Hi, Chandra. Hi, Tim. So today I am moving few of the changes to the production. So those are first will be the MGM script changes. That one Rachana is given sign up for that one. So those changes I have configured in the properties file.
+
+00:11:47 - 00:12:32 Unknown Speaker:
+
+So those changes and apart from that one. So three duplicate records we have identified in production. So those things also I am removing. And third one will be our recent, the last Friday. Uh, we have received one spike quad detector in our GCP cloud in E3 environment, so this is related to the logs. So printing more actually. So that's why the size got increased in the composer side. So we have decided to remove the print statements in our code set so that one. I have done the cleanup activity, so these changes also we are planning to go in production in today. Yeah, and uh, apart from that one, um, few of the records. I got an SQL query from the Prudhvi so that new templates description modified one, so that one I have updated in the E1 environment.
+
+00:12:32 - 00:13:36 Unknown Speaker:
+
+And separately, he shared one more query to update the same records into the DQ artifacts table, so those one also. I have mapped similar to whatever the data available in the DQ repository, same data, I just map it to the DQ artifacts as well. On addition that one, there are a few conditions checks was there, uh, from the case when conditions, so those things also. I adopted and updated the, uh, E1 Environment DQ artifacts table, so that is completed. So these are the things from. Yep, just one thing I can see 402 records, okay. So are we going to modify this existing record as well? In the future, I am asking. So what you have in the database is 260 records. The other records were created using the self-service automation tool. So those were not considered.
+
+00:13:37 - 00:14:26 Unknown Speaker:
+
+Our goal is to allow users to modify the existing rule, and we are providing that option by loading the data into DQ Artifacts table. So that's why we have done it now. Existing records, we have not touched it. We only updated the records from DQ repository, what is there now. Except the stagnant check, virtual check, everything we loaded into DQ Artifacts table now. So that can be used using the front end, they can modify that. Resubmit it, that's the plan. So no, you might see more, but actually, we loaded only 260 ml, that is fine. So my point is, you know, are we going to modify anything? Because, see, once I will load in ACe database, right? So whatever you will update from your template or through your script, right on the Lumi side, that will be not synced.
+
+00:14:26 - 00:15:29 Unknown Speaker:
+
+Yeah, for now, what I discussed with such an easy, it's okay, giving some changes. Also. We can do it later since it's not in production. So for now, go ahead and create it so that you guys can complete out all of mine. Meanwhile, if some changes are coming for a few of the records, we'll update it, we'll give you update points. Okay, fine, fine, then I will. I will try to automate it anyway. Okay, that is fine. Yeah, thank you. Yeah, thank you. Uh, yeah, that's all about for mine. With respect to that, what I have said, right? So we I with loading the data from DQ repository, updating the data into DQ repository, but also loading it into DQ Artifacts tables. And I also started working on templates for the new rules, new descriptions, that given by Rachela.
+
+00:15:29 - 00:16:31 Unknown Speaker:
+
+I'm targeting to close it by Friday. But I started working on it already now. I should be closing it in the next two days. All those templates, queries. There are few questions related to that. I have to discuss with Sachin after loading the data. I will check with him. If he is free, I will connect with him for 10 minutes and get out the requirements so that it is easy for me to do the development. It's between. So the tickets that are assigned to me in this print are still impeded. We are waiting for user inputs. Jason confirmed today morning that he has a meeting with Looney team and he'll come with the requirements probably by end of day today. Can you just mark them as blocked? If that's the case? Sure.
+
+00:16:34 - 00:17:54 Unknown Speaker:
+
+Uh, yeah, whatever reason you just stated and mark them as blocked? Okay, okay, yeah, thank you. Yeah, I can see. Here there is one UH tab is there that is called DQ Repository extract. 1262 entries are there, correct? What is this about? If you can brief me? So this is the current DQ repository table that we have, uh, like our Q track one. And uh. We are modifying it to match the new table uh that we have set up in, Uh, postgres, the new table structure. So I've used all the current rules as an input and created that spreadsheet. Then just one, okay, okay, let's close this call, then I will connect with you. Maybe PIT3 and IAPA will be needed along with you. We'll check this out. Okay, sure. Sundeja, please go ahead.
+
+00:17:56 - 00:19:08 Unknown Speaker:
+
+So, Mani? Yeah, hi, Sundeja. Hi, everyone. Actually, I'm working on the AFC TLS. I moved to the production and I'm waiting for the validation. I shared with Rachana this mail regarding TLS. In between, I also started working on the YouTube, the new use cases, the new rules I got from Rachana. I started working on that. I already built. I'm waiting for that, the DQ repository table we need to create for that one, I'm waiting for that one. And the RESI one, the same thing, uh, the SHA one. Uh, I need to. We need to come up with the JSON for this, the RESI one. Yeah, so when Rachana dropped off, anything else if you wanted to? Yeah, actually I need the AFC, TLS part, the validation is going on.
+
+00:19:09 - 00:19:56 Unknown Speaker:
+
+I have shared with the attachment with Rachana, but in this attachment we don't have the data. I want to know in this week we have any alerts or not? Okay, okay, sure, you can just drop her a message. I think on slap, probably she can get that. But I just wanted to call out. I think this to the entire team, right? Uh, so there is the CD Framework initiative that is going on, uh, and which has like, very strict deadlines at our end. So that's why I think you'll see pretty much like right now, caught up. I think with that mostly for at least like three, four weeks, uh, coming going forward as well. So I mean, even even from a product standpoint, I think rest all initiatives are at least like, like this one is like the topmost priority for us right now.
+
+00:19:56 - 00:20:55 Unknown Speaker:
+
+So that's where I think you, you might see, like it's not able to like, respond, uh, in that particular, uh, quick fashion, right where she typically does. But I think she will be able to mostly answer your questions, uh, in a day or two. Sure, I just wanted to give that heads up to everybody. Okay, that's it, thank you, thank you someone, um, anything else. Team? Yeah, yeah, just one thing I wanted to check. So I'm not sure if you already covered this. Uh, and I missed it, uh, but just wanted to check on that mail that you sent out. Uh, that escalation email thing, right? Uh, yeah, yeah, it's, uh, it's, it's fixed, actually. Anand what happened is like it, uh. I got the seven business day, but the scheduler runs that job on every day, so on weekend the business day was for the like.
+
+00:20:55 - 00:21:56 Unknown Speaker:
+
+If you calculate, the seven business day of before is third of June, so for Sunday, Saturday and Monday, the same mail got triggered. You can see the dates are so right now. Uh, please schedule the job to only run on the weekend so that the weekdays will be calculated. Okay, okay, okay, um. But anyway, the bulk email thing is also live now, right? Yeah, it's live. Okay, perfect. I remember I think last week when you were going to push it, so I was not available at that time, so I was not able to check. What about the bulk update, Anand? Yeah, validation in, Uh, even the environment is not stable yet. Uh, so I'll be getting it now by tomorrow, I guess. But okay, okay, got it. Sure, I just wanted to check these two things.
+
+00:21:56 - 00:23:39 Unknown Speaker:
+
+Yeah, thank you, thanks. Um, we can discuss this part. Okay, regarding this data. Thanks everyone, thank you, thank you. So let me quickly save my screen. Okay, so this and let me know if you guys are able to see it. One second. Okay, so, uh, this is the data I can see in the exercise one. Okay, no, I'm still not able to see. No, no, not able to see your screen. Okay, okay, let me share it again. Maybe, uh, so my website share the screen. If you have any faces you don't have the file, right, you that is the mail, right. You are discussing about this. Even I have got that final content. Ah, okay, okay. If ever you have, then, uh, please say that I think there's a problem with, uh.
+
+00:23:40 - 00:24:52 Unknown Speaker:
+
+My WebEx, I will check with the IT team. That's fine. Yeah, please sit. Is this one discussing about? Your screen is coming up just a second. 100%, I am not able to see. I think there's some issue with your WebEx, right? Okay, let's see. If you are able to see, right, let's see, there are around 1, 2, 6, 3 or 6, 4 something record are there, right? 1,000. In shape 2, I have that. In shape 2, yes. 1, 2, 7, 4. Okay, that is DQ repository extractor. Extractor. So now the thing is, when you migrated it, right, How come I am getting 402 records? And then what you migrated? Exactly? Okay? So previously, uh, the DQ artifact table, right? So 115 records is there for a testing purpose created.
+
+00:24:52 - 00:25:51 Unknown Speaker:
+
+Uh, that is mentioned by Prudhvi, actually, okay, and later whatever, the DQ repository, uh, we have a DQ roles, right? Except the threshold check type, okay, so those are comes around 287 records was there, so total it will comes under 407 records, so it is there in the DQ artifacts table. Except. Threshold check, right? Yeah, I accept threshold check. How many are there for threshold check? Then threshold check? Around? It will come 900 change plus 900, yeah, below thousand, so overall count will be same, right? But what is this? Correct? Yeah, yeah, yes, correct, yeah. And one more thing, um, I.I excluded only UMDL use case, actually, because Synthesis last Friday only onboarded this use case. So still, these are not moved to E2 and E3 also, so that's why I excluded only that particular one.
+
+00:25:51 - 00:26:48 Unknown Speaker:
+
+And remaining all DQ rules are more so. One more thing is, uh, so Ayapa, we have all the records, right? Not only okay records, right? Yeah, yeah, so all records we want. Okay, okay, fine, yeah, no. Why? Why I am asking is because the same but the same data is supposed to, you know, going forward in the production or E2 environment, right? The data is massive. Don't worry about that one now, don't worry about that now, you focus on the implementation part. Definitely, this will not be the final list and we will have a lot of changes in future, so don't worry about that one. So focus on what needs to be done. With respect to back end, just load the data. This I have discussed with Sachin, also, Sachin also aware that this will not be final.
+
+00:26:48 - 00:27:39 Unknown Speaker:
+
+And you'll have a lot of changes in this data that I got it. But the count should not, you know, uh, it's not like that that you can misplace the count, right? Implementation for 100,000 records. It will be same. What's happening is you have already some entries created from the front end for testing. There are 112 or 120 records created from the front end. That record is also there in the DQ artifacts table. And even our table it is there and their side also it is there. No, my point is No, no. One second. My point is how data, you know, you know how data is falling to this table, take your artifact, how it is coming to that table. Uh, this guy has written a script, right? Normal has written a script.
+
+00:27:39 - 00:28:38 Unknown Speaker:
+
+He'll receive the FTP file. Okay, okay, got it from this bulk upload. We are doing this activity. Okay, okay, okay, so right now we have this data. Okay, then it is fine. Okay, I got that flow. Oh, it's just one thing you. I can see that there's a SQL script is also attached with it, right? Yeah, so why I did that was, you know, I had put this entry like a few a week ago or so, something like that, right? So if you want the latest data, like whatever is there in E3, you just have to run the script, take the data extract and paste in that in that second tab. So you'll get all the new rules modified accordingly and you'll get the SQL scripts generated. Uh, that I got it again.
+
+00:28:38 - 00:29:27 Unknown Speaker:
+
+The point is who will execute this one manually? You know, one by one got my point. No, it's just one script, right? It's just one time entry, it's just gonna be one. Yeah, yeah, it will be one time load, but still we have thousand plus records, right? So we cannot do it manually. Why not? Oh well, no, I think, uh, uh, no, we are not gonna do it. I think there's another team who's gonna help us out with this. Yeah, so they were expecting it in a CSV format itself, so we have created the CSV format as well as we have created the insert scripts, like whatever suits them. We, uh, I mean, we are still awaiting our internal team sign off before we can approach them and see how they want to execute.
+
+00:29:27 - 00:30:37 Unknown Speaker:
+
+Oh, okay, this is the query for TQ Quality check, Don't write quality table rule. Okay, and did you executed any of this? It worked, and that means, yeah, the insert statements would work. Yes, you validated it, right? Yeah, I did. Okay, let me see. Okay, so what you are doing? You are downloading a CSV, putting it here, right? That's it. I can see. That concrete statement is there, Concat? And yeah, all those like last of the fields are derived, like. I can see this math function is defined here. Okay, let me check this. Even it will solve my problem. I was thinking to automate it. Yeah, even I was thinking to automate it. I don't have a connectivity with the HTTP. I don't know how I can do it on my local system.
+
+00:30:39 - 00:31:23 Unknown Speaker:
+
+Local you can do it. Local you can do it. But that is for even value. For higher environment, we don't have access. So we have to save them in the Excel form at home. VIMAL BALAGGARANANTHAMIKAVARANTHAMIKAVARANTHAMIKAVARANTHAMIKAVARANTHAMIKAVARANTHAMIKAVARANTHAMIKAVARANTHAMIKAVARANTHAMIKAVARANTHAMIKAVARANTHAMIKAVARANTHAMIKAVARANTHAMIKAVARANTHAMIKAVARANTHAMIKAVARANTHAMIKAVARANTHAMIKAVARANTHAMIKAVARANTHAMIKAVARANTHAMIKAVARANTHAMIKAVARANTHAMIKAVARANTHAMIKAVARANTHAMIKAVARANTHAMIKAVARANTHAMIKAVARANTHAM. Thank you. Thank you. Thank you.
+

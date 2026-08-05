@@ -1,0 +1,854 @@
+2026-06-16 Data Quality Rule Migration and Validation Meeting
+
+Creation Time: 2026/06/16 16:58
+
+
+📅About Meeting
+
+• Date & Time: 2026-06-16 16:58
+• Location: Virtual Meeting (with some participants facing connectivity issues)
+• Attendee: Sachin, Kundan, Aapa, Prithvi, Ather, Nirmal, and others
+
+📒Meeting Outline
+
+Data Quality Rule Migration and Validation
+
+• Stagnant Data Check to Timeliness Check Change  
+  The team discussed a late-requested change where all "stagnant data check" entries need to be renamed and treated as "timeliness check" in the UI dropdown and backend. This change is to be reflected first in the CUI environment for validation before migrating to Lumi, where alerts are already being used. Ather will notify the exact dropdown name for implementation.
+
+• Field Mapping and Default Values for Migration  
+  Various fields such as "null valid," "latest version in," "approve in," "complex in," and "account in" were reviewed for appropriate default boolean values. It was agreed that "approve in" should be true for all records, "complex in" and "account in" should be false. Some fields like "business justification" are to be left blank for now. The "use case ID" mapping requires special handling due to one-to-many relationships.
+
+• Data Migration Script and Issues  
+  The current migration approach using direct insert queries was found problematic due to incomplete field mapping and missing records. Sachin and team emphasized the need for a scripted approach that generates SQL inserts with correct parameters and mappings, including the use case ID. Aapa and Prithvi are responsible for updating and validating the migration scripts. The total records to migrate are about 230, with some exclusions.
+
+• Validation and Synchronization with DEC Repository  
+  The team reviewed the mapping between the DEC repository and the target Postgres schema, focusing on columns like DQ ID, var name, table name, filter criteria, frequency, and description. It was confirmed that some fields like rule ID, var ID, and table ID are removed and should not be mapped. The team is ensuring that the migrated data matches the DEC repository accurately.
+
+• Connectivity and Availability Concerns  
+  Several participants faced internet connectivity issues due to weather conditions, impacting meeting efficiency. Sachin emphasized the importance of being in the office during critical migration phases to avoid delays and ensure continuous support. Backup plans and resource readiness were discussed to mitigate risks from unexpected absences.
+
+• Next Steps and Urgency  
+  The team agreed to complete the migration and validation process on the same day. Everyone involved (Prithvi, Aapa, Ather, Kundan) must remain available until confirmation of successful data migration. Sachin stressed the need for prompt closure and readiness to work late if necessary.
+
+📋Overview
+
+• The stagnant data check is to be renamed and handled as timeliness check in both UI and backend.
+• Default boolean values for key fields were finalized to ensure consistency in migrated data.
+• Current manual migration queries are insufficient; a scripted, parameterized migration approach is required.
+• Mapping between DEC repository and Postgres schema was clarified, with some fields dropped and others specially handled.
+• Connectivity issues are affecting progress; team members are urged to work from the office during critical times.
+• The migration and validation process must be completed today with all key members available for support.
+
+🎯Todo List
+
+• Ather:  
+  • [ ] Provide exact dropdown name for timeliness check to Kundan, ASAP  
+  • [ ] Mark stagnant data check as timeliness check in frontend development, ASAP  
+
+• Kundan:  
+  • [ ] Implement timeliness check changes in the UI and backend as per Ather’s input, ASAP  
+  • [ ] Set default boolean values: approve in = true, complex in = false, account in = false, ASAP  
+  • [ ] Coordinate with Aapa and Prithvi on migration script execution and data validation, ongoing  
+  • [ ] Confirm no new records are inserted until migration is finalized, ongoing  
+  • [ ] Be available until migration closure, including late hours if needed  
+
+• Aapa:  
+  • [ ] Share and validate the updated migration insert and update queries with Kundan and Prithvi, within 1.5 hours  
+  • [ ] Ensure use case ID mapping is correctly handled in migration scripts, within 1.5 hours  
+  • [ ] Confirm all check type updates are reflected in the DEC repository, ASAP  
+  • [ ] Participate in validation and troubleshooting during migration, ongoing  
+
+• Prithvi:  
+  • [ ] Support Aapa and Kundan with migration scripts and data validation, ongoing  
+  • [ ] Keep backup copies of queries and mappings for continuity, ASAP  
+  • [ ] Assist in verifying frequency and other field mappings, ASAP  
+
+• Sachin:  
+  • [ ] Monitor overall migration progress and coordinate team availability  
+  • [ ] Provide clarifications on mapping and default values as needed  
+  • [ ] Ensure team adheres to office presence policy during critical phases  
+
+• All Team Members:  
+  • [ ] Ensure stable internet connectivity or work from office during migration  
+  • [ ] Communicate immediately if unable to join or support migration tasks  
+  • [ ] Participate actively in validation and issue resolution until migration completion
+
+Transcription
+
+00:00:00 - 00:00:05 Unknown Speaker:
+
+I didn't. We paused a print. Correct. Then business POC, NM is this one. Next.
+
+00:00:06 - 00:00:33 Unknown Speaker:
+
+धीरे से, धीरे-धीरे। ग्रुप ईमेल आईडी? लोड टाइप ठीक है। फिल्टर क्राइटेरिया ठीक है। Then— नहीं, NM ही। फिल्टर क्राइटेरिया नहीं, फिल्टर क्राइटेरिया NM। हाँ, हाँ, वही। फिल्टर क्राइटेरिया NM is same as फिल्टर क्राइटेरिया। इसमें, हाँ, इस तरह का डेटा। वही मैं कह रहा था। Correct. फिल्टर कंडीशन ठीक है। Then filter var name is this. Then checkType is this.
+
+00:00:33 - 00:00:40 Unknown Speaker:
+
+हाँ, इसमें एक और चेंज होगा। Whichever you see is as stagnant data check, mark those as timeliness check.
+
+00:00:42 - 00:00:59 Unknown Speaker:
+
+सारे stagnant data check को mark it as timeliness check. Ather just ping him that exact name which is there in the dropdown. तो ये main data में नहीं होना चाहिए था। किस main data में? On the Lumi side.
+
+00:01:01 - 00:01:13 Unknown Speaker:
+
+No, no, no. This is a change they have requested quite late to us. So they made this stagnant data check as timeliness check. आपको सिर्फ frontend पे दिखाना है, right? No.
+
+00:01:13 - 00:01:21 Unknown Speaker:
+
+So it would be updated in that Lumi also once we finalize over here. Then let's do the migration there now.
+
+00:01:23 - 00:01:32 Unknown Speaker:
+
+No, no, man. That's what. Let them validate over the CUI first, Kundan. Once they finalize this, then then we would move it to the Lumi. Lumi.
+
+00:01:33 - 00:01:51 Unknown Speaker:
+
+Because Lumi people are already using. They are getting those alerts, right, if there is a rule failure. So they need to communicate these to the end user. We won't be able to take the decision right now. But in order to support the frontend right now, all the stagnant data check should be changed to the timeliness check, which Ather would ping you in a minute.
+
+00:01:52 - 00:01:56 Unknown Speaker:
+
+ठीक है। So for stagnant data check, we have mapped to lookback period.
+
+00:01:58 - 00:02:05 Unknown Speaker:
+
+Okay. Do we have a check called stagnant data check, Ather? No, no. Right. So that is a— What is the name?
+
+00:02:06 - 00:02:30 Unknown Speaker:
+
+Timeliness check होगा एक UI के dropdown में। उसे करना है हमें। वो मुझे ping कर दीजिए। आप, मैं कर देता हूँ। Okay. ठीक है। Now, now tell me— एक सेकंड, just one second, Sachin हाँ। जब ये Nirmal will export this data and you know, push it to the Lumi, right? तो वहाँ भी उसको handle करना पड़ेगा? Again from timeliness check to stagnant check? No, no, no.
+
+00:02:30 - 00:02:32 Unknown Speaker:
+
+You would be modifying it over here, right?
+
+00:02:33 - 00:02:52 Unknown Speaker:
+
+यहाँ तो मैंने— New rule. नहीं, नया rule जितने भी onboard होगा, उसमें वो already आएगा timeliness check। वो stagnant data check आएगा ही नहीं। इसको rename किया जा रहा है, बस। नहीं, नहीं, correct, agree। अब मैं कह रहा हूँ कि जब ये data हम लोग वापस Lumi में भेजेंगे AS से। ये नहीं होगा ना? ये तो हो गया ना, matching हो गई, right?
+
+00:02:53 - 00:03:09 Unknown Speaker:
+
+इसी वजह से तो Lumi से आ रहा है। जो थोड़ा बहुत cosmetic changes हैं, that we will incorporate at Lumi side to match the data। ठीक है, आप मुझे ping कर दीजिए। मैं कर देता हूँ। Now this is the description. Go to the valid value text. Hold on.
+
+00:03:10 - 00:03:22 Unknown Speaker:
+
+It is not there. Null field is false. Null valid in from where you get it as false, man? Default boolean है, Sachin। आप empty नहीं रख सकते। Okay.
+
+00:03:24 - 00:03:32 Unknown Speaker:
+
+But this also we have to check with threshold. Yeah, correct. And then mean threshold, max threshold, सारा का zero है। Next, let's go to the next step.
+
+00:03:34 - 00:03:37 Unknown Speaker:
+
+Aggregate type NM। हाँ, that is should be a blank.
+
+00:03:38 - 00:03:49 Unknown Speaker:
+
+Margin 50 should be blank. History date is zero. Business justification is blank. Latest version is— Latest version in why it is false? Boolean.
+
+00:03:50 - 00:04:00 Unknown Speaker:
+
+So then these are true, right? That's what you have to provide me a default value. What do you want? Right now I kept it false. It should be true.
+
+00:04:01 - 00:04:28 Unknown Speaker:
+
+One second. Latest version in you want true, right? Actually, you know, latest versioning we thought of making it, but as it is supporting a primary key, right, इसके वजह से इसका use नहीं रह गया है। That is something we need to check with the DBA team. Latest version in, if you remember, we decided, right, like when there would be a new request for that particular rule ID, right, there would be another entry over here. But वो अभी नहीं हो पा रहा है। Approve in should be approve, right?
+
+00:04:28 - 00:04:32 Unknown Speaker:
+
+Approve, reject, जो भी भेज रहा है वो। Default value?
+
+00:04:35 - 00:04:45 Unknown Speaker:
+
+Approve in should be true right now. All the routes are approved. हम्म। All should be true. Complex should be false. Complex in should be false.
+
+00:04:45 - 00:04:49 Unknown Speaker:
+
+And this account in? False.
+
+00:04:52 - 00:04:56 Unknown Speaker:
+
+What is this approve in and account in differences, man?
+
+00:04:58 - 00:05:21 Unknown Speaker:
+
+Okay. Why there is a two? Can you open a Excel sheet that I have given you for a mapping? मेरे पुराने system में था, Sachin। वो अभी नहीं मिलेगा मुझे। ओके, मैं, मैं देखता हूँ। मैंने Sravan को भेजा था recently। Hey, I have one more thing. Why this create user ID you kept blank?
+
+00:05:24 - 00:05:27 Unknown Speaker:
+
+The updater one you updated by yours, and this one you missed it.
+
+00:05:30 - 00:05:37 Unknown Speaker:
+
+Leave it. That's fine. Okay. For my— our migration side, what I am doing is I am putting your name okay.
+
+00:05:47 - 00:05:51 Unknown Speaker:
+
+ठीक है। By that time, what I am doing is— कहाँ गया ये?
+
+00:05:53 - 00:06:19 Unknown Speaker:
+
+इसको तो पहले मुझे delete करना पड़ेगा, पूरे को। Oh my God.
+
+00:06:21 - 00:06:22 Unknown Speaker:
+
+That is funny.
+
+00:06:28 - 00:06:35 Unknown Speaker:
+
+Look, what is there? I'll share my screen and then just let me know, okay? You can stop sharing.
+
+00:06:37 - 00:06:37 Unknown Speaker:
+
+Yeah, go ahead.
+
+00:06:39 - 00:06:53 Unknown Speaker:
+
+Stop sharing. First of all, stop sharing, then only you would be able to view my screen. That is done. Right. Now, rule ID is done, var ID is done, use case ID, subject ID, var name, table name, var type name.
+
+00:06:55 - 00:07:12 Unknown Speaker:
+
+Data quality rule ID, rule ID is done. POC, this one. Table, filter criteria, this done. Name, this this. Valid value, null valid is— Null valid in, it is already there in the DQ repository.
+
+00:07:12 - 00:07:32 Unknown Speaker:
+
+It's include null as invalid. ये भी filled है, ठीक है। Mean already है, max already। Aggregate type name is as aggregate। Allowed margin भी already है। Lookback period is your history date city. So did we entered any result to this history date city?
+
+00:07:33 - 00:07:34 Unknown Speaker:
+
+One second.
+
+00:07:36 - 00:07:43 Unknown Speaker:
+
+There is a— There is a field in the lookback period in the DQ repository. Did we map that to history date city? Prithvi and Aapa.
+
+00:07:49 - 00:07:58 Unknown Speaker:
+
+Yeah, sorry. Can you come back again, Sachin? Did we mapped this lookback period to history date city? History date city.
+
+00:08:00 - 00:08:13 Unknown Speaker:
+
+Now share your screen, Aapa. I know there is a data migration issue. I'll share it to you and then let's map it. Share your screen. Okay.
+
+00:08:15 - 00:08:20 Unknown Speaker:
+
+Show me your insert query that you did. The mapping that you were doing.
+
+00:08:21 - 00:08:26 Unknown Speaker:
+
+Show me your insert query.
+
+00:08:27 - 00:08:27 Unknown Speaker:
+
+Yeah.
+
+00:08:30 - 00:08:36 Unknown Speaker:
+
+So this is the insert. This is the update one. No, no, one second. Just close this one.
+
+00:08:40 - 00:08:44 Unknown Speaker:
+
+और ये data migration कब तक चलेगा?
+
+00:08:46 - 00:09:01 Unknown Speaker:
+
+See, that script is ready, okay. So now the thing is— आपको delete करना पड़ेगा सारा record। हमें दोबारा— You can delete it, right? We need to do this. That is done, okay. With the new changes I already adopted it.
+
+00:09:01 - 00:09:13 Unknown Speaker:
+
+But the thing is कि वहाँ से सही migrate हुआ है या नहीं, that is— नहीं हुआ है, नहीं हुआ है, नहीं हुआ है। Now, parallelly, can you open the screenshot that I have given to you, Aapa?
+
+00:09:17 - 00:09:20 Unknown Speaker:
+
+Go to your Slack. There is a screenshot I have given to you.
+
+00:09:26 - 00:09:26 Unknown Speaker:
+
+Aapa?
+
+00:09:34 - 00:09:37 Unknown Speaker:
+
+Aapa, you are— we are not able to hear you.
+
+00:09:41 - 00:09:48 Unknown Speaker:
+
+And guys, those who are facing issues or challenges with the internet connectivity, please be in office.
+
+00:09:52 - 00:09:56 Unknown Speaker:
+
+These interruption delays the, you know, timelines.
+
+00:10:00 - 00:10:08 Unknown Speaker:
+
+Either have a better connectivity in the home. In case you are not having that connectivity, then be there in office from 11:30 till 8:30.
+
+00:10:17 - 00:10:25 Unknown Speaker:
+
+तो Prithvi, you have that script, right? You can go ahead and share it. No, no, no. He is not having it. Aapa is having it.
+
+00:10:28 - 00:10:32 Unknown Speaker:
+
+No, no, mapping part who has worked? Prithvi, you were also involved, right?
+
+00:10:38 - 00:10:50 Unknown Speaker:
+
+He is also involved. But query got executed by Aapa. He did make some changes to that query also. That's what we were discussing in the morning. You have that mapping, right?
+
+00:10:50 - 00:10:59 Unknown Speaker:
+
+Mapping table with you, right? So if you can share your screen, we can match it there also. No, leave it. It would be Aapa only, man. Even he joined through his phone.
+
+00:10:59 - 00:11:04 Unknown Speaker:
+
+He did not join through his system, Prithvi. Oh. Right?
+
+00:11:05 - 00:11:10 Unknown Speaker:
+
+Correct, correct. I didn't saw that too. No, I do have a join for both. Both, yeah.
+
+00:11:13 - 00:11:14 Unknown Speaker:
+
+Yes, Aapa. Yes, Aapa.
+
+00:11:25 - 00:11:36 Unknown Speaker:
+
+Let's wait he is joining. No, and, and, you know, if— if you guys really face challenges in home, please be there in office.
+
+00:11:40 - 00:11:57 Unknown Speaker:
+
+Aather, till the time he is joining, right? Prithvi, can you share your screen? Can you— let's see what is there in UI now, in the event environment. Or Kundan, you deleted all the record? I deleted and inserted again, Sachin, so all the record are— Okay, let's— let's see.
+
+00:12:00 - 00:12:07 Unknown Speaker:
+
+I'm sharing my local. Yeah, yeah. Yeah, yeah, yeah. That's fine. You modify one, I have made those changes, Sachin.
+
+00:12:08 - 00:12:15 Unknown Speaker:
+
+Yeah. अभी देखो, data अभी भी थोड़ा सा— अभी तो ठीक लग रहा है। नहीं, अभी सही है ना?
+
+00:12:17 - 00:12:19 Unknown Speaker:
+
+ये frequency सही उठाया है? Weekly?
+
+00:12:22 - 00:12:29 Unknown Speaker:
+
+मुझे doubt हो रहा है। Frequency is mapped to which property, Aather? One second.
+
+00:12:35 - 00:12:49 Unknown Speaker:
+
+अब आप— means, you all guys just analyze, right? I should not be spending 8 hours just for this when I have 4 resources for SRE. See, that is frequency type NM. Table load frequency NM, right?
+
+00:12:51 - 00:12:55 Unknown Speaker:
+
+So that table load frequency NM is mapped to, I'll tell you.
+
+00:12:57 - 00:13:12 Unknown Speaker:
+
+No, that is frequency type only. Weekly, monthly, daily. Hold on. Table load— table load frequency is— name is mapped to table load frequency only. So these are the thing I need to verify with Aapa, whether he has sent it correctly or not.
+
+00:13:15 - 00:13:24 Unknown Speaker:
+
+Okay. And please make sure we are not inserting any record— any new record to these one until I confirm you guys.
+
+00:13:26 - 00:13:43 Unknown Speaker:
+
+Otherwise— In even also, Sachin? In even also. But let— let hold that process right now. And even if you are inserting, just do let us know so that we will delete that from the backend. Because this is the same record which would be moving to the production environment.
+
+00:13:43 - 00:14:01 Unknown Speaker:
+
+From here it would move to E2. And from E2— So this initial validation we are doing on even, right? So once done, then we will just get a business sign-off on E2 and then I'll ask the DBA team to migrate it to E3. And then we'll mark this process as live in production environment.
+
+00:14:02 - 00:14:02 Unknown Speaker:
+
+Okay.
+
+00:14:05 - 00:14:12 Unknown Speaker:
+
+Just cross-check randomly few records, right? Look, hold on. Hold on, hold on. उसको open करो। Open that one. Open that one again.
+
+00:14:13 - 00:14:24 Unknown Speaker:
+
+Same one? हाँ, हाँ, same one. यहाँ देखो, allowed values क्यों blank आ रहा है? Description में देखो। Role description? हाँ, role description.
+
+00:14:26 - 00:14:41 Unknown Speaker:
+
+नीचे देखो ना, the one that you have created. उसी— उसी में scroll करो। देखो, allowed values blank आ रहा है क्योंकि— हाँ, यहाँ, यहाँ नहीं है ना कुछ। यहाँ data नहीं है इस— इस record के लिए, right? तो— और ये mandatory है। Which property it is?
+
+00:14:43 - 00:15:06 Unknown Speaker:
+
+One second. इसको देखेंगे? हाँ। एक काम करोगे, Aather, सारा key values का mapping डाल दो you वहाँ पे। Group में डाला हुआ है? डाला हुआ है ना? ये already share किया हुआ है। और इस— इस screenshot से map करना, मैं आपको भेज रहा हूँ, forward कर रहा हूँ। ये group पे ही मैं भेजूँगा। मैं— मैं group पे ही भेज रहा हूँ, ठीक है?
+
+00:15:07 - 00:15:21 Unknown Speaker:
+
+ठीक है। ये group पे है। अब आप मेरे को बस ये बताओ कि ये mapped सही है कि नहीं है। Give me a second. क्या group का नाम है?
+
+00:15:23 - 00:15:34 Unknown Speaker:
+
+US consumer? नहीं, यहाँ पे नहीं। Now, can you compare is the mapping matches with your or not?
+
+00:15:41 - 00:15:51 Unknown Speaker:
+
+दो अगर screen if you can able to open it. Download इसे कर लो, side by side if you can open it. And we need to focus on L and M column. Don't see A, B, C.
+
+00:15:56 - 00:16:07 Unknown Speaker:
+
+इसमें क्या map करेंगे? मैं— मैं बता रहा हूँ ना, इसे आप— इसे आप close करो और अपना mapping एक तरफ खोलो and then sideways इसका mapping open करो। ये mapping है हमारा?
+
+00:16:07 - 00:17:08 Unknown Speaker:
+
+नहीं, जो mapping आपने भेजा है उसे open करो, हाँ। अच्छा, जो group में भेजा है mapping। Group में जो group में आपने भेजा है। जी, जी। तो मैं वो बता दूँगा कि वो mapping सही हुई है या नहीं mapping हुई है। ठीक है, ये देखिए, ये— और image मैं— DQ ID तो DQ ID के साथ चला गया, ठीक है। var name है, ठीक है। table name है, ठीक है। var type name देखो, है var type name। business POC name, business group address। table load frequency name। To check the frequency.
+
+00:17:08 - 00:17:10 Unknown Speaker:
+
+Table load frequency is there, right?
+
+00:17:11 - 00:17:29 Unknown Speaker:
+
+You can see that it's there. Filter criteria NM। Filter criteria NM। var name। Data quality role type NM। Where it is. This one. Okay, हाँ। And then role description is there. Valid value text.
+
+00:17:30 - 00:17:51 Unknown Speaker:
+
+Null valued in. Min max aggregate type name। Accurate margin city। Right? Hyst day city। Hyst day city भी है। Business justification and created user। Yeah, that is description already. Hold on, hold on. Now, this approve in Kundan.
+
+00:17:52 - 00:18:10 Unknown Speaker:
+
+Approve in जो हम discuss कर रहे थे। Kundan, if you can do one unmute. Yeah, yeah, I'm here. Approve in what exactly you are getting from UI, based on which you are marking that request as approved? हाँ, that is the, you know, once you are getting the data from UI, right?
+
+00:18:12 - 00:18:31 Unknown Speaker:
+
+This is about the migrated data I'm talking. So what default approve? अभी, अभी, hear my question and just answer my question. Based on when you are getting a task in the approver page, once the user clicks on approve, what you are saving in the database right now? That is true.
+
+00:18:31 - 00:18:40 Unknown Speaker:
+
+Then mark it as true for all the records right now. Okay? Okay, that is true. Aather, dev में लिखो, approve in true.
+
+00:18:43 - 00:18:46 Unknown Speaker:
+
+ये follow है? हाँ, this one. As true.
+
+00:18:50 - 00:18:54 Unknown Speaker:
+
+As true. Correct. Whatever boolean. Now go to that screenshot again.
+
+00:18:57 - 00:19:00 Unknown Speaker:
+
+Now complex in mark it as false.
+
+00:19:08 - 00:19:21 Unknown Speaker:
+
+नहीं हो रहा है वो। As false। आप एक बार Kundan या जो भी करेंगे ना, एक बार variable में request कर दो। हाँ, हाँ, that's fine. Mark it as false, not true.
+
+00:19:23 - 00:19:36 Unknown Speaker:
+
+Now go to the next. These property you are not going to get from the Lumi. Act in is not going to use because earlier we thought of using this field to display it. So act in would remain as false.
+
+00:19:40 - 00:19:51 Unknown Speaker:
+
+वो हमने वो सोचा था 01 और ये null करके करेंगे, तो नहीं हो सकेगा। बस tag Kundan, we need to modify that one. Rest field is fine.
+
+00:19:54 - 00:20:01 Unknown Speaker:
+
+Okay, now Aapa share your screen. Okay, now I need that validation. Can you share your screen quickly?
+
+00:20:05 - 00:20:08 Unknown Speaker:
+
+Aapa, again we lost you, man.
+
+00:20:13 - 00:20:14 Unknown Speaker:
+
+Aapa, you there?
+
+00:20:23 - 00:20:25 Unknown Speaker:
+
+What to do in these cases, man?
+
+00:20:32 - 00:20:54 Unknown Speaker:
+
+I think the way it is going, it would be mandatory for us to be in office for 8 hours then. If these continues, because then I won't be leave with the command, right? Then I have to reach out to Raj for these issues. Like availability, connectivity, right? And then— हाँ, let me check once, Sachin.
+
+00:20:55 - 00:20:59 Unknown Speaker:
+
+Right, and he is going to, you know, ask everybody to be in office then.
+
+00:21:43 - 00:21:50 Unknown Speaker:
+
+वो join कर रहा है, Sachin. उधर ना, तूफान आ गया है। And then no power, nothing is there, okay. So still trying to join.
+
+00:21:52 - 00:21:59 Unknown Speaker:
+
+And in that case, Prithvi, you should be able to support us, right? And you should have those things handy then.
+
+00:22:01 - 00:22:22 Unknown Speaker:
+
+Yeah, next time I'll keep those queries with me. Yeah, like, look, when we are working, right, if I'm including couple of resources, all the resource should have all those information with them. It's not that, you know, and that is the reason we— I used to create a backup, right? Even there might be a chance, right, he might go on emergency leave, right?
+
+00:22:23 - 00:22:30 Unknown Speaker:
+
+And these complete set of data migration would impact with that. Aapa, you're back?
+
+00:22:34 - 00:22:35 Unknown Speaker:
+
+He's not there.
+
+00:22:43 - 00:23:11 Unknown Speaker:
+
+But he is also in Bangalore, man, right? And you guys are also there in Bangalore. Then how come this, you know, this storms arrives? ये हो सकता है क्योंकि Bangalore में कभी एक तरफ भयानक बारिश होता है, एक तरफ नहीं होता। ये बहुत common है यहाँ। Like, in my area nothing is happening, but maybe it is possible after 5 km it will be very heavy rain.
+
+00:23:13 - 00:23:26 Unknown Speaker:
+
+Man, even I just had a conversation just before joining this call, right, with my brother. He is there in Bangalore, right? He— he even didn't say anything.
+
+00:23:28 - 00:23:37 Unknown Speaker:
+
+That's why I'm telling, so maybe possible that on the— he is staying on that, uh, north— south Bangalore side, near Electronic City.
+
+00:23:39 - 00:23:41 Unknown Speaker:
+
+That area maybe it will be raining much.
+
+00:23:45 - 00:23:53 Unknown Speaker:
+
+But ultimately, look, man, I won't be there in next 1 hour, right? Because once it's evening, right, I used to have back-to-back calls.
+
+00:23:54 - 00:24:07 Unknown Speaker:
+
+And— and like, if— if— if the task has been assigned, right, and if somebody take the ownership and complete it, right, I even don't need to spend n number of hours with you guys, right?
+
+00:24:10 - 00:24:10 Unknown Speaker:
+
+Aapa?
+
+00:24:12 - 00:24:16 Unknown Speaker:
+
+Yeah, hi Sachin. Yeah, sorry. Go ahead and share your screen, Aapa, quickly.
+
+00:24:18 - 00:24:18 Unknown Speaker:
+
+Sure.
+
+00:24:28 - 00:24:31 Unknown Speaker:
+
+Sachin, can you see my screen? No, not yet.
+
+00:24:34 - 00:24:35 Unknown Speaker:
+
+Okay.
+
+00:24:38 - 00:24:40 Unknown Speaker:
+
+Anyone else? Let me know once I have this one.
+
+00:24:47 - 00:24:57 Unknown Speaker:
+
+You are in Bangalore, right, Aapa? Yeah, yeah, yeah, Sachin. So suddenly heavy rain came, Sachin, in Electronic City. So with the very wind also.
+
+00:24:58 - 00:25:04 Unknown Speaker:
+
+So that's why something is happened. Man, but still that internet should not get impacted, right?
+
+00:25:08 - 00:25:09 Unknown Speaker:
+
+Yeah, yeah, that's— this one.
+
+00:25:14 - 00:25:25 Unknown Speaker:
+
+And that is still— you can see the screen or still blank? No, no, it's still blank. And— and that's where I'm asking, right? Like, if you have some connectivity issue at home, right, please be there in office.
+
+00:25:27 - 00:25:31 Unknown Speaker:
+
+Because now post 6 PM I won't be able to spend time with you guys, right?
+
+00:25:34 - 00:25:36 Unknown Speaker:
+
+Then how— again it would be pending for tomorrow.
+
+00:25:43 - 00:25:44 Unknown Speaker:
+
+Sure. Just share your screen.
+
+00:25:47 - 00:26:07 Unknown Speaker:
+
+Yeah, yeah, I stopped and re-shared. One second. Prithvi is in on the call? Prithvi is there, but he joined— Prithvi, I have shared that query— Maybe I'm sharing this query to— I'm sharing query to you, Sachin, actually. I mean, I'm trying to share the screen.
+
+00:26:10 - 00:26:10 Unknown Speaker:
+
+Kundan?
+
+00:26:13 - 00:26:14 Unknown Speaker:
+
+Yeah, tell me now.
+
+00:26:17 - 00:26:23 Unknown Speaker:
+
+No, you— shall I share with you? Can you share the screen? Yeah, yeah, sure, sure. Share with me. Ping me.
+
+00:26:23 - 00:26:24 Unknown Speaker:
+
+Sure.
+
+00:26:26 - 00:26:29 Unknown Speaker:
+
+Yeah, just one second. Yeah, ping me on Slack.
+
+00:26:32 - 00:26:32 Unknown Speaker:
+
+Okay.
+
+00:26:34 - 00:26:35 Unknown Speaker:
+
+Okay, let me start sharing.
+
+00:26:41 - 00:26:50 Unknown Speaker:
+
+Look, you guys don't understand, right? This was— I was discussing with Samir. Let me show you, okay? What happens in the background. To all of you, right?
+
+00:26:51 - 00:26:58 Unknown Speaker:
+
+If you guys are able to see this one, right, it's a straight mail from Poonam, with a high importance.
+
+00:27:00 - 00:27:01 Unknown Speaker:
+
+Okay, copying Rajendra.
+
+00:27:03 - 00:27:07 Unknown Speaker:
+
+This is what I was mentioning to Samir in the morning.
+
+00:27:08 - 00:27:13 Unknown Speaker:
+
+And that's what would go ahead with this self-serve, the way we are behind the timeline.
+
+00:27:18 - 00:27:24 Unknown Speaker:
+
+Right, and that is something we— we are, as a team, we are still not understanding and not grooming ourselves.
+
+00:27:27 - 00:27:35 Unknown Speaker:
+
+Now, what should I reply to this, right? He is— he is not ready with that data that— that has been asked by Anand.
+
+00:27:40 - 00:27:44 Unknown Speaker:
+
+And these validation are being done from last 1 and 1. 5 month.
+
+00:27:48 - 00:27:59 Unknown Speaker:
+
+And why there is discrepancy, Sachin? Any reason? He— he is not, you know, clear with the requirement. That's the problem. Go ahead, Aapa.
+
+00:28:00 - 00:28:04 Unknown Speaker:
+
+I'll speak. Kundan, I shared with you. Can you open it? Are you able to see it?
+
+00:28:06 - 00:28:13 Unknown Speaker:
+
+Can you share once again? Am I able to see that? Yeah, I— Okay, let me— let me share again. I stopped it right now.
+
+00:28:15 - 00:28:15 Unknown Speaker:
+
+Yeah.
+
+00:28:18 - 00:28:27 Unknown Speaker:
+
+Let me know if you are able to. Yeah, yeah, yeah. I sent it in the Slack. Yeah. Kundan, this is the one— sorry, Sachin, this is the one I just insert the data while doing this one.
+
+00:28:27 - 00:28:28 Unknown Speaker:
+
+Inserting.
+
+00:28:29 - 00:28:36 Unknown Speaker:
+
+So the above one is this one. One second, one second, Aapa. Insert into this table. Okay.
+
+00:28:38 - 00:28:40 Unknown Speaker:
+
+These are the selected columns.
+
+00:28:41 - 00:28:49 Unknown Speaker:
+
+No, share the one of the screenshot that I have given to you. Okay, okay. Yeah, yeah, sure. That one. Sideways.
+
+00:28:50 - 00:28:51 Unknown Speaker:
+
+Sure, sure.
+
+00:28:53 - 00:28:56 Unknown Speaker:
+
+Then you selected this varnam table name, this one, this one, this one.
+
+00:28:59 - 00:29:00 Unknown Speaker:
+
+No, let him open that.
+
+00:29:03 - 00:29:10 Unknown Speaker:
+
+Aapa, open the screenshot that I have shared. Can you open that image also? Yeah, yeah. I shared with Kundan already. Okay, you— you shared.
+
+00:29:10 - 00:29:13 Unknown Speaker:
+
+Kundan, can you check that on Slack? Yeah.
+
+00:29:15 - 00:29:21 Unknown Speaker:
+
+The query I already taken. Let me check that. Okay, I think— Sachin pinged on that.
+
+00:29:24 - 00:29:28 Unknown Speaker:
+
+Hello? Yeah, I already shared. You can take it anyway if I have time.
+
+00:29:30 - 00:29:30 Unknown Speaker:
+
+Yeah.
+
+00:29:34 - 00:29:39 Unknown Speaker:
+
+Okay, so this is that. Yeah, Aapa, tell me.
+
+00:29:43 - 00:29:57 Unknown Speaker:
+
+Yeah, so first field, right, Kundan, so what are the— seeing in the dec artifact below, right? So those are the columns, and I just map it to the below is the dec repository. So line number 16th onwards, it will start the column 121 mapping. Yeah.
+
+00:29:59 - 00:30:06 Unknown Speaker:
+
+So you are inserting 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, right? Yes, yeah.
+
+00:30:07 - 00:30:15 Unknown Speaker:
+
+We have this many column only? Yeah. No, no, no. Can you— One more also. One more also, Kundan.
+
+00:30:15 - 00:30:25 Unknown Speaker:
+
+I'm sharing with you. This is after loading the data, I'm updating few fields. That is the updated query I'm sharing with you. No, wait. Because this is the initial data.
+
+00:30:25 - 00:30:45 Unknown Speaker:
+
+No, no, wait means first we are loading the data into dec artifacts table from the dec repository, okay? After that one, once this data is loaded, right, we are updating few more fields. Like example, there is a field name called useCase, right? So those useCase, right, we are take it as a— this one.
+
+00:30:47 - 00:30:50 Unknown Speaker:
+
+Serial numbers we are giving 1, 2, 3, 4, 5, like that way.
+
+00:30:52 - 00:30:59 Unknown Speaker:
+
+Yeah. Kundan, जो मैं बोल रहा हूँ, करो। First of all, share that screenshot that I have given to you.
+
+00:31:00 - 00:31:23 Unknown Speaker:
+
+आप मुझे एक बार requirement बता दीजिए, क्या ask है? मैं कर दे रहा हूँ। ठीक है। Requirement is, look, just see the column L and column M. हाँ, ठीक है। Okay, now column M is your Lumi dec repository table. ठीक है। Okay, the one that has been marked as yellow. And the column L is your postgress schema.
+
+00:31:24 - 00:31:38 Unknown Speaker:
+
+This is our postgress schema. ठीक है। Right, so dec ID map to the table rule ID, the first one. Variable ID is mapped to subject var id, but var id has been removed. Okay? So you really don't need this.
+
+00:31:38 - 00:31:48 Unknown Speaker:
+
+This is not needed. UseCase ID, anyhow, the way Aapa is doing, that— that would work, right? So even ignore that one. Now again, table ID, you can ignore it. Table ID is also being removed.
+
+00:31:49 - 00:31:58 Unknown Speaker:
+
+Okay, ठीक है। Now varnames should be varname, table names should be table name. Var type names should be var type. Now again, rule ID has been removed. So even ignore this field.
+
+00:32:00 - 00:32:23 Unknown Speaker:
+
+Rule ID, var id, table ID. This is same. हाँ, var id. अगर kind note करना है तो कर लो। Var id, table id, और rule id नहीं चाहिए हमें। ठीक है, ठीक है, समझ गया मैं। वो मैं map कर दूँगा, कोई दिक्कत नहीं। इसमें, if you see this one, in this field, we are having bunch of field, but he has taken only 10 field. Now can you change that insert query?
+
+00:32:24 - 00:32:47 Unknown Speaker:
+
+अभी करो। नहीं, नहीं, नहीं। Let's do in a different way, Sachin. Okay, ऐसे करता है। ये migration ही गलत हुआ है। हमें migrate ऐसे करना था। Where it is, script के through करना था। इन्होंने direct query बना के किया है, इसलिए problem आ रहा है। But again, if you create a script, right, that would again take time for this.
+
+00:32:47 - 00:33:04 Unknown Speaker:
+
+नहीं, ज्यादा time नहीं लगेगा। ये देखिए, मैं कुछ नहीं कर रहा हूँ। मैं data उठाता हूँ, सीधे जो है sequel generate कर देता हूँ। यानी, you'll see, right, इनका होना क्या चाहिए, that script should be कि उनको sequel generate करके direct दे दे। Whatever manipulation you want to do, do it here, ना?
+
+00:33:06 - 00:33:22 Unknown Speaker:
+
+Correct? हाँ। अगर अभी आप manually इसको sequel के through करेंगे, right, that will take a lot of time, और कुछ ना कुछ miss हो जाएगा। तो मुझे— No, no, no. That sequel is already there, right? So why it would miss? You just need to add some parameter to that insert query.
+
+00:33:22 - 00:33:43 Unknown Speaker:
+
+नहीं, तो parameter is not direct mapped. That's the thing. UseCase is not direct mapped, right? वो आपको जो है one-to-many mapping वाला है, पड़ा हुआ। ठीक है? हाँ। हाँ, तो उसको अलग से आपको pull करके रखना पड़ेगा। तो वही मैं कह रहा, थोड़ा time दीजिए, एक डेढ़ घंटा, मैं ये कर देता हूँ। Exact data match के साथ insert query पूरा बना हुआ आ जाएगा। ठीक है?
+
+00:33:44 - 00:33:47 Unknown Speaker:
+
+There will be no update statement, nothing like that, okay?
+
+00:33:49 - 00:34:05 Unknown Speaker:
+
+But you have to map the useCase ID. वो मैं कर लूँगा, वो data pull करके। 16 records ही हैं total. ठीक है? Right, right. हाँ, ठीक है। वो मैं कर देता हूँ। We are— are you sure you would be able to wrap up in next 1 and a half, 1 and a half hours?
+
+00:34:06 - 00:34:23 Unknown Speaker:
+
+मैं कर दूँगा, Sachin, कोई बात नहीं। ये भी तो किया ही है, ना? हाँ। अभी तो किया है। ये concept मतलब पहले से किया हुआ था। तो this one also will close it. No, we have to ignore few records from there, right? We need to insert only those particular dec ID, which is being mentioned over there. हाँ, correct.
+
+00:34:24 - 00:34:34 Unknown Speaker:
+
+That is— that is you are talking about— कहाँ गया? Aapa, you said in the Excel, right? No, no, no, wait.
+
+00:34:35 - 00:35:01 Unknown Speaker:
+
+मैंने शायद ये गलत वाला open कर दिया। I think इस पे पड़ा हुआ है। नहीं, एक सेकंड। Conflict with your ID। One second, Sachin. Close करेंगे तो। हाँ, यही है ना? ये ID मैं include कर लूँगा ना? ये dec ID से ही include करना है ना?
+
+00:35:03 - 00:35:20 Unknown Speaker:
+
+हाँ, वो मैं कर दूँगा, कोई नहीं। आपको total 230 records ही आएँगे, ठीक है? Yeah, correct. ठीक है। आपको overall यही आएँगे। Again, Aapa and Prithvi, confirm me, out of those 230 records, also we have modified some of the check type. Did you modify that in dec repository, or you haven't modified it?
+
+00:35:22 - 00:35:32 Unknown Speaker:
+
+That is done, Sachin, already. I am updating that initial only. Can you— can you show me that list? What are the check type that you guys have updated? How many rules have been impacted with the check type?
+
+00:35:33 - 00:35:36 Unknown Speaker:
+
+Or you don't have that list? We just did it blindly.
+
+00:35:39 - 00:35:41 Unknown Speaker:
+
+Yeah. No, no, I— I have it.
+
+00:35:43 - 00:35:55 Unknown Speaker:
+
+Shall I share my screen? Oh, hold on. Okay, Kundan, then understand. Go to that screenshot, what I'm— I'm trying to say. What do— what do you need to pick it up?
+
+00:35:55 - 00:36:04 Unknown Speaker:
+
+Because even there is a change in the description, right? In the rule description. But that will be updated, right? In the dec repository. That is updated, Aapa?
+
+00:36:04 - 00:36:14 Unknown Speaker:
+
+Aapa, that is updated, right? The rules just updated. Yeah, yeah, yeah. Description check types, those are updated already. Okay, so Kundan, then is everything is updated?
+
+00:36:14 - 00:36:16 Unknown Speaker:
+
+You need to take care.
+
+00:36:18 - 00:36:39 Unknown Speaker:
+
+Dec ID वहाँ से pick करना है। Var id छोड़ देना है। UseCase छोड़ देना है। Because useCase ID, you have to map it, right? वो मैं जो भी यहाँ है ना, Sachin, मैं as it is map कर देता हूँ। ठीक है? नहीं ना, नहीं करना है ना। आपको आपकी query फट जाएगी फिर। Subject ID नहीं चाहिए, useCase ID आपको खुद चाहिए। नहीं, ये सब तो— ये मैं यहाँ से match करूँगा। That's what I am telling.
+
+00:36:41 - 00:37:08 Unknown Speaker:
+
+No man, अब फिर मैं समझा रहा हूँ। Subject ID, rule ID, table ID drop हो गया है table से, right? तो वो mapping याद रहेगी। हाँ, ये हट जाएगा। ये नहीं रहेगा। ये सारा हट जाएगा। UseCase ID जिस तरह से हमने 1 से लेकर 16 तक configure की है, वैसे map होनी चाहिए। Okay? और वरना useCase ID छोड़ करके आप script कर दीजिए insert query का। फिर useCase ID का update query Aapa ने जो बनाया, whichever has been created by Aapa, you can run that one for useCase ID.
+
+00:37:09 - 00:37:37 Unknown Speaker:
+
+हाँ, ठीक है। अगर वैसा हुआ तो ठीक है। नहीं तो, you know, मुझे लग रहा है one shot में ही चला जाएगा। ठीक है। Okay? And but make sure that null, null valid in यहाँ से आना चाहिए। Include null as valid। Main threshold यहाँ से आना चाहिए, right? Look back period history days city से आना चाहिए। हाँ, ये property से map होगा। Exactly. And— and business justification text, they have completely marked it as blank, but business justification text was already there in the dec repository.
+
+00:37:39 - 00:38:01 Unknown Speaker:
+
+हाँ, नहीं, वो नहीं ले सकते, Sachin. That is text, right? और हमें चाहिए— ठीक है, हमें JSON चाहिए, but उससे भी करना है। But अभी business justification छोड़ दो। बाकी सब mandatory है। Okay? हाँ, वही मैं कह रहा हूँ कि ये वैसे कर लेते हैं। Because this way we are not going to reach anywhere. ये जो sequel बनाया है ना, ये पता नहीं कितनी बार update होगा। आप कब तक करोगे?
+
+00:38:02 - 00:38:18 Unknown Speaker:
+
+ठीक है। Correct. ठीक है। Then do it, and then confirm me so that we'll— we'll reconnect. As I told, Prithvi, Aapa, Athar, okay? And Kundan, we need to close this today only. Please be available until— unless I confirm that data looks good.
+
+00:38:18 - 00:38:26 Unknown Speaker:
+
+So even if I give you a call at 9, please be available. Or 10 or 11. Each one of you should be present before we close this migration today.
+
+00:38:28 - 00:38:38 Unknown Speaker:
+
+ठीक है, ठीक है। Okay? हाँ, ये हो जाएगा। थोड़ा time चाहिए। Let me, you know, figure out the way. Okay? Okay then. Thank you.
+
+00:38:38 - 00:38:39 Unknown Speaker:
+
+Thank you, everyone.
+

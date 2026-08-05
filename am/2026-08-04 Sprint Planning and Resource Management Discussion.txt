@@ -1,0 +1,397 @@
+2026-08-04 Sprint Planning and Resource Management Discussion
+
+Creation Time: 2026/08/04 18:01
+
+
+6138106030153936896📅About Meeting
+
+• Date & Time: 2026-08-04 18:01 (Duration: ~57 minutes)
+
+• Location: Virtual Meeting
+
+• Attendee: Sachin, Rachna, Manish, Richa, Sindhuja, Raksha, Athar, Kundan, Nirmal, Pethvi, Sameer, Jason, Suman, Nancy, Shravan, Rishabh, Varga, Sravan, and others
+
+📒Meeting Outline
+
+Sprint Planning and Resource Management
+
+• Sprint Start and Planning
+  The team confirmed starting sprint planning with updates on tasks and resource availability. Raksha informed that the DBA partner is out of office until September 1, creating a potential blockage for database changes needed to support new features like B40, B45 details storage. Raksha will reach out to alternate contacts to mitigate this risk.
+
+• Task Prioritization and Dependencies
+  Several tasks related to UI updates, backend pipelines, and database changes were discussed. Pending tasks include enabling radio button flows, adding new columns for B40/B45, and segregating backend DQ rule processes. Some tasks are on hold due to dependencies on DBA support. The sprint end date is August 31, with efforts to prioritize critical tasks to meet this deadline.
+
+• Status Updates and Workflow Enhancements
+  The team agreed to mark task statuses clearly (e.g., "in build") to improve visibility. A new UI tab will be created to separate approved/rejected records from new requests to avoid confusion. Kundan is assigned to backend and UI tasks related to approval/rejection flows, including renaming UI labels for clarity ("Reason for approval/rejection").
+
+Reporting and Dashboard Development
+
+• Q-Track Reporting MVP
+  Sachin explained the MVP for Q-Track reporting, which integrates data from DQIM and DQ results to provide downloadable reports filtered by use case and time period. The initial version will be a simple Excel report sent via email, with a future dashboard planned for visualizations.
+
+• Resource Constraints and Timeline
+  Front-end resource constraints were highlighted, with only one front-end developer (Athar) available. Backend development can proceed with additional resources, but full UI integration will be delayed beyond the current sprint. The team agreed to deprioritize some self-serve features to accommodate this.
+
+• Platform and Deployment Challenges
+  Sachin outlined the need for platform reviews, SRE approvals, and ALM requests for deployment, making a launch by August 31 unlikely. Discussion included the possibility of storing data outside Lumi (ACE database) to overcome data retention limitations and support longer time periods (90+ days). This requires building new transaction tables and involves significant design and review effort.
+
+Data Quality (DQ) Rules and Framework Updates
+
+• CD Rules and Role Modifications
+  Ongoing work on CD rules continues with ANSI and Suman covering while IFI is on leave. Rishabh will be the point of contact for new role additions and sign-offs. Some rules require rewriting based on alert feedback.
+
+• DQIM Framework and Calibra API Integration
+  Both metadata usage logs and KRI frameworks are implemented, but outputs are stored separately and need integration. Calibra API integration requires discovery and is planned for the next sprint due to dependency on integration ID requests.
+
+• Multivariate and Univariate Rules
+  Varga continues work on multivariate generic rules. Univariate monthly builds are complete; daily builds are near completion with a demo planned. Stories are reserved for Sameer to support this.
+
+Data Pipelines and Environment Access
+
+• Pipeline Deployment and Validation
+  Jason and Sravan discussed deployment of data ingestion pipelines. Four pipelines are deployed but require validation; eight pipelines remain to be certified and deployed. Access issues with service IDs and vault configuration are blocking some tasks.
+
+• Environment Provisioning and Cost Estimates
+  Discussion on environment provisioning for three environments and associated cost estimates. Snowflake integration is parked in backlog pending further details.
+
+• Pipeline Capacity and Story Point Estimation
+  Jason estimated story points needed to complete remaining pipelines and certification. Sachin plans to assign tasks accordingly.
+
+Automation and SQL Execution Tasks
+
+• Automation of SQL Execution for New Rules
+  Prithvi is generating SQL files for new rule registration automation. The next step is to automate execution of these SQL queries, capturing results (pass, fail, syntax error) and storing them in the DQ artifacts table.
+
+• Task Assignments and Knowledge Transfer
+  Sravan is assigned to take up the automation task, with Suman to assist on related CDFM modifications. Emphasis on thorough understanding of existing code and processes before implementation.
+
+• Code Management and Production Environment Safety
+  Modifications should not be committed directly to production; changes must be shared via email and deployed only after approval and during off-peak periods.
+
+Miscellaneous Updates and Controls
+
+• Pay Now, Pay Later and Aribia Controls
+  Group DLs need updating for these controls by adding specified DLs to existing lists.
+
+• Backup and Leave Notifications
+  Kundan holds backups for DQIM portal; Sachin plans to create stories for upcoming leave periods.
+
+• General Queries and Next Steps
+  Sachin encouraged team members to reach out if unclear about tasks. Story assignments will be completed by next day post-lunch.
+
+📋Overview
+
+• DBA partner absence creates potential blockage for database changes; alternate contact to be identified.
+
+• Critical sprint tasks prioritized with dependencies on DBA and backend support; sprint end date August 31.
+
+• UI improvements include status marking and new tabs for approved/rejected records; Kundan assigned key tasks.
+
+• Q-Track reporting MVP to deliver Excel report via email; front-end integration delayed due to resource constraints.
+
+• Platform and SRE reviews required for deployment; long-term data retention needs new tables and design.
+
+• CD rules ongoing work with ANSI, Suman, and Rishabh as POC; Calibra API integration deferred to next sprint.
+
+• Data ingestion pipelines partially deployed; access issues and environment provisioning discussed.
+
+• Automation of SQL execution for new rules assigned to Sravan; code changes to be managed carefully.
+
+• Pay Now, Pay Later and Aribia control DL updates required.
+
+• Team members to review recordings and confirm understanding of automation tasks.
+
+• Story assignments to be finalized and communicated by next day post-lunch.
+
+🎯Todo List
+
+• Raksha:
+
+  • [ ] Identify alternate DBA contact to support database changes, by September 1
+
+• Kundan:
+
+  • [ ] Implement backend and UI changes for approval/rejection flows, including label updates, by August 31
+  • [ ] Update backend for B40, B45 columns and DQ rule segregation tasks
+
+• Sachin:
+
+  • [ ] Assign sprint tasks to team members and communicate by next day post-lunch
+  • [ ] Coordinate with Purna for demo and alignment on priorities
+  • [ ] Support query modifications for CD rules with business input
+  • [ ] Provide input on query optimization to Jason and team
+
+• Athar:
+
+  • [ ] Continue front-end development and support UI tasks; prioritize with sprint goals
+
+• Sameer:
+
+  • [ ] Support univariate daily build demo and automation tasks; confirm bandwidth
+  • [ ] Review and start automation of SQL execution tasks after overview
+
+• Sravan:
+
+  • [ ] Take ownership of automating SQL execution for new rules; confirm understanding by end of day
+  • [ ] Assist Suman with CDFM modifications and pipeline validations
+
+• Suman:
+
+  • [ ] Assist with CDFM modifications and pipeline tasks; receive overview from Sravan
+
+• Jason:
+
+  • [ ] Complete pipeline certification and deployment tasks; estimate story points and communicate capacity
+  • [ ] Resolve access issues for service IDs and vault configurations
+
+• Nirmal:
+
+  • [ ] Automate scheduled DQ rule pipeline runs; coordinate with Sachin
+
+• Raksha & Sachin:
+
+  • [ ] Align on Q-Track reporting backend development; deprioritize front-end integration for current sprint
+
+• All Team Members:
+
+  • [ ] Review Pethvi’s recordings on automation and SQL generation tasks; confirm understanding by end of day
+  • [ ] Reach out to Sachin if unclear about assigned tasks or sprint priorities
+
+• Sachin & Purna:
+
+  • [ ] Align on resource allocation and project priorities in upcoming call (day after tomorrow)
+
+• Sachin & Raj:
+
+  • [ ] Discuss query optimization approaches and JSON object handling solution
+
+• Sachin:
+
+  • [ ] Update group DLs for Pay Now, Pay Later and Aribia controls as per instructions
+
+• Sachin:
+
+  • [ ] Create stories for upcoming leave coverage and sprint start tasks
+
+Transcription
+
+00:00:02 - 00:01:30 Unknown Speaker:
+
+Yeah, I think so. Rachna will be joining. Let me ask her. And Manish was mentioning multivariate gender something, right? I forget the terms, but exactly he was mentioning yesterday, if you remember. So, what Manish is mentioning is slightly in control. For now, we shouldn't look for algorithms which work only on specific tables. I understand that point. He was mentioning something to name the story. That's what I'm looking for. It was multivariate gender or something. I forget it. Do you remember what exactly he was mentioning? No, Sachin. Okay. We'll check with him. Hi, everyone. Hey, Richa. Thanks for joining. Okay. So, Sindhuja, are we starting with the sprint planning or the updates? Yeah, sprint planning, Sachin. Okay. So, let me save my stuff with you and post that. So, Raksha, just one news, okay?
+
+00:01:30 - 00:02:35 Unknown Speaker:
+
+As you are seeing my screen, this guy is out of office till 1st of September. Oh, okay. He is the DBA partner for us. So, I need to figure it out, you know, anyone alternate to this one. Okay, because some of the changes... What do we need from him? Validate stays, we need changes in the database. Okay, okay. A scale, right? Correct. So that is a challenge for us because even for the new team integration, the way you are asking, right, B40, B45, the details will be saved, right? I would need those database changes to store those objects. Right. So anyone else in this team that we can reach out to? Is there anyone under them? Oh, let me. But I know Murli with whom they used to work. Let me reach out to that person.
+
+00:02:35 - 00:04:03 Unknown Speaker:
+
+Sure, sure. Okay, I'll let you know. But this can be a blockage if no one is there to support us. Okay, let me take this requirement first and then maybe, you know, we'll go for the rest. So, we should buy a filter. Let me select the blanks one first. Okay. It is done right. Dependency on Lumitin, this is fine. 817. What is this? Add a previous layout. This is of UI. I am just taking a note of it. This is 31st of July. What happened to this one, Athar? Radio button enabling will give the flow to and the SQL query. This was 31st. So, I am working on that. The complex. Okay. I'll prioritize this one. Okay. Yeah, that one is pending since a long time ago. Okay, this one you have to explore, right?
+
+00:04:03 - 00:05:23 Unknown Speaker:
+
+So, this is again a first. This is on hold 831. So, there is a dependency on this one, right? Because I need those additional columns for B40, B45. Okay, so this is in progress. This animal is working on it, but we won't be able to save the data until unless you know that. Gets updated. This is 8.17. Update date fitted to a date and selection instead of single data. This can be done. This is all we are taking, right? So this is anyhow on 31st, so I'll be working on the designing part of this and then post next print, people can start working on the API and all. Now, this is again A3 annual field added similar to register new page corresponding to check price. So, it's just one question regarding that one.
+
+00:05:24 - 00:06:23 Unknown Speaker:
+
+Since you mentioned that you will be working on discovery this sprint, then will we be able to, you know, deliver the rest in one sprint only, like after that, since we are claiming it to be done by 31st August, right? Hmm, that is a good question. I'll see like if I can start at least building the pipelines right in the back end. Right, yeah. Okay. There might be slight delay, but we will try to close it by 31st. So, instead of 31st, what is the next print end date, Sindhuja, if you can help me out, the one that is starting from 18th of August? Uh, 18th August to 31st August only. Oh, okay, oh, most probably this should be at least on here. Okay, I'll prioritize this too.
+
+00:06:23 - 00:07:34 Unknown Speaker:
+
+Okay, so let me see these details and then maybe I need to start assigning these to some folks. So that, yeah, the two and four should be done. Okay, yeah. Okay, this one. This is dynamic one, right? Which you are working. Yes, this is also working. So this should be observed. And I told, right, at least make the status as in build, right? So that people would understand what exactly you are working on current status. I have updated the feed. I don't know if it is the same. It is the same and I opened it. Is there a status field which has been updated? I also saw some updates. For each column which I am working on, that has the current status. It's updated such and I think you need to refresh it once.
+
+00:07:36 - 00:08:41 Unknown Speaker:
+
+I might lose my changes then. Look, I'm able to see this one only. Yeah, now it's coming back. Yeah, at least deployed in E3, I have, you know, already what I mean to say that apart from deployed in E3, right, if something is going on in the build, right, just mark it as build. That's what I'm mentioning. Okay. And this one should be done. Approved, rejected. So, just like I said, I think there is one difference from what you were saying earlier that this is already enabled. So, what is enabled is once a record is approved or rejected, it totally disappears from there. Yeah, we need to create a new page for this. Okay. Because I can't keep the new request onto those pages because again you would be messed up with the approved one as well as the reject one as well as the new one, right?
+
+00:08:41 - 00:09:43 Unknown Speaker:
+
+So let me create a new tab over there which would be displaying you the result of approve or reject and then you can figure it out. So in the same section it will just be a different tab, right? Yeah, yeah, so let me make it just, uh. 34 state. The reason being this would require a API build. Okay, okay, sure, okay, and this one I can give it to author for sure. Slash, Uh, let me do Kundal, okay. And this requires a HDB rejection. This one something we can, uh, do it again if we get that uh support from the DBA team. Okay, this is Kundan, Kundan is working on it right now, this print he would be assigned with this task. Okay, Kundan, you are aware, right? I already asked you.
+
+00:09:43 - 00:10:40 Unknown Speaker:
+
+The reject option may reason for you just need to use the same same, uh, textbook. Rachna, you don't need to get an additional text field to mention the reason for rejection, right? So, you can just... Can we rename it at least? It just says note right now. So, instead it should say like this, reason for rejection. No, no, no, no. There is a field, right? Just above the field of... Very correct. That's what I am saying. It has a header of note. From what I recall. So, that note needs to be replaced with this thing, reason for rejection then. And what about in case you are approving it? So, we can make it reason for approval slash rejection. That works. Okay. Basically, in the UI you are mentioning, right? Yeah, in the UI. Approved page.
+
+00:10:40 - 00:11:47 Unknown Speaker:
+
+Okay. So, the label will be changed. Yes. The label is changed. We will just change the label name. Right. Reason of approval or rejection. Okay. Like this one. So this one again, Kundan is working, but this NIDA editor of UI also. So that's last Kundan. And these all are going in this current sprint only. And not even partners, rows rejected, send automation. Kundan is working on this one. Closing it. These are 31st one. So 31st one I'm ignoring right now because once I picked it up, right, I'll update it. Okay. 8.17. Segregate back-end DQ rule segregation from approval process DQ rule code to be generated run. Yeah, this one, you just need the run and then the response of this, right? Yes, yes, right. Right, so this one we can assign to fifth way.
+
+00:11:55 - 00:13:13 Unknown Speaker:
+
+DHBI, right. This goes for A3. DQ rules tip generation pipeline to run at end of everyday newly built request. It is just a schedule based, right? So, this can be done by Nirmal. Okay, it's 17 hours generated to be automated run setup manually setting up may take time. What is this? Okay, let's see. So, right now that integration is not there, right? For running the generated SQL scripts, that part is manual. So, that needs to be automated. Okay. So these can be taken by the three and this can be three one. Again, there is a three. What is this? Newly submitted. I'm updating the wrong column. No, that is fine. This is fine. This one is. Add this column to this one again. I need to work with the DBA team.
+
+00:13:13 - 00:14:11 Unknown Speaker:
+
+And the update can be done by Kundan in the backend. I'll pick it up for the sprint. Okay. Independence fee on his DBA team. Okay. So these are, we are going to pick it up. So these stories, anyhow, I'm going to, you know, create for the sprint. Okay. Yeah. That is one. So, Nirmal, Athar, Kundan, Pethvi. Not Nirmal. Nirmal doesn't have much. We have demo call with Purna day after tomorrow. So, like whatever progress we have made so far, that we can present there. Yeah. That's something. I'll do that. Okay. Tomorrow or day after tomorrow? Day after tomorrow. Thursday? I think he asked. Okay. He asked for Thursday only. Okay. Okay. So these we are going to pick the perf. I'll check if Nirmal and Kundan have much work or we can replace it to them.
+
+00:14:11 - 00:15:09 Unknown Speaker:
+
+That is one. Next, this Q-Track reporting template, right? I need to understand this, what exactly you are looking for. Right, Sachin. So firstly, like right now, we just want an MVP kind of thing for this reporting. Like again, going forward, there will be additional metrics for this. But what I have shared with you, right, I just had it reviewed by Purna also today. So he has given his thumbs up for starting work on this. So basically, like all this data we already have in some form. In either DQ results or in DQIM, right? So, it's just like an integrated downloadable report kind of thing. So, when someone comes to the portal and they can just select the use case and time period. And then this kind of like all these metrics are getting sent to them over mail.
+
+00:15:09 - 00:16:01 Unknown Speaker:
+
+Like very similar to what we have already built for the raw data of DQIM, right? Now, this is that data plus some data from the DQ results. So, if you see these row number 4 to 6, this is like your entire coverage across your queue track, right? So, active DQ rows, variables, track, tables, covers. So, all of this corresponding to the use case filter. But these are not relevant as per time period. This is the total coverage. Then after that, whatever you see from row 8 onwards, that is specific to the time period because that is like run level data. Yeah, so that's pretty much it. Like these are not complicated, just very simple metrics. It just requires integration from the DQIM data and then the DQ results data.
+
+00:16:01 - 00:16:55 Unknown Speaker:
+
+So if we combine both of them, we should be able to get these metrics. So how we are going to design this? So any template that you have discovered or you want this to be built the way we would like to build it? Like, look, we selected a use case and a time period. Based on that, these are going to be static, right, activity equivalent variable, this table cover, right? So, this will be based on the use case. Use case, correct, whatever they have, that's something. And then these are, again, based on these field of criteria, right? That would be populated in the UI, correct? And then they can download it, correct? Yes, so Sachin, there are two parts to this. So one is the UI dashboard that we were planning, right?
+
+00:16:55 - 00:17:48 Unknown Speaker:
+
+That going forward will also have some kind of visualizations, graphs and stuff. And this is more of like a simple Excel downloadable format. So this is what we are looking for as an initial MVP version. This we should be able to deliver. And then dashboard we can take up after this has been done. But, Krishna, I have only one front-end business. So, Sachin, in this, front-end means, we don't even need to display it there. If we are even able to, you know, just give an option to put those filters and send this over mail, like if you can make it on your back-end, that should be fine. Front-end will only be of this much use. In this, the use case and time period filter we are taking and then that has to be integrated with what we are fetching in the backend.
+
+00:17:51 - 00:18:59 Unknown Speaker:
+
+But even that requires effort, Rachna. And by when we are targeting this? This, we are targeting again for next two sprints. Because look, so much work is already there for the content, right? If we give you very realistic, you know, scenario that I do have only one front-end resource, right? Got it. This is already too much of work for him, right? So, it will not be possible to integrate this immediately. We can start doing that back-end design, right? But at least we need a template, right? If you ask, I can start working on this. Maybe I can pull some resource for this on the back-end side, but. Even if I give it to you, let me see it once. As per the alignment I have gotten from pool, he is basically committing for these two projects for August.
+
+00:18:59 - 00:19:58 Unknown Speaker:
+
+Our main focus is on this. It's a lot for resource wise. So maybe like after tomorrow when we connect with him, we can also realign on this. Only challenge is the front-end resource. Back-end, I still have two or three resources, right? I can settle Kundan and C and this. But front-end, say, only Athar is there, right? And these are going to be lots of work from him, right? Because then you will come and say that this is prioritized, right? And then we might lag over here. True, true. So, as per my understanding, Sachin, I think this reporting is also kind of prioritized. And since that also we are targeting for August, then maybe we can deprioritize some things in self-serve if that's like resource constraint. So, in this, we can deprioritize some segments which are in the focus of Ather.
+
+00:20:01 - 00:21:00 Unknown Speaker:
+
+And same thing we will also align with Purna day after tomorrow. Let's have that alignment. What I can do, at least I can start building the backend for this. Exactly, yeah. Then UI integration, we can say that it will go later. It will not go immediately. Okay. So, Sachin, there is only one caveat in this, that UI integration, unless we provide users, it will not be available. No, and this cannot go like this. This requires a platform review, SRE review, and then deployment. So, till 31st, it's impossible to make it launch. Even with just backend. Because then I have to capture this. I have to submit an ALM request. Okay. And then on this ALM request, I need to, you know, get my... BPM and reviewed from the platform team.
+
+00:21:01 - 00:21:59 Unknown Speaker:
+
+Once they provide their approval, then we can start the build and then with that build, then it would go for a SRE review, right? This is all these steps. First I request it, right? Doing a POC with this. Then, this is a very long step. This is 31st, so it cannot be done from any angle. Okay. Also, if you can help me understand, are we bringing it back to Lumi anywhere? Not in Lumi. Yes, means rules are going over there, right? But not the failures. So, like whatever we are capturing from the partner end, it falls positive to positive. No, those are not. And if we try to bring that to Lumi, how big of a work effort that is? Even if I bring it to the Lumi, right, tomorrow you would ask for a UI interface where people can...
+
+00:21:59 - 00:23:09 Unknown Speaker:
+
+Yes, correct. That is such a long-term thing. We have to make it eventually. But for now, I am trying to understand that if we are not able to launch it by August 10, so suppose if we are able to bring this data to Lumi at least, so that it's available to download for our team, right? I would suggest to keep it on the ACE just to, you know, as you're planning, uh, or what I can commit is that I can at least start building the backend for this. Okay. But, uh, we might not get all those details on the UI screen. And even back-end, back-end kitna complete hai, that's something I need to check because I feel like these L1 escalation, L2 escalation, these B40, B45 details which you are looking for, these, for this table, updation is required.
+
+00:23:10 - 00:24:12 Unknown Speaker:
+
+Yeah, yeah. Right, and then true positive, false positive toh amara aa jayega. Okay, no. And if you're looking for 90 days, this is not straightforward, Rachna. I think I confirmed you, right, what Raj was mentioning. A is just like, you know, CASA type of DB, right, where they don't preserve our data for very long, right? So, anyhow, I have to create a table to store these all details. Okay. So, Sachin, you see, once its like steps, if you can help. Me understand ki wo kaha pe aapko SRE review call ratna padega and what all needs to be done from your end, right? So, I will take this forward with Kuna accordingly, like what are the dependencies. Okay, okay. Now, for 30 days we can do it, but if you are extending it 90 days, 120 days or, you know, maybe for one year, right?
+
+00:24:12 - 00:24:59 Unknown Speaker:
+
+The one that we were discussing last. Then in that case, as I stated, I already had that, you know, confirmation from us that we need to build a table at our end, dump all the records from Lumi to Ace and then we can build these roles over there. These are already there, right? Take your old tables and all. These are already there, but these false positive and true positives are getting saved to the Ace TV right now. And in order to build a system to have a long run or the long number of days, I need to create all together a new table itself. So, Sachin, what is the difference there in the existing table and then the new table that you will create? Both are in ACE DB only, right? So, what is the difference then?
+
+00:25:00 - 00:25:41 Unknown Speaker:
+
+Our table is not under the ACE DB, although that is a part of ACE, but we are saving it into the new Procure database for our use case, right? We will save the DB for self-serve there. There are challenges with ACE. The one that you... have seen with the Kivana dashboard, right, where they are restricting you from last 60 days, that same goes for the ACE. You are not going to get the data prior to that, right? So, we have 90 days requirement and if you want to increase it and if we build a capability based on ACE database, then anyhow we have to redesign that. So, if we are taking an initiative, let's do it thoroughly so that it would be a full-fledged solution for you by end of the day.
+
+00:25:44 - 00:26:31 Unknown Speaker:
+
+So, Sachin, abhi jis table mein data store ho raha hai, toh that allows you for longer time periods, right? So, aap kya rahe ho ki self-serve ke jo, so, bahan par you will be creating another table with these fields, right? It would be a transaction table for those DQID. DQID details are already being there in that DQ rules table, right? Which is there in that DB. Yeah, yeah. It would be just a transaction table that we need to save whenever there will be, you know, failure, no positive, false positive. We just need to add those transactions to those tables also. That's it. Okay. And then you will be building this layer. Just make sure. Yeah. So this is a major work. So that table build requires an SRE review or something? Everything.
+
+00:26:31 - 00:27:38 Unknown Speaker:
+
+Not only the tables, Rachna, even the designing, right? The BPM and flow, how to create a wrapper and all, right? This is, I would say, it's never going to be a two-spin task. It will certainly take more than that. I can explain it to Poonam in the call. If required. Yeah, yeah. This is going to take time. This is not a two-spin task. Okay, okay, Sachin. I think we can take this up with Poonam also once. So, we are all aligned on that. Okay. So, maybe I can just park it for discovery for myself. Okay, and then I'll get back to you on this one. Yeah, yeah. Okay. Now, tell Srimani. We would be getting the CD new rules? Yes, that will be continued, Sachin. Even though it's not like high priority, but if there are resources, then they can continue building on that.
+
+00:27:38 - 00:28:40 Unknown Speaker:
+
+Yeah. So, this would be taken care by ANSI and Suman this time around. IFI is on leave for next three days, starting tomorrow. So, we would need ANSI and Suman's capacity so that in case, you know, In case you need any assistance over there, it can go on. Also, on this, we have debuted the alerts that the CDRules gave and we have some suggestions like some rules might have to be rewritten or something has to be changed. New roles or existing role modifications? New role modifications, yeah. Also, Sachin, actually, Ansi and Suman, so going forward, like Rishabh will be the POC for this. So whenever you are sharing any, you know, role results for sign-off for E3 deployment, you can share it with him.
+
+00:28:41 - 00:29:53 Unknown Speaker:
+
+You can also CC me just in case, but yeah, like Rishabh will be taking care of the new role additions for this. Okay. What else we have? Let's know. DQIM, do we have anything new? DQIM? I don't think so. Apart from the... This rule, right? Okay. That was that. Let me go to this one once. Check tips. So, this we covered up. Self-serve we covered up. Athar was already working and then the backend also, right? CD framework, it is done from our side. We would need maybe monies and reserve once you review. Do let us know in case you need any. So CD framework are both the versions implemented like that first metadata usage logs one and the second KRI one both, right? Yeah, Kira is also done. It's just that Calibra API, we are working on it, okay?
+
+00:29:53 - 00:30:39 Unknown Speaker:
+
+So that integration, we can, again, that needs a discovery. They have shared us the details, but we need to see how to call those API and all, right? So the build can't be started in the sprint because we may need to raise some integration ID request and all to the Calibra team, right? So that is the reason I'm mentioning we don't have any build work on this. Now, I would leave it to you if you want to review it and then let me know if I need to. Yeah, yeah. I think, Sachin, there would be one thing regarding this. Like, right now, the outputs from both the frameworks, that usage logs one and the KRI one are getting stored separately, right? Like, the output format is also very different for both. So, that will have to be integrated.
+
+00:30:39 - 00:31:41 Unknown Speaker:
+
+Again, that's a task from product team side. So, we'll let you know, like, what kind of table structure will be there. And it should be such that the output from your version 1 and then KRI 1 both are getting stored in that particular table. So that will be coming up. So will we be getting this in this print? That I am not sure. Manish and Rishabh, do you think we will be picking this up, this print or the next one? Depending on like your bandwidth, right? Most likely next print. We do have some of the backups. Okay. So should I pick up these stories or I should leave these then in that case, Manish? I think like you can leave it for now, but we will definitely come back to this. So only this part, Calibra integration.
+
+00:31:41 - 00:32:51 Unknown Speaker:
+
+Okay. That is something we can work on. Okay. Yeah. This one we can check. Otherwise, I'm not picking up any other part for this. Quantro multivariate would be again, you know, Vargo would be continuing on this. So, Manish, as you're there, I think you have marked it as multivariate general POC, right? Something like that. I forgot that. Sorry for that. Okay. That's like generic rules. Oh, generic rules, sorry. This would be carried out by Wargav. Anything else on these CD, KRIs, 8-dimension, anything that we need to pick it up? I guess, like, Rishabh did mention about, like, some of the DK rules that were failing. Yeah, CD, we have reserved the capacity for that with two resources. I think two resources are more than sufficient. So Sachin, for that, we can correct the query by ourselves.
+
+00:32:52 - 00:33:40 Unknown Speaker:
+
+And we have all the 29 DC rules that we're selling. So will it be on you to correct those queries because you want to go through the data by yourself? Or should we give you the corrected query? How does it work? Look, I'll be very honest. We are not aware with the business requirement. Because that has been given to us, those query has been given to us on a very, you know, on an urgent requirement to just move it to the production environment, right? So we would need your help to modify those query. Or else if you can explain us the business requirement, then I can ask the folks to modify those query. Right, so I think like there will be like many rules that will be failing in future.
+
+00:33:40 - 00:34:38 Unknown Speaker:
+
+So, it would be better that, you know, we give you certain kind of KD on, you know, how to diagnose them. So that, you know, you guys are not dependent on us. Yeah, yeah. Yeah, exactly. So, once you provide us those details, I can ask team to, you know, fix those query from our side itself. So, we can work on that. Right. Okay. And if the number is higher, then just let me know. I may need to pull one more resources. Yeah, the number won't go, like, Beyond 30 or 40, I don't think so. Okay. Okay. And on univariant, we have already enabled the monthly one. The daily one would be done. So that may require a couple of story point and not more than that. Okay. Univariant to cut over from the existing DQ.
+
+00:34:39 - 00:35:37 Unknown Speaker:
+
+Control results to the DQ result and with email alert. So maybe I can ask Samit to give you a demo for that maybe in tomorrow's DSU call. So Sachin, is that build complete now? Yes, yes. For monthly it is done. For daily I think there is a small change he is doing. Most probably you would be able to wrap it up today and then we can have a demo tomorrow. Okay, sure. Okay, so just reserving a couple of stories for Sameer for that. Keevana, anyhow, we have moved out. Do we have any new use cases? No, Sachin, not as of now. Okay, and Stephen, if you're there in the call, AFC is done? I'm waiting for a sign-off from Rachel. Oh, okay. Yeah, I think... I did not. Okay, I think I provided for YouTube.
+
+00:35:37 - 00:36:44 Unknown Speaker:
+
+Okay, I will check and provide that. So it's just a deployment seven, right? Yeah. Let's see. Suman, do you have anything used in your bucket? No. Suman, Suman, Suman. No. Nancy, UMDL is still with you, right? Yes, Sachin. Actually, this is a little stuff on our partner end. I already tried following up with them, but they have not responded. So, yeah, not pending on Nancy, it's pending on us. So, are we going to get input in the sprint? Yes, yes, we will. So, I have to assign at least one story point. Yeah, yeah, sure. I think I covered up everything. Be proud to support some of the stuff that IPA is doing once you will be back. Okay. And then I'll assign rest of the tasks to the rest of the folks.
+
+00:36:44 - 00:38:22 Unknown Speaker:
+
+Do you want to prioritize anything else on this? Yes, this is good, Sachin. I think that was that eight dimension check that Kundan was working on, right? That is already ready. So that's where I was just asking. So that we were discussing earlier, right, Sachin, if we can fit it in the self-serve template and we were trying to check that. Okay. That is a data modification, right, with respect to the queries also, correct? Yeah, correct. Like query output should be in a format which can be utilized by self, so. Let me assign to Tithvi then. He has created it, right, so you would be able to. Okay. What else? Nothing? Jason, you there? Yes. How's it going? All good. How's this going? It's going. Okay. So new ingestion pipeline would continue, right? Anything else?
+
+00:38:23 - 00:39:21 Unknown Speaker:
+
+For the next two sprints? Not, just for the next print. Oh, no, I think that's the only one that, oh, sorry. And then the sending of the resi loyalty status table. Yeah, so that is being blocked. I think I have tagged you with this group, right? And even I asked you that day, right? I am not able to view this service ID anymore in my account. Okay. So even I checked with Rajendra, even he doesn't, he was not able to view the service ID. So that is a kind of blocker. So if I go to this cell point, I think I have opened it somewhere. So as we don't have that service ID, right, I need to raise the access to access that raise the table, right? That is having a different altogether IIQ group.
+
+00:39:22 - 00:40:22 Unknown Speaker:
+
+We were able to set up that vault configuration, but that is being blocked due to that part. Got it. I also don't think I only have access to one of them. Yeah, it would be that test one, right? This one. So I really don't know where it went suddenly. So even for the US consumer production one, I lost that access also. Got it. Okay. So that can be solved. And again, like that is one question to you. That would be live only when we would have a three environment provision. Otherwise, we won't be able to launch that part. And where exactly we are right now with the environment provisioning. Yes, I wanted to talk to you about the cost estimate, actually. Let's connect today then. Then we can connect separately on that.
+
+00:40:23 - 00:41:31 Unknown Speaker:
+
+And then we can take a call on that. So those two would be the requirement, right? One is this new ingestion pipeline and then that noisy loyalty status one, right? Yes. This build is ready, right? It's just that query is pending with you, correct? Yes, I can. Then we can assign it to Suman. You can work on the other part. Just give an overview to Suman. Have a connect with him today and then let him start working on it. He has worked on some of the DT flow earlier, so he should be able to work on this part. Okay. And on that, Snowflake 1, Jason, as 7 was doing a POC, right, that was something not possible and I think he has already communicated it to you. Yes. Anything else we are targeting for that in that case?
+
+00:41:32 - 00:42:29 Unknown Speaker:
+
+Yes, we'll pick it up in the next PI based on what's happening with another use case. We have to, I believe, Get registered on the EWP or Snowflake, and then configure the endpoints, like configure some specific endpoints between the accounts. I do need more of the details, but I believe that's what they're doing, so I just want to follow their process. Okay. So that needs to be parked in the backlog for this? Yeah, definitely parked in the backlog. Okay, okay. So, okay, so how many pipelines are there, Sravan, right now that needs to be moved to E3? Like you would be supporting those four pipelines, right, to have a data ingest and those have been deployed today, right? Apart from that, how many next do we have?
+
+00:42:30 - 00:43:34 Unknown Speaker:
+
+We have five left, so four of the new ones, and then the users table is currently blocked. Okay. So these anyhow you just need to send those E3 data ingestion once it would be tested then I think that should that pipeline would be set up and then you just need to schedule the job at your end. So that would be done. New pipeline where we are with those four new Python is it in E1 or E2? I believe we just submitted for certification. We had to send out the new impact notification, which went out yesterday. So it should be, the table should be certified today. So hopefully by end of day, we'll complete E2 and be ready for E3 to raise the E3 request by Wednesday. So seven, how much story pointer you are expecting to complete these jobs?
+
+00:43:35 - 00:44:37 Unknown Speaker:
+
+So out of those four tables, three tables are certified. One table is still pending, Jason, right? Okay. And apart from that, there are three new pipelines which are still in even. I don't think you have created an SFT space on your end for those. The one which someone was working on. I said the mapping was then 7, right? No, no, on JSON send. Oh, I see what you're saying, yes. I understand. So it's not 4, right? It would be 7, correct? 7 plus 1, that is there. 7 plus 4, that is in A3. 13, correct? And out of 13, 1 is blocked at lazy user 1. But we still have 12 to work, correct? Correct, correct, correct. So, if I give all those 12 pipeline responsibility to you, how much capacity you would require to close all those in this case?
+
+00:44:37 - 00:45:35 Unknown Speaker:
+
+So, four are already deployed, Sachin, right? We don't need... No, no, no. We need to... No, no. We still need to do one round of validation before we can... It's just the metadata has been deployed, right? You might face some challenges in the E3 environment. Okay, okay, okay. So, maybe one story pointer maybe for those four tables. But we are still left with eight tables. Yeah, I think another maybe two story pointers. Okay. So let me reserve one story pointer for this and maybe three story pointer because you need to do certificates and also, right? And then maybe four story pointer and then I'll see what else I can assign it to you. Okay, sure. So Jason, Manish, Rachna, Rishabh, any other queries for this sprint? Not on my end, thanks.
+
+00:45:36 - 00:46:39 Unknown Speaker:
+
+Okay, so just give me today's time, maybe by tomorrow, you know, post lunch, the stories will be assigned to you folks. And in case somebody is not aware with the task that needs to be done, just reach out to me. Okay. Okay. Thanks, Rachna. Manish, Jason in reserve. Folks, just stay back for a couple of minutes. So, just one thing I wanted to check. Today, I had shared a mail regarding this pay now, pay later and Aribia controls. So, that, like, the group DLs need to be updated for these. Yeah, there are these two separate controls, right? One is the pay now, pay later. So, you need to add these two DLs to the existing one. I remember existing one is something pay now, pay later at AXP.
+
+00:46:40 - 00:47:58 Unknown Speaker:
+
+So, just add these two with comma and then the next one is for Aribia only. So, this one you can add to Aribia. Yeah, sure. Okay, thank you. Thanks, Sushant. Thanks, everyone. Thanks, Sushant. Thank you. Hey, thanks, Sushant. Thanks, Manish. Thank you. Suman, do you have anything in your bucket or no? As of now, no, Sushant. Nancy, did we receive any new CD or no? No, today no, Sachin. Okay. And Shravan, even you might not be having anything at your end also, right? No, Sachin. Did you guys went through the recording that I have said, the one that has been recorded from Pithvi's side? Yeah, I went through, I think there were three recordings. I went through two of them. Yeah, I went through three of them. Oh, man. Can you guys complete it today?
+
+00:47:58 - 00:49:05 Unknown Speaker:
+
+Because there is a work on that, right? Then I could have assigned those tasks to you. Right now, what Prithvi is doing, he is just generating the SQL file out of it, right? We need to add another task into that flow. Once the SQL files gets generated, okay, you need to execute those query as it is, the way it has been generated by that automation. Okay. While executing. Yes. Executing by the automation. You are not going to execute it manually. Okay. Understand the flow. Right now what he is doing is picking up those tasks from the ASTB and based on those new rule registration he is creating a SQL out of it. Right. Independent SQL. Go through those recordings thoroughly and post generating those SQL, the next requirement is that you need to add a task over there which should execute those queries independently.
+
+00:49:05 - 00:50:02 Unknown Speaker:
+
+If he has created four queries, right, it would loop in. Okay? Now, once that automations and even you can embrace the one of the tag or the task created by IPA, you just need to clone that task. IPA just have a connection with Sravan or Suman. Okay? But even before implementing that, I need a thorough understanding what exactly you guys are supposed to do. Otherwise, you won't be able to fix that automation. Okay? So, the next... We have the util, right? Why am I saying the same, right? You just need to call that util method. Okay? Maybe incorporate into the tag where Pithvi has created. And then... integrate that task that would execute that SQL, right? Once you get the output of that SQL, it might be pass, it might be fail.
+
+00:50:02 - 00:50:58 Unknown Speaker:
+
+Now, how it is pass or fail? Just the way we are comparing with the DQ results, right? You might get some expected values, some actual values, right? Another chances are there that your SQL, while it is re-executing, it might fail with some syntax error also. Got it? Summoning Sravan. Yes. Right? So, I need to store that result again to that same DQ artifacts table as a result. Either pass, fail, syntax error. These three. Just let me know if you are clear with the requirement or not. And maybe Sravan, I'll assign this task to you. Oh, sorry. You are on those pipelines, right? Yeah, you can take up this task. Let Suman to work on those CDFM. I'll assign this task to you then. You are already having the bandwidth, right?
+
+00:50:58 - 00:51:50 Unknown Speaker:
+
+In case you are not comfortable, just confirm me tomorrow morning. Then I'll see who else can either carry on as he has built it. But just confirm me before your EOD today. Because if you haven't went through those codes thoroughly, you would be struggling over there to fix that part. So just confirm me because this is a priority requirement coming from Purna. I think I was sharing that Excel sheet, right? You guys have seen, right? It needs to be implemented by this sprint. So once that, so this is for all, right? To whomever I'm going to assign it, maybe Sameer again. Sameer, you have bandwidth, right? Leave it 7L. You guys can go through those requirements. Let me assign this to Sameer. Okay, he's not having any task right now. Right.
+
+00:51:50 - 00:52:53 Unknown Speaker:
+
+And then you just need to save that result to the same DQ artifacts table. Okay. And then for Suman and Sravan, what else? Where are you with those modifications which you are doing that? Do you have time today to give an overview to Suman? It's such a DQAD replacement, right? Yeah, but this is DB operations also required, right? Oh. That is the challenge. But at least he can give you those codes, right? The way he was sending it to you overnight. Ah, yeah. Yes. So just assign that task to someone. Let him do that. Till the time we are not getting any new CD rows, right? That suppose we are going to expect it tomorrow. Okay. So maintain as 7 is still having work, right? He can work with those Reggie pipeline with Jason today.
+
+00:52:53 - 00:53:38 Unknown Speaker:
+
+Okay, but Suman doesn't have any work. So assign that task to Suman. Okay. So, once he will do the modification at the code level, so DB level, everything he will prepare all the details. So, once I will back to, so that I will update the operations. Yeah, you can exit and even on the code level, he should just copy the file and send it to you over an email. He should not commit it. Correct. He should not commit it because right now those are running in the production environment. I don't want to get it interrupted. We are having a peak time, right, till 11th, 12th of every month, right? There are lots of jobs running. So, someone don't commit any file that would move to production.
+
+00:53:39 - 00:54:33 Unknown Speaker:
+
+Just take a requirement from APA, make those modifications, send those files over email, and once APA is back on Monday, he can update the DB as well as deploy the code also to the production environment. Okay. And the rest of the folks, you already have tasks. Prithvi, I know like you need a bit clarity on the work that being, you know, discussed right now. We can discuss tomorrow morning. And Kundan, Nirmal, Varga, and few guys are already having tasks. So, you can carry on your tasks. And Samir, I'll see that part right here. I'll give a overview so that you can start working on that. Okay. Anyone having any questions? And in case somebody is not having work or not aware what needs to be done in this thing, just reach out to me.
+
+00:54:35 - 00:55:28 Unknown Speaker:
+
+And seven, one input I need, okay, this is something I was discussing with Raj also. If you see some of the queries, right, which are not optimized, right, we would need your input to optimize those queries. Right now, what folks are doing, whatever the pieces of SQL that they are receiving from product owner, right? They are implementing it as it is, right? So when you are deploying it, we already have a DAG, right? You can utilize the DAG to twist the query and run it. And then see if that optimal query can work. Because in that way, we can optimize these operations. So that part also... And when you are trying to make those entry to the database, right, now that JSON object has been launched, one of the challenges that Nirman pointed out, did we get a solution for that or no?
+
+00:55:33 - 00:57:01 Unknown Speaker:
+
+Yeah, we do have a solution for that. Probably I can discuss with you later. Okay. Then just let me know because we need to segregate that part also. Okay. Anyone having any other queries? Do you save that BPMN for that use case registration? Yes. Okay. Yeah, yeah. That could fail. I asked both of you, right? You need to add a sample bundle. Okay. Okay. Okay. Okay. What's that? The backup you have made, Kundan has the backup, right? But he doesn't know you, so you really don't have a backup, okay? Leave it. I mean, he knows about the DQIM portal and everything. That's the reason I shared you. Because there's no specific UI backup, such as even like a feature or the use case backup kind of thing. Okay. Okay. I might be on leave on 18th and 19th.
+
+00:57:01 - 00:57:25 Unknown Speaker:
+
+It's a tentative, but I'll come from maybe next week for two days. Okay. I'll create two stories and then post that you can start the sprint tomorrow. Just give me today's date and I'll create and I'll let you know. Yes. Thank you. Thank you, everyone. Bye.
+

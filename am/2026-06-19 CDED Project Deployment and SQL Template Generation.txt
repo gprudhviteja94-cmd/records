@@ -1,0 +1,196 @@
+2026-06-19 CDED Project Deployment and SQL Template Generation
+
+Creation Time: 2026/06/19 11:56
+
+
+📅About Meeting
+
+• Date & Time: 2026-06-19 11:56  
+• Location: Virtual / Online Meeting  
+• Attendee: Kundan, Vargav, Prithvi, Sachin, Atharva, Rajendra, Nirmal, ANSI, PITB, Rachna, Anand, MC, Victory, and others
+
+📒Meeting Outline
+
+Critical Code Deployment and Timeline for CDED Project
+
+• The meeting emphasized the urgency and highest priority of the CDED (Critical Data Element) project, mandated by the Enterprise Vice President (EVP).  
+• It was clarified that the project involves plain Python code with no AI components.  
+• The immediate task is to convert the existing code into DAGs (Directed Acyclic Graphs) and deploy them to the production environment by 26th June, with no possibility of deadline extension.  
+• Kundan and Vargav were assigned to lead the task, with Kundan expected to take the lead on 60% of the work and delegate 40% to others.  
+• After the DAG implementation, starting 29th June, around 100-120 new SQL validation rules (DQIDs) will be onboarded and must be completed by 3rd July.  
+• The project will undergo validation between 3rd and 10th July, followed by a demo to the EVP around 10th or 13th July.  
+• The team was advised to raise access issues immediately if encountered, but otherwise, the timeline must be strictly followed.  
+• Vargav will continue parallel work on the multivariate discovery for the next sprint, dedicating limited hours to the CDED project.  
+• Kundan was instructed to hand over the Kivana dashboard responsibilities to MC and focus fully on the CDED tasks. Nirmal will take over API-related tasks to free Kundan’s bandwidth.  
+• No leaves or extensions are allowed during this critical two-week period; team members may need to stretch their work hours.
+
+Code Review, Testing, and Backup Plans
+
+• Prithvi confirmed code commitment and testing for three check types, with plans to share sample queries and conduct a review and demo at 4 p.m. the same day.  
+• Emphasis was placed on training backups for all critical utilities to ensure continuity during absences, with Nimble identified as a backup for Prithvi’s work.  
+• Atharva demonstrated UI changes reflecting the new descriptions and data pushed to the system, with minor corrections such as changing "equal" to "equals" in filter criteria.  
+• Sachin highlighted the need to replicate data modifications from ASA to UNICEF environments.  
+• Communication was clarified to be in English for the benefit of all team members.
+
+SQL Template Generation and Rule Description Alignment
+
+• A detailed discussion took place on the SQL template generation logic, focusing on the use of rule descriptions, filter conditions, allowed values, and check types.  
+• It was stressed that the SQL generation must consider multiple components: variable, check type, filter condition, and rule description.  
+• There was a clarification that the rule description was reformatted to support SQL template generation and uniform user display.  
+• The team reviewed sample data and filter conditions, identifying gaps where filter criteria were missing or incomplete in the data provided.  
+• Sachin and Kundan agreed to update missing filter conditions to ensure accurate SQL query generation.  
+• It was agreed that final mapping and demo of these changes would be presented on Monday morning.  
+• Kundan was requested to share specific DQ IDs with the team for marking simple checks.
+
+Project Coordination and Blocked Items
+
+• Sachin advised marking stories as blocked in the tracking system when awaiting input from the product team, who are currently fully engaged with the CDED project.  
+• Communication with product team members such as Rachna and Anand should be via email, avoiding the group channel to reduce noise.  
+• The team was reminded that the entire product team and interns are currently focused on the CDED project, limiting availability for other tasks.
+
+📋Overview
+
+• The CDED project is a top priority with a strict deployment deadline of 26th June for DAG implementation and 3rd July for onboarding new SQL rules.  
+• Kundan and Vargav are the main resources, with clear task distribution and no leave allowed during this period.  
+• Backup plans and knowledge transfer are critical to ensure continuity of work.  
+• SQL template generation requires integration of multiple data components, and missing filter conditions must be addressed.  
+• Communication protocols were clarified to streamline collaboration and avoid delays.  
+• The team will conduct a code review and demo session for recent code changes and finalize SQL template updates by Monday.  
+• Blocked items should be clearly marked and communicated via email to the product team.
+
+🎯Todo List
+
+• Kundan:  
+  • [ ] Lead DAG conversion and deployment to production by 26th June.  
+  • [ ] Delegate 40% of tasks to team members to meet deadlines.  
+  • [ ] Hand over Kivana dashboard responsibilities to MC immediately.  
+  • [ ] Support stabilization of the self-serve platform in the E3 environment.  
+  • [ ] Share specific DQ IDs with the team for marking simple checks.  
+  • [ ] Update SQL template generation to include all necessary filter conditions and rule descriptions; demo on Monday.
+
+• Vargav:  
+  • [ ] Assist with DAG implementation, focusing on 40% of the work.  
+  • [ ] Continue multivariate discovery work with limited hours during the sprint.
+
+• Prithvi:  
+  • [ ] Share sample queries and conduct code review/demo at 4 p.m. on the meeting day.  
+  • [ ] Ensure Nimble is trained as backup for the utility developed.  
+  • [ ] Complete other templates before the 4 p.m. session.
+
+• Sachin:  
+  • [ ] Coordinate data modification replication from ASA to UNICEF environments.  
+  • [ ] Update missing filter conditions in the data and communicate with Kundan for SQL template accuracy.  
+  • [ ] Mark stories as blocked in the tracking system and notify product team via email.
+
+• MC:  
+  • [ ] Take over Kivana dashboard tasks from Kundan immediately.
+
+• Nirmal:  
+  • [ ] Take over API-related tasks from Kundan to allow focus on CDED.
+
+• All Team Members:  
+  • [ ] Avoid taking leave during the critical two-week period; stretch work hours if necessary.  
+  • [ ] Communicate blocked issues via email and mark stories accordingly.
+
+Transcription
+
+00:00:00 - 00:01:11 Unknown Speaker:
+
+Open the calendar, whether it's with your phone or in front of your laptop. Because the ask that I'm asking to you, that is very, very critical. And that has, you guys have seen, right, there is an invite that I have sent for the CDED, right? Now, the reason Kundanai pulled you, because it's critical and highest prioritized. Work that has came from the boss who leads the VP, it's basically EBP Enterprise vice president. Okay, the requirement is for the critical data element. First of all, let me clarify you, there is no AI which has been involved in this use case for this city. Okay, it's plain Python code, okay, there is no use of AI. If you have opened the calendar in front of you, we are standing on 19th. Okay, where we are going to get the code review?
+
+00:01:11 - 00:02:03 Unknown Speaker:
+
+Okay, we have to deploy the code as it is to the production environment. The reason I pulled you from then? Because Gargant doesn't have that grip on this lumen platform right now, and he might struggle with few of the access. Also, right? And this is, as it is, a critical element. We need to close these. You know, they would be providing us the code base, they have already said the code base. I'll forward it to you. Okay, it is already with Varga, but I'll forward it to you. Also get the requirement clarification today. Okay, it's just that we they have implemented here and there, we really don't need to touch their code base. Uh, because the alignment is the way it has been designed. It would go as it is. Okay, okay. What we need to do?
+
+00:02:03 - 00:03:09 Unknown Speaker:
+
+We need to generate the tag for that, to run those process in the environment. Number one is the tag. For all those use cases, there might be multiple use cases we need to do for all those use cases. The deadline is 26th of June. Please, one week, one week. It's not even one week, it's just five days, five days, basically, yes, five days. Okay, so that's the reason I asked you to open your calendar that is number one. There is no extension to that. Okay, because this, this piece of uh tool would be presented to EVP. If we need to stretch, we have to do that. There is no extension for that. And let me know if you don't have confidence, then I need to pull out some different resource for that. Okay, that is number one.
+
+00:03:10 - 00:04:24 Unknown Speaker:
+
+Give me that clarity today itself. Otherwise, I have to plan it accordingly. Okay, that is number one. And your job is not done just by converting it to the DAG and deploying it to the environment. On 29th of June, we are going to get hundreds or maybe 120 Dqids or the new rules. Okay, I think, uh, I was not aware with this. I I think I was showing this to you guys, right? Uh, when we were having this. Rajendra. And, uh, give me a second, I'll show that to you. I was not completely aware why he is looking for this information. I feel like you guys have seen this conversation. 100 new SQL validations. What this platform is all about. Is it from your side? Yeah, this training now that is again is starting again in it.
+
+00:04:24 - 00:05:32 Unknown Speaker:
+
+Okay, okay, so this was. I was not aware that this was something with respect to the CDE. Only. It's equal validation into the product. No, no, hear me out, don't read it out. Okay, so basically, 26th May, sorry tag implementation. Okay, that needs to be completed by 26th, 29th. You are going to get almost 100 to 110 new DQITs, OK, and that need to be onboarded and closed by 3rd of July. OK, so you are getting one week for DAG implementation, one week for onboarding these 100 new SQL. If there are access related issue that we can raise it, but if we really don't get any access related issue, then all these sequels need to move within a week. Because post that they have a plan to validate in the PIV to the next week, which should close on 3rd July to 10th of July.
+
+00:05:32 - 00:06:31 Unknown Speaker:
+
+Okay, and then they have a demo with the VP, maybe on 10th or 13th of July. Okay, so this is the push we have only couple of weeks and even Rajendra is pushing for the same. Okay, okay, okay, even he is pushing for these one. Okay. First of all, be clear it is not an AI initiative. This is all Python related code framework that they have built. As far as my understanding is there. And what this CD is. I'll explain you by end of this call once I'm done with the update from ANSI and PITB. Okay? Yes, sir. Now, let me know, Vargav and Kundan, do you guys have any plan D for upcoming two weeks? Number one is that. I don't have any, Satyam. No, sir. No, right? No.
+
+00:06:31 - 00:07:33 Unknown Speaker:
+
+And, Kundan, the reason I pulled you, just to fast track it, otherwise the initial plan was just Vargav to work on it, right? But to assist you in case there are some challenges. But this is a highest priority task, which we need to close by next couple of weeks. There is no extension. Okay, it's like, it's like, you know, they are trying to prove this USCDO to the EVP, why? What was the use of these? You know, SQL? Uh, onboarding and all. Okay, and maybe, uh, once we are done with these tag implementation and everything, maybe I can pull, uh, to help you guys on the next week, right? Once your tag implementation is done, uh, to help you onboard. Those sequels, maybe ANSI also, so maybe I need to, you know, come up with complete team to migrate these details, but.
+
+00:07:34 - 00:08:24 Unknown Speaker:
+
+Right now. I am not in a position right to pull every everybody on those use cases until unless we stabilize with the tag at you Right. Okay, so This is highest priority. So if there are certain thing which is in your bucket close it by today only to them And varga apart from this. You need to continue with that Cointreau, you know, the discovery for the multivariant check. You can continue on that in the next print also because I don't think your eight hours should be spent only for this DAG. Let Kundan to be dedicated for that because he has a good hands on that one, right? He can make it faster. But Kundan, again, it should not be all the responsibility on your head.
+
+00:08:25 - 00:09:23 Unknown Speaker:
+
+You have to distribute the task in such a way that you can get the task done from at least 40 percent of the task. While you would be leading the 60 percent. Okay, okay, I'll explain you what this city is. Uh, and see, uh, anything to discuss? I have seen that you have asked for the sign up, right? So I feel you're good from your side, correct? So once they review, I can work on any changes. Anything in your bucket right now? No, like for the UMDL, as I mentioned, there were four rules which I need clarification. That's fine. You have already received those story pointed to the next print also, right? So I'm okay with that. No worries for that. Anything else? And on the Walmart issue, Sachin So, that one also.
+
+00:09:23 - 00:10:14 Unknown Speaker:
+
+I had sent the analysis email. But like I said, there is one clarification in the logic. So actually, I'll tell you, the complete product team is running behind this CDA right now. Okay, as this has came from the EBP. And that was the reason Rachna is not free. And even if you chase Anand, even he, you would not get time from Anand. So you can just drop an email, okay, don't put it into this uh channel, also just drop an email and then mark that stories as blocked. That's it because I am not expecting that we are going to get time from them, at least for this next couple of weeks. Even the interns and and everybody right, including everybody, is within that CDF. So, in the rally you are asking me to block?
+
+00:10:14 - 00:11:13 Unknown Speaker:
+
+Market has blocked and just shoot them in, right? So that we would notify them that this is the stuff where we are waiting for your input. If she gets time, if she replies, then just have a connect with Rachna. Okay. And Kundan, do one thing. This Kivana dashboard, hand over to MC. Because you are full focus, you need to start it from today, and few efforts of yours would be required on just stabilizing the self serve in the E3 environment. The API, which I have assigned it to you, I will assign it to Nirmal so that you can focus on the CD. But at the same time, you need to support, you know, on that E3 deployment and E3 deployment is done right, at least you stabilize that the platform. Okay, so I'm just like a varga.
+
+00:11:13 - 00:12:17 Unknown Speaker:
+
+I have kept two to three story point for that Multivariate discovery right similarly two to three story point for you to have PIB, but your complete dedication should be on the CD And again, I am calling it out varga and kundan. There is no Timeline extension so couple of weeks no leave. And in case required, please stretch a bit. Prithvi, I have seen your message that you have committed the code. Did you test it also? Yeah, for those three check types, I am able to generate the queries. I will share those sample queries with you. Maybe you can review them. I will connect with you today. I'll connect with you today at 4 p.m. Let's have a connect, let's go through the code changes that you have made, and let's have a demo also for that.
+
+00:12:17 - 00:13:01 Unknown Speaker:
+
+And um, please make sure that, like, you know, you might go on leave, right? Like yesterday, you're not feeling well or something, right? So in that case, Nimble should be trained enough to handle these, uh, utility that you have built. I'm asking this multiple times, right? Uh, like, for control. Now we have couple of resources, self-serve. If Kundan is not there, at least I can manage those and all, right? So similarly, I need a backup. Apart from Athar, everybody else would have a backup. Okay, whatever piece of work you are doing. So let me ping you at 4, but make sure by that time you complete the other template also. And Athar, can you please bring up your screen to that UI once?
+
+00:13:02 - 00:14:00 Unknown Speaker:
+
+So Prithvi, Whatever, .. whatever description that you have given, the UI has been changed accordingly and the data have been pushed right now. Uh, we did not made any changes to the filter criteria and the description that you have given. Just one change equal has been changed to equals. Okay, that is one change. And uh, can you bring up your stay in Earth and see you can feel free to drop off? Uh, just stay. I just need to explain the CDA, right, so you can stay back. Just one thing, Sachin. We modified the data in ASA, right? So we have to do the same activity on UNICEF. We will do that. Don't worry. We will do that too. Let me do it on one side. I mean, where should I do it?
+
+00:14:00 - 00:14:56 Unknown Speaker:
+
+Hey, Bhargav, you understand Hindi a bit. Like, I know, like, we understand it. Do you understand or you don't understand? Just let me know. If you know, then I'll stick to English. Yeah, I don't understand. Okay. Yeah, because these people have made me like that. Only sorry for that, man. Just just say, so, uh, based on use case at that. Yeah, so such in. Yesterday I pinned in the group there is one yeah, yeah that that need to be fixed by Uh Kundan, so, uh so case him are different. Uh, when. Uh, yeah. So if you please see this one with me, right? So not in okay. These are the things that would come in. Not in, not, not between, between. Length equals to length, not equals to. That would be there in your description.
+
+00:14:56 - 00:15:48 Unknown Speaker:
+
+Okay? And there is a classical cases where you are not even going to get these in. Not, not in, not between. Because there is one case. Can you show that one? Even this data? You only said to us, the last one look less than one, you only said it, so it would come like this. Only take values less than one, okay, but that would be there in your filter condition as you have added over there, right? Travel trip cost amount less than one. Okay, and these are the expected values, right? Allowed values dropped out. So I have to make sure the template is, uh, expecting any of these, so. And according to it, I have to generate the query. Exactly. Exactly. This is not considered. No, it's not considered. I'll do this. Which one?
+
+00:15:50 - 00:16:43 Unknown Speaker:
+
+This drop down in, not in. That would come in your old description. That would come in your old description. Just select any one of them. Just select between. Just select between. You can see that description would change, right? But we agreed to not use any description, right? No, no men. Then how you are going to get it? You have to use the rule description along with the filter condition and the allowed means those variables and everything, right? Otherwise, how you are going to generate the SQL man on basis of what? No, where condition only you add this also into the where condition. Filter condition itself. That that would be a redundant man. If I add that between right, that is already getting populated in that rule description.
+
+00:16:43 - 00:17:38 Unknown Speaker:
+
+If I write down, suppose somebody is just just select the between in the allowed values, if he is selecting between right, it is already coming into that rule description. Why should I write down that again to that filter condition. But such in the initial plan was we are just understanding the description What template to choose but we will not use any information from the description No, man. No again. There is a gap in this, you know communication you have to eat why we have formatted this description just to support your that sequel part right otherwise. Why would we have did so much of changes in these description and all? There was only couple of agenda. First agenda was to, you know, uniformly form this description to the user. That is number one.
+
+00:17:39 - 00:18:44 Unknown Speaker:
+
+Second is to support your SQL template. And you were using these rule description from very beginning. Why did you remove that condition? Descriptions. We changed it completely right, everything we added to the filter criteria to go and see filter criteria everywhere, filter criteria is not there. I have seen those data also, I can show it to you in the database, we were verifying those data yesterday. Also, there are lots of thing which is not there in your filter condition, you haven't added everything to the filter condition. Kundan Can you share your screen and run those query? Let me showcase that to him once. Just run by check, by check, type, by check, type. The way we were doing it yesterday. This is the data you guys have only given, right? So look here, filter condition is na, right?
+
+00:18:46 - 00:19:39 Unknown Speaker:
+
+All these filter conditions are how your query would get formatted man, just tell me. No, there is no filter condition, it is just a description it must be, what is the check type? Yeah, so this is a valid value check right, so it would be there in the description, so you have to pick the description right. No, no, right side there is a filter criteria, can you go right side also? Yeah, look for a name, yeah. One second, I am removing this use case ID, that is not. This is the data you guys only provided, 50, we did not need it right now. See the one where dots are there, right? That is not in us, not in us, right? This is the data you guys have provided. How would you get this us now?
+
+00:19:41 - 00:20:34 Unknown Speaker:
+
+Similarly, there are cases. Can you scroll down a bit? I have updated it. Maybe if you are missing, we can update them. Look, this is equals to 4, right? Those are not there in the filter criteria. We can add that, no, Sachin? How much revoke you want, guy? Once you share the data and again you come back next day and you used to mention, man, this is still not finalized, right? When we are going to finalize then, Prithvi? You want me to read it from the description, is it? Yeah, read it from the description also. Okay, I'll update that. And one more thing, Sachin. Can you ask and answer to show that screen again? I have one question there. Atharva, show your screen. It was Atharva. These are the data you guys have only said, right?
+
+00:20:34 - 00:21:24 Unknown Speaker:
+
+And if it is missing in the we just adjusted based on the data that you have given to us. So here, between each user and less than one that will not come right, it's between from one to number, should be there right, two numbers. Yeah, yeah, yeah, this is just a example, example we are giving. Uh, you can change it right. Between would come like one to four, right? That should be coming from user one comma four, it will come between one comma four. However, users write right one hyphen four, it can come one comma four, right. That is something you. It depends on the user. Okay, fine, okay, Sachin, I need time today. Okay, I'll demo this on Monday to you because this request changes to the existing check types also.
+
+00:21:24 - 00:22:40 Unknown Speaker:
+
+But I understood now, with respect to description, I'll map everything and I'll show you on Monday morning. But again I am repeating just listen to me carefully, when your SQL template is getting generated you have to consider the variable number one, check type number two, filter condition number three, rule description number four, Allowed values and all right, whatever it would be there, that would come into your load description, so don't worry about that. Can you show one razy one? Can you come up with the razy? Open that one? So look here. If you see this 45 days, right? Can you click on modify? So now look, this 45 days is being saved into that look back period, right? But it would comes in your description so you can pick this 45 days from this description, and the variable is already being appended to this new description.
+
+00:22:40 - 00:24:07 Unknown Speaker:
+
+Also, right? Luminescent timestamp. So let me write down, man, again, you say something else on morning, on Monday morning. Please consider the law columns in SQL Generation. Number one is your variable. Number two is your filter condition. Number three is your rule description. What else is there? I'm not seeing the screen. Can you just recall me? Check type. Yeah, check type. Table, Variable, CheckType, and RuleDescription. I think this is 420. Yeah, Variable, CheckType, FilterCondition, and RuleDescription. Okay? Okay. So, just keep me posted with me once you are done. Yeah, sure. And before, even before that, right? The 7 or 8 records that I have asked you to send in. Just send those DQ IDs to Kundal so that we would mark those ads also. Uh, simple check instead of the complex one. Okay, yeah, thanks.
+
+00:24:07 - 00:24:19 Unknown Speaker:
+
+Uh, feel free to drop. Uh, victory. Uh, do you have anything? Uh? Otherwise, we just need to jump into a ball. So just one thing, I mean, yesterday you made.
+

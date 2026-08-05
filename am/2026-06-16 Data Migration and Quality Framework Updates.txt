@@ -1,0 +1,249 @@
+2026-06-16 Data Migration and Quality Framework Updates
+
+Creation Time: 2026/06/16 18:01
+
+
+📅About Meeting
+
+• Date & Time: 2026-06-16 18:01  
+• Location: Virtual (Webex)  
+• Attendee: Anand, Rachna, Sachin, Sameer, Ayyappa, Prithvi, Saravan, Suman, Tanisha, Nirmal (absent), Krishna, Bhargav, Purna (mentioned), others
+
+📒Meeting Outline
+
+Data Migration and DQ Repository Updates
+
+• Null Values and Column Usage  
+  The team agreed to keep certain UI fields as null since they are not required in the Data Quality (DQ) rule runs. Columns such as variable type (continuous/discrete) are manually entered and not fetched from metadata, so they can be discontinued. Date variables are needed but handled via filter conditions.
+
+• Data Migration Status and Portal Readiness  
+  Data migration is nearing completion, expected within a few hours. The portal deployment is targeted for end of the week or early next week. Existing use cases have been migrated, but some use case names need clarification or renaming (e.g., PRJP to Insurance). Duplicate or unclear use cases were discussed, with a call for seriousness on data insertion and a dedicated resource assigned.
+
+• DQ ID Management  
+  Concerns were raised about large gaps in DQ IDs. A proposal was made to fix a base number and increment sequentially (N+1) to avoid huge gaps. Backup and mapping of old to new DQ IDs will be maintained before changes. The priority remains to migrate existing data and make the portal live before ID restructuring.
+
+• Threshold Checks on UI  
+  Threshold checks will not be implemented on the UI initially. There is a plan to migrate threshold data to the ASTV database for reference, but modification capabilities will be disabled to prevent unauthorized changes. The focus is on letting the checks go live first.
+
+• Bulk Update and Production Deployment  
+  Bulk update testing is ongoing. A deployment of AMGM script in production has removed duplicate records from DQ positive data. Data migration discrepancies are being resolved, with closure expected soon.
+
+CD Framework and AI-Based DQ Checks
+
+• Current Status and Expectations  
+  The CD (Control Deficiency) framework is evolving. Initially based on usage logs, it now incorporates KRI (Key Risk Indicators) scripts and QTRI variables. The process is manual, with a parser created for KRI SQL scripts. The work is divided into identifying CD variables, cleaning and creating DQ checks using AI frameworks, and deploying/validating these checks over a few weeks.
+
+• Immediate Needs and Ambiguities  
+  The immediate requirement is to persist identified CDs in a Lumi warehouse table for sharing with other teams. However, clarity is lacking on how data will be fed into this table and the exact role of the current team. The CD identification framework by Antares is on pause due to ambiguity.
+
+• AI-Based QTRI Checks  
+  The AI-based QTRI DQ checks framework by Charmi is finalized and expected to be completed within four weeks. Validation of these checks will be done by the Tech team before implementation.
+
+• Next Steps and Coordination  
+  Metadata sharing from Purna is awaited to proceed. The team plans to meet again to clarify requirements and set expectations. The deployment of the CD framework to the E3 environment is planned for early July, with RFC readiness required.
+
+Metadata, Use Cases, and Environment Migration
+
+• Metadata and IIQ Groups  
+  Metadata input from JSON for new tables is pending. IIQ groups are still being created and can be modified post-pipeline creation. There is urgency to complete IIQ groups before certification to avoid recertification.
+
+• Composer to Astronomer Migration  
+  Migration from Composer to Astronomer is requested to be included in phase 1 to allow sufficient validation time. The environment provisioning is awaited to start migration. Delay in migration phases could impact processes and require higher-level approvals.
+
+• Use Case Verification  
+  Some use cases lack proper naming or clarity on ownership. A follow-up call is planned to verify and finalize use case details.
+
+• Alerts and Validation  
+  TLS alerts are being monitored; no recent alerts have been received. Validation will continue for a few more weeks to ensure system stability.
+
+📋Overview
+
+• Decided to keep certain UI fields null as they are not used in DQ rules.
+• Data migration is almost complete; portal deployment expected soon.
+• Use case names require cleanup and verification.
+• Large gaps in DQ IDs to be addressed with a fixed increment strategy, maintaining backup.
+• Threshold checks will be migrated but not modifiable via UI initially.
+• Bulk update and duplicate record removal in production completed.
+• CD framework work is ongoing with some ambiguity; immediate focus on persisting CD data.
+• AI-based QTRI DQ checks framework finalized; validation and deployment planned.
+• Metadata and IIQ group creation pending; urgency due to certification timelines.
+• Migration from Composer to Astronomer planned for phase 1; environment provisioning awaited.
+• Monitoring of TLS alerts ongoing; no recent alerts detected.
+
+🎯Todo List
+
+• Rachna:  
+  • [ ] Complete data migration and finalize portal deployment (ASAP)  
+  • [ ] Share metadata details with the team after confirmation from Purna (TBD)  
+  • [ ] Verify use case naming and ownership, especially PRJP and insurance-related cases (By next call)  
+  • [ ] Coordinate with Saravan on IIQ group creation and pipeline readiness (TBD)  
+
+• Anand:  
+  • [ ] Implement fixed base number and N+1 increment logic for DQ IDs after backup and mapping (Post-portal deployment)  
+  • [ ] Coordinate with Purna and team on CD framework requirements and clarify expectations (Next meeting)  
+  • [ ] Follow up on Composer to Astronomer migration provisioning and phase inclusion (Urgent)  
+
+• Sachin:  
+  • [ ] Lead discussion on CD framework deployment and AI-based DQ checks validation (Next call)  
+  • [ ] Assist in clarifying requirements and setting sprint expectations for CD and AI checks (Ongoing)  
+
+• Bhargav:  
+  • [ ] Explore API call, Lumi consumption table, and DQ repository data fetching for CD identification (Pending clarity)  
+
+• Ayyappa:  
+  • [ ] Insert DQ repository table data for completed DQ rules (Pending data receipt)  
+
+• Sameer:  
+  • [ ] Complete migration from DQ representative to DQ artifact (By end of day)  
+
+• Team:  
+  • [ ] Avoid unauthorized data insertion; use dedicated resource for data management (Immediate)  
+  • [ ] Monitor TLS alerts and report findings (Ongoing)  
+  • [ ] Prepare for next meeting to finalize CD framework and deployment plans (Scheduled)
+
+Transcription
+
+00:00:07 - 00:01:08 Unknown Speaker:
+
+So is that something you have finalized? Because that is something going as null from UI right now? Okay, right, I think we can continue keeping it as null. I don't think we really need it anywhere in the DQ, like DQ rule runs. Also. Yeah, these are the column that we are specifying, one is where type, okay, one is date, filter, where, and null valid in, Uh, yes, null valid. And we already confirmed on the previous calls this is not required anymore. Uh, variable type. Also, I do believe like we can skip that. Anand, let me know if you think otherwise. I basically, this is the column where we specify whether the call, like whether the variable has continuous values or discrete values. So we don't really use it anywhere, plus it is like manually entered, not not really fetched from metadata or anything.
+
+00:01:08 - 00:02:50 Unknown Speaker:
+
+Got it, yeah, makes sense, then. Yeah, we can discontinue it, right, like all these, all these people, right? Yeah, date variable, um, date variable. We would need, but we can't take it in the filter condition itself. I think, yeah, that is anyhow coming from the filter. So yeah, yeah, then it should be fine. We can leave out these with new records. I'm mentioning, okay, the existing one would be there, it would be migrated. Okay, okay, works. Uh, seven, uh. This was the query you have also, right? Anything else is Ravan is there in the call? Yes, If you remember the data that you have said, right, let me even pull it out. Let's close it out because data migration, Rachna, we are just at the end. It would be, you know, ready in next few hours.
+
+00:02:50 - 00:04:04 Unknown Speaker:
+
+Oh, that's great. Was, hold on, I sent it right. Um, so this one seven, you have said, right, I think you were pointing out to this one only right? Where? Type name, correct, correct, anything else. That's that. I'm just checking with you. Uh, type name. No. There was one thing, uh, so I'm trying to remember. So so I have tagged you over here. Okay, so in case you find any, any other value, right? Uh, please pitch in in this thread. Okay, okay, so this is regarding those data and I think if you can just bring up your screen in, uh, even there is few rectification. Rachna and Anand. We are doing, uh. But most probably this would be, uh, ready today. And then, uh, you know, the portal would be alive in by end of this week, or most probably by next week.
+
+00:04:04 - 00:04:58 Unknown Speaker:
+
+Uh, early, uh, Monday or Tuesday. The data migration which is being left the code base has been deployed to v3 already. Okay, okay. Click on that register or update DQ checks. Go to the use case so you can see all these use case have been populated, which we are having existing one on those 16, one, one, one minute. Can you scroll down a bit now here? This one does not have a proper name, it is PR exactly PRJP. This is a like seems like IIQ group. So if you can just give us a better name, we will modify this use case name. This is, I think you created for insurance one, right? Oh, okay, okay. Yeah, yeah, then just replace it with insurance only. So, insurance already hai, insurance table. Then why are there two different ones?
+
+00:04:58 - 00:05:45 Unknown Speaker:
+
+That is what we received as an input, right? And that might be the reason I have inserted those records. But who is the email going to for this one, the PRJP one? That is, we just need to check and then I'll confirm you on this. Yeah, sure. Okay. I'll check this one, I just check this one. PRJpau USPM Bell Analytics. Even this was, I was raising a concern today morning in RDSU. Right? Where there is a use case like that, and can you open any of the use case author, maybe RESI or something? This doesn't seem like insurance one to me, but yeah, let's just confirm. Look, the data would be displayed like this, Okay, and can you click on any modify one so you would be getting our data over here?
+
+00:05:45 - 00:06:53 Unknown Speaker:
+
+So there is some bit changes is required, which we are working. Like, you know, this comma separated, right, where the value should come, uh, right, so those we are just modifying it, and most value. This should be ready by end of today's. Okay, okay, great, yeah, okay. Sachin Uh, that one is like a TLS one, the p-r-j-p-a-u-s-c-s-o-e-l. Is it the latest one that you are working on? We created the outside use case, right? Uh, use case bucket, but who has asked you to create it? Is this from the business that is, uh, we are not created that one, uh, we have created the data in V1 and V2 V3, the tables No. But based on whose recommendation? We have included that as a use case, name a new use case all together, not the use case it has been registered.
+
+00:06:53 - 00:08:20 Unknown Speaker:
+
+As you just couple of them, can you go up, filter out the use case? I have query, and couple of use case, one is this one, and then this one. Airline fee fee credit, Uh, Delta split. Yeah, these were supposed to be one single use case. I have shared only one basket for these, like one word basket. Details this airline fee credit, airline fee credit, Delta split. And the third one, right with that one. And even this spend returns rewards. Integrity Scanner Who has created these? Okay guys, can. Can we be serious on not inserting the data by our own? And that is the reason I have asked a dedicated resource. I have to take care of these. So today I was mostly working on the migration part, and then we found one issue where we were showing error even on the edit mode.
+
+00:08:20 - 00:09:08 Unknown Speaker:
+
+So, as I said, this can have removed those, and those changes are in local and pushing those in E1. I was continuing on merging the approve and the reject page, but since, as I mentioned, was mostly involved in the data migration from the UI testing. So some part of his left will try to close it today and then push those chains, that's all from the side. One question, Uh, on this one, onion and Rich now, okay, uh, doesn't have that one. But if you see the Max DQ ID, right, it is a very use number, right? Uh, is someone handy? The big query hyper, Do you have a big, very handy right now? I understood such, and basically there are a few gaps. I think the Max number is pretty big.
+
+00:09:08 - 00:10:15 Unknown Speaker:
+
+Um, we can also do one other thing. I'm just thinking. Like wherever there is this huge gap where we are jumping like by hundreds or thousands. Can we take something in between? But how can I write a logic, Rachna, to create n plus 1, right? No, if we just fix n and if we keep incrementing to that. Instead of picking the max DQid, we just fix that N number. Because I, I know what you are saying. Like, there there is this huge gap, like, say, there are DQids one, two, three, four. And then suddenly there is one thousand, something, yeah, and then suddenly there is ten thousands or something, yeah. So like, I think we can keep something fixed in between, because I'm sure like there is a gap of thousands there.
+
+00:10:15 - 00:11:07 Unknown Speaker:
+
+And even if we keep incrementing, I don't think like our database will cross that many rules. Is there a probability that we can rectify those? Uh, ID, Yeah, we can do that also. I mean, this is just internal thing. I.We don't really send it out anywhere. Okay, okay, then then, uh, let me fix that part and then we'll do a N plus one. Okay, sure, sure, that works. Okay, thank you. Uh, and then you can go ahead. Thanks, just, uh, such in one thing, uh. Before you make those changes, No, just keep one of the existing copies of the DQ repository before making that change. Because just in case we need some future reference, right? Like, what is the old DQ ID, and what is the corresponding new one? That mapping should be there.
+
+00:11:07 - 00:12:01 Unknown Speaker:
+
+Okay, so, first of all, my priority, Rachna, is to migrate the existing data and make this portal live in. Uh, yeah, because here and there now it's on 16th, right? And then leaders might chase for us. So let me close this one. And then, uh, yeah, like, whenever you do, I just meant to say that, uh. Just don't modify the data without keeping a backup and keeping that mapping about what is the old to new mapping? Yeah, yeah, exactly, yeah, thank you, thank you. And one more call out, Uh, we are not planning for a threshold check on this UI. Right? Yeah, yeah right, I think right, and first, and then we can proceed with that. No, again the challenge over there, right? Quantro, when you would be onboarding on your own, right?
+
+00:12:01 - 00:12:49 Unknown Speaker:
+
+Those details are not there in the age database, right? Then how we can do this n plus one for this DQ ID? Even if I fix it, suppose right now you are having 900 records, right? I'll make it one to 900. Somebody is inserting five new threshold check at the DQ repository in the LUMI, but that details is not there in the ASTV, right? So can we do one thing we let us migrate those threshold data also to the ASTV, although we would not be displaying those to the UI. Yeah, I mean, what I'm trying to say is if we also showcase it also, right, there's no problem as such. It's just that the modifier option should not be given because people might be wanting to look at the rules also, right, the existing threshold checks.
+
+00:12:49 - 00:13:37 Unknown Speaker:
+
+But right now, especially for ICMB and all, they have put up like thousands of checks, right? So if they want to refer, they can go to the portal and see that, right? It's just that the modify part, I mean, probably we can hold off for that, we can do that, but right now, the way, okay, uh, you want to disable that modify part? Yeah, we'll do that, okay. But first of all, let these checks to go live in the portal and then that we will put it in the back. Yeah, yeah, and then, uh, you can go ahead. Uh, okay, so uh, I was involved in the match. Basin from uh, Lumi to a side, so that is done, uh, but uh, there is one more migration that is, uh, you know, Lumi to Lumi side, uh.
+
+00:13:37 - 00:15:05 Unknown Speaker:
+
+From DQ representative to DQ artifact, so that, uh, migration didn't went good. Okay, so right now I am doing that changes and, uh, was probably by EOD. That will get completed, that's that. Thank you, Samir. Okay, I am just seeing the participant based on the Webex meeting invite and based on that. So after a brief discussion, then I will change the modifications, whatever need to be done. So based on the recency score, frequency and then project count and all, I have calculated the usage score for the process logs. So once we have a call and discuss further, then I will see whatever modification should be done for this particular process logs. And then also, I have prepared tentative framework for multivariate, so that also I shall share and shall have a discussion with you. Sachin.
+
+00:15:05 - 00:16:00 Unknown Speaker:
+
+So these two things have not come today. Uh, so on and on, this CD checks, right? I received a call from Purna last Thursday. Okay, okay. So he was like, having a I'm, I'm not pretty sure. No, it's CD only. But he was mentioning, right? So he was having a, you know, migration plan to the E3 environment. On the first week of July for this CD. Okay, so he was asking me to keep our RFC handy for 15 days. That might be, you know, maybe, and last week of June till, uh, first week of July, or, you know, 10th of July, right? Okay? So the reason I set up a call today to understand the expectation is that, you know, the utility build by Untwitch would go live in the E3. Or what is the expectation from us?
+
+00:16:00 - 00:16:47 Unknown Speaker:
+
+Because, so, let me let me I think from what I understand, let me tell you such, and please feel free to add as well, right? So yeah, right now what's happening is, uh, such, in the CD framework itself, right? Initially, we have created one version of it, which was using usage logs and all those kind of stuff. Now, we have pivoted to a different approach also, where we are looking at KRI scripts, which are K risk indicators, which the control management team uses. And then, sorry, what's the other part, Rachna? KRIs and QTRI existing variables as well. Just based on these two. And based on the Calibra, if other teams like other business units have also identified some CDs, putting all those together and creating one script as well.
+
+00:16:47 - 00:17:26 Unknown Speaker:
+
+So what we are trying to do is we are just identifying some candidates and all of this is manual, right? So there is no automated process. So there is one parser that we have created just to parse through the SQL for these KRI scripts, right? But apart from that, it's like we're pulling together stuff from here and there basically. As per our discussion today with Purna, what we have also done is we have broken down this process into two or three weeks. So first week is where we are identifying all these CBA variables using all this approach. Second is where we are again doubling down, cleaning up that and then creating some DQ checks based on the AI frameworks that Charmi and Antunj had created.
+
+00:17:26 - 00:18:14 Unknown Speaker:
+
+And then third week is mostly deploying those checks, like validating all those checks are good and then deploying those DQ checks. My understanding of this is where, like, initially, because last week even Purna and I spoke on. He was also mentioning he like, you guys, uh, go ahead with the deployment of the CD framework, right? But now the framework itself also also has changed. So, like, my best understanding is, the current need is basically just to persist. Whatever CDs have been identified, so we have created a table of sort, right, which has, like, what is the CD name? Which table it is, which variable it is, how was it identified, what was the source and all those kind of stuff into some kind of a Lumi warehouse table, right? So that it can be published for other teams as well.
+
+00:18:14 - 00:18:57 Unknown Speaker:
+
+I think that is the immediate need for sure is my understanding, wherein Rishna will share the metadata and how we create, right? That process we can use to create the metadata. Now, how is the data being fed into that table, right? That is something... that still needs some clarity. Like, because if it is the method by which we are currently working. I think there are a lot of non-automated kind of things that are being done right now, right? So that needs that is. Yeah, that is where my question is on, like, what is the expectation from our side? Like, whether we need to build it, press or we need to, you know, take the work that you guys have done and then build. Uh, yeah, my understanding. It will not be fresh, right?
+
+00:18:58 - 00:19:48 Unknown Speaker:
+
+Because I think that's why our team is currently doing all this work. Right? To identify a framework which can identify these CD variables. So that some scratch, I think doesn't make sense for you. Also, right? Because we currently are doing all that POC and research work of how how to get those CD side. And then what is the third right? What should we do in that case, right? Uh, that is what I would like to know, because. What I have asked Vargav, just before going on leave, I asked him to at least explore three parts. One is that API call, which is already handy with us. One is that fetching the data from that Lumi consumption table. And third one is from the DQ repository. While I'm doing exploration for the Calibra and the Manta.
+
+00:19:51 - 00:20:42 Unknown Speaker:
+
+Is something that you guys have to do because I think that is something that we are manually fetching right now. Right? Yeah, yeah, part and part is something that at least has already created in the code itself. I think that should be fine. Okay, then, discovery anyhow? I'm, uh, I'm. I started working on it, right then. What exactly piece of work I need to assign to Wargap then? I think that is something that has not been explored, and plus definitely what Rachna will share. That metadata, I think that can be picked up first, because he was asking today also about that persistent layer of that data. And can we get a sense for this what exactly Antrix built so that we would have understanding and then secondly...
+
+00:20:44 - 00:21:28 Unknown Speaker:
+
+I'll be very honest, there is some clarity that is lacking from our side as well right now. Because what Antares has created earlier is a different framework and right now what we are working on is slightly different from that. It will eventually, I believe, the couple of inputs that we are working on right now will get added to the original framework itself is what I understand. But still I think right now we are still in that phase that we are also figuring out which direction are we taking. Based on the KRIs and the Q track, are we just saying this is the CD framework, or are we including it to the previous one? And, uh, how to get it built and everything right? Yeah, because the challenge with me is that I am not able to, you know, uh, specify all exact requirement.
+
+00:21:28 - 00:22:16 Unknown Speaker:
+
+Yeah, yeah, correct. And, uh, it would be again, you know, difficult to get his stories accepted at the end of the sprint. Right, right, right? So that is something we need to come to. A you know, conclusion, where, you know, we would have that, that very specific requirement, right? Not hundred percent, but at least some kind of stuff where you know. He can work because he is having that bandwidth, right? And then we can take it forward. Like Mantha and Kalimba anyhow, I have to explore it right, working with the different team, right? So even I don't need, uh, support over there. Uh, that's something I can explore from my end. Uh, but uh, like you mentioned, right, those metadata and all. If you can help us with those requirements, we'll just get a confirmation from Pona and then we'll share with you.
+
+00:22:16 - 00:23:13 Unknown Speaker:
+
+And I think, in addition to what all Anand already mentioned, uh, there is also this, uh, DQ check building part right, that Charlie has built the Q track based AI, sorry, the AI based Q track checks. So I think that also is something that Pune is expecting that we will be completing in four weeks, so some work can be taken up there as well. Okay, uh, and then let me know, like, uh, if, uh? Yesterday he was saying that. Even creating those checks on her own right is what my understanding is, and then she'll validate those checks as well. And the checks will be passed on to Tech for just implementation part validation will also be done, at least as of now, by Tech. Right, correct, correct, I mean, definitely, like we cannot go ahead with full-fledged implementation within the strict timeline.
+
+00:23:13 - 00:23:57 Unknown Speaker:
+
+But that that model is also kind of final, right? So I think we can start picking up like that requirement as well is what I think right, correct. Yeah, because there is no modification going on there like that has been finalized, so at least that is a clear cut requirement that we have for this. Yeah, okay, then then whatever we can, you know, close it out. Let's start working on it. Because, uh, as Anand, you have given us the overview for CD, right? Uh? I asked him to work on it, but again, when I got a call from Buna on last Thursday. It was all confused and then I thought of it's having an impression that we would be getting the code just to deploy to the EPA environment, right?
+
+00:23:57 - 00:24:49 Unknown Speaker:
+
+And if that is the case, I don't think Bhargav's input would be required over there. Even AIPAC can just deploy the code over the environment. Correct. Yeah. So let's meet tomorrow. Yeah, sure. We'll also just check this with Pona, I think, tomorrow. Yeah. Yeah. Yeah. Maybe. Yeah. Yeah. Yeah, I was saying, I was saying, uh, just to reiterate on what all is required. First thing is the metadata thing, so that we will get the information from pornive, whatever like. I have, uh, taken to be correct, so, uh, so once I have that confirmation, I'll share the metadata with you. So that goes in. And then after that, uh, the CD identification framework that Anthrax is building. There is some ambiguity, so we might not share that immediately to you. That is on pause for your end.
+
+00:24:49 - 00:25:35 Unknown Speaker:
+
+And then there is the framework that Charmy has built for implementing that AI based DQ checks for those data risk dimensions, right? So that that requirement is final. I think that is something we can start sharing with you, and then the fourth thing is just deploying the DQ checks. We will already have the code like major part of the code. And it just needs to be fit into like whatever standard, uh, like DQ repository script, DQ, uh, result scripts that we have right into those. So, uh, like these are the four things that are expected from what I understand, and like, clarity is on, uh, like, first thing and last two things. Uh. The main framework is ambiguous as of now. Okay, okay, let's connect tomorrow.
+
+00:25:35 - 00:26:24 Unknown Speaker:
+
+I already set up a call at five, I'll I'll invite you over there and let's let's pick it up. So I'm just, uh, calling it out, right? Few of the use case that we have picked it up. Like you can see this CD check build right, multivariate check, right? So you might not see that progress by end of the sprint. Because again, like, you know, those confirmations are here and there, right? So. We might end up not completing any of them. I hope I made a sense over here. Sure, Sachin. I mean, yeah, definitely. I mean, as and when we have more clarity, we'll provide you the clarity. And then I think based on that, let's set the expectations also. Yeah, okay. Thanks, Anand. Thanks, Sachin. So for Sameer, I think we are already end of the day.
+
+00:26:24 - 00:27:23 Unknown Speaker:
+
+So again, for Sameer, Anand, we need a connect tomorrow. So let me extend that call to one hour to sort it out, first the requirement and in the first 15 or 30 minutes. And then maybe we can close the contract tomorrow, because that's now again a piston as in priority from Purna, right? Yeah. So let's close it out. Nirmal was working on this bulk update. He was doing some testing. Nirmal, where you are, if you can provide me because I did not get a chance to reconnect with you. Is Nirmal there? I don't see him in the call. Okay, I don't see Nirmal in the call. Who else? Again, Ayyappa, Prithvi was working with me along with Kundan for the data migration. Anything else you guys want to share, Ayyappa and Prithvi? Uh, no, such.
+
+00:27:23 - 00:28:18 Unknown Speaker:
+
+Only one thing. Just want to add, uh, that one yesterday. That deployment is done in production section, that AMGM script, right? Uh, that is done, and uh, that. Duplicate records also removed from the production degree positive data. Okay, from my side again, I was helping team on these data migration, there was lots of discrepancy. So I hope now we should be able to close it out in next one hour or two hours. And again, Jason did not join. There was a change required for RAISI. So that is something I'm looking into. So seven for that, they have changed the complete approach. And I need to raise some access. I'll give you that conference page over the Slack. The way we were building that DT, it has been changed for our central computer.
+
+00:28:19 - 00:29:22 Unknown Speaker:
+
+So we need to go back. I just got the details to discuss with you. Do you have anything to discuss with Krishna and Anand if you have any update? I think at the start, sorry, I missed the session at the start, but we were discussing about that spreadsheet and there was one value in that data migration, the new TQ repository table. That essentially that action. So there was one field aggregate type name that we have derived from the current description. No, that is, that is, that is not required. No, no, no, that is not okay, that is I.I sorted out with the team today. Okay, where we are with TLS. I'm waiting for the update. Because if we have the alerts in this week, so I will go and recheck that one because I'm not sure about the validation in the E3.
+
+00:29:24 - 00:30:17 Unknown Speaker:
+
+So Tanisha was occupied, I think I'll follow up with her today and she can let us know if there were any alerts on their end or not. Because if we don't have the alerts, then that is a very good one. So that's what I'm thinking. Right, even so I think we will try to run this for a few more weeks until we get an alert just so we are validating that part at least. Yes, yesterday also I have the same name and the RISI one also the same, the output I am getting in the E3, the R42. Right. We have not received any alerts recently. So let's continue with that. Let's see. Hopefully in a few days we will get some alerts. Okay. And YouTube one, the build part is completed for the three DQ rules.
+
+00:30:17 - 00:31:13 Unknown Speaker:
+
+And I am waiting to create the DQ repository table. We need to insert the data right in the DQ repository. So I am waiting for that. I am waiting for that. I have a call. Sorry, so you have the details to be inserted, right? Ayyappa will be inserting it. Ayyappa will be inserting, yeah. I have the details, I have already shared the details. Sure, sure, okay. Thank you. That's it, Arachna. Thanks, Suman. And Suman and Saravan, did we get the input for the metadata from JSON for those new tables? Not yet, Saravan. He's still working on... That one is... Yeah, he is still working on creating the IIQ groups. He raised the request yesterday. IIQ groups? Look, IIQ groups we can still modify, right? Once the pipeline is get created. Correct?
+
+00:31:14 - 00:32:23 Unknown Speaker:
+
+Why we are sitting for the IIQ group? Yeah, that's what I told him that we wanted before the certification. Like, if we don't have it before certification, we'll have to go for recertification. So, then... I don't know why he hasn't... I'll, I'll talk to him today, I have set up a call, let me talk to him. Okay, and, uh, Anand, just one info. Uh, I already sent that email to you. I hope Rachna would have communicated to you regarding the migration from composure to astronomer. Okay, so the complete U.S. right? We requested them to include us in the phase 1 itself. The reason being we need time for validation. If I put it for the phase to write, again you know the phasing dates start, right? We might end up not closing all those DAG migrations which would impact the process, right?
+
+00:32:24 - 00:33:10 Unknown Speaker:
+
+Yeah, but again, I'm just trying to understand, when exactly is it? It has started on us, they just need to provision that environment to us right now. They did not provision it. I requested them, let me loop in over you over there. Also. Okay, so that as soon as we can start migrating it right, we would not end up missing those deadline. Because if you want to do it on phase three, then, uh, you know, if it is getting extended, or if you want to do it on phase three. It would require more than BP level approval. That's what they are missing. So that would be again, child, that's right. So it's not only USCS, even the Raze uses. Everything is going to get back, whichever is using the composer packet. Sure, thank you.
+
+00:33:10 - 00:33:40 Unknown Speaker:
+
+Uh, Richna, Uh, if you have five more minutes, can you stay back? Actually, I have a call, so already late for it. Okay, yeah, okay, just just ping me, maybe seven, or, uh, seven, thirty, yeah, just just to verify that use case, that's it. Maybe once. Yeah, oh, for sure. Thank you, thank you. Uh, uh. And uh, someone, you can stay back, someone, and seven if you guys can stay back, I'm not serious.
+

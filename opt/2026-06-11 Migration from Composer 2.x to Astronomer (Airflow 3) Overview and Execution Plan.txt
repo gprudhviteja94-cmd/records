@@ -1,0 +1,669 @@
+2026-06-11 Migration from Composer 2.x to Astronomer (Airflow 3) Overview and Execution Plan
+
+Creation Time: 2026/06/11 10:01
+
+
+📅About Meeting
+
+• Date & Time: 2026-06-11 10:01 (Duration: approx. 42 minutes)
+• Location: Virtual meeting (screen sharing and Slack channel used)
+• Attendee: Vineet (Accounting), KR (CFR team), Wamsi, Pradeep, Shivani, Rahul, Panna, Prithvi, Anuj, Nikhil, Rakesh, Ankita, Rajat, and others from Lumi core platform engineering, cloud engineering, and application teams
+
+📒Meeting Outline
+
+Migration Context and Overview
+
+• Purpose and Background of Migration  
+  The meeting clarified the ongoing migration from Composer (version 2.x) to Astronomer (Airflow 3) on the Lumi platform due to Composer 2.x reaching end-of-life by December 2026. Users must upgrade to Composer 3 and eventually migrate to Astronomer for better performance, operational efficiency, security, and financial benefits. The migration is a leadership-driven decision following a successful POC by Lumi core platform and cloud engineering teams.
+
+• User Impact and Communication  
+  Notifications and materials have been shared multiple times, including recordings and a Slack channel for questions. The migration affects projects currently using Composer, but some users (e.g., from accounting or CFR teams) were unsure if it applies to them, highlighting the need for clearer communication and project applicability checks.
+
+• Migration Options and Recommendations  
+  Two options exist:  
+  1. Direct migration from Composer 2.x to Astronomer (recommended for phase one and two users).  
+  2. A two-step upgrade: Composer 2.x to Composer 3 by end of 2026, then to Airflow 3 in 2027 (option for phase three users with exceptions).  
+  Phase three users needing delay must provide business justification and get director approval.
+
+Migration Phases, Timelines, and Process
+
+• Phases and Deadlines  
+  • Phase one started June 9, 2026, with a target completion by August 17, 2026.  
+  • Phase two to be completed by end of October 2026.  
+  • Phase three expected to complete by end of Q1 2027, with flexible start dates.  
+  Users can request phase changes (e.g., moving from phase three to two) based on resource availability.
+
+• Project Tracking and Access  
+  A project tracker is maintained and shared via SharePoint with access managed on request. Users are encouraged to update required fields in the tracker to facilitate migration scheduling.
+
+• Migration Execution and Validation  
+  For E1 environment, Lumi core team migrates and makes tags Airflow 3 compatible, uploads them to Astronomer deployment and GCS bucket for users to validate. Users test and sign off within about a week before moving to higher environments (E2, E3). Support is provided via Slack channel for issues during validation.
+
+• Deployment and CI/CD Process  
+  Migration involves moving DAGs and related tag code from Composer’s GCS buckets to Git repositories integrated with Astronomer deployments using CI/CD pipelines. A template for GitHub Actions is provided and extended to support Astronomer without conflicting with existing deployment processes.
+
+Technical Details and User Responsibilities
+
+• Code and Compatibility Changes  
+  Migration requires making tags compatible with Airflow 3 syntax changes; however, no changes are made to business logic or non-Python code. Only Python tag code is affected. Users may need to adjust code if breaking changes affect their logic.
+
+• Support for Custom Operators and SDK  
+  Custom operators are not automatically migrated; users must handle these manually. Lumi SDK and Griffin integrations are packaged and installed in Astronomer, removing dependency on GCS buckets for these components.
+
+• Data Flow and Java Operator Concerns  
+  The move away from Dataflow Java operator to flex templates is recommended due to stability and performance issues; this best practice continues in Astronomer.
+
+• Coexistence of Composer and Astronomer  
+  Both Composer (Airflow 2) and Astronomer (Airflow 3) can coexist during migration phases to avoid disruption. Once sign-off is given on E3, Composer instances will be decommissioned.
+
+• Downtime and History Migration  
+  No downtime is expected during migration. Composer DAG run history is not migrated by default; if required, it needs business justification and may cause downtime.
+
+• Resource and Performance Considerations  
+  Users experiencing slowness or queuing in preprod environments can raise issues for investigation. Potential worker scaling during migration can be discussed.
+
+User Queries and Clarifications
+
+• Clarification on whether accounting and CFR teams are impacted and how to verify applicability.  
+• Explanation of migration phases, timelines, and flexibility for phase changes.  
+• Details on validation process, including accessing migrated tags, running DAGs, and signing off.  
+• Confirmation that only tag code (Python) requires changes, not other language codes.  
+• Explanation of deployment templates and coexistence of old and new environments.  
+• Handling of custom operators and Lumi SDK integration.  
+• Impact on ongoing testing and API calls during migration.  
+• Support channels and documentation availability, including onboarding guides and Slack channel pinning.  
+• Discussion on funding and prioritization relative to other migrations like Cornerstone to Lumi.  
+• Addressing concerns about fundamental changes in SDK and DR (disaster recovery) compliance.
+
+📋Overview
+
+• Migration from Composer 2.x to Astronomer (Airflow 3) is mandatory due to end-of-life of Composer 2.x by December 2026.  
+• Two migration options exist; direct migration to Astronomer is recommended for most users.  
+• Migration is phased with clear timelines: phase one (June-August 2026), phase two (by October 2026), phase three (by Q1 2027).  
+• Users must update project tracker and validate migrated tags in E1 environment before moving to higher environments.  
+• Migration involves code compatibility updates for Airflow 3, primarily on Python tag code; business logic remains unchanged.  
+• Lumi SDK and custom operators require special handling; SDK is integrated as a Python package in Astronomer.  
+• Composer and Astronomer environments coexist during migration; no downtime expected.  
+• Support is provided through Slack channel, emails, and documentation; onboarding guides and CI/CD templates are shared.  
+• Migration prioritization respects ongoing Cornerstone to Lumi migrations; users can request phase adjustments.  
+• Performance issues and resource scaling requests during migration are addressed case-by-case.  
+
+🎯Todo List
+
+• Lumi Core Platform Engineering Team / Migration Leads (Wamsi, Prithvi):  
+  • [ ] Share project tracker access and ensure all users update required fields, ASAP  
+  • [ ] Provide onboarding documentation and CI/CD deployment guides in Slack channel and via email, ASAP  
+  • [ ] Pin key migration resources and instructions in Slack channel, ASAP  
+  • [ ] Coordinate with SDK team to clarify and address DR-related fundamental changes, TBD  
+  • [ ] Support users with tag migration validation and troubleshooting via Slack channel, ongoing  
+  • [ ] Review and address performance issues raised during migration testing, ongoing  
+  • [ ] Manage phase change requests and approvals, ongoing  
+
+• Application Teams (e.g., Vineet, KR, Shivani, Rahul, Panna, Anuj, Nikhil, Ankita):  
+  • [ ] Verify applicability of migration to their projects and update project tracker, ASAP  
+  • [ ] Validate migrated tags in E1 environment and provide sign-off within one week of migration completion, per project schedule  
+  • [ ] Perform testing and deployment in E2 and E3 environments following migration guidelines, ongoing  
+  • [ ] Communicate any custom operator or code issues to platform engineering team promptly  
+  • [ ] Coordinate with Lumi migration teams to prioritize Cornerstone to Lumi migration if resource constrained, ongoing  
+
+• Platform Engineering / SDK Team:  
+  • [ ] Investigate and implement necessary SDK changes to comply with DR and other fundamental requirements, TBD
+
+Transcription
+
+00:00:33 - 00:00:37 Unknown Speaker:
+
+Um, those who are not speaking, I request them to be on mute.
+
+00:01:03 - 00:01:07 Unknown Speaker:
+
+Yeah, we'll just give a couple of more minutes and we'll start.
+
+00:01:25 - 00:01:33 Unknown Speaker:
+
+Um, meanwhile, let me share the Lumi communications email we have received.
+
+00:02:07 - 00:02:20 Unknown Speaker:
+
+Um, I think let's go ahead and start. Uh, can you guys see my screen? The email that we have shared as a part of, um, astronomer migration and end-of-life for composer— Yeah. Okay.
+
+00:02:22 - 00:02:46 Unknown Speaker:
+
+All right, uh, good morning. Good— I'm see this— I'm see my name is Vineet, and I'm from the accounting team. Uh, I just wanted, if you can, you know, share a little context. Uh, if this is a technology project or does it involve finance? I received this invite, um, and I joined, but I'm not sure that, you know, it is relevant for my area of responsibility.
+
+00:02:46 - 00:02:49 Unknown Speaker:
+
+So I just wanted to request if you can share that context.
+
+00:02:51 - 00:03:04 Unknown Speaker:
+
+Same as KR also. Like, I'm from CFR team. Uh, I gone through the materials which was shared as well, but I still don't understand what is happening and how is it relevant to the function I'm working on. So if you could sum— you give some background, that would be useful.
+
+00:03:06 - 00:03:12 Unknown Speaker:
+
+Absolutely. Um, yeah, so le-let me just share the context, right?
+
+00:03:12 - 00:03:40 Unknown Speaker:
+
+So, um, I-I'm not sure, uh, which projects, uh, that you are dealing with, but, um, you know, whatever the use case or the— or the projects that is currently using composer, um, you know, we have, uh, sent the notification to all the users who is using composer and on— and staying on the Lumi platform, right?
+
+00:03:41 - 00:04:05 Unknown Speaker:
+
+So, um, we are migrating from composer to astronomer, right? And, I mean, the main intention of this call is to not go through these materials again, right? Uh, because we have already had this, uh, recording sessions which we have already shared, and the materials that we have already sent multiple times, right?
+
+00:04:06 - 00:04:28 Unknown Speaker:
+
+Uh, and we have also created a Slack channel for it, which people are already joining and then asking or— or clarifying any of the questions that they may have, right? Uh, so the main intention is to let you guys know that composer is, uh, compo- composer 2. x, uh, version will reach its end of life by December this year, right?
+
+00:04:28 - 00:04:57 Unknown Speaker:
+
+Um, and users would typically need to upgrade to composer 3, uh, and then migrate to astronomer, right? So there— there are multiple upgrades that need to be done for the composer. I mean, in— in case if you want to stay in the composer, right? So first you have to, uh, upgrade yourself, uh, from composer 2. x versions to composer 3 by end of this year.
+
+00:04:57 - 00:05:16 Unknown Speaker:
+
+And, uh, even after upgrading to composer 3, uh, you might require another upgrade. Uh, that would be required next year to move to 8. 3 again, right? Um, so, I mean, that— that is what we are trying to say it here. So we are saying, like, composer 2.
+
+00:05:16 - 00:05:40 Unknown Speaker:
+
+16, which is the end of life, um, and we have to upgrade to composer 3. From a user point of view, Wamsi, I mean, uh, you know, my team does use some information from Lumi, and I am not sure that we are aware that we are— all we know is that we are using Lumi tables.
+
+00:05:41 - 00:06:04 Unknown Speaker:
+
+We, I think, are blind to the fact that we are using composer 2 or we need to move to composer 3. So it is almost as if it is in the background. Maybe we can just, uh, yeah, maybe we can check it. Vineet, uh, yeah, we— we can go, uh, into the details maybe after this meeting and then we will know exactly if you are even applicable for this migration or not. Okay.
+
+00:06:05 - 00:06:05 Unknown Speaker:
+
+Right?
+
+00:06:07 - 00:06:29 Unknown Speaker:
+
+Okay. Thanks. Okay, so, um, basically late last year, right? So, um, we are from Lumi core platform engineering team, and we have worked very closely with cloud engineering team, uh, on a successful POC, and we have decided, uh, to move to astronomer, right, based on several factors, right?
+
+00:06:29 - 00:06:56 Unknown Speaker:
+
+That could be, uh, on the performance— I mean, significant performance improvements, um, operational efficiency, and some security aspects as well, uh, along with some finish— uh, financial benefits, right? Um, and we have seen— and we have seen, uh, a lot of users have recently upgraded to 2. 16. Uh, however, they still have to go with another upgrade, as I was mentioning before, to composer 3, right?
+
+00:06:57 - 00:07:20 Unknown Speaker:
+
+Um, however, what we would recommend is, because we are anyways migrating to astronomer, we would definitely recommend option one to directly move from 2. x to astronomer, uh, which is, um, supporting 8. 3, right?
+
+00:07:20 - 00:07:27 Unknown Speaker:
+
+So that— that is one option that we recommend, directly moving to astronomer instead of doing, uh, multiple upgrades within the composer.
+
+00:07:29 - 00:07:55 Unknown Speaker:
+
+Okay, um, so that's, uh, that's one option that we would recommend. And, uh, option two is, uh, like a two-step approach, which I was just mentioning. Um, like you need to have them upgraded to composer 3 within 8. 2, and again, you know, by March 2027 you will again have to upgrade to 8. 3.
+
+00:07:56 - 00:08:25 Unknown Speaker:
+
+Okay, so what— what we would expect is, um, phase one and phase two users, uh, we definitely recommend them to go with, uh, option one. And phase three users, if they have any specific exceptions, right, uh, for delaying the migration, um, you know, because those are all tier one projects.
+
+00:08:26 - 00:08:48 Unknown Speaker:
+
+Uh, but however, they have to let us know the business impact, what's preventing them to immediately migrate to astronomer. So, I mean, such exceptions require some alignment and approval from the user's director. So we're going to talk to them, um, and— and make sure that, uh, the exceptions are in place for those phase three users.
+
+00:08:53 - 00:09:04 Unknown Speaker:
+
+Um, coming to the timelines, uh, see, we have actually identified all these projects, whoever is using composer, and we have, um, I'm going to mute somebody.
+
+00:09:08 - 00:09:12 Unknown Speaker:
+
+Okay. So, Wamsi, are we taking questions now, or do you want to park it for later?
+
+00:09:14 - 00:09:33 Unknown Speaker:
+
+Uh, I'm sorry, Praveen, what was that? Are you taking questions now, or do you want to take it, uh, towards the end? Yeah, yeah, yeah. This— yeah, the main agenda is to— and, I mean, this is like a kind of Q&A session, uh, but just to give you guys a high-level just of what we are trying to do. Um, we will certainly go through Q&A session.
+
+00:09:34 - 00:09:39 Unknown Speaker:
+
+We'll have, uh, roughly about, like, 45 minutes or so, Praveen. Sure, thank you. Yeah.
+
+00:09:41 - 00:09:47 Unknown Speaker:
+
+Yeah, coming to the dates, uh, so we were expecting, uh, all the phase one users.
+
+00:09:49 - 00:10:16 Unknown Speaker:
+
+Uh, I mean, we have started this yesterday, which is June 9th, um, at least in MST I'm talking about, right? So we— we will be trying— we will be closing all the phase one users by or before 17th of August across all the environments. So, uh, that's the goal for us. And, uh, phase two users, uh, which is coming to the next PI, uh, so we have to close by end of October.
+
+00:10:18 - 00:10:45 Unknown Speaker:
+
+Okay, and, uh, we have already got some requests from phase two users, um, and they wanted to be part of phase one, and some of the phase one users wanted to be part of phase two. So it's flexible. Uh, we definitely want you guys to go through, uh, the project tracker that we have already shared. If you don't have access to it, please do let us know, um, or feel free to ping us in the Slack channel that we, uh, have provided.
+
+00:10:46 - 00:10:48 Unknown Speaker:
+
+I will also share it in— in the chat group.
+
+00:10:51 - 00:10:57 Unknown Speaker:
+
+Right, uh, I think, uh, I am good. Um, uh, Pradeep?
+
+00:11:02 - 00:11:06 Unknown Speaker:
+
+Yeah, Wamsi, um, nothing from my end. We'll— we'll take any questions that they have. Okay.
+
+00:11:08 - 00:11:37 Unknown Speaker:
+
+Um, hi Wamsi, um, Shivani here. Um, since you all have started yesterday, and 17th August is the date for E3, uh, live, right? So, uh, can we have more, uh, visibility around how you will be, uh, taking up for E1, E2, and E3? Like, what are the timelines for E1 so that we can also, like, plan accordingly, uh, for the testing, uh, for phase one users?
+
+00:11:39 - 00:12:00 Unknown Speaker:
+
+Right now, um, as we speak, we have already converted about 30, 30-plus projects in phase one, Shivani, right? So all we need is you— you have to, uh, you know, just update some of the fields that we have asked you for in the project tracker. I'll show it right away.
+
+00:12:01 - 00:12:10 Unknown Speaker:
+
+Um, and, uh, it's going to take, I mean, depending on the number of tags that you have, uh, it's going to take, um, a few days for us to convert those tags, right?
+
+00:12:11 - 00:12:33 Unknown Speaker:
+
+At least for the E1 environment, we will make sure that you, uh, I mean, astro— astronomer team, as well as Lumi core platform engineering team, they will be working, and then they will, um, provide you, uh, all the details for you to validate, like, once the migration is completed in E1 environment, right?
+
+00:12:34 - 00:12:55 Unknown Speaker:
+
+And we expect you to take a week and provide us sign-off, um, or if you have any issues, you know, you can always ping us in the Slack channel. So we'll be working closely with you until you get your E1 signed off, and we expect you to take, uh, or you to work on the higher environments, but we will be there to support you.
+
+00:12:56 - 00:13:11 Unknown Speaker:
+
+Okay. Yeah, I think for our project we did fill a few details, uh, the last time. So let us know if our project has been, you know, picked, uh, for the conversion and if we need to plan. Sure. Uh, do— do you mind sending us in the chat, Shivani?
+
+00:13:12 - 00:13:23 Unknown Speaker:
+
+Yeah, yeah, I'll ping you. Yeah, uh, we'll make a note of it. Okay, sure. Um, Pradeep, you can take it up, um, and I will try to share, uh, the project tracker here.
+
+00:13:25 - 00:13:42 Unknown Speaker:
+
+Is the list public, uh, as in, uh, which projects are part of phase one, phase two, phase three? And I'm sorry if I'm not able to locate it. Uh, no, no, you're good, uh, Rahul. So we're going to share it. I think, see, we— we've been working very closely with, um, uh, the SharePoint team.
+
+00:13:42 - 00:14:06 Unknown Speaker:
+
+I'm not sure if I can give public access, uh, but I was just trying to, uh, uh, you know, accept all the requests that's coming in within less than an hour. So that's what I'm trying to— let me share that, uh, here. Just give me a second. Yeah, you— you guys can go ahead with any of the questions that you may have, and Pradeep will take it up. Yeah, yeah, one question.
+
+00:14:07 - 00:14:32 Unknown Speaker:
+
+So, so— Yeah, so Wamsi, this is Panna here. So I— I have a couple of questions. Like, when you are saying phase one, phase two, right? On what basis we have decided phase one, phase two? And, uh, second question is, like, what would be the role of platform engineering team here, and what is expected from the application team?
+
+00:14:32 - 00:14:37 Unknown Speaker:
+
+Is it something that, you know, both the activity should be in sync, I mean, as per the timeline?
+
+00:14:40 - 00:15:08 Unknown Speaker:
+
+Okay, so I'll talk about the platform engineering part that you were asking. So for the platform engineering part, um, so what we will do is we will try to create you a space, like a deployment, like how you have today for composer. You have an app, for instance, where you go and run your jobs, right? We're going to do the same thing here in astronomer. We are going to create a deployment for you guys, and we will, uh, you know, provide necessary accesses to it, um, like your project group, uh, whatever you have access today for your project.
+
+00:15:09 - 00:15:35 Unknown Speaker:
+
+We will provide the same binding for this astronomer. So whoever has access to your GCP project will have access to this astronomer. Uh, and for E1, we will go ahead and pull all your tags from your GCS in the current composer, and then we will migrate and make them Airflow 3 compatible, and then, you know, uh, upload it into the, uh, astronomer Airflow deployment and also into a GCS bucket where you can pick and put it in your Git repo.
+
+00:15:36 - 00:16:01 Unknown Speaker:
+
+So you— you should be able to take it forward from E2 and E3, but in E1 we will pull all the tags. We will, uh, try and migrate them and make them Airflow 3 compatible. This meeting is being recorded. That— that being said, we will try and, like, make sure most of your tags, like, at least whatever we can migrate, we will try and migrate, but there are some edge cases and, you know, cases where you would have to make code changes.
+
+00:16:01 - 00:16:25 Unknown Speaker:
+
+So basically what we are trying to do is we are trying to make any syntax changes that Airflow 3 is bringing in, um, because in astronomer it's Airflow 3 versus, as Wamsi mentioned, in composer it's Airflow 2, and Airflow 3 has a lot of breaking changes. So what we will do is we'll try and make your tags compatible with Airflow 3, but we will not touch any of your code or such like your code logic, and everything remains same.
+
+00:16:25 - 00:16:40 Unknown Speaker:
+
+So if there is anything that you need to change at— at the code logic level itself, then yes, you would have to make those changes. But from our end, uh, we will make— we will try and make your tags compatible to Airflow 3 and then upload it to your deployment and then ask for your validation.
+
+00:16:42 - 00:16:50 Unknown Speaker:
+
+Got it. Okay, so then which means testing and everything is also required, right, from application team? Yes. Yes, that's correct.
+
+00:16:51 - 00:17:12 Unknown Speaker:
+
+Yeah, Wamsi and Praveen this side. So, uh, we— we do have some concern on this because, uh, I'm leading TFR Lumi migration, and, uh, this is only been one hour later. Why this, um, move is coming now? Why it was not there in 2025 itself when we moved? When we were just looking for the platform often rate.
+
+00:17:13 - 00:17:37 Unknown Speaker:
+
+Because I need to first understand, uh, who is going to fund this, if any— any demand is coming to application team, uh, from where the funding is coming and who is going to support it. So it's the same thing. Like, at this point at least, uh, it's the same process, right? So however you're getting, like, I think this is all funded from the, uh, infrastructure side itself for the, uh, composer and all.
+
+00:17:37 - 00:18:05 Unknown Speaker:
+
+It's the same process, uh, and we always try and see, you know, to optimize whatever we can whenever we can. So we went with composer, we saw some, uh, you know, issues or some sort of, uh, optimizations that we can do, and we did some POC, and, uh, we, as Wamsi was mentioning, we did see a lot of, uh, advantages, um, so which is why we were trying to migrate to astronomer. This is the decision from the leadership as well.
+
+00:18:05 - 00:18:31 Unknown Speaker:
+
+Uh, yeah, I— I think I answered your question if I'm not wrong. Yeah, because, uh, see, uh, we need to see how we can, uh, decouple Lumi migration with this. Uh, this should not come as a critical path, at least for— for my portfolio, uh, the entire CFR. So that's the thing. So if you are already in the path to migrate from Cornerstone to Lumi, that will take the precedence over this astronomer migration.
+
+00:18:32 - 00:18:57 Unknown Speaker:
+
+Uh, that is there. That's— that's correct. I think that's for entire company, not just for my portfolio, right? Every— No, not just for you. So if— if whoever is migrating to Lumi today from Cornerstone, if you think that, you know, you can't manage both astronomer migration and the Cornerstone to Lumi migration, then yes, your Cornerstone to Lumi migration will take the precedence, and then, uh, and then we can work on the astronomer migration.
+
+00:18:58 - 00:19:26 Unknown Speaker:
+
+Uh, but we would highly recommend if— if you have some bandwidth, if you can also, you know, accommodate this astronomer migration along with it, that would be great. Uh, if you think that it is not possible and you have— you have to concentrate solely on the SRP migration or, you know, the Lumi migration, then that will take the precedence. Awesome. Okay, I think, uh, then we should be fine, uh, and because we want to first, uh, keep our focus on the Lumi migration, and obviously if we have some capacity, we can, uh, focus here.
+
+00:19:27 - 00:19:29 Unknown Speaker:
+
+But, uh, I'm still not sure for this year.
+
+00:19:36 - 00:19:38 Unknown Speaker:
+
+I have one question here.
+
+00:19:40 - 00:19:49 Unknown Speaker:
+
+Now, uh, for suppose our one of the tags, it fails. It's working properly in our lower environment, but it fails in— in your astronomer.
+
+00:19:59 - 00:20:22 Unknown Speaker:
+
+Yeah, we will support you with that. Um, so you— we have a channel. I think we have already mentioned it in the chat. So what we— what you should be able to do is when you— when we provide you the deployment for validations, if you find any issues, you can reach us to us, uh, in that Slack, and we will— we will, you know, work with you and, uh, see if there is any issue from the infrastructure, and we will— we will try and fix it.
+
+00:20:22 - 00:20:39 Unknown Speaker:
+
+So also we have, uh, like, uh, along with the tags, are you— are you, uh, also migrating the Python code or the SQL or the, uh, all these other, like, JSON scripts also to the, um, astronomer?
+
+00:20:39 - 00:21:06 Unknown Speaker:
+
+So— so what we are doing today is whatever you have in your tags, GitHub, and plugins, we are taking all of them and putting it in the astronomer, um, as— as a one-time thing when we are trying to migrate and we are putting it in there, and we will also update them in your GCS bucket. You should be able to download them and put it in your Git repo. But if you're talking about your helper functions and all that, yes, we— we are also putting it in there because if not, we will get import errors in our validation. So yes.
+
+00:21:06 - 00:21:35 Unknown Speaker:
+
+It means— it means all the, uh, what we say that all the, uh, scripts which are there in composer, they are all getting migrated, correct? So whatever is in your composer tags folder, yes, but not your project GCS bucket. We are not touching that. Anything in that composer bucket, we are taking that data and putting it in the astronomer. Composer and specifically the tag folder, not others, correct?
+
+00:21:35 - 00:21:52 Unknown Speaker:
+
+Uh, tag, data, and plugins. Because, uh, why I'm asking this question is because I have DT flows and we have a special, uh, setups done for, uh, DT flows. So you're talking about CQL automation? Yes, correct. Okay.
+
+00:21:52 - 00:21:54 Unknown Speaker:
+
+Yeah, we are working with CRIF and team on this here.
+
+00:21:56 - 00:21:56 Unknown Speaker:
+
+Okay.
+
+00:21:58 - 00:22:13 Unknown Speaker:
+
+So we— we are working with the CRIF and team on the same. So once they, you know, uh, they— they are, uh, just checking on few things, and once they provide that, uh, you know, that folder, that'll be a different folder, and you will have the same CRIF and folder in your tags.
+
+00:22:14 - 00:22:15 Unknown Speaker:
+
+Okay.
+
+00:22:16 - 00:22:25 Unknown Speaker:
+
+Okay. Um, thank you. Okay, thanks. So Wamsi, one question from my end. Uh, what is the effort needed from application team?
+
+00:22:25 - 00:22:45 Unknown Speaker:
+
+Is it just testing and deployment, uh, like we are doing today, uh, with the DAGs? We just deploy— I mean, develop it and deploy it, right? So it will be similar in astronomer? It's— it's going to be similar. So for E1, we are trying to make your tags compatible with Airflow 3, so you will validate that and let us know that, hey, this is working and we are good with E2.
+
+00:22:45 - 00:23:01 Unknown Speaker:
+
+From E2, we will provide you the deployment and you should be able to take— take it from there because we've already provided you the migrated tags in E1. Um, you— you can take— take it from E2. That's it. So it means we will just test it in E2 and then move it to E3 like we do today. That's all, right?
+
+00:23:01 - 00:23:23 Unknown Speaker:
+
+Not huge effort from development team. Um, so, uh, I mean, yes and no, because for E1 we are trying to get your tags and, you know, we are trying to migrate them, make them Airflow 3 compatible, and pushing it and providing you all those tag codes, right? All that tag codes. Uh, our expectation is you take it forward from E1 to E2 to E3.
+
+00:23:24 - 00:23:47 Unknown Speaker:
+
+So if— if let's say you don't have any tags in E1 that is already in E3, we would appreciate you— you can also, like, upload it to E1, so we— we will migrate and we'll provide you with them in the E1 itself and you can take it from there. Okay. Will we— will there be a downtime while we do this exercise for the development environment? For the development environment, no. No downtime.
+
+00:23:47 - 00:24:13 Unknown Speaker:
+
+Um, so, uh, by default, um, so we will not be migrating any composer tag run history to astronomer tag run history. We are not migrating composer tag run history to astronomer, so you will not have any downtime. But if there is any pressing need and you would need composer tag run history for some reason in astronomer as well, then we would need to have a discussion on why, uh, and your business justification, and if it is valid, then we will try and do that.
+
+00:24:13 - 00:24:27 Unknown Speaker:
+
+But the problem is you will have a downtime if we migrate the composer's tag run history. How many projects so far you have migrated to astronomer? So far it's, uh, 16. 42. Yeah.
+
+00:24:27 - 00:24:40 Unknown Speaker:
+
+Yeah. How much time it took on an— how much time it took on an average, Wamsi and Prithvi, for one project approximately? So it's a— it's a subjective thing. Um, some— some projects are getting done quicker, some might take time.
+
+00:24:40 - 00:25:03 Unknown Speaker:
+
+So I would probably say— I would probably say one project can get done in a day or it can take more than a day, but not more than, like, it won't take, like, weeks of time, but probably, uh, if it is— if— if the project has no issues, maybe— maybe a day, and if it— if it has some complexity, it will take a couple of days. Okay. Our project is in phase three. I want to move it to phase two.
+
+00:25:04 - 00:25:21 Unknown Speaker:
+
+And, uh, because we do have our resource constraints on the current composer environment already, and since composer is anyway going to be decommissioned, we would work that out into astronomer rather than composer. Uh, would that work? Absolutely. Yeah.
+
+00:25:22 - 00:25:44 Unknown Speaker:
+
+Okay. And, uh, also, like, you have mentioned a few code changes. So these code changes are only with respect to Python programs or non-Python programs also? Like, we have other language data flow and we have Java programs as well in our project. No, I think it is— it is all based on Python because, uh, the changes will only be to the tag code.
+
+00:25:45 - 00:25:53 Unknown Speaker:
+
+Since we're migrating from Airflow 2 to Airflow 3, you might have to make changes to your tag code. That's the only change. Not your actual— Okay.
+
+00:25:55 - 00:26:04 Unknown Speaker:
+
+So no change required in my Java, uh, related code or any other language code? Yeah, yeah. It's— it's in your, uh, tag code. Only tags. Okay.
+
+00:26:04 - 00:26:14 Unknown Speaker:
+
+And related to DT, you said that you are still working with the DT team to figure the change out. Yeah. Yeah. So I have DT also in my project. It's a multi-tenant project.
+
+00:26:15 - 00:26:31 Unknown Speaker:
+
+And, um, uh, so I'll have, like, I probably I'll need a separate discussion altogether with the team, uh, to go into the details of it. Would not, uh, take everybody else's time. Uh, is that possible to, like, get some of your time?
+
+00:26:32 - 00:26:32 Unknown Speaker:
+
+Thanks.
+
+00:26:34 - 00:26:54 Unknown Speaker:
+
+Hey, Wamsi. Yeah, Wamsi. Uh, so, like, we received an email from you today that actually required validate migrated tags in E1 and provide sign-off. So I'm from project Moka, so my project is listed in that email. Uh, but we are not clear on the process of how to validate.
+
+00:26:54 - 00:27:08 Unknown Speaker:
+
+So I saw the bucket which you mentioned, migrated tag buckets. So there is one, um, zip folder available. I think in that the tags would be there. But how do we, uh, move ahead with the validation? You've asked for the sign-off.
+
+00:27:09 - 00:27:18 Unknown Speaker:
+
+Could you please explain on that? So, uh, we've provo— um, so this is Prithvi. Um, um, is it— yeah, I'm talking to Anuj? Yes. Hey, Anuj.
+
+00:27:18 - 00:27:39 Unknown Speaker:
+
+Um, so there are two things. The tags that we provided in a GCS bucket is for the, uh, for you to upload it into the GitHub. Um, uh, and we have the onboarding document which is shared. Um, Wamsi, did we send them email or you— you shared them in the Slack for now? Uh, no, I— I did send an email to them.
+
+00:27:40 - 00:28:05 Unknown Speaker:
+
+Um, I— I think, uh, probably we should have included those confluence links on the onboarding and— You did or you did not? No, no, we— we did not. I think we did it last time, uh, but we did not include them in this. Yeah, if you didn't do that, maybe just— yeah, I think. So we will send those details, like how to log into this, uh, UI and where to look for your deployment.
+
+00:28:05 - 00:28:28 Unknown Speaker:
+
+So once you log in, it will directly show you which workspace you are part of, and it will show you the right deployment which you have access to, and you can just take it from there. You can— you can click a couple buttons and you'll be in the Airflow UI. That's where all your tags are already loaded. We have already migrated your tags there, uh, and we have made sure there are no import errors. So you can just run the tags and see if it is working or not.
+
+00:28:28 - 00:28:58 Unknown Speaker:
+
+Once it— if you think it is working fine and everything is good, you can take that zip file and put it in your Git repo. And we also have a clear-cut documentation with screenshots on— and how— on how to set up the CI/CD, uh, for aspirin. Yes, that's what I was going to ask the next, because you mentioned E1 you will do, but E2, E3 we will have to do. So could you please send that? If you have already sent, I might have missed or may not be able to recollect, but could you please send these two details again over that email where you have mentioned that action is required?
+
+00:28:58 - 00:29:04 Unknown Speaker:
+
+So I've sent you already the reward. Don't worry. We'll— we'll send again. Yeah, we'll share you the login guide.
+
+00:29:05 - 00:29:11 Unknown Speaker:
+
+Thank you. All the details, actually, Wamsi. Login. Whatever we shared in the first email, yeah, we'll send everything. So we'll share everything, yeah.
+
+00:29:15 - 00:29:31 Unknown Speaker:
+
+This is Nikhil. Uh, it's one question. So, uh, how will we get to know that when you are doing the migration? As we are using some, uh, you know, custom operator that we have created for our use case. So that way we— that you may require to, you know, run our— your dag in E1.
+
+00:29:32 - 00:29:33 Unknown Speaker:
+
+Yes, please.
+
+00:29:34 - 00:29:55 Unknown Speaker:
+
+Sorry, Rakesh, I didn't quite get your question. So you are saying you have your own custom operators? Yes. So this is Nikhil. Uh, so I'm asking, like, we have some custom operators in our use case project, and, uh, we just want to know, like, when you will do the dep— uh, you know, migration to astronomer on— in E1.
+
+00:29:55 - 00:30:20 Unknown Speaker:
+
+So when you will run our dag, you may need that operators, right? So first and foremost, we are not going to run your dags. Uh, we will only, like, once you say, okay, we are ready to move, like, if once you give us that, uh, you know, okay to migrate, we will go ahead and create your deployment and then we'll migrate your tags. But operators is, uh, tricky. Like, we are not touching operators yet.
+
+00:30:21 - 00:30:38 Unknown Speaker:
+
+Um, like, because the only— most, like, 90% of the users use Lumi SDK and maybe Griffin. So those we work with them. But if you have custom operators, um, I think you will have to, like, uh, go through and, you know, make any other changes there.
+
+00:30:41 - 00:31:00 Unknown Speaker:
+
+Hi, Prithvi. Ankita here. So, uh, I just wanted to know, like, in Airflow in current project, is it, uh, like, both the Airflow 2 version and astronomer can coexist? Because we have some ongoing testing going on. Will that be impacted if we are planning for migration?
+
+00:31:01 - 00:31:11 Unknown Speaker:
+
+Um, so no. Uh, astronomer is only with Airflow 3. Um, so if when moving to astronomer, you will have to migrate to, um, Airflow 3.
+
+00:31:13 - 00:31:27 Unknown Speaker:
+
+So, yeah, go ahead. So the ongoing, uh, things won't be impacted in that case? Ongoing things as in in your composer? Yeah, yeah. Our dags will be invoked from, uh, other, uh, workflows.
+
+00:31:27 - 00:31:47 Unknown Speaker:
+
+So via API we are calling that. So that won't be impacted either way. Both the versions can coexist in our project. So when we say both the versions, again, so if you are migrating to astronomer, the plan is to migrate you to E1, then you go to E2, E3. If there is preprod, you'll go to preprod and then E3.
+
+00:31:47 - 00:32:05 Unknown Speaker:
+
+So you will go from E1, E2, E3. And once you give us a sign-off in E3, we are, you know, we are going to delete all your composer instances from E1 to E3. That's the plan. So if your question is, um, can they coexist? Yes, until you go to E3 and you provide us a sign-off.
+
+00:32:05 - 00:32:24 Unknown Speaker:
+
+But once you provide us a sign-off, we'll go ahead and, uh, we will, you know, um, delete the, uh, delete the composers, if that's your question. Got it. Got it. So currently, our dags are also called via APIs, uh, endpoints. So in astronomer also, we will be able to, right?
+
+00:32:24 - 00:32:28 Unknown Speaker:
+
+I think. Yes. Yeah, you should be able to do that. Yeah, remote API calls, yes. Okay.
+
+00:32:28 - 00:32:39 Unknown Speaker:
+
+Got it. Got it. And, uh, one more question. Uh, so in astronomer, uh, we just have to paste the file in, uh, that folder or the process will be different? The process is a bit different.
+
+00:32:39 - 00:32:54 Unknown Speaker:
+
+It's not GCS bucket. Uh, you will have to put that in your Git repo. And, uh, and we've already listed all those steps on how the CI/CD works. CI/CD, uh, will— we provided that template file. You'll have to download it and put it in your Git repo.
+
+00:32:54 - 00:33:02 Unknown Speaker:
+
+And it picks up from your branch and it'll put it in the, um, you know, the specific astronomer deployment.
+
+00:33:05 - 00:33:15 Unknown Speaker:
+
+So this helps are already provided. Yeah, it's self-explanatory. But if you have any questions, you can put us a message. So just one question. Which steps do you have?
+
+00:33:15 - 00:33:17 Unknown Speaker:
+
+Is it available in that channel?
+
+00:33:18 - 00:33:26 Unknown Speaker:
+
+Sorry, like, there is an overlap. Can you ask that question again? No, I'm asking, like, in the channel, is the steps available? What do you think? Yes.
+
+00:33:26 - 00:33:47 Unknown Speaker:
+
+Uh, not in the channel, but there is a documentation. Um, that documentation is already shared in the communication. If not, we will also put it in the Slack channel. You can just go through those, uh, docs. So, um, so if you can see the last page of, uh, the presentation that we have attached along with this communication, that should have all the details.
+
+00:33:48 - 00:34:00 Unknown Speaker:
+
+But we'll be sharing it again. And also maybe, uh, Wamsi, let's just pin that. Like, put everything in a message and pin that message so in that Slack channel. In the Slack channel, yes. They can just go to that pin message and get details.
+
+00:34:02 - 00:34:10 Unknown Speaker:
+
+Okay. Okay, just one thing. Phase three timeline. Can you know the phase three timeline?
+
+00:34:17 - 00:34:36 Unknown Speaker:
+
+So, uh, Wamsi, can we know the phase three timeline? I mean, some projects are in phase three. So the phase three timeline would be, uh, I mean, it can start anywhere, uh, right? I mean, but the, uh, completion date would be end of first quarter in 2027, uh, across all the environments.
+
+00:34:41 - 00:35:06 Unknown Speaker:
+
+Um, Prithvi, I had one question, uh, on the deployment side. Like, uh, once we are done with E1 and you're saying that we'll have to, uh, update the template also, the template that we use for the GitHub Actions deployment, uh, I hope it will not conflict for the other deployments that we'll continue to do in E3. Uh, because we have another template, right? Right now we are using that one for all our deployments.
+
+00:35:06 - 00:35:30 Unknown Speaker:
+
+And, uh, we are also doing the Lumi migration, but we are trying to have that capacity for astronomer as well. But then there'll be no conflicts, right, while we do deployment in E1 or testing in E1 and meanwhile we do the deployment in, uh, composer buckets. Firstly, thanks for that. Thanks for both migrations. Uh, and second, yes, uh, the, uh, template file will not have a conflict.
+
+00:35:30 - 00:35:53 Unknown Speaker:
+
+So what we're doing is we are taking the same template file and we just added, uh, astronomer, you know, that piece, like that code block we added to that template. So that's just in addition to whatever you have today. So with this template, you will have the same, you know, you will have that GCS deployment, you will have that, uh, you know, artifacts and everything. Like, everything else is the same. It's just that you have extra piece for astronomer.
+
+00:35:54 - 00:36:07 Unknown Speaker:
+
+Okay. Okay, got it. I— I have another question. Uh, so recently, like, we— we are experiencing a lot of slowness in our dags in preprod environment. Uh, the task and everything is, like, getting queued up.
+
+00:36:07 - 00:36:24 Unknown Speaker:
+
+Uh, so is there any possibility, like, while we are doing the migration, like, for preprod, we can have some kind of, uh, increase in our workers? I mean, if that's feasible also or not? Or do you think that this, this migration will anyway should solve, uh, for this?
+
+00:36:25 - 00:36:43 Unknown Speaker:
+
+Again, it is subjective. But sure, we can have a look when we are migrating. If you can bring that up, uh, you know, when we are migrating this project or when you're testing, if you bring that up, we will have a look. We'll also see historically, uh, you know, how we are tasked and where the bottleneck is. And we'll try and fix it.
+
+00:36:43 - 00:36:59 Unknown Speaker:
+
+But if you— if you— if you're facing, like, error, like, issues with composer, feel free to also drop us a note, like, an email to our team or drop the HPI, we will also look into that. Okay. Can you help me with your team DL? Uh, or is it there in the channel? I'll find it from there.
+
+00:36:59 - 00:37:05 Unknown Speaker:
+
+Yeah, it should be. Or, uh, you can also create a Jira. Maybe you can ask Wamsi can provide you more details.
+
+00:37:06 - 00:37:21 Unknown Speaker:
+
+This is Rahul. I have a question. I've been trying to devise this. I have two questions. Question number one, recently we have seen, uh, the data, uh, Java operator was discontinued or was, uh, asked not to use it.
+
+00:37:21 - 00:37:30 Unknown Speaker:
+
+We are using data flow big time. And we have been asked to use flex template. Is those type of, uh, fundamental differences are also coming in astronomer? It's the same. So it's the same.
+
+00:37:30 - 00:37:59 Unknown Speaker:
+
+The best practice is whatever we are following in the composer, it's going to be same in astronomer as well. Because, uh, data flow Java operator, like, is problem, but not just for, uh, uh, because it, you know, like, we've listed all the issues with data flow Java operator, right? So we will end up facing similar issues in astronomer as well. So, yeah, the best practices are same. So you— it's, it's highly recommended for teams to migrate to flex template over using data flow Java operator.
+
+00:38:00 - 00:38:11 Unknown Speaker:
+
+Okay, so question was, uh, we are moving towards flex template, but are those similar fundamental changes are also coming in because we have to make further more changes then?
+
+00:38:12 - 00:38:28 Unknown Speaker:
+
+Uh, I didn't understand. Similar fundamental changes as in, it's going to be moving away from Java operator was one example. There could be other operators as well. You are recommending from performance and stability perspective when we are moving to astronomer. Yeah, yeah.
+
+00:38:28 - 00:38:56 Unknown Speaker:
+
+So for now, yes, I think Java operator is one big concern for us. That's one thing that we are focusing on. But we will definitely reach out and, you know, share emails if they are— if they are seeing any other issues. Okay, second question is on the, uh, you just said that there will not be any buckets where we'll be deploying the, uh, uh, the dags, right? It would be more or less, uh, the Git repo where it will be referring three files and then deploying it.
+
+00:38:56 - 00:39:15 Unknown Speaker:
+
+We are using a lot of, uh, Lumi, uh, functionality when we are importing the dags. Uh, we are using certain functions from them. How would that work because those, uh, functionality are also residing in the buckets? How will that? When you say Lumi, are you— are you talking about the SDK or, uh?
+
+00:39:16 - 00:39:24 Unknown Speaker:
+
+Yeah, yeah, SDK. Lumi SDK. That is already integrated with astronomer. So that's a bottom package. It doesn't, uh, reside in GCS bucket anymore.
+
+00:39:24 - 00:39:45 Unknown Speaker:
+
+It's all, uh, so dag. So when you're converting the dag, that will also take care of both things, right? Yes. So today, whatever you are importing from, from Lumi, whatever you are importing the, uh, operators, right, that, that will work as is. But usually that Lumi file is available in one of our, uh, buckets that is placed by.
+
+00:39:45 - 00:39:54 Unknown Speaker:
+
+Yes, that is not anymore. We are— we try to create a Python package and install it in all these astronomer deployments, which means from Lumi.
+
+00:39:56 - 00:40:22 Unknown Speaker:
+
+Requiring cert operator, whatever, that will still continue to work. You don't need to worry about the bucket and the folders. Okay. Can we actually do this on the— can we actually do this on the while importing while, uh, this, this was feedback came from the platform engineering team that while the DR was executed, uh, codes should not be used as, uh, for connecting to the BigQuery, right?
+
+00:40:22 - 00:40:33 Unknown Speaker:
+
+What we found out that the Lumi package which is given to us and we are leveraging that, that internally is using those. And, uh, are those fundamental changes also going in along with this?
+
+00:40:34 - 00:40:38 Unknown Speaker:
+
+Uh, I think I need to have a word with SDK team. I'm not quite sure.
+
+00:40:39 - 00:40:54 Unknown Speaker:
+
+Yeah, Rajat can speak, uh, reach out to us from the composer team. We probably need to touch base internally because there are certain fundamental changes which you are requesting USB stream to do, but they have to be done in the SDK as well. Yeah, yeah, sure. Let me check that.
+
+00:40:56 - 00:41:05 Unknown Speaker:
+
+Yeah, I have a question. I have a question. I'm from ETU team. So, uh, I've been trying to ask this question from last 20 minutes. I need a time, Prithvi.
+
+00:41:06 - 00:41:17 Unknown Speaker:
+
+So, Prithvi, basically what I want to understand is, right now we have India projects created, but we do not have the dags created yet. So will the composer be a strain to be for them and.
+

@@ -1,0 +1,298 @@
+2026-07-01 Browser and Tooling Challenges in Payment Processing
+
+Creation Time: 2026/07/01 16:39
+
+
+📅About Meeting
+
+• Date & Time: 2026-07-01 16:39  
+• Location: Not specified  
+• Attendee: Rahul, Krishna, Mubishara, Pankaj, Lily (briefly mentioned)
+
+📒Meeting Outline
+
+Browser and Tooling Issues
+
+• Browser Crashes and Issues  
+  Rahul experienced repeated browser crashes (Firefox and Chrome) while trying to copy or open large JSON responses (~81,000 lines). Attempts to open HAR files or use developer tools also led to crashes, impacting debugging and data inspection.
+
+Payment Transaction and Staging Data Flow
+
+• Understanding Modify Payment Wrapper and Scenarios  
+  Discussion focused on the modify payment wrapper API, its interaction with payment transaction tables and staging tables. The wrapper is designed to handle both create batch and modify batch scenarios, with different request parameters depending on whether data exists in staging or only in payment transaction tables.
+
+• Create Batch Scenario  
+  In the create batch flow, data exists only in staging tables (no entries yet in payment transaction tables). The challenge is to convert staging data into a payment transaction object that can be used to generate the expected structured response for the UI.
+
+• Modify Batch Scenario  
+  For modify batch, the batch and transaction already exist in payment transaction tables. The user modifies recipient data, which is saved into staging tables. When the user re-opens the modify drawer, the wrapper should overlay staging data on top of payment transaction data to present the latest modified values.
+
+• Request and Response Structure  
+  The modify payment wrapper currently calls existing BAU modify payment endpoints to fetch data from payment transaction tables and then overlays staging data using a static mapper. The response structure must match the existing modify payment output format, including sections and fields for UI rendering.
+
+Data Mapping and Reverse Mapping Logic
+
+• Static Mapper vs Reverse Mapper  
+  The current overlay uses a static mapper to update values after fetching the structured response from the modify payment API. However, it was suggested to leverage the existing reverse mapper logic that converts payment transaction objects into the structured response format. This approach would be more maintainable and consistent, especially across different pay methods and use cases.
+
+• Reverse Mapper Importance  
+  Reverse mapper applies complex logic based on driver fields (e.g., pay method, recipient country, currency) to generate the correct response structure. Using it would avoid maintaining separate static mapping logic and ensure consistency with existing flows.
+
+• Implementation Approach  
+  The recommended approach is to:
+  1. Query the payment transaction object from the database (or create it from staging data in create batch scenario).
+  2. Overlay staging data on this object.
+  3. Use the reverse mapper to generate the final structured response for the UI.
+
+Challenges and Next Steps
+
+• Data Volume and Performance Concerns  
+  Large JSON responses cause browser crashes, complicating debugging. There is a need to optimize how data is fetched and presented.
+
+• Clarification on APIs and Data Flow  
+  Some confusion exists regarding which APIs are used for saving and fetching staging data, and which are used for final submission. It was clarified that staging APIs save data temporarily, and final submission updates payment transaction tables.
+
+• Action Plan  
+  Rahul will focus on understanding and implementing the reverse mapper approach for both create and modify batch scenarios. This includes:
+  • Investigating existing modify payment flow code.
+  • Creating payment transaction objects from staging data.
+  • Applying reverse mapping to generate UI-ready responses.
+  • Ensuring driver fields are included in requests for correct mapping.
+
+• Timeline and Expectations  
+  Rahul aims to complete this work by the end of the day (night). The team emphasized the importance of focusing on the correct approach to avoid further delays.
+
+📋Overview
+
+• Browser instability is affecting debugging large data responses.
+• Modify payment wrapper handles both create and modify batch flows with different data sources (staging vs payment transaction tables).
+• Current overlay uses static mapping; reverse mapper usage is recommended for maintainability and correctness.
+• Reverse mapper depends on driver fields to generate structured responses.
+• Rahul to explore existing code, implement reverse mapper logic, and handle both create and modify scenarios.
+• Clear distinction between staging APIs (temporary save) and final submission APIs.
+• Need to optimize data handling to avoid browser crashes and improve performance.
+
+🎯Todo List
+
+• Rahul:
+  
+  • [ ] Investigate existing modify payment flow and identify reverse mapper usage in code.  
+  • [ ] Implement logic to create payment transaction object from staging data for create batch scenario.  
+  • [ ] Apply reverse mapper to generate structured response overlaying staging data on payment transaction data.  
+  • [ ] Ensure inclusion of necessary driver fields in requests for correct reverse mapping.  
+  • [ ] Complete implementation for both create and modify batch scenarios by end of day.
+
+• Krishna:
+  
+  • [ ] Assist Rahul with clarifications on staging and modify payment APIs as needed.
+
+• Mubishara:
+  
+  • [ ] Provide code references and support related to staging APIs and modify payment endpoints.
+
+• Team:
+  
+  • [ ] Explore options to handle large JSON responses efficiently to prevent browser crashes during debugging.
+
+Transcription
+
+00:00:00 - 00:05:50 Unknown Speaker:
+
+So I said, code.com. If i do ctrl c still it crashes damn it the hell how do i now download that. Shit, man, this browser will not work. Now you're using IA, is it? No, no, Firefox, I was trying. Chrome you could have tried, no? Huh? Chrome, Chrome. Shocks, man. Chrome is crashing, no? That is not... Oh, you tried, okay. Let me ask Krishna. Hey, are you also using that zero to get the user? This one, this one, are you using this? You're on mute, but I can't hear you. So don't use that one second. That's why we are just logging each other out. So wait. What did I want to do? Okay, then click on modify. As soon as I hit it with the control, it will die. It didn't die. Oh, nothing came.
+
+00:05:50 - 00:08:11 Unknown Speaker:
+
+This is all that came. What is this? I can't see the whole thing. This is actually like this. Yeah, but because those lines are too many, right? There's something like 81,000. So it dies. It would have come in HAR, but when I opened it in HAR, I didn't try it. I thought it would die, wouldn't it? By opening a new window? Oh, look, it's died 2-3 times now. After which I asked you, it died. I don't want to do that. Let's try here. F12 and then IEA, right? HR? Load? It's gone. It won't be copied, right? Oh shoot i did it damn it where is my browser this thing tabs all of them gone yeah. Is this the way? Okay. This one wants here. No, madam, it's BA. I'm not doing anything fancy.
+
+00:08:11 - 00:10:12 Unknown Speaker:
+
+I'm a single guy. Bye. Okay, let's show me what you are saying here, right? Yeah, go to the images. Download that folder attachment. Open the first one. Yeah, this is a normal transaction that is there in the database. For a batch payment, that is a transaction ID. And item ID, it is present in the payment transaction table. And for that, the response has come right side. One second. So, original modified payment wrapper only takes item ID, which represents the transaction ID, correct? No, this is a wrapper we are creating now, right? Correct, correct. But for which scenario this call is going to be made? Is what I'm saying like, in the create batch flow, or is in the modify batch flow, or when? Because that is important. Depending on that, you will have the request parameters accordingly.
+
+00:10:12 - 00:11:16 Unknown Speaker:
+
+Right, right, right. If you go to the second one, can you go to the second one? Yeah, this is the modify request. Okay, um, existing API only, they have not created anything, so this is, uh, I mean, existing in a sense. Uh, Mubishara has created this, this API that is staging. Okay. So here there is a third request if you see that modify operation type is modified so in Modify batch payment. No, no, no, there itself. The second one. Check the third JSON. There are three different requests recipients are going. The third recipient is already existing in the payment transaction table. Okay. The other two are add. So, they are adding newly for existing batch payment. Third one is existing already in the payment transaction and they are modifying that. Okay.
+
+00:11:16 - 00:13:06 Unknown Speaker:
+
+So, they modified it and they submitted it. So, it has been. Yeah, but. Yeah. Okay. It is there, sorry to interrupt, right now. Basically, let's write down the scenarios we want to consider, and then we'll definitely do the travel first. I want you to verify no, no, no, until until when I say write down. The scenario. Will not basically understand what? For each one right? So for the create batch right scenario, basically one right? So. User has already added a recipient in staging user is now on the payment. Q card and. Wants to edit. The. Existing. Recipient. Visible. Within the. MNQ grid. So that is the one you saw that. Second request. In this one basically. So, this is how I wanted to technically basically modify wrapper request and I wanted to see the response here, right?
+
+00:13:06 - 00:14:07 Unknown Speaker:
+
+Yeah. Now, in the request, how is it going to look? Is what... Yeah, you can go and see the image too. But why the image? There is no file with you. Request response. That's what I had asked you. File doesn't have it. It is high. Which one? This one is the first one you said is an existing payment transaction in the database. But that is not the scenario I am talking about when we are talking about create batch. Nothing is created yet in the payment tables. It is only in that queue. So let me give you that real perspective. I understood, you remember, right? Like that, what I'm trying to say is first, you understand, uh, that, that clue, what I'm talking about. Okay, and confirm me what is expected, to be honest.
+
+00:14:07 - 00:15:30 Unknown Speaker:
+
+So I will come to the modify batch scenarios also. Ah, okay. Maybe you can call this I shared you is a modify batch. No, no. So exactly. I was expecting this first, right? But anyway, that's fine. So you are saying let's let's user has basically created a batch already. No, no, no. Landed on. So we are talking about the modify batch. The batch is already there. Okay. Already there. And then Q and is trying. To modify listing recipient A1 or rather I1, right? For the first time in the session. Yes. Okay. So, what will be the request? This one? No, no. Go to the second one. Second image. Yeah, see this. In this particular session, he added... No, no, no. Hold on a second. This is the endpoint for getting you the staging data, right?
+
+00:15:30 - 00:16:40 Unknown Speaker:
+
+I am trying to capture the request response for modify wrapper. Modify payment wrapper, sorry. Right? In that case, the new endpoint you are writing is this? Yeah, the first one? Yes. So now that is where I was going to. So is there in the file also? Is it this one before? Before overlay? Yeah, ah so abhi if I write it down here, right? So first of all, I think in the UI contract, right? If I remember, this is something we will not have, right? I don't know. It could be there also. I mean, what are we saying? That is what I shouldn't remove. But what I meant to say is. I mean, maybe in the current modified payment, it is just item ID, right? So, maybe this is needed. But you need to have a staging.
+
+00:16:40 - 00:17:41 Unknown Speaker:
+
+What is item ID? What is the payment transaction ID? I understood. So, item ID is nothing but the transaction ID of the record. That is how I think it is used, right? So, in this. Same number only. See, payment transaction. BAU request I captured, no? So in the BAU modify payment request, this is the simple request, only item ID, which represents the payment transaction ID in the payment transaction table, right? So in our case, because it is being clicked on that specific row in the payment queue, the row has the actual transaction ID with it. Now, how we get it here is our lookout, whether we call it item ID only or something else. And batch ID is the additional reference that, okay, that particular, uh, we are looking at this particular batch ID, right?
+
+00:17:41 - 00:19:07 Unknown Speaker:
+
+Where this this guy is a is is a part of now. In this case, if you ask me this, this, either this or this, there should be only one, shouldn't be two, okay. I mean, both are not required, I believe. Because, I mean, I'm just talking about a scenario where we want, right? And because the user is clicking for the, well, actually it doesn't have, yeah, it's, so there's no staging UUID yet, right? And only staging will be generated only when there is going to be already an editing done for the first time. Or rather, something is saved, so until then it won't be all right. When it is, something is modified. When user clicks on Modify Wrapper, API call they're making, that's when it should create an staging ID unique ID. Correct.
+
+00:19:08 - 00:21:11 Unknown Speaker:
+
+In this scenario, I'm expecting this. Yeah. Okay. Now let's take the second scenario. User has opened an existing recipient. Detailed few fields. Saved in staging and yes close the drawer by choosing save and close now the user wants edit the. Same recipient again. Now what is your input? What do you think will be the input request for this scenario? That UID also would be there. The after overlay thing is something else, right? Or is it the same? Yeah, because technically UUID will not be there because there is no staging UUID generated until you make the first save staging call. Okay. So, oh no, you're right. Sorry, sorry. So yes, there should be because the first staging call has been done, right? I mean, media. So we should have this staging UUID. You confirm me on that one.
+
+00:21:11 - 00:23:41 Unknown Speaker:
+
+Do we need payment transaction ID or item ID or both? I don't know. Item ID is the existing modify payment stuff. Which is equivalent of single. So maybe we, for this one, let's say we don't do it right? However, when you call the actual modified payment from here, right, maybe not the endpoint, but the underlying service, right? You need to pass this transaction ID as a request or whatever, right, like the actual data. That is how it is expecting. Oh, I had it. I didn't know. But it work. Oh. Oh, you forwarded this so many. Maybe you would have put a filter. The original one is like payment security mighty secure fit. Anyway, let's come back here. So let's say we remove the item ID just for the understanding, right?
+
+00:23:41 - 00:25:45 Unknown Speaker:
+
+Yeah, so in this case, what do you think will happen? Yeah, it should have that record, should have been staged into staging table. Sir, No, no, that is fine out. What is the output of this? Do you have it in here, in in one of your scenario, or you don't have that. Because I didn't understand what is before overlay after overlay. Yeah, yeah. Okay. Go there. Go there. That overlay request you sent. So, now the response. Oh, I formatted it also. Okay, here. This is the one? Yeah. So, what is the difference between the before overlay, after overlay? Yeah. Can you compare both the JSONs? It's pretty big, man. No, compare. No, use VS Code or something. How do I? Okay, this one then. Cutoff hours 2024 something. Oh, it's just rotating.
+
+00:25:52 - 00:27:00 Unknown Speaker:
+
+No, no, no, no, no, no, no, not with this one. After overlay, before and after. Only I compared. No, ah, no, no, no, see before overlay. Okay, that is what is there. In the payment transaction tables, when you click on Modify, it renders it's not modified it, it render the request from payment transaction table to staging tables. Okay, it gives the output, whatever is there in payment transaction table with all the information and FDM, and then the remittance information, everything. It fetches, it creates it as an payment transaction object, and it returns the JSON response. That is, that is, so, that is. So, before you, before the user does the modification and saves into staging, right? What you show is basically from payment tables and that is exactly same as output of current modified.
+
+00:27:01 - 00:28:01 Unknown Speaker:
+
+You should compare. Which is this one, right? Compare before overlay and modified stage record response. Modified stage. There is a third JSON is there, right? Before, see, there is no difference between. Before Yeah, modify staged see this is a this is not. Sorry, I didn't understand this one. No, no. This request is already done by Mubishara. What they do is you make some changes and you save that particular recipient. It will go sit inside the staging table. So now I have made a call to get the response of that. Yeah, but again, understood, understood, but just, sorry, let me interrupt for a second, right? This get is basically giving you all the different records that are sitting in the staging table for the same staging UID, right?
+
+00:28:01 - 00:28:48 Unknown Speaker:
+
+It's not get, it is in the request, They could update into the staging table only. This is no, no, no, so that's the request for saving into staging table. Can never have more than one recipient, you are showing three here, it can never have those three in the request. But the API is developed in that way. I don't know how, why they have done it, so that is what, let's look at it, right? I don't think you can, because you see from drawer, right, you you pick only one, so, ah, okay, maybe at a time at a time, you pick only one. No, so I had it open. Okay, here, staging right, staging API right, so first time when you save right, it is about.
+
+00:28:48 - 00:29:52 Unknown Speaker:
+
+It is like, this actually correct, but this all of these fields, right, are for that single recipient, and that single recipient basically sort of is identified. Uh, actually, there should be a transaction ID, this one, but because it's the first time, uh, this is the create scenario, so it doesn't have right. But now let's look at the modify one, right? So modify newly added, Uh, I think that's modified. Add a new to existing batch. Okay, so it, it should be this one. Let's say I have one of the scenarios, and does he? Does she have the existing? Yeah, this is the existing, huh? Okay, so this is modify scenario. Where existing transaction ID exists. Why this is null, man? Remain transaction batch ID will be present in the request. Sorry, sorry, okay.
+
+00:29:52 - 00:30:44 Unknown Speaker:
+
+Whatever you got added which is not saved to the table is this scenario. Is there a six scenario? This should be existing transaction or existing, right? So what we are talking about is this. So, this is an existing individual transaction. No, no. I understood. Okay. This is an existing API only. Okay. But once it is saved inside staging table, after that, we are making a call to wrapper API and wanted to compare that response. No, you cannot compare that is what I am trying to tell you. No, no. See, basically, it is there in this payment transaction. Okay. Now you got into the front end and you make some changes. It gets staged inside staging tables. Correct. Okay. Even here also, if you go and see that request, it is actually staging that.
+
+00:30:44 - 00:31:46 Unknown Speaker:
+
+Go to that request. Yes, sir. I sent. It's not actually submitting it. It's staging it inside staging tables. So when you. This is the what I'm showing here is the end point to actually save the data in staging. But what is that API? This is basically... See, these are all staging APIs. The whole page, right? This is not saving in the payment table. This is basically after the user has updated some attributes for that single recipient or the payment on the drawer, right? User will say save, right? When user clicks on save that, that will call the staging thing, right? Not the final submit, okay? To the payment table. So this is the these are the fields that shown on the drawer. Okay, yeah, now. After that, let's say user has chosen save and close, now he clicks Modify.
+
+00:31:46 - 00:32:34 Unknown Speaker:
+
+For example, save and close will basically which one is this? Uh, which? Okay, basically save and close will bring it to the this payment queue thing. And then when you click, when the user clicks on the kebab menu and says, Edit again, right, right. That is the time, technically, this wrapper gets called again, exactly which is here along with this. So my question to you is, what are the what is the output you are expecting here? So when he clicks on that, there is a stage record with modified details, then the overlay should happen. Okay, onto the whatever is there in the payment transaction table. And it will see what is there in the staging table. And it will overlay with that stage data and return to the response. So that's what, see, I understood.
+
+00:32:34 - 00:33:22 Unknown Speaker:
+
+We should not be using that API to save the data into staging data. So what I'm trying to say, this, this you are showing is never called by UI. Let me, let me, give me one minute. I'll tell you. Okay. I understood that. Ideally, I shouldn't be using this API to modify some payment. Okay. I don't know what is this payment, but API, but what I'm trying to say is, yes, if I use that API, Whatever you are saying, modify payment, that is the existing, it will go and sit in the staging table. Okay, so anyway, this is not my API, even modify payment also, it's not my API. Which one we are using, it doesn't matter. Here we are updating into the staging tables. After that. The overlay is working or not is my target?
+
+00:33:22 - 00:34:12 Unknown Speaker:
+
+No. But first, you have to be very clear on this one. Basically, whatever you. This request response has no relevance only in the final outcome of the wrapper is what I am trying to explain. No, no, Raul. In the second request, I am modifying the data, okay, so whether I'm using Modify Payment or another stage records, I don't know what exactly. No, no, no, so no, you have. You have to be clear, that's why I'm, I'm taking you step by step. No, no, when the user. No, no, again, let's let's revisit. When the user edits right on the drawer Yes and clicks on Save, basically, it goes in the staging table. By means of this particular endpoint, right? Literally, the data is in the staging table against this staging UUID and transaction ID and all, right?
+
+00:34:13 - 00:35:05 Unknown Speaker:
+
+One question, only the modified data will go? For saving No. I know all the fields I, I had explicitly said, right, because the user may have made some fields as null. Also, we we will not have that complexity, only one field is modified, we store one, instead, we take the entire snapshot. Understood? Yeah, staging, okay, now now user wants to basically click and say modify, right? Yeah, the same drawer has to open, so in order for the drawer to open, it needs exactly the format. Now, let me just say the format is exactly like this, right, right, which is Bau, let me open it, right? The Bau modify payment request. Where is the response? Response is the one that is crashing my browser. But um, I think it's very similar to what you have here, basically, right?
+
+00:35:05 - 00:36:41 Unknown Speaker:
+
+Yeah, okay, Raul, can you actually go and uh uh, compare those two J. SOn's once? So just format is. Is this making sense? Yeah. This is making sense, right? Ultimate output expected is what? User should be shown with the values which user had modified in a previous attempt, which went into staging. But those have not basically been propagated to the main payment tables because the user has not submitted anything, right? We are talking about that scenario, correct? So, only thing is the data from staging has to override whichever, whatever values coming from payment tables. So, Rahul, one question I have. If we are actually submitting complete details for staging it, okay, then why do we need to actually go to the payment transaction table? Because this is the latest information and this will be submitted after that.
+
+00:36:42 - 00:37:34 Unknown Speaker:
+
+The simple reason is the existing modify payment API call, right, Basically looks at transaction tables, all of it, all the child tables and all right, as per the data model. Yeah, in in our case. And and remember that, uh, physical like mapping and lookup, right? Is is slightly different than the staging. So, for example, for a payment transaction, you have three part, three different parties penny, bank and intermediary. I'm just making it up in the in the actual tables PyMT transaction and the PYMT party table, right? Basically, it will have three records in the party table. Three records. And for each record, you will have a party-specific fields. Right. Now, if you look at the staging table, basically, there is no three records. There is only one record. One record, yeah.
+
+00:37:34 - 00:38:22 Unknown Speaker:
+
+But all the party fields are like literally named. One is Benny, one is Benny Bank, the other one is the intermediary, right? Yeah. First of all, mapping is very... So there's no correlation. So if you want to generate the output of the modified payment in the same way, in theory, you have to follow the same mechanism, how the data from a payment transaction object is reverse mapped using the reverse mapper into that format that we need, which is the fields and sections, right? Not this one, but like this format we need, right? This whole section thing. This is all generated by reverse mapper is what we discussed, if you remember. Ah, right, right. In the BA, you modify payment, right? Okay, okay, you're right, yeah. It is, right?
+
+00:38:22 - 00:39:11 Unknown Speaker:
+
+So, what I was suggesting in the wrapper to be done is two things. One is, let's say, because it, especially for this, well, whatever is the convenient way, but for this one, one option could be you convert, you basically call modify payment using the existing payment transaction batch ID, right? So you get this output in this section format, right? And then you apply a static mapper, which basically simply takes values from the staging records and goes in it and explicitly updates the respective values in the section, wherever it is, right? But the static mapper, you have to know this field is this section, right? That basic mapping, you have to know. One way of doing it. Second way of doing it is basically... look at this code and identify how that reverse mapping happens.
+
+00:39:11 - 00:40:08 Unknown Speaker:
+
+So for example, if it is happening from payment transaction object to the output, what you do here in this scenario is get the payment transaction object by querying database first using this. Then override the values using the staging things because that structure is different. Another kind of mapping. Override the value. So now we have a payment transaction object with new values and then you do the BAU whatever is being done in the modified payment. For the reverse mapping to take place, so you can get it back the section wise response with the updated values, right? Can you go to that? Uh, do you have? Can you? Do you have them open in this one? VSCode? Yeah, please, that is what I am doing here. No, no, this compares. Don't compare these two, there is one more, which one?
+
+00:40:08 - 00:41:07 Unknown Speaker:
+
+The last one, the modified stage record response. So which one do I compare? Yeah, anything you can take. Both are same only, so the modified stage response with any of the other two responses. No, but modify stage response is this one. This doesn't sound right. A response? Wait, wait, wait. Wait, wait. I've given wrong. I think. Wait a second. That is what I sort of opened here. That doesn't sound right. I made a mistake. Wait a second. I was, this is why I couldn't understand what you said, which this is why I wanted you to give me. That's why I was asking for the email first of all, and what I was expecting at this. You will give me the file name here in this format so I will be able to understand what is request, what is the response.
+
+00:41:07 - 00:45:49 Unknown Speaker:
+
+What scenario now you are getting? Why I was asking for this type of thing in an email, because it's very confusing on on that chart for different scenarios. No, no, the saving I have not done it properly in my bad. Wait a second. Let me modify stage responsibly. One second. One second. Yeah. Hello. Yes, Rahul, yeah. Okay, so maybe, no, so this is the BA you modify payment, so Krishna gave it to me. His browser is not crashing, mine is crashing, I don't know why. Okay, okay. But it was saying 82,000 something, this one is only 6,000 line, I don't know, that number mismatch is there. I don't know why. But, okay, this is just, this is something we know now, right, like. Okay, so so which method? So are you?
+
+00:45:49 - 00:46:43 Unknown Speaker:
+
+So my question to you was in in, uh, for this, this scenario, right? Are you able to excuse me? Overlay with, uh, what is that? The output by by by constructing the payment transaction object, first applying the staging and then converting into that reverse mapper thing to get it. Or how are you doing? That's my question. Uh, yeah, actually, you know how you didn't verify it yesterday night? It, uh, actually updated something inside staging tables. After that I tried to get the same payment, so it overlaid with, uh. It got from staging transaction table and has updated a staging table data and given me the final output. No, but how it did, it is important, right? Like that is something basically I want to see and understand. Both, right?
+
+00:46:43 - 00:47:35 Unknown Speaker:
+
+Because if we do it via the existing mechanism, there is an advantage that subsequently for any different pay method or any type, right? Whatever correct set of reverse mapper that needs to be used will be leveraged. But if we write our static mapper, let's say after generating the response from the output of the modified payment and then changing the values, right? And that static mapper is something we'll have to maintain separately. For different use cases, right? Potentially with conditional mapping and whatnot, right? That is the reason I was focusing on the reverse mapper. If you remember, that is what I had given you that task, right? While I was in Bangalore, that reverse mapper thing. Let's try to understand and use that and then generate. That is what I'm expecting. So if you can...
+
+00:47:52 - 00:49:09 Unknown Speaker:
+
+I have actually created a staging record, modified staging record and then I try to get that using the wrapper. It has given me a proper response. Okay, let me. Uh, no, no, I'm not doubting how it is given. I'm asking, you have to understand how it is doing. Is what my I'm telling you, right? No, no, I understood. Only thing is I wanted to show you. Okay, I staged something, I modified something in the staging table. When I refetch that, okay, the stage data, it should give me a structured response. Okay. So, let me share my screen. Two minutes. Yeah. See, this is modify wrapper one. Okay. So, this is batch change section ID. Okay. That is pointless batch, in this case, it is actually pointless you. We are talking about a single recipient transaction ID, not the batch.
+
+00:49:09 - 00:49:59 Unknown Speaker:
+
+But staging UID should be there as an input in the request because it has to get it something from staging table. This is sitting inside at transaction tables. Okay, so I have to pass the batch transaction ID and the transaction ID, so right now user is on Modify Batch payment is clicking on one of the recipient Okay, that recipient is. This. One. Batch transaction ID, in my opinion, is not needed because the actual data is against the actual payment transaction ID in the main table, you don't need the batch transaction ID. Under this, this is the this recipient. You have wanted to edit it? Yeah, it's not mandatory. We have any transaction ID that is enough in the in the I.I agree, like in the request we should have, but it is not needed.
+
+00:49:59 - 00:50:55 Unknown Speaker:
+
+In my opinion. To get the data from the payment tables is what I am saying, right, right? So now, Rahul? When I click on Modify wrapper, okay, uh, if I pass that particular transaction ID that is there in the transaction tables, the, uh, the response is structured response we receive. Okay. This is basically the wrapper is calling the existing endpoint and giving returning. It is not doing anything in this case, right? There is no staging. There is nothing. It is only giving you what is in the tables. Yeah. It is giving with FDM mapping. But that part is already done by the existing modify payment also, right? If you pass that single transaction ID, you get exactly the whole thing in the same way. Which is Bau correct?
+
+00:50:55 - 00:51:41 Unknown Speaker:
+
+In this instance, the wrapper is basically just calling, making that Bau endpoint equivalent call and giving you the output which exactly is written by that right. Is that correct? Yes, it's wrong. Yeah, yeah, it is, it is doing the only, huh? But now you are going to show me the staging thing getting over, I mean, which staging data has to override? Where is that example? Is what I want to understand. So this is the data that 305. We are updating this information beneficial information. Okay, so you are saying that we should be sending everything okay as part of this request, and the API should be, we should be using a different API. But okay, I have this one staging response. I think this is one submit request that they are doing it, so when they submit this way.
+
+00:51:41 - 00:52:32 Unknown Speaker:
+
+No, no, no, no, I don't know you're mixing. This is not the submit request for staging either. I showed you just now, right? What is this API? Then? It is a.I don't know. I think it is just a testing API which gives you data from staging and shows you what is in there, I guess. Because I told you, right? The API, I don't know from where you took it, but the Confluence page I showed you, the individual API for saving, right? See, she has created some get and all, but that was more of originally what batch staging transactions. As staging recipient, I don't know which one is that it doesn't match the name here on the confluence, though. So is because there was something that originally maybe we were going to use that name for.
+
+00:52:32 - 00:53:31 Unknown Speaker:
+
+The which she had created. To simply do the test, right? What is in staging for the staging UID, which records are there, etc. And that API actually could also give you a specific single one also if you do a get. This one is a post when it is taking multiple which I am now clueless what it is. Because my understanding as per the confluence is different for single one. Okay, let me, but this doesn't see, but this is no, this has no relevance. No, let me again sort of understand, this is not relevant, right? This API, the date, the with the staging UUID and the transaction ID payment transaction there will be. There is a record in staging, right? That you have different values, yes, how are you getting the values from staging in?
+
+00:53:31 - 00:54:18 Unknown Speaker:
+
+So you are making the API call of staging versus the actual look up in the table. And then overriding it, how are you doing it? I mean, how is the code doing, whatever you've generated? Right now, it gets the information from the, if there is an entry into payment transaction, it gets the data, that object, that existing MyDefaultPayment is there, right? It gets that, and then it does the overlay from the staged data. My question is, staging, say, how is it getting, first thing? I'm just going to go step by step, and you need to answer me, so that I can understand. From staging, how are you getting? Are you making a database query? Yeah, yeah. Staging tables. Using which field values? Which column values are you making that query for that individual transaction?
+
+00:54:19 - 00:55:05 Unknown Speaker:
+
+We have that unique ID, right? Staging ID and transaction ID, right? So, we are using both and we are trying to reach it from the stage data. Okay. Now, second question. How is the overriding or overlay you are saying is happening? How is it really happening? Is it after? Generating the response structure from Modify Payment yes, or is it before? No? No, after? Only first it gets it, the whole structured response yes. When you you update the values and the update value is using a static mapper. Right, right, you are not doing the other one, the reverse mapper thing that I was talking, you are not doing that. Uh, why do, I mean, do we really need to do it? Because we have the uh, response with us? Okay, from the modify payment.
+
+00:55:05 - 00:56:10 Unknown Speaker:
+
+Can I see the code? Yeah, but I'll tell you why. Can I see the code? Because there is a good reason that reverse mapper could be handy. Maybe not for the first market scenario, but something else. And basically, you still haven't generated that response, right? Whatever you have sent me doesn't have that response with modified values, no? Yeah, it was. I don't know what happened. The one that you sent me doesn't have it. Yeah, it doesn't have actually. Yesterday, for me, updating into staging table, I ran one API. It updated nicely and then I used this one. I updated these values, name, account, everything. And then I ran the after overlay, this one. Yeah, but your code should tell you what it is doing when you rerun it now. No, not coding.
+
+00:56:10 - 00:57:10 Unknown Speaker:
+
+Now the question I have is which API I use to modify the data into staging table. You can directly modify the values in staging also, right? I can do it, but I thought of doing it through... Take the one. No, no. So let me see. I would say take the one. I mean, I'm just surprised when you spoke to Mubashita, maybe she didn't give you. No, I didn't discuss with her at all. She gave me the code, that's it. Okay, give me like 10 minutes time. Let me actually run it. If not, I'll go through the staging tables and see whether when I run this one, this API. If it is staging the data with the modified values or not, okay, if not, I'll come, I'll use another modify payment option see second. Okay.
+
+00:57:10 - 00:58:01 Unknown Speaker:
+
+So this is only one scenario right now. Don't forget the create scenario, where there is data is only in staging, right? So you have a bigger challenge there. And I thought you were targeting the create scenario first create scenario May. The Modify payment wrapper has to convert the data from staging into a payment transaction object and then try to generate the response structure as a modify payment output. Because there is no entry, which is, yeah, so now you get it. Why I am focusing on the create. Because if you have that first challenge completed to convert staging into the payment transaction object and then you call the BA, you modify endpoint, right? With that, I am hoping it will generate the response correctly. I mean, basically not the endpoint endpoint, but within the endpoint implementation, wherever it is generating that response from the payment object.
+
+00:58:01 - 00:59:12 Unknown Speaker:
+
+That part because the actual endpoint may be doing the database query and all which will you will never find, right? Yeah, but this time I cannot use modify API Create object that currently we have it in getting it from the staging transaction tables. If it is a create flow, how this object gets created? Because it has only the staging data, right? Using staging data only, we should create that complete structure, is it? I mean, not necessarily. I mean, fully complete or whatever partial complete, right? But yes, you have to because. Essentially, the drawer has to be painted on the UI with the data, and it has this output. Response has to have the same structure with like sections and fields, exactly like the existing modify output. Right? So let me send you this Excel so you can basically follow that.
+
+00:59:12 - 01:00:17 Unknown Speaker:
+
+But Rahul? That day, we thought they will store that information in the print end itself. No, no. We initially discussed that, but later, if you remember, just towards the end of that discussion, Pankaj, when we discussed with Pankaj, he said, right, we shouldn't have, because it will have a limitation, it will become slow and whatnot. Everything has to be done from backend. And that is when he explained the reverse map. Okay. Okay. I mean, I thought you were focusing on create only because that was the main thing. No, no, no. I actually... By using the reference only... See, see. We have the data inside... Create was more sort of challenging in the sense just to finding out how the modify implementation currently works and we leverage the part of the logic where reverse mapper comes into play, right?
+
+01:00:17 - 01:01:01 Unknown Speaker:
+
+Yeah, and then we. And because if you do that right, you can use the same pattern for the overlaying. Also. It was the original idea, right? See, now you are doing overlay or override with a different mechanism and create you will follow different mechanism. Unnecessary. You'll maintain two different mappings, right? Okay, okay, which could be avoided if you use the same approach, right? If you create the basically whatever mapping we want to use. You create the payment transaction object out of it and then subsequently invoke the some existing code, which does the reverse mapper call and gives you the output. Right, then that's it, there's nothing else needed. That was the main task. I mean, you. You went in the direction with the existing thing.
+
+01:01:02 - 01:01:59 Unknown Speaker:
+
+This was one of the ways, but we knew back then only that it is not going to be efficient. That's why we are focusing. I wanted you to focus on the reverse mapper thing from existing code, understand and leverage that. That was the whole point. Do you have that reverse mapper class references that Pankaj shared that day? So what he said is there are different reverse mappers. But explicitly, I mean, I don't know how it is called and used. If I knew it, I wouldn't basically give it to you, right? What you need to do is look at the existing modify payment flow, debug it, and find out the code where it is basically the payment transaction object is obtained from database. And then convert it into the response structure. Where is that code? Right?
+
+01:01:59 - 01:02:45 Unknown Speaker:
+
+Yeah, that that code will involve basically whichever reverse mappers are applicable, as per the pay method. And whatever other logic it may have, I don't know, okay, I'll check that, I'll check that. So so once you find it, use that to kind of leverage it here. So then try to create a dummy, not dummy, but the payment transaction object. Using minimum fields right from staging and whatever. The driver field, I somehow feel you may need the driver fields also, like which pay method, which account. I don't know something you will need. Yeah, because FDM mapping is required, right? Yes, to get the basically whatever. Because there is some logic in which certain reverse mappers are selected, and that logic is based on the correct set of attributes.
+
+01:02:46 - 01:03:49 Unknown Speaker:
+
+In the payment transaction object, like driver fields, meaning which pay method, which recipient country, which currency, and so on. There are like seven, eight fields, right? Originating account branch, all of those. So if those fields are currently, let's say, not available in, say, in the request, right? In the modified payment wrapper request, Then you need to add and get it from UI, and then... do that? Use it to generate? Okay, no, no, you got it. Uh, let me work on it. I'll come up with, uh, create flow and modify both okay, within, uh, reverse mapping. Okay, give me time tonight, I'll close this. Okay, uh, yeah. Let's focus on the correct thing because we have lost so much time and that's my worry. Oh, no, no, no. I needed to be ready this week and I was hoping today but not today.
+
+01:03:49 - 01:08:40 Unknown Speaker:
+
+Okay. Yeah. I'll close it tonight. Yeah. Make sure and look at the code and understand and then only show me. Okay. Because I want to understand myself with you what it is doing. Definitely. Yeah. Okay. Okay. Ciao. Thanks. Bye. Lily? Lily? Lily? Hello. I don't know. Hello. Hello. What do you want me to do? How should we start? Thank you very much.
+

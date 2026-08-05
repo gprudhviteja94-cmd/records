@@ -1,0 +1,177 @@
+2026-06-12 Data Validation and Filter Condition Enhancements
+
+Creation Time: 2026/06/12 16:32
+
+
+📅About Meeting
+
+• Date & Time: 2026-06-12 16:32 (Duration: 2104 seconds)
+• Location: Not specified
+• Attendee: Rachana, Pradhyay, Sachin, Poorna, and others (some names inferred)
+
+📒Meeting Outline
+
+Data Validation and Filter Condition Handling
+
+• Review of Data Columns and Expected Values  
+  The team reviewed the data provided in column F and cross-checked it with the email sent to Athar and Sachin. There was initial confusion about column names and data updates, but it was confirmed that the current data is fine after filtering out stagnant data checks.
+
+• Handling of String Values in Filter Conditions  
+  It was discussed that string values used in filter conditions should be enclosed in quotes to avoid backend failures. The approach will depend on the column data type: strings will be quoted, while numeric values may not require quotes. This feature is not yet implemented and will be added, with Sachin to be informed.
+
+• Check Type Corrections and Description Updates  
+  Several data quality checks were reviewed for correctness in their classification as "valid value" or "missing value" checks. For example, checks involving counts of records with values not positive or invalid date formats were corrected to valid value checks. Descriptions were updated to align with the latest UI format, including consistent use of zero percent thresholds for null values.
+
+• Filter Condition Enhancements  
+  New filter conditions were added or corrected, such as ensuring customer ID is not null when a customer indicator equals one. The team agreed to update descriptions and filter conditions accordingly.
+
+• Handling Complex Checks and Template Development  
+  Complex records and checks were discussed, with some being moved into simpler valid value checks by adjusting filter conditions. It was noted that queries generated from new templates will differ from old ones, so outputs will be generated and reviewed side-by-side to validate correctness. Sample queries for four check types will be prepared by Monday morning for review before template creation.
+
+• Data Format and Delimiters in UI  
+  The team agreed to use commas as delimiters in UI inputs instead of slashes to ensure correct parsing. Also, there was a discussion about whether the front end can enforce quoting of string values or if this should be handled in the backend. The preferred approach is backend handling based on metadata, but a fallback to manual quoting during request approval is possible.
+
+• Duplicate and Obsolete Records  
+  Duplicate records with the same DQID were identified and agreed to be deleted. Some records had been replaced but not updated in the environment, so cleanup was planned.
+
+• User Guidance and Future Enhancements  
+  It was emphasized that filter conditions must be provided in exact SQL format by users. This will be communicated during onboarding and noted in the UI. Although an agentic (AI-based) process to simplify this is planned for the future, current backend limitations prevent its immediate implementation. Poorna is engaging teams to obtain necessary permissions for AI integration.
+
+📋Overview
+
+• Confirmed data in column F matches expectations after filtering stagnant data.  
+• Agreed to implement quoting of string values in filter conditions based on column type to prevent backend errors.  
+• Corrected check types from missing value to valid value where applicable and updated descriptions to the latest UI format.  
+• Added new filter conditions, e.g., customer ID not null when customer indicator equals one.  
+• Planned to generate and review sample queries from new templates to ensure consistency with old logic.  
+• Decided to use comma delimiters in UI inputs for filter conditions.  
+• Discussed backend vs. frontend handling of quoting string values; backend preferred but fallback possible.  
+• Identified and planned deletion of duplicate and obsolete records in the environment.  
+• Emphasized need for users to input filter conditions in exact SQL format; to be communicated during onboarding.  
+• Long-term plan to implement AI-based agentic process for filter condition handling is underway but currently not feasible due to permission constraints.
+
+🎯Todo List
+
+• Pradhyay:  
+  • [ ] Add quoting of string values in filter conditions based on column type and inform Sachin about this update.  
+  • [ ] Generate sample queries for four check types using new templates by Monday morning for team review.  
+  • [ ] Update descriptions and filter conditions for all reviewed checks as discussed.  
+  • [ ] Delete identified duplicate and obsolete records from the environment and mark accordingly in comments.
+
+• Sachin:  
+  • [ ] Confirm feasibility of fetching column metadata at runtime to enable automatic quoting of string values in backend.  
+  • [ ] Review sample queries generated by Pradhyay and provide feedback.
+
+• Rachana:  
+  • [ ] Coordinate review of new queries and template logic with the team.  
+  • [ ] Ensure UI notes and onboarding materials include instructions about SQL format requirements for filter conditions.
+
+• Poorna:  
+  • [ ] Continue engagement with relevant teams to obtain permissions for AI integration in backend for future agentic process implementation.
+
+Transcription
+
+00:00:01 - 00:01:18 Unknown Speaker:
+
+Yeah, I think he joined. Yeah, yeah, yeah. Yes, yes, these are, yeah. I provided in column F, okay, what is the expected infant and what the same thing that you shared through mail. Okay. I will have to recheck that because I don't remember giving this column name romain jesh in timestamp. That's why I am a little confused. Let me just open that mail which I sent to Athar. You have used that only, right? Whatever has been sent to Athar and Sachin or something else. No, no, can you go right side? Yeah, yeah, this is okay. Okay, I think this was updated. Okay, then we are fine with this one. Leave out the stagnant data checks. I think those should be okay. Yeah, yeah, just filter out that and let's look at the other ones.
+
+00:01:28 - 00:02:35 Unknown Speaker:
+
+So one thing was like, wherever we are putting these values, right if it is a string, let's put them in quotes. Because what will happen when we are using this data directly from filter conditions given in UI with the like backend configuration, right? I think we are directly using those values, right? But let me know if that's not the correct understanding. So if I say my allowed values are, say, true or false, then true or false have to go in. Codes right in your code, you are directly using them, you are not adding codes in your code separately, right? This is a new thing. I have not worked on templates yet, right? So, um, so what? I'm trying to understand that in the UI, when the user inputs say true, comma, false, it has to be in order to be able to read it directly in the filter, right?
+
+00:02:35 - 00:03:54 Unknown Speaker:
+
+Yeah, yeah, I got your point. But few places it is, we need a single code, few places we don't need it, for example, numbers, some, some numbers in strength we need it, and numerical ones we don't need it, right? Yeah, so what we can do is based on the column type we can do it. So if it is a string, let's put it in forks so that the backend doesn't fail. Right. Like later, whenever we are moving this, so that should be like, say, for example, we will not take what is here. We will see what is the column type, and according to that column type I will put. But this thing is not already built right you will add this. Okay, then just please keep a note of it and let Sachin know also that you will be working on this.
+
+00:03:55 - 00:05:30 Unknown Speaker:
+
+So, then we should be fine. Should I note down here? Yeah, you can note down here only. So, you mean to say removing the quotes? For backend, valid values are to be put in quotes as per data type. Okay, yeah, okay. Okay, I think, yeah, I don't think I highlighted anything because of this. Now, let's see one by one. Okay, count of reports where latest value not in. Yeah, here this is a valid value check. I am not sure why this was made as 0%. It's not working. Can you change this to valid value check? Oh okay this one existing one is missing value check was there so should i change it to yes yes so then this description should be back to accordingly. Yes, exactly. Because this description is currently using for missing value.
+
+00:05:30 - 00:06:51 Unknown Speaker:
+
+But here we have to take this se and se. The variable should have values not in se, se. That's how it is. The new description should change. Okay. I'll update it. Yeah, can you just either mark it or change it as it will remain like this again. Next one will be this one. Give me a minute. Next one is if cust is set value 1 then cust id should have value. OK, so basically, here we need to add a filter condition here. CUST ID should not null, not be null for more than zero percent total reports. But we have to add this condition customer indicator equal to one, because in current description you have this extra thing, right? Put it in the new filter condition, New filter condition we have in separate column, new filter condition put and test indicator equal to one.
+
+00:06:51 - 00:08:30 Unknown Speaker:
+
+Yeah, just cross check the column name. I think it's Cust underscore in. Yeah is the customer ID, this is the action, this is the no, no, no, no, the customer indicator variable. I am saying it's CUs underscore. I n not I n d. Okay, can you go to the new condition again? You have written here is there if cus this is all right. Yeah, I use this, so this one also. Should I change it to this color just for review? Yes, okay, okay. Then next thing is the count of records where values are not positive positive, so this is comes under missing value. No, this comes in valid value. Can you change that part? Yeah, actually, I was a little confused about it. PRUDHVI Let me know, like, what is the situation with rules which are like this?
+
+00:08:30 - 00:10:01 Unknown Speaker:
+
+Either values are not positive or values are not numeric? So do we have like? Will we be able to implement this in such a way that these things are going in only the filter condition? That my value is not positive. That part can be put in filter condition. If it is a strike forward, we can do it, Rachana. We can have it as a separate template. I can check it if that is possible based on the existing query. I will check that out here. Okay, separate, okay, okay, then I think they should be okay. Can you go to the description part of it? Can I read the whole thing? What's there? Yeah, just just stay there, just go to the new description part. Can you select that cell? Where is this 0.05 thing coming from?
+
+00:10:01 - 00:11:13 Unknown Speaker:
+
+I did not see it in the old description. That's why I was just wondering, is it something you found in the code? Like, from where did you get this? If it is not there in the current description, then it would have somehow problem with the generation of the new description. You can mark it the way I can check it. This is the DQID, just quickly I am checking in production as well. Count of records where values are not positive same description only variable name this is comes under missing value and filter criteria. We used this one, yeah, but there is no 0.05 condition, right? I think that has been wrongly added to the new description. Yeah, market is red. Okay, I'll check that. Yeah, sure. Do you still need that check type change?
+
+00:11:14 - 00:13:38 Unknown Speaker:
+
+Yeah, it would still need check type change because this is not missing values. Oops. Able to see through the my screen. This is my American signal. So, I am just modifying the first one which Rachana suggested that valid value check type. That way I marked that. So, I just updated here like this one variable. So, the variable large transaction code should only take values in SC and SC. That is all. Okay. You update it in the new description as well. Yes, any description. I'm replacing, okay? Directly replace it and change the function. Sure, sure. This one I'll change. Yeah, I'm very sorry about that. Sure. I think we can focus on this alpha numeric. Okay. Yeah. Let's continue from where we live. This fourth one, right? There should be no null values.
+
+00:13:38 - 00:14:38 Unknown Speaker:
+
+I saw these two records like the description was different from how we are doing it, the new description. Now we are keeping it in that zero percent null values format, right? But this is old format. Okay, uh okay, this is the. We use this variable, the variable should not be null for more than 0%, right? But in quantum E, we have used this, should not be null, that's why I marked these two. Because these will not align with the UI format and then it won't come in the UI properly. Okay, so here we need to change the new description, you mean to say correctly? Yes, the new description has to be in the latest format what you are using for all the other missing value checks. Okay, missing value check. Okay, okay.
+
+00:14:38 - 00:16:39 Unknown Speaker:
+
+Can you go towards the right? I think you have already written it there. Just use the same thing. This column, edge. This is the format. Okay. So, just replace the variator name and margin and then you should be good. Okay. Okay, here percentage just we need to give zero percentage only of the total and the variable name we need to give it, that's all. Yeah, yeah, shall I update it here only? Or we can? Yeah, you can update it now. Yeah, sure. Yeah, this is done. Yes, I'm looking for the next one also. Oh, this one. Oh, both are same one. Just variable can change. I think these changed. Yeah, okay, you can mark it as green, just so we know it's changed. Yeah, yeah, this one might change to green. We are good.
+
+00:16:39 - 00:17:57 Unknown Speaker:
+
+This one, okay, so it's the first one. Also, right? Just mark that also. Oh yeah, this one also changed. Okay, okay, okay. Next is number of records where this thing does not have a valid date format. Can you change this for valid value? Check? Okay, existing one also valid value only, but recently changed it to missing value. I think, oh no, why is it changed? This is valid value only. How is it missing value? Yeah, okay, number of people. This one I changed. So then it will take only that is the format, so you know what is updated, just mark that also, okay, then the description will also change. There is nothing about null percentage here. This is for valid date format, so this will become like that one. The variable first membership state should only take values.
+
+00:17:57 - 00:19:38 Unknown Speaker:
+
+Let's do one thing now. This too complex. I don't think it will fit in the UI, okay, But the description still needs to be changed. The description is not correct. Can you go to the new description? Make it the variable customer ID should only take values. Just edit it. No, not that person. The new description. New description already has the variable name. The variable first member since date should only take valid date values ok next is count of records where this thing is not in this. So this is fine that I am marking as a grid color, this one. Yes, that is. Point of recursion. Yeah, this one, next one I marked just because this is in terms of slash, slash, I think just make it comma separated because comma is the delimiter we are using in UI.
+
+00:19:39 - 00:20:36 Unknown Speaker:
+
+Okay. In the new description, just make it comma, comma. Okay, we got it. This one slash was there, okay. Yeah. LJT will not read correctly. Yeah, because it's completely... Yeah, yeah, that is fine now. Okay. Yeah, in the next one you have skipped one category somehow. This was small business consumer, corporate. You have skipped corporate. Oh, yeah. That's not in the code. Right? It is not there. That's why it is not there. No, no, no, I have verified, Rachana, this code, right? It is there. This is, actually, Pradhyay, you might be referring to old code, that's why. This was recently updated, I think, two months ago or so. Correct, correct, yeah. Pradhyay, yes, correct, because recently I have added this one, because there is an update came from the product, yeah, so that's why.
+
+00:20:38 - 00:22:14 Unknown Speaker:
+
+Okay, yeah. This needs to be changed. Yeah, just add it there. Okay. Okay, next one, cm11 count values not in. Not in, this is actually valid value only. Yeah, that is fine. Yeah, this I marked because this was supposed to be not in, not added in, like should only take values not in. Okay, you mean to say same, what is the criteria here is it should be there here. Correct, correct. It's the opposite right now. So, just make it not in. Okay, yes, somehow. Next one also same thing. Okay, somehow. Okay, dear. Perfect, so. Yeah. Same level down. Next also same thing. It's not between. Okay. Next one is count of records where IA code is not alphanumeric. Yeah, it is also not alphanumeric. Not alphanumeric. For next three. Next one, this one also, below one also same thing.
+
+00:22:15 - 00:24:25 Unknown Speaker:
+
+Yeah, next two also it is the same thing. RACHANA This Alpha numeric is fine. You will come up with a different template. Yeah, yeah, that we have to come with different template, okay. Amount of records where trip cost among value is less than one less than one. If I did, I mark just one variable should only take values less than one. Should I check in right side? Any comments? Same for all the remaining ones everywhere, it's not, that's why I marked it. Yeah. I believe it should be okay. But even if we don't want to complicate it that much, then I would just suggest, like, keeping the codes where it's required in the description itself. That is the easier way to go. Just check with Sachin if that thing is required. If that thing is possible.
+
+00:24:25 - 00:26:13 Unknown Speaker:
+
+If not, then we will just update these descriptions. That's all. Hello, am I audible? Yes, sir. Oh, okay. I think Prithvi, your voice was breaking. Even from the front end, the same thing is expected. New request. Sorry, can you repeat? Your voice was breaking earlier. He mentioned a front-end also expecting the same thing. He mentioned the last word what exactly this one should be? Filter criteria? This one you mentioned the red color only the template missing value template. We have missing value only current description like this one. We need to map to the current template only. This one. Yes, OK filter criteria. You have a customer in indicator. We have added Yeah, okay, and this one population, yeah, we need to check this description that you mentioned available. This one 0.5, how it came.
+
+00:26:24 - 00:27:13 Unknown Speaker:
+
+Yeah, the first one if you see, there is brackets also in the. Actually, I have just removed that brackets are not required. Okay. Then other places also I will re-verify. So, from the front end, Rajana, can we expect the data to be in quotes if it is a string data? If it is an integer, can that be normal entry? Even from the front end, can we expect that? Yeah, I mean, if if the backend thing is not possible, then we will try to do it in the front end. Because, uh, see, what will happen is, uh. The partners might not enter it in quotes and everything right. They might just add comma separated, like whatever it is, like one C, one D, one M, like that.
+
+00:27:13 - 00:28:04 Unknown Speaker:
+
+So then when we are approving the request, then we will have to manually add it, like the product team. So the backend route is definitely preferable because it will take care of it on its own. But just in case there is some issue with fetching the metadata and detecting the type, then we have to go the manual way. The problem is at runtime when we are creating the query, that's why we cannot go and fetch the metadata of the table. So if you are OK with it, then we can write. I will check with Sachin on that, but I wanted to confirm with you that is OK. At run time. We can get the metadata of that column and based on that we can OK, right right, just check with Sachin.
+
+00:28:04 - 00:28:59 Unknown Speaker:
+
+If that is doable, then that should be fine. Sure, OK, I think this page we are done. Can I go to complex records? Yeah, sure. Here also I marked a few because I think I marked these because these seem like these will fit some of the templates. So I was thinking if we can make these to be like a part of OK records. So let me just tell what can be done here. So make first one right. Count of records where status code equal to this and policy cancel date is not equal to this. So if you put the second part in filter condition policy, cancel date not equal to the state. And then it becomes a valid value. Check that your status code should only take values one zero, one zero.
+
+00:28:59 - 00:30:09 Unknown Speaker:
+
+Ah, shall I move this one? Yeah, yeah, you can move this one. Okay, you want to put this one inside. Yeah, if that is a filter condition, then it becomes a valid value check, right? It will fit easily. But one thing, Rachana, the existing queries with the new templates, even though it is same for filter condition, everything is same, queries will not be exactly same. There will be a lot of difference, okay? So, what I can do for these whatever we are saying okay, I will generate queries using the new templates. I will share it for review. Yeah, we can review it together. So, quickly what we can do is like whatever old segregations you have done right, we will generate one output from there and we will generate one output from the new templates and then we will just match it to validate.
+
+00:30:12 - 00:31:03 Unknown Speaker:
+
+Yeah, yeah. So if it's all matching then we should be good like the new logic should be working fine. There are some case conditions also. Select itself there is a true false conditions are there. So one one query one one form it is there. It is very difficult to write template. So we should agree it for something. This is how a template for this one the query should be. If you confirm it, then I can create a template on it. So what I can do by Monday morning, I will create for all these four check types, whatever we decided, I will come up with queries first for this. Some sample queries. Okay. We will review them. If you are okay with it, then I will create a template. Sure, sure. That is okay.
+
+00:31:05 - 00:32:03 Unknown Speaker:
+
+Okay, then we can leave. The Complex 6 as it is, if you are suggesting, so I think we are fine with that. These are only 4 anyway. Yeah, line 17. I think we can definitely take. This is a simple valid value check, right? True false. Last one. Ah, OK, at least this we can. Can you go right side? Column, F not F column? Yeah, this is part as comments column. Yeah, it's a wrong data. This can be deleted. It's okay. Yeah. There are four entries in the database that's now with the same DQID. So we can delete this one actually. Yeah, but this is the same one which you deleted recently. The one which you deleted. Yeah, yeah, correct. This one only is highlighting actually. But then this has been replaced with the current DQID, right?
+
+00:32:03 - 00:33:00 Unknown Speaker:
+
+It's not just deleted. It has been replaced, right? Yeah, yeah, yes, yes. But why is it not updated in the environment? No, no, no. Actually... It is still there. No, no. Actually, what happened is this is the duplicate record. But actually, alternatively, this one has another DQID already there. Actually, yeah. I think we already covered... We can delete this as well. Yeah, yeah. You can delete it. Okay, then you can delete it. So, shall I mark it as red color by the, is it fine or shall I delete it? Yeah, in comments you can mention delete it, yeah. So, anyway complex we are not touching it right now, okay, all the list we are not touching it. Let's focus on the OK records only and yeah, I would review it with my profession then I will come to you.
+
+00:33:01 - 00:33:52 Unknown Speaker:
+
+Sure, sure. Okay. Only worry for me is the filter conditions, how they are going to give. This is not an actually an intelligent application that we are writing. If it is somewhat like agent process, we can do it, so this is Python. If else conditions, we have to put lot of if else conditions. If user has, see. But at least filter conditions, like simple filter conditions, it should be able to handle, right? Like if I am saying that this variable equal to this or this variable less than this, that it should be able to handle, right? Yeah, how user writes is my worry. Yeah, yeah, filter condition part I totally agree. Like filter condition, they have to give it an exact SQL format. That is the concern, right? Yeah, yeah. Yeah, that we will ensure.
+
+00:33:52 - 00:34:53 Unknown Speaker:
+
+Whenever we are onboarding any users, we will let them know. We will also add a note in UI that it has to be in working SQL condition. Actually, I'm out of curiosity, I'm asking, Sorry, I mean, it's not right for them. If we can do it through some agentic process, but this will become very easy, Yes, yes, the thing is, we do plan to do it via an agentic process. But right now, the whole backend setup required for accessing an AI in production, that is not there, right? Like, we do not have that permission, so that's why we are going ahead with this, but that is the long term plan. I mean, Poorna is already engaging the required teams for that, that, so that we get that permission in future. Okay, okay, yeah, yeah, okay, then I think that's about it. Thank you for your time. Yeah, thank you.
+

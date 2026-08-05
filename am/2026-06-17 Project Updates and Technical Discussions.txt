@@ -1,0 +1,208 @@
+2026-06-17 Project Updates and Technical Discussions
+
+Creation Time: 2026/06/17 18:31
+
+
+📅About Meeting
+
+• Date & Time: 2026-06-17, 18:31 onwards (approx. 33 minutes)
+• Location: Virtual meeting (screen sharing and calls)
+• Attendee: Anil, Rachna, Sansi Ather, Anand, Sachin, Maji, Bharat, Raj, Sameer, Suman, Shaman, Sravan, and others from the Lumi and platform teams
+
+📒Meeting Outline
+
+Project Updates and Deployment Status
+
+• UMDL User Story Deployment
+  Anil reported that Rachna approved moving changes to the E3 environment without adding data in lower environments. Deployment is pending completion, after which data validation and further changes will be addressed. Anil also mentioned a production issue user story, with analysis sent to Rachna and a pending query to clarify with her.
+
+• UI Enhancements and Bug Fixes
+  Sansi Ather consolidated approved project components into a single dialog and pushed changes for review. Bug fixes included allowing zero as a valid percentage and dynamically deriving values for "in" and "not in" dialogue boxes based on rule descriptions. Post-review, changes will be pushed to E1 and E2. Upcoming work includes justification textbox additions and renaming tasks, with Sansi awaiting input from Rachna.
+
+• Multivariate and CD Checks
+  One team member worked on multivariate checks but lacked clarity and plans to connect with Sachin for requirements. CD checks are pending input before further work.
+
+• Data Migration and Reporting
+  Updates on data migration activities were shared, including resolving data mismatches and generating monthly/daily reports. Collaboration with UH, Sachin, and Maji continues to address issues with the new RG Workspace and DT flow tags for loyalty status. Griffin configuration is done but visibility issues remain under investigation.
+
+• Bulk Update and Process Execution
+  Code changes were made to pick files from the Edge side and update tables on Lumi side based on new database structures. Parent processes executed successfully, but child processes failed to pick up. Coordination with Bharat from the platform team is ongoing to resolve this. Validation will follow once platform fixes are applied.
+
+• Rule and Session Updates
+  Work continues on UMDL and YouTube-related decryption sessions, with completion in E1 and E2. Composer-related files were updated to match production, and notifications sent to the Lumi Platform engineering team for Astronomer migration phase one. Backup file locations were discussed, confirming root folders for use case projects.
+
+• Template Development
+  New templates for four different check types are being developed. Clarifications on data types for user-chosen columns are pending from Sachin. Data migration to repository tables continues alongside template creation.
+
+• TLS Release and Validation
+  Suman reported completion of TLS validation in E1 and plans to release in E3 after Rachna's approval. Results will be shared with Rachna soon.
+
+Technical Discussions and Issue Resolution
+
+• Data Type Handling in Queries
+  Sachin and team discussed challenges in determining data types (string, date, integer) for composing SQL queries dynamically. The approach is to treat all inputs as strings initially, then cast to date if the format matches known date patterns. Integer handling was debated, with confirmation that casting integers as strings generally works in BigQuery. Utility methods will be created to handle this dynamic typing.
+
+• Access and Environment Setup Issues
+  Issues with IQ request approvals for environment access were discussed. Requests for E2 and E3 were denied because those environments are not ready. Guidance was provided to raise requests only for E1 and to communicate appropriately with directors and platform owners. Access to DAGs and DT flow execution was also discussed, with Sravan assigned to assist Sameer in resolving DT flow issues.
+
+• Path and Configuration Management
+  Changes to deployment paths and configuration files were reviewed. It was emphasized not to create new buckets unnecessarily and to place config and tag files under designated folders (DT/Config and DT/Tag Configuration). Fixes are expected from the DT flow team rather than the current deployment scripts.
+
+• Error Handling and Data Validation
+  Errors related to dataset IDs and invalid data were noted. The team agreed to monitor and adjust as necessary, ensuring data types and formats comply with BigQuery requirements.
+
+📋Overview
+
+• Deployment to E3 environment for UMDL user story is approved and pending completion.
+• UI enhancements and bug fixes are in review with plans to push to E1 and E2.
+• Multivariate and CD checks require further clarification before progress.
+• Data migration activities are ongoing with some mismatches resolved; reporting is functional.
+• Bulk update parent processes succeeded; child process issues are under platform team investigation.
+• Composer and Astronomer migration activities are progressing with notifications sent.
+• Template development is underway with pending data type clarifications.
+• TLS release planned for E3 after validation and approval.
+• SQL query composition strategy agreed to treat inputs as strings with conditional casting.
+• Environment access requests need to be carefully managed and aligned with readiness.
+• Deployment path and config file management clarified to avoid errors.
+• DT flow execution and access issues are being addressed collaboratively.
+
+🎯Todo List
+
+• Anil:
+  • [ ] Complete deployment to E3 and validate data changes (ASAP)
+  • [ ] Connect with Rachna to clarify script query issues (ASAP)
+
+• Sansi Ather:
+  • [ ] Incorporate renaming inputs from Rachna into UI components (Next sprint)
+  • [ ] Push reviewed UI changes to E1 and E2 (Post-review)
+
+• Sachin:
+  • [ ] Provide clarity on multivariate and CD checks requirements (ASAP)
+  • [ ] Assist in resolving DT flow execution issues with Sravan and Sameer (ASAP)
+  • [ ] Share query location and support data type handling implementation (ASAP)
+
+• Suman:
+  • [ ] Release TLS in E3 environment after validation (Today)
+  • [ ] Share TLS results with Rachna (Tomorrow)
+
+• Sravan:
+  • [ ] Support Sameer in fixing DT flow access and execution issues (ASAP)
+
+• Team (General):
+  • [ ] Raise environment access requests only for E1 until further notice (Immediate)
+  • [ ] Follow correct communication protocol for IQ requests (Immediate)
+  • [ ] Monitor and fix errors related to dataset IDs and data validation (Ongoing)
+
+• Raj and Platform Team:
+  • [ ] Investigate and fix child process execution issues in bulk updates (ASAP)
+  • [ ] Address DT flow tag visibility and configuration issues (Ongoing)
+
+• Rachna:
+  • [ ] Provide inputs on renaming and justification textbox requirements (When available)
+
+Transcription
+
+00:00:04 - 00:07:16 Unknown Speaker:
+
+Thank you. How long will you stay there? I will stay here for a while. Anil, do you just want to take updates probably and then like move the Chrome and call it tomorrow? Yeah, sure. Yeah. Okay, so I think I'll just share my screen. Let's just do that in a moment because it's already 6.40. Yeah. Yeah. Anilji, can you please start with your updates? Yes, I think so on the UMDL user story, today Rachna has given the approval to move the changes to E3 as we are not adding the data in the lower environment. So I am waiting for the deployment to be completed. Once done, I will run the data in E3 and validate the change and will work on the changes, whatever required. Um, and uh, also there was one, uh, production issue, user story, uh, assigned, so that one, uh.
+
+00:07:16 - 00:08:22 Unknown Speaker:
+
+Today I had, uh, send the analysis to Rajna. Um, so I have one query, uh, in that script, so, uh, I have to connect with Rajna on that. Uh, for that. So yeah, sure, we can connect later. Yeah, uh, so yeah, those were the uh things I was, uh, working today as well. And Sansi Ather, Hi all, good evening. So I have refactored the approved project components and consolidated into a single dialog. The changes are posted. I have pushed for review post that I'll be pushing in E1 and E2. But from that there were some like bug fixes done and enhancement. So one is the percentage was accepting zero as invalid, so modified that to accept zero as a valid value. Also, the in and not in dialogue box, which was introduced in the valid value check.
+
+00:08:22 - 00:09:20 Unknown Speaker:
+
+So currently we didn't had any variable which was saving those value. That has to be derived dynamically based on the rule description. So those values are currently, now the changes are made to derive those values from rule description and those changes are also in review. Once those will be done, then push. So these are the UI enhancement that has been done. We'll be moving to work on the justification part where we have to show some additional text box. And also the renaming part, Richa, if you can share me, maybe I can start incorporating that too. That's all from my side, too. Yeah, I think as of now, I do not see any further like renaming changes, but if there are, I'll let you know. Okay, sure, so then I can just move my task from my current sprint, so I'll update the task.
+
+00:09:20 - 00:10:59 Unknown Speaker:
+
+Okay, sure, thank you. Hi, team. Today I have worked on multivariate checks. So after having a call with Anand and Sachin, I haven't got clear clarity as to what to work on. So I'll be connecting with Sachin later regarding what modifications are based on their requirement. And also for the CD checks, I still have to wait on your input. So what actually has to be worked on. So today I only want to motivate checks and all. Thank you. So today I am involved in this data migration activity only. So there are some, uh, changes that needs to be taken place. Yesterday there was a mismatch in the data, we figured it out and then today we are identifying that, so that is still going on. Uh, that that's the updates, monthly and daily, like we are able to generate the reports for those.
+
+00:10:59 - 00:12:08 Unknown Speaker:
+
+And as well as I'm working with UH, Sachin and Uh do meet in Masjid Uh. Regarding the uh, issues going on with the new workspace called RG Workspace, where we are trying to, uh, create the tags like, uh, DT flow tags. For loyalty status, there's a loyalty status. And yeah, we had a call with Maji that we like. We are able to install, like configure the Griffin we have done, but like, still we are not able to see that. So yeah, uh, yeah, we are investigating on the tissues, then, yeah, it is in progress. Uh, that's all from my hands. So today I had changed the code for the file to pick up from the Edge side and update the table on the Lumi side. Based on the new database, data structure changes.
+
+00:12:08 - 00:13:15 Unknown Speaker:
+
+Then, for the bulk thing, the parent processes got executed successfully, but the child processes are not getting picked up. So I did connect with Bharat, the platform team. And after this call, I'll also connect with him. I had manually, like locally, I had verified the child process one. Once that issue got resolved from the platform side, then I'll validate once and then close the bulk update one. Basically, like, for our tenancy, the bulk update configuration has done for the first time, so that's why I'm basing this. And that's all from my side, uh, so from mind, uh. I worked on the Um. And again, your DK rules in session, so even when E2 is completed, so P3 is currently in progress. So so it is in a one state environment.
+
+00:13:15 - 00:14:02 Unknown Speaker:
+
+And apart from that, uh, I got requirement from the uh, someone. Also, there is a new new decryption session for the YouTube related one, so that one also completed in E1 and E2. So after that one, I started working on the composer related one astronomer. So those are some of the files are I just removed from the E1 composer. So that what are the files we have in the production environment, same files I have updated in the Lloyd E1 environment. So I sent out a notification to the Lumi Platform engineering team for the Astronomer migration, so they consider as their phase one migration activity. So, if any, uh, questions will come from the team and we will acknowledge those. Part. Yeah, uh, that's all about from my team. Where did we keep that? Uh, backup?
+
+00:14:02 - 00:14:55 Unknown Speaker:
+
+Uh, which one? Uh, right? Uh, what is the location that we have kept? No such that one. Uh, this is from unwanted files only I have removed such so that one still there in the table. Creation files are still there on the search, so currently some in progress is. Deployment is going around, so that's why you don't have to. No, no, I hope you did not get my question. I am asking you have sort of mail to the astronomer team, right? Yeah, yeah, yes, correct. Mentioning the backup file that we have placed. Where is those backup file? Anyway? That will be the Lumi Use case Team only section, they will consider that that is the root folder for all the use case projects. Uh, let's discuss this call. Thank you, thank you.
+
+00:14:55 - 00:16:11 Unknown Speaker:
+
+So is this the same team? Uh, I thought Astronomer was a different team, right? Will it be at No meeting itself? Yeah, yeah, that's the one they given on the PPT, that one million only, so that's why I showed you that. Okay, yeah, yeah, thank you. I started working on those new templates on four templates for four different check types. I do have a few questions with respect to the data type of columns what the user has chosen. So I'll get it confirmed with Sachin. Meanwhile, I started working on the templates part. I am creating those templates for the new descriptions that we are going to get it from through Frontend. Uh, yesterday I was working on data migration to repository table, uh, updating the data. Um, today I started working on the templates.
+
+00:16:11 - 00:17:18 Unknown Speaker:
+
+Uh, thanks pretty satchel. Um, I was working on this data migration again. Uh, Cindy along with. There were some changes which was required to, you know, which I have reviewed and so that feedback to him. The easy issue for the DT flow has been sorted out. I was going to call with the platform team only for that. Now we were able to view the DAG in the composure. So that is also being fixed from our side. And with respect to these, uh, uh, you know, uh. Onboarding to the Lumi Engineering space right? Yesterday? We had to connect with the team and we need to follow up with the team. So those are the part I was looking into. Thanks so for my tickets. The Racy tickets were blocked yesterday evening. Jason shared the empty files for the new tables.
+
+00:17:19 - 00:18:44 Unknown Speaker:
+
+So I think me and Suman can now proceed with the E1 setup for those tables. Apart from that, I was looking into astronomer changes which are required for the astronomer migration and also helping out Raj with some of his initiatives. Thanks, Shaman. Suman? Hi everyone. I was working on the TLS. Now today I'm going to release in E3. I got the Rachana approval, sign off. And other than the YouTube one, I have completed the validation in E1. Today I will do in E2. Maybe tomorrow we're going to share these results with Rachana. That's it, thank you so much. Um, yeah, since it's already late, we decided we'll just do the DSU and motor or grooming to tomorrow. Is that fine with you? Yeah, yeah, that's, that's fine. Okay, I will. Uh, we'll just utilize the DSU tomorrow for growing.
+
+00:18:44 - 00:19:50 Unknown Speaker:
+
+Okay, okay, yeah, okay, anything else. No, nothing from my side. Anybody else would like to connect with me, please do let me know. Sachin, I wanted to connect with you. Okay. Prithvi, Aipa, and Sameer, you guys can stay live. Sundija, we can use this bridge? Yeah, you can, yeah. Okay, thanks. Sachin, we need Athar also. Okay, Athar, you stay here. Sure, I'm there. Okay, okay, I'll start with, uh, you can go ahead first. I think you might be a small person, you can sort it out. Yeah, so uh, certain the thing is, uh, uh. Where? Condition? We get a column here and the filter condition filter criteria, right? So it will be in regards or data record. It can be anything, okay, when we are running a select query on that, based on the data type of that column, we have to compose that query.
+
+00:19:50 - 00:20:44 Unknown Speaker:
+
+Okay, so how do we know what is the data type of that column? That is a challenging thing. Write a regular expression, right? If it is a string, treat it as a string, right? Even the date you would be getting as a string column. Correct and then just compare if it is a formatted like 2024. I can zero one, even zero six, right? If you are getting those formats, then just consider it as an date. Those would be assumptions, no? No, that is not an assumption. That is not an assumption. Look, Vipi, as I stated, right, we are not building a full-fledged solution, right? If the input, anyhow, this tool is going to get refined, right? And if there is an invalid input that we receive from the user, the automation would fail to generate the SQL, right?
+
+00:20:44 - 00:21:40 Unknown Speaker:
+
+And then we will cross check what was the issue for that. Correct, but for time being, in order to handle different data type, what you can do? You can just write a utility method, right? First of all, treat everything as a string. Okay, whatever input you are receiving, first of all, treat it as a string. But in case you are getting a format of a date, right, then just cast it to a date. And based on that convert, you know, make it into. So, string is in condition to increase time. What about integer? How do we know it is an integer? There should not be single quotes or we should not be adding single quotes further. Integer also, first of all, like where we are matching this data type. Can you give me a condition now?
+
+00:21:41 - 00:22:48 Unknown Speaker:
+
+Yes. Yeah, it's from query is there now, Sachin. From where condition did you? If you can share your screen and can showcase me that part, right? Then I'll be able to help you out. Okay, two minutes, Sachin. You can continue. Okay. Can you just display me the location where you have shared that location? Can you hear me? Yeah, I can. I can hear you. What is the location that we have specified to them? Yeah, so this is the one section. We are using the config folder and the Qtrak folder, right? This is the one, same thing I have updated. Same folder, structure. What are the current... Hold on, this is under composer. Why we are giving them a composer look is. But our Dax is there here only, right? Okay, so they are looking for the Dax all right.
+
+00:22:48 - 00:23:43 Unknown Speaker:
+
+Yeah, yeah, all Python files, only they are looking. Actually, where did we kept the, uh, you know, backup? No, no, this is already existing one section, uh, all files. So you just specify that all the DAG files are under this QTrack folder, right? Yes. So actually at this point I missed out something. Maybe I will give the top of main. I will reply on that. Exactly. And that is the reason I was asking you where is the location which you are specifying. Because they might be looking into that DAG. So just specify that. Sure. I will. Thanks. You can feel free to drop them. Sameer. Let me share my screen so this has been sorted out. Okay, it is now failing due to us. Let me know once you're able to see my screen. Perfect.
+
+00:23:43 - 00:24:50 Unknown Speaker:
+
+Yes, I can see the snacks, right? Uh, so this is the one right now. This tag is appearing in this. Yeah, it may be failed due to the DT flow, because, so just check this part, yeah. I think we need access to this. Like Sachin, he rejected my IQ request. Man, how can I reject your request? That would go to Rajendra. I am not the owner. No, no, no. Not Rajendra. I am just trying to share my story. No, man. I don't have the authority to reject any one of your requests, man. No, no, no. Not you, Sachin. I am talking about my IQ request. Yeah, I hate you only see who has rejected this one So who denied it this guy Who denied Man he's a director for Razi. You should have looped in Jason.
+
+00:24:50 - 00:25:54 Unknown Speaker:
+
+I am told you right to move in Jason. Don't raise the request today. Raise the request once Jason is back. Okay. And why did you raise it for E1, E2 and E3? E3 we don't have even the environment. Okay. That is the reason he has denied it. Who did ask you to raise for E2 and E3 man? First of all, you are making mistakes from your side. You should have raised only for E1. I just asked you to raise it for E1 only, right? Not for E2 and E3. The E2 environment and E3 environment are still not ready. Then why are you raising it? And that is the reason you denied it. Just raise for E1 and then just ping him again once Raj approves it. Just raise for even and just give. Can you?
+
+00:25:54 - 00:26:49 Unknown Speaker:
+
+Can you show me the Slack message? What is the context that you have provided to him? Go to the Slack message, the one that you're having. Uh, just mention that, uh, hi, Bill. I am part of, UH, U.S. Consumers team who is handling these related stuff, where we are collaborating with Jason Powell. Okay, as we have, as I need to work on these. Uh, could you please review and, uh, approve the request? Please don't write directly, please approve the IIQ, you can just write down, please review and approve the request. He is a director member, so just understand that point. And that is the reason, you know, I haven't shared this IIQ to throughout the team. Because this should be confined to certain people. Not everybody is going to get access for raising, if someone is working, you are working.
+
+00:26:49 - 00:27:52 Unknown Speaker:
+
+Only two of you, or my sub, right? Only three or four people would be having access to raise it because that is a restricted access. So don't raise any environmental access until unless I confirm you back. Right? Even seven raised it, right, but here also raised only. Okay is not even provision, man, then how do you get it okay? Uh, anything else? Yes, See, these are two different conditions. Both are similarly. So, I am adding the act in, not in, true or false. So, in this case, maybe true is a text in the database. So, this is okay. What if some numbers are there in this? If this column is a number, how do we know if it is an integer column or a text column? How do we know that?
+
+00:27:56 - 00:28:53 Unknown Speaker:
+
+Now if you put a integer, will it give you a cast error? Yeah, yeah. If it is a text, it works. If it is a number, if you are giving like this, it will say it's not right way to call. Did you try it in BigQuery? Yeah, yeah. I executed and I checked it. I'll give you an example of DQID itself. If you give DQID, it is actually text in the database. If you give it as an integer, it is fine. Seven, can't we run BigQuery with integer being a string? Ideally, we can. Exactly. Exactly. That's what my thought process is. Date I can understand date, I can still understand date can cause a issue, right? But integer string should not be going to cause any issue to you.
+
+00:28:53 - 00:29:53 Unknown Speaker:
+
+So, with respect to DQ, even, even, even, even for date, the suggestion that I have given you, right? When you are going to get a input, right? Even create a date as an string only, okay. And then if that format comes as 2026 hyphen, blah, blah, blah like date format, right? Then cast it to a date in that SQL. This. These are the details you are reading from the database, right? So when you are reading it from the database, write a method, uh, for that particular column, right? If, first of all, treat everything as a string, but if you are figuring out, write this. There are certain date, format, right? Ddmmyy, year, mmyy, right? Consider those all format. If any of those format matches right, then just cast it to this uh, SQL part.
+
+00:29:53 - 00:30:51 Unknown Speaker:
+
+This would be dynamic for you. What is the problem with that? Okay, fine, date is okay fine, and uh, number fine. I will test it again. But DQID I verified that we even tried yesterday also, and if that is going to be the case, then we will try to. You know, add a data type for you in this, but ideally this should work. Integer should not give you a problem with respect to casting. So, can't we explicitly cast everything as string like while applying filters? That's what I asked him, right? First of all, create it as a string. Everything as a string, blindly. And then if you are figuring out if it is a kind of, you know, date type of format, then just cast it back to a date format. Okay.
+
+00:30:51 - 00:31:53 Unknown Speaker:
+
+So, everything can be cached as a text and even number also will be cached as text. Yes. Okay, okay, and repeat, Uh, those seven records, right? I'm waiting for the details, so save the details. Also the one that I have watched, right? Uh, the one that we decided to mark it as a okay instead of complex, so that we will migrate those data also. Oh sure, okay. And Samir. Sravan is having access to this one. Can you work with Sravan to fix this one? Sure, sir. Sravan, so the DAGs are appearing right now. I already shared all the URLs to Sameer. He's just not having the access to run the DT4. You would be having this access. Let me give you this DAG itself. So we just need to fix this DT4 issue and then this should get executed successfully.
+
+00:31:54 - 00:32:50 Unknown Speaker:
+
+Yeah, I just .  Yeah, yeah, yeah. Because  I have other meetings, right? And I was looking into this .So it  was  just one change. I'll tell you that this is the path that should be  there for the central component.  That's what I have changed, and I  already committed this code. But right  now, the path  for this, which we have  specified,  please  make sure if you're changing any .Anyhow, you are going to change it into the ddeploy not on these one now. So for this one, the path would change. The deploy config one, this path is not the correct one. This prjd config. The path would be... Please don't create any bucket on this one. It would be DT under DT. Whatever Config file is there, place it under Config, and whatever Tag file is there, place it under Tag Configuration.
+
+00:32:50 - 00:33:32 Unknown Speaker:
+
+Going forward, right now, we really don't need anything because it's already deployed, and I think the fix would be required from the DT phone. Not from here, not from these. These are continuously right, so we really don't need any pics over here. So fix the DT Pro and then just let me know. Um, you can see there is an error for this one. Also, if something is something we need to change, then then we might need to change it. Because I have seen that error mentioning on this one. Our data set ID must be Alpha, right? invalid data.
+

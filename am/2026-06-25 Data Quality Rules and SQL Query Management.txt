@@ -1,0 +1,169 @@
+2026-06-25 Data Quality Rules and SQL Query Management
+
+Creation Time: 2026/06/25 18:02
+
+
+📅About Meeting
+
+• Date & Time: 2026-06-25 18:02  
+• Location: Virtual Meeting  
+• Attendee: Sachin, Rachna, Prithvi, Ayyappa, Nancy, Anand, Charami, and others
+
+📒Meeting Outline
+
+Data Quality Rules and Dynamic Date Handling
+
+• Dynamic Date Replacement in Rules  
+  Discussion focused on making date values in data quality (DQ) rules dynamic, replacing static dates with current dates or dates relative to the current date (e.g., past one month). It was agreed that dates should not be hardcoded but dynamically handled in the rules.
+
+• Basic Checks and Missing Value Threads  
+  The team confirmed that basic checks such as ensuring variables are not null and validating missing values should be applied over a recent time window (last one month). These checks are straightforward and essential for data quality.
+
+• Conversion to Latest Template  
+  Rachna confirmed plans to convert existing rules to the latest template developed by Prithvi. However, some complex rules, especially those involving multiple filter conditions and inner queries, may not fit neatly into the template.
+
+Complex SQL Queries and Filter Conditions
+
+• Handling Multiple WHERE Clauses  
+  The team discussed SQL queries with inner and outer WHERE clauses, particularly those parsing dates to validate formats (e.g., yyyy-mm-dd). It was noted that multiple WHERE clauses are valid in nested queries, but combining them into a single WHERE clause with AND conditions might simplify the logic without changing results.
+
+• Automation and Python Code Generation  
+  It was clarified that most SQL queries are generated via Python code developed by Charami, not manually written. This allows flexibility in modifying queries as long as the logic remains correct.
+
+• Validation and Testing of Converted Queries  
+  Sachin and others emphasized the need to validate the converted queries by comparing outputs and ensuring no syntax errors. They also stressed avoiding the use of SELECT * in queries, especially due to the presence of PII data, recommending SELECT COUNT on relevant fields instead.
+
+Data Validation and Rule Testing
+
+• Duplicate Records and Query Accuracy  
+  Nancy shared findings on duplicate record checks where some alerts were triggered incorrectly due to differences in certain columns. The team agreed on the importance of back-casing failures by examining exact records to confirm if they are true duplicates or query issues.
+
+• OR Conditions and Null Values  
+  A specific case involving OR conditions and null values in event timestamps was discussed, highlighting that such findings indicate the rules are working correctly by identifying real data issues.
+
+• Rule Deployment and Description Updates  
+  It was agreed that rules validated so far can be deployed to the E3 environment for testing. Descriptions for these rules will be updated later after alignment with Ashwin. Until then, current descriptions can remain as is.
+
+Coordination and Next Steps
+
+• Point of Contact and Alerting  
+  Anand and Sachin will be the primary POCs for the CDA rules. The existing group email used for alerts will continue to be used for notifications and communications.
+
+• Unmapped Records and Template Limitations  
+  Sachin highlighted that some records (64 noted) could not be mapped to existing or new templates due to significant differences, indicating that further changes are needed. The team agreed to review these cases in the upcoming ATM call for detailed discussion.
+
+• General Meeting Closure  
+  No additional queries were raised. The meeting concluded with thanks and agreement to continue validations and discussions as planned.
+
+📋Overview
+
+• Dates in DQ rules should be dynamic, reflecting current or relative dates rather than static values.  
+• Basic data quality checks include null value validations and missing value threads over recent data.  
+• Conversion of rules to the latest template is underway but some complex queries may require special handling or be marked as complex.  
+• Multiple WHERE clauses in nested SQL queries are valid; combining them into single WHERE clauses should be tested for equivalence.  
+• Queries are generated via Python automation, allowing flexibility in query structure as long as logic is preserved.  
+• Validation of queries should avoid SELECT * due to PII concerns; SELECT COUNT on relevant fields is preferred.  
+• Duplicate record checks require careful back-casing to confirm true duplicates versus query errors.  
+• Some data issues identified confirm the effectiveness of rules; others require query adjustments.  
+• Validated rules can be deployed to E3 for testing; descriptions will be updated post alignment with stakeholders.  
+• Anand and Sachin are main POCs; existing alert email groups remain in use.  
+• Some records do not fit existing or new templates, requiring further review in the ATM call.
+
+🎯Todo List
+
+• Sachin:  
+  • [ ] Validate converted queries against existing DQ rules and confirm outputs, ASAP  
+  • [ ] Avoid SELECT * in queries; use SELECT COUNT on relevant date variables, ongoing  
+  • [ ] Coordinate with Anand and Charami on complex query modifications, ongoing  
+  • [ ] Review unmapped records and prepare for discussion in ATM call, next scheduled call  
+
+• Rachna:  
+  • [ ] Convert existing DQ rules to latest template and test functionality, by Wednesday  
+  • [ ] Attempt combining inner and outer WHERE clauses into single queries and validate results, ASAP  
+  • [ ] Share outputs and queries with Sachin for review, ongoing  
+
+• Nancy:  
+  • [ ] Continue evaluation of rule failures and validate duplicate record checks, ongoing  
+  • [ ] Provide feedback on query accuracy and data issues to Sachin and Rachna, ongoing  
+
+• Anand:  
+  • [ ] Support Sachin and Rachna on rule validations and clarifications, ongoing  
+  • [ ] Assist with POC responsibilities and communication for CDA rules, ongoing  
+
+• Ashwin:  
+  • [ ] Align on rule descriptions for final sign-off, timeline TBD
+
+Transcription
+
+00:00:46 - 00:01:45 Unknown Speaker:
+
+So you have started working on the rules that Charmi shared? Yes, yes. That's great. Rachna, here is my question actually. So here some dates was there actually. So this one how we can take it out? Yeah, so this has to be dynamic. Like the date will get replaced by your current date. Current date? Remove your cursor. I cannot see that. Okay. I think we need to just remove the date between 015 to whatever you know, dynamic value that you are passing. The date should not be there, I feel, yeah, the date should not be there. It should be in terms of current date. And maybe like going back past one month or like how we do it usually, right? Similar way, only it should go.
+
+00:01:45 - 00:02:38 Unknown Speaker:
+
+So these are very basic checks, only such an if you would have seen, these are basic, like missing value threads, that the variable should not be null and those kinds. So we can check it in last one month, that should be fine, OK, and can we convert these to the latest template which we have built? Yes, yes, definitely. Yeah, that's what we will do, OK. And regarding this and say pass date, this would come into your filter criteria, the date filter you are asking, not the date filter. There are. I don't know why. There are couple of where clause, right? OK, that is the inner where clause, followed by the outer where clause. Yeah, right, I think this is checking something like whether the variable has string values or not.
+
+00:02:38 - 00:03:28 Unknown Speaker:
+
+So yeah, this has to come in the filter condition, yes. But I don't think it is going to fit into the one which Prithvi has built. Prithvi, can you confirm? Can we check the excel once ever? Can you show what the rule is for which you are showing the code right now? Yeah, this is the first one actually. So, rule description they give invalid dates. Okay. So Sachun I think this is the one I was mentioning that day for which you said that there are no existing cases of that invalid date thing right? I think this is what I had seen so that's why I was recording this. So basically this has to be in that format only ki like you know there are no junk values that are coming in the date field.
+
+00:03:28 - 00:04:32 Unknown Speaker:
+
+So like your day is not beyond 31st and then your year is not something like too far in the future things like that. So Ayyappa, is the code for this one? Can you show the SQL query? Can you expand that SQL? Yeah, this is the one I have. I have kept it here actually. Okay. What is this? Say parse date, right? Okay, so they are parsing and... So, I am just trying to think if they are only checking that format basically that it is like yyyy-mm-dd like that is the format they are checking. So, this we can keep right. So, if we have this in the filter condition. We can pave this, but I think the template which Prithvi has created, I don't think this is getting fitted in.
+
+00:04:32 - 00:05:47 Unknown Speaker:
+
+That missing value, like your account as of date is not null part will go in the missing value check thing, and then rest becomes the filter. No, but how that inner query would be formed. What do you mean by inner query this parse thing? Yes, yes. It is a bit different. Prithvi, if you can go and unmute and speak, right? We are talking about your automation and I am not hearing back from you. No, Sachin, it won't fit actually. Multiple work conditions won't work. Yeah. But right now, we are taking it this way, right? Suppose someone puts in two filter conditions. Where my date is greater than something and some other condition that we are doing right. The second one can still go right the line number 18, say, Right, I think that can still.
+
+00:05:47 - 00:06:46 Unknown Speaker:
+
+I think it's working. Like, how is there? Like two where clauses? Yeah, yeah, correct, this won't run, only no, yeah, no, no, no, that would run. If you observe it closely, it's a inner where clause for a inner query, and then that additional where clause is for that outer query. Yeah, okay, okay, okay, no such in this one. I completely like this way. Okay, you already converted? Yeah, I just modified it separately with scope 1 actually. So, that query is monitored like this way. Yeah, but did you test it like is it working? Did you verify? Yeah, there is no syntax issue Sachin, but I need to change the syntax actually as you mentioned. Result, we need to validate the result. Yeah, yeah. So, you already converted it, right?
+
+00:06:46 - 00:07:45 Unknown Speaker:
+
+But that save parse it which you have added right in the top query line number 4, 5. I don't think we are using any condition like this in any of the query. Yeah, correct Sachin. This is the. Yeah, exactly. So Sachin, we can keep this one as complex. Complex. If it's just unruled, it's fine. Yeah, yeah. But is it the case with all of them or just this one? That is something we need to answer because I did not review these checks as of now Rishna because I just sent that excel sheet to APA to review it. Here most of the queries will be like this one only Sachin. Always ISA, DK scope, everything CM11. One second, but can we not combine these two filter conditions? I don't see any other aggregation or anything happening in the outer query, right?
+
+00:07:45 - 00:08:41 Unknown Speaker:
+
+There is just a select star only, nothing else. What if we ran this just as an and condition? In my opinion, it would give the same output because there is literally no other aggregation happening out there. Yeah. Just doing a select star, right? That is something not required? Yeah, yeah, select star is not required. So the thing is sachin with these CD checks, right? We have not manually written these queries. We have basically like, built a whole Python code through which we are generating this. The thing that Charlie has built, right? So this code is coming as an output from that, only like this is not manually written. So it's okay, like, if we need to modify anything, we should be good with that, like, there is no need to stick to.
+
+00:08:41 - 00:09:30 Unknown Speaker:
+
+This is what I mean to say. As long as the check makes sense for what it is supposed to be, we can change the way it's written. Okay, so if I just try to convert the way that DQ rule is having those query right now and let's see the output and just let's validate few of the outputs. If you don't have access to this DQ risk per second history then just get the access but please make sure this contains PII. Okay. So, don't. Yeah, I think my father would have the access because we also worked on that other RPA use case. But I am just asking him to be careful not to use the select star. Right, right. Yeah. And even if you are doing a select star please make sure you are not.
+
+00:09:31 - 00:10:40 Unknown Speaker:
+
+Decrypting the PII. We just need to go with that count of this date variable only. Nothing else would be required when you calculate the actual value. So you can replace that select star with select count of this account cycle cut date as your actual value. So, this is the pattern we mostly have observed in this excel sheet Sachin. So, it is following the same thing only. So, just do one thing if it is getting fit into the pattern that Prithvi built well and good otherwise mark it as a complex trick when you are onboarding it as a DQO. Yeah, and also like along with that, if you can do that quick check, right? If we do not separate these out as inner and outer queries, if it's a single combined query, uh, just check if that's possible.
+
+00:10:40 - 00:11:46 Unknown Speaker:
+
+If that's giving the same output, then I think we can simply go ahead with that rather than complicating the whole thing. Okay, sure, anything else about this. No Rachna, this is the one only. Maybe I will try this one. So just one clarification. So instead of doing the separate this one, try to make it into the single query only. Yes, that's correct. Got it. So Rachna, I will try this one. Maybe if I am finding any examples. Rachna is out till Wednesday. I mean you can coordinate with Anand also, this is something that Charity worked on so he is well aware of it. Okay. Okay. Okay then. Yeah. Okay. Nancy, do you have any query? Because even I have invited you to that call. Do you have any query with Rachna? So, I am doing the evaluations, Sachin.
+
+00:11:47 - 00:13:18 Unknown Speaker:
+
+RACHNA Those failures in the last code, which we discussed, right? So from that, like two of them, I could see that for one query, the filter was not applied. That's why it was giving the failure. So now we are getting like zero records for that, and for one which was having distinct, Yeah, let me share my screen. Yeah, sure. So we had two check types with the duplicate value. So this one, this is giving like the actual count we are giving, it is giving 2. I checked it. So this is the distinct records which we are getting for that DQ. What was the rule again? Can you show the rule? Records should be only get a source code just used to follow the IE and Samin need to drop off just to have a connect with Loni platform team.
+
+00:13:18 - 00:14:26 Unknown Speaker:
+
+Thank you so. And see here I see only three columns, there are more columns were mentioned, right? And these are not duplicates. How is this getting alerted? This campaign channel level 2 is different in both these cases, right? How can this be alerted as a duplicate? Yeah, so the reference in the reference query, which was provided, we had only these three columns. Yeah, that is fine, but even according to this, this is not a duplicate. Why is this getting alerted? Yeah, this variable is different for both, right? This is not a correct record, only just cross check it, like, what, what's going on? Like in the count part, something is not correct. Okay, um, yeah, I will check this one, yeah. You can also try pulling the concatenated version once just to see like, what's going on?
+
+00:14:26 - 00:15:32 Unknown Speaker:
+
+It does not look fine. Similarly, AnSI I think this applies for all the rules. Like whenever you see a failure, right? This is how you back case it like. You look at the exact records, so if it's a duplicate, check, just just pull those records and see if it is an exact duplicate. Or is it something like this? And if it is something like this, then the query needs to be checked. Okay, so these three I have validated. The remaining I have to... What about this 281? What is happening there? 01. So here I think the OR condition is mentioned. That's why we are getting this count. So, here the event time stamp is having the event date also. Okay, which one is null? 6 to 5 days. 6 to 5 days null, yeah.
+
+00:15:34 - 00:16:57 Unknown Speaker:
+
+Okay, can you pull that? Yeah. Yeah, this is a good finding, so this only I meant to say. Like, if you are seeing a proper data issue where it's not fitting the rule, this is good, then at least we are sure that the rule is working fine. And we have also identified the issue. But wherever like you are seeing the data, that the data looks correct only and nothing is failing as per rule definition. Then just recheck your query, this you can send the output to me, this output and this query that you are just running. Yeah, the rest I have to validate it. Yeah, you can continue in a similar manner like we discussed right now, right? Same thing you can do further again. Okay. And those rules you confirmed that we can deploy to E3.
+
+00:16:58 - 00:18:06 Unknown Speaker:
+
+So the description for those rules are like... Right, right. For now you can keep it as it is. When I will provide changes for this like whatever other changes before sign off right. With that we can like process these descriptions as well. Because I still need to align it with Ashwin. We connected that day with him right. So until then you can move it to E3 for your testing purposes. And then in E3 only we can update it once we have the new descriptions. Okay. Yeah. Okay. Thank you. Thank you. Anything else from anyone? Business POC name and wearable title. Right, those I will provide you. So, I feel like whichever these CDA rules you are waiting, right? Like all of the CDA rules, these belong to our team only.
+
+00:18:06 - 00:19:23 Unknown Speaker:
+
+So, the POC will always be like Anand and me and then the group email is the same email that you use for alerting like for keeping me and Anand and CC and your other testing routes, right? Yeah. That queue crack, alerts, mail, so that same email you can keep and POC will be yes, so that is what you can continue. Yeah, sure, and, uh, validate that check types belongs to. Based on the query, we can give it to the definition. Yeah, yeah, yeah, I will validate once you have updated that. So in case anything needs to be changed, okay, thanks, sure, anything? I mean I just wanted to give you an example. There were 64 records, right, that we couldn't map them to the existing set, right, or the legacy SQL itself we cannot.
+
+00:19:23 - 00:23:46 Unknown Speaker:
+
+So I tried to make changes to filter query criteria and it's not helping as they are completely different. We cannot get them into the existing templates and even new template also lot of changes would be required even if we go with new templates for that. Got it. Okay, let's review it in the ATM call so we can discuss that page by page. Sure, sure. Okay. If nothing else, then we can close the video today. Thank you everyone. Yeah, man
+
