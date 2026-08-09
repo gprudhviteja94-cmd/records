@@ -1,0 +1,154 @@
+2026-08-07 Implementation and Coordination of Business Role Bundles
+
+Creation Time: 2026/08/07 13:21
+
+
+📅About Meeting
+
+• Date & Time: 2026-08-07 13:21  
+• Location: Not specified  
+• Attendee: Sachin, Nirmal, FI, Raj, and others (names inferred from conversation)
+
+📒Meeting Outline
+
+Implementation and Coordination of Business Role Bundles
+
+• Bundle Implementation Boundaries and Task Creation  
+  The meeting began with clarification on the boundaries for implementing the business role bundles. The team needs to build two bundles independently to avoid conflicts. The process starts from role implementation, creating tasks with parameters such as PQ root, name, table name, quality role type, and role description. The API handling these tasks is either ANSI or self-managed. Input parameters are minimal, with ADS_ID expected as an output parameter.
+
+• Human Task Response Handling and Coordination  
+  It was emphasized that the human task response handling is already implemented and should be reused. Coordination among team members is critical to avoid delays due to unavailability. The ADS ID should be retrieved from the output parameters, and the response reading should not require additional parameters. The team is expected to implement the saving of two fields: the implemented date (passed from the human task) and the assignee. If a dedicated database column for the assignee is unavailable, the data should be stored in a JSON object within the business certification block.
+
+• Database Updates and Email Communication  
+  Updates to the database should be done using the DQ rule ID as the key. The two fields (implemented date and assignee) must be saved accordingly. After updating, email communications must be sent to users. The email should include details such as rule description, actual value, expected value, table name, variable name, check type, and result. The user ID for sending emails will be retrieved from the JSON object saved during the process.
+
+Code Optimization and Refactoring
+
+• Code Reuse and Utility Methods  
+  There is repeated code for catching human task responses involving input variables, output variables, and task metadata. A common utility method should be created to handle this, reducing duplication and improving maintainability. The team was encouraged to refactor this themselves rather than rely on management.
+
+• Constants and Configuration Management  
+  Multiple constant files exist with overlapping variables, causing unnecessary complexity. The suggestion was to merge these constants into fewer files for easier management, while still allowing logical segregation (e.g., email-related constants). Similarly, configuration classes are duplicated unnecessarily; a parent config class should be used to centralize property value retrieval, avoiding redundant business logic in context classes.
+
+• Utility Classes and Code Structure  
+  The current utility classes are scattered and inconsistent. The team should consolidate utility functions such as JSON conversion into a single utility class (e.g., bundle-util). The existing AIS utility classes should not be duplicated but extended or reused where possible.
+
+Progress Tracking and Deliverables
+
+• BPMN and API Status  
+  The BPMN for role creation is under the USCDO module and partially completed. Team members can fetch it from Ace Compose for reference without needing the entire BPMN locally. The list API for displaying existing rules is ready, with a recent pull request submitted. Any required modifications can be done concurrently with core logic development.
+
+• Review Process and Collaboration  
+  Code reviews should be done incrementally after completing two or three bundles to avoid overwhelming the reviewer. This will ensure design integrity and timely feedback. Both Sachin and others were urged to follow this process strictly.
+
+• Database Column Creation and Reporting  
+  Column creation for assignee and implemented date will be completed by Monday when FI returns. Meanwhile, the team should add these fields to the report JSON files rather than relying on immediate database updates. This approach avoids database dependency during ongoing development. Once the ACE database is finalized, the DQR index and tables will be updated to synchronize columns.
+
+📋Overview
+
+• The implementation of business role bundles is divided to avoid conflicts, with clear task creation and parameter handling guidelines.  
+• Human task response handling is already implemented; the team must reuse and optimize it with better coordination.  
+• Two key fields (implemented date and assignee) must be saved either in database columns or JSON objects, depending on availability.  
+• Email communication must include comprehensive rule details and be triggered after database updates.  
+• Code duplication in handling human task responses should be refactored into common utility methods.  
+• Constants and configuration files should be consolidated to simplify maintenance.  
+• BPMN and list APIs are available; team members should use them for reference and development.  
+• Incremental code reviews are mandatory to maintain quality and avoid backlog.  
+• Database schema updates are pending but should not block ongoing development; interim JSON-based reporting is advised.
+
+🎯Todo List
+
+• Sachin:  
+  • [ ] Confirm ADS_ID output parameter and finalize API input/output parameters, ASAP  
+  • [ ] Review and integrate bundles incrementally, ongoing  
+  • [ ] Coordinate with FI for database column creation by Monday  
+  • [ ] Ensure email communication includes all required rule details, ASAP  
+  • [ ] Refactor repeated human task response code into a common utility method, ASAP  
+  • [ ] Consolidate constant files and configuration classes, timeline TBD based on priority  
+
+• Nirmal:  
+  • [ ] Implement saving of implemented date and assignee fields in database or JSON object, ASAP  
+  • [ ] Use existing BPMN from USCDO for reference, ASAP  
+  • [ ] Collaborate with Sachin on bundle development and reviews, ongoing  
+  • [ ] Refactor code duplication related to task metadata handling, ASAP  
+
+• FI:  
+  • [ ] Complete database column creation for assignee and implemented date, by Monday  
+
+• Raj:  
+  • [ ] Assist with code refactoring and bundle reviews as needed, ongoing
+
+Transcription
+
+00:00:13 - 00:01:19 Unknown Speaker:
+
+This is a common bundle, so you really don't need to touch on this. Okay, so here both of you know. This is the boundary for Union to close your implementation now, uh, between you have to build this bundle and this bundle. Okay, yeah, from starting from this role implementation, so this response and then ending it, what you need to do? Uh, this is going to create a task for us, right? With that PQ root, where name, table, name quality, role type, data quality, road description right now. So the API is working on that or ANSI or yourself working on it, right? I need, you know, input parameter. No, no, that could come in the output one as ADS underscore ID. Let me check that one once and then I'll confirm it back. Please control center.
+
+00:01:46 - 00:04:23 Unknown Speaker:
+
+This is having some cause in Asia. So look, you'd be getting a task like this. Okay, okay. And under this task data put cqid, these are input assign under this task metadata. Okay, let me review this. Under this task metadata, these are filled as tiny, okay. How to catch the human task response that is already being implemented? Connect with Nirmal. Again, I would say, like, these are, you know, parity work. Have a better coordination. It should not be like, you know, he is not available. I am not available. I really don't want to hear it, so have a better coordination. This is already implemented in one case. You just need to pull this data. What this would do, whoever is working on it, right, like suppose F is working on it or myself working on it or you are working on it, right?
+
+00:04:24 - 00:05:38 Unknown Speaker:
+
+So that would have that ADS ID. Okay. That moves from its output parameter. Okay. Or just just see if, if we can get it to the even. This is not required over here when you are going to read the response of this human task, right? Uh, let's try it out, right? Anyhow, we need that implemented also in the output parameter. Okay, and assign you also, right, let's get these back in four minutes. Okay, so I need these two parameter basically okay, from this unit, whoever has worked on it. So then I need to store this to that same DQ role ID, okay, and if or implemented it, uh, I'll walk. I'm working with the team to give me this field. Where you would be mentioning this implemented date, that would be the date which is being passed on that human task.
+
+00:05:38 - 00:07:08 Unknown Speaker:
+
+If the market has seventh of a quest, you need to save that seventh of a quest. Okay, okay, that is one. And then save this assignee in this in this block object, because for the assignee. I think they are not going to give me a column, okay? So what we can do in the business certification itself? Right over there? I'll try to get a new column, but if they are not going to give me a column, then you can save it under this one. Your voice is breaking, Nirmal. I'm saying, when I'm doing the bulk, I'm facing the task data. This is under task metadata only. But task data, here you are mentioning. Yeah, yeah. No, it is not over here, man. Okay, oh yeah. That is under task data, but see means from wherever you are getting it right.
+
+00:07:08 - 00:09:13 Unknown Speaker:
+
+I just take that part that is even I am not sure, right? Because these are in two ready state, let me see some which are being completed. Yeah, completed one. No man, here, it is not there. Um, and I was looking into this DB object, I would try to get a separate field for that assignee. But, uh, you know, I am not sure if we are going to get that. If that is something not possible, then what we can do? We can store that to that JSON object under this JSON log. Okay. If you're there. Yeah, I'm talking on mute, yeah. Okay. And this is the two fields that you have to save. And as an input parameter, you are going to get this DK rule ID, var name, table name, data quality rule, right?
+
+00:09:13 - 00:10:34 Unknown Speaker:
+
+So when you are going to update it, that update query should run on this rule ID. And then save these two details to the DB. So implement this bundle. And then the final is to send the email communications to the user. Okay? While sending the email communication, they are already saving this JSON object, right? Where he would be providing you that user ID. We are getting that from Arthur, right? Check that part and you have to send that email communication to that book. Okay, so this would be like, you know, uh, this email would be having the details like, what is the uh? Rule description, right? What is the actual value? Okay, let me send it to you also, so that should not crumble. Then this should have. They should have number one.
+
+00:10:34 - 00:12:23 Unknown Speaker:
+
+Role description no table name, Table name where name for which check type the role type, simple or complex. What else? We can provide actual expected value? The whole description. This should be sufficient. What is the table for which variable they have created for which check type? Rule type, what is that role type? Not role type, check type. Role description, what is the role description? What is the actual value? Expected value and the result. Okay? Yeah. Sachin, where is the BPMN? Sorry, I missed it actually. This BPMN is under this USCDO. I am still working on it on some of the part. If you want, you can fetch it from this one. Go to Ace Compose. You don't need to use that whole BPMN in your local. I wanted to understand the input parameters and output parameters.
+
+00:12:24 - 00:13:52 Unknown Speaker:
+
+This is the role creation. This is the one. Okay, and Nirmal, you've got it right, your work gets over over here. Why? I have segregated so that you both are not going to get into a conflict situation where you know you are working on the same bundle, right? So you can work independently, you can work independently, and later on I'll integrate all to this. Right? Because now if I assign him this task, right, you would say, like, where is that part? You know, I might be touching that theme and all, right? One more important thing I need from both of you. This piece of code we are repeating. When we are trying to catch the human task response. Even yesterday I have seen it written by and that should return you both input variable, output variable and the task metadata.
+
+00:13:58 - 00:15:19 Unknown Speaker:
+
+I think I have a similar kind of something in there. No, just check that. Right now, I am not asking you guys to touch the task management. You need to work on this role, business role, right? Here, what I am asking, create a method when you are going to call that method for that process ID. Right. When you are going to process it, you should get this task. So all these three, right, task data, task metadata, input output, all should get through a common method. And then whatever you want to play with those tasks output variable, you can play around with this. Because this is getting repeated, right? A number of times, everybody is writing this piece of code. Okay? That is something you need to check that part. And these are some optimizations, right?
+
+00:15:21 - 00:16:16 Unknown Speaker:
+
+I am editing these from you guys, right? I should not be pitching in for these, right? As you are... You yourself believe, right? This is getting repeated, right? So, you should do it by your own instead of myself because sometimes I get busy, right? I don't review it, right? But if I see it over here. Now, see, this is just a string and bundle utils and for this, a whole class has been made. It doesn't make sense, right? This is fine. This is okay. This is okay. This is okay. I'm not talking about face server tool or this one. No, no. The sales server tool will have all the business logic tool, I guess. And the Qtrak bundle tool, I mean, all the static classes where you do not make any network calls, I put those in there.
+
+00:16:17 - 00:17:16 Unknown Speaker:
+
+So this also had to go there, convert JSON to object in bundle-util. Now we are sending email reports here. It looks like we messed up everything here and there. And the util that you were mentioning, util is not there. The one that I am asking you to... Util and common Util, those classes we cannot make because it is already made in AIS. So, that guideline is not there. No, Util in the sense, I am asking you to create a Util method for this. Yeah, I'll do it. But, class name Util in AIS? No, no, no. I am not asking you to name a class name, right? But, my intent is if you have created this Util, this is okay. This is okay, but these two could have been combined to a single use.
+
+00:17:16 - 00:18:46 Unknown Speaker:
+
+Plus, yeah, yeah, okay. So refactor these code, right? Because if Raj takes this some time, right, he would be fumbled on me in that case. Okay. Look here, self-serve constant, q-track self-serve constant. Right? We need so many constant files. How many lines of code this is having? 120, 150. Only just for these variables, right? We have unnecessarily created a constant. Now again, this is having a different one. Right? With just 86, right? So it's just that we are looking. It is having only this much of code, why we are not merging it to a single constant right now? Again, the segregation can be done between email, uh, between the self right, that is something understandable, right? But otherwise constant. BANArE Just for our ease, we are just creating multiple Java classes that is not going to work.
+
+00:18:46 - 00:20:32 Unknown Speaker:
+
+Guys, understand now how you are going to manage with the EI. Your SFT config is fine, this is fine, email is fine, but why? There are two configs for this? No config is your parent class. This will be extended to all the configs to get the. Why do I need to config? Just to get the property values. I guess resource config is for DP changes. I think they have added unnecessary business logic in the context. I am saying the same thing. This phone will refactor. Do you guys want me to wait and do it in a day? I don't know the business case. But you can just add this ticket under me. I'll leave it up to the copy. Take care. Contract, constant, util, right? Whichever code you're touching, leave whatever you think of wise, okay?
+
+00:20:33 - 00:21:52 Unknown Speaker:
+
+And this JSON is for? Are you clear with the requirement what you need to do? Yes, Sachin. And one more thing. That one list API that would not be being there, right? How could you say that API already ready here? Which one, the API that you are mentioning? With respect to that use case, passing it with the multiple one? Is that one the one that we are giving back for displaying the existing rules? Are you talking about that? No, I have given you a PR, I guess, day before yesterday. You check that one. Show me your face. I am on my screen. Give me a second. Okay, no issue. Then just let me know, right? If that is not ready, then even I am going to assign it to you. No, no, that one is ready.
+
+00:21:52 - 00:23:40 Unknown Speaker:
+
+You have, I guess, the code commit on that. Give me a second or two. Okay. No, In case... if some modification is required, then you can work on the core logic while the API and all can be verified. Just need that use case, actually for time being, I am getting one use case at a time, so, as Arthur mentioned, we need a list of use case. So only that part tool haven't changed. Then if it is already there, just let me know. Once you are able to view it, then you can modify it. Yeah, this one is the PRF, send it hello page bundle role. Is this the one? Yeah, For this one, I'll be reviewing your each bundle. How did you rate them the code, right? If you're done with the two bundles or three bundles, get it reviewed with me.
+
+00:23:40 - 00:25:04 Unknown Speaker:
+
+Same goes for you. If I miss the core logic, this complete design will fail then. Okay. So, please make sure if you are done with some of those bundles, let's get it repaired immediately. Don't come up with 15, 16 file at the same time. Okay. Okay, I'll just modify this one and then I'll confirm you. Yes. Sachin, okay, this is fine. With respect to the Chemise one, Can you please let me know when you are done with those column creations? That would be done on Monday once FI is back. Okay. You guys can just add that on that report right now. Add those to the report. Correct? Database if we can take it later on. I could have done it, but you know, even I feel like if it is someone's responsibility and if it is not urgent, let him be back and then let him execute it.
+
+00:25:04 - 00:26:03 Unknown Speaker:
+
+That should not be a so stopper for you guys, because you guys just need to save that record and then display the same in that report also. And it should not happen to be like, you know, you are saving it to DB, and then again, in the reporting part, you are retrieving it from the DB. Avoid to database. When you are saving it to the DB, save those details. We have the same report in the run itself, we have result. Json file, right? We will use that. Correct. Exactly. That's what I mean to say. You should not be, you know, doing like, you know, I saved it to database. Then when my next task would be there, it would read from the database again. So that should not be the case.
+
+00:26:04 - 00:26:48 Unknown Speaker:
+
+You have to just, while saving it, save into that result.json and then update it into your report.json. So right now what you can do, update it into that report.json and then just database save, you can complete it on that. That's it. Right. You can keep that. Write the code. I just keep that code ready. Right. And another reason why I am not finalizing it, because the ACE database is not finalized. Once I finalize the ACE database, based on that, I would update the DQR index. So that both tables could be in sync and with the same column, the same sector we have defined it. Sure, sure, Sasan. Yeah. Okay. Yeah. Thank you. Okay, then. Thank you.
+
