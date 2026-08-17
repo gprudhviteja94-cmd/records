@@ -1,0 +1,226 @@
+2026-08-17 Data Automation and SQL Query Optimization Meeting
+
+Creation Time: 2026/08/17 15:54
+
+
+📅About Meeting
+
+• Date & Time: 2026-08-17 15:54 (Duration: ~49 minutes)
+• Location: Not specified
+• Attendee: Sachin, Samir, Ansi, Nirmal, Prithvi, Arthur, Nirvan, and others
+
+📒Meeting Outline
+
+Data Automation and SQL Query Adjustments
+
+• Automation Timestamp and Data Selection  
+  Discussion focused on updating created timestamps for data records to 16-08-2026 to align with Samir's automation, which picks data based on the previous day's date. It was confirmed that the automation should pick data using the created timestamp and that the SQL queries need to reflect this correctly.  
+• SQL Query and Rule ID Filtering  
+  Samir was requested to write a quick SQL query in BigQuery to select data from DQ artifacts filtered by specific rule IDs. The importance of removing unnecessary conditions like additional WHERE clauses was emphasized to optimize query performance.  
+• Decimal Formatting and SQL File Handling  
+  It was agreed to refactor actual value fields to show two decimal places consistently across reports. The team identified an incorrect SQL file being used in reports and decided to remove or fix it. The SQL file is primarily for developer use and not intended for business distribution.  
+• Report Distribution and Content Clarification  
+  The report containing executed and generated SQL is for internal developer use to aid debugging and understanding. Business teams receive a summarized version without detailed SQL files to avoid resource overhead and complexity. Developers can access detailed SQL files separately from a Google Cloud storage location.  
+
+Cluster Management and Execution Environment
+
+• Cluster Creation and Deletion Concerns  
+  The team discussed the time overhead caused by cluster creation (up to two minutes) and the need to manage cluster deletion properly to avoid resource wastage. It was highlighted that clusters should be deleted in a finally block to prevent lingering clusters consuming memory and space.  
+• Execution Time and Environment Stability  
+  Execution delays were attributed to cluster creation overhead. The importance of monitoring execution times in the production environment was noted.  
+
+SFTP Access and File Handling Issues
+
+• SFTP User Lockout Incident  
+  A user account for SFTP access was locked due to multiple incorrect password attempts, likely caused by automation or testing errors. The team acknowledged the incident and discussed the need for careful password management to avoid repeated lockouts. The incident response and unlocking process were referenced but noted as currently unresolved.  
+
+Java and Python Code Review and Coordination
+
+• Human Task Retrieval and Work Basket Handling  
+  The team reviewed the approach to retrieving multiple human tasks from the work basket in the process. It was stressed that the code must correctly pull data from the work basket and that repeated mistakes in code implementation were causing frustration.  
+• Code Quality and Context Data Usage  
+  Feedback was given on improper use of static values and redundant SQL queries. The team was instructed to read and update values from context data rather than re-querying or re-updating unnecessarily. Proper key naming conventions, such as using "implemented by" instead of "assignee," were emphasized.  
+• JSON Object vs. Map Usage  
+  Clarification was provided that business history data should be handled as JSON objects rather than maps for consistency and correctness.  
+• Coordination and Communication Challenges  
+  The meeting highlighted coordination issues among developers, stressing the importance of understanding design and data flow to avoid repeated code errors and delays. The lead expressed frustration over repeated explanations and the slow progress despite multiple resources being involved.  
+
+Project Timeline and Resource Utilization
+
+• Urgency for Completion and Testing  
+  The lead emphasized the need to complete integration and testing before an upcoming presentation scheduled for Thursday. The delay in code readiness is impacting the ability to conduct thorough testing and frontend integration.  
+• Resource Allocation and Efficiency  
+  Despite involving five resources to accelerate the task, progress was slower than expected. The lead noted that some parts of the work could have been completed in two to three days but have extended unnecessarily.  
+
+Track My Request Feature Discussion
+
+• API Data Basis and Use Case Clarification  
+  A brief discussion touched on how the "Track My Request" feature retrieves data based on specific use cases, with a note that the API returns data accordingly. Further details were deferred for later discussion.  
+
+📋Overview
+
+• Confirmed updating created timestamps to 16-08-2026 for automation data selection.
+• SQL queries need optimization by removing unnecessary WHERE clauses and conditions.
+• Actual values in reports should be formatted to two decimal places.
+• Incorrect SQL files in reports to be fixed or removed; reports are for developer use only.
+• Cluster creation overhead affects execution time; proper cluster deletion is necessary.
+• SFTP user lockout due to incorrect passwords is unresolved and affects file access.
+• Code review highlighted repeated mistakes, improper use of static values, and lack of coordination.
+• Developers must use context data correctly and follow naming conventions for keys.
+• JSON objects preferred over maps for business history data handling.
+• Project timeline is tight; integration and testing must be completed before Thursday.
+• Multiple resources involved but efficiency and coordination need improvement.
+• Initial discussion on "Track My Request" API data retrieval based on use cases.
+
+🎯Todo List
+
+• Samir:  
+  • [ ] Update created timestamps in the relevant tables to 16-08-2026 as per automation requirements.  
+  • [ ] Write and optimize SQL queries in BigQuery to select data filtered by rule IDs without unnecessary conditions.  
+  • [ ] Run automation after updates and confirm data correctness.  
+  • [ ] Fix or remove incorrect SQL file references in reports.  
+  • [ ] Format actual value fields to two decimal places in all relevant reports.  
+• Sachin:  
+  • [ ] Coordinate with Samir and Ansi to ensure automation and SQL fixes are implemented.  
+  • [ ] Verify cluster creation and deletion management to prevent resource leaks.  
+  • [ ] Follow up on SFTP user lockout incident and coordinate unlocking process.  
+  • [ ] Review code changes submitted by Nirmal and others; ensure code review comments are addressed.  
+  • [ ] Ensure report distribution strategy differentiates developer and business needs appropriately.  
+• Nirmal:  
+  • [ ] Complete code changes based on review comments within 20 minutes and share updates.  
+  • [ ] Remove static values and read required data from context in code.  
+  • [ ] Save all necessary data into context at the end of processes for consistent access.  
+• Development Team (Samir, Ansi, Nirmal, Prithvi, Arthur, Nirvan):  
+  • [ ] Improve coordination and communication to avoid repeated code errors and delays.  
+  • [ ] Ensure proper retrieval and updating of human task data from the work basket.  
+  • [ ] Use correct key names and data structures (JSON objects) for business history and user information.  
+  • [ ] Finalize integration and testing to meet the Thursday presentation deadline.  
+• All:  
+  • [ ] Continue discussions on "Track My Request" API data retrieval and use case implementation in next meetings.
+
+Transcription
+
+00:00:00 - 00:03:00 Unknown Speaker:
+
+Okay. And then... No, no, no. Can you do a select start for page 2? Samir, we don't update the 212 rule to the UQIT festival in the morning. Only 213 is there, right? Yeah, that is failed into syntax error. Because you are sending not null. Now, what I need, Ansi, on this one, when you go to the stall, keep on stalling. You need those last four parameters, which we are expecting from Samir's automation. Okay. Very expected status name and execution date as planned. The EAPA task. What does it say to tick mark? It is not tick mark. It is not tick mark. It is tick mark. BEPA task endpoint. Can you check are we updating? Just apply in condition. Can you check are we updating DPLOT FAT stable? Sachin only this only one. We updated.
+
+00:03:00 - 00:05:05 Unknown Speaker:
+
+Both, both, both. So, you use the in-condition. Decode fit stable. As part of bundle implementation we did. Even this one. Next turn. Hello. Next turn. Why don't you create multiple rule query? No, in the same setup. No, you would be getting all the. Remove the set condition. Remove the set condition. And show me what is the created timestamp for this because Samir automation would be picking up those values. One is none, right? So even update that to seven. So, Sameer, now confirm me, you are picking current date or previous date data? Current date minus one. So update the created, you are picking created timestamp basis, right? Yes, yes. Please correct me if I am wrong, okay? So, update the created timestamp for both these results as 16-8-2026. It is 17 right now. No, it's 16.
+
+00:05:05 - 00:10:29 Unknown Speaker:
+
+Yeah. Just copy that created timestamp for the below one right, which has been there. Update the values as 16. Copy that value. Complete value. And instead of 17, just mark it as 16. Just run this one. No, that is correct. Both of them. Now again, then I select star and just show me the value again. Select star from this table and show me those two values. If you want to update again, you need to again change. You don't need to do anything. Now, Samir, can you run your automation? That is good. Thank you. Yeah, that should be the case. Yes, sir. This is generated round, 4, 3, right? Sir, only one point it is picking. So why that distribution? Where it paid? Pick up the other record. No answers. That means while reading itself, it is picking one.
+
+00:10:30 - 00:11:32 Unknown Speaker:
+
+So that's where I need that answer, right? Why is it that other record? Yeah. So if you see this one, we are getting values for this. The rule ID, this one. Okay. All are getting null values. Okay. So we generate this as k. Okay. No, no. We are actually picking for yesterday's date still. We have not modified that. Both roles have been modified with yesterday date only. That's what I asked. Can you write a SQL query quickly, Samir, in the BigQuery? Select stack on the DQ artifacts where role ID in those two role ID. Let's do it quickly as I do have lots of other tasks to be completed. Can you do a bit on a hurry? Yeah, you want us to send that? Sorry. Those two TQID. Okay, just give me a second.
+
+00:11:45 - 00:12:53 Unknown Speaker:
+
+So, since you tracked my request, can I just discuss for two minutes? I mean, by just... We will discuss thoroughly. I won't be able to multitasking. I'm already doing the multitasking. Yeah. Can you show the created timestamp? These are all news, so that's where we are getting. Okay, great. Why did we... So, even those are null, right? Even those are null. I know this is a manual entry, right? And that is the reason we are getting that to never been going to be a situation. We should handle... Okay, even I only asked that we not to handle it because you are not going to get it. Okay, that's fine. Uh, can you show me the result for this? Uh, nine, four, two, three, one, three. That is not his error, that's right.
+
+00:12:53 - 00:14:16 Unknown Speaker:
+
+Can you show me what are the results that you know? No, first of all on this TV, leave this first of all on the TV. Can you show me what are the details that you have updated quickly? Yeah, this is an executed on 17th. Um, expected value, expected value, uh, actual value and the result. Okay, now keep a note, you have to, you know, refactor this 64.61 to two decimal places. Two decimal, okay. Yeah, okay. And now, and see, serious thing. Samir, I'm good from your side. No, no, just show me that result once. Go to that content. Go to the top. So even here it would be, you know, two decimal places, okay? On this SQL file, right, how we are identifying that this is a.This is not supposed to be the SQL file.
+
+00:14:20 - 00:15:23 Unknown Speaker:
+
+And even remove the SQL file from this one. They are not bothered which SQL file we are implementing. Okay. Can you just remove the SQL file? Okay. I'm talking about the SQL file. Go back to that report. Oh, okay. It's a SQL file. That is an incorrect SQL file that we have pulled. And remove that SQL file. They are not bothered about the SQL file, right? Check type, go back, go back, go back. Sachin, this is basically developer helpful report that we created actually. This is not for any business. So, we are not sending this to business side. We are keeping it internal. That's why we have both executed. No, we have to send this to the business, right? That was the requirement. But, Sachin, let's not send. This is mostly developer-assisted.
+
+00:15:23 - 00:16:13 Unknown Speaker:
+
+If need, we can add one more mail for business. This is required for any developer. Instead of going to different files, understanding what exactly I'm writing. If the case is that we are not sending an email this one to a business team, that functionality hasn't been built? No, we are sending to the dev mailbox right now, Sachin. Okay. But it was not intended for business only is what I am trying to say. No, no, no. There should not be. Why we are going to create multiple email man? Understand the resources you are going to consume and ultimately you are going to send the same sort of details, right? No, if you tell me to remove the executed SQL and generated SQL. For a developer, okay, I got something executed and failed.
+
+00:16:13 - 00:17:10 Unknown Speaker:
+
+For him to understand what exactly it created, what legacy file it has chosen, all this information is important. For him, in one shot, he can see everything in that page. But this is incorrect SQL file which you are displaying over here. This one? It is wrong. Let me fix that one. That is it. Even this one executed SQL and generated SQL. It's better if we display that also, Sachin. Because, as I said, it's developer. Developer or anyhow there is a human being involved, right? Developers are aware where would be the SQL file which is being generated. They can go to that location. Individual DQID would have individual SQL, right? So they can go ahead. And essentially, what if there are 100 rules created? You wanted to see all 100 in one shot? This?
+
+00:17:10 - 00:18:07 Unknown Speaker:
+
+This is the reason I created this HTML. No understand, uh, no understand. You have to integrate those hundreds equal to the framework. So anyhow, you need those sequels, right? Placing it over here is never going to make a sense this way. But I think we are storing it in Google. Yeah, exactly. So this report is going to be for business team content and then developer can go to that location, download that file and then integrate with this automation frame of that. So 100 files, 100 instruments he has to go through. That is the challenge. So what is the problem? If it is user friendly or not, I can see 100 instruments. No, you can see, but here, what exactly you are doing? If you want to send this SQL, right?
+
+00:18:07 - 00:19:08 Unknown Speaker:
+
+This SQL, even Rachna wants to test it out, so you can just execute in the BigQuery. But if I'm appending it with a DQ repository, which is required for the developer, right? The entry is not there in the DQ repository. The SQL would fail, right? Correct? Okay. That rule is not onboarded. What is the meaning of sending the details to developer also? That needs to be inserted over there. Anyhow, they need to work manually for that. What I thought, see, what is the query being executed? What is the query being generated? What legacy file it has chosen? What is the output description? I got your perspective, but that is going to be a very big email with lots of details, right? And ultimately... Only for internal development team. I'm not going to send this to everyone.
+
+00:19:09 - 00:20:06 Unknown Speaker:
+
+For business, if you really need something, maybe we can come up with a table with all... See, because we have results on JSON file. All the information is there. So it's just that how do you want to compose a mail? Yeah. No, no, understand. That would be going to be lots of details for the developer also, even over an email. Because I am never going to assign 100 roles to a single individual, right? If 100 roles comes up, three or four developers are going to work it. So they can just go ahead, download those details from there, and then they can plug in. Okay, let's make it user-friendly, and we'll, you know, take any further announcement later. So just one call-out. This actual value, you have to, you know, do it at two decimal places, both the places where you are displaying it.
+
+00:20:06 - 00:20:59 Unknown Speaker:
+
+And now one more thing. If we are already displaying the DQ ID, okay, that would be a summary, and then this is a brief description. Okay. That information is being repeated, right? That is the reason I called it out. But that's fine because multiple TQID would be having over, you know, on that list and then if somebody wants to re-look into it. Just make those changes and then it will look good. So, you can promote your automation till A2. This is fine. Okay, such. Okay, just making those small changes which I have watched. One is actual session. One is this one, right? SQL file. Yes. SQL file, you need to fix it, which Prithvi mentioned. This is not the correct SQL file. Check with him. Just, you know, format that actual value to two decimal places.
+
+00:21:00 - 00:22:11 Unknown Speaker:
+
+And SQL file, it may need some time, so that we can do it later. This HTML element also should be removed, right? No, no, no. That would be there. That would be there. What Prithvi was mentioning, He wants to place the generated SQL also where that subject tree is also there, that inner join is there, right? So that I am asking, Yeah, this one should be displayed or not? Yeah, that should be displayed, right? How do you get that schema for the table, right? Otherwise? No, whatever, whatever we are generating over here. It should be in a such a format that if somebody picks up the same, they can. Otherwise, if you are marking it, it will pass, right? We are helping the ultra.
+
+00:22:11 - 00:25:24 Unknown Speaker:
+
+Right, so that they can just go ahead and execute it without having anything okay, okay, so that means your part is done. If you want, you can complete the problem and take, uh, stereo screen, execute it. I need only this details to be picked up, yes, Did you trigger it? No. I will remove the filter, otherwise it won't take it. And one change for you, I already called it out, right? You just need to remove those additional where clause. In that where clause, remove that and condition. Yeah. Why it is taking so long? I think six minutes. Is it because of cluster fearsome? I think so. Otherwise, there are only two records, right? Take the execution time in the production environment. Cluster creation, creating the cluster itself takes like two minutes.
+
+00:25:25 - 00:27:44 Unknown Speaker:
+
+Yeah, and that is the reason I am not very fan of this cluster creation. And are we managing that cluster deletion in case suppose you are creating a cluster, right, while submitting a request. Cluster creation, suppose it did not create it, okay, well and goodbye. While submitting it, right, There are certain issues. So are we making sure that that cluster is being getting deleted to then move to the next task to delete that one? If no, we have to take care that in that finally condition, because you should not leave a cluster being created. And just as it is, it takes memory and spaces over the environment. You see, the request up there is actually executed. Done? Yeah, it is completed. So we have to check in the SFTP now. You can do that, Sameer.
+
+00:27:49 - 00:29:09 Unknown Speaker:
+
+You might have stored it into that GCP bucket also. Go to that bucket and download it from there. No, no, Sachin, we are not storing it. We are uploading it as byte format. Directly to the SFTP, right? Yeah, directly to SFTP. Let me ask Sameer to join that. Have called it out and see. Okay. So, Nirmal, basically, you are good with ANSI job and submit job. So, there is no other dependency now on that. Okay. I just changed this demo for this one. Now, quickly, serious thing and did you fix those code changes which I have asked you? Yeah, Sachin. Request I created and shared, Sachin. Again, right now? Yeah, the latest comments I am fixing. Okay. Those are very small changes, right? Yeah, give me 20 minutes and I will close it and share it with you.
+
+00:29:09 - 00:30:28 Unknown Speaker:
+
+Okay, so understand what is the code review comment I have given to you. That is open. Where is your code review comment? This one, right? This one I already given, right? On this one. I think this is very small change that I watched over here. Where are those? Man, where I can find my code changes? Code review comments, so it could be more intense. Yeah, like... Yeah, why did we put this static values over there and why we are trying to commit it? You can create this from the DB, right? So just remove phase one, number one. Secondly, why we are using this TQ results table, man? These are test cases that I have committed. Even, so why we are not reading NN, then this one, right? This ERD, DUS, CTO.
+
+00:30:29 - 00:32:37 Unknown Speaker:
+
+It's a local test file for my use case that I did it before. Okay. I shouldn't have committed this. I removed this one. This is for this one. That is number one. Now, if I go over here, Just let me check these. This is very important. Composure. Why are we putting this to the composure? Searching, searching. I will log into that SFT and help download that file. Nirmal, that user got locked, right? Did they respond to the SFT channel? The incident was in progress. Let me check it again. What is that one? Tell me. The account got locked for the EUCDO PhD. So, for now, Sachin, which is asked, that is for this user only, right? Not for Luma TST. Yes. We might have provided incorrect password summation. No, I haven't used this one.
+
+00:32:38 - 00:35:19 Unknown Speaker:
+
+By the time Nirmal has asked me to write, when I had just given a trial, it got locked. He already mentioned that it is already locked. When I tried to log it. Can you give me the inc number yeah okay i can find it from here. Is that the case? Dear FSBot used to unlock it, right? If you see Yovaraj message, Sachin, someone was replied. If you can see him, I think. Oh, this is FSBot. So it is blocked we won't be able to do anything it is get locked only due to one reason and the reason is you have provided password incorrect. Okay. But I have only attended for only one time, Sachin. That too when... By the time only he mentioned that he's already lost. Is there any way like someone is also using the same?
+
+00:35:20 - 00:36:44 Unknown Speaker:
+
+Maybe, whoever. Maybe through automation from somewhere else, right? You might have provided a wrong password. Yes. Until and unless you provide a wrong password, the bot is never going to get blocked. While testing, it might be getting some wrong password. Please be careful right now. I really don't know how much time these people are going to take now. And this guy is offline right now. Yeah. So he's offline. 3.30 p.m. Well, so, well, so, well, so, well. My hand. I don't know now who would be able to support us on this. Okay. Okay then, Sameer and Ansi, you can flip it over. Let me reset my screen. On the Java side, what exactly you are doing? This is Python code. This is Java code, right? If I come over here, this one will move to a normal, you know, one method I told you.
+
+00:36:44 - 00:37:46 Unknown Speaker:
+
+DQ rule ID is fine. Closing ID for human task is fine. Right now, my question to you is that, if you remember we talked about it, you are going to get multiple human tasks, right? So if you are going to get a multiple human task, we have couple of human tasks in our process. How we assure that when we are writing the same task status, we are going to get it. Have you gone through the EDS conference page? How to retrieve a human task to the work basket. I think I already said that confidence to both of you, Nirmal and Prithvi. So if you go over here, there are a couple of human tasks for this process. This is first, right? And then here is the next human task.
+
+00:37:47 - 00:38:52 Unknown Speaker:
+
+When you are retrieving, it might return you the result from this one. Okay. Ideally, you need a response from this human task. This human task is tagged to this work basket. Check the details. How can you pull these details from this work basket? Yeah, I'm sure so. And this is from the work basket. Yeah, you can get it from the work basket. So, look, these are simple columns, right? I already told these details last Friday. And if I again need to repeat it on Monday, I'm just wasting my energy as well as time. If I'm seeing the same repeated piece of code, which has been communicated last Friday. I thought I'm getting it somewhere. I updated it. No, so that's where, that's where, when you are doing the coding, You really need to understand the design, the flow, the data flow and all.
+
+00:38:54 - 00:40:00 Unknown Speaker:
+
+I told you, I really don't have a problem to make you guys understand what needs to be done even two times, three times, four times. But if I'm seeing this repeated kind of code, this really frustrated me in the quiz. Now this piece of code, I'm not sure if it is going to work. That is number one. This assignee name, I have called it out. Mark it as. Instead of assignee, mark it as... No, that would not be the context. Assignee... Yeah, you need to mark it as implemented by. Okay. And this one, you're going to get it from the task data. This is not, never going to give you the details. You have to get it from the task data. Okay. Again, this all piece of code is not going to work.
+
+00:40:04 - 00:41:18 Unknown Speaker:
+
+This is never going to work. That is number one. Again, in this context, why we are updating actual value, expected value, result, these would be already there in your context data, these value. When Nirmal is going to update it right, he needs to put it in this bundle itself here only. He needs to update it. When batch processing would be done, he needs to update those to the context data. I really don't need this piece of code over here. You just need to read it from the context data. You should not be putting it into the context data. It is a re-updation that we are doing over here. And that's when we are running a result set, right? Doesn't really have a sense over here. Again, this piece of code is incorrect. Okay.
+
+00:41:19 - 00:42:43 Unknown Speaker:
+
+Now, this is a justification. This is the method that you have created. And here you are just updating the implemented date. Buzz justification, okay. SQL type author. I don't know what it is. I need to check. And if I go to this object, Is it an object mapper? It's just a small JSON string, right? And what exactly is an object mapper here? Nirmal told me it's a map that he would return in the context. Which one? This is the business history. Why are you going to return a map, right? That should be a JSON object, right? No, no. JSON object is there in the. Here I need that key as implemented by and implemented date is a separate column, right? A key should be implemented by. Who did implement it? Who did implement it?
+
+00:42:43 - 00:44:16 Unknown Speaker:
+
+So just check this part also. If I come back to here, this would not be get from the context sheet. This you need to read from the property. Right? Why from the context data? Okay. This one, this one, okay, okay, okay. This is a user email, right? Which has been saved. Is this the key? The key is incorrect. The key is incorrect. Arthur, what are you sending? For the user to log in, what is the concept? For the user email? So, look, man, I feel sometime I need to scratch my head seriously. Why we are not coordinating, man? What is the problem in the coordination? I mean, how could you guys are going to work? When AI would come into a place in this project, right, then the coordination becomes more important when you would be, you know, doing a coding using the AI tools.
+
+00:44:16 - 00:45:36 Unknown Speaker:
+
+See User email Underscore ID. Can you ping me? Let me just create and one confirm because there are two emails for the users as well as the team? Let me create a rule and then I'll come, so give me a moment. In the payload. I see it's in the user one, but not sure if it's for the team. You just bring it to just just get that property from outside. Okay, I can remove this static info. I don't want to see this static input until I let you use something from the same book, correct? Yeah, I had a CC. Also. He is correct, you need to be there, okay, that is a understand again, or we need to read it from the context. This select query is not required anymore, right? Why do you need this one?
+
+00:45:42 - 00:46:42 Unknown Speaker:
+
+This is what we are reading it from the database. You can read it from the context. You can read these values from the context. Save everything in the context and press the context at the end of the process. Okay. Apart from the SQL query, Nirvan, save everything to the context. So that he can read it from the contact. Again, those fields are important. He has to share those names. Those are the coordination that you guys need to do. That's what I told you. This is a genuine feedback that I have provided. If I ask this to him, then he can do it alone within a week. All this part, right, which I have involved five resources. The reason for involving five resources to get this work done quickly. Even putting my takes, I just need a day, right?
+
+00:46:42 - 00:47:34 Unknown Speaker:
+
+But the plan to involve five resources so that I can get this task done quickly before this Thursday. Now my end-to-end integration is not done. How can I do a presentation to Poonam Thursday if I am not doing a testing today and tomorrow? Because I would need at least a thorough testing for a couple of days, right? And then even Arthur needs some time to integrate it on the front end. It might sound like, you know, when you reach to my stage, right, maybe after one year or two, when you'll be leading a team of staff with two resources, you would get to know my first lesson. Right? We haven't done the task that is being assigned to us, right? We could have closed it easily last week itself. I can.
+
+00:47:34 - 00:48:46 Unknown Speaker:
+
+I can still understand some of the tasks handled by Nimel or others because they are doing a bunch of tasks. But actually, your parts and she part and Samir part, right. Could have been done in two or three days, that should not have taken this long. Okay, I'll fix this briefly and we can reconnect to others. Maybe you can repeat your drop-off. Sachin, one thing which I wanted to discuss is about the track my request, okay? So there I got the details. Basically, on the basis of the use case... I have a doubt here. Here, whatever the API got, it will be of the basis of use case. We'll be getting this. I will tell you.
+

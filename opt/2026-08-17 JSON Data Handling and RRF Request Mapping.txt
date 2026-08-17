@@ -1,0 +1,104 @@
+2026-08-17 JSON Data Handling and RRF Request Mapping
+
+Creation Time: 2026/08/17 13:39
+
+
+📅About Meeting
+
+• Date & Time: 2026-08-17 13:39  
+• Location: Online Call  
+• Attendee: Pawan, Ganesh, Gautam, George (mentioned for future discussion)
+
+📒Meeting Outline
+
+JSON Data Handling for RRF and New Requests
+
+• Current JSON Storage and Retrieval  
+  The discussion began with the JSON data stored for RPT and Satyam in blob storage. Ganesh will assist in providing the JSON currently stored for RPT and Satyam. The blob storage locations are maintained via environment variables, with two separate storages for given and Satyam data. Pawan was advised to refer to existing RRF code for these details.
+
+• Mapping Fields for New RRF Requests  
+  The team discussed the fields that need to be sent to the RPT team for new RRF requests. Since RPT and R have fewer values, mapping is straightforward. However, for new RRF requests, clarification is needed on which fields are mandatory. It was confirmed that fields such as client name, opportunity ID, and run date are important. Opportunity ID and client name are expected to be present, but run date may sometimes be empty or default to the current date. Pawan will receive copies of existing data for reference.
+
+• Validation and Status for Sending JSON  
+  The group discussed when the JSON should be sent to Satyam. It was clarified that the JSON should only be sent after the petrol process status is completed (ETL submitted status). This status check ensures the JSON is not sent prematurely or for every segment but at the entire quote ID and scenario level. George will be consulted in a future call to confirm the exact status and conditions for sending the JSON.
+
+• Differences Between On-Prem and Modern RRF  
+  It was noted that the on-prem RRF system already sends JSON to Satyam upon submission, but the modern RRF system does not currently do this. Ganesh will explain the on-prem logic to Pawan so that the same approach can be implemented for the modern RRF system.
+
+• Ad Hoc Request Processing  
+  The ad hoc JSON sending process is already completed and operational. The JSON is saved to two blob storages: one temporary and one for future use by Satyam. Pawan was encouraged to start working on the ad hoc requests immediately.
+
+Coordination and Next Steps
+
+• Collaboration and Clarifications  
+  Pawan will work closely with Ganesh to understand the current implementations and mappings. If further questions arise, the team agreed to have follow-up discussions. Gautam emphasized the importance of this collaboration to close the identified gaps.
+
+📋Overview
+
+• Ganesh will provide the JSON data and blob storage locations for RPT and Satyam.
+• Important fields for new RRF requests include client name, opportunity ID, and run date; these need to be mapped carefully.
+• JSON should be sent only after the petrol process reaches the ETL submitted status, confirmed by George.
+• Modern RRF currently lacks JSON sending functionality, unlike on-prem RRF; Ganesh will guide Pawan to implement this.
+• Ad hoc JSON sending is completed and functional.
+• Pawan to start working on ad hoc requests and collaborate with Ganesh for smooth implementation.
+
+🎯Todo List
+
+• Ganesh:  
+  • [ ] Provide JSON data and blob storage locations for RPT and Satyam.  
+  • [ ] Explain on-prem RRF JSON sending logic to Pawan.  
+
+• Pawan:  
+  • [ ] Map fields for new RRF requests, focusing on client name, opportunity ID, and run date.  
+  • [ ] Start working on ad hoc request JSON sending immediately.  
+  • [ ] Collaborate with Ganesh to clarify data mappings and implementation details.  
+
+• Gautam / Team:  
+  • [ ] Coordinate with George in the next call to confirm the exact status and conditions (ETL submitted) for sending JSON for new RRF requests.
+
+Transcription
+
+00:00:24 - 00:02:13 Unknown Speaker:
+
+Hello. Sir, tell me, sir. Uh okay. Yeah, I am here. Yeah, I am here. Hi. Yes, I can hear you. Okay. Yeah, so the context of this call is for the JSON which we are storing for RPT and half, right? Like to Satya. Yeah, okay. Okay, for new another request also, we thought like we should do the same thing, right? Okay. So, what I need from you is like the JSON which we are putting in graph storage, right, for Satyam, okay, then JSON you have to give to the, sorry, on. Okay, okay. Yeah, I can give this. Yeah, so, yeah, I am saying like this. I am just putting it here. Maybe I will bring to you also. RPD, Satyam JSON, I am saying that one, okay.
+
+00:02:15 - 00:03:14 Unknown Speaker:
+
+So, And that blob storage location also I think from environment variable you can get power. So here if you refer to existing RRF code, you will see two blob storages like maintained. One for given, one for Satyam. So from naming convention mostly I think it should be visible or else you can ping to me. And in that blob storage whatever JSON is there, maybe Ganesh can help us. So this is one thing, RPT, Satyam, JSON, blob storage, get from Ganesh, okay? And the second thing is, this is where your help is needed most. In RPT and R, we have only few values, right, Ganesh, here. Yeah. Okay, so it is easy to map these values because only few are there. But in new RRF request, what fields needs to be sent to RPT team, right?
+
+00:03:15 - 00:04:14 Unknown Speaker:
+
+That is where we need your help, actually. Yeah, I mean, those are also same. So whatever is present in Adhoc RPT are the same information we are sending in normal new requests as well. But it's just that I think there are some validations also after which we send it. So validations, like mostly George will be more able to help, but yeah. But yeah, I mean, so we don't have any validation, right? See, see one second. So my, my, this thing is one second. I'll show you what my point is and I'll explain one second. So this is RPT screen, right? Yeah. Okay. So we have client names. See, Ganesh like client names are not Ganesh. Pawan. Yeah, so from RRF request, you know the client name, okay?
+
+00:04:16 - 00:05:02 Unknown Speaker:
+
+Run date description, I think whenever, so I think that will be empty in new RRF request, right, Ganesh, that one. So all the mandatory, it's like opportunity ID in new RRF request, whether it will be there or not, we need to check. It will be there, okay. So you need to see client name, opportunity ID, run date, whether it will be run date will also be there. Yeah, so I will share those copies which are present. That should be fine, yeah. Yeah, so if you show him on the screen, right, so then he will be easily mapping them. So, for example, here, in a new RRF request, where we can see those data, right? So, client, then you will see on the home screen, okay? Opportunity ID also, it will come from here.
+
+00:05:02 - 00:06:06 Unknown Speaker:
+
+If it is empty, then again we need to check, like, what value we need to send. Opportunity ID we are seeing here. So, in this standard RRF request, all this information will be already populated, right? And just when they click on submit, you know, like it is going to, you know, have this request created. And I think the way in which this RRF request, Standard request goes is until and unless the better process goes, it completely processes it, it doesn't go right. So I mean, you have to check, um, after which state? You know, we are sending this RF request. Basically what happens is when the petrol status is completed, that's when we send the standard request. Before that, it doesn't go okay, so, you know, saying like it should not go for every segment.
+
+00:06:06 - 00:07:01 Unknown Speaker:
+
+Only for the high status only. Yeah, it shouldn't go. So, I mean, if you look at the current code implementation, I mean, that's going to be one hint that we can get. But if we want to get more clarity, we can just talk with George like after we state like, you know, this should be, we should send them. Basically, when my understanding is when the petrol process is completed, that's when. It is sent to Satyam. But, yeah. So, one help can you do, like, in today's call, like, whenever we have next call with George, right? So, can you help, like, identifying that item, like, whether, which status, like, for example, if the RRS request should be. And this one, will it happen for every scenario or for the entire request quote ID level?
+
+00:07:02 - 00:07:58 Unknown Speaker:
+
+No, no, no, entire quote ID level. Okay. So, quote ID and scenario, right? So, this confirmation we can get from George and that quote ID should be in which status, whether ETL submitted or submitted, yeah, ETL submitted, right? I think when it goes to Petal, it will be ETL submitted, I think, normally. So in which status we have to send this JSON to the blob storage we will ask you. Yeah, I mean we can get his input. So I think that should be input. Yeah. And last thing as I was saying, so in all pretty enough like this run date, I am not sure like here where that run date will be there or if it will be there or not here in the regular request. You can. I mean, run date, this information, all this information are present in this.
+
+00:07:58 - 00:08:49 Unknown Speaker:
+
+So, we will get those when we are creating it. Let me just check. All this information are present in this. So, there shouldn't be any issue that this information is not going to be present. Yeah, because run date here, they are selecting like this, right? But, whether for a new request, the run date will be like a today's date, like sometimes. See, these names, client name, opportunity ID, they are there. But run date, I am not sure whether it will be there here in the request. Because anyhow, in custom PC, it won't be there, right? It will be there in either this one only. In information also, it is not there, if you see. Client name, all these things like here. Run date is not there. Let me just see. I think that there is something.
+
+00:08:51 - 00:09:45 Unknown Speaker:
+
+Yeah, so let's actually look at it. So, uh, maybe just a little stop time, right? So do power and you can work on that one, like just mapping and in the evening call. Um, for now, I think what he can do is he can straight away start working on this ad hoc one. Because that is straightforward. That we have to send as soon as the summit is being, uh, clear, we have to send, send that, so I'll. Send him the locations. One second, sorry. So you are saying like currently on submit we can send, we can save to blog story you are saying, right? Yeah. At least for this point. Yeah, for the ad hoc one we can do. The ad hoc is already done. Oh, okay. Yeah, I already completed that one.
+
+00:09:46 - 00:10:42 Unknown Speaker:
+
+So, we are putting it in two places, like two block storage. One, temporarily Gavin is taking that one. Future, Satyam will take, but both we are sending. So, for RRF request, yeah, this is already done. For RRF request, I think one of the point you mentioned, right, that we are not doing it currently, which we have to do. So, that's where I think that gap is identified. Now, I mean, What is that? We are not doing currently. What is that? So currently, whenever I am submitting an RRF request, we are not sending any JSON to Satya. No, no, no. So this is not the correct answer. One second. I got it. Sorry. I will correct myself. This is on-prem RRF, okay? And this is modern RRF, okay? For on-prem RRF, I think you made some change where it is sending that one.
+
+00:10:42 - 00:11:23 Unknown Speaker:
+
+Yeah, right. For modern RRF, it is not there. So that you will agree, right? Okay, yeah, yeah, that is correct. Yeah, so now your help here is like in on-prem RRF, from where you are picking the data and you are sending the JSON, right? Yeah. That logic you have to explain to Pawan so that in the new answer he will do the same thing. Okay, okay, sure, sure. Yeah, so that's very like, first, so Pawan, like, you get the context, right? Just work with Ganesh, okay? And if still we have some questions, we can connect once. Sure, Gautam, yeah. Okay, yeah, thanks, Ganesh. Yeah, thank you. Yeah, thank you.
+
