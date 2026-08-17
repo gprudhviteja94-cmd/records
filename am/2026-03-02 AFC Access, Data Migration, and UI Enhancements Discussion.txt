@@ -1,0 +1,274 @@
+2026-03-02 AFC Access, Data Migration, and UI Enhancements Discussion
+
+Creation Time: 2026/3/2
+
+
+📅About Meeting
+
+  • Date & Time: 2026-03-02 18:35 (Duration: 2656 seconds)
+  • Location: Virtual meeting / conference call
+  • Attendee: Anand, Rachna, Rajan (mentioned), Manish (mentioned), Ather, Sachin, Shabbir, Nirmit, Sindhuja, Jason (absent), Prithvi, Akta, Anand (appears twice in notes), Rachna, other team members (some names repeated / unclear)
+
+
+📒Meeting Outline
+
+
+AFC / Access & Carryover Stories
+
+  • Contacts & escalation Discussion about looping Rachna (again) because no response received; if no response today, escalate to Rajan. Plan to create a group chat and set up a call if contacts are available. Confirmed contacts are the same ones Manish’s team used (Anand confirmed).
+
+  • Access status & carryover handling Build in progress but not complete; some prerequisites and access remain outstanding. Team confirmed effort has been made (analyzed required access, raised engagement request) but full access wasn’t granted. Decision: change task labeling to "prerequisites" instead of "blocked" and carry the task to the next sprint. No hours claimed beyond R-task creation. Action: create carryover story for AFC and move task to next sprint.
+
+  • Demo readiness No end-to-end demo available (build/API integration incomplete). Front-end not integrated with backend API yet — Sachin and Ather coordinating API integration, access and DB connection. Team will try to complete API integration in this sprint; until then, no demo.
+
+
+Data Migration, DQ / Quadro Work & Validation
+
+  • Shabbir update — DQ priority work Worked on priority-three controls and requirements change handling. Migrated data from TQ repository to DQ test repository; running onboard metric tests. Facing failures due to "where" conditions (filter logic) and need manual fixes; currently cannot demo because onboard metric fails mid-run. Continue debugging and modifying conditions.
+
+  • Rally / story closure & sanity Concern raised that Rally not updated: 24 hours still showing on a story (ending with 913). Nirmit confirmed release to E3 last year; ensure sanity checks and mark stories complete before demos. Team asked to update Rally tasks and test cases.
+
+  • Monitoring & alerting (ingestion failures) One production issue fixed by changing schedule and query; job now runs hourly and notifications will be received for ingestion success. Discussion on clustering tags for alerts: cluster by use case + frequency (not mixing use cases) to support partner-specific alerts. Maestro provides notifications for successful ingestion (Lumi tables) but not direct failure alerts for non-Lumi tables — need to identify source and ingestion path for each table to determine failure detection approach. Team to pick representative tables (Razy tables suggested) and analyze ingestion/hydration logs; if hydration framework used, check if logs exist. Sachin to identify and follow up; ask Anand for points of contact if needed.
+
+  • DQIM portal / workbasket onboarding Insurance use case missing from DQIM dropdown and workbasket not assigned. Need new workbasket registration and mapping (MHA). Sachin requested details to onboard insurance so alerts appear on portal.
+
+  • DQ repository / Quadro artifacts New DQ repository test table created with two added columns: focus_metric and load_date. Four use cases selected (Resi, Reverse Integrity, GAM SO Trigger, plus another) and their threshold data moved to DQ repository test table. Some data inconsistencies found; a change was made to include dataset name in table name — team recommended reverting that change and keep table parameterization flexible. Agreed approach: keep only table name column and parameterize dataset/table selection in code (use dot-splitting logic to detect fully-qualified paths, environment, or dataset.tableName). Rename column "where clause condition" to "filter condition" (or use existing "filter criteria" from repository) to avoid confusion.
+
+
+Rule-generation Tool, SQL generation, GitHub integration
+
+  • Automation for rule SQL generation Development progress: code generates SQL queries for existing rules (left = generated, right = legacy). Working checks: stagnant check and null value check are functioning. Need to integrate with project GitHub repo (merge), fix execution bugs, and integrate with DQ repository test table. Aim to complete additional checks, merge code, and prepare first demo.
+
+  • Demo plan & timeline Plan to review with Sachin tomorrow, Prithvi will make modifications Thursday, and a first demo is targeted for Thursday or Friday (note: Wednesday is holiday for some). Prithvi to mark his story complete when ready.
+
+
+UI / DQ Portal Enhancements & Validation
+
+  • Register / approver UI changes Implemented validation for search box and mandatory selection; replaced watch icon with button and updated behavior (changing existing table rather than yellow box). Register modal revised: distribution list input initially had three text boxes; modified to improved UX with domain auto-population. Validation added to ensure only @aexp.com addresses are used; regex to be updated accordingly. Approver page will display more data once backend API integration is done. Added notification prompting users to enter approval/rejection notes for critical values.
+
+  • Email registration / domain handling Instead of allowing multiple comma-separated emails without domain checks, team to restrict to corporate domain and auto-populate domain part to prevent invalid domains (Gmail/Yahoo). Team discussed avoiding permitting registration for many people in a single registration if that causes later issues — confirm policy with Anand and Rachna.
+
+
+Documentation, Architecture & Miscellaneous Items
+
+  • Self-serve documentation HLD/LLD, ARB document, data flow diagrams, BPMN, UI pages and links were shared as the main documentation for Q-Track. Some pages need further content; team can suggest items to add.
+
+  • RISC / monitoring jobs Two Lumi jobs monitored; some jobs deprecated (cornerstone). Jobs for monthly runs and royalty (MLSC array) listed; Jason responsible for some items.
+
+  • Blocked items & escalations Jitin not responded — blocking palladium testing. Plan to talk to Raj and carry palladium testing forward to next sprint with one story pointer (pending one approval). Group chat created earlier but no response — escalate as required.
+
+  • Miscellaneous noise Several unrelated audio fragments and background conversations were present and ignored for action items.
+
+
+📋Overview
+
+  • Access for AFC incomplete; carryover story to be created and task moved to next sprint.
+  • No end-to-end demo available until backend API integration and DB access are complete; Ather and Sachin coordinating integration.
+  • DQ data migration to test repository progressed; onboard metric failing due to filter conditions — requires fixes before demo.
+  • Rally updates and story closure: ensure tasks and remaining hours are reflected correctly; perform sanity checks before demos.
+  • Monitoring/alerting: Maestro only provides success notifications for Lumi tables; for non-Lumi tables need to analyze ingestion paths and hydration logs to enable failure alerts. Cluster tags by use case + frequency for better alerting.
+  • DQIM portal missing insurance workbasket — need registration and mapping (Sachin to onboard once details provided).
+  • DQ repository schema updates: added focus_metric and load_date; revert changing dataset into table name; rename where-clause column to filter condition / use repository's filter criteria. Parameterize table/dataset selection in code using dot-splitting logic.
+  • Rule-generation tool: generation working for some checks; merge to GitHub, fix execution issues, and integrate with DQ test table. Planned demo later this week.
+  • UI changes implemented for register/approver pages; domain-restricted email validation to be enforced and enhanced UX for domain auto-population.
+  • Blockers: Jitin non-responsive (palladium testing), pending approval for one item; escalate to Raj if needed.
+
+
+🎯Todo List
+
+  • Sachin:
+    
+    • Coordinate API integration for AFC front-end & backend, complete API+DB integration effort, target: end of current sprint (no exact date provided).
+    • Provide details and onboard "Insurance" workbasket to DQIM portal (requires mapping/MHA). Owner to provide onboarding once Anand shares required details. Time: ASAP (before next monitoring cycle).
+    • Analyze ingestion for representative non-Lumi tables (pick Razy tables), determine whether hydration/logs exist and propose method for failure alerts. Deliverable: list of tables, ingestion path and feasibility of failure notifications. Time: next update cycle (TBD).
+
+  • Anand:
+    
+    • Confirm points of contact for source systems / owners (for Sachin to analyze ingestion and hydration logs). Time: ASAP.
+    • Confirm policy on allowing multiple registrations in register modal (limit/approver expectations). Time: ASAP.
+
+  • Rachna:
+    
+    • If no response from Jitin by today, escalate to Rajan and continue follow-up for palladium testing approval. Also create/maintain group chat and schedule call if contacts available. Time: Today/Tomorrow.
+    • Create carryover story for AFC (prerequisites) and move task to next sprint. Time: Today.
+
+  • Ather:
+    
+    • Implement front-end call to integrated backend API once access and DB connections are available; collaborate with Sachin for access details. Time: This sprint.
+
+  • Shabbir:
+    
+    • Fix filter/where conditions causing onboard metric failures; retest onboard metrics and prepare for demo when stable. Time: Ongoing this sprint.
+    • Update Rally story statuses/hours and ensure story closures (coordinate with Nirmit). Time: Before next demo.
+
+  • Nirmit:
+    
+    • Ensure stories (e.g., story 913) are closed correctly in Rally and update remaining hours; perform sanity checks before demos. Time: Before next demo.
+
+  • Development team (Jason / Prithvi / relevant devs):
+    
+    • Merge rule-generation code into project GitHub repo, fix execution bugs, and integrate with DQ repository test table. Deliverable: merged branch ready for demo. Time: Review tomorrow; modifications Thursday; demo Friday/Thursday evening (tentative).
+    • Complete remaining rule checks beyond stagnant and null checks and prepare demo artifacts (generated SQL vs legacy SQL comparison). Time: This week (target demo).
+
+  • UI team (Akta / UI dev):
+    
+    • Finalize register modal and approver page UX: enforce @aexp.com validation (update regex), implement domain auto-population and limit/mode for multiple registrations as decided by Anand/Rachna. Time: ASAP.
+    • Integrate UI with backend API to populate approver page columns once APIs available. Time: After API integration.
+
+  • Data team / DQ owners:
+    
+    • Revert dataset-name change in DQ repository table; keep parameterizable table-name approach. Rename "where clause condition" column to "filter condition" (or use existing "filter criteria" column). Time: ASAP.
+    • Confirm parameterization approach (dot-split logic) with devs to support fully-qualified dataset.tableName or default to warehouse Lumi table. Deliverable: agreed parameterization spec. Time: ASAP.
+
+  • All:
+    
+    • Ensure Rally task/hours and test cases are updated for deployments to E3 (add test cases where missing). Owner: relevant story owners (Sindhuja/Normal?). Time: End of call / before next review.
+
+Notes: Several people to follow up offline for exact deadlines and to confirm who will pick specific tables and tasks. If any owner above is incorrect due to meeting transcript ambiguity, please reassign and notify the group.
+
+
+Transcription
+
+00:00:00 - 00:00:44 Unknown Speaker:
+
+Looping Rachina today. Because I did not get a 101 response from him. And if he is not responding by today also, then I'll loop Rajanpun. Maybe together. Yeah, you can even set up a call, I think, right? And also, are these the same contacts that Manish and team got the access from? Yeah, yeah, it's the same one, Anand. Okay, okay. Just one info, I did not check the conference space right now, where it stands. I was busy, but till last Friday, you know, nothing has been moved. So I'll cross-check both the aspects, and in case we can, I'll first of all create a group chat. If they are available for a connect, then we'll set up a meeting also, in case.
+
+00:00:53 - 00:01:45 Unknown Speaker:
+
+Info like, you know, although the build is in progress, uh, and she would be requiring a carryover story, uh, I was expecting by end of the sprint. But there are some other, you know, uh, part which is being left. So hopefully she would be able to complete it by the end of this week. The build part, so we'll just create our carryover story for AFC, and then just. If this task is not completed, then I will... No, no, no, hold on. It's not that no action has been done, right? We have took action. It's just that we need to carry it over. Like, you know, we did analyze what set of access would be required. We raised the engagement request, right? So effort has been put for this one.
+
+00:01:46 - 00:02:41 Unknown Speaker:
+
+It's just that we did not receive the complete access for this. So... Then can I change the name to like prerequisites and remove the blocked and then I'll move the same task to the next sprint too. Is that fine? Yeah, yeah, that's fine. And that is the reason we have just, you know, even I did not claim any, you know, task for this and ANSI has also just created an R task, right? It's not like, you know, we spent 8 hours or 10 hours on this. Okay, and then you told me you want the story in the next trend, right? Yeah, this would be carried forward, that's something we can take it forward later. You can carry on with the updates right now. Yeah, sure, uh, anything to demo? The AFC front? No, no, it's the build.
+
+00:02:41 - 00:04:23 Unknown Speaker:
+
+The build is still not ready, so I don't think we would have anything to demo right now. Okay, um, yeah, thank you, uh, utter. He's not there in the call. Come back to him, you know, we, uh, demo, we cannot do it right now. Everything behind from the front, yeah, this one is completed, so that is pending. I am on discussion with Sachin on that. But integrate the backend API with a front-end call, which, uh, Ather would be doing a call. Along with the you know, access level and the database connection. So we will try to complete it in this print, at least, you know, p of the API integration. Uh, so there's nothing to demo again? No, no, it's. It's not running end to end, so we won't be able to do a demo.
+
+00:04:32 - 00:05:33 Unknown Speaker:
+
+SHABBIR Hey, hi, uh, so, uh. So in this print. Like, I have worked on the control, uh, priority three, and as well as the priority when, uh, new requirement changes, I have done those like current aspect, like, as per the priority three. What we have done is like, we have, uh, like, migrated the data from their TQ repository to degree. Was the test, and we actually educated as expected. So what we have done is like, we have modified that and we are trying to run our onboard metric on that. Yeah, we are, we are, we are working on it. Yeah, we have still facing like, like, we are seeing some issue with the wear conditions, so we need to modify it and we need to run that on onboard metric. Yeah, that's it from my side, actually.
+
+00:05:34 - 00:06:43 Unknown Speaker:
+
+So, like, I thought, like, once we, like, right now, we don't, cannot demo. It is failing in middle because of these wear conditions, which need to be fixed manually as of now for, like, to check how onboard metric is actually producing the results. So, yeah, right now, we can't demo it. As of now, we are still working on that. Uh, Quadro priority, uh, data changes. Okay, so, Anand, you're okay with this? Right, right, right, yeah, that should be fine. Yeah, initial level of demo, we already did it, yeah, that we had last week, so that's fine. Yeah, okay. Before you give update, why it is not being updated? The rally is still not updated. I can see still 24 hours of work to be done. Is that the case or you are done with the job?
+
+00:06:48 - 00:07:54 Unknown Speaker:
+
+There are still 24 hours. Story ending with 913. It's not closed. That's what Sachin is asking. There's a task also that is open. As far as I know, we released it to E3 last year. Yeah, yeah. Is this being marked as complete, Nirmit? Yeah, yeah, it did. Just ensure you guys do this sanity before joining the demo, okay? Yeah, please proceed, yeah. So, I was working on this data, the alerting and monitoring of the data. Tables. So I got one issue in the production and we changed the scheduling of the tag and also the query part, then it works fine. So if any ingestion failure happened for a day now, because now the job runs in like in an hour basis, so we'll get that notification. Uh, yeah, thanks, normal, uh, such in just uh.
+
+00:07:54 - 00:08:46 Unknown Speaker:
+
+One confirmation, the thing I was mentioning to you earlier as well, uh, that, uh. Since you are clustering the tags, right? Please cluster it use case plus frequency wise, instead of like, uh, the cluster. That normal had shared over mail, because in that mail, I saw that, like, uh. Multiple different use cases were like, grouped together, which won't be suitable. If in future we want to alert the partners, right? So I would suggest is that even if like, uh, even if, suppose in future we want to alert some partner. Uh, regarding like. Whatever ingestion failure, it will always be use case based, so it's better that you just take that use case filter and then cluster the group. Okay, we'll do that. Just one quick question on this, you know, as we are not receiving any failure notification, right?
+
+00:08:46 - 00:09:35 Unknown Speaker:
+
+As I have, uh, intimidated you last Friday. Also, it does that data ingest successful, then we can get it through that maestro right now. For the rest of the table, the problem is that, uh, we need to identify the source and if it is, then we can check the failure. Otherwise, we can just let you know whether the ingest will happen for that particular day or not. We won't be able to just like insurance, right? Where we are sharing you the error report also, right? So for those part, I need to analyze the rest of the tables, how it is. You know how it is getting the data from the source and how it is getting ingested. To the Lumi table, Okay, so are you saying that for the tables which are not Lumi?
+
+00:09:35 - 00:10:29 Unknown Speaker:
+
+First, we cannot generate a failure alert or. No, we won't be able to do that. Because Maestro just gives you a notification when there is a successful injection. What we were discussing the other day also, right? You said you are exploring some way in which we can like alert whenever the notification has not come in the expected direction. Yeah, so so that is where I am coming up, uh, when I have did that. So if it is a Lumi, first we have a table where we can monitor those jobs. But if it is not looking just first, then we need to, you know, analyze from where the data is. So let me pick up few of the tables and I'll I'll come back to you. Maybe let me pick up razy tables, right?
+
+00:10:29 - 00:11:32 Unknown Speaker:
+
+Which we are aware of, right? So let me pick up raising how the ingestion is happening. Um, if it is a loamy first, we can go ahead and, you know, check into that audit table, but if it is not loamy first, then we have to dig down. As of now, um, is doing a bunch update, right? Maybe in a daily basis or a monthly basis, then we won't be able to track it. What they have is this hydration framework. Yeah, so for hydration purpose, then, yeah, if it is a hydration purpose, then I have to check for hydration. Are they are maintaining any logs like, suppose they are doing this hydrogen today, right? What if there is a failure, right? So for that, I, I really don't have any information if they have a long table or not, so let me figure it out.
+
+00:11:40 - 00:12:57 Unknown Speaker:
+
+If you have any point of contact, Anand, just do let me know. So, Rachna, I'll identify these, you know, these things and then I'll let you know. Sure, sure, Sachin. Thank you. Yeah, thanks, Rachna. You can go ahead, Sindhuja. I just have some questions. So this particular thing was released to E3, right? Like deployed in E3. So in that case, validation was done in E3 or just in E1? Like because your task only says validation testing in E1. It's done in E3. In every environment, right? So that your task is not reflecting that. And second one is like, I told anything that goes, you know, E3, right? The law is there. I want you guys to add the test case, so I don't see it here. Is it something that you can quickly add normal?
+
+00:12:57 - 00:14:43 Unknown Speaker:
+
+If you have them? Just do it. So that I'll come back and review it at the end of the call, you do know how to add, right? Yeah, yeah, we'll come back and review it at the end, thank you. Um, at this point I have the two stories, and the first one is the RESI SFT tool Data Transfer, so SFT related one. Uh, I think Jason is not joined here, I think. I was waiting for this to happen. So for the other story, uh, this is the rules update, uh. As per the requirements, we have added the updated the one of the mail ID as per the requirement, so this is the new email ID. Added. So this is in the production, yeah, so coming to other, uh, tasks level, uh. So regarding the Quadro related one, right?
+
+00:14:43 - 00:15:37 Unknown Speaker:
+
+So just I have gone through the use case details and as per the requirement. And we have added created the new table that is the DQ Repository Test table having. We have added two new more columns we have introduced, so that is the focus metric and load data, actually. Yeah, so this is the DQ repository table. We have added the focus metric and dot date. So we have selected currently four use cases. So that data, which is the threshold logic, right? So that data only I have moved to the test table, DQ repository test table. So this is the one. And after that one, we selected four more cases to the Quantro Artifacts table. So this comes under that use case only. And we have initially selected which is the less number of TQ.
+
+00:15:38 - 00:17:15 Unknown Speaker:
+
+So those use cases we have selected. Resi and Reverse Integrity. And this one, GAM SO trigger. So these are the use cases. I have selected and moved the data to the this table, which is a threshold logic one. And here, as observation, we have done some more data inconsistency. So that's why we have modified the table name, which is happening with the data set name is required. I'll not recommend to do this. Yeah, please revert this change. What if tomorrow some other data set wants to get the data from these people? Then they need to remove those data sets. How will they? They have to code it in the stable name, then, right? Yeah, they have to code it. But, uh, data, we can't, uh, make it constant for a particular use case, right?
+
+00:17:15 - 00:18:07 Unknown Speaker:
+
+Data should be useful to be used in any of the use cases. You mean to say, like, uh, they want to pull the data from our use cases? That the question. Anyway, this thing is running at our end at the entire port of R2. What I'm trying to say is, in E3, there might be some... The most of the ways that we have today is like, we're directly hitting the AXP Lumi warehouse table, right? There are some cases also where there is one intermediate script first running. Which pulls from AXP Lumidi, creates a sub-table like in our projects, something like that. And then from it, it will basically bring the last run. Correct. So there I am thinking how will we parameterize how to call, right? If you don't mention it explicitly in this column.
+
+00:18:10 - 00:19:29 Unknown Speaker:
+
+Even if you mention it, do you think it will work? That we can do through the code itself, right? Yeah, we can parameterize, exactly, we can parameterize it down and right, making a change in the data. I don't think it is going to work. The only thing is like, uh, we can parameterize, but like, the only thing is like, as per the environment. We are rarely picking it from the warehouse only not like under the data sets, if you are, if there is any other like instead of data warehouse. If you are actually picking from other, like code or anything, then we might write in something like we need to put pick like some, if conditions like, it has to be checked based on some criteria. Let's keep only table name.
+
+00:19:29 - 00:20:20 Unknown Speaker:
+
+I mean, I'm just, I'm just thinking about it, we can keep table name. So it will take, according to the project. Uh, a parameter, right? If it is like, exactly, but if let's just say you provide like an x extensive kind of thingy, PRJP, this one, right? USEDO prod.data.tableName, then it should pick that thing and not go with the ASPLumi one. Yeah. Something like that, probably. Yeah. Because anyhow, even if, Anand, if you put these data like this way also, right? And if they don't have access to your use case, they won't be able to fetch it. If it is deciding... See, these run... Rules are getting generated in your use case itself, in our use case itself, right? Correct. So, we are enabling either accessing warehouse tables or inside our use case. Yes.
+
+00:20:20 - 00:21:14 Unknown Speaker:
+
+We will have access to that. Exactly. Exactly. Yeah, that's why, Sachin Anandan, let's say, based on some criteria, we have to put that parameterization. That is what we have to do. Suppose, if they are actually picking up from the use case dataset, Then... like, maybe we should, maybe we should check whether it is. Uh, like, we have to split it by dot, like something like that. What is the size of the array? Then we have to pick it, uh, the platform, something like that, we have to design, not the size of. Yeah, I think let's look at like, for example, if it's like there's some dot or some use case name being present, right? Then we can use that. Otherwise, how we our table will be like data set, name, dot and like this one, use case name, dot and data set.
+
+00:21:14 - 00:22:22 Unknown Speaker:
+
+Whether it is a DW or like data, then dot the table name, right? Like, if you if you check with split with the dot, then we will get three. If it is not like only one, then it is directly the table. Yeah, correct one more column. We have used this one description column of the where clause condition, right? So just when we have added the condition name, rename the column name as condition instead of where clause condition. Okay, sure, not condition, but filter condition. I think, right, yeah, filter condition, you can add actually that one. We have the DQ repository as a filter criteria, so use that itself. I think filter criteria was there. Yeah, but yeah, sure, we will load all. This. Column name again Modified to add name.
+
+00:22:22 - 00:23:25 Unknown Speaker:
+
+Okay, yeah, I think last time we discussed it, whatever is in the repository, I think as of today we can use the same so that there is no confusion. I think that's all. Yeah, yeah, there's some kind of control. And apart from that one, I just monitor the UH for the regular daily Uh Q track, Uh, Dax in the production. So that one got to, so there was no failures happen now for this print. Yeah, I think, yeah, thank you, thank you everyone. Uh, just before we close, I had one question to Sachin, Uh, such in. Regarding the DQIM portal, right right now, I think we do not have the insurance use case in drop down. So, like, we got some alerts this weekend. But, uh, when I went to check it on the DQIM portal, I realized that there is no drop down.
+
+00:23:25 - 00:25:09 Unknown Speaker:
+
+Only. Like, the work basket is not assigned on the DQIM portal, did we request it for a new work basket registration? Probably not. Yeah, then we have to onboard that Vechna, then only those could appear over there. We need a mapping MHA. Okay, I would require few details from you. So just share those details to me, I'll onboard that insurance. Thank you, I have accepted the stories at my end. I think there are two which are still in progress, so apart from that, I have from my end. Yeah, yeah, okay, I think we still have two more people. Is your story not complete? It's completed? But uh, I mean, uh, demo part is pending. I wanted to review that with Sachin first and then present it to the team. Okay, probably you can share your screen then.
+
+00:25:58 - 00:26:51 Unknown Speaker:
+
+So I actually what I did I reviewed this with Sachin as well but not the one after I migrated to the project folder that he has given in GitHub. So what happens is that it takes the existing rules that are there for duplicate in the database. It will take all the rules and then run for that all the rules it will create a query like this. Left side one is the generated one, the legacy one is on right side. So I have displayed both. So that anyone wants to review how it is generating the SQL file, whether it is correct or not, it will be easy to verify it. So this much I have done for both stagnant check and null value check, for both it's working fine, and I'm still working on the other checks.
+
+00:26:51 - 00:27:51 Unknown Speaker:
+
+But meanwhile, my goal is to merge the code with the GitHub repository. Because it has bags for execution and I also need to integrate with the DQ repository test table that I have has created. So once that is done then it's ready for a demo at least for two validation to check types. So on and then register maybe you know we will come back with more details on this with the template that we are discussing. Maybe on this Thursday or Friday. Most probably Wednesday, it would be holiday for me and as well as for Prithvi. So once he's done with some of the input that I have provided, I'll review it tomorrow. And then maybe if any modification required, he can do it on Thursday and then we can do a first demo to you maybe on upcoming Friday or Thursday evening.
+
+00:27:53 - 00:29:41 Unknown Speaker:
+
+Sure, sure. Right now, it might not be pretty clear to you. But we will come up with a plan to demo it to you on a computer. Right now, it's in testing phase, so we'll be validating whether the queries are being generated properly as per the existing rules, the existing queries, and we'll compare it. But in future, we don't have to compare because if things goes well, then we'll simply generate a SQL and we'll integrate with the actual SQL file and then deliver that particular SQL file. That's the plan. As Sachin said, we will review it in the next call with all the details. Sure. Yeah, sure. Thank you. Thank you, Prithvi. Can you mark your story as complete so that... Sure, yeah. I'll do that. So man... Anna, come here. This is still being blocked.
+
+00:29:41 - 00:31:52 Unknown Speaker:
+
+We did not receive a response from Jitin as of now. So I'll, I'll, maybe, you know, I need to talk to Raj again on this one. We already created a group chat last Friday, but he did not responded over there. Okay, also, since this should be, carry forward this palladium testing on the next print, maybe with one story pointer. Until the time is specific. This would still be picked up because you're not sure whether it will be unlocked or not. It is just one approval required post that it would be done, just one approval and then. Reference the dashboard once. Let's just cross check. Yeah, I think Akta is remaining. Which I have integrated in this portal. So to start with, I've implemented the validation for this search box, specific validation.
+
+00:31:53 - 00:33:20 Unknown Speaker:
+
+So if the user doesn't select it, we'll proper message to select an option. And the options are selected. Some of the values are entered. Second one is the icon, Which? Initially we this watcher icon and then you mention to this icon and then update it to a button with proper message. So watchlist has been there. And on click of this, the existing table will be changed instead of a yellow box. So that is one thing in this register model. Initially, we had the distribution list use case Addition 3, three text box weather. Basically, with that description, we have changed this, and it is with the proper validation to enter a valid mail ID. Yeah, like, you know, somebody should not be registering with Gmail or Yahoo or other domain exactly. Just, you know, display a box over there.
+
+00:33:21 - 00:34:22 Unknown Speaker:
+
+You might have seen some form, right? There is a drop-down of selecting a domain, correct? So here, it would be just a simple text box where they would be just writing Sachin.lal and the domain would be auto-populated over here like at the rate aexp.com. So when you are sending that details, first text box plus second text box combination and then it would form your email address. So Sachin here we are giving multiple comma separated email. So in case of like let's say 5 to 10 email emails. Oh man, look this functionality I would like to avoid. Ananda and Rachna, just let me know, if somebody is going to register for 5 persons, right? This would come back with a... You want that funds only, right? I mean, I have updated accordingly what we discussed in the last meeting.
+
+00:34:22 - 00:36:00 Unknown Speaker:
+
+If we have any further discussion, I will update accordingly. That's fine. Just make sure that every email address should be, you know, at the rateexp.com. Yes, yes. I'll update the regex for this. Specific description also for this. But for now, I have just added the title. So this was the big part which has been done in this page. And in the approver page, more data would be coming in. So that would be specifically when we integrate the API. In the back end, the UI, the column data which will be coming in, that will be shown in the UI. And I've added the notification for the user. To enter the approval note or the rejection so i have raised up here for the critical values which. Why are you talking like that? I am dying, uncle.
+
+00:36:00 - 00:36:48 Unknown Speaker:
+
+My wife said that it is morning now. I have to go tomorrow night. I will be there tomorrow. Will you come to school tomorrow? Yes, sir. Sir. Is it the time to go to school? Yes. Oh, my God. Oh, my God. I have to go to school tomorrow. Oh, my God. I have to go to school tomorrow. Oh, my God. My father-in-law gave me the money. He gave me all his assets. Is he a millionaire or not? He is a millionaire. When did he eat? This year. He must have eaten half of it. This year. He gave it to a rich person. I told him that he gave it to a rich person. I told him that he gave it to a rich person. I told him that he gave it to a rich person.
+
+00:36:48 - 00:38:08 Unknown Speaker:
+
+I told him that he gave it to a rich person. I told him that he gave it to a rich person. I told him that he gave it to a rich person. I told him that he gave it to a rich person. I said I don't want the first rupee, but he gave me the first rupee. He gave me a man. He is a big man. Mohan Rao. He doesn't have anything. How many do you have? Three? How many do you have? How many do you have? Two. Three, four. If it's three, I'll give you three. He said, everyone is a thief. He said, everyone is a thief. He said, everyone is a thief. He said, everyone is a thief. He said, everyone is a thief. He said, everyone is a thief.
+
+00:38:08 - 00:40:01 Unknown Speaker:
+
+He said, everyone is a thief. Have the use cases, okay, right now we are working on this one. I'm not sure if it is AFC or pay now, pay later, because somewhere I can see pay now, pay later on some. Some case, like in Rally, we seen it is an AFC. So just let me know, I'll remodify based on your input. Uh, these are a couple of document and this is the sample email alert that goes to the user with a check type. We have added more check types to it, so maybe you can got it, uh, from that self-serve, right? I'll, I'll pick it up from there. Yes, sure, thank you. Okay, uh. This is overall, uh, you know, main picture that we have created last time, right?
+
+00:40:01 - 00:40:58 Unknown Speaker:
+
+And this is the ARB document FS created and the data flow diagram that I have created. Basically moving, uh. While we're executing the tag on this one, then this is the issue management portal. Again, the BPMN structures, the UI page, and then for more details, I have included these two link. If somebody wants to dig down, right, uh, how it is working, they can in this page. On the UI part. The things have been mentioned over here or in the background part to this one self serve. I did not added anything more right now. Oh, this one is. HLD and LLD and again they can go through this self-serve screen if they want to you know navigate through the details. This again I did not have the content to write on it. Reporting again.
+
+00:40:58 - 00:41:50 Unknown Speaker:
+
+This is the way that we have created last time. So this completes your queue track. Okay then this is something insurance. I'll move ahead. On RISC right now, I've just added two stable. The job that is there, one of the job is there in the Lumi right, which is right now we are monitoring. And the cornerstone I mentioned it has been as deprecated. So this ratio would again come under your bucket, Anand, or it would be under Jason. No, no, this is the reason. Yeah, okay, this is again Jason. And these are a few other jobs that we have created for monthly in Jason. And then the royalty one, which Jason has asked recently. This is for MLSC Array again, based on the launch announcement that you did. I just took the details from there.
+
+00:41:50 - 00:43:37 Unknown Speaker:
+
+I don't know what is the problem with this navigation. These are the DD flow and the pipeline if you want to see Hyzer again. I don't have much content, and you don't have much content in control. In the PPT that you have said, that's that's it, okay? So this would be easy to navigate. If you want to go directly. Any other, you know details we would like to add, then I'll modify this page. Has been. He has messaged me, uh, that, uh. There was a power outage at his area, so he asked me, Thank you everyone, thank you everyone. You guys can stay back. It will be done also. It will be done also. The air flow will be controlled on the ODIL table. The storage will be controlled. So if we put the...
+
+00:43:44 - 00:43:57 Unknown Speaker:
+
+It's hard to say that they are there. If they are there, why should we be there? Narayana. Narayana. Narayana. Narayana. Narayana. Narayana. Narayana.

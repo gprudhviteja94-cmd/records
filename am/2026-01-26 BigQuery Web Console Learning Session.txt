@@ -1,0 +1,116 @@
+2026-01-26 BigQuery Web Console Learning Session
+
+Creation Time: 2026/1/26
+
+
+📅About Meeting
+
+  • Date & Time: 2026-01-26 12:29 (Duration: 1892 seconds)
+  • Location: Lumi — BigQuery web console learning session (virtual)
+  • Attendee: [Not specified — presenter and audience from AMEX / Lumi training group]
+
+
+📒Meeting Outline
+
+
+BigQuery introduction and purpose
+
+  • What is BigQuery / web console BigQuery web console is an intuitive web interface within the Lumi/GCP environment used to explore, analyze, and generate insights from large datasets. It enables execution and management of SQL queries, monitoring of query execution, and provides a centralized environment for team collaboration.
+  • Primary benefits Scalability to handle very large datasets; dynamic compute resource management that allocates slots automatically based on query needs; and a collaborative model where project-level datasets are shared among users, facilitating cooperative analysis across AMEX teams.
+
+
+Key terminology and UI components
+
+  • GCP Console The top-level Google Cloud web interface through which BigQuery and other GCP services are accessed.
+  • SQL Workspace The web-based SQL editor within BigQuery used to write, execute, and manage queries and scripts.
+  • Projects Workspaces (GCP projects) used to onboard users and organize access to BigQuery resources and other services.
+  • Explorer The navigation pane in the BigQuery console for discovering projects, datasets, tables, and views; useful for browsing schema and data organization.
+  • Datasets Top-level containers within BigQuery used to organize tables and views and to control access at a grouping level.
+
+
+Features and capabilities of BigQuery
+
+  • Concurrent queries Supports executing multiple queries at the same time so users can run several analyses without waiting for prior queries to finish.
+  • Time Travel Ability to query table snapshots as they existed at a past point in time for historical analysis and recovery scenarios.
+  • Sessions Represents a sequence of interactions between a user and BigQuery; allows maintaining stateful work flows across queries within a session.
+  • Scripts Support for multi-statement SQL scripts to run multiple SQL statements as a single job.
+  • Job priority: interactive vs. batch Interactive priority for low-latency, time-sensitive queries; batch priority for larger, non-urgent queries that can run when resources are available.
+  • Collation Controls string sorting and comparison rules — important for correct behavior across different languages and character sets.
+  • Result caching BigQuery caches query results to speed up repeated queries and reduce compute cost when appropriate.
+  • Clustering Organizes table data into clustered segments to optimize query performance on frequently filtered columns.
+  • Query Scheduler Enables scheduling recurring queries for automated, periodic execution.
+  • SQL translator (HiveQL to BigQuery Standard SQL) Tooling to convert HiveQL queries into BigQuery Standard SQL to ease migration of existing analytics workloads.
+
+
+Guidance and next steps
+
+  • Practice encouragement Attendees were encouraged to explore the BigQuery console hands-on and to use Lumi resources (e.g., Lumi Academy) for further learning.
+  • Upcoming content Next session will cover access entitlements and data management in BigQuery (getting started with BigQuery — permissions, dataset/table management, and governance).
+
+
+📋Overview
+
+  • BigQuery web console provides an accessible, collaborative interface for large-scale data analysis.
+  • The platform scales compute dynamically and supports concurrent work across teams.
+  • Key UI components: GCP Console, SQL Workspace, Explorer, Projects, and Datasets.
+  • Core features that improve productivity: concurrent queries, time travel, sessions, scripts, job priority, collation, caching, clustering, query scheduler, and SQL translation tools.
+  • Attendees are advised to practice in the console and refer to Lumi Academy for deeper learning.
+  • A follow-up session will detail access controls and data management best practices.
+
+
+🎯Todo List
+
+  • Presenter / Training lead:
+    
+    • Schedule next video/session on “Getting started with BigQuery: access entitlements and data management” — target date: TBD
+    • Share Lumi Academy resources and links referenced during the session — deliverable: resource list, due: 1 week
+
+  • Attendees / Learners:
+    
+    • Hands-on practice in BigQuery console: run example queries, explore Explorer and SQL Workspace — suggested timeframe: within 2 weeks
+    • Review Time Travel and clustering examples in Lumi Academy and test on a sample dataset — suggested timeframe: within 2 weeks
+
+  • Data Governance / Admin:
+    
+    • Confirm project-level dataset sharing and access model for AMEX teams (roles/permissions) — deliverable: access plan, due: prior to next session
+
+(If owners or exact deadlines are known, please provide names/dates to update the Todo List.)
+
+
+Transcription
+
+00:00:02 - 00:02:22 Unknown Speaker:
+
+Loomy BigQuery Part 3. Let's dive into Lumi's BigQuery web console. Let's dive into Lumi's BigQuery web console, the platform that will make large-scale data analysis accessible for everyone in Amex. During this learning session, we will guide you through an introduction to the BigQuery web console, the key terms associated with BigQuery, and its features and capabilities. Let's get started. What is BigQuery? Imagine having an intuitive web interface where you can explore, analyze, and generate insights from your data. That's the BigQuery web console, a key component of the Lumiac. There you can execute SQL queries, manage, and monitor their execution. BigQuery offers users several advantages. One of its primary benefits is its scalability, which allows it to handle vast amounts of data with ease, making it a perfect fit for AMEX.
+
+00:02:22 - 00:03:37 Unknown Speaker:
+
+Its dynamic management of compute resources ensures efficient handling of extensive datasets by automatically allocating slots based on query size. Moreover, BigQuery fosters collaboration by providing a common dataset for all users within a project, enhancing cooperative data analysis. BigQuery Key Terms What is BigQuery? Imagine having an intuitive web interface where you can explore, analyze, and generate insights from your data. That's the BigQuery web console, a key component of the Lumi ecosystem. There you can execute SQL queries, manage, and monitor their execution. BigQuery offers users several advantages. One of its primary benefits is its scalability, which allows it to handle vast amounts of data with ease. Making it a perfect fit for Amex. Its dynamic management of compute resources ensures efficient handling of extensive datasets by automatically allocating slots based on query size.
+
+00:03:38 - 00:06:05 Unknown Speaker:
+
+Moreover, BigQuery fosters collaboration by providing a common dataset for all users within a project, enhancing cooperative data analysis. BigQuery Key Terms In the BigQuery Web Comp... What is BigQuery? Imagine having an intuitive web interface where you can explore, analyze, and generate insights from your data. That's the BigQuery web console, a key component of the Lumi ecosystem. There you can execute SQL queries, manage, and monitor their execution. BigQuery offers users several advantages. One of its primary benefits is its scalability. Which allows it to handle vast amounts of data with ease, making it a perfect fit for AMEX. Its dynamic management. Compute resources ensures efficient handling of extensive data sets by automatically allocating slots based on query size. Moreover, BigQuery fosters collaboration by. Providing a common data set. For all users within a project. Enhancing cooperative data analysis.
+
+00:06:07 - 00:10:33 Unknown Speaker:
+
+BigQuery key terms. In the BigQuery web console. So, there are several terms that you should be familiar with to navigate the platform more effectively in the future. First, there's the GCP Console. This is a web interface that allows users to access different services by Google Cloud Platform. Then, we have the SQL Workspace. This is essentially a web editor used for SQL execution and management. Another you will often come across is Projects. Which refers to the workspace used to onboard users and access BigQuery, among other services for performing analytics. Additionally, there's the Explorer, a feature that provides a pane for users to discover and navigate across data schemas and data sets. Lastly, we have data sets. These are top-level containers used within the BigQuery web console. To organize and control access to your tables and views.
+
+00:10:34 - 00:13:37 Unknown Speaker:
+
+So let's review how these terms will look once accessing this amazing data tool. This is BigQuery, one of the services GCP Console and Lumi provides to you. This is your SQL workspace. Now this is the Explorer feature. In here you will be able to open your current projects and datasets. That's it for the terms you should be familiarized with. So let's keep going. BigQuery features and capabilities. Progress, you'll come across an array of powerful features and capabilities designed to make your data exploration efficient. One such feature is the ability to execute concurrent queries. This means you can run several analyses simultaneously without waiting for one to finish before starting another. Next up is Time Travel. This allows you to query a table snapshot as it appeared at a specific time in the past. I'm sorry.
+
+00:13:39 - 00:18:57 Unknown Speaker:
+
+I'm sorry. This lets you go back and explore your data history. Then we have sessions, a series of interactions between you and BigQuery. Think of it as having a continuous dialogue of your data where you can. Ask questions with queries and receive answers as results. BigQuery also supports scripts, allowing you to execute. Hit multiple SQL statements in a single go. And speaking of scripts, you get to decide the job priority. Choosing between interactive or batch. Interactive is for those. Queries that need quick responses. Wall badge is perfect for larger queries that can run in the background as resources become available. Collation is another interesting feature. It's all about sorting and comparing strings in your data. Crucial when you're dealing with different languages and character sets.
+
+00:18:58 - 00:24:15 Unknown Speaker:
+
+BigQuery also cleverly caches the results of your queries to ensure faster response times, just like having a fast forward button. Speeding up your data analysis, clustering is another feature that organizes your data for more efficient querying. Imagine having your data sorted into neat piles. Making it easier and quicker to find the information you need. For those of you who like to keep things organized and timely. Query Scheduler lets you set up recurring query executions. Translator is a handy tool that allows you to convert SQL queries written in HiveQL into BigQuery. BigQuery standard SQL. This translator makes sure your high queries can speak the BigQuery language without any hitches. You are all packed with BigQuery features and capabilities. Go ahead, dive into the platform, practice and explore. There's so much to uncover.
+
+00:24:19 - 00:25:11 Unknown Speaker:
+
+Remember, Lumi and BigQuery are opportunities to deal with big data like never before. This platform is a powerful tool designed to simplify and enhance your data analysis tasks. So let's revisit what you've learned. What are the features that facilitate efficiency and insight in your data exploration? You should be thinking about features like concurrent queries, time travel, sessions, and many more have been integrated for this purpose. This is just the beginning, and we're excited to see how you'll leverage these tools to unlock the full potential of big data. Wrapping up, our exploration of BigQuery web console has just begun. With its feature-rich environment and key components like the GCP console, SQL workspace, Explorer, projects and datasets, we are set to unleash the full potential of big data.
+
+00:25:13 - 00:29:19 Unknown Speaker:
+
+By the end of this video, you are now able to understand the purpose of the BigQuery web console. And familiarize yourself with the key features and terms of the BigQuery web console. You are doing great! Don't miss our next video getting started with BigQuery where we'll delve deeper into its access entitlements and data management. For further assistance, check out our resources like Lumi Academy. See you soon! Thank you. You're welcome. Thank you.

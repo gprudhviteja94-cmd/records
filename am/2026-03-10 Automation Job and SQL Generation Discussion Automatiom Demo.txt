@@ -1,0 +1,302 @@
+2026-03-10 Automation Job and SQL Generation Discussion Automatiom Demo
+
+Creation Time: 2026/3/10
+
+
+📅About Meeting
+
+  • Date & Time: 2026-03-10 18:00 (Duration: 2025 seconds)
+  • Location: Virtual meeting (call)
+  • Attendee: Sindhia, Suman, Anand, Pithvi (Prithvi), Sachin, Rachna, Jason, Shelly (referenced), Matt (referenced), Precious T (referenced), Kundan, Ather, Bhavan, Saurabh, Samir, Mahendra, Vagwan, Arun, Indhuja, Ananda, others (noted in discussion)
+
+
+📒Meeting Outline
+
+
+Automation job / DQ repository -> SQL generation
+
+  • Current implementation & demo The automation reads new entries from the DQ repository table (for demo, a CSV is being used). For each entry it generates SQL files based on check type (duplicate, stagnant, etc.). The script is currently run locally; DAG implementation is in progress and expected to be closed today. The CSV includes rule description, check type, table/column details, and may include an added status column to mark processed rules for testing.
+
+  • SQL file generation logic For each rule entry the script:
+    
+    • selects the appropriate template (based on check type)
+    • generates SQL and creates folder(s) per check type (duplicate/stagnant currently)
+    • determines schedule (daily/monthly) from the input and finds matching existing SQL files
+    • if an existing SQL file is found for the table+schedule, it copies and appends the new SQL at the end (so multiple requests for same table are appended into one file)
+    • if no legacy SQL found, it creates a new .sql file that contains only the SELECT statement from the template (minimal creation)
+    • for demo, duplicate check uses one template; stagnant checks use three templates; most rules fit those templates.
+
+  • Behavior for multiple checks on same table The automation currently preserves check-type folder segregation. If a table has both stagnant and duplicate checks, separate SQLs may be created under separate check-type folders, resulting in duplicates of the table-level file. The tool appends to whichever file it finds in the target folder for that check type.
+
+  • Observed limitations & current practical behavior
+    
+    • Folder segregation by check type can produce duplicate files for the same table across different check-type folders.
+    • The automation does not currently prevent parallel processing/merge conflicts if multiple checks for the same table are processed concurrently.
+    • If no existing SQL template/file is found in the legacy folder, the script only creates a simple SELECT-based SQL (no merge).
+
+  • Reporting / visualization A simple HTML report/view was created to review generated SQL and compare with legacy SQL. A summary report (records received, success count, description, files created) can be produced and emailed to stakeholders after execution—this is planned to be added.
+
+  • Next checks to implement Future sprints will add support for threshold checks, valid value checks, and further duplicate-check coverage.
+
+
+Design decisions / consolidation discussion
+
+  • Segregation vs single repository Sachin, Arun and others discussed pros/cons of keeping generated SQLs segregated by check type vs a common repository:
+    
+    • Segregation makes maintenance and debugging easier for each check type.
+    • A single common repository would avoid duplicate files for the same table, but requires additional logic to detect and merge files, ensure idempotency, and handle concurrent updates.
+    • Refactoring is required if the team decides to change current structure (existing merged files exist in production). A POC is needed before making structural changes.
+
+  • Merge / concurrency concerns Concerns raised:
+    
+    • If multiple checks for the same table are processed in parallel, race conditions and conflicting file updates may occur.
+    • The automation needs a check to avoid re-downloading or re-creating a file if it already exists in the target location, and a merge strategy when appending new checks for the same table from different check types.
+    • Team agreed to analyze complexity and make a decision in 1–2 days.
+
+
+Demo details & immediate fixes
+
+  • Demo actions Prithvi demonstrated adding an extra CSV entry (duplicate entry with new DQ ID) and showed the generated SQL was appended to the file (timestamped folder observed). He noted a small issue where DQ ID increment logic wasn't applied in demo; he will update that.
+
+  • Planned improvements
+    
+    • Add status column in input table/CSV to mark processed rules.
+    • Implement logic to increment/uniquely assign DQ IDs for demo/test entries.
+    • Add email/reporting logic to send execution summary and results.
+
+
+Other project updates & blockers
+
+  • Resi user venue history / migration ask (Shelly / Cornerstone)
+    
+    • There is a historical table (resi user venue hist) used by one user (Precious T). Cornerstone requested a migration plan; need to validate whether the table must be migrated to Lumi (Shelly said it’s required for audit).
+    • Jason and others to set a follow-up call (possibly tomorrow) to finalize migration plan and next steps.
+
+  • SFTP / pipeline moves (Resi / Raze)
+    
+    • Several tables have been hydrated to Lumi; pipeline switch to Lumi and SFTP profile updates are pending for some tables.
+    • For the RisI venue metadata SFTP profile, change requests are being managed via PRC; this is blocking profile edits. Team expects global change to be applied before testing; aim to release by end of week.
+    • For a specific MX→SFTP process (Raze), files have been released/pushed; Jason to validate file pull using Prod profile. If successful, data push starts tomorrow.
+
+  • DQIM / incidents / PR merges
+    
+    • DQIM: Data for 1–7 March has been populated; additional population will complete in a few hours. DQIM-enabled in E3 environment. Distribution list updated so failing records can be seen in E3 once the PRs are merged.
+    • There are three PRs pending merge (content changes). Ather asked Bhavan and Saurabh to merge; they have not responded. Team requests follow-up and hoped-for merge today to enable Thursday/Friday E3 deployments.
+    • An incident was referenced for a blocker (FC check / email attachments); there was confusion about incident priority level — to be validated and corrected. Incident number to be shared post-call.
+
+  • FC (AFC?) check / SMTP
+    
+    • Sending attachments is blocked pending an SMTP/SMTPlike protocol change; platform team involvement needed. A call/escallation is recommended to unblock today/tomorrow.
+
+  • Non-interrupted timer / BPMN
+    
+    • Kundan completed end-to-end backend/BPMN changes; environment is not reflecting BPMN update (platform issue). Platform team engagement required to resolve. PRs to be merged for content changes.
+
+  • Automation rollout priorities
+    
+    • Automation for the risk per second / ingestion audit table will be released by end of this week.
+    • Coverage for other tables depends on missing details and responses from Mahendra / SRE. If no response, the automation may be paused and resources reallocated.
+
+  • DT Flow & metadata promotions
+    
+    • DT Flow deployment planned by EOD today.
+    • Metadata promotion for E3 target planned for upcoming Thursday (ISDR). Summary and history metadata updates targeted to complete by tomorrow morning.
+
+  • Other work
+    
+    • Samir is implementing Raze MX changes in DT flow.
+    • Self-Quantro has blocker around VPMN not reflecting; platform team engaged.
+    • AI / interns: Raj asked about AI use cases — team has two interns working on AI-related tasks for onboarding; no immediate deliverables discussed.
+
+
+📋Overview
+
+  • Automation reads new rules from DQ repository (CSV for demo) and generates SQLs using check-type templates; appends to existing SQL files when found.
+  • Current folder segregation by check type can create duplicate table files across folders; merge and concurrency strategy is needed.
+  • DAG implementation and local->production pipeline work in progress; DAG closure expected today.
+  • Reporting HTML created for review; planned to produce summary email/report after runs.
+  • Need decision/POC about keeping check-type segregation vs common SQL repository — team to analyze in 1–2 days.
+  • Demo validated append behavior; small fixes pending (DQ ID increment, status column).
+  • Migration request for resi user venue hist table confirmed required for audit; Jason to follow up with migration plan meeting.
+  • Multiple PRs blocking production promotion for DQIM and other features; follow-up requested to merge PRs today if possible.
+  • SMTP/email attachment and BPMN reflection issues are platform-dependent blockers requiring escalation/calls.
+  • Risk ingestion automation for a prioritized table planned for release by end of this week; rest contingent on SRE responses.
+  • DT Flow and E3 metadata promotions scheduled (DT Flow EOD, E3 metadata Thurs).
+  • Action owners to be assigned for PR follow-ups, incident validation, and migration planning.
+
+
+🎯Todo List
+
+  • Prithvi:
+    
+    • Update script: ensure DQ ID increment/unique assignment logic for test/demo (ASAP).
+    • Add status column handling in CSV/table processing to mark processed rules (by next demo / within 2 days).
+    • Add email/report summary generation logic (include records received, success count, files created) (POC in next 2–3 days).
+
+  • Sachin / Team:
+    
+    • Decide on file organization strategy (segregated by check type vs common repository) — perform POC and provide recommendation (owner: Sachin / Rachna / Arun; due: within 2 business days).
+    • Determine merge/concurrency approach for appending SQLs when multiple checks exist for same table (same owner and timeline as above).
+
+  • Jason:
+    
+    • Schedule a call with Shelly/Cornerstone and internal stakeholders to finalize migration plan for resi user venue hist (owner: Jason; suggested: tomorrow).
+    • Validate ability to pull files via Prod SFTP profile for Raze MX pipeline and confirm readiness (owner: Jason; due: today / tomorrow).
+
+  • Kundan:
+    
+    • Continue testing non-interrupted timer and VPMN changes; coordinate with platform team to get BPMN reflected in environment (owner: Kundan; follow-up: ASAP).
+
+  • Ather / Bhavan / Saurabh:
+    
+    • Merge pending content PRs required for DQIM / UI changes (owner: Bhavan & Saurabh; requested: today). If merged, schedule E3 deployment (Thu eve or Fri morning).
+
+  • Vagwan / Platform / SRE contacts:
+    
+    • Review & merge the PR related to dqim/in (owner: Vagwan / platform contacts; due: today if possible per request).
+    • Resolve SMTP/profile/platform issues blocking AFC/attachment sending and BPMN reflection (owner: Platform team; escalate via call tonight or tomorrow).
+
+  • Mahendra / SRE:
+    
+    • Respond to automation onboarding request for remaining tables (owner: Mahendra; due: by tomorrow). If no response, team will pause automation for those tables.
+
+  • Prithvi / Demo QA:
+    
+    • Re-run demo: remove last rule and re-add to validate append/creation flow; confirm fixes after DQ ID logic updated (owner: Prithvi; due: ASAP).
+
+  • Incident owner (to be confirmed / Sachin):
+    
+    • Create/validate new incident for the FC/SMTP blocker, correct priority if needed, and share incident number with the team (owner: Sachin / incident owner; due: today).
+
+  • Samir:
+    
+    • Continue DT Flow work for Raze MX; ensure pipeline changes are deployed (owner: Samir; DT flow deployment EOD today).
+
+  • All:
+    
+    • Follow up on the three PR links that will be shared by Sachin for merges (owner: Sachin to share; all to follow up; due: today).
+
+If any attendee needs clarifications or an updated action owner list, please reply to this note and I will update the summary and assignments.
+
+
+Transcription
+
+00:00:08 - 00:02:00 Unknown Speaker:
+
+Hi, Sindhia. Hi, Suman. Hi, Anand. Hi, everyone. Okay, so before we, you know, get started with the demo, sorry, the DSU, Pithvi, I mean, let's utilize this time, initial time for this demo of this automation job, like where we left off. Pithvi, you can go ahead and, you know, say yes. Continuation of what we discussed yesterday. So it takes the input. Um, it goes to the DQ repository table in BigQuery and finds any new entries are made, and it gets all that entries. And for each one, it generates a SQL. So currently I'm running it locally, I'm working on DAG implementation. I should be able to close it today and so the import. Currently I am giving it as mixed check CSV.
+
+00:02:02 - 00:03:02 Unknown Speaker:
+
+So this is the sample CSV I have put in with the description of the rule and what type of check it is stagnant data check and what table and column details it will mention it. So whatever is there in DQ repository it is same. Maybe, for this testing purpose, we might introduce another column to maintain the status of the rule, if that is already processed and implemented, will maintain a status of that. Otherwise, uh, it's the same table and same data we are using it. Okay, so once we receive the once we use have this one, we run the script. Uh. This script will go through each entry from the table, from the CSVR, from the table, and it creates an SQL file. It will create it according to the type of check, if it is a duplicate check, it will create a folder under that.
+
+00:03:02 - 00:03:56 Unknown Speaker:
+
+It will create that new SQL file, and if you observe that SQL file, it will always add that new SQL in the end of the file. With the existing SQLS to find which is matching one with this particular, I mean, which SQL to be updated. It goes and see whether the new job that we are creating is for a daily job or monthly job based on the what is configured in the what is mentioned in the table input table or CSV in this case. So here if it is a daily job then according to that it will try to further table if there is already an SQL file for it it will get that. And copied to that this folder and will append that SQL to it.
+
+00:03:56 - 00:04:58 Unknown Speaker:
+
+For the same table, there are two or three requests, it will append two, three to that same SQL itself. And finally, we'll generate one SQL with all the changes for that table, and this is a different table. Again for the since, the input has two different entries one for RESI account and another is easy eligibility eligible user. For both it has created two different SQLs. Similarly for stagnant check since I have given only one table most of that stagnant checks are related to one table only. So usually go to same table based on the configuration mentioned. And if it doesn't find any of the table I mean SQLs from the legacy or existing SQL folder. If it does not find any entries for that particular SQL table, then it will not create anything.
+
+00:04:58 - 00:05:51 Unknown Speaker:
+
+It will only generate a new SQL and if it matches one of the template, it will create that SQL new SQL as just from select it will create. It will not create anything else. From select it will create and it will close it. Okay, so that's how it works. So assume that we have something we already have something and we will append to the existing SQL. And if at all if it is there is no SQL for it, then it will simply create a .SQL file with that select statement only for that particular new rule. And yeah, these are the two folders since we have only two different checks that we implemented and we are using templates. So for duplicate check, we found only one template, and stagnant we found three.
+
+00:05:51 - 00:06:48 Unknown Speaker:
+
+So most of all the rules that are there in the database are covering these four templates for both duplicate check and stagnant check. And we should be working on threshold check and valid value check and the duplicate check. In the upcoming sprints and the table or the SQL that gets generated, I can show you a sample. But see one question I had is let's just say there is one table for example resi-eligible user, right? Yeah. And it has both stagnant and duplicate checks. So what happens in that case? Because ideally we have to maintain one SQL file for one table, right? Yeah, we will. So if there are two different checks, only SQL gets different, right? But we can use, she'll use the same file, right? Yeah, is that happening or not is what I'm trying to say.
+
+00:06:48 - 00:07:34 Unknown Speaker:
+
+Yeah, it happens. It doesn't care what is there already in that. It will try to find for that table for daily there is an SQL. It gets that SQL and append to the end of the file. If we are already using this thing. Because what I'm trying to ask is you have this duplicate check SQL folder, right? In which this resi eligible user is there. Yeah, now let's just if I want to add a stagnant check, will it go to the Duplicate Check sQL folder and add it in this file? No, it'll. What it does is stagnant check, right? So it will try to copy that file from the source and it will put it here inside the stagnant check itself. Yeah, but then there will be two duplicates of the same file as well, right?
+
+00:07:34 - 00:08:25 Unknown Speaker:
+
+Yeah, yeah, so I, I didn't think in that direction, actually. It's good point. So yeah, I mean, ideally, this should be like a common repository for all the SQL files. Even if we're, you know, I would recommend to have a segregation between the check type. The reason being, you know, it would be easier for, uh, you know, future maintenance. Uh, because if we, you know, keep on, uh, adding the different check uh in one SQL file, right? Uh, then these automations, right? That may not perform as we were. You know, we are going to expect, uh, in future. Because just take an example for CSP model, right, that is having 100 rules, correct? Uh, so we have segregated those sequels based on the rule model ID only correct.
+
+00:08:25 - 00:09:23 Unknown Speaker:
+
+Now, if we are trying to club everything, like, you know, stagnant check, duplicate, check everything in a single file. Uh, it would be a very into this automation also. It can, you know, generate that. We can try to optimize it, but again, end of the day, the maintenance, the debugging and all, that would be difficult. You know, you have to take care of all the sequels in that single SQL file. Hi, Sachin. Just one question on that. Like, suppose even if we go ahead with this segregation, right, then how do we proceed with, like, the current file? Right, because currently, all of this is merged as per the table name. So, like all the checks, irrespective of what check type it is, then will we have to, like, segregate each file? That is, you know, for existing check?
+
+00:09:23 - 00:10:19 Unknown Speaker:
+
+I can agree like, you know, all the checks are there, but uh, this, uh, we haven't thought about it. We have to, you know, uh, again, do a POC for that. If we are trying to know, place one single SQL file with different check type. Because I, I did not ask Prithvi to do that. But also on that question once if such a new guys have created this entire framework using the existing script template itself, right? Yes, yes, then you can use the same automation to onboard the. But how it should be done? If we can have a, I mean, discussion, how do you want it? We can do in that direction. No, uh, what they are asked is like, you know, right now, suppose Razy is having 10 checks?
+
+00:10:19 - 00:11:19 Unknown Speaker:
+
+Okay, yeah, and out of those 10 checks, one may be duplicate, five may be threshold. Uh, three may be, you know, stagnant. Okay, so right now it's having only. Suppose it's a daily job, then we have only single SQL file and that contains all the check type particular time, right? It's taking only one sequel file as an input, having different check type. Yeah, but what we thought of? We are just segregating the check type just to, you know, create the sequel file, correct? But right now have we? Have we already segregated check types based SQLS? No, no, no, right now it is not there, right now it is not there. That was the point, and Rachna was mentioning like, Okay, uh, that is something we need to think about it and we need.
+
+00:11:19 - 00:12:15 Unknown Speaker:
+
+Uh, let let me give you know, let us give some time. We will analyze that part and then we'll let you know. We need to modify the existing skills. Also. Right? Yeah, exactly exactly that complete refactoring is required in that case, no. The problem, you know, problem where it would rise when you would get couple of entries for the same table with two different check type. Yeah, exactly. If we are running that at the same time, then it will create a problem. Because, look, uh, your threshold type would pick up template, right? It would create a SQL. Then, you know, we have to stop the parallel processing over there. So what would happen? You need to have an additional check if it has created a file for the table in suppose in the duplicate check type, right?
+
+00:12:15 - 00:13:04 Unknown Speaker:
+
+Okay, then the next time it is checking for the stagnant one or creating a one, although it would pick up the template for the stagnant one. Merging would be difficult because you there would be couple of files, one would be sitting in the duplicate and one would be sitting in the stagnant. So it would be like, you know, doing a code merge. No, as Arun said, we can remove this table segregation, this folder segregation and keep all in one folder itself, generated SQLs. And maybe we can have a check to see if already there is an SQL locally. Right, that's what I told, right? Merging would be difficult. We have to come up with a plan how we are going to merge it. Because there would be a new SQL file generated, which would already be there in your bucket.
+
+00:13:05 - 00:13:54 Unknown Speaker:
+
+Right, yes, even if you remove this one. So in that case, uh, we have to add a condition. Like if the file is already there in this folder, we are not supposed to download it again. Yeah, that is doable only. Yeah, yeah, doable only yeah. But let's see, you know, let's analyze the complexity of that, and then we will get back to you on this one. Just leave us a day or two, right? Uh, to check and we'll let you know on this. So here, you would give a demo, like a run example or something you can, like for an existing rule, right? Can you remove like the last rule and then just try adding it again? Yeah, yeah. So what I did, I ran it. Let's do it. Prithvi, let's do one thing.
+
+00:13:54 - 00:16:07 Unknown Speaker:
+
+Go to that CSV file, add a duplicate entry over there, just copy paste, just change the DQ rule ID number. Okay, yeah. Added for duplicate. DQID is alone enough, right? Yeah, you can just create, just make the DQID as unique and then, you know, keep it as it is. No issues. This is a new folder with timestamp so under duplicate account user the first. No, it has overwritten actually. Yeah. Tildi QID 3 is existing SQL. From here, it has added this new one. No, not even 3, it's 4, 3, 4, it is. Yeah, this is newly added. I actually have to. Increment it and update it. That is not done for differentiation purpose. I didn't do that, I'll do that logic. Otherwise. This is the new skill it has put in.
+
+00:16:07 - 00:17:29 Unknown Speaker:
+
+Okay, okay, yeah, and this is secondary scale here. Yeah, it has appended it already. Actually, this is not discussed with Sachin also. Only for reference purpose, how it is generating when compared with the legacy SQL for same rule ID. I mean, I have just created an HTML page for us to review how it is doing it. Since lot of SQLs are there, this is one thing, one HTML file. And this would be useful after the execution that is also based on confirmation. We'll put this the logic, so how many records we received, how many are successful? Okay, and what is the description and what files? Created? Some small report that can be sent through a mail or something to the people who are interested in here. Okay, okay, yeah, yeah, this writing thing alone, I'll check that.
+
+00:17:29 - 00:18:41 Unknown Speaker:
+
+Uh, yeah. Okay. If there is anything else, I'll discuss. Sure. Yeah. Thank you. Thank you, Prithvi. Thank you. Thanks, Prithvi. This looks really good. Yeah. Thank you, sir. Thank you, Rachna. Sachin? Shall I stop sharing, Sachin? Yeah, I think we should be good with it. Yeah. Thank you. Yeah, I think before we move to the updates, Jason, since you're there on the call, wanted to discuss one thing. Yep, sure thing. Yeah, Jason. So I think you might have seen Shelly's email yesterday, right? She looped you and Matt into that. So basically, there's this another table, Rezi, user venue hist. Is basically again created by the GM and his team when they were creating the venue table, right, initially. So there's this historical dump or load kind of a table as well that they maintain.
+
+00:18:42 - 00:19:24 Unknown Speaker:
+
+So, I mean, there is just one user, which is again Shelly's team itself, somebody named Precious T, right, from their team basically uses this for some kind of a purpose. And we received an email from Cornerstone team basically asking for the migration plan for the same team because the rest of the tables are have been hydrated to Lumi, right? Even though their movement, like the entire pipeline movement, the SFTP art is still to be done, like I mentioned earlier, right? But this one table, I think it's not being even migrated to Lumi as of now. So, I mean, that's where, before proceeding with this, I just wanted to check with them exactly what is the need, right? If we really want this table to be migrated or not.
+
+00:19:25 - 00:20:31 Unknown Speaker:
+
+And that's where I think Shelly has confirmed that she needs it for audit purposes. Has to be filled out, asking for the migration plan. I think I'll set up some time with you, probably tomorrow. Uh, just to go through that. And then we can, uh, I mean, finalize what exactly has to be done next, right? Yes, uh, that's actually. This is a really good conversation. Because are all the other tables? Um, I know they're being hydrated to Lumi, but do we need to switch the pipeline to pay to Lumi for? Okay, right? So they'll be hydrated? But we need to switch the pipeline. So let me just give us a, you know, a quick overview update on the you know, tasks that we are doing so for AFC check, type on in the there is a blocker, like, you know, while sending the attachment, right?
+
+00:20:31 - 00:21:22 Unknown Speaker:
+
+What? I heard from Ansys that we need a SMTPIL protocol to be added for our project, that wouldn't. That is running like. You know, we have enabled the SFT last time, so let me see if we, uh, you know, we can go with the same processing. And then if that is enabled, then I think we would be able to resolve this. FC Check Uh, access is still there, is still not responding. I hope you have seen that message, right? Even I tried to reach out. Was there anything from your side on that? Like, were you able to escalate it? Or something? No, Sachin. I was waiting, like, probably to yes, respond or something, so I have not escalated it. Yeah, if we can set up a call, I think that would be really helpful.
+
+00:21:22 - 00:22:38 Unknown Speaker:
+
+Just like, have a call with them to understand what exactly is pending from our end, right? And then we can availability and set up something for tonight or tomorrow night. Okay, yeah, sure, okay, and uh, coming to this Q track, dqim on in, so the things are there in, uh, you know, I have. By end of this fall, I'll share you the incident number also. So it has been tested on A2 just again. We need your follow-up with Vagwan and sort of to merge the PR. We are chasing them from last couple of days or Friday deployment to E3. Do you want it to be merged today? Such a like, Yeah, if they can, right? If they can merge it today itself, right, let's not wait for tomorrow if they can merge that PR today itself, right?
+
+00:22:38 - 00:23:28 Unknown Speaker:
+
+Once that is back, you can review it on Thursday, right? Uh, back-end changes, end-to-end has been done from Kundan side, the BPMN changes, the code base changes, those all are ready from our side. It just that the content changes, which Ather asked Bhavan and Saurabh to merge it. Even I reached out to them yesterday. They haven't responded. So if you can just reach out to them to merge the PR. Can you just send me that PR link? Yeah, I'll send you all those three PR, which Ather is. So once that is merged, we can plan for either Thursday evening or max Friday morning deployment, E3 deployment. So I end of this call. I'll share you that incident number, also how it looked like, so we are sending those details to that UI. Also.
+
+00:23:28 - 00:24:18 Unknown Speaker:
+
+Okay, on the one there is a blocker, so we are trying to, you know, the one that I asked Kundalini to test the non-interrupted timer for sending email and all. So the VPMN is not getting reflected in the environment, so we are working with the platform team to sort it out. Post that there would be some progress to be made on the same. So so that is the update on Self Quantro. Um, Samir is already working on it. We already had a discussion on that. Once some more progress would be done, we will keep you posted. Go to the next. Uh, okay, no, no, you, you move bit faster. So on automation job, uh, what we have identified out of the table, so risk per second that is having a ingestions on the audit in for table.
+
+00:24:18 - 00:25:03 Unknown Speaker:
+
+So for that, we would be releasing the job in this week end of this week. Uh, but for the rest of the table, it is being, you know, either either the hydrated table or some other information. For that. Again, I am reaching out to Mahendra, there is no response from him. I think you are, you are already part of. That group, is not responding from last Thursday, so let me see. Otherwise. If we are not getting any, uh response from the SRE team, then I'm going to, you know, uh, stop this automation job and maybe assign that few other tasks to name okay. But at least he would complete the risk first account. And there is a Raze MX quest, but that is already being implemented by Samir Uh in the DT flow, so that would work.
+
+00:25:03 - 00:25:54 Unknown Speaker:
+
+So we will be covering those table rest of the table. I need the details, so again, I'll cross check with my right. He respond By tomorrow or not. Uh, RPHX, we have call, go to the next, uh. The automation with Pre-3 is working, we already demoed it. Okay, uh, on raising Jason. The updated update is setting the file from your MX system to SFD, right? So that has been released, the files are being pushed. Uh, the Prod profile that I have said to you, could you please just try and test it out whether you are able to pull the file or not? Okay, so if you are able to pull the file, we would start sending the data tomorrow onwards so that you can, you know, complete the pipeline for the T3 raising on you loyalty status.
+
+00:25:54 - 00:27:01 Unknown Speaker:
+
+DT Flow will get deployed by EOD today, and the metadata promotion for E3 is planned for upcoming Thursday in the ISDR. So that would be again ready in the E3 environment. The summary one and the history one, right? So, those two metadata update, the pipeline creation is in progress. That would be again done by tomorrow morning next year. Okay? Now, coming back to that SFT profile for that RISI venue metadata update, right? That is still being blocked. Even the team from Kithim Batrati are not able to... modify the profile. The reason being now they are taking a request through a PRC. So that would be a change required from a global perspective. So once they are done, then only we will be able to test that is again in pipeline.
+
+00:27:01 - 00:27:52 Unknown Speaker:
+
+We are trying to release it by end of this week. There are PR, so we have made some changes again. There are, you know, some feedback from the production team, which they did not intimate it earlier, but now they are asking to make those change again. We are working on that and hopefully that would get released by upcoming Friday. That is one, uh, Rachna, on that data migration for DQ IM today yesterday data is populated, uh, first to 7th March of data. That would get populated in, again, next couple of hours or max two to three hours, okay? Anything else I'm missing? Or I think I did. So now it's enabled in E3, right? Yeah, it's enabled, right? Yeah, it's enabled in E3. And yeah, the data that you have asked to update, right, the distribution list, that has been updated.
+
+00:27:52 - 00:30:31 Unknown Speaker:
+
+So if you see today's data, let me share my screen. So you are able to see this data for, uh, the one which are failing yesterday basically, so you can see this one right, this product card, right? These are failing yesterday. So this has been updated so now you would be able to see the data insurance one that has been failed. And that would go live only when the PR that I was talking, right, right, these three PR. Once they merge it, then only it would go to the production. Where is Indhuja? Okay, I'll ping it to you. Okay? Sure. Okay, incident number... Man, did you ping me the incident kundal last time? March It would be like I was just thinking, is this an incident getting created? But let me hold up a little bit.
+
+00:30:31 - 00:32:17 Unknown Speaker:
+
+Um, the priority and urgency should be, should not be two, right? Uh, it should be three in this case, because that grid that I've showed you, right, I think in most cases. Did somebody increase the incident? Because I even remember this was SEP 3 only. That was SEP 3 only. Even I noticed. Someone is resolving it. I have not changed it. Priority and all. This was actually SEP 3 and even I do remember. Can we check the history somewhere? Check this one if you have no. That is a resolved one. Okay, again, someone has just moved it. I will, we'll take, we'll take care of that. One another. Okay, that, yeah, okay. So once you will create a new incident, I will validate it. Yeah, sure, sure, yeah, okay. And Ananda? Do we, uh, need to?
+
+00:32:17 - 00:33:14 Unknown Speaker:
+
+Uh, you know, uh, you know, use AI or something like, you know? Raj was asking his, um, use case or something. Oh, I didn't get that. Come again? Like, Raz is going to meet Poonam right now. I mean, they might be having a call, right? So, he was asking, like, if we have any input from our side. Like, using AI or something in the use case. I mean, we do have, like, two interns in our team who are working on certain stuff like that. But, yeah, I mean, it's still that. It's basically for their onboarding piece. Okay.

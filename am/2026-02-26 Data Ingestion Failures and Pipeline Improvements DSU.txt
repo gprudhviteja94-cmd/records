@@ -1,0 +1,220 @@
+2026-02-26 Data Ingestion Failures and Pipeline Improvements DSU
+
+Creation Time: 2026/2/26
+
+
+📅About Meeting
+
+  • Date & Time: 2026-02-26 11:30 (Duration: 1089 seconds)
+  • Location: [insert location]
+  • Attendee: [Sachin, Ayapa, Nirmal, Prithvi, Kundan, Aradia, Kartik, Anand, Raj/Rachna/Tanisha (business), Samir, Saurabh, Kundal, others]
+
+
+📒Meeting Outline
+
+
+Data ingestion incident & notification failures
+
+  • Incident description and priority The primary issue discussed is a high-priority data ingestion failure. The ingestion is discarding out-of-sequence files (example: seq 142 arrives but 141 was never ingested), causing pipeline failures. Notifications for E3 failures are not being received as expected. This incident must be resolved as the top priority; the group should not receive the same failure again tomorrow.
+
+  • Ownership and next steps An incident was created and assigned to Aradia to investigate and share findings. If root cause requires SR team changes, tag Kartik (who provided the file). Lumi team should also be involved for checks if needed. Kundan and others should support Aradia to find the root cause and remediate.
+
+  • Files and repro steps requested When requesting fixes from Kartik or SR, ask for the file(s) for yesterday and today (the dates where ingestion failed) so the team can reproduce and analyze sequence gaps.
+
+  • Potential configuration cause The group suspects a configuration issue in the file Kartik sent. The ingestion logic discards out-of-sequence records; therefore missing prior sequence numbers must be investigated.
+
+
+DAG / Pipeline, scheduling, and environment practices
+
+  • DAG failures and notifications Nirmal’s DAG is failing; its failure notifications are not being received. Investigate whether the query used by the DAG is incorrect or whether the notification mechanism is broken.
+
+  • Scheduling frequency Team discussed changing scheduling from daily to hourly for quicker detection and testing. Consensus: make scheduling hourly for the test runs.
+
+  • Environment usage & promotion policy Test new tables and flows in lower environments (E1 / A1) rather than E3. Do not create test artifacts directly in E3. Ayapa confirmed the DQ Repository test table exists and was created in E1. Before moving to E3, validate end-to-end in A1/E1/E2 as applicable.
+
+  • Deployment help For deploying code into E2/E1 (Even environment), Ayapa can assist. Pipeline build is only required in E2/E3; direct uploads are possible for some components. Let developers finish code (queries fetching latest records) before deployment support is provided.
+
+
+DQ Repository test table and testing approach
+
+  • Test table purpose The DQ Repository test table was created to validate flow and template behavior. Tests should insert a new rule (new record) and verify the query pulls the latest record for the relevant check_type, particularly for stagnant check types.
+
+  • Test plan details Create a query that always fetches the latest record. Insert a new rule to simulate change and verify the end-to-end template works (notifications, human task creation, timer behavior, etc.) in the test environment before promoting.
+
+  • Who will build what Ayapa created the repository/test table. Developers (Nirmal and others) must implement the query to fetch latest records, complete coding, then coordinate with Ayapa for deployment to test environment.
+
+
+BPMN / human task timer test
+
+  • BPMN bundle and environment Ayapa has created a BPMN bundle that should be deployed to EU1 environment and referenced in the USCDO repo. The current BPMN is not final (not complete PPMN), but needs to be deployed for testing.
+
+  • Behavior to test Insert system.out.println logging at specific points. Configure the timer as pt1s (non-interrupting timer) and verify:
+    
+    • Human task creation occurs and becomes active.
+    • The first reminder and second reminder paths become active if no user action.
+    • If user approves/rejects before reminders, the flow follows the corresponding route.
+    • Confirm the human task is active after the print statements and that the timer behaves as non-interrupting.
+
+  • Priority This BPMN/human task timer testing is second priority for today. No email notifications required — this is to validate flow on the platform.
+
+
+Quarterly reporting / data availability & stakeholder communication
+
+  • Quarterly dataset feasibility Anand and Raj expect a demonstration of ingested records. Only five records have been ingested so far; full quarterly records are not available in the DB yet. If asked by Raj, present those five records and clearly state that complete quarterly records are not yet available; check feasibility before promising more.
+
+  • Preparation and communication Samir (or others preparing the description) should have the first set of descriptions ready; Raj may contact today. Be prepared and do not provide misinformation. If business asks, state the current development/test status and only show ingested sample records.
+
+
+Use-case data storage and dependencies
+
+  • Question: persist or not Team debated whether to store the loaded data (feed key/warehouse table values) or only process in-memory for reporting. Decision depends on whether ingestion validation is required:
+    
+    • If ingestion checks are needed, persist data and add dependency links (maestro) for ingestion tracking.
+    • If only processing for reporting, no need to store; use plain scheduler day-1 SQL scripts.
+
+  • Action: confirm with product First ask Rachna whether data must be stored. If Rachna cannot confirm, escalate to Tanisha. Do not contact business stakeholders directly before going through Rachna (preserve hierarchy).
+
+
+Miscellaneous technical questions
+
+  • Combo box / variables behavior Concern raised about two properties/variables tied to true positive/positive selections. If either variable is empty, tasks may get locked and not complete. Devs should handle empty selections and ensure task closure logic handles missing values.
+
+  • Access requests If anyone needs environment or repo access, follow the normal access request process (reach out via the usual access team), after confirming with Rachna if needed.
+
+
+📋Overview
+
+  • Highest priority: Resolve data ingestion failure (sequence gap discard) and missing E3 failure notifications; incident assigned to Aradia; involve Kartik / Lumi team and tag SR if necessary.
+  • Investigate Nirmal’s failing DAG and why notifications are not sent; verify query correctness.
+  • Make test scheduling hourly (instead of daily) for quicker feedback.
+  • Test DQ Repository flow in lower environments (E1/A1) first; Ayapa created test table and can assist with deployments to test environments.
+  • Developers to implement query to fetch latest record for check_type; insert new rule to validate-flow end-to-end.
+  • Deploy BPMN bundle (created by Ayapa) to EU1, add references in USCDO repo, add logging, set non-interrupting timer pt1s, and validate human task & reminder behavior — second priority.
+  • Prepare first set of description and demo sample records (five ingested records) for Raj; clearly state quarterly data is incomplete if asked.
+  • Confirm with Rachna whether data persistence is required. If ingestion tracking is needed, persist data and add dependency links; otherwise use plain scheduler and skip master.
+  • Handle empty combo-box / variable cases in UI/task logic to avoid locked tasks.
+  • Follow proper access request and escalation procedures; do not bypass Rachna when querying business questions.
+
+
+🎯Todo List
+
+  • Aradia:
+    
+    • Investigate root cause of the ingestion failure, confirm whether it’s configuration/file issue, gather logs and reproduce using yesterday’s and today’s files (as requested), deliver analysis and remediation steps — ASAP/today.
+    • Verify why E3 failure notifications are not sent and propose fix — ASAP/today.
+
+  • Kartik:
+    
+    • Provide files for yesterday and today (the ones that failed ingestion) when requested; correct file configuration if issue confirmed — deliver on request (today).
+
+  • Nirmal:
+    
+    • Debug the failing DAG and verify the query used to pull failure/report data; fix and redeploy — target today.
+    • Complete code to fetch latest record from DQ Repository test table and coordinate deployment to test environment with Ayapa — target today.
+
+  • Ayapa:
+    
+    • Assist with deployments to Even/E1/E2 environments; verify BPMN bundle presence and help reference it in USCDO repo — support as needed (today).
+    • Confirm DQ repository test table location (E1) and help developers run end-to-end tests in lower environment — today.
+
+  • Prithvi:
+    
+    • Plan the test cases for the upcoming sprint: how to test end-to-end template flow (including stagnant check types, new rule insertion, reminder flows). Share test plan — prepare today for sprint.
+
+  • Kundan:
+    
+    • Coordinate with Aradia and the team on the incident investigation; escalate to Kartik or SR if needed; ensure incident does not reappear tomorrow — today.
+
+  • Dev team (owners: Nirmal / others):
+    
+    • Implement handling for empty combo-box / variable cases to avoid locked tasks; ensure task closure logic is robust — deliverable: updated code and test — this sprint.
+    • Set scheduler frequency to hourly for test runs (where applicable) — today.
+
+  • BPMN deployer (owner: Ayapa / assigned dev):
+    
+    • Deploy the BPMN bundle to EU1, add USCDO repo BPMN reference, insert system.out.println logs, set timer to pt1s and verify non-interrupting behavior and human task activation — target today (second priority).
+
+  • Samir / person preparing demo:
+    
+    • Prepare first set of description and demo artifacts (show 5 ingested records) for Raj; be ready for possible call — today/tomorrow.
+
+  • Rachna:
+    
+    • Confirm whether the use case requires persistent storage of loaded data (ingestion tracking) or only transient processing — respond ASAP so devs can decide dependency/linking.
+
+  • If Rachna cannot answer:
+    
+    • Tanisha: be available to confirm persistence requirement and dependency linking.
+
+  • Access requests:
+    
+    • Any team member needing environment/repo access: raise access request to the access team following normal process — as needed.
+
+Notes: For any urgent clarifications, contact the meeting owner by phone (owner indicated being on leave today but reachable by phone).
+
+
+Transcription
+
+00:00:00 - 00:01:09 Unknown Speaker:
+
+The environment. Okay, and post that, just test it out thoroughly, it should not. You know, the instance are failing and we are not receiving the notification. So first priority is this one to fix it and then pick up the receiver. Okay, so should I make this to a like hourly running day instead of daily? Sorry, I did not get your point. Uh, should I make the like the scheduling part to hourly running. Yes, yes, yes, yes. Okay. Ayapa, when did you create that repository test table? Hi, Sachin. Yes, Ayapa has created the repository test table. Now, the thing is like we need to create a DAG and move until E3 where this test data to go. Why E3, man? Why E3? Why E3? That was the reason I asked in that question, where did we created that table, in which time, in which?
+
+00:01:09 - 00:02:01 Unknown Speaker:
+
+And where did we created that? Uh, you're asking about the DQ Repository test table, that is the question. Sorry, yes, yes. We created the E1 environment. Yeah, so test it out in A1, we should not be creating it in E3 directly without testing. Don't do any environment. Okay, just for your information. I'll be on leave today. Uh, both my wife and daughter, they're not well, so I'll be taking a leave. Reach out to me over my phone in case anything urgent. Uh, but you know, keep the task moving which you are working. Okay, nirmal, I already had a word, uh. And see. I am aware with the task that you are doing so you can continue on that work along with that. Also, I know what you are doing. Just one ask to Prithvi.
+
+00:02:02 - 00:02:46 Unknown Speaker:
+
+Now don't trust to implement all the template as the expectation from Anand is to test the flow in the upcoming sprint. Now plan it out how we are going to test it. The test table which IFA has created, the Deque repository test table, there what you need to do, create a query which would be pulling up the latest record from that. Suppose I insert a new rule over that table, That would be pulling the for the check type, whatever check type you have built it. It's stagnant, right? So for the stagnant one, insert a new query or the new record over there with a new rule, fetch that through the query. Okay, and then see whether your template is working end to end or not. In the Even environment.
+
+00:02:46 - 00:03:37 Unknown Speaker:
+
+If you want to deploy your piece of code in the Even environment, you can take help from Ayapa. He can help you to deploy it into the Even environment. Approval and all in Even also. Or it just required on the E3 for the pipeline build. Yeah, only pipeline required on E2 and E3 only, even it is not required. It's a direct, straightforward, we can upload it, you can upload it. Okay, so let him complete the coding first, because he would not have done that, you know, fetching the details from the table, right? That query. Let him complete the build and then, once he is ready, help him out to make it deploy to the Even environment. Same goes for nirmal. Once he is done with his change, get deployed to E3 today.
+
+00:03:37 - 00:04:25 Unknown Speaker:
+
+So Kundan, just just for your information, I'll tell you there is a ingestion failure and again, the dag that Nirmal has created, right, that is not working. This one again. We have a E3 failure notification, but we did not receive the notification. Which we have built, so there must be issue either. The query that he has built is not correct, check that one. Why we are not getting this report, it's it's already being there, right? This failure report is already being repeated, you know, is being reported from last two days, right? But let me check that I will let you know. Okay, okay, now I think I have covered up all. You are only left. Kundan, So Kundan. The very first, highest priority is this one. I just added it to this group, uh, this one.
+
+00:04:25 - 00:05:19 Unknown Speaker:
+
+This is highest priority, this is top, most priority. I already shared the root cause to the insurance team, but should not happen. Like, you know, they would mention that as such. In his only, nothing has moved. I should not be hearing back this tomorrow. What is this incident about? This incident is regarding the data ingestion failure. Okay, and I'm pretty sure this is a configuration issue of the file that Kartik has sent. Okay, I, I already, um, intimated him that this is a issue he need to fix, right? But he was bit rigorous. Let Lumi team to check, Lumi team to check. Okay, so what I did? I just created an incident and right now this incident is assigned to Aradia. He is checking on that, he would be sharing his input.
+
+00:05:19 - 00:06:13 Unknown Speaker:
+
+And you know how this end-to-end works? In case you have any, you know, confusion, give me a call, I'll I'll route you to the right directions. This is the pipeline, okay, you have the access of this pipeline. Yes, this is top, most priority. Okay, uh, so just walk with Aradia to get the root cause. And if it is something that he would mention that this need to be fixed from SR team. Most instances, just tag Karthik Karthik. Please take a look on this one. And then when he would be sending the file, he should be sending this file. Uh, for DV, for yesterday and even for today's date, file for which this failure happened. This happened because, you know, previous day ingestion failed, right? And this comes with out of sequence number 142 expected, right?
+
+00:06:13 - 00:07:34 Unknown Speaker:
+
+But 141 ingestion is not there, so if 142 comes, then it will discard it. Okay, so this is the highest priority. Second, what I need, which I gave you code base. I am going to post this change, post this rule creation. I need one one confirmation from you. This would, this would again going to get changed. This is not a complete PPMN. Okay, uh, so this should be like this. I did not, uh, you know, deploy the complete PPMN. We will do this later. Now, just confirm me that this bundle is already created by IAPA. IAPA has already worked on this. What I need, go ahead and deploy this BPMN in EU1 environment. In the same USCDO repo, put the BPMN reference there. Print system.out.println here and print system.out.println here. Once you are creating this task, make it pt1s.
+
+00:07:36 - 00:09:03 Unknown Speaker:
+
+I will do that. Okay. What I have to check is that this is a non-interrupted timer. So, after doing system.out.println, is this human task active or not? I have to test this out. Okay. First thing, this human task creation will fail. Okay, and then again, that should be active. Okay, what is the plan behind that? Is that? Uh, this was, you know, suppose, you know? As soon as this human task gets created, I'll be notifying the user to either approve or reject the request. Okay, that would complete second first reminder, second reminder, this should get active, okay. But in case in between, if they have taken this action, then this would go to this route, okay, but basically. So, take this one as a, you know, second priority today. Complete this one.
+
+00:09:03 - 00:09:57 Unknown Speaker:
+
+Okay, no need to send a email or something, just you want to this right, just just to cross check on this platform. Okay, anybody having any other questions? I'll be anyhow putting this message Hey Samir on that, uh, contra one. Okay, although I'll be not there. I have moved the call to tomorrow so that you will get time to prepare that data. But still, Raj may reach out to you today. Okay. So at least prepare the first set of description that we were discussing yesterday. Yeah, actually I'm doing in currently I'm doing that only. Yeah, and on that quarterly one, you know, in case he asks you tomorrow, you can mention this is still, Raj, this is still in development phase. We have ingested those five record, you can show those five records with.
+
+00:09:57 - 00:10:48 Unknown Speaker:
+
+Anand has asked, Okay, and mention that we don't have the complete quarter record right now, right? And means first, check the feasibility. That is something feasible, you can work on it, okay, but if that is not feasible, then we have to come up with the answer. That we don't have, you know, complete quarterly record in our database as of now, so we have to test it out. Don't fumble here and there, you know, providing any misinformation to him, otherwise, it would be again a problem for us. Okay, but at least be prepared, at least the first set of record, so that, uh, you should not be struggling. In case he asked for a connect today itself, sure, okay, and reach out to me in case you have query, so I'll be expecting maybe a call from you or Max from Kundal.
+
+00:10:48 - 00:13:07 Unknown Speaker:
+
+I said, Do you have any query? Or you'd be able to move? I see that, you know, Saurabh did not. Uh, that's the one thing I just wanted. Okay, uh, let me, let me, let me. Being sorrow. Just one thing I have to check. Uh, those two properties we are adding on true positive only or on both name true positive, only positive. Okay. History is not there. If you make a group, where will you get its history from? It's been made since yesterday. The question just one thing what will happen if these two variable any of them are coming empty you know no data then what excellent. Because my code was ready, so that's why, you know, these all things are coming into my mind. Because if they are not selecting that combo box, right, the task won't be closed there.
+
+00:13:11 - 00:14:31 Unknown Speaker:
+
+Right. It's a locked one, right. Exactly. We just need to load the data whatever they are using from the BigQuery and process it, right? Is there any need to store the data somewhere in our use case project? I mean, do we need to create the dependency for those two tables, the Lumi Warehouse table? No, I did not get your point. Could you please come again? Sorry for that, so okay, uh, so uh. They are using, uh, like three uh queries they are using in that use case to load the data. Different types of data. So the so, this, uh. We have that C Stone feed key right in the warehouse table also. So is there any need, uh, to, like, create the dependency, uh, for the table in like we, how we create for the UM insurance in in all the environment.
+
+00:14:31 - 00:15:49 Unknown Speaker:
+
+Do we need to store that somewhere, that feed key for this particular use case, or we just need to use that data? Whatever? They are loading and process it in the data frame and use for further reporting? We can, we can store it, we can store it. Are you going to make that, like, you know, table as a maestro? Dependency one. I didn't get that such an like. How we are checking the ingestion, then we don't need to store the data, but if we are checking the ingestion, then we have to store the data. Okay, then we have to add this link of dependency also if we are, yeah, yeah, that's what. That's what I I told and see, first of all, check with Rajna or Tanisha.
+
+00:15:49 - 00:16:48 Unknown Speaker:
+
+If we are going to store those data, then you have to add those table in the link up right to. Whenever there is a ingestion, but if you are, they are not keen with respect to ingestion. Then we don't need to store those data. Okay. Got it. Then it will directly be plain scheduler, day minus one, whatever the, you know, the SQL script is there. Yes. Don't include their, even if you're including in framework, right, just create one property and I think it will be done. You will skip the master. Okay. Yeah. So, okay. We need to check with Rachna on that. If they are. That intuition. Check with Tanisha that this is joined, right? Yeah, okay, okay, yeah, okay, don't go directly to Tanisha. First, check if Rachna can answer Okay, okay, okay, right.
+
+00:16:48 - 00:17:16 Unknown Speaker:
+
+Let's not directly jump to the business team. Then it would be like, you know, skipping uh, hierarchy, reach out to Rachna first. If she is not able to answer it, then then we can, uh. And on the access part, if you in, reach out to the folk. But as of now, he did not receive any answer. Okay, okay, anything else? yes.

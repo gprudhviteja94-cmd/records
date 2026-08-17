@@ -1,0 +1,173 @@
+2026-02-04 Access Issues and Automation Updates Stand up 6:00pm
+
+Creation Time: 2026/2/4
+
+
+📅About Meeting
+
+  • Date & Time: 2026-02-04 18:01 (Duration: 1161 seconds)
+  • Location: Virtual meeting (conference call)
+  • Attendee: Sachin, Suman, Anand (joining in ~5 mins), Rachna, Sarab, Jason, Samir, others (names inferred: production/dev team members)
+
+
+📒Meeting Outline
+
+
+Access & Blocker Handling
+
+  • DT flow access (Suman) Suman reported she does not have access to create the DT flow; the project shows no access. Sachin asked whether an incident was raised and requested Suman to check who the incident is assigned to. Team clarified that when access-related issues occur, a blocker ticket (task marked as blocked) must be created with the reason (e.g., awaiting access). The guidance was to mark the specific task blocked (not the entire user story) unless the whole story is truly blocked, so others can continue refining remaining work.
+
+  • Blocker ticket procedure Demonstrated/confirmed how to mark a task as blocked and record the reason. Emphasis on blocking a specific task instead of the entire user story unless necessary.
+
+
+Automation / SQL Analysis (Sachin / dev)
+
+  • SQL script analysis for automation job The automation work involves analyzing SQL scripts and identifying common patterns to capture in a configuration file. There are observed deviations across SQLs, so the dev needs complete details before finalizing approach. Sachin will wrap up analysis with the dev and then schedule a call with Rachna (expected tomorrow or the day after) to finalize path forward.
+
+
+UI / Configuration Changes (Dev updates)
+
+  • Request detail display & table reorder One developer implemented configuration changes to display action results on the request detail page and reordered table data to present action reasons, classification, and justification in the correct sequence. These two changes are complete and will proceed with E3 testing. Details to be shared in the group immediately (Sarab is active/responsive).
+
+
+Data Movement, Testing & Environments (Data/dev)
+
+  • Testing approach and environment details Developer explained testing approach using five provided records (pointing to Lumi data). Current practice: create a temporary table in E1 and test; plan is to move data and DAGs to E3 to test against real data. Only the artifacts table should be moved; other structures should be created dynamically. One record was tested successfully, showing results in DQ results.
+
+  • Tasks for environment setup Plan to create required tables and insert data in production/E3, and move DAGs. Developer to connect with Jason to confirm control name and data file name to identify download/data issues.
+
+  • Metadata vs. data ingestion status Clarified that metadata updates can be marked completed, but venue table updates and testing in the environment should remain "In Progress" until data ingestion and testing are actually completed. Team discussed responsibility for test cases: developers should cover unit/SIT; if UAT is needed, product team provides scenarios. There was agreement to add test-case tasks and attach them to stories.
+
+
+Alerts & Notifications
+
+  • Ingestion alerts Clarified whether alerts are needed for successful ingestions or only for failures — the decision is for failure-only alerts. Team member working on alerts will keep others posted.
+
+
+QTrak / Self-service Automation (Other dev)
+
+  • QTrak self-service automation A team member started work on QTrak self-service automation, had a call with Sachin for inputs, is creating a PoS prototype and will review with Sachin. A previously created bug in QTrak was resolved.
+
+  • ZSFT file creation and insurance data validation ZSFT file creation was completed earlier that day. Insurance-related data validation was done by the team. Documents flow/DD flow access not available for some members; they prefer access to be granted to the person who will maintain/debug (e.g., let Samir get access rather than another dev doing it for him).
+
+
+Production Support (Rachna)
+
+  • Production support tables Rachna shared details about three production support tables; team member is reviewing them.
+
+
+File exchange
+
+  • Files from Jason Jason sent files used in recent testing; team confirmed receipt.
+
+
+📋Overview
+
+  • Suman lacks DT flow access; incident raised — must check assignee and create a blocker ticket for the specific blocked task.
+  • Blocker procedure clarified: block task-level items, add reason, avoid blocking entire user stories unnecessarily.
+  • SQL automation analysis in progress; deviations observed — follow-up call planned with Rachna to finalize config/pattern approach.
+  • UI/config changes for request detail display and table reorder completed; will proceed to E3 testing and share details in group.
+  • Data testing: temporary table approach in E1 tested for one record; plan to move artifacts table and DAGs to E3 for full testing with real data.
+  • Only artifacts table should be moved; remaining tables generated dynamically.
+  • Confirm control name/data file name with Jason to troubleshoot download/data issues.
+  • Metadata updates can be marked completed; data ingestion/testing must remain "In Progress" until verified.
+  • Alerts will be implemented for failures only.
+  • QTrak automation and ZSFT files updated; bug resolved; insurance data validation completed.
+  • Production support items (three tables) under review.
+  • Files from Jason received.
+
+
+🎯Todo List
+
+  • Suman:
+    
+    • Check incident assignment for DT flow access and confirm assignee, ASAP
+    • Create a blocker ticket on the specific blocked task with reason "awaiting access", today
+
+  • Sachin:
+    
+    • Wrap up SQL analysis with developer and schedule call with Rachna to finalize approach, within 1–2 days
+    • Review PoS prototype for QTrak self-service automation and provide feedback, ASAP
+
+  • Dev (who implemented UI changes):
+    
+    • Share details of request-detail and table reorder changes in the group, immediately
+    • Proceed to E3 testing and report results, by end of tomorrow
+
+  • Data Engineer / Dev (moving data/DAGs):
+    
+    • Move artifacts table data and required DAGs to E3, create necessary tables and insert data, today/tomorrow
+    • Test end-to-end with real data in E3 and report DQ results, after migration
+    • Connect with Jason to confirm control name and data file name to identify download/data issues, today
+
+  • Tester / Devs:
+    
+    • Create test-case tasks (unit/SIT) and attach to stories (including UAT scenarios if required), this sprint
+
+  • Alert owner (assigned person working on alerts):
+    
+    • Implement failure-only ingestion alerts and share status with the team, ongoing (keep team posted)
+
+  • Rachna:
+    
+    • Provide any further details required for production support (three tables) and coordinate testing, ASAP
+
+  • Jason:
+    
+    • Confirm and share control name and data file name used in recent files, if not already shared, today
+
+  • Samir / Access admin:
+    
+    • Provide DD/DT flow access to the appropriate owner (so they can maintain/debug), ASAP
+
+Notes:
+
+  • Ensure venue table testing remains marked "In Progress" until data ingestion and environment testing are complete.
+  • Keep the group chat updated when changes are pushed so reviewers (e.g., Sarab) can respond quickly.
+
+
+Transcription
+
+00:00:00 - 00:04:06 Unknown Speaker:
+
+Thank you. Good evening. Hi, everyone. Anand will be joining in the next five minutes. You just ping me. OK. We'll just wait then. Suman, did you get the access for the DT flow? Your voice is still low, Suman. Hello? Yeah, did you receive the access for creating the DT flow? No, Sachin, it's still on the... You don't have any access to the project. It's showing like that only. No, and then, uh, did you raise the incident? Or, yes, so, can you check to whom the incident has been assigned? Okay, one second, and then secondly, whenever there is, uh, issues like that. Please create a blocker ticket for. This means you have to create a task and mark it as blocked. Um, or you can just it on the which is blocked. The second, second one.
+
+00:04:06 - 00:05:03 Unknown Speaker:
+
+Yeah, so someone, and yeah, you can just do this, someone like, block and then add your reason. So what is your reason? You're awaiting access? Is it waiting for that? I don't prefer this. Uh, I'll tell you the reason. Um, because, you know, there might be a that he might be doing over the same user story, right? So it's better to block a particular task instead of blocking the complete user story until and unless there is nothing to do over that user story. So the entire user story is not blocked, just a part of it is blocked? Exactly, exactly. At least he can refine the story. Yeah, I thought the entire thing was blocked. If only a particular thing is blocked, you can block that particular task. Exactly. So you know someone how to mark a task as blog, right?
+
+00:05:04 - 00:06:32 Unknown Speaker:
+
+Yeah. Yeah. Yeah. Yeah. Okay. And see, you can start with your updates, please. Yeah. So I'm working on the automation job, doing analysis of the SQL script, the type of patterns. So we can, design the common pattern, adding it in some config file, doing some analysis on that, it is in progress. SQL So I have partisans, the SQL among the resources, and we have some observation. But before coming into a conclusion, I need those, you know, complete details before setting up a call with you and Rachna to finalize the path forward for that. Because we have seen lots of deviation over there in the SQL. And let me, you know, wrap up those analysis along with the dev. And then maybe tomorrow or day after tomorrow, I'll set up a call with you and Rachna.
+
+00:06:34 - 00:08:05 Unknown Speaker:
+
+Okay, sure. I think you can go ahead. So I have worked on the application of the configuration to display the action results in the request to tell page. And the other one was to reorder the table data, basically, where we have to show the action reasons, classification, and justification in a proper sequence. So these are the two changes which has been done. And I'll be proceeding with the E32. Sharing these details in the group, Yeah, do it immediately, because Sarab is responding right now, right? So we'll see. Uh, appropriate, we would be able to, uh, you know, proceed with the changes to the A3. Oh, great, yeah, thank you. Like, maybe tomorrow, by end of the day, I will make complete that testing. Why? Because you have sent me the five records and those are like pointing to the Lumi data, like AXP LumiT, right?
+
+00:08:05 - 00:08:49 Unknown Speaker:
+
+So what I have done is like based on the where clause, I am creating a temporary table in our E1. So now we don't do that, right? Just create those records and move it to E3. There we'll test it. The tables that I have shared would be there, right? It's just the data would not be there in E1A2, yeah, in E1 we have the tables. So for what I'm doing is like, I have created a one record, I have picked only one and twisted that code, and I have tested it. It is working fine. Uh uh, so I'm able to see the result in the DQ results. So if you want to run, do the testing for one day and month. I think it we need to push everything, it's necessary.
+
+00:08:55 - 00:09:46 Unknown Speaker:
+
+What I will do today, I will move the data code to the E3 then. Yeah, yeah, yeah. Let's see over there with the real data what the values are coming. Yeah, I need to create those tables over there in the production. I need to move those DAGs as well. I will do that and create those DAGs as well. Sorry, tables and insert these data. Okay, yeah. So the only data that you should be moving is this artifacts table, right? The rest of everything should be created dynamically. Created directly. Yeah, with these five records. This session, I will connect with Jason and I will try to figure out what is the control name and data file name he has given. And so that, like, I can identify what exactly the data issue is like, the download issues.
+
+00:09:46 - 00:11:33 Unknown Speaker:
+
+So, yeah, one more thing, the message that you are paying to me, just mention it that I need to get the password for a splat G. I just need one clarification on this one. So do you need a alert, or even for a successful ingestion, or just for the failure one, just for the failure? Okay, okay, okay, okay uh. He's already working on that, so we'll keep you posted on that one. Yeah, sure, okay, uh, just one uh. Observation you should not be marking this venue table updates as completed. We are still in the silver and. Please mark it in progress. Until you complete the data ingestion, we can't mark it as done. You can mark this updated the metadata completed. That's fine. But testing in the environment should not be marked as completed.
+
+00:11:33 - 00:14:17 Unknown Speaker:
+
+That should be in progress. Engage the tram team. But the provision is not clear right now, right? So it is the kind of unit testing that folks are doing, yeah, even for that is know the strength of dedicated testers. We expect everybody to do everything. At least we can get it from the product team and then based on that we can mark it as pass or fail. Like, what exactly, you know? No, not product, right? Like, we really don't have to depend on the product team for the test cases. So okay, so there's something called unit and sit that the developers can do. If it is a UAT story, then I understand that we can take the scenarios from the product. You can not doing right. That's what I marked it right now.
+
+00:14:17 - 00:16:21 Unknown Speaker:
+
+We were not doing, but if that is something needed, uh, going forward, we can take care of that also. So then just create one you know, test case you, you know task over there and then just attach it, attach it, attach it. And you know, anyhow. We have received the sign up forms and so if we, there were no test cases. Correct. Sure, I'll add those test cases. Sorry, yeah. Yeah, and also ours, it would be similar like for the other test link. We will be adding, working on currently and coming to other study. Production support. Yeah, Rachna has shared some details. That part, I'm looking at the three tables, some production support. Yeah, that's all about from me. Thank you. Hey hello everyone. Yeah, me. I started working on this QTrak self service automation project.
+
+00:16:21 - 00:18:24 Unknown Speaker:
+
+I had a call with Sachin in the morning so I got some inputs from him. So, I am creating some POS kind of thing first and then review it with him. If things goes well, we proceed with that one. Okay, so the AZ team is not there and even the insurance company is not there. So, on Q-Track, basically I was working on that issue which created a bug yesterday. Has been sorted out now. So that part for the Q track and then for the ZSFT file creation is done today morning. And then for insurance. There was some data validation was required, so that is also done from our side, yeah, and documents. Not able to create the DD flow. I can ask somebody to do it, but I don't want to do that.
+
+00:18:24 - 00:18:51 Unknown Speaker:
+
+Because I think that that would be lots of ask to Samir. And then even soon won't be able to, you know, debug or fix it going forward. So let him sort out that access so first. And then now the work that he has did with Jason. Uh, Jason already sent that file to us for the one that he did yesterday. Okay, um, yeah, I think that's it. Yeah, we received the files, woman. We received the files.

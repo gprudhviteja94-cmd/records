@@ -1,0 +1,164 @@
+2026-02-03 Deployment Impact and Knowledge Transfer Discussion sachin call
+
+Creation Time: 2026/2/3
+
+
+📅About Meeting
+
+  • Date & Time: 2026-02-03 12:21 (Duration: 1057 seconds)
+  • Location: No location mentioned
+  • Attendee: No relevant content mentioned
+
+
+📒Meeting Outline
+
+
+Deployment & Production Impact
+
+  • Deployment timing and impact The deployment is imminent and may impact the officer's planned work. There is concern whether reported issues can be fixed by tomorrow. The deployment has caused schedule shifts (previously planned for the 3rd, moved to the 1st). Team must keep this item tracked and coordinate with business hours to avoid blocking critical processes.
+  • Backup & coverage during leave Discussion noted that key people (e.g., Kundan) are on leave; the team needs backups to handle production issues. Office hours on Friday are available. The expectation is that others (e.g., Athar, ANSI) or the meeting lead will step in, but clear handovers and knowledge transfer are required to ensure cover during absences.
+
+
+Quadro / Q-Track (Control) Knowledge Transfer and Ownership
+
+  • Current status and dependencies There is an ongoing phase-based implementation (phase 2 dependency before phase 3). Samir indicated phase 3 cannot proceed until phase 2 completes. Discovery is still in progress and several dependencies exist, so blind implementation is not acceptable.
+  • Expectations for KT (knowledge transfer) The attendee was asked to prepare a document summarizing their understanding of Quadro/Control. A reverse KT (review of what the attendee learned) is required before assigning further tasks. The lead expects a clearer status update after initial KT sessions.
+  • Concerns about incomplete handover Only ~20 minutes of KT occurred with the subject matter expert; the lead expected follow-up the next day and did not receive adequate updates. The lead questioned readiness to work independently on Quadro given limited KT and suggested further sessions are needed if the attendee is unclear.
+
+
+Automation Proposal and Analysis Requirements
+
+  • Scope and caution on automation The attendee proposed an automation approach (consolidating multiple SQL/sequence files into a single solution). The lead emphasized that automation must account for the existing running system and its established behavior. The current system supports ~1500 roles (tags); a proposed reduction to e.g., 50 tags requires careful analysis of differences among those roles and how they will be mapped/clustered.
+  • Analysis before implementation Before coding, a detailed analysis is required: list deviations across existing SQL/sequence files, demonstrate how deviations will be accommodated in a single file/solution, and confirm the proposed approach will not break existing production behavior. The lead insisted on completion of discovery and analysis (on a sample table first) before full implementation.
+  • Request for review and feedback The lead encouraged the attendee to share their work on Q-Track/automation for review and feedback, but stressed that the solution must integrate with and not blindly replace the existing implementation. A review session is proposed once ANSI/others are available.
+
+
+Communication, Prioritization, and Sprint Focus
+
+  • Sprint focus and task prioritization The lead expected the attendee to focus on assigned sprint tasks (set up environment, Java installation, Docker Compose, and Quadro/Control KT) and not shift early to unrelated experiments. Composer and environment setup were completed after follow-ups; more proactive updates were expected.
+  • Status updates and follow-up etiquette The lead highlighted several missed timely updates (post-Java install, post-KT) and asked for immediate reporting when KT sessions leave open questions. If additional KT is required, the attendee should proactively request more sessions with the SME or escalate so the lead can arrange them.
+  • Decision on assignment The lead will decide whether to keep the attendee on Quadro/Control or move them to another use case after the reverse KT and clarification of the attendee's current understanding.
+
+
+Next Steps: Review and Meeting Scheduling
+
+  • Review session offer The lead is open to reviewing the attendee’s automation solution. A review is to be scheduled tomorrow (once ANSI is back) so the solution can be checked for compatibility with the existing system.
+  • Continue Control KT The attendee agreed to continue working on Control/Quadro, prepare the requested document, and undergo reverse KT before progressing to broader automation or other tasks.
+
+
+📋Overview
+
+  • Deployment may impact scheduled work; track and coordinate to avoid blocking production.
+  • Several staff are on leave; backups and clear handovers are required to cover production responsibilities.
+  • Quadro/Control work is dependency-driven (phase 2 before phase 3); discovery not complete — cannot proceed to phase 3 yet.
+  • The attendee must prepare a document summarizing their understanding of Quadro/Control and complete a reverse KT before further assignments.
+  • Automation suggestions are valuable but require thorough analysis to ensure compatibility with existing production implementations (e.g., mapping ~1500 roles into fewer tags).
+  • The lead expects timely status updates after KT or environment tasks; some updates were missed and must improve.
+  • A review meeting for the proposed automation solution will be set once ANSI is available; the attendee will continue Control KT in the meantime.
+
+
+🎯Todo List
+
+  • Owner: Attendee (person working on Quadro/Control)
+    
+    • Prepare and submit a document detailing understanding of Quadro/Control (reverse KT content) — due: ASAP / before the review call.
+    • Continue analysis of SQL/sequence files: identify differences across files and propose how deviations will be handled when consolidating (start with one representative table) — due: before implementation starts.
+    • Provide status updates immediately after KT sessions or environment setup tasks (Java install, Docker Compose) — ongoing.
+
+  • Owner: Lead (meeting lead / Sachin)
+    
+    • Schedule a review call tomorrow (when ANSI is available) to review the proposed automation solution and accommodate it with existing system — due: tomorrow.
+    • Decide assignment for the attendee (keep on Quadro/Control or reassign) after reverse KT — due: after reverse KT review.
+
+  • Owner: Samir / SME
+    
+    • Provide additional KT sessions as needed to clarify phase 2 dependencies and operational details for Quadro/Control — due: upon request (coordinate with lead).
+
+  • Owner: Team Ops / Backup contacts (Athar, ANSI, others)
+    
+    • Ensure coverage plan is documented for production processes during planned leaves (e.g., Kundan, others) — due: ASAP.
+
+Notes: Confirm exact owners' names and explicit deadlines in the next review call if required.
+
+
+Transcription
+
+00:00:02 - 00:01:15 Unknown Speaker:
+
+And he is having a contact me check, he is having a call Thursday, right? So now, uh, uh, issues, I write. Whether we would be able to fix it by tomorrow or not, that is the idea of concern. And then his officer is going to get impacted, right? He has already planned it for third right and due to this deployment he has already sifted it to first in a couple of days. Okay, just keep this in your list. Yeah, I'll just keep a track of this. Okay. Okay, thanks for that. Yeah, happy. Good. Shall I quickly share my screen? Okay. I have done something with respect to Q track when I'm asking you to keep an eye on Quanto right now. Yeah, but uh, okay, so okay, let me discuss.
+
+00:01:15 - 00:02:11 Unknown Speaker:
+
+I don't know, I don't know whether the instructions are not clear or something right. Once you say to the last sprint, you go through, understand Quadro. I had a discussion with Shamir, he told me. There is a phase three implementation. Phase two is, uh, need to be completed, or you have a dependency, you cannot complete that. So I spoke to Alam also about that. If we if Sachin asked you about Quadro, you tell him that Shami told me this. Okay, but right now, today, what I have asked you? First of all, prepare the document, what you have understood in the contour, right? I will work on that, okay, Why did I included you into that automation discussion? The reason I am just trying to give you an overview of that one.
+
+00:02:12 - 00:03:10 Unknown Speaker:
+
+The discovery for that one is still going on. We cannot just go ahead and blindly implement something if we do not have a proper input on that. Okay, if you are talking about that thing, I understood the problem and I am automating it. Uh, a lot of things existing. Did you check the existing sequence? Yeah, I went through the SQLS and then the data is, and the author, Okay, you have gone through the sequence. What is the difference you have observed in different different SQL file, and how you are trying to accommodate those all SQLS file into a single SQL file. Sachin, I think, okay, fine. I mean, if you are interested in something else, let me do that itself. Okay, fine. It's not about that, man. Look, implementation, you can do it in a couple of days, right?
+
+00:03:11 - 00:03:57 Unknown Speaker:
+
+I have to understand. If you are building a system for this... I thought you will see what I am doing, then... Fine, I thought you will give some feedback. You have to understand the current system, Prithvi. When you are providing a solution to build a system, right? First of all, you need to understand, right? I can just ask you to start the implementation, right? No, I'm not. Is that going to solve your issues? You have to keep in mind the existing system which is already running, right? I'm not going to create, I think I have told that clearly, right? We have 1500 software, right? I'm not going to create 15 in tag, right? Now, if I don't want to create 1500 tags, right?
+
+00:03:57 - 00:04:44 Unknown Speaker:
+
+If I want to just create 50 tags, first of all, I have to analyze what is the difference in those 1500 roles and how I'm going to accommodate those 1500 roles into 50 tags, right? That is the analysis part. We have to complete it first before just jumping into the implementation. So, Even if you are, you know, trying to propose a solution, first of all, you should be clear. Like, what I am going to predict? If you have analyzed those sequence, there are lots of deviation in those sequence file right now. How you are going to make those deviations? All the differences between those sequence file, and then, you know, club into a single sequence file. If that part is clear, then we can go ahead and do the implementation.
+
+00:04:44 - 00:05:41 Unknown Speaker:
+
+You might be, you know, it's, it's not a press script, right? Like, we're just going. We have to adjust with the current implementation also, right? So you have to understand the current structure of the implementation, which is being already being placed and running. So so, if you're, you know, willing to work on that, go ahead. And then, first of all, uh, you know, understand the file SQL file. What is the difference in the SQL file? And how? You are going to just take one table, I'm not asking you to analyze all the table, right? It's not related to control itself. For you, I don't know what to say. Yeah, I did something. That would be very definitely useful for our team. Okay. I would request you to go through that and see what I have done.
+
+00:05:42 - 00:06:33 Unknown Speaker:
+
+But first of all, did you analyze the current system? That can be fruitful. I am not denying that, right? That can be fruitful. But is your solution that you are proposing is going to handle the current system which is in place? Right, if you just come up with a new solution, right? I have to take care of the existing system which is already in place, right? That is already running. And you know, people are using that one, right? I just don't, you know, can't go blindly. Just to replace those existing system, right? Because the new system would take time to be in place, right? Things doesn't work like, you know, just come up with a a new system and place it, right. You have to accommodate the existing systems. Also.
+
+00:06:33 - 00:07:16 Unknown Speaker:
+
+That's the reason these analysis and discovery, those are the part such. If I'm there in your position, I would have at least saw what exactly I have done and then see somebody. I mean, at least if I'm coming up with some solution, I'm thinking in the direction of what current team is doing, trying to automate that and how I'm automating it. At least. Okay, what is the time this guy has done? At least I would have seen that man, I am, I'm not, I had. Did. I discarded yourself? No, the question still remains. No, even if you have told me all these things after the discussion, then I would have been very happy. Look, look, the first part was that, Hello, what is the problem?
+
+00:07:16 - 00:08:09 Unknown Speaker:
+
+I'll tell you, first of all, I have asked you set up the score that was not that okay, um. I did not get an update post, you know, Java installation. Post that you did not update me, anything on that. As far as the Docker Composer is completed. Look, Composer was done once I followed up rigorously with you, right? Then that was done. Then I have asked you to work on control. If you had an interaction with me, right, you did not update me on the time. Why I have asked you to work on Quanto? Because if you understand that system, right? Uh, Samir won't be able to migrate all those use case independently. I need another hand, uh, who can pitch in and then help somebody to migrate that control, right?
+
+00:08:09 - 00:08:55 Unknown Speaker:
+
+I did not get any answers on Quanto, right? And I have included you on that automation just to give you an idea that we need to start from next time, right? But what you did? You have already started in the previous bin. Instead of focusing on the previous sprint task, it jumped into something else which you are just willing to do, right? Things doesn't work like that quickly. If we have something that has been asked. What I understood from the. I mean, you are saying one thing in the coming sprint, right before, even so last week, what you said. Q Track. We are automating the process, right? Query generation, that generation, everything, so you're going to go through the queries, okay, and understand the daily, uh, schedules that are there.
+
+00:08:55 - 00:09:41 Unknown Speaker:
+
+And that was, I am going through that, okay, before even, I mean, maybe I started two days before. See, it's control is not big thing. What KT that he has given me is little thing, only for me he has given, and he is busy with his own things. Sir, Okay, so I cannot just bugging more. Also, 20 minutes discussion happened with him. Yeah, prepare a document. Whatever you have understood me, let's have a reverse KT first. Close that one and then pitch into the next solution. Okay. First of all, I need to know where you stand with Cointreau. Then I'll take a decision whether I need to keep you in Cointreau or I need to move into a different use case. Okay. So, last week you said Q-track. Now, we're still discussing whether it's a Q-track or Cointreau, right?
+
+00:09:43 - 00:10:32 Unknown Speaker:
+
+No, no. First, wrap up the Cointreau. Close your understanding over there and then we can discuss what. What else you need to pick it up? Okay, okay. Only 20 minutes discussion happened with, Uh, then why didn't you come back to me, man? Why these DSUS are happening, right? If 20 minutes discussion is happening, right? Why don't you told me the next day on the day so that I need I? I have asked you right last in the last year, so whether you understood want or not, you said, Yes, yes, I, I did. Some queries are there and then, like that, right? If that is the case, I didn't feel like he's having complete knowledge. I don't want to just go to that level. I'm open, no, but no.
+
+00:10:32 - 00:11:20 Unknown Speaker:
+
+Look, if you're not clear, how would you work, then that's what I thought. When you said you're going to work. From next bit, I thought, fine, let me keep this aside. And he's busy with the phase two you track. I think I have set up a call, when did I set up? I think I have did it on, uh, Wednesday, right? And I have clearly called it out. That you are going to work on this from next print, right? Yeah, so so you could have focused on the quantum, right? We had, uh, you know, three days, even if you're on leave on Friday, right? Friday you did not connected on the issue. Uh, you were on leave on Monday, so. At least, right, we had a correct Wednesday in the evening on that part.
+
+00:11:20 - 00:12:13 Unknown Speaker:
+
+And at least you have told, you know, you have informed me on Thursday, like, you know, this is something I did not understand. I need another set of session, right? Then I could have asked Sameer to have some more time with you, right? Until and unless you understand the system, just think about it, man. He might be on leave tomorrow, right? How you are going to complete your work if it doesn't have those clear understanding on the application that we are working on. I think from that perspective, right, I'm not there to, you know, stop you from any implementation or anything that you are looking for, but you have to go with the existing systems also. We can't replace existing system because those have been also built with lots of discovery and, you know, Refinement and lots of things have been done behind that.
+
+00:12:13 - 00:13:12 Unknown Speaker:
+
+You don't build a system, you know, in a day, right? So first of all, I got myself when you said automation, I got, that's what I can say. No, then then I have repeated you multiple times, right? That is for an experiment. If if those are, you know, diverting your mind, then no. Only one day. I mean, my clear instruction words, we will be working it from the next print, okay? Now, if those things are diverting you, then I would not include you guys going forward in the discovery areas. No, no, what I'm saying is, when you said that, I just, okay, maybe I'll be working on Qt track in next print onwards. So, this one, the information he provided is very less, and he's saying that, He is working on phase 2 and he is busy with it.
+
+00:13:12 - 00:14:11 Unknown Speaker:
+
+Once that is done, only phase 3 can be done. So, nothing much we can progress now on that. That is why I shifted to that. But that communication was not there to me, right? I was not aware with that, right? What conversation you and Sameer had? I messaged you the day saying, Sachin, he is saying there is nothing to be developed as of now because there is a dependency. So he told me to, uh, I mean, for that, uh, you have, uh, mentioned it to me. Let me share my screen. Yeah, this is a message, okay? And then look for your information. I keep learning. Quiotra. Also starting on automation, personally, this is my message, right, focus on control, automation would be required in the range and right, so I have clearly called it out to focus on the quantum, right.
+
+00:14:11 - 00:15:06 Unknown Speaker:
+
+Try to understand even you know what would happen if this person goes on leave tomorrow, who would handle this point for them? Okay, but uh, right, today, today he is on leave, right, Kundan is on leave, right, so I have a backup. Although he is not looking, I am there to, you know, connect with Athar or look into these issues, right? Myself only, independently, you know, having those 8 or 10 applications, whatever is running, right, I am taking care of that. But just take an example. Right now, it's just Sameer who is working on Cointra. What would happen if he is on leave tomorrow? Who would fix those issues or something that comes into production? That is the reason we have spent one sprint for you, right? To understand that system so that you would be aware with this one.
+
+00:15:06 - 00:16:06 Unknown Speaker:
+
+Although you might not be working on that, but at least have some idea how the codes are working. And all those setup and everything ready in your system. And then the reason of including you guys in those disrupt is that just to keep you updated. What we are going to get in the interest, we should be involved, I am not saying we should not be. But uh, yeah, maybe he might be working on phase two, that is fine. But uh, what he is doing, what piece of code he is writing, right? Uh, it's not that what he is writing is the final one, right? There might be some changes that may be required, right? And and suppose now this deployment is going on, right? Nobody joined. I asked Apple also. Now should I make this process as blocked?
+
+00:16:07 - 00:16:48 Unknown Speaker:
+
+The answer is no because we have office hour on Friday. This is the office hour. So now Kundan is on leave till Thursday. Should I ask the business to move this one? That is not feasible. We have to close it. So it doesn't work the way you are thinking. There are lots of things that are going on now which you know. Not feasible to share everything with you because we are not handling one process. Let me be very clear, we have 10 to 12 process that is running in the production environment, right? And we have a team to manage it. And then we have to create a backup. So if you are not still here with one two, connect with Samir if Samir is not giving you a time to let me know.
+
+00:16:48 - 00:17:30 Unknown Speaker:
+
+And then why I have paused this automation right now? I can review your, you know, solution, I'm not denying that, let's have a review tomorrow. Once. ANSI is back season off today, so you would be working with ANSI on this one, and, uh, till that time. First of all, if you are okay with one, two, then I can. I can check with you the solution that you are providing and then we have to accommodate it with respect to the existing system. Also, let's have a discussion tomorrow and set up a call on this and then you can come up with the solution that you have proposed. Yeah, sure, sure. I'll go through the control. I'll continue to do that. Yeah, okay. Thank you so much.

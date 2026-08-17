@@ -1,0 +1,251 @@
+2026-01-12 Validation and Workflow Updates
+
+Creation Time: 2026/1/12
+
+
+📅About Meeting
+
+  • Date & Time: 2026-01-12 11:31 (Duration: 2004 seconds)
+  • Location: [insert location]
+  • Attendee: Sameer, Sachin, Regina (mentioned), Rachna, Hansi, Kondal, Sindhuja (absent), Ansi, Kundan, Prithvi, Nirmal, Nirman, Rajendra (tagged), Gaurav, Saurav, Bhagwan, Athar, Kanchan, Kondal, others (names referenced in discussion)
+
+
+📒Meeting Outline
+
+
+Validation & ICMB / Quanto Workstream
+
+  • ICMB completion & email Sameer confirmed ICMB data validation is complete and will send the email with results in a couple of minutes. Team asked Sameer to send that ICMB email immediately and then start focusing on the Quanto task.
+
+  • Quanto work Sachin and Sameer to focus on Quanto next; Sameer to report blockers if any.
+
+  • Validation counts & pending items
+    
+    • Sameer: Sent 15 scripts; recipient returned 16 (15 + 1). Waiting to know how many will be signed off.
+    • Rewards integrity: 1 script pending.
+    • DQID server: ~12 pending items.
+    • Two scripts raised in Jira due to missing Maestro notifications; awaiting resolution.
+    • Many validations from Sameer’s side completed; pending responses from Rachna on approvals.
+
+  • Follow-ups Team to follow up with Rachna on outstanding emails/results. Sachin emphasized prompt acknowledgement emails when an issue is seen.
+
+
+Feed Key (Julian date) Issue — Data Mismatch
+
+  • Problem description A feed key which had been treated as 7 digits now appears as 5 digits because the Julian date portion changed for 2026 (counting days after the year yields 5 digits). This causes substring-based logic (expecting 7 digits) to fail, producing mismatches in some scripts.
+
+  • Investigation
+    
+    • The erroneous feed is coming from BC Non-premium table (as noted).
+    • Removing the filter condition that relied on fixed-length substring returned correct results in queries.
+    • Team validated corrected results and Sameer will share the queries/results with Regina asking if the filter condition can be removed.
+    • No response yet from Regina on these clarifications (multiple emails sent — Friday and today).
+
+  • Next steps discussed
+    
+    • Review and decide if filter condition should be removed or logic updated to handle variable-length feed key as Julian date length changes.
+    • Discuss Julian date handling further on a follow-up call.
+
+
+RTF Events / Sub-status & E2 Transition
+
+  • Issue Not receiving the expected sub-status (RTF events / sub-status updates) in the workspace. The event triggered from RTF side is not appearing in the workspace or E2; logs/process not showing expected entries.
+
+  • Expectations vs actions
+    
+    • Leadership expects the team to prioritize sub-status issues (primary focus), not pivot prematurely to RTF event investigation.
+    • Confusion: team previously moved to E2; the focus should remain on ensuring sub-status flow and why sub-status is missing.
+    • It was noted that a discussion with the external contact (Raaz? Urad? RTF owner) was performed but the team still needs to re-connect to address the sub-status specifically.
+
+  • Responsibility & escalation
+    
+    • Team members should prioritize getting sub-status working to avoid blocking dependent user stories (notably Kundan and Kundan’s user stories).
+    • If contacts (e.g., Rajendra, Gaurav) do not respond, escalate appropriately.
+    • Athar was asked to prioritize closing sub-status items today as he will be on leave starting tomorrow.
+
+
+ServiceNow / Dashboard / Story Acceptance
+
+  • Integration & dependents
+    • Dashboards and ServiceNow integration are high priority; incomplete sub-status will block story acceptance.
+    • Ensure stories and validations are ready for acceptance and coordinate with Anand (or relevant approvers) to get stories accepted next week.
+    • Gaurav did not yet reply on a particular item; team to follow up.
+
+
+Access, Training & Knowledge Transfer (KT)
+
+  • Access issues
+    
+    • Some members lacked access to training materials and environments (BigQuery, Lumi, Q-Track recordings).
+    • One member reported GCP account errors but later confirmed BigQuery access was granted after raising a ticket.
+
+  • Recordings lost
+    
+    • Previous WebEx recordings/Q-Track training content appears deleted (retention policy suspected). Team acknowledged the recordings were removed.
+    • Plan: re-run KT sessions this week, record them again, and update the setup document. Sachin to set up KT plan and sessions, record, and share updated materials.
+
+  • Onsite attendance
+    
+    • Team expected in-office on Monday, Wednesday, Thursday unless urgent reasons otherwise. Coordinate with Kundan and others if on-site tasks require presence.
+
+  • Communication channel guidance
+    
+    • Do not use the current meeting group for day-to-day issue reporting; use the specified Slack/Teams channel (the “step channel”) for queries so others can respond promptly if primary contact is not available.
+
+
+Miscellaneous Technical Notes & Actions
+
+  • Feed key code The code currently expects a 7-digit feed key; produces 5-digit feed keys in 2026 due to Julian date format—code needs adjustment to support variable length or to normalize feed key format.
+
+  • Data profiling Team reviewed feed key in the environment and confirmed mismatch between generated feed key and expected pattern.
+
+
+📋Overview
+
+  • ICMB validation completed; Sameer to send email with results now.
+  • Several validation scripts still pending (rewards integrity, ~12 DQID items, two Jira-blocked scripts).
+  • Feed key mismatch due to Julian date change (7-digit → 5-digit); removing substring-dependent filter returned correct results — need decision to remove/update filter.
+  • Waiting on Regina and Rachna responses for clarifications and approvals.
+  • Sub-status not being received in workspace/E2; this is the priority to unblock dependent stories.
+  • Team must acknowledge emails promptly when investigating issues (quick “I’m looking into it” replies).
+  • WebEx/Q-Track recordings were deleted — KT sessions to be re-run and recorded; setup doc to be updated.
+  • Access issues mostly resolved (BigQuery/GCP); remaining access requests in progress.
+  • Onsite attendance: Monday, Wednesday, Thursday expected.
+  • Use the designated support channel for operational queries; escalate to Rajendra/Gaurav if necessary.
+
+
+🎯Todo List
+
+  • Sameer:
+    
+    • Send ICMB validation email with results to Regina, now (ASAP).
+    • Share query and validated results showing effect of removing the feed-key filter; request Regina’s approval to remove or change the filter (Follow up: 2 business days).
+    • Continue work on Quanto after ICMB email; report blockers if any (ongoing).
+
+  • Sachin:
+    
+    • Follow up with Rachna for approvals on validation scripts and report back (by EOD / next business day).
+    • Ensure team members send prompt acknowledgement replies to product-team emails (ongoing).
+    • Set up KT sessions for training materials that were deleted; schedule recordings and share updated set-up document (this week).
+
+  • Athar:
+    
+    • Prioritize closing sub-status items and coordinate to ensure sub-status is fixed (today — before leave starts).
+    • If no response from Rajendra/Gaurav, escalate and coordinate with Saurav/Bhagwan as fallback.
+
+  • Validation Team (Sameer, Hansi, Kondal, F1):
+    
+    • Validate remaining scripts (rewards integrity, DQID pending items) and update status column in emails sent to product team (update ASAP).
+    • For Jira-blocked scripts (missing Maestro notification), follow up with infra/notification owners and update Jira tickets (by next standup).
+
+  • Dev/Platform Owners (Kundan, Nirmal, Prithvi):
+    
+    • Investigate and fix feed-key generation logic to handle variable-length Julian date (modify code or normalize feed key). Provide plan and ETA (by next 2 working days).
+    • Confirm source table (BC Non-premium) feed format and whether upstream change required; if API/front-end parameter changes needed, list and schedule deployment steps.
+
+  • KT / Training Leads (Sachin, Kundan, Nirman):
+    
+    • Recreate KT sessions and recordings for Lumi/Q-Track materials and share recordings & updated setup doc (this week).
+    • Provide step-by-step setup document and ensure trainees have access; coordinate with support for any access issues (ASAP).
+
+  • Messaging & Communication:
+    
+    • All team members: start acknowledging priority emails with a quick "I’m looking into this" response when issue is observed (immediate).
+    • Move operational queries to the specified support channel (step channel) rather than group meeting thread (immediate).
+
+  • Escalation:
+    
+    • If Rajendra/Gaurav do not respond to sub-status or workbasket sync issues, escalate to higher management and tag Rajendra (as discussed) — responsible: Sachin / Athar (by end of day if no response).
+
+Please update the "Current Status" column in the email thread for each item (e.g., build in progress, received sign-off, pending approval) so product team sees real-time status.
+
+
+Transcription
+
+00:00:01 - 00:02:12 Unknown Speaker:
+
+Thank you. Okay, everyone joined? So, Sameer, you can continue on the one that we discussed last week. Yes, Sachin. On the Quanto one and... I completed the ICMB with data validation also. I just want to send an email. So... Yeah, I will send it now in a couple of minutes. Okay, just send that ICMB one and then, you know, start focusing on the Quanto one. Let me know if you face any blocker or anything. Sure, Sachin. And, uh, okay, and see an app. I guess where we are with respect to the validation. How many scripts have been left now? Yeah, so for the ICME, I had sent 15 to her. 15 she has given son of, plus one other script, so 16 scripts she gave son of. I don't know how many she can sign off.
+
+00:02:13 - 00:03:26 Unknown Speaker:
+
+Then a few scripts actually, Sachin, we saw an issue on Friday. The feed, which was generating starting this year, was coming as five digits. So because of that, in some scripts, we were using a substring of this feed key, seven digits, so that was failing. With that filter condition, if we remove, we were getting the correct results. So, I have validated those results, but I will send those results and query for her review to Regina if we can remove that filter condition. And did we get a response from her or we are still waiting for a response? Uh, yes, such in your audible. I was asking, like, the email that you have sent for her for the, you know, clarification did? She replied over that email. Or we are still waiting for her response on that?
+
+00:03:26 - 00:04:29 Unknown Speaker:
+
+Uh, no, still waiting. Actually. Friday I had sent one email, then today two more results I have shared with her, so yeah, okay, then just follow up with her, okay. So, how many validations left with you right now, if I consider your bucket? So, rewards integrity, one script, we are having, I think, 12 DQID server that is pending. Then, we had raised a Jira ticket for two scripts. We were not getting this maestro notification. I've seen that. Yes. Yeah, close to our... It's left for the validation. Rest all done from your side, right? You're awaiting a response from Rachna? Yes. Okay. How about you, F1, on the ICM event? Yeah, I just got a mail from Rachna. I just need to check that and I will update you, Sachin, how many she has approved.
+
+00:04:29 - 00:05:27 Unknown Speaker:
+
+Sign up. Okay, guys, please, you know, be ready with your... details before this stand up right. Otherwise, I won't be able to explain it to the product team. And did anyone check this one? The one that we received on last Friday? Yes, Sachin. Me and Hansi and Kondal also, we just together actually worked on this part. Some characters are difference, actually. So instead of seven, right, we are getting only five only. Uh, since we are adding the Julian date, right? So it is counting the after the year, it will counting the number of days, right? So now the year 2026 has started, right? So that's why we are getting a total five digits. So when we are verifying that particular feed key, right, it is mismatching actually the results due to this feed key.
+
+00:05:27 - 00:06:52 Unknown Speaker:
+
+From which table it is coming up. BC Non-premium. Okay, give me a signal, I'll take a look on that. And, uh, format should not break, correct, it should not break. But not sir. Uh, have you tested that? Yeah, yeah, that, uh. Ansi was shared the two reports to you, uh, previous year, and uh, that means the old date and the new date one that report. No. What was the issue? We will continue, let me, you know, wrap up with the rest of the. We'll continue on that. Let's close that immediately. Because if we are responding, you know, uh, uh, if you remember the feedback that Uh C has given, uh right, we should be very prompt. While, uh, we are giving a reply, right? So, uh, like, if I have asked you, at least give her a reply like, I'm looking into this one.
+
+00:06:52 - 00:07:44 Unknown Speaker:
+
+That is something we are missing, right? If I have just, uh, reverted you, please check this on priority. Uh, as soon as you see the email, just revert on this email that I am looking into this issue. Sindhuja, you are there, right? Did Sindhuja joined? No, not joined, okay? So so at least whatever your objection is, at least revert it to the you know product team so that they would know at least you are working on it. So that that's right. Why we are doing a retro if we are not, uh, considering the point that, uh, being raised in the in the retro? Okay, so just just revert on to this one and and see on this one, if we are done on this one, right? Whatever status update is right, uh.
+
+00:07:44 - 00:08:36 Unknown Speaker:
+
+Create another column here called Current Status. If you need a update from my app, take the update and revert on to this email. That all the deployment has been done. On this one. You can mention that build is in progress for rest of them. Like you already get a sign up for MGM one, right? So you can mention that received sign up. And wherever we stand, just revert on to this email. Yeah, I'll, I'll leave it on you and see on this one, okay, uh, and then be there on the call. Uh, we will discuss that Julian date issue. Okay, um, what is the uh conversation that we had with? Uh, why? He is asking us to check from our end? Yes, so we checked. We are not getting the event in the head work.
+
+00:08:36 - 00:09:23 Unknown Speaker:
+
+So he showed us the flow, basically the data which is, so the event which is triggered. It's not coming in the like, basically in the workspace from the RTF side. So that's why he wanted to be sure. No, no, forget about even whatever T2, even in the E2. Your status is not, uh, reflecting, right? This is not regarding this is regarding the RTF events. That was there for a sub status, for the sub status. What is the come come back to me with the sub status? What is the you know, issue with the substance? You didn't have the discussion with him, he was checking with the RTF thing. Oh man, uh, then then we messed up. This meeting then, in that case, right?
+
+00:09:23 - 00:10:19 Unknown Speaker:
+
+Our agenda was to, uh, understand why we are not receiving the sub status, why we have went to this RT event issue and again, you would need a connect with him today for the sub status. And the thing is, we discussed about the, you know, why the logs are not getting, you know, why the process is not getting No, man. No, no, no. Look, look, I really don't understand. First of all, your focus would have been to check whether, why we are not receiving the sub-status, right? Again, you would think over sort of here and what Raaz would assume that you already had a discussion on Friday and again, why do you need a connect with him? Right, he might not be having a time to connect with you guys on a regular basis.
+
+00:10:19 - 00:11:19 Unknown Speaker:
+
+First of all, you should have prioritized the sub status. One man again, you know, we would end up this week just figuring it out why sub status is not coming. And now let's, you know, leave the part this even aside, and let's focus on the E2 why the sub status is not good exactly. I, I really don't know why did you guys went for this RT event? One man? We already decided that we have moved to E2, right? Yeah, correct, then why? Why? These? These things have been discussed during that time, and now then your stories are not being not moving. Now I'm lost couple of sprint if I go to this valley. Right. Although you are working on here and there and other initiatives, but mainly they would chase out you for those dashboard and that ServiceNow integration.
+
+00:11:20 - 00:12:44 Unknown Speaker:
+
+Correct. And how would you ask Anand to accept your stories in the next week? Did Gaurav reply on to this one? No, no. I will ask him. He didn't came here, so I'm just calling him. No, no, did you had a connect with you? No, I connected with Kanchan. Okay, so, uh, whatever, she suggested, right, just to, you know, change the name, see? He told that, you know, uh. We are not going to merge it right now. The reason behind Sage? Also not sure whether we have to, you know, change it or not. She just pinged over there. They are, you know, supporting the UH incident only okay, so they are not, you know. Take down too much into the code. So Urad is the correct guy to connect. What is the other issue?
+
+00:12:44 - 00:14:21 Unknown Speaker:
+
+Other is this platform is one, so this work basket, right? The data is not getting synced. I provided him all the detail, I connected him over the call. Also he told I will check and update you. There's no response. I think... Okay, let's see. I tagged Rajendra. If they're still not responding, we will escalate over there. If you're getting a connect with Gaurav, make sure you are using these two by today itself. Do you have anything else in your bucket? Okay. And your rally stories are accepted in this... This report validates in the incident, yes. Please try to reach out to them. You would be on leave from tomorrow. So please make sure whether you connect with Saurav or you connect with Bhagwan, please make sure you are closing that sub-status because that is going to block Kundan for his user stories.
+
+00:14:30 - 00:15:28 Unknown Speaker:
+
+They have given their availability last Friday. We did not, you know, follow up on the correct, uh issue that we should have. Yeah, I mentioned it like earlier, also like, we'll be checking on this. So there was, uh, yeah, a gap from our side, also, like, we didn't follow. Yeah, exactly, let me just check with. Yeah, just check with them, because they are not going to give you give their availability on every week or every day, right? So when you are meeting a person makes sure that you are, you know, keeping a note that these are the things that I need to check with that guy. Anyhow, today sort of is not available, they mentioned on Friday. Only then check with the work, one man, if sorrow is not there. Check with whoever is required, right?
+
+00:15:35 - 00:16:47 Unknown Speaker:
+
+And if any changes is required for the API or in the front-end input parameter that needs to be deployed. Otherwise, you would be a kind of block, right? He is only from tomorrow right till 16. 19th is the last step when the sprint is getting over we don't have any delivery exactly. To close this one, Athar, on priority today itself. Okay. Because I don't want to disturb you during your holidays and all. That is your priority, Athar. Just follow with those guys to close it. Sameer, you are already working on that one. And send a revert email to that email that I have asked you. I will come back with those details that you are asking. And now... uh, yeah, hi Sachin. So the long training I completed and uh, the other ones I do not have access.
+
+00:16:47 - 00:17:39 Unknown Speaker:
+
+I've raised the access to a support result to raise access for all of them. Whatever that. Uh, how you guys are connecting to the VPN, um, you must have set up the OCTA in your phone, right? Yeah, then how come your, uh, you know, Google account has not been created? That is this surprising? Actually, it created, but, uh, some error is there, actually, uh, even the ticket. Uh, no, no, can you say? Can you share your screen quickly? But now it is resolved, GCP account is created and okay, you want me to share? No, you are able to access, uh, the big query and all right. Ah, that thing, I didn't test, but uh, can you share your screen quickly? I didn't raise a request to get access right, so I raised it in the morning.
+
+00:17:39 - 00:18:39 Unknown Speaker:
+
+Today I have got the session I can access the big way. You can access the BigQuery, right? So then you have the access. Prithvi, do you check that? Yeah, for me, this WebEx is installed in the morning today. It's asking me to quit and reopen it for me to share my screen. Okay, okay, that's fine then. Just coordinate with Nirmal. You guys are there in office. Then if you are there in office, you can check with Kundan also. Yeah, yeah. I'm not in office today. Because, uh, there was some, uh, communication gap. Sorry, that's my bad, my dog, but uh, yeah, next, uh, uh. Please make sure what are the day you have planned? Essentially, as you mentioned, right? Those we have to maintain that. Uh, the same day, yeah, Monday, Monday, Wednesday, Thursday.
+
+00:18:39 - 00:19:43 Unknown Speaker:
+
+Okay, please make sure you guys are there in office on Monday, Wednesday and Thursday. Yeah, okay, until unless you have something urgent and I'll talk to you guys in the evening. Let's see, uh, where he goes. So Nirman, you're done with Lumi training, right? And did you start it on this one? Uh, those training. I don't have access, I guess. Uh, it's not showing you the videos for those, uh, even in Q track also. No, no, no, hold on a minute. Okay, you are waiting for this approval. Have you went through this one? For training? There is no approval is required. There is nothing restricted with respect to that. Go through these training videos, which I already tagged you over here, right? So it is not working. That is something known to me.
+
+00:19:43 - 00:20:38 Unknown Speaker:
+
+What about Q track? You type? Also showing me the same issue which is no man recording you are looking for doesn't exist or no longer available. Oh, it can let me see, give me a second, I'll just cross check. And one more thing I would like to discuss, like, don't utilize this group for any of your issues, right? Because here only I am available, right? I might not be able to give you a prompt response over here. So, utilize this step channel so that whenever you put a query, if someone else is there, they can just cross check and then help you with that. Anyhow, first of all, point of contact with Kundan, but even if, like, you know, if Kundan is busy, either Samir Ansi or whoever is free, they can take your request and help you guys out.
+
+00:20:40 - 00:22:54 Unknown Speaker:
+
+So this two tracks would get open. Man, this is surprising. Oh man, what happened to this one in that case? Samir, these were over my praise or someone else's praise? This is Q-Track, Sachin. These recordings, man. These recordings were over Rose WebEx. These were over my WebEx only, right? I think I have a no no no no kundan was right those recordings were being removed look right now i can see only the latest one yeah deleted recordings were deleted, man. These are the meetings. Surprising, man. How come they delete these? Okay, no worries. We will set up a KT plan for this week and then with me and uh uh, I'll set up those KT plan and then we'll record it again. I think those all recordings were being deleted. Okay, let's move to some archive.
+
+00:23:12 - 00:26:07 Unknown Speaker:
+
+They have deleted this one, man. Might be having a retention policy. Even the latest one, they might have removed it. Everything has been deleted, man. We will create these sessions again and we'll update you. Okay, till the time, what you can do other than that? So then where is that set up document for that? Uh, okay, just share that document, let them at least set up that, uh, that document needs to be, uh, modified. Yeah. Once they will, you know, uh, face anything, we'll update that one and, you know, integrate that one. Okay, okay. And now I think I'm done, what is that? Can you tell me? Shall I share my screen? Uh, oh, bad. Okay, okay, you carry on. Sorry, let me restart. Okay, you're getting it from Lumi T, right? Not this.
+
+00:26:07 - 00:27:25 Unknown Speaker:
+
+Uh, actual Lumi schema, right? Ah, yes, correct. Then we have to go over there, right? No problem. Can somebody stay on your screen? That's fine. I have to stay on your screen and, you know. Let me do it. Let me do it. Give me a second. No. Okay. Okay, not this one, right? This is not this one. This is a data profiling table, actually. So you have to go to below on that this one yes yes this is the environment actually i'll change it i'll change it if you want you can drop up kundan a pen and she can stay back. This is the feed key that we are receiving, right? This feed key is correct, Sachin. What we are generating, there is the problem. We are generating only 5-digit feed key.
+
+00:27:25 - 00:33:10 Unknown Speaker:
+
+Here you will see in our code, we are looking for 7-digit feed key. Brother, do we need a full description? What? Do we need a full description? We got the CLs from there. From there? Yes, we got 82 CLs. Why is it not enough? Is this enough? If we run it, it will come here. We need to modify it. It will come here. Once we run it, it will go to the next agent. Yes, the next agent is that one. And with the reasoning information.

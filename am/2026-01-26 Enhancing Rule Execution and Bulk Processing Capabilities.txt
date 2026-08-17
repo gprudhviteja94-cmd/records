@@ -1,0 +1,190 @@
+2026-01-26 Enhancing Rule Execution and Bulk Processing Capabilities
+
+Creation Time: 2026/1/26
+
+
+📅About Meeting
+
+  • Date & Time: 2026-01-26 09:04 (Duration: 1688 seconds)
+  • Location: [insert location]
+  • Attendee: [insert names]
+
+
+📒Meeting Outline
+
+
+Rule Execution & Rule Assist
+
+  • Rule execution visibility The presenter demonstrated how to view which rules executed for a given deployment ID, including execution coverage percentage and frequency of executions. Example: searched by a discard ID, selected a specific rule and viewed rule execution coverage (100%) and its multiple execution instances.
+  • Inspecting inputs and outputs For a selected rule execution instance, attendees saw the exact input passed into the rule and the resulting output. Example observed: rule validated input and set "send email" to true. This allows verification that rule behavior matches expected business rules.
+  • Rule artifacts and formats Rules engines can use different artifacts: compiled DLLs or decision tables (Excel), confirming decision tables are supported as input formats.
+
+
+Bulk Processing (ACE)
+
+  • Overview and use cases Bulk processing is an input channel for ACE to start a process per row in a file. It supports both ad-hoc UI uploads and scheduled/automated ingestion from file locations (e.g., secure file transfer), enabling manual and fully automated bulk starts.
+  • Upload and mapping configuration The Control Center UI shows configuration: choose whether to start a process or case; file type (XLS/CSV); file retention duration (temporary storage, default e.g., 30 days configurable longer); header validation, header-line skip count; and column-to-process-input mapping (map Excel columns to ACE input data).
+  • Execution policy and concurrency Execution policy lets you schedule immediate or delayed starts, control frequency and concurrency of subprocess execution for each row, and configure output generation (e.g., status report fields, source of those fields).
+  • Job details and monitoring Job Details page displays uploaded file metadata, job state, and the subprocess instances started for each row; users can drill into subprocesses to see inputs, outputs, and completion state.
+  • Demo A demo file (five data rows, address fields) was uploaded via the Control Center; the processes completed successfully and attendees reviewed process instance details confirming expected behavior.
+  • Appropriate scenarios Bulk processing is appropriate for ad-hoc large runs (thousands of records) and also for scheduled regular jobs. It supports use when normal daily volumes spike (e.g., thousands rather than hundreds) and can be automated so no manual upload is required.
+
+
+Searching, Process Intelligence & Variant Paths
+
+  • Finding cases by branch/path For processes with multiple branches (variants), locating instances that traversed a specific branch (e.g., those that created a click case) can be done several ways:
+    
+    • Design-time: write a value into a correlation key or context data (e.g., set correlationKey4 = clickCaseID). Then search Control Center by that correlation key to find affected processes.
+    • Process Intelligence: use variant path analysis to view which variants (paths) occurred and their frequency; drill into variants to list instances. This will be demonstrated in a future session (Process Intelligence module).
+    • Time-series/observability: emitted ACE events are available in OpenSearch/Elastic cluster or Cornerstone for searches and visualizations.
+
+  • Design implications Consider including searchable markers (correlation keys) where specific downstream behaviors are important to find later. Process Intelligence provides richer analytics at scale.
+
+
+Capacity, Scaling & Deployments
+
+  • Infrastructure baseline & handling spikes Current infrastructure has substantial capacity; examples discussed: default deployments include multiple application pods (typically three) across availability zones for failover. Handling a spike from hundreds to tens of thousands of bulk records is feasible on the existing platform; millions of simultaneous operations would require separate planning.
+  • RPA considerations RPA tasks are handled on separate infrastructure; core automation runs in main infrastructure and triggers asynchronous RPA calls to RPA-hosted resources. Scaling RPA may require additional infrastructure adjustments.
+  • Performance testing Customers must still run performance tests for their expected volumes and SLA targets to benchmark processing time, file sizes, connection loads, and output generation. If tests show capacity needs, the platform can be scaled in the AmEx on-prem cloud with relative ease.
+  • Multiple deployments & reporting Multiple deployment IDs represent separate scalable service groups (each typically backed by multiple servers). Onboarding conversations determine whether a use case uses an existing deployment or requires a new one. Deployment ID is used in reporting to organize and track use cases; moving a use case between deployments would be planned and communicated, not done abruptly.
+
+
+Administrative Notes & Q&A
+
+  • Open Q&A and next steps Time reserved for general questions about content from the four-day series. Participants encouraged to raise remaining questions in the Slack channel set up for this training for private/follow-up queries.
+  • Future coverage Remaining topics (process intelligence, functional items) will be covered in Day 5 and specifically process intelligence demo scheduled for next session (Tuesday).
+
+
+📋Overview
+
+  • Rule execution can be inspected end-to-end: which rules executed, coverage percentage, per-instance input/output and frequency.
+  • Rules artifacts may be DLLs or decision tables (Excel).
+  • Bulk processing supports UI upload and scheduled automated ingestion; file mapping, header validation, retention, execution policy, concurrency and output generation are configurable.
+  • Job Details view exposes uploaded file state and subprocess instances for diagnosis and tracking.
+  • For locating cases that followed particular branches, use correlation keys in design, Process Intelligence variant analysis, or search emitted events in OpenSearch/Cornerstone.
+  • Infrastructure has default redundancy and capacity sufficient for typical spike scenarios described; performance testing is still required to validate SLA targets.
+  • RPA scaling is handled separately and asynchronously from core automation.
+  • Deployment IDs group use cases into independently scalable deployments and are important for reporting and capacity planning.
+  • Questions can be posted in the course Slack channel for follow-up.
+
+
+🎯Todo List
+
+  • owner 1:
+    
+    • Add correlation key to process design to mark when click cases are created; document correlation key used — due: [insert date], deliverable: updated process design and documentation.
+    • Run performance tests for expected volume scenarios (including potential spike scenarios) and report metrics (processing time, concurrency, output file sizes) — due: [insert date], deliverable: performance test report.
+
+  • owner 2:
+    
+    • Configure bulk processing job in Control Center for scheduled automated ingestion from secure file location (if desired) — due: [insert date], deliverable: scheduled job configuration and verification run.
+    • If performance tests indicate capacity shortfall, request scaling change with platform team (provide performance report and estimated increased capacity) — due: [insert date], deliverable: scaling request ticket and platform team response.
+
+(Replace owner names and due dates with the appropriate assignees and deadlines.)
+
+
+Transcription
+
+00:00:03 - 00:01:39 Unknown Speaker:
+
+Day 4 is... what rules executed for your deployment ID and you can also check what percentage of rules got executed, which rules got executed getting executed frequently and you can even go and check what was the input out of your rules and what was your output. For example, I actually searched for the discard ID and looking at all the rules that actually got executed. So this is one of the rules and I'm going to click on that. And if you look at it, it says rule execution coverage 100. This is the rule that got executed. These are the different instances of the rule execution and I'm going to actually click on one. So you can look at it on what was the input to the rule and what was the output to the rule.
+
+00:01:40 - 00:02:42 Unknown Speaker:
+
+So input was this and essentially based on the rule data, it validated it and then it has actually set, if you look at it, send email, it is updating it to true. So you can see what went into the rule, what was the data that went into the rule and what was the output of the rule. You know if the execution was proper, and that's the expected execution that you're looking for, okay, out of the rule that you had configured. So this gives you a good insight as to how your rules are doing. And so that's something which will help you as you fulfill your business rules within years. Any questions about rules. Yeah, Barney, just a question. These rules engines, are they typically like Excel files or it's based on rules in my understanding, right?
+
+00:02:43 - 00:03:43 Unknown Speaker:
+
+That's correct, yes, yeah. They can be. Okay, they can be rules on DLL files, okay, or it can be decision tables, which is an Excel, yes. Right, thanks. Moving forward, we want to cover bulk processing. So bulk processing, as we discussed, is one of the input channels for A's, like if you have a file and if you want to actually start a process for every row of the file, then yeah, this is where you would come. And there are multiple ways to start bulk processing too. You can actually do a UI upload. And also you can actually have it as a regular deployment process that you're getting the file from some location and then you're processing it, right? So where it is not a manual operation.
+
+00:03:44 - 00:04:38 Unknown Speaker:
+
+So you have a serial job which pulls their file from, say, some secure file transfer location, and then it actually starts the whole process. So you can come up with that thing. So the flavor that I'm going to show you today is how to upload a file directly from... control center. Before I go ahead and start the processing, I'll show you what it actually is. So this is where you would come to actually say, okay, we discussed a little bit about this during our DHC session, and basically you would say, okay, how do I actually map what is in the file to actually what the process needs. This is how it would look. So essentially what you're going to say is, okay, what is my definition time? Okay, it's a process or a case.
+
+00:04:38 - 00:05:21 Unknown Speaker:
+
+You can start both process or case from here. Okay, and then what is my file time? Okay, it's an XLS or CSV. How long do I want to store my file? Okay, so we actually put the file into a temporary storage and it's free. So do you want to store it for 30 days? That's what this means. If you want to configure it more than that, you can do that. And then the header validation is something that we discussed a little bit, which is basically, uh, is my data in the same order as I want? And if the header names exactly match what I want, okay, so that the validation it would do. And you can configure how many header lines to skip. Okay, so if the file has multiple color lines, it will skip it.
+
+00:05:22 - 00:06:13 Unknown Speaker:
+
+So here it says, okay, my column one of my Excel is first name, column two is middle name, and column three is last name. So, and then you would map it to the ACE data. Okay. So the input data that you would pass. So that is how you would actually map your file to the process input that you are looking for. And there are other tabs. Okay. So I'll just briefly go over it. Okay. We don't have to get into. Too detailed here. This is to execution policy is to, uh, say, how do I want to execute the process? Right? Say, here is where you would say I want to execute it immediately, or they have to execute it. Um, basically after 10 minutes or after a day, things like that.
+
+00:06:13 - 00:07:12 Unknown Speaker:
+
+You would be able to configure it, and you also would say how frequently or how concurrently you would execute the process. Okay, and output generation if your process requires a specific output generation. So you are actually scheduling a file to be processed and you are triggering different sub-processes for each row of the file. And after all the processes are executed, If you want to generate a status report out of all your process distributions, then you can configure your output generation policy, which will say what are the data fields that I need in my output and where do I get it from? So that configuration you can actually configure here, and it would generate an output file for you. So Job Details gives you insight of the file that you just uploaded.
+
+00:07:12 - 00:09:44 Unknown Speaker:
+
+Okay, and then it would actually show you what state is it in? And also your sub-processes, the process that you trigger, all those details, it will actually bring it up. So that's where the job details page comes into question. Thank you very much. So let's see the demo file being uploaded. So this is a demo file. Okay, so let me share all the files. So if you look at it, this is my file. Okay. I have the same last name, building, address, address one, city, state, zip. And so it's kind of a demo data. So and it has five rows of data and one row of address. Okay. So that's what you're looking for. And let me upload this file. And I'm going to select process file. So the file has been created for process file.
+
+00:09:45 - 00:11:15 Unknown Speaker:
+
+Okay so if you look at it this is the file that we uploaded and it's actually it's cross signed okay. If you look at it, all the processes are completed and you can actually go into any of the processes and then see what happened with regard to the process. So you can say all the data that we just took out are there and the process actually went into a completed state. This is the process that we ran. It's a very simple process which actually takes the input and then outputs the data. So that's how you would actually do bulk processing in ACE. I'll take a pause. Any questions on? Is it safe to say that this kind of bulk processing would be ideal for ad hoc processing wherein we have multiple thousands of accounts that we need to process?
+
+00:11:17 - 00:12:09 Unknown Speaker:
+
+Also, yeah, you would, uh, so this is, uh, from the UI. It's, um, yeah, you would be able to do, uh, add processing, and uh, if it's not just for add up processing. You can have a regular process to verify, right? And those, you can actually have it as a schedule process, and you can actually run that. Instead of trying to come here and then have some person upload a file, right? So you can design a process where you can just retrieve the file from location and then you can start the whole process. Okay but if we ever get like some additional cases out of the ordinary like usually if a process let's say just runs 100 cases a day but just in case there is some event that we get 15,000, 20,000 cases then this can be used for that right?
+
+00:12:09 - 00:13:24 Unknown Speaker:
+
+Yeah. That is all I have for today. Okay, so I wanted to cover rule assist and bulk processing. We covered most of it, uh, yesterday, and, uh, the rest of the stuff is like, functional, and process intelligence is something that, uh, which would cover as part of D5. Um, so any other questions. Yeah, we wanted to keep this the rest of the time. I think we knew we only had a short amount of material remaining to cover. But we wanted to keep this open for general questions about any of the things that we've covered over the last four days. So if anybody has questions about anything, whether it's stuff that Marlee showed today or any of the other days, we're happy to take those questions now. I just wanted to remind, we have a Slack channel set up for this.
+
+00:13:25 - 00:14:36 Unknown Speaker:
+
+So if you're not comfortable asking questions in the public forum or you think of something later that you want to know or any of those things, you can feel free to post them on that Slack channel. And we'll answer those there. Murali, I do have a question regarding searching for process related data inside the control center. So let's say if a process is designed in such a way that it has multiple branches to it and only a few set of cases would go to a particular branch, let's say that particular branch creates a click case. So, if I have to find all the cases, all the click cases created from that particular process, is there a way to do a selective search on the total cases which followed a particular branch? Do you want to take the question?
+
+00:14:36 - 00:15:35 Unknown Speaker:
+
+I think process intelligence has a very important part. So let's say this is a real time scenario actually. So there is a process which has two branches in it. One would not create click cases. One does create click cases. So it was difficult for me to find out the cases for which click IP was in it. So is there a way I can do it easily and filter it out based on the path process? Yeah, there's actually a few different techniques for doing that. Some of those techniques might go to how you do your designs in the first place. So when you think about variant paths, you guys saw we could show what we call the SVG, the flow that happened. But then you'd have to know which ones you're looking for.
+
+00:15:36 - 00:16:23 Unknown Speaker:
+
+And I think in your scenario, you had mentioned thousands of entries for bulk. So you're trying to figure that out. So one of the things that you could do is you could add the fact that it created a click case in one of your available correlation keys as part of your design. That would make it easily searchable. So what that looks like is after the click case is created, you put the click case ID in correlation key, and let's just say correlation key 4 just for... a lack of better description, but you add it to your context data, you put it in correlation key four, now whenever you're searching for processes, you can search on correlation key four, does it have a value? And that would show you which process, and then you'd get a list of the processes that created the quick case.
+
+00:16:24 - 00:17:19 Unknown Speaker:
+
+So that's one way to do it. Another way to do it, as Merle was mentioning, is we have process intelligence, and in process intelligence, we have variant path analysis. So variance is what you're describing, right? There's multiple ways we can traverse a process flow or an automation flow. And each different path is a variant. So we can show it there at scale. And if you want to see which variants are happening and how often they're happening, you can come to Process Intelligence. And I'll show you how to see that tomorrow. I'm sorry, Tuesday, when we go back through Process Intelligence. It's a pretty rich feature there that's able to display which variants occurred and how often they occurred. And then also we have some click-through ability that on the specific variants, how often they occurred, you can see which instances they occurred for.
+
+00:17:20 - 00:18:05 Unknown Speaker:
+
+And those are all time-related searches. It'll make a lot more sense when I show it to you. OK, Mitch, go ahead. But I would say if you do need to see that, you know, you can either add it to correlation keys and you can search for it in the control center as part of your design, or you can also pull it up in process intelligence, just your basic reporting. It doesn't have to necessarily be the variant path analysis. As ACE is executing, anything that happens inside ACE gets emitted as time series events. And all that data is available both in our Elastic Cluster, and you have your ability to search or visualize that information through our Open Search toolkit. Or you will also have it in Cornerstone so you can see it there.
+
+00:18:20 - 00:19:03 Unknown Speaker:
+
+Future state, creation of click cases, that's something we want to definitely talk about, how that fits into our designs. A lot of our automations in the current state either create click cases at the end or are meant to work click cases that have already been created. So using click in this way is what we do now, but I'm not sure that that's how we're going to market future state. Because the toolkit here, you can see it's all combined into one thing. You know, looking to create cases for things other than exceptions to be managed is an interesting thing, right? Do we need to do it or do we not need to do it? So we'll look at those on a case-by-case basis. Sorry to use the word case there.
+
+00:19:03 - 00:20:06 Unknown Speaker:
+
+On a scenario-by-scenario basis and determine whether or not it still makes sense. We see click being used in all kinds of interesting ways. A lot of times it's used just because we, you know, it has some reporting associated with it and there's not really any case work to do at all. But we create the case because it's a pass-through to cornerstone. So that's one of the places we see it. I don't know that we're going to continue down that path. I have a question. So yesterday we discussed about processing. Capacity around it, right? Suppose during performance test, we have something that we would require, say, two or three parts to handle the volume. But if there is a certain spike in volume, and that's something absolutely unplanned and ad hoc, how do we tackle that during production?
+
+00:20:09 - 00:20:58 Unknown Speaker:
+
+Well, the volumes that you guys are talking about is still very, very small when it comes to the infrastructure we have allocated through the work. So when you say spike of volume, you're talking about maybe like, let's talk in terms of bulk. In bulk, let's say your process normally has 100 records, but today it has 10,000, right? Handling 10,000 things in bulk is still small for the infrastructure we have set up for these things. If you got to the point where you're doing millions and millions and millions of unexpected things, then that would be where we would have to have that conversation. You know, in case management and automation, if we're doing millions of things all at the same time, then something else has gone wrong in the enterprise. I think, absolutely all right.
+
+00:20:58 - 00:22:00 Unknown Speaker:
+
+So basically, you know, whatever infrastructure we currently have is sufficient to manage a significant volume handling, correct? So we have, like, Uh, by default, we have. I think it's we put three pods, three application containers in each environment that you're running the application. So we have two availability zones that get deployed right away for failover, but three is an awful lot for the kinds of things we're doing here. When we have RPA, that's where we have to scale the infrastructure for the RPAs because those take time, but those become asynchronous activities. We trigger the automation. All the core automation capability happens in your main infrastructure. And then we send a remote call to independent infrastructure to handle the RPA activities. And so based on that and our conversations about what needs to happen there, that's where scaling is a consideration.
+
+00:22:00 - 00:22:52 Unknown Speaker:
+
+And we spend time on making sure that those are done to scale. I see. Sorry, did you have something to add? Yeah, the thing is, because what we said, because we have enough capacity to run your process, it doesn't mean that you don't have to run your performance test. We still expect you to run your performance test for the volumes that you're looking for. The reason being, okay, a couple of things that you want to benchmark, okay, what is the ability to take a look at, okay, these 10,000 records I'm going to process in five hours, 10 hours, whatever. So depending on your business, you want to make sure that you have contributed in such a way that it processes within an appropriate amount of time. And also there are other parameters.
+
+00:22:52 - 00:24:04 Unknown Speaker:
+
+So how many blocks, how many data bit connections, what is your load, and how big of a file you are generating for output, things like that. So you would still have to do a performance test. Have that test part of your product lifecycle. Absolutely. That's insane. Thank you. And if we do find as a result of this test that we do need more infrastructure to support it, that's not a difficult task. Because we're running in the American Express on-premise cloud environment, we have the ability to scale the environment just with a few clicks of some buttons. So if we do find that we need more capacity to handle whatever it is you're doing, it's not a highly complex activity for us to take on. All right. Thanks, Benjamin. So the other thing I want to point out, you can see...
+
+00:24:05 - 00:25:01 Unknown Speaker:
+
+As long as we're on the subject, we have this ACE inter-asset. So today for automations, I think we definitely have more than one deployment. And when we say deployment, those are representative of individually scalable reference columns. We call them services on the tech side, but what a service is, it's its own application servers that are sitting in our cloud. So anytime you see a new deployment ID, you can be confident that we have at least, usually at least three servers sitting behind the scenes supporting this one deployment ID. So what we see for automation, I think GCS has its own, I think TLS has its own, I know GSG has more than one. So we have a number of different deployments that are supporting these different aggregations of use cases that need to run.
+
+00:25:02 - 00:25:54 Unknown Speaker:
+
+And what we do is when we have capacity considerations or regulatory considerations or other such things, right, and this is done by Saurabh and his team, we determine whether or not we need a new deployment and whether the use case should go into an existing one. So all those conversations happen kind of at onboarding time. When you come with a new use case, we'll say, okay, do you know what's your expected volume? Do you know what are the different things that it interacts with? And then so I will say, okay, it just makes sense to go into this deployment or we need a new deployment. Once something's in a deployment, it generally doesn't change. And our commitment to JP and those folks is that if for some reason, and again, we haven't seen it ever, but if for some reason a use case needs to move from one deployment to another, we'll be very transparent.
+
+00:25:54 - 00:27:03 Unknown Speaker:
+
+We'll make sure there's plenty of time to adapt things like reporting and other things that we use to represent that. So things really don't change in that regard. But if they had to, it would be an active conversation that just wouldn't happen suddenly one day. We're in some use cases in a new deployment. And why it matters is because deployment ID is one of the reporting criteria. So when we run our reports, we look for use cases within deployment IDs. It helps to kind of keep things organized and see how things are going. We're on top of the hour, so if there are no more questions, then we can proceed on Tuesday with our day five. Yeah, it looks like a number of the questions from today are about stuff. We're going to cover that.
+
+00:27:03 - 00:27:22 Unknown Speaker:
+
+That's all good. Yeah, and again, guys, remember, we do have these other ways you can ask questions if something comes up, so we appreciate your participation. you know when you ask questions it makes us know that we're hitting some of the right subjects and also that we're not just talking to you know empty space so thank you guys for your participation

@@ -1,0 +1,248 @@
+2026-02-25 Insurance E3 Pipeline Incident and Team Updates DSU
+
+Creation Time: 2026/2/25
+
+
+📅About Meeting
+
+  • Date & Time: 2026-02-25 18:01 (Duration: 2172 seconds / ~36 minutes)
+  • Location: Remote meeting / video call
+  • Attendee: Sachin, Anand, Rachna (Rachna / Rajna unclear), Jason (expected late), Aman, Om, Karthik, Lumi team (represented via ticket), Sindhuja, Cinderella, Kundan, Athar, Prithvi, Nirmal, Sameer, Raj, Saurabh (stakeholder), plus other team members referenced
+
+
+📒Meeting Outline
+
+
+Insurance E3 ingestion incident and pipeline design
+
+  • E3 incident (insurance table 065) Discussion covered a failing pipeline in E3 for an insurance table (tariff table 065). The ingestion failed at the "passing" stage with logs indicating a sequence-number related error (sequence number null / mismatch). An incident ticket was created and assigned; expected assignment and investigation will take 2–3 days. Teams involved: source team, Lumi (monitoring team), and pipeline owners (Karthik referenced). There is uncertainty whether the root cause is at Lumi or the source; log analysis currently points to an upstream data/sequence issue.
+
+  • Options: pause ingestion vs. resend file Two approaches discussed:
+    
+    • Pause the combined job (which runs multiple pipelines) to avoid failing downstream pipelines — but pausing stops all 7 tied pipelines and impacts other tables.
+    • Attempt to re-send/reset the specific failed file with corrected sequence number so other pipelines can continue; this may require Lumi support and coordination with Karthik/source team. Team members expressed preference not to stop all pipelines if possible; meanwhile Karthik agreed to segregate jobs in future (separate cron/DAG per pipeline) to avoid broad impact, but that will take time.
+
+  • Operational responsibility and SOP Action items and clarifications needed about ownership when error summaries point to non-Lumi problems. The group agreed to define ownership for such errors going forward rather than always relying on Lumi. Need to build a "piece of error" ownership model in the SOP. Also discussed recurring failures (every 3–4 days) for this table — suggested an offline call including Jane and other stakeholders to deep-dive recurring failures.
+
+
+Daily standups / DSU updates (team status highlights)
+
+  • Sindhuja / general DSU Team to run checks on latest workspace (do not run announcement; run new workspace). Work performed: story-points summary, monitoring, code cleanup.
+
+  • Anand Working on AFC build and pivot/Excel generation; some parts not complete (pivot data, generating Excel). Build initial steps working in E1; expects build mostly completable within sprint; validation may be moved to next sprint if access issues persist. Plan to copy validation tasks to next sprint if needed. Also working on automation onboarding (one check) to have demo-ready content.
+
+  • Cinderella Deployed code to E3 in the morning; categorized tables and prepared conference space/doc for Crazy Venue. Created test repository/table clones, added two columns (focus metric, load data) and loaded monthly/daily records into DQ repository. Monitored daily jobs — no failures.
+
+  • Frontend / self-service Working on self-service validations — three validations, final one pending; progress toward review. Made UI changes for "add watchers" (textbox for comma-separated emails) completed. Started on view change to show watcher list within table (not popup).
+
+  • Other development updates
+    
+    • API integration: build issues resolved; working on priority-3 tasks and E3 pushes.
+    • Production RCMS customer issue fixed and deployed to A3/E3 as applicable.
+    • DQM changes and dashboard approvals deployed in E1.
+    • Mock data enhanced, lint errors fixed, tests updated, E1 deployments done.
+
+
+Grooming, sprint/carry-over planning and priorities
+
+  • Access issue follow-ups Access request (for investigation / data access) raised yesterday; no reply yet. Owner will follow up and update the team as soon as reply arrives.
+
+  • Sprint scope / carryovers Several stories will be carried forward:
+    
+    • Self-service frontend (carry to next sprint) and true-positive validation to be carried forward for Kundan and Athar due to dependencies and pending approvals from Saurabh's team.
+    • Automation build and related stories (Nirmal, Prithvi, Sameer) will carry forward; a plan to onboard at least one automation check to demo in next sprint using dummy data was agreed.
+    • APA/Quantro and SFT data transfer for A3 testing to be carried forward.
+    • RPA Goodwill and EMDL items may be parked for next PI as requirements are not yet ready from business.
+
+  • Board housekeeping / story labeling Request to make story names more intuitive than generic "build" so reviewers (e.g., Raj) can quickly understand what work each story contains without opening each card. Action: update naming conventions on the board.
+
+  • Back-end priority Emphasis on making good progress on backend work and 1:1 migration in the next sprint. Automation and backend both need progress; backend part is priority. Team agreed to allocate effort and plan accordingly.
+
+  • Notifications / monitoring design Discussion on monitoring grouped tables: tables have different ingestion frequency (daily vs weekly). To properly monitor and notify, grouping should be based on ingestion frequency and schedule, not table purpose. That may require multiple DAGs / Maestro configuration. Concern noted about Maestro notification reliability; need to evaluate Maestro notifications or supplement with separate monitoring. Rachna to think and report back.
+
+
+Other coordination / next steps
+
+  • Job segregation Karthik agreed to segregate jobs into separate cron/DAGs over time — will reduce blast radius of single pipeline failures.
+
+  • Follow-ups and offline meetings Agreed to take deep-dive on recurring failure (insurance table) offline with Jane, Lumi, source team representatives when ticket is assigned. Anand / others to work on build completion and validation follow-ups post-call.
+
+
+📋Overview
+
+  • Sequence-number mismatch caused the insurance E3 pipeline to fail; incident created and assigned — investigation may take 2–3 days.
+  • Team prefers avoiding stopping entire job (which contains multiple pipelines); suggested re-sending/resetting the failed file if possible, but may require Lumi/source action.
+  • Karthik will segregate jobs (separate DAGs) to avoid future cross-impact; implementation will take time.
+  • Ownership model for error types needs definition in SOP — not always Lumi's responsibility.
+  • Multiple stories (self-service front-end, true-positive validations, automation jobs, APA/Quantro, SFT transfers) to be carried over to next sprint/PI due to dependencies, approvals, or missing requirements.
+  • Anand expected to complete build most likely within this sprint; validation may be moved across sprints if access issues persist.
+  • Team agreed to onboard at least one automation check to demo next sprint (use dummy data if frontend not ready).
+  • Board story naming to be improved for clarity.
+  • Monitoring/notification design: group by ingestion schedule; evaluate Maestro reliability and supplement monitoring where required.
+  • Offline deep-dive planned for recurring pipeline failures with Lumi and stakeholders.
+
+
+🎯Todo List
+
+  • Sachin:
+    
+    • Follow up with Lumi/source on the insurance E3 incident ticket today; update team on ETA for assignment and investigation (ASAP — today if response received).
+    • Coordinate offline deep-dive call with Jane, Lumi, and source owners to triage the recurring failure (schedule when ticket assigned — target within 2–3 days).
+
+  • Karthik:
+    
+    • Implement job segregation (separate cron/DAGs per pipeline) to prevent single-pipeline failure impact — provide implementation plan and timeline (deliverable: plan + target date; ETA to be confirmed).
+
+  • Source Team / Karthik (if they own resend):
+    
+    • Determine if re-sending/resetting the failed file with corrected sequence number is possible; if yes, re-send and confirm ingestion (deliverable: file resend / confirmation; ETA based on ticket).
+
+  • Lumi team:
+    
+    • Investigate logs and confirm root cause for sequence-number null/mismatch; share RCA and recommended fix (deliverable: RCA + remediation steps; expected 2–3 days once assigned).
+
+  • Anand:
+    
+    • Complete remaining AFC build tasks (pivot data, Excel generation) in E1 and confirm build completion or identify blockers (target: within this sprint — check after 3 working days).
+    • If build completes, hand off validation tasks (or copy validation story to next sprint) and confirm status (deliverable: build done or validation copied).
+
+  • Rachna:
+    
+    • Review monitoring grouping approach and propose a DAG/notification plan based on ingestion frequency (deliverable: plan for DAGs and notifications; due: tomorrow).
+
+  • Kundan / Athar:
+    
+    • Continue self-service backend integration once Saurabh's approvals are received; be ready to implement backend changes once frontend/response format available (deliverable: backend updates; carried to next sprint).
+
+  • Prithvi / Nirmal / Sameer:
+    
+    • Prepare automation stories for carry-forward; plan to onboard at least one automation check (using dummy data if necessary) for demo in next sprint (deliverable: demo automation check; due: next sprint).
+
+  • Raj (or board admin):
+    
+    • Rename ambiguous "build" stories to more descriptive names for easier review (deliverable: updated story names on board; target: within 3 days).
+
+  • Meeting organizer / Sindhuja:
+    
+    • Share meeting notes and confirm owners/ETAs for all assigned items (deliverable: updated action-tracking; due: follow-up asap).
+
+Please advise if you want these action items moved into a shared tracker (Jira / Confluence) or want me to format assignments with explicit due dates and Jira story links.
+
+
+Transcription
+
+00:00:00 - 00:02:17 Unknown Speaker:
+
+10 minutes If you can share your screen, I'll just reach home and then share it. Okay, let them join, so Jason will join a little later, like he told, like, after a few minutes. So we can probably get started with Anand and Rajna's initiative. Just a second, there was some E3 incident issue in insurance. I'll just give me. We have to do this test track together and there are some challenges to do the data. So, that discussion is going on currently. Meanwhile, I am cleaning up my code. So, that's because the artist's development code was not done. The artist's development code was not created. So, that's what I have to be doing. Uh yes yeah i don't see anand and rachna also till now right i'm slacking them just give me a minute. I am joined.
+
+00:02:18 - 00:04:16 Unknown Speaker:
+
+Let me check. Can you guys check with Aman and Om if they are going to join? Okay, let me give them a call here. I'll also text Om. Hello. Yeah, anyone is fine. Uh, so before we, you know, start on the spring planning. Uh, there is a E3, uh that I just need to talk to home on that. Uh. So whom? You have seen the tariff for that one of the insurance table for 065? Okay, and as discussed yesterday, uh, number one. If he is going to stop that pipeline, that means whatever configuration he did, is it for seven pipeline or three pipeline, right? The ingestion is get stopped for all those tables. Okay, number one is that second, if you don't, if you don't stop the ingestion, the ingestion would start failing.
+
+00:04:16 - 00:05:02 Unknown Speaker:
+
+Today onwards, because, uh, today onwards, we would be getting a, you know, sequence number increment by two. Right, because right, yesterday, once I've been failed, okay, and I, I really don't know what was the problem of sending that, resending that file? I can get that RCA because, you know, there are constant with respect to access. We won't be able to face the data file which is there in the E3 environment, which Lumi team used to monitor. Right? And we can help them with the logs, and based on the logs analysis, it's seems like it's a, you know, sequence number mismatch issue, something with respect to date or something that need to be fixed from, you know. Source team only I.I'll wait for the Lumi team to you know, we can hear back from them.
+
+00:05:02 - 00:05:52 Unknown Speaker:
+
+But it would, again, you know, going to consume at least two to three days right now only I was created the incident. And, you know again. It would take some time to get it assigned to somebody and then we can try to follow up with the person to whom it is being assigned. Um, such an. I just have one small doubt won't the sequence number check pass for, like the other tables of the pipeline that didn't fail? No, I, I did not get your point. Um, so we have like one job which has sort of seven pipelines tied to it, right? And one of them failed? Essentially, yes, as well, right? That one, that one pipeline that failed again. But won't the rest? Six of them ingest successfully, successfully.
+
+00:05:52 - 00:06:53 Unknown Speaker:
+
+But till the time we are hearing back from the Lumity, right, you have seen their assets. And that was the reason, that was the reason I was asking to have a separate, uh, cron job for individual pipelines, so that now, if six, five, has been failed. Rest can continue to move ahead, right? But now the problem is, suppose you hear back from them maybe tomorrow or day after tomorrow. Your voice is cracking. Is it better now? Yeah. So what I was mentioning, as we are not stopping the ingestion, hearing back a solution from the Lumi team, you would end up filing the file in the Lumi bucket, right? And then again, the ask from Karthik would be as the files are there, just ask them to do it. Then again, we have to work with the Lumi team, right?
+
+00:06:54 - 00:08:10 Unknown Speaker:
+
+Right. That is again going to be an overhead for us. But if we do pause the session, That would create overhead for us as really remediate the file. Still, no, we can just reset with the right sequence number, right, and given we are within a couple of days, we should be able to recover. That's what I'm asking. I'm not sure. What's the problem of resending the file? If the if you feel the file is correct, what is the issue of resending the file? I, I really would like, you know, need to understand that. Just to add on Sachin, as discussed yesterday, Karthik has also agreed that they will segregate all these jobs, right? So that's the solution, which is obviously they will take time to implement. But right now, If we kind of... that route, that, okay, let's such, uh, stop all pipelines.
+
+00:08:10 - 00:09:05 Unknown Speaker:
+
+I mean, my ask was not to not to stop the pipelines, because I know that it's going to impact rest of the six. My simple was the file has been rejected at the passing, hasn't even moved beyond the passing stage. You will check the logs, it has been failed at the passing stage. So why we just try to reset the file again? If the file is correct, it would ingest over there. Okay, and you're saying with Lumi it will take time because Lumi... Yeah, that will take time. That is for sure. And what would happen... I got your point. I completely got your point. But now that will be a question on us. Like when we created this SOP, right? At that time, we said that whenever there is an issue, we'll work with the Lumi team.
+
+00:09:05 - 00:10:14 Unknown Speaker:
+
+If Lumi is able to fix it, Then, fine, if no, Lumi is not able to fix it, then we'll go to this, so then that's where there is a they will catch us, right? No, no, look, Lumi would fix it. When it would be a loony issue right now, based on the locks, it doesn't seems to be a loony issue. Okay, okay, it's clearly mentioning, right? Your sequence number that you're passing is null, right? That was there in the uh, in that error lock, right? Then what is the is this is Karthik saying no, they will not share the file. Yeah, he's needed to reshare the file again. Okay, let's park it right now. If he is not able to reset the file, let it be. We can wait for the Lume team, but I am sure that it's something not Lume issue.
+
+00:10:14 - 00:11:00 Unknown Speaker:
+
+And then we know going forward, the way we were discussing yesterday, we need to create a prize where if some piece of error summary comes in, right? Then in that case, we need to define who is going to own that piece of error. It's not always the Lumi team need to, because look, there is a constant, we won't be able to download or, you know, access the environment for all the details. That's the constant with us. No, yeah, and then every third, fourth day, this is, the pipeline is failing, that means there is some issue at the end, right? That they are not, that's something. So we can call out. We can just keep a call. Om, can you pause? Yeah.
+
+00:11:05 - 00:13:18 Unknown Speaker:
+
+We'll just keep a call with Jane and all these team maybe and then kind of discuss on this because that's, yeah, for this table, this pipeline, I think it's happening on every third, fourth day, right? So, yeah, let's take it offline, yeah. Yeah, okay, yeah. Let me see once the ticket gets assigned, I'll try to reach out to that person. Okay. Sindhuja, he went to reach or should I say I missed him? Please let me know. Let me share my screen. Just give me a minute. Thank you. Thank you. Thank you. My screen visible. So for the next I think we'll quickly take the first five minutes to do our DSU so the team can update the status. Did you create two CLs? Latest. Latest one. We also worked on the latest workspace. Part of it.
+
+00:13:19 - 00:15:27 Unknown Speaker:
+
+Part of it. Did you run the announcement? When you run, you should not run the announcement. You should run the new workspace. Be careful. That is done. So today, I was working on getting the latest... Did you run the story points? Window from the summary data and also there was one production issue with the rcms customer that is fixed and deployed to a3 yesterday yeah that's it for my section. So, I was working on that API integration. Okay, API creation or integration. So, I was facing some build issue that I resolved it. So I'm currently working on control, uh, priority three, and as well as for the priority and push the code to E3 and for the Quanto 3 priority. We so like I have shared like one of the code, like a small part of the code to IEPA.
+
+00:15:27 - 00:16:42 Unknown Speaker:
+
+Where it will create for focus metric on basis of the description table. And as well as like I had connect with Sachin Quanto. But like for the code review or like code discussion. Is back Cinderella? Yeah, um, I'll come back later. Yeah, Hi, Cinderella. So in the morning, we have deployed the code into E3. And then, uh, I categorized all the tables, uh, and chained it to Sachin, and uh, for the crazy venue table updates. Uh, I created a conference space, like how to do the changes and share it with, uh, some years. We will review it, then I will share it to the team. So yesterday we got the details from the for the counter related use case. So I have created the UH repository test table from the cloning from the existing repository tables.
+
+00:16:42 - 00:17:46 Unknown Speaker:
+
+So, and add on that one, uh, we have created, uh, two more columns in the test table. Uh, like your focus metric and load data, and once that I created and then I have added information. I mean to say all the records, uh, for the monthly and daily, so all things data got loaded into the DQ repository, so that got completed. Yeah, and uh, apart from that one, I just monitored the Uh, today daily, uh, monitoring jobs, so there was no failure happening. Yeah, that's all about from me. Yeah, I'm continuing on self-service. So far, three validations are, I mean, last validation is pending, okay, as per the plan. So, I'll try to close it soon and give it for review. Yeah, same problems. Action.
+
+00:17:47 - 00:19:07 Unknown Speaker:
+
+Starting with the insurance, There is a data ingestion issue in the E3 environment for one of the... the pipeline. So I was working on that and have created an incident that is it still in progress? Okay, on Crazy venue. The certification has been approved so we can move ahead with a testing. I have just cascade the same information to summon so you can start the you know, data ingest into the 18. A E2 environment was went through. The I was still working on that data ingestions for this LSR and now the BPM and modifications, so that's still in progress. Yeah, those are the major update for today's date. Thank you so much. And on the call so when I don't think he joined today. So, today I have worked on the feedback to add more meaningful mock data and updated it accordingly.
+
+00:19:07 - 00:20:19 Unknown Speaker:
+
+I have also addressed the lint errors and fixed the related test cases while I was facing in the E3 deployment. And these changes have been deployed in E1, the new DQM changes and the approval for dashboard. These both are deployed in E1. Also, I have worked on the add version enhancement. Show the text box so when the user can enter comma separated email IDs to add watchers. So this has been completed. I have started on the view change, where we will be showing the washer list in the same table, not in the pop-up. So that I'll be working, continue working on that, thank you. Yeah, um, any questions on to the grooming? Yeah, we can continue. Yeah, um, yeah. So I think first is on cute track. Um, I I think, first of all, uh, any updates on this access issue?
+
+00:20:19 - 00:21:12 Unknown Speaker:
+
+Uh, no one. And so I still not hear back anything from anybody. Uh. The engagement was raised yesterday, but post that. Let me follow up with that post today. I'll try to reach out to them. At least just check with them and ask how long it will take. I think that is important. Yeah, based on that. Just ask them how much time are we expecting them. Okay. I'll check today and then I'll update you. If I receive the response today itself, I'll keep you posted. Otherwise, maybe talk about it. Sure, sure. And second thing is, Ansi, so from a build standpoint, in E1, is it complete? No Anand, it's not complete. Like the initial steps are working. So there are still like the pivot data, then generating the Excel data and such things are there.
+
+00:21:13 - 00:22:12 Unknown Speaker:
+
+Okay, okay. So I believe how much time would you take for that ideally? What do you anticipate? Like will this work with the next sprint is what I'm trying to ask. Yes, yes, it will work. The big part of it as well. Yeah, yes, because right now the exact query result I'm not able to see. So you're seeing some dummy values in the for the execution. Okay, sure, sure. So I think the first thing is, I think you can copy that story to next print as well. The AFC One Anand AFC, Yeah, AFC Build. I think we still have three days and see, right, we should be able to at least complete the build for that, right? We just need a validation task once we get the access correct. Like, we're still standing on Friday, right?
+
+00:22:12 - 00:23:43 Unknown Speaker:
+
+How much of the build is still remaining because we are still having Thursday, Friday and Monday. In case any refactoring or something is required so you can walk on that user story. But at least from build standpoint of you, I think you should be able to complete the build in this sprint itself. Okay, okay, just let me know and see like you know, you do. You feel you'll be able to wrap up within three days or you still need this build story? Uh, yeah, I'll, uh, let you know. Session will be after this call, okay? Then then copy the validation part. Uh, not the build one, whatever refactoring and all would be required so you can work on that validation, not the Build one. Okay, next, self-service, uh, front end would be called carry forward, and this true positive would also get carried forward.
+
+00:23:43 - 00:24:43 Unknown Speaker:
+
+Uh, both for Kundan as well as for Athar, because this needs, uh, you know, changes. And right now, both people are, you know, just suffering between dqim and cells. So carry over there all the stories. Just wanted to check because we have only two um sprints left right. I see at least there are other things like, uh, those are not ready for the job, like, you know this, uh, RPA goodwill, those are still not ready. Uh, so we may need to park it to the next PI, Uh, they are not ready in the sense from home, like from the requirements standpoint. So, Anand, you're okay with it, right? Like, if it is not achieved in this PI. Correct, correct. Because it's, like, even we haven't, like, it's not even pending at our end.
+
+00:24:43 - 00:25:43 Unknown Speaker:
+
+The business team themselves have not provided us the requirements yet. So, that should be fine. And also, like, when we are carrying forward these stories, right, Sachin, like, is it that they are, like, of, you know, too much work or whether developers not able to achieve these? The changes has been done from the other side right now, it needs to be, you know, approved from Saurabh's team. Once he approved, then Kundan would be able to make the changes in the back end because he would be getting those in the response right? So once, uh, that is being, uh, you know, uh, built in the even, then we can. We need to promote it to E2, then to E3. So that's the reason I'm asking this. Both the story would be required in the upcoming segment, also maybe story pointer.
+
+00:25:43 - 00:26:49 Unknown Speaker:
+
+You can keep it less because they are not spending the whole day for that. But still, an effort is required for those both of those stories and cells. And that is already having lots of work, which, you know, we are doing in the back end. Myself, that would still go. And on the automation build, Anand, let me do one thing. We can, you know, try to at least onboard one of the check which we can validate in the upcoming sprint. Okay. So, although it would be carry forward for the build, but we will be, you know, deploying that code and let's test it out in the next. Yeah. At least if we have something to show, right? Yes, yes. We do have. Correct. We do have, we would be just inserting some dummy data, right?
+
+00:26:49 - 00:27:46 Unknown Speaker:
+
+Because right now the frontend is not ready from where the data would be captured. So we would be just inserting some dummy data and then the bot would pick that new rule from there and I'll plan it out working with Prithvi and I'll demo it in the upcoming spring. So, you know, Nirmal's story, Prithvi's story would carry over, Sameer's story would carry over. Like for APA, Quantro would carry over. SFT data transfer would carry over for A3 testing. And same goes for Sameer's Quantro and Nirmal's automation. So for Nirmal's one, Rachna, I have shared you one email on the table, right? Those are pending for that automation job. I would like to know like whether those in-jacent failure, you know, report is required to be notified to us or are we going to notify some partners?
+
+00:27:46 - 00:28:55 Unknown Speaker:
+
+So if it is going to be a monitoring, yeah, now you can notify it to like us and your team, but, uh, going forward we might include a few partners. Like, yeah, then. In that case, if we are trying to segregate, right, then the RAZY notifications should go to the RAZY team, right? So in that case, just cross check. Question regarding the mail you have sent over? Like, my concern is that, uh, what if, like, uh? These tables that you have dusted together, they have different ingestion times, right? Like, suppose one table has a daily ingestion, while other has a weekly? Want to monitor just based on particular table wise, right? Then we have to create that many DAGs Rachna individual DAGs to monitor their ingestion.
+
+00:28:55 - 00:29:52 Unknown Speaker:
+
+If you want to monitor it, you cannot really cluster it based upon what kind of data the table has, but more on the injection frequency, intraday frequency. Then, like whichever tables have it, so you can master them, and even the daily ones if you know that, okay, this table has in addition every day at 8 a.m and then other one also has around 8 or 9 a.m. Then for them, you can it together at some time later in the days, but then the ingestion frequency. There is no way to cluster it from what I understand. Then we have to depend on the Maestro notification in that case, like, if we are getting a Maestro notification with respect to the data engine, then it's okay. Otherwise, we will send this thing initially, right?
+
+00:29:52 - 00:30:50 Unknown Speaker:
+
+Sachin, But you said there are issues with the Maestro notification. Yeah, correct, correct. Uh, okay, uh, let me think about it. I'll I'll get back to you on this tomorrow. Any other task Anand you would like to create or have some parity in upcoming sprint? So Sachin you were part of that UMDL call right? So that is of utmost priority with respect to any use case that will be working. So as and when that comes up then definitely we will have to take that up. Okay we do have bandwidth Anand like you know like hence you would have some bandwidth right? Right now, I can engage her in that automation job, but if required, I can pull her back to that EMDL. Right, so we are expecting RPA, Woodville and EMDL, like all three in the coming week.
+
+00:30:51 - 00:31:52 Unknown Speaker:
+
+But let us hope at least get at least one of them right, so that we can get started. Okay, okay. Okay, we can plan accordingly based on the priority. I will just suffer layapao and see and swim based on that. Yeah, just want to ask one thing, right? So the drop down change that we are doing right in DKY? Will you go live in the coming sprint for that? Yes, yes means not this sprint, but on upcoming sprint, yeah, hopefully that would be ready by that time. Okay, it's just that one dependence, you know right? Otherwise we could have released it this sprint only. We have that dependency and that that may create some delay. Just another thing I wanted to check, um, so for this one to write.
+
+00:31:52 - 00:33:48 Unknown Speaker:
+
+When I see in under the feature, it's mostly like build part one, part two. We are like doing it continuously in every sprint. Raj, When they see the board, right, control, build is like just in there in every sprint. So can we make the name more intuitive, the work that they're doing, right? What build in the name itself? Because Raj won't have time to open up every story and see it like, what is, you know, description? So, yeah, it's just a suggestion from my side, yeah. Let's wait for them. We still have three days, right? So we can wait. Yeah, I think we are done. I think I copied everything. It was one. Yeah, just last one I have to move. Okay. So currently, the board is looking this way, um, 49 of 67.
+
+00:33:48 - 00:35:02 Unknown Speaker:
+
+But yeah, I'll change the name and stuff. And um, I see some of the crazy stories like they've added already, probably in the planning call, right? We can like, um, revisit on the story points and also like, add the remaining ones. Okay, I said, yeah, such in just. I mean, one thing to call out is, uh, next sprint, right? Especially I.I specifically want that back-end part of it and the one true migration to have some good progress, so just calling that out, okay, uh, back-end part of it. I got your point, so I'll, I'll few of them. But what is the automation part of it? Oh, okay, the automation job right that we are building, not the service. Yeah, okay, I was, I was, uh, thinking about that self, so because self-serve, you know, I'm working on that access part.
+
+00:35:02 - 00:36:11 Unknown Speaker:
+
+Also, I was asked yesterday regarding how you are going to manage those access. Like, you know, we should not be providing the update access again. So there are lots of analysis and back and forth is going on over there. So at least even in the self-serve, we would try to integrate the backend API where at least, you know, instead of mockup JSON, you can view the actual data getting pulled from the database with respect to the legal or the use case. That can obviously, that's needed, but what I'm more concerned is regarding the automation job itself, right? so let's have some problems because i think the last two sprints we spent for analyzing so i think let's get some bit builder okay thank you so much thank you this so this

@@ -1,0 +1,328 @@
+2026-02-05 Q-Track Overview and Future Enhancements Meeting Q Trac Office hours
+
+Creation Time: 2026/2/5
+
+
+📅About Meeting
+
+  • Date & Time: 2026-02-05 20:33 (Duration: 2,073 seconds)
+  • Location: Q-Track Office Hours (virtual; meeting recorded)
+  • Attendee: Data Office team — Poonam, Bhuvana, Mashish, Sachin, Anand, Anil, Ashish, plus other Q-Track partners and participants
+
+
+📒Meeting Outline
+
+
+Q-Track overview & history
+
+  • Purpose and origin Q-Track is a data quality monitoring (DQM) and anomaly detection tool launched Aug 2023 to provide data quality capabilities to non-Calibrate users across the enterprise. It addresses needs for data producers, analysts and use-case teams to run quality checks and log outcomes without requiring Calibrate steward access.
+
+  • Problem statement solved Q-Track centralizes detective data quality checks and incident logging for process-level metrics (joins across tables and derived metrics), ingestion checks, and column-level checks where applicable. It addresses the need to place and log DQ checks per MRFG standards and to create an auditable history of incidents and remediation.
+
+  • Timeline and scale Ideation began Dec 2022; initial build in 2023. Grew to 1,000 TQ rules in 2024. Migration from Cornerstone to Ruby completed late 2024. Current footprint: ~2,000 rules across ~50 tables (30% coverage of USCIS inventory).
+
+  • Architecture & tech stack
+    
+    • SQL-based checks run in BigQuery (queries and logic live in BigQuery).
+    • Orchestration via Airflow tags in GCP; scripting in Python.
+    • Hosted environment moved from Cornerstone to Ruby.
+    • Alerts delivered by email only when checks fail.
+    • New Data Quality Incident Management (DQI) portal added for governance and incident logging.
+
+
+Capabilities & types of checks
+
+  • Types of checks supported
+    
+    • Threshold checks (numeric ranges or percentage thresholds)
+    • Valid value checks
+    • Missing value checks
+    • Stagnant data checks
+    • Duplicate checks
+    • Ingestion checks (detect missing or late ingestions)
+    • Process-level checks (complex joins/derived metrics that represent business processes)
+
+  • Current scope All checks are detective (post-ingestion). Q-Track does not block ingestion; it detects and alerts after data is loaded.
+
+  • Alert content Alerts include table name, variable name, frequency, description, expected vs. actual values, and run timestamp to support investigation.
+
+
+Governance, incident management & reporting
+
+  • DQI portal purpose The DQI portal centralizes alert triage, partner analysis and remediation workflows so conversations and decisions are logged and auditable (Project Guardian compliance). It replaces ad-hoc email/chatter-based communications with structured tracking.
+
+  • Reporting cadence
+    
+    • Monthly: consolidated pass/fail counts per check, per use case; trend plots of failures across time to support monthly review.
+    • Quarterly: aggregated DQI reports summarizing incidents, variables/tables tracked and broader impacts.
+
+  • Remediation workflow
+    
+    • Alert fired -> recipient receives email -> partner reviews alert and records classification in DQI (false positive or true positive).
+    • False positives: partner options include Delete rule, Monitor rule, or Revise rule (with justification).
+    • True positives: partner records impact (number of customers, dollar impact) and classifies the incident. An incident (ServiceNow INC) is automatically created and routed to production support; remediation and triage begin with production and table owners. Incident number will be linked back in Q-Track for status tracking.
+
+
+DQI portal demo & user workflow
+
+  • Portal access & filtering
+    
+    • URL: aceworkspaces.axb.com (SSO group access shared in chat).
+    • Users can filter by workbasket (use case), status (open/in-progress/closed), table, variable and other attributes to see only their alerts.
+
+  • Alert handling on portal
+    
+    • View alert details (expected vs actual, run date, description).
+    • Log analysis and choose classification:
+      • False positive -> choose Delete / Monitor / Revise + justification.
+      • True positive -> provide impact metrics; system creates ServiceNow incident and notifies production support.
+    • All entries (classification, justification, and action) are logged in DQI for audits and retrospective analysis.
+
+  • ServiceNow integration
+    
+    • True positive submissions produce a ServiceNow incident (INC) with details; the incident is sent to the respective data team. Q-Track will include a hyperlink from the alert to the ServiceNow INC for tracking remediation status.
+
+
+Roadmap & planned enhancements (2026+)
+
+  • Self-serve onboarding portal
+    
+    • Explore page to browse existing checks by use case/table.
+    • New rule intake forms on UI replacing Excel intake sheets.
+    • Goal: enable partners to submit checks, accelerate onboarding and reduce time-to-deploy.
+
+  • AI / ML capabilities ("One Rule" / intelligent thresholds)
+    
+    • Historical profiling (6–12 months) to compute profile metrics: autocorrelation, coefficient of variation, skew, distribution shape.
+    • An algorithm selector chooses among ~7–8 algorithms to generate more accurate thresholds, adapting to data characteristics (seasonality, sparse/repeating values, skew).
+    • Periodic re-profiling (monthly/6/12 months) to adapt thresholds as data drifts; supports univariate and planned multivariate analysis to account for correlated variables.
+    • Expected result: fewer false positives, better threshold fit, automated threshold recalculation over time.
+
+  • AI-assisted self-serve
+    
+    • After minimal input (table, variable, filters), the UI will recommend relevant DQ checks and suggest rule definitions (AI-enabled). Partners can accept recommendations and deploy quickly (target: rapid deploy, e.g., 24-hour target to deploy once approved).
+
+  • Expanded coverage & acceleration
+    
+    • Expand DQ coverage across more datasets and platforms within USCIS using AI-assisted creation of checks for Critical Data Elements (CDEs).
+    • Automated and improved visualizations in reports (seasonality plots, trend visuals) so partners can more quickly assess impact.
+
+
+Clarifications & Q&A highlights
+
+  • Q-Track is not intended to replace Calibrate; it complements Calibrate by enabling broader non-steward users to place checks and manage incidents. Calibrate remains the enterprise tool for stewards.
+  • Checks are currently detective only; future capabilities may expand automation around sign-off and onboarding but not stated as preventive ingestion-blocking.
+  • Thresholds can be numeric, percentage, ranges, or derived from joins/complex logic. The ML framework improves thresholds beyond single-method approaches (e.g., interquartile range).
+  • Current intake remains Excel -> Q-Track team -> tech deployment. Self-serve UI will remove Excel and enable direct onboarding and AI improvements.
+  • Impact capture (dollars, number of customers) will become structured via dropdowns to help severity assessment and prioritization.
+
+
+📋Overview
+
+  • Q-Track launched Aug 2023 to enable enterprise DQ for non-Calibrate users and to log/process DQ incidents.
+  • The platform runs SQL checks in BigQuery, orchestrated by Airflow + Python, and is hosted in Ruby.
+  • It supports many check types (threshold, missing, duplicate, stagnant, ingestion, and process-level checks) and currently covers ~2,000 rules across ~50 tables.
+  • Alerts are detective only and sent by email only on failures; DQI portal centralizes triage and creates ServiceNow incidents for true positives.
+  • New DQI portal provides structured classification, justification, monitoring and ServiceNow integration to drive remediation and auditability.
+  • Roadmap items: self-serve intake UI, AI/ML thresholding ("One Rule") with periodic re-profiling, multivariate analysis exploration, AI-assisted onboarding and recommendations, expanded coverage and better reporting visualizations.
+
+
+🎯Todo List
+
+  • Poonam / Data Office:
+    
+    • Share SSO access group and DQI portal URL to participants (ASAP)
+    • Distribute the Q-Track roadmap deck and contact points (Anand, Dharachana) (Within 3 business days)
+
+  • Q-Track Product Team (Anand / Bhuvana / team):
+    
+    • Publish formal roadmap with timelines for self-serve portal, AI-enabled onboarding, and threshold ML features (By end of Q1 2026)
+    • Provide sample reports (monthly and quarterly) and visualization mockups to partners for feedback (2 weeks)
+
+  • Tech / Production Support (Sachin / Production team):
+    
+    • Ensure ServiceNow incident hyperlinking from Q-Track alerts is implemented in DQI portal (target: next sprint)
+    • Confirm notification templates (email) include INC number and link (next release)
+
+  • Partner teams / Data owners:
+    
+    • Review existing DQ rules for your workbasket; classify current open alerts in DQI (Ongoing; recommended monthly review)
+    • Provide feedback on desired impact dropdown ranges (dollars and customer count) for DQI impact capture (2 weeks)
+
+  • Q-Track Engineering:
+    
+    • Complete automation for periodic re-profiling and threshold recalculation loop (timeline to be included in roadmap)
+    • Implement self-serve intake UI to replace Excel intake (MVP target per roadmap)
+
+  • All attendees:
+    
+    • Send additional requirements, questions or requests for onboarding to Anand, Dharachana or meeting hosts (ASAP)
+
+If you want, I can convert these tasks into a prioritized action tracker with owners, deadlines and status columns for distribution.
+
+
+Transcription
+
+00:00:00 - 00:01:03 Unknown Speaker:
+
+Welcome to the Q-Track office hours. We are hosting from the data office team here. Poonam, anything you wanted to quickly touch upon before we get started? Okay, so welcome everyone. So what we are going to do is give you an overview of Q-Track and the capabilities that we recently added and plus the capabilities that we plan to add in 2026 and beyond. And with that we are also going to give an overview of what is QTrack for most of you who have not heard what is QTrack. So those are the things that we plan to cover and then we will open up for Q&A. Thank you. Thank you Bhuvana. Let me just share my screen. Mashish, I think there is some audio from your side, if you can go on. Thank you so much.
+
+00:01:04 - 00:01:52 Unknown Speaker:
+
+Okay, so let's get started, right? Let's start off with a quick overview about QTrack. QTrack is a data quality monitoring and anomaly detection tool that was launched in the August of 2023. The inception was brought about due to a core reason, which is basically non-availability of enterprise data quality tool, which is Calibrate, for the non-data users. So if you are anybody who interacts with a lot of data, right, you might be data producers, data analysts, creating some reports, but if you want to do some kind of quality checks at the end of the day, that is where Q-Track came into place, right, from a USES standpoint. Another very key factor what Q-Track solves for is basically all these USES models that are running, right?
+
+00:01:52 - 00:02:37 Unknown Speaker:
+
+Based on MRFG standards, there is a need for all the data quality checks to be placed somewhere and to be logged as well, and that is also something that Q-Track supports. I'd say one of the biggest call-outs is Q-Track does not, like, obviously does solve for a lot of these column-level checks in a lot of tables, but we go one step ahead, and they form a lot of process-level checks, right? Creating complex metrics out of joining different tables, creating logics on top of it, and then keeping some track of it, right? That is where Qtras really shines, is what we'd say. If I look at the quickly, the journey, right? Started off in, the ideation started off in December of 2022. Then we started building in 23. Eventually moved on to 1000 TQ rules in 24.
+
+00:02:38 - 00:03:26 Unknown Speaker:
+
+Last year, we did a big uplift of moving this tool entirely from Cornerstone to Ruby. So that got completed towards the end of the year. And we stand at about 2,000 rules as of today. And also very glad to share that we recently launched this DQIM portal, which again we will be demoing in today's call. If you look at the design aspect of it, how exactly does this work? It's very simple. You do some kind of data extraction based on Lumi tables. You run those checks, right? So, this is entirely written in SQL. So, you have some SQL logic that is querying all these tables, joining different tables together and creating your metrics. And then based on that, you check. So, for example, if it's like a threshold check, right?
+
+00:03:27 - 00:04:06 Unknown Speaker:
+
+A very simple example I can give is, for example, you want to check the credit bureau score, the population, right? If the population has some score between X and Y, that is a good enough, let's just say, a population that we are catering to. But we also want to keep a check, right? It should not drop below X. That means the people who are giving out cards are not really credit worthy in a way. Or, I mean, if you want to do some kind of comparison between these thresholds, I think that is where QTrack can be brought into place, right? We offer a plethora of other checks as well. One of them is threshold check. Others are like valid value check, missing value check, stagnant data checks, duplicate checks.
+
+00:04:07 - 00:04:43 Unknown Speaker:
+
+Any ingestions that are being missed, like you said, so-called ingestion checks and like I said, right, process level checks, which are like if you're joining together multiple tables and creating complex metrics in a way, right? If I look at the scope part of it currently, all of the food red checks are detective in nature. They're not preventive, as in they do not stop the ingestion of particular data from happening. As in when the ingestion has happened in a particular table, that is when this kicks off and the quality check runs. And then you get alerted if in case there is some kind of a data quality issue. Environment is in Ruby. We hosted it initially in construct, but the entire process has now moved to Ruby.
+
+00:04:44 - 00:05:31 Unknown Speaker:
+
+There is a dedicated DQI, which is data quality incident management portal that we have created, which we'll be showing in some time. And of course, you will get email alerts as in when you have some kind of data quality checks. Can we record the session? Okay, sure, sure. This meeting is being recorded. Just to add, you will get an email alert only if the data quality check has failed. Else, you will not get an alert. The text part of it, for those of you who are interested in it, the scripting language is Python. We are creating these Airflow tags within GCP. And that is enabled by our technology partners. But essentially, the query part of it, the logic part of it, sits within BigQuery.
+
+00:05:35 - 00:06:20 Unknown Speaker:
+
+This is one of the sample alerts, for example, that you get as event there's some kind of failure that happens, right? So here somebody has placed some kind of checks on the Resi data, for example. So you get the table name, the variable name, what is the frequency at which the table gets loaded, any description that you have provided while you place the check. And then most importantly, the expected value that should have come and versus the actual value that has come up, right? So that you can do your analysis post that. As of now, so we're covering, like I said, almost about 2,000 rules, which are put across about 50 odd tables, I can say, which covers about 30% of the total inventory that we have in USCIS, being used at USCIS.
+
+00:06:21 - 00:07:05 Unknown Speaker:
+
+We have a lot of these different analytical partners with whom we partner and create a lot of these checks. Some of them are in pipeline as well in 2026. So along with placing these checks, right, you have onboarded to Q-Track, your checks are running. But on top of that, what we also provide is some kind of a reporting. This happens both at a monthly level as well as a quarterly level. So at the end of the month, our team basically consolidates all the different checks that have run for you. All the passes, all the failures. Also, if you see on the left side, you'll see a trend plot as well. How exactly is your use case doing with respect to the number of failures it's generated.
+
+00:07:07 - 00:07:59 Unknown Speaker:
+
+So all of this information is polluted and shared with your team for you guys to have a kind of a monthly review of the chips and the health of these chips in a way. And then we also have a quarterly report that is a little more aggregated that we consulted all the data quality incidents that have happened in the past three months or so, right? Along with all the different variables being tracked, all the tables being tracked across the different. So next up is the governance part of it, right? And this is where we are happy to launch this new tool, this platform, which is basically for the DQI part, the data quality incident management. What happens now is, as in when some of our partners, right, they get an alert, for example, a data quality alert comes up.
+
+00:07:59 - 00:08:43 Unknown Speaker:
+
+What happens today is a lot of the conversation and the remediation process happens over imaging, right? We create an alert, we send it to them through our automated process, and we ask for a response, right? What kind of data quality might it be? What is the impact that has happened, right? With respect to the number of customers impacted or the dollar amount that might be at risk. So all of that analysis is something that we expect our partners to do based on that alert, and then come back to us. And based on that, then we think of the remediation process, where we work with the data owners to identify what exactly is the issue, and then, I mean, Get the remediation or the resolution as soon as possible, right? Uh, but what happened?
+
+00:08:43 - 00:09:26 Unknown Speaker:
+
+That is a lot of the information was flowing through email chains or through conversations or calls, right? And that was not not really in a good, good way of logging all that data. And that is where, uh, we launched this particular platform. So, in accordance to Project Guardian, right, there is a need for all of this information to be stored somewhere. Uh, so that if there is some kind of an audit, what are? What were the data part issues that have happened in the past? We have a good enough platform where all of this information is posted up. So this is what exactly the purpose has been solved using this platform, which again, we will be doing in a little while. But before going to that, there are a few things in our pipeline as well, which we wanted to share with you guys.
+
+00:09:27 - 00:10:09 Unknown Speaker:
+
+The first one is like a self-serve portal that we are building. So this helps people onboard quickly. Is what I'd say. But first and foremost, if you look at the left side, there's an explore page, right? What all checks have you already placed? Or if somebody just wants to like shop around and understand what are the checks already placed by other teams as well, right? So you can have a view. If you can search by any use case name or let's just say any table name, you can see all the different checks that are available on our platform as of now. And second is the onboarding part of it, right? So as in when, if you want to create a new, what you can do is, go click and let's submit a new role or create a new role where in this form kind of pops up.
+
+00:10:10 - 00:10:57 Unknown Speaker:
+
+And this is a very similar to the onboarding process that we have to do. So we currently take the intake form through Excel sheets, which are again like, you have a lot of different columns that you have to fill out for each group. Similarly, we have this QTRAD intake form kind of stuff where you mention the table name, the variable name, all the different descriptions and stuff like that over here. And then this kind of kicks off the entire onboarding journey at our end, which is also something that we're planning to automate and do it. Second is one rule. So this is an ML intelligence framework that we have been building. So what happened over the past couple of years is that we were facing an issue of a lot of false positives because what happens is data drifts over a long period of time.
+
+00:10:57 - 00:11:34 Unknown Speaker:
+
+And then the thresholds that we have put down might not really make sense after some time. A certain point in time, let's just say. And even the checks that we come up with initially also might not be the best kind of checks, because the data, let us say, drifts a little here and there. So that is where we came up with this intelligent framework, wherein what we do is essentially, as in when somebody submits a requirement to us, a table, a variable that they want to put a check on, we do a historical profiling of that data. So it might be six months or 12 months of data that is being profiled, so that we understand certain variables, certain metrics like auto correlation value,
+
+00:11:35 - 00:12:22 Unknown Speaker:
+
+how exactly does each data point link with each other or coefficient of variance or skew like when you plot the normal distribution graph of it, how exactly does this look like? Is it like normal distribution? Does it have a long tail skew? Because that will change ultimately what kind of metrics are you putting on top of it to calculate the thresholds. So we calculate all those different profile metrics and then we decide the algorithm. So based on those metrics, we have about 7-8 different algorithms that we have developed at the packet or coded at the packet. And then based on those profiling metrics, it will choose exactly which algorithm should be best fit to calculate the threshold. And then it goes ahead and calculates the thresholds based on that algorithm.
+
+00:12:23 - 00:13:05 Unknown Speaker:
+
+And using that, basically those thresholds, you can go ahead and add your daily or monthly decreases as well. What's also important is this arrow that you're seeing at the end, right? So what we also do is every periodically, which is every month or six months or 12 months, there is an automated process which recalculates or does this profiling once again. So let's just say in your last one month, if the data has drifted a lot, right? Or in the last one week, it has drifted a lot. That again might cause a risk that the algorithm that you selected earlier might not really make sense. So that is why we have that loop. Which recalculates the threshold. First of all, re-identifies the best algorithm and then recalculate the threshold.
+
+00:13:07 - 00:13:55 Unknown Speaker:
+
+So like at a very high level, this is how it operates in the back end, right? So you have different logics happening and based on the profiling methods, you select which algorithm suits best. We also are exploring the multivariate side of things, right? So if you submit variable A in a table that exists, right? How can we determine if there are other variables that influence the values of this particular variable and the deviation that might happen? So we try to put all together a more complete picture while we determine the data quality aspect. But otherwise, if you look at the right side, the univariate part of it, for example, the ACF values, if they are high, that means there is some kind of trend going on, like a 7-day cycle or a 30-day cycle.
+
+00:13:56 - 00:14:34 Unknown Speaker:
+
+That will give us like some kind of a pattern that we can track data on. So we use like something like four fingers. Or if the values, like the correlation value is really low, right? That means, let's just say, the system is always emitting a value of five. So it's always like five, five, five. So even a 5.001 might be a deviation, right? That should not happen. So there is another algorithm for that. And similarly, we have like different use cases. And based on that, the framework itself picks what is the best algorithm on the market. Okay, so I will take a pause and that is where I want to move on now to the demo part of it where we are going to showcase the DQI model that we have made.
+
+00:14:34 - 00:15:27 Unknown Speaker:
+
+So just to go back and reference, this is the model, the overview of it. And this is the governance aspect of it. Governance and then the automatic or automated remediation part of the Q-Track process. So how we go about it is, this is basically the URL, which is aceworkspaces.axb.com. The only approval on, let's just say, the access that you want for it is something, it's an SSO group that we'll share it in the chat. With that SSO group, you'll be able to access this website, and you'll be able to see what are the different alerts that have come up, let's just say. So first and foremost, if I land upon this page, You can see all the different alerts for the entire Qt Red platform that have come up.
+
+00:15:28 - 00:16:13 Unknown Speaker:
+
+The first thing that I would probably want to do is see only my alerts, right? What alerts have been generated specifically for my team or my use case. So for that, what I can do is I will go to filter over here and select the workbasket. So here already all the use cases that have onboarded with Qt Red, we have created workbaskets here. If you have like a new, I want to set something like co-brand travel, right, for example. You can also do multiple filters, right? What is the status? If you want to just look at the open alerts that are there, or if you want to just retrospectively look at the closed ones, or some things that are in progress, things like that, you can select that.
+
+00:16:13 - 00:17:05 Unknown Speaker:
+
+And even use these filters to, let's say, narrow down the search of that particular page, for example. Specifically for this work passing. These are table names, the variable names, the description, when exactly that DQ got executed, and what is the status of that particular alert that has come up. So for example, this is an open market, and I would probably want to go and have a look at this one. So as in that, like I said, the DQ alert gets fired, and if there is a failure, there is a notification that you first get, which is in the email, right? Once you see that email, Then you can proceed to the log your insights over this platform. So I'll go here, click on Actions, click on View details. And this brings me to this page, right?
+
+00:17:05 - 00:17:51 Unknown Speaker:
+
+Wherein again, you'll see a few more details over here. Again, the table name, description, run date, and what was the expected value versus what was the actual value? For example, what I'll do if I want to log in my details over here, right? What are the analysis that I've done. And then I can choose the classification now. So the classification could be of two types, right? It could either be a false positive, which means, I mean, it was not really a data, like a major data issue. It's just a temporary blip in the data that you have come up with. So that's the option one. Option two is a true positive, right? When you see there is an actual gap in the data, and then there is some kind of an impact also that has happened.
+
+00:17:51 - 00:18:37 Unknown Speaker:
+
+And we need to raise this and get that data. So first and foremost, let's go through. So false, positive. I'll get three options to choose out of that. So first exactly is delete. For example, if that rule doesn't make sense, if that ingestion has stopped, the table has migrated to another table, or the kind of definition that you had provided earlier does not really make sense, for example. That is where you probably want to delete the rule, and you can provide a justification here as well. The second is monitor rule. You think that might have happened, and you want to progressively monitor it for one or two more rounds, right? That is when you would want to select the monitor option. And third is revise.
+
+00:18:37 - 00:19:17 Unknown Speaker:
+
+So let's just say you feel like, okay, the data has drifted, let's just say, and whatever you put doesn't really make sense, but there's a small tweak, let's just say, the threshold or the definition of that rule that you would want to go ahead with. You can even go with the revise rule option. So let me go ahead with monitor rule for now, and then I can... put in my justification here. I can probably say something like test alert for now. Now you can just click on submit. So that's all. That kind of closes this entire workflow for you and you get a success notification. So whatever details that you had shared, if you want to retrospectively go back and look at it, all that information will be here as well.
+
+00:19:18 - 00:20:14 Unknown Speaker:
+
+So if you have classification, what exactly was it? And then you also have the justification that you know it and what was the action that was taken back then. Okay, so that was the first workflow is what I'd say. Let's choose another one, for example, Resi Analytics, right? If I go to this one, and the second option that I see over here is, let me resolve this first of all. Second is too positive, right? If there is a data issue that has happened. Now here, You will be expected to provide further justification as to what has the impact with respect to the number of customers or the dollar impact that has happened. And here we'll be providing. There are plans to expand this justification box in a way that you'll be provided a drop-down box where you'll be given.
+
+00:20:14 - 00:21:03 Unknown Speaker:
+
+Is the impact between this dollar amount to this dollar amount and even the number of customers. So that it's easier for you guys to also go in and put in your thoughts over here. So now again, I'll not go ahead and click submit, because the reason I'm not doing it in E3, for example, is because what happens next, right? So if it's like a true positive, and now this is where the magic happens. Based on all the information that is already there on the page, plus what you have provided, right? There is an incident. So there's no incident gets on that particular moment, and that gets back to the production support team in Ruby, right? It gets tagged to them and then the remediation process kicks off. So you'll get an email alert saying that the INC has been created.
+
+00:21:04 - 00:22:03 Unknown Speaker:
+
+You'll get the INC number as well. And then it gets, I mean, automatically tagged to the production supporting who will further loop in, like the remediation process happens, right? They will loop in the production, the table owners who exactly are responsible for doing the remediation, the resolution process. I will quickly invite Sachin just to give you guys an overview of how exactly that shows up in E2. Because we don't want to create false INCs on one production data. So we'll just quickly call in to do that. Thank you, Anil. I'll just walk you through the true positive scenario on the E2 environment. I hope I am audible. Yes, I think we are using some tech terminology, so Edu is nothing but a test environment. Uh, production is where all the action takes place, where most of the data flows through.
+
+00:22:03 - 00:23:02 Unknown Speaker:
+
+For MX, uh, so this tool, this Q track, is currently live on the production environment. Where, let's say, if there is an application, someone submits an application for a create card. When the processing starts for that application, that happens in the next production environment. So this tool is placed right over there. So whenever there is a data ingestion, that happens, any of the tables that you choose and you want to place a data quality alert upon ingestion. Uh, the TQ or the trigger will kick off Q track execution and all your TQ rules will get executed and you will get an alert. So now this process where we are asking the user to confirm whether it's an actual data issue with an impact. Once the user submits it, it creates a service ticket and it will send to the respective data team.
+
+00:23:02 - 00:24:06 Unknown Speaker:
+
+So the remediation process will get started. So this is what it is. So just wanted to simplify the terms that we have been using since we work with the technology team. So we use some of the jargons, but yeah, this is to simplify those. Thanks. Also, let me take the same example over here. Okay, I'll go and just reverse, uh, reserve this task for me under my bucket, and I'll be selecting a true positive. And maybe, uh, comment like, You know, any, any, like, you know this for test purpose, okay, and then I'll go and couple of minute. So first of all, it would trigger an alert to us over the email, and then it would also notify us for a minute.
+
+00:24:06 - 00:25:34 Unknown Speaker:
+
+Once this gets over the main time session, if you can show like one of the earlier emails, right, that would be okay, give me a second getting an alert. Yeah, so we would be getting an alert like this, okay, with the incident, with the rule description, name and the variable category. And if we go to this incident, just to cross verify. So a ServiceNow incident would be created for this one. Business impact, and you know, this is an incident, need to be, you know, taken care by the respective team. So one thing is want to add here is we are also going to simplify the business impact, will add further more drop-down states to capture the actual business impact. So you will be asked to provide impact in terms of dollars.
+
+00:25:35 - 00:26:35 Unknown Speaker:
+
+The partners will be asked to provide the impact in terms of number of customers that got impacted. That information will be again used to decide the severity of the incident that we need to raise, because the highest the severity means highest the impact and higher the attention. And this is a formal way of engaging a team within the enterprise so that the issue gets its due attention. And then the remediation process gets started. And at the same time, what are we also going to do is bring this incident number as an hyperlink within Q Track. So that whoever has requested for the data quality check and whoever has submitted that as an actual data issue. By selecting true positive can also see the incident number over there, and they can click on the incident number to check the true status or the current status of the incident.
+
+00:26:35 - 00:27:32 Unknown Speaker:
+
+On what's going on, how the remediation process is currently progressing. Yep, so this is the, you know, just recent incident that we have created. We just received this notification over the email and we can see the same description opening, you know, displayed over this service. Now ticket over to you. ANAND Yeah, thank you so much for sharing that. But yeah, I think that's pretty much from our side. We just opened up for a few questions. In case of any doubts, please do voice them out or put them in the chat. Poonam and Anand, what additional functionalities do we have in Q-Track which are not there in Calibrate today? So we are not trying to first... That's a good question. So we are not trying to replicate Calibrate. Okay, if... You can use calibrate.
+
+00:27:32 - 00:28:26 Unknown Speaker:
+
+Please do so, that's an enterprise level tool. But calibrate has some limitation as we know that only data steward and data steward delegates can write their rules. Hence, QTrack for USCIS, okay. We are not trying to compete with them also, but we're trying to provide all the features and capabilities in QTrack that are essential for USCIS teams. Right now we have a manual process of onboarding the checks, but we are making it in self-serve. At the same time, we are also planning in this year to make it as an AI-enabled self-serve. Once you have provided a few things like the table name, the variable name, and few filter conditions, it will immediately tell you whether your DQ rule is relevant and could DQ rule or not.
+
+00:28:26 - 00:29:18 Unknown Speaker:
+
+And it will also going to provide you what would a good DQ check look like as per your. And then it will also have a very smooth and fast onboarding here, so the time to market would be less. We are going to speed up the execution. So right now we are getting requirements to Excel sheet. Then we are validating it, running it with the partner again, getting the sign off, and then the implementation is happening through our tech partners. Right? That's in the journey now, we are going to super simplify this journey so that it would be an smooth and seamless experience with the partners wherein they can. Just once they are aligned on the AI enabled recommendations on the DQ check and the results, they can submit. A button that you cannot deploy and max.
+
+00:29:18 - 00:30:07 Unknown Speaker:
+
+It will take just 24 hours and it should get deployed. So that's what we are trying to. That's one capability we're trying to achieve, and another capability is we want to expand. Um, the coverage now. USCS has expanded over the years, right? We have continued continuously adding a lot of data platforms also, so we want to expand the coverage of data quality monitoring. And again, we are using going to use AI enabled acceleration here, wherein on the AI itself. Once I provide the list of CDs, CD is a critical data element, right? Once I provide a list of CDs. The algorithm should be able to come up with relevant DQ checks, and I will also support that with some of the business functionality. And then it should come up with those relevant DQ checks again.
+
+00:30:07 - 00:30:54 Unknown Speaker:
+
+That will feed to the cells. Or onboarding that we are already planning to accelerate so that we improve the coverage also. At the same time, then we are going to extend U.S. Automation on the reporting as well. Then some of the visual craft that we want to show to partner that can help the partner quickly decide whether that's an impact or not. Some could be seasonality, so the graph will give in a very good picture instead of looking into the numbers and details. So we are also going to do that. So the short answer is, there are a lot of things that we have planned and we are going to publish that roadmap as well. Uh, Ashish. These are some of the key things that we are planning to work on.
+
+00:30:54 - 00:31:37 Unknown Speaker:
+
+And, uh, can you elaborate more on the threshold alert that we're talking about here, so what kind of threshold that we generally, uh, monitor through this tool, so any threshold? So it could be anything like some. AI population currently for consumer cards is 34 million right now. You can also put a threshold check that okay if the AI population go below 34 million or something. There's something wrong means either there was there was a mass cancellation that has happened or the system. There's some problem with the system, right? So any threshold that you think of or depends. And you can say, I'm joining two, three tables and then coming up with a threshold check. Let's say even the benefits journey or OPR channel, like there is an eligibility.
+
+00:31:37 - 00:32:27 Unknown Speaker:
+
+Uh, that goes through when you are marketing to a customer and you know, okay, what is the customer population that you are targeting, right? But then you see that the customer population is less than what you were expecting, right? You can place a check over there. So this tool is so powerful that you can have complex kind of logic placed over there and you can determine what kind of threshold you want. The threshold could be in percentages, the threshold could be in a range, numeric number. And the good part is we have come up with an automated process and it is an ML enabled process that will determine what should be a good algorithm to come up with those thresholds. Ranges like area we were using this interquartile range, there was just one standard algorithm that way you were, we were using.
+
+00:32:27 - 00:33:15 Unknown Speaker:
+
+And it was, uh, giving us the thresholds, but those thresholds were not that great. And we could see a lot of false positives coming here now. That's why we have changed it and we are now using again AI enabled threshold calculations. Got it? And now if we have to put additional DQ checks, so requirement has to be given to your team, or we have to directly go to tech for these requirements. No, we have to, you have to. Currently, it's in progress where we are planning to launch the self voice screens, and right now it's an Excel base. So you can give requirements to my team and then we will do the due diligence. We'll work with you, we will show you, okay, whether the DQ check that you have provided can be further improved.
+
+00:33:15 - 00:34:08 Unknown Speaker:
+
+All right, and once we align on that and and you give the go ahead, we will get it deployed. But yeah, the experience will definitely going to change once we have those self-serve AI enabled UI screens. Got it? Thanks for watching. If this, the deck that we have presented to you and obviously you can reach out to Anna and Dharachana and to me, if you have more questions or you want to even get your requirements, please do reach out to us.

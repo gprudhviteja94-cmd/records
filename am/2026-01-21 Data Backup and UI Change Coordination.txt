@@ -1,0 +1,194 @@
+2026-01-21 Data Backup and UI Change Coordination
+
+Creation Time: 2026/1/21
+
+
+📅About Meeting
+
+  • Date & Time: 2026-01-21 12:37 (Duration: 1149 seconds)
+  • Location: Stand-up call (remote)
+  • Attendee: Sachin, Anand, Kundan, Srishti, Bhagwan, Saurabh, Nirmal, (others implied: meeting host)
+
+
+📒Meeting Outline
+
+
+Backups & Data Ingestion (Insurance use case / DW tables)
+
+  • Current ask Discussed backing up multiple tables related to the insurance use case to avoid data loss if pipelines (E3/DCU) run or overwrite data.
+  • Discussion details
+    • There are three relevant tables mentioned:
+      • First table: November data — pipeline intermediate table (contains last pipeline run data).
+      • Second table: the problematic table that DCU may auto-fix (requires confirmation from Srishti / DC process).
+      • Third table: December backup created last week (already exists).
+    • Sachin asked to keep backups of:
+      • The full DW table (DW1) as-is today.
+      • November intermediate table (pipeline output).
+      • December table (already backed up but reconfirmed).
+    • Agreed approach:
+      • Create backups for the November and the current (visible) table. Option to create separate backup tables in the use-case folder for each (two separate backups).
+      • Ensure all three datasets (table1, table2, table3) are present in the DW once DCU fixes are applied.
+      • If DCU automatically fixes the second dataset, then ingest the first and third as new once fix completes.
+    • Action intent:
+      • Cross-check counts between the warehouse and intermediate table; if identical, backups can be reconciled later. However, team expects data changes so will keep backups.
+      • Anand / Sachin to coordinate and confirm backup creation and locations.
+
+
+UI Changes, Merge, and Deployment (Justification field, false-positive flow, E3 deployment)
+
+  • Current ask Small UI/UX change and related backend/service-now integration; determine readiness and deployment timeline.
+  • Discussion details
+    • Kundan reported the merge of changes (escalated today). UI change required: sub-filling between two text fields and move justification textbox to appear at the end and make it mandatory at submission.
+    • Concern: The justification field was previously conditional (single JSON entry). With false-positive moved to second position, there will be two JSON entries (true/false). Need to review config and possibly tweak to accommodate additional entries without breaking existing flows.
+    • Kundan estimates UI changes take ~half a day + end-to-end testing.
+    • RFC unlikely to be raised this Friday due to current sprint load; proposed deployment target Tuesday (subject to testing and approvals).
+    • Dependencies: Review and merge by Bhagwan and Saurabh may be required; service-now integration also to be coordinated. If dependencies hold, could demo on E3 (or postpone demo).
+    • Testing note: Trooper’s tape submit button not enabling — requires testing and fix prior to E3 demo.
+    • Decision: Do not change existing behavior that affects false-positive flow beyond adding justification; keep justification box last in UI. Kundan to show config and discuss tweaks with team before finalizing.
+
+
+Notification/Monitoring Automation (Ingestion failure alerts)
+
+  • Current ask Implement automated notification (email) from Lumi system when ingestion fails for insurance tables, similar to earlier ZODL API alert emails.
+  • Discussion details
+    • Team wants automatic emails when ingestion fails (not daily status, but on failure).
+    • Options discussed:
+      • Single aggregated email for groups of tables (lower effort).
+      • Individual email per table/job (higher effort and testing overhead).
+    • Effort:
+      • Automation is feasible and can be built within a sprint, but not in current sprint (work planned for upcoming sprint).
+      • If individual table-level alerts required, effort/testing increases proportionally; aggregated alerts are simpler.
+    • Additional requirement:
+      • Email recipients should be relevant downstream users (ideally recent/active users of a table) — noted as a future enhancement and a non-trivial capability.
+    • Next steps:
+      • Create a feature/story for the insurance ingestion alert automation so work can be scheduled in an upcoming sprint. Team to record sessions and coordinate handoff for implementation.
+
+
+Session Recording, Demos, and Onboarding Links
+
+  • Current ask Ensure recordings are available and shared; confirm onboarding/training links.
+  • Discussion details
+    • Meeting recordings are being saved; some older recordings appeared in meeting videos.
+    • A previously shared onboarding/training link was not visible in one participant’s mailbox; discussion to re-share links and recordings.
+    • Suggestion: When someone shares a screen and records the session, others (Nirmal, team) should join to ensure recording contains all necessary content.
+    • Anand / meeting host to re-check and re-share training/onboarding links and recordings.
+
+
+Config Review & Follow-ups
+
+  • Current ask Review configuration that controls justification/false-positive JSON structure.
+  • Discussion details
+    • Kundan will share the config page and discuss how to adapt the config to accept multiple entries (true positive / false positive) without breaking existing logic.
+    • Team to join a follow-up in ~5 minutes (or a short session) to review proposed changes.
+    • Recording of that session requested for team members who cannot attend.
+
+
+📋Overview
+
+  • Back up November intermediate table and the current DW table snapshot (DW1) to prevent data loss during E3/DCU runs.
+  • DCU may auto-fix the second dataset — confirm with Srishti; ingest first and third datasets as new after DCU fix.
+  • UI change: move justification textbox to the end and make it mandatory at submission; avoid changing existing false-positive behavior besides adding justification.
+  • Kundan’s merge exists; UI changes estimated half-day plus testing; RFC and deployment likely next Tuesday (pending approvals and testing).
+  • Trooper’s tape submit issue requires testing and fix before E3 demo.
+  • Build ingestion-failure email automation (feature to be created); aggregated alerts easier, per-table alerts costlier.
+  • Re-share recordings and onboarding/training links; record config review session for later reference.
+  • Kundan to share config and schedule a short review session (~in 5 minutes as mentioned).
+
+
+🎯Todo List
+
+  • Sachin:
+    • Confirm final list of tables to back up (DW1 full table, November intermediate table, December table) and desired backup locations — due: ASAP / before backup work begins.
+    • Coordinate with Anand and confirm counts/cross-check between warehouse and intermediate table — due: by end of day (or before ingestion actions).
+  • Anand:
+    • Create backups for the November and current DW table (create separate backup tables in use-case folder as discussed) — due: ASAP.
+    • Re-share recording(s) and onboarding/training links that were missing for some attendees — due: today.
+  • Kundan:
+    • Share config page and walkthrough for justification/false-positive JSON structure changes; schedule 5-minute review session and record it — due: today (immediate follow-up).
+    • Implement UI change (move justification textbox to the end and make it mandatory), estimate half-day for development + end-to-end testing — target: finish dev & initial testing by next working day.
+    • Investigate Trooper’s tape submit-button issue and provide fix or test plan — due: before E3 demo attempt.
+  • Srishti:
+    • Confirm DCU behavior: whether the second dataset will be auto-fixed and expected timeline — due: ASAP.
+  • Bhagwan & Saurabh:
+    • Be available for review/merge of UI/service-now changes when PRs are ready (timing: per Kundan’s readiness; merges may affect deployment timing).
+  • Product / PM (owner for feature creation):
+    • Create feature/user story for ingestion-failure email automation for insurance tables (include scope: aggregated vs per-table, recipients scope) — due: create story this sprint for scheduling in next sprint.
+  • QA / Testers (assigned by team):
+    • Perform end-to-end testing of UI changes, justification submission, and trooper’s tape submit flow on QA/E3 before deployment — schedule test window aligned with Kundan’s completion.
+  • Recording & Documentation:
+    • Record config review session and store link in team shared location (owner: Kundan/Anand) — due: immediately after session.
+
+
+Transcription
+
+00:00:00 - 00:01:00 Unknown Speaker:
+
+Stand-up call. Use case one. Yeah, the use case table. There, the number details are there, right? This is backup and... Yeah, that one. Just go to details. Go to details. Sorry. Yeah, go to details. Preview. Yeah, no, no, no. Here, last modified is 28. Ah, it's by the year 2020. Okay, 2021-25. Then it will not get deleted. Okay. So, two things, right? I mean, one thing is December data that you created a backup, you remember, right? I think last week or something we created that. Yes. That has to be loaded as well as this data, this exact table that you're seeing right now. This also has to be loaded once this MD fix gets placed, right? If you want, you can create one backup for this table as well.
+
+00:01:00 - 00:01:47 Unknown Speaker:
+
+I mean, because in case the E3 pipelines runs or something, right, I don't want this to be erased. So what Sachin is asking is like, ask me to this DW1, right? Like this, the entire table, what is available today, keep a backup of that, that is this table. What I am saying is November data, which is on the top. That first table that also created a backup, and then obviously we have already created this backup of December, which is the third table, right? Yeah, okay. So basically, you want me to back up both Navable data and Azure data, data warehouse data. Yeah, correct. So ideally, once they know all those challenges, right, the table one, table two, table three, all three data should be there inside the DW table. So we just have to make sure that happens.
+
+00:01:48 - 00:02:33 Unknown Speaker:
+
+Because what they're saying is through DCU, the second data will get fixed automatically. That is something we have to understand from them. And then once that is done, the first table and the third table, we have to ingest as new. Okay. Got it, right? Yeah. So if you want to create a backup for the first table also, in case that gets erased, if you run the pipeline or something. Yeah, yeah. This will erase definitely. So I will backup this one and as well as this one. Yeah. Yeah, if you want, you can create a different, different two set of table in our use case folder. That is fine. Yeah, similarly like backup for Jan 8, what I will do is like, I will create for November and as well as this data one. Yeah, correct.
+
+00:02:34 - 00:03:28 Unknown Speaker:
+
+What is the difference between these two, warehouse and this one? Because I think warehouse... The first one is your pipeline intermediate table, right? Which has the November data, last time the pipeline ran. Yes, this will also have the same, right? This will have the data warehouse. So this has the ingested data in the main warehouse table. So this has, I think, July, August, September, October data, something like that. Not December. Correct. Take the count. I think it would be having couple of months or three months data. In the second one, second one, warehouse one. Just cross check and have a backup. If the data remains same, we can, you know, discard it later. But keep a backup. I mean, the data will not remain same, Sachin. That we know for sure.
+
+00:03:28 - 00:04:32 Unknown Speaker:
+
+So just keep a backup for everything, yeah. Yeah, correct. I'll take a backup. Yeah. Yeah. But also understand the DC process also, Sachin. Once from Srishti, right? I'll pause a bit. Yeah. Yeah, I think, you know, I mean... Either they need to be very uniform with their structure that they are following right now. I don't know. Because we are already almost the end of JAR also, right? Exactly. I'll talk to Anand and maybe post this one. Anything else, Anand? The other thing is with Kundan, I just wanted to understand that flow. So, Kundan, Uh, if you can share your screen. So even though, you know, changes have been merged by, uh, uh, today, I, I just escalated it today. So if he has merged it, uh. Second, then I need, uh, you know, maybe, uh, some design change.
+
+00:04:32 - 00:05:42 Unknown Speaker:
+
+But, uh, I think you are sharing the screen to me, right? Can you go ahead and just share it to us? Speaking on Mute. So if the merge has happened, Sachin, when can this be deployed? On E3, I need a sub-filling between two text fields. If that can be done today, then we can plan for an E3 deployment also. Kundan, you are speaking on mute, man. Is he there? For the UI changes, I would need half a day or something. So we can plan accordingly just to test the flow. Okay. Okay. Okay. No, no, no. Hold on. The problem is RFC won't be raised for Friday for sure. Because we are already popped. Got it. No, that's fine. We can go ahead with Tuesday itself, but what I'm, what I'm trying to understand is Tuesday.
+
+00:05:42 - 00:06:53 Unknown Speaker:
+
+If then, uh, our UI changes, plus service now will go together, right? Oh, Sachin, you're on mute or other if you want to take that. I thought if you can just hold it. First of all, you know, let the things to be fixed. Kunal, if you can share your screen, first of all. Yeah. Share it. Okay. Yeah, so if you are viewing it on QA environment on it, you can see that, you know, expected value and actual values are coming. And here, other one thing I I don't have a problem in the way you are going to save the data on the justification. Uh, but one review comment is that populate this justification. At the very end. Once this uh, you know pop-up gets selected, uh, this doesn't look good.
+
+00:06:53 - 00:07:48 Unknown Speaker:
+
+Uh, if you ask me, yeah, has to come first, then justification, then action. Reason. No, no. Even if he is, you know, making that, uh, at the very end, just like, uh, whatever he is selecting, right? A justification should come at the very end of. Make it mandatory for submission. And the way you would like to take the value, right? But at least at the UI side, make this justification box at the very end. This is one change and that is the reason and I was avoiding to showcase to you right now. Yeah, I mean, just don't change anything that is already existing, right? If we because see for false positive, we just wanted to add justification, so let's not, like, change the order. Yeah, yeah, correct. That box should appear at the very last, the reason being this doesn't look good.
+
+00:07:48 - 00:08:44 Unknown Speaker:
+
+See such. And so the thing is, initially this was a conditional text box. Okay, so that was, uh, basically, a single object was going inside. The false positive option now we are going to place at the second. Then there would be two entries in the JSON. Okay, basically one inside the true positive and the false positive. Maybe I can just discuss with you. With respect to the config that is there, which we just got much, we can tweak it. But the number of entries same entries would be increased in that case. So we can discuss on that. I'll just show you the config and maybe we can take up that. Okay, okay, uh, uh, let me come back to you on this one, okay, and then then I'll for me on this, okay, one more thing, like, Uh, for trooper's tape.
+
+00:08:44 - 00:09:35 Unknown Speaker:
+
+This submit button is not getting enabled. Well, those are things you need to, you know, that is the reason I was telling, right, this need a testing before, you know. I just got this now, so like half and half, even I need an end-to-end testing. Yeah, and these are the reason, Anand, I'm not going to communicate to you that, you know, this should be ready by Tuesday. The reason being, again, if they need a change, right, that need to be reviewed from Bhagwan and Saurabh. Again for a merge. And uh, this, this, uh. That is the reason I was taking this complete spin. Because if there is a, you know, direct uh access that I have got, then we can do it quickly. But as we have a dependency, right again, this would, this might get delayed.
+
+00:09:35 - 00:10:33 Unknown Speaker:
+
+Yeah, okay, like, Uh, today's demo call we have to postpone because we are not going to showcase the incident. I got it. Yeah, so this has been changed, right? So we won't be able to do it right now. I'll keep you posted. I think this should get sorted out by tomorrow. Or by Friday, for sure. Maybe what you can do, you can, you know, if you want to keep the call, you can demo it on E3. Okay, and then just for this service, now integration, and then this expected value, actual value. You can let them know that these are, uh, going to be deployed to the E3 environment in upcoming days, right? But anyway, I was like, I mentioned that I was planning it for like, third of February, which is the end of the spend, right?
+
+00:10:33 - 00:11:45 Unknown Speaker:
+
+So we should be able to do that, right? Yeah, yeah, um, we should be able to do it. Yeah, yeah, okay, okay. Yeah, okay. Thank you. Yeah, you can go ahead. Yeah, Sachin. So, let me just... So, what we wanted was similar to the email that was sent out for the ZODLs, right, when we were updating the API attack. So, That was... an email sent by the Lumi system itself. Can we have something similar for insurance orders, where if the pipeline fails, then from the Lumi system itself, right? We get a notification. Essentially, this is regarding the ingestion that we are doing on a daily basis. Yeah, so if it ever fails, yeah, that is where I was discussing yesterday also, right? That we can build a, uh, you know, automation for that, uh, that would require an effort.
+
+00:11:45 - 00:12:53 Unknown Speaker:
+
+And then, uh, you know, that's something we can take it up in the upcoming split. Not this print, because we are, you know, already occupied, everything has been planned for this print. So maybe let me show my screen once so similar to this email, right? That was sent out for T. I.attacking. So I believe this is sort of an embed, so something like this, if we can have right. So whenever the ingestion fails, right, we don't need to receive it every day. But whenever the ingestion fails, an automatic email is sent to us. As well as all the users of Yeah, we can do it, yeah. So what would be the effort required to set up something like this? We have 15 tables, so you know, if you, if you need a individual report for individual table, that would require a multiple effort.
+
+00:12:53 - 00:13:51 Unknown Speaker:
+
+But if we would just like to monitor, like if there is a, you know, failure in the ingestion for a particular. For those sets of tables, then that doesn't require lots of effort because we will club all those tables in a single email. But if it would be a different job for different table, then that many job, that many diagonal you have to create. Which I just don't understand. But this is something that would be less effort relative to the capability that we were discussing yesterday. Yeah, yeah, you know, this is not going for an indefinite time. Like, you know, we would be able to build it within a sprint, that's for sure. And then maybe testing department that would require another setup. Okay, it just that if you want, uh, individual email for individual table, then your effort, uh, you know, increase the refunding.
+
+00:13:51 - 00:14:57 Unknown Speaker:
+
+Although it would be a copy paste code, but still, that required, uh, testing and, you know, deployment a certain team is using, right? They should only receive an email for that is what we want, right? So across the downstream as well, right? Because right now there's like a couple of primary users, but going forward that might increase, right? And then it would be hard for us to keep tabs on who is using a table or not, right? So automatically we can do something better. Recent users or something like that get an email for failure. It doesn't matter. For that, I guess. Now, I'm not sure if this would require different capabilities for each table or if you can club them in one, but that is sort of what we would try.
+
+00:15:00 - 00:16:27 Unknown Speaker:
+
+So if there is an ingestion failure, yeah. Again, that too depends on you. If you want to make it an independent table one, we can go ahead and begin to create that independent table. Not a problem. Understood. So, we would need today's user story for this. Yeah, please create a feature anyhow. We are required a feature for insurance. Just let us know. I'm going to move the process or even you can connect with us. Uh so once we have a future and a hugest story we can start uh taking these initiative from upcoming or you need me over there. You can cover it up. Okay. So, you know, just record that session. Okay. And anyhow, this sessions are getting played now. The previous session. I have seen that recordings have came back to my meeting videos.
+
+00:16:27 - 00:18:17 Unknown Speaker:
+
+The oldest one. Oh, okay. Uh, can you share? Like? I will check once? What was that? Uh link where it was onboarding link earlier? It was not coming right that day. You have seen this email box is completely blank. Yes, but then when I have checked it out, I have said it over the same message. Only, right? You can switch with onboard. I guess no, no, no, he has pinged it as training, something like training. Okay, yeah, this is the one. So if the lazy one is running, even you don't need to do a, you know, again, this is something not available. Oh man, no, it's not there. Yeah, no, then go ahead and record it, and then maybe I'll pitch it in between and better you.
+
+00:18:17 - 00:18:58 Unknown Speaker:
+
+If you can share your screen, okay, and then record it, because in my screen you might not be able to record it. So with this woman and Nirmal, you guys can jump into some speech. Uh uh, thank you guys, go ahead. Uh, let me know what changes you are proposing? Yes, so basically, if let me share the config page, yes, feel free to drop up. Uh, yeah, you guys can join us. Yeah, in five minutes, I, I will share with you, okay?

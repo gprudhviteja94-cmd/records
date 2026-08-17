@@ -1,0 +1,196 @@
+2026-02-23 Access and Development Updates Meeting DSU
+
+Creation Time: 2026/2/23
+
+
+📅About Meeting
+
+  • Date & Time: 2026-02-23 18:01 (duration 1378 seconds)
+  • Location: [insert location]
+  • Attendee: Anand, Tanisha, Sindhuja, Shamir, Nirmal, Ayyappa, Suman, Prithvi, Jason (absent), Jitin Batra (access requested), Amit/Om, Karthik, Ethan, Raj, Sameer, Tim, Nimel, Samir, other Lumi/platform/DBA team members
+
+
+📒Meeting Outline
+
+
+Access & AFC / Bid Number process
+
+  • Bid number (TBD) handling Discussion on whether the AFC form's bid number field can be filled with "TBD". Tanisha had shared a pre-filled example where bid number was "TBD". Team consensus: marking as TBD is acceptable for now but get confirmation from Tanisha by mail before submission. After confirmation, submit the request with TBD if required.
+  • Access / data usage controls Reminder that access requests are separate from other processes. When using partner tables, access must follow process so partner data, PIA, and test data use are tracked and not manipulated via ad-hoc email sharing. If uncertain about contacts for quick access, loop in Raj who previously helped obtain access for 360. If access delays continue, raise a user story as these stories may slip.
+
+
+Story statuses & dev updates
+
+  • DQIM UI changes Sindhuja reported implementing requested UI changes: added info icon to button text, added notes. Working on API model integration: created UI model and a common component to fetch API; will wire up when API ready. Also working on configuration changes to add two dropdowns for "true positive" while keeping the existing justification text field. Will push config changes and test in E2.
+  • QTrack API & SFTP Sindhuja / team working on QTrack cell service API development; task created but may not have been updated. SFTP-related work updated and tasks reflect completed items; team to verify tasks and placeholders.
+  • Quanto work Shamir working on Quanto priority-1 changes requested by Anand. Completed requirements for priority-1; encountering bugs: flag indicating monthly vs monthly-algo was being converted to string causing job failure (fixed). Fixed Unique ID/UI issue where values came back as 'L' despite being provided. Testing in E1 and preparing deployment to E3 to run with RN-provided real-time data. Plan to discuss further with Anand in tomorrow's meeting.
+  • Missed injection & resource allocation Missed injection tasks: Nirmal is handling missed injection fixes; release likely tomorrow. Ayyappa may assist if bandwidth allows. Sameer to help Ayyappa and Suman with Quanto ideas and migration of threshold checks. If role updates are unchanged, story will be renamed to priority-1.
+  • Automation & validations Prithvi working on automation rules: completed two validations, proceeding with third (null value validation).
+  • Code review, ServiceNow integration, QTrack UI deployment Nimel/others worked on code review and data flow changes. E3 deployment issues for QTrack UI were sorted with platform team. ServiceNow integration validated end-to-end; result and email sent to Anand for cross verification.
+  • Self-serve, DB/tables and migration Working with DBA to finalize tables; data creation and migration from Lume to ACE underway. Jason was absent; need maintainer access for Jitin Batra's workspace to migrate metadata changes (Remi MXS, ODL tables). Follow-up with SFT team; currently blocked on access. Certification stage pending platform metadata review; once approved, E2 testing can start.
+  • Cutover / tenancy validation Call scheduled with the A-team for tenancy/cutover validation (830). Receiving new law healthy status issue from last week mostly resolved and tested in E1; moved to certification stage pending platform approval.
+  • Insurance ingestion incident Incident from last week monitored through Friday — ingestion resumed and RC sent to Karthik. Discussion on SOR (source) pipeline design: current grouping of multiple tables under a single pipeline caused prolonged failures when one table failed (example T457 repeated file). Team emphasized need for SOR team to split pipelines per table (or per role) so a single table failure does not block others. Action: connect with Ethan and Karthik to evaluate segregation feasibility for Pack Engine and Analyst pipelines.
+  • General coordination Several people to take KT sessions (e.g., control bill KT with Samir, Suman, Ayyappa). Work handovers to enable others to start (Suman to start bill work today; Ayyappa to start tomorrow). No other updates reported.
+
+
+Blockers & risks
+
+  • Access to partner tables and API readiness delaying full story completion (queries, end-to-end testing).
+  • Jitin Batra maintainers access and SFTP follow-up blocking metadata migration.
+  • Potential prolonged outages if SOR pipelines remain grouped — risk of multi-table impact and longer remediation windows.
+
+
+📋Overview
+
+  • Confirm with Tanisha whether "TBD" is acceptable in bid number field; proceed after written confirmation.
+  • Access must follow formal processes; loop in Raj if needed to expedite partner contacts.
+  • Sindhuja completed UI tweaks and is building API model; awaiting API readiness to complete integration.
+  • Configuration update required for DQIM: add two dropdowns for true positive while retaining justification text field.
+  • QTrack API and SFTP tasks advanced; verify task updates and placeholders.
+  • Quanto (priority-1) changes completed; fixes in place; testing in E1 and planned deploy to E3.
+  • Missed injection work in progress (Nirmal); Ayyappa may support if bandwidth allows.
+  • Automation validations: two done, third (null checks) in progress.
+  • ServiceNow integration validated after resolving E3 deployment issues.
+  • Self-serve table finalization done; data migration pending and blocked by workspace access and platform metadata approval.
+  • Insurance ingestion incident resolved, but SOR pipeline segregation needed to prevent multi-table failures.
+  • Action items assigned and KT scheduled to enable ownership transfer and progress.
+
+
+🎯Todo List
+
+  • Anand / Requester:
+    
+    • Confirm whether "TBD" is acceptable for bid number via email to Tanisha, by [insert deadline].
+    • Review ServiceNow email/result sent for cross verification (no deadline specified).
+
+  • Tanisha:
+    
+    • Provide explicit confirmation (email) on acceptable bid number value (TBD), by [insert deadline].
+
+  • Sindhuja:
+    
+    • Update configuration to add two dropdowns for true positive (retain justification text field) and push changes, target: push to E2 for testing (by [insert deadline]).
+    • Complete API integration once backend API is available (no specific date).
+    • Update QTrack tasks/placeholders to reflect current status (by [insert deadline]).
+    • Follow up on SFTP tasks and ensure task list is accurate (by [insert deadline]).
+
+  • Shamir:
+    
+    • Deploy Quanto changes to E3 and run tests with RN-provided real-time data; update status post-run (today / by next working day).
+    • Discuss remaining Quanto items with Anand in tomorrow's meeting.
+
+  • Nirmal:
+    
+    • Continue missed injection fixes and prepare release (target: release tomorrow).
+    • Address code review and data flow changes as requested.
+
+  • Ayyappa:
+    
+    • Support Quanto and threshold migration if bandwidth allows; coordinate with Sameer and Suman (start tomorrow morning).
+
+  • Sameer:
+    
+    • Assist Ayyappa and Suman with Quanto ideas and threshold migration (by [insert deadline]).
+
+  • Prithvi:
+    
+    • Complete null value validation and finish the third automation rule (by [insert deadline]).
+
+  • Platform / DBA team:
+    
+    • Finalize metadata review and approve certification to enable E2 testing for planned tables (ASAP).
+    • Provide maintainer access to Jitin Batra's workspace (or advise steps) for metadata migration (by [insert deadline]).
+
+  • Jason:
+    
+    • Join follow-up call / provide access details or perform required approvals for metadata migration (as soon as available).
+
+  • Ethan & Karthik:
+    
+    • Meet to assess feasibility of segregating pipelines per table (analyst and pack engine) and propose changes to SOR pipeline design (schedule connect and deliver proposal by [insert deadline]).
+
+  • All / Team:
+    
+    • Raise a user story if partner access or required details are not received in the next couple of days so work visibility is maintained (by [insert deadline]).
+    • Conduct KT sessions: control bill KT with Samir/Suman/Ayyappa to enable pick-up (scheduled / start today).
+
+(Please replace [insert deadline] entries with specific dates/times as agreed.)
+
+
+Transcription
+
+00:00:06 - 00:01:01 Unknown Speaker:
+
+So if you go over here, right, there is no need to enter the TBD, right? In the bid number section, if you just enter TBD, is it accepting that? I'm not sure. Then again, I have to submit all the details and then submit a request for this by marking it as a TBD. So, you know, we just inform it with the partners once, but most probably that's what they did, but I still ask them once, like, what to do with it. Yeah, post your confirmation, then I'll submit the request. In case it is required to be submitted, marking it as TBD. Yeah, sure. Hi, Anand. I just want to confirm this with you also. So, basically, this form, you know, for AFC that we had raised, So they are asking for this bid number and then I had asked Tanisha for like what is the reference for filling all these details.
+
+00:01:01 - 00:02:16 Unknown Speaker:
+
+So she shared one like a pre-filled form that they had requested their access with. But usually bid number they had filled as TBD. So that's what I was wondering if we can just submit it for TBD or not. Right, I think that should be fine. Even if you want to place it over mail, just get that confirmation from Tanisha if you want. Yeah, yeah, sure, sure, yeah, yeah. As per the details that you've shared, you're going ahead and, uh, filling bit as TBT for now. Um, there is a all separate, different process for that. Yeah, so just for. The access permit is required here. Yes, yes, look, if you remember, it's it's not just access. You know exactly when you are using their tables and all right, they may need to support you with the test data tomorrow.
+
+00:02:16 - 00:04:20 Unknown Speaker:
+
+If you want to, you know, procure something they need to, you know, keep a track like else is not, you know, manipulating their records with respect to the PIA and all, right, sharing over the email and all. So, just restrict those, they go via these processes. Yeah, okay. For 360, if you remember, like, Raj was having a point of contact, right, and that's the reason we were able to at least get those access quickly. But this is something I'm not sure if Raj would be having any point of contact. So, if required, you can loop in Raj over there also. Yeah, yeah. I hope that's all right. Yeah, sure. Yeah, sure. This meeting is being recorded. These stories can might get, you know, uh, in couple of days if we are not getting the required details for this, so just, uh, you know, call out for this user story.
+
+00:04:20 - 00:05:47 Unknown Speaker:
+
+Okay, but it's still not blocked, right? She can progress on the work. No, so it if we are not going to get the access, she can complete the script part, but she won't be able to write a simple query also because if you are not able to access the table, I have completed the suggestions which were shared in the meeting, basically implementing the info icon to the button text and adding a notes to that. So that's been completed. I am working on the API model integration. So as of now, since the API is not ready, I'm just creating a model for that in the UI, creating a common component to fetch the API. So once the API is ready, I'll just implement the exact. So for this story, this is the update.
+
+00:05:47 - 00:06:42 Unknown Speaker:
+
+For the other one, I have started looking into the configuration change that can be done with respect to the requirement shared. So I'm still working on those configuration. Once that is done, I'll push those changes and we'll test it in E2. Okay, thank you. Just a clarification, right? So the one in progress is the DQIM one, right? Yes. Shared it to update the UI for the justification and true positive. So for that, I was going through the requirement and just modifying the config accordingly. It just has to, like, two dropdowns have to be added. So don't replace the justification text field that we have, right? You can keep it as is. It's just that additionally two dropdowns for true positive needs to be added. Sure. I'll update the config.
+
+00:06:51 - 00:08:24 Unknown Speaker:
+
+Thank you so uh i am working on this q track cell service uh api uh development okay so i already created a task i think it didn't get updated or what. So you can update the placeholder, Sindhuja. On this, okay, on the another one, Sindhuja, there was, you know, in the SFTP part, there was some work was there that I was working on, so I updated this one. Okay, so if you go to the task, you will find that, you know, whatever things I have completed. Yeah, okay. I will have a look here. We can proceed. Anything else? No, I think that much only. Okay, thank you. Shamir? Hi, Sindhuja. Hi, Tim. So, Sindhuja, right now I am working on Quanto. So, coming to Quanto last week, Anand actually came with some few of the changes for the priority one.
+
+00:08:24 - 00:09:12 Unknown Speaker:
+
+Since last week, I have done with two days, like. I have done the completed the new requirements for the priority one and what I am trying to do now is like I am trying to run in A1. I am facing few bugs like where I have created a flag where it will tell us whether it is run monthly or monthly algo. So there like I am facing an issue where it is internally converting into string and it is failing the job for the priority two. Have fixed that one. And uh. And as well as like, uh, uh, there is uh, uh, another uh issue for the with the UI. You know you? Unique ID, which, uh, being, uh, included in this, uh uh in this print only, like, uh, in the table,
+
+00:09:12 - 00:10:30 Unknown Speaker:
+
+where it will tells us that, uh, whether it is a unique ID from the first, uh, stage itself, like from the advanced itself. So here my one is like, it is getting an L. Even I am sending the data, like giving the value, so that is also fixed. Now I'm testing it in E1, it is also almost completed, so what I will do by today, I will deploy to E3 and run the data with. UH, which RN has provided for even real-time data. So there also I need to update that table accordingly, like that is also I have written that tag as well, so that should be run. And I have to run this code so I will test it and I will update it. Thank you, Shamir. It on A3 today I guess.
+
+00:10:34 - 00:11:57 Unknown Speaker:
+
+Thank you. A meeting with Anand tomorrow. So maybe we'll jump into that part tomorrow. Just an update on that. We just met with our requesters like an hour ago. So they have given us an idea about what the use case is. So that is something we can still discuss, but the requirements are still yet to come. So we have shared the requirements in the firm with them. Thinking if is if, let's just say, uh, Ayapa still has bandwidth, right? With respect to that, r a thing. Um, he can pick up. The are the missed injection chips placed? Mr.Nirmal is working on that. So we will be releasing it, not today. I think it's already 6 p.m. So we might be releasing it tomorrow. So for missed injection, I think. Analyst and pack engine.
+
+00:12:04 - 00:13:20 Unknown Speaker:
+
+Then, you know, I am planning Nirmal only to work on those and then Ayyappa can pitch in for the Quantro one, the one that you are asking, right? I have asked Sameer to, you know, help with the ideas of Quantro with Ayyappa and Suman. They can start migrating those threshold checks which are in the pipeline. Sure, sure. So that makes sense, yeah. And then if we don't have anything on the role updates, then we will just rename this story to the point of one. Makes sense, yeah. Yeah, you can go ahead. Yeah, thank you. Hi. I'm working on that automation for the group. I worked on two different rules. So, two different validations I worked on it and I am validating them and I moved to third one also null value validation.
+
+00:13:22 - 00:14:28 Unknown Speaker:
+
+So, three different things I am working in this point. Thank you Prithvi. That Nimel was working asked him to do some changes over there, which he is working on. With respect to the code review and the, you know, data flow, the that it should work on that, uh, post that there was a service now integration for which the E3 deployment was required for Q Track UI. There were some deployment issue, which we have sorted out today, working with the platform team and then validated the service now integration also, so that is working. End-to-end file. We have set the result and, you know, the email to Anand just to cross verify that one. Okay, on self-serve. I am working with, the, you know, DBA team for finalizing the tables, has been finalized.
+
+00:14:28 - 00:15:41 Unknown Speaker:
+
+It is the data creation, so I got the details. So I'll be working on, you know, creating the data and, you know, migrating it from the Lume to the ACE database. Jason did not join the call today. So we need the access for Jitin Batra's workspace for as a maintainer access for migrating the metadata changes that he has asked for Remi MXS table, ODL table. So that has been also been you know followed up with the SFT team but it is a kind of blocked right now. Okay, and then on the certification for that, so that is also in pipeline. And then I have a call today with the this a steam for validating our our tenancy. Your CPU for a migration TV migration cut over activity at 830.
+
+00:15:41 - 00:16:41 Unknown Speaker:
+
+So I'll be working related to the receiving new law healthy status issue, what I have faced in the last week. And it one is resolved and tested in E1, it has been moved to E2 for testing also, and currently working on the control bill, taking KT with us. So also, in just an update, it hasn't been moved to E2. Right now. It is in certification stage, so that means the metadata need to be reviewed from the platform team. I am working on that, uh uh with the Lumi Platform team. So once approved, I'll let you know post that. You would be able to start the E2 testing right now, you won't be able to find the table in the E2 environment. It's inside.
+
+00:16:41 - 00:17:54 Unknown Speaker:
+
+Yeah, yeah, okay, and taking the KT on the control with the with Samir point of view, yeah, so Sammy just, you know, with Suman and Ayyappa. So that they can pick up the bill starting today itself. Like Suman, at least he can start working on it. Ayyappa, maybe he can start tomorrow morning. Any, any, okay, as Aman and Om is there, so on the insurance part, Aman and Om, the incident that has been created last week, right, so till Friday I have monitored it. Everything is fine now. The data ingestion is being done. They have sent the RC also to the Karthik. Nothing pending at our end with respect to analyst or the back engine. Anything else you would like to check on the insurance? The Lumi team did load the data from... Yeah, they did.
+
+00:18:01 - 00:19:12 Unknown Speaker:
+
+Thing I would like to highlight, you know, just talk to them, because again, it depends on the SOR team feasibility. But ideally, whenever there is a ingestion issue, right, they should stop that particular pipeline, right? If I am having a 10 insurance table for the analyst, I should be willing. In such a way that if one of the pipeline gets impacted either, I have to stop all 10. What happened for this scenario is that, although that T457 got failed, we are repeatedly receiving the file on a daily basis, right? So ultimately, what happened? Instead of limiting to fix it for a day or two, we have fixed it for complete week. That is not an ideal season. Because, you know, they may come up tomorrow with mentioning, right, these doesn't fail due to our, you know, system.
+
+00:19:12 - 00:20:00 Unknown Speaker:
+
+It's just an invalid sequence number that you guys are sending. And that occurred due to the, you know, very first incident due to this issue has happened. So, we need to talk to the SOR team. They need to set up their pipeline individually. Instead of, you know, table pipeline in a single patch. No, no, no. Update a factor from MES upstream. Understood. Okay. And do you have an idea how much... Right. So, if I understand correctly, you are saying that the initial pipelines that we have on various tables should be separated. There should not be one common pipeline, right? So, that data for one table fails, the other one not. Yeah, I am guessing this is the reason being when you have identified there is an issue for this table.
+
+00:20:01 - 00:20:53 Unknown Speaker:
+
+Why the pipeline was running for last four to five days with a failure report. That means they did not stop that pipeline, right? Right, but, okay, so I have one doubt. Let me just clear this up. If we were to stop the ingestion and the SOR entrant, that would then require manual remediation efforts from enlist and entrant, right? But Lumi can sort of recover fights, as I understand it, in a much more automated way, right? Look, let me give you an example. We have set up 150 DAGs, right, which is sending you the data anomaly report, right? Now, suppose there is a data issue with respect to one DAG, right? I'm not going to stop or continue with those 150 DAGs, right?
+
+00:20:54 - 00:21:40 Unknown Speaker:
+
+Even if we have configured in such a way that if my DAG contains 10 roles, out of that one role is failing, On a daily basis, due to certain reason, right? Then we do have that flexibility to exclude that exact particular rules, right? Anand, you have seen that cases right, where we just transform it to a monthly job now, right, right? So again, on Analyst. We have set 10 tables and it should not happen like, you know, if one table is failing. It might take a time, right? It may take a week, it may take couple of weeks. Just like last month, right in the month of Jan, where we struggled for a month completely, right? So it should not happen like, you know, uh?
+
+00:21:40 - 00:22:33 Unknown Speaker:
+
+If one of your pipeline gets in fact right infected, so that means the rest of the pipeline would be also, you know, getting impacted due to that. Would it be for them to split these pipelines now? Pack engine is possible. As far as I understand from Ethan, right, they have a spring batch job, right? That is possible. We need to check on the analyst part if we can segregate the pipelines. So I'll set up a connect, right? Yeah. And then we can discuss this. Yes, we can. Ethan and Karthik, right, folks? Yeah. Yeah. Yeah, thanks. Oh, nothing from my side

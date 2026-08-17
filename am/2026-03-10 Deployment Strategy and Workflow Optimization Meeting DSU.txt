@@ -1,0 +1,179 @@
+2026-03-10 Deployment Strategy and Workflow Optimization Meeting DSU
+
+Creation Time: 2026/3/10
+
+
+📅About Meeting
+
+  • Date & Time: 2026-03-10 11:30 (Duration: 1098 seconds)
+  • Location: [insert location]
+  • Attendee: [insert names] (participants mentioned: Sameer, Kundan, Sindhu Jai (absent), Suman, Sachin, Nirmal, Prithvi, Kundan, Samir, others)
+
+
+📒Meeting Outline
+
+
+Deployment & DT Flow (E3 / use case folder / full-refresh)
+
+  • DT flow (reality status = 1) change promotion Sameer confirmed he modified the query in the environment for the DT flow related to reality status = 1 and was instructed to promote those changes to E3 and update metadata the same day. He should keep the requester posted once E3 deployment is complete.
+
+  • Testing write to use case folder Sameer to run the flow and test whether data is written to the use case folder (even if the flow fails afterwards). Emphasis that table type is full-refresh (Overwrite), so the use case folder must be refreshed (previous records deleted) rather than append. Sameer confirmed overwrite behavior will occur.
+
+  • End-to-end next steps After verifying data lands in the use case folder, the next step is to dump that data from the use case folder to the warehouse for testing. Recommended to run the full-refresh operation during evening hours (to avoid daytime disruption) and demo in the evening. Make the flow live on Thursday once metadata is available; cross-check columns and data types to avoid mismatches during E3 deployment.
+
+
+RFCs, timelines, and blocking issues
+
+  • RFC readiness RFC must be ready for upcoming Thursday/Friday as discussed in previous code review. The team is targeting to close the outstanding item(s) and not extend indefinitely. Manager emphasized that multi-sprint open tasks must be closed; extend only if necessary and communicate.
+
+  • Email sending / cluster credential issue There is an outstanding error where emails are not sent from the cluster. The suggestion (from previous review) is to move file-generation code to GCP (bucket) or change architecture to avoid exposing cluster credentials. Cluster-based email sending requires credential handling which is undesirable.
+
+
+File creation, IO patterns, and best practices (CSV / GCS / BigQuery / temp tables)
+
+  • When to create files The manager questioned why files (CSV/Excel) are being created and saved to GCP buckets routinely. It is not recommended to create files for every use case. Instead:
+    
+    • If data size is small, hold data in memory structures (dictionary/objects) and process without creating files.
+    • If data size is large, use temporary BigQuery tables (or use-case folder temp tables) instead of writing files. After processing, delete temp tables via a DAG/task.
+    • Only create and store files in GCS when there is a clear requirement (e.g., user needs the data back, SFTP transfer). If files are created for SFTP, keep retention short (examples: 24 hours) and communicate to IAPA any data saved to GCS.
+
+  • Reduce DB calls Code review found multiple DB calls (three separate queries) that could be combined into a single query. Developers must check and consolidate queries where possible.
+
+  • Avoid unnecessary file IO File write + delete adds extra IO overhead and increases throughput cost and complexity. Prefer DB/temp tables for large volumes. If files must be written, ensure downstream processes (IAPA) are informed and consider automated cleanup tasks only when absolutely necessary.
+
+
+Current tasks, ownership, and deadlines
+
+  • Samir / Sameer Samir/Sameer to complete the flow verification and E3 promotion today. Run and test flow, validate overwrite behavior, then demo in the evening. Ensure metadata and column/data types match prior to Thursday go-live.
+
+  • Nirmal Nirmal sent a list of tables via email; code not yet reviewed. Need to validate ingestion/failure behavior for those tables with respect to the audit info table.
+
+  • Audit info / XCOM / ingestion notification checks For tables provided to Nirmal (and those referenced by Sameer), check:
+    
+    1. Whether those table names are present in the audit info table (i.e., ingestion notifications recorded).
+    2. Whether daily ingestion notifications are being received for each table (the XCOM/export table check). If tables are present in audit info, DAGs can be created to use that table for ingestion checks. If not present, verify export/XCOM table notifications.
+
+  • DAG implementations DAG implementation work is in progress and one DAG was mentioned as completed and ready for review. Participants are to coordinate review after the call.
+
+  • Team workload & expectations Manager reiterated that team members (Kundan, Samir, Prithvi, Suman, etc.) have multiple tasks; long-running tasks must be completed or extended formally — no indefinite open items.
+
+
+Miscellaneous / Admin
+
+  • Prithvi note Prithvi has a doctor appointment and was encouraged to leave the meeting if needed.
+
+
+📋Overview
+
+  • Sameer to promote modified DT flow changes to E3 and update metadata today.
+  • Sameer to run the flow and verify data is written to the use case folder and that full-refresh overwrite behavior occurs.
+  • After use case folder verification, dump data to the warehouse and demo in the evening; go-live planned for Thursday once metadata is available.
+  • RFC must be ready for upcoming Thursday/Friday; close outstanding items or extend formally.
+  • Email sending currently failing when sent from cluster — move processing or file handling to GCP and avoid exposing cluster credentials if possible.
+  • Avoid creating files in GCS unless required; for small data use in-memory structures, for large data use temp BigQuery tables and delete them after processing.
+  • Consolidate multiple DB queries into single queries where possible to reduce overhead.
+  • Nirmal to analyze provided table list against the audit info table and XCOM/export notifications and report within 1 hour (by 13:00).
+  • DAG implementation largely done; coordinate reviews and finalize.
+
+
+🎯Todo List
+
+  • Sameer:
+    
+    • Promote DT flow change to E3 and update metadata, today. (Deliverable: E3 deployment status & confirmation)
+    • Run the flow and confirm data writes to the use case folder (validate full-refresh/overwrite behavior), today (test in evening recommended). (Deliverable: test logs/screenshots/demo)
+    • Dump use case folder data to warehouse and demo in the evening; cross-check columns/data types before Thursday go-live. (Deliverable: demo + validation report)
+
+  • Nirmal:
+    
+    • Analyze table list sent by email: confirm which tables appear in audit info table and whether daily ingestion notifications are present. Provide results within 1 hour (by 13:00). (Deliverable: analysis report indicating table presence in audit info and XCOM/export notifications)
+
+  • Kundan / Dev team:
+    
+    • Review code patterns: consolidate multiple DB calls into single queries where applicable and replace file IO with in-memory structures or temp tables. (Deliverable: updated code/PR)
+    • If files must be written to GCS, notify IAPA of any saved data and ensure retention/cleanup policy (e.g., 24-hour retention for SFTP files). (Deliverable: notification to IAPA + retention plan)
+
+  • Sachin / Engineering:
+    
+    • If any GCS files are temporarily required, consider a controlled deletion task; however preferred approach is to avoid file IO. (Deliverable: decision document or implemented cleanup task if approved)
+
+  • Manager / Release Owner:
+    
+    • Prepare RFC for Thursday/Friday release and ensure all pre-deployment checks (metadata, column/data-type validation) are done prior to E3 go-live. (Deliverable: RFC + pre-deploy validation checklist)
+
+  • DAG owners (who implemented DAGs):
+    
+    • Share DAGs for review and finalize scheduling/notifications. (Deliverable: reviewed DAGs and go-live schedule)
+
+Please update the owners above with actual assignee names and fill in the Location and Attendee list. If any item needs re-prioritization or clarifications, flag immediately.
+
+
+Transcription
+
+00:00:17 - 00:03:31 Unknown Speaker:
+
+Hi everyone, just wait for a couple of minutes. I don't see Kundan and who else left. Sindhu Jai not there, okay. I could just check with Kundan whether he's joining or not. Yeah, sure. Okay, so I'm starting with you. So you have modified that query in the environment, right? We should not be applying any limit over there. T flow that is regarding the dt flow for a reality status one right so go ahead okay then just you know promote that changes to e3 uh today itself and the metadata. Okay. Okay. Okay then. Just keep me posted on this E3 deployment once you're done, Sameer. Okay? And don't, you can test the flow at least whether it's going till your use case folder or not. Okay. Right.
+
+00:03:31 - 00:04:29 Unknown Speaker:
+
+So, let it go and fail, but at least we would be able to know, right, whether it is writing the. And do remember, this is a full refresh table, right? Yes. So, whenever you are writing the code to your use case folder also, your use case folder should also get refreshed every time you are inserting data to that. Yes, it will get refreshed. It will get refreshed. Refreshed in the sense means you are deleting the previous records, right? So, what will happen? So, Whatever the... the file transformations are there in the final folder we have selected as Overwrite. So what it will do whenever it is trying to accept the new data, new data, it will override first and it will insert the data. Yeah, that, that's what I need a confirmation from you.
+
+00:04:29 - 00:05:15 Unknown Speaker:
+
+Like, it should not be, you know, just appending it because the table type is of full refresh. Yeah, okay, so so then you can go ahead, uh, run the flow, at least, see whether the data is getting saved. Use case folder or not. Yeah, sure, at least till that point, we would be sure. Then your next part would be just for dumping the data from, you know, that use case folder to the warehouse. So that we can test it out on first day. Okay, so do you want me to run it, like, do it by myself? Or like, Do you want me to be like shadow Suman? And he wants, let him do that? You run it, test it out from your site, okay, and maybe in the evening hours you can demo it to someone.
+
+00:05:15 - 00:06:41 Unknown Speaker:
+
+Because this, it's a, it's a.As you mentioned, it's a full request, right? So again, run it in the evening hours so that, you know, it would be, uh uh, refreshing the data, sure, okay, and then on Thursday we need to make it live once the metadata would be available. And then please cross check the columns and all, so up table. It should not be like, you know, data mismatch or something, right? Uh, the way we used to figure it out. The issues while doing a E3 deployment. So please make sure your data type and everything should match while doing it. Okay, uh, I have to keep RFC ready for Thursday, Friday. Also upcoming Thursday and Friday that we discussed yesterday during the code review. Are targeting to close it?
+
+00:06:41 - 00:07:47 Unknown Speaker:
+
+Uh, yes, so this one, I'll try to, uh, today, but uh, that file which is getting downloaded, that uh file, uh. Right now, the email part, uh that it does not get, uh, the email is not getting, uh, sent. We are facing one error email you are trying to send it from the cluster. Yes, yes, yeah, that is where I asked you yesterday, right? Move those code to your dad, right? And one thing, Kundan You know, I would like to know the review that I was doing yesterday. Why? We are always having a tendency of creating a file, saving it to the GCP bucket? No, we are not doing that. Okay, the thing is, uh, you know, sending email through that cluster, right? Then again, we have to do the entire, you know, credential, exposure and all those things.
+
+00:07:47 - 00:08:37 Unknown Speaker:
+
+So suggestion was to, you know, move that file to GCP server, okay, our GCP, uh, bucket, basically, and, you know, that path we can consume native through the data. No, no, no, look, uh, what is happening? Which I have seen, like, you know, whenever we are pulling the data from the database, right? What we are doing? For most of our use case, we are creating a CSV file, storing it to the CSV bucket, right? And then you are pulling that data. And then, you know, whatever piece of activity wants to do, you can do it. But this is not the case. Okay, that is not the case every time. Okay, that is in few scenario where there is a requirement of that type. Okay, this is not recommended that every time you download the file.
+
+00:08:37 - 00:09:28 Unknown Speaker:
+
+Yes, what I have observed yesterday while doing a code review for NC. She was first of all, making three DB operations calls, three different DB operations calls, three SQL query, three query call. Okay, that that we could have combined to a single SQL call, a single big query call. That is something you need to check and come back, right? Number one is that second. A second point is if you are getting all the data at the DB query call, right, and if, uh, if you can couple of query call, that is number one. Second, like, when we are getting the data right, and if the data size is small, right? Even you should not be creating a file, right? You can store it into a dictionary, or some objects play around that is data, right?
+
+00:09:28 - 00:10:15 Unknown Speaker:
+
+Is there any need of, you know, uh, storing the data first thing? Okay? That is based on the requirement wise, that's why I am telling you, okay, so even it is a big data, or, you know, no, no, what I understood from the requirement. We really don't need to send them back those data, right? Is that the case? And see, we are sending, we are not sending back them the data, right? It's just the conditional filter that we are applying and then we are creating that Excel set. Correct? Yeah, yes. Then in that case, as I discussed yesterday, if the data size is small, store it into a dictionary object. If the data size is large, store it into a temporary table instead of creating a file.
+
+00:10:16 - 00:11:11 Unknown Speaker:
+
+IO operation is always going to be, you know, it would take more memory and that is not advisable if you are doing any, you know, higher volume of data. But why we are storing in even in the file? Okay, because the by default, once you are querying to the table, right, any of the table you are getting. The dictionary object only, then save it into the dictionary object if it is there. I didn't review the code. I just could help her with the, you know, one of the problems she was facing, you know, yeah, okay then, and see, then let's follow what I have asked you to do. If the volume is too high, then you can use a temp table in our use case folder, don't create a file and save it into the GCP bucket.
+
+00:11:12 - 00:12:07 Unknown Speaker:
+
+And whatever files going forward is going to the GCP bucket, it should be communicated to IAPA. Whatever data you are, you know, saving to the GCP, it should be communicated to IAPA and whatever database operations also you are doing. Okay. Sachin, one question. Just to add on that one, if saving the file into that one, right, after the processing, right, maybe we can create one more task over there only. Which will delete the file from the GSMA that is not, as that is not advisable, right? File. IO operation is always going to be, you know, that is having a high throughput, right? So don't go ahead with that because writing deleting file I operation that is not advisable. You can use. What is the use of that? Okay, if you have the DB access, then why you need Excel?
+
+00:12:07 - 00:13:01 Unknown Speaker:
+
+Exactly? Exactly, Yeah, because, look, ultimately, you are dumping records in the GCP, right? So instead of doing that, if there is a requirement that they need that data back, right? If they need that data back. Enough email, then you can store it into the GCP. The way for few of the use cases where we need to transfer the data via SFD, then you can go ahead and save it into the GCP bucket. I am fine with that if the requirement is. Uh, like, you know you, even in case of SFT, you have seen that part, right? They are not saving the data more than 24 hours, right? The file gets saved only for 24 hours. The reason being, no one wants to save the data in a file. And then that is not advisable.
+
+00:13:01 - 00:13:55 Unknown Speaker:
+
+Also, so, until unless the requirement is to send back the data to the user don't create a file and save it in the GCP bucket. Use your. BigQuery tables, create a temporary tables, and then, you know, post-processing, delete that table also through the tag itself. The last task that you would be doing is once your processing is done, just delete that temporary table. That would be a simple query, right? But if you're creating a file, just imagine, right? You are first of all writing a file, saving it, and then again, you know, in order to delete again another file operation. Yeah, okay, and see, Samir is done. I need this to be completed today if you need a bit time to extend it, extend it, but this should be closed today. We can't go indefinitely.
+
+00:13:55 - 00:14:42 Unknown Speaker:
+
+Like, you know, the implementation is going on from last two sprint. Yeah, yeah, I'll close it today, yeah, but for like, you know, if it is a for demo purpose. Still local. I was still, uh, you know, uh, given you time to go ahead with supposed to be done last week only. Yeah, right. And and when there is a task and if you guys are not meeting the timeline, then you have to extend. There is no, you know, liberty would be given for that, sure, because we are understanding that, right? We have lots of tasks in bucket which needs to be, you know, to click. Kundan is bombarded with n number of tasks, he is having lots of tasks, Samir is having multiple tasks, is having multiple tasks. So right now and see Prithvi and Suman.
+
+00:14:42 - 00:15:30 Unknown Speaker:
+
+You who guys have a individual task which you guys are doing for a quite a long period of time. And that needs to be closed. We can't go indefinitely, so if you're not competing within the set timeline, extend your and close it. Sure, yeah, I'll close it today. Okay, uh, nirmal for you, the table that you have sent over the email, right? Uh, I did not reviewed your code yet. The reason for that? Of closer than that, we haven't analyzed whether those failure is coming to that audit table for or not. Okay, so, first of all, couple of things you need to analyze number one, uh. Check the list of the table that you have sent, whether those are getting ingested to the audit info table or not. That is number one. Okay.
+
+00:15:30 - 00:16:33 Unknown Speaker:
+
+Second, is this table XCOM table? Check whether we are getting a daily ingestion notification or not for this. Where is Sameer? Sameer, you have given me this table name, right? Yeah, this one. So, check this table. This table is used to, you know, get the daily injection notification. Okay? So, That list that you have given cross check couple of things. One is that audit table that we already discussed you are aware with, for which you are, you know, already doing that for insurance and the pack engine, right? So, first of all, identify for how many table you are getting a notification in that audit info table. And next analysis should be whether we are getting a data ingestion on these, uh, this, uh, the table that I have given to you.
+
+00:16:33 - 00:17:21 Unknown Speaker:
+
+Come up with the analysis in next one hour. Okay, won't sit again for three or four hours just to have this smaller analysis. Okay, just let me know in next one hour by 1 p.m. whether you're getting these details or not. Whether you are getting those table name or not in that audit info table and then next is this XCOM table. If some tables are present in the audit info table, then we are good. We can create those DAG for those table for, you know, ingestion check for. Through that audit info table itself. If those are not present in that audit info table, then we need to check this export table whether we are getting the injection notification or not. Thank you, sir. Requirement is clear or you have a doubt? Let me know, right?
+
+00:17:22 - 00:18:14 Unknown Speaker:
+
+Got it, right? Okay. Next, your DAG implementation is done? Yes, the DAG implementation is done. Just want to check with review with you. Maybe shall I shave my skin after this call? End of the call? Yeah, end of the call, let's do it. And it is a independent act that you have created for concentrating. Ah, yes, character. And did you analyze to buy by what time? What is the last time? By when we used to get this? Uh, CSP score Model 11 notification. Hey Prithvi, just once again, you have a doctor appointment, right? So feel free to drop up, man. No need to continue, you can go ahead. Oh, thank you, thank you, thank you so much. Yeah, no problem. Yeah, yeah, go ahead. Uh, that injection timer you're asking about CSV Mod.

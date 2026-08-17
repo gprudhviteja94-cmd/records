@@ -1,0 +1,252 @@
+2026-01-22 Access Issues and Data Correction Strategies
+
+Creation Time: 2026/1/22
+
+
+📅About Meeting
+
+  • Date & Time: 2026-01-22 12:38 (Duration: 2088 seconds)
+  • Location: Virtual (call/Slack)
+  • Attendee: Anand, Aman, Sachin, Samir, Raj (referenced), Sristi, Kundan, Athar, Saurabh, Bhagwan, Sindhuja, Nirman, Ather, RICHna, plus others (product, SRE, LDOT teams referenced)
+
+
+📒Meeting Outline
+
+
+Access & Epic / Workspace Mapping
+
+  • Epic/workspace access issue Discussion that certain epics (e.g., US Consumer / Insurance epic) are not accessible for some members. Aman and Anand investigated: appears to be an enterprise LPM/project mapped incorrectly which prevents access for users without enterprise LPM1 access. Some EPICs visible only (Lumi Migration, Unified Marketing Data Layer, Global Dining).
+  • Proposed remediation Options: 1) grant enterprise LPM1 access after short navigator training; 2) request Raj to create/assign the required EPIC(s) to the US Consumer Insurance area. Interim approach: use production-support workspace so Sachin can log and track effort; create a cloned epic/task and remap when Raj provides the new epic. Anand to initiate chat with Raj to expedite new epic creation.
+
+
+RISI MX Test / Data Correction (DCU) & RFC
+
+  • Routing to SRE for DCU RISI MX Test 61 routed to SRE for data correction (DCU) involving encrypting columns (state and jail). Unclear whether SRE will handle pre- or post-RFC data migration/handling.
+  • Backup & existing data Team already backed up two months of data. Concern: if SRE handles DCU and keeps existing data intact, it avoids re-migration. Need clarity on their approach: backup, re-ingest, or DCU in-place.
+  • Next steps Samir to set up call (requested tomorrow ~3:00 PM IST) with SRE and relevant engineers to confirm process for handling existing data when metadata (RFC) is promoted to E3. If SRE commits to handle by Tuesday, proceed; otherwise RFC promotion may be delayed (pushed to Wed/Thu).
+  • Incident assignment & approvals Incident assigned and LDOT approval received. Team to verify incident details and track resolution.
+
+
+Build/Demo / Environment Promotion & Insurance Validation
+
+  • Build/demo timing First part of RISI build ready; demo planned upcoming Tuesday for Anand to validate; after validation, will promote to next environment. Remaining work in progress.
+  • Insurance validation Validation in progress; results being prepared and communicated. No questions raised during meeting.
+
+
+Human Task Creation / DQIM & Incident Flow (ACE, ServiceNow, Email notifications)
+
+  • Human task UI & justification alignment Issues observed in DQIM human task UI: justification box overlapping, expected value display issues. Athar to discuss ordering/alignment with Bhagwan and Saurabh; Kundan to follow up and fix UI alignment.
+  • Incident creation flow Demonstrated creating an incident from a true positive case in ACE → ServiceNow. Incident description is auto-populated from API (includes DKID, table name, variable, actual/expected values, justification). Some fields are not editable via current flow; team can propose changes.
+  • Email notification enhancement Current process does not send email notifications to owners on true positive incidents. Proposal: add an email utility bundle into BPMN so an email is triggered on true positive incidents. Kundan’s capacity to be reduced on self-serve tasks so he can implement email utility.
+    • Email should be configurable (properties file) — don't hard-code recipients or content.
+    • Retry mechanism to be implemented for emails (same pattern used elsewhere) to handle transient failures/TLS issues.
+    • Add condition so only true positive incidents create ServiceNow tickets/email (fix existing incorrect bypass).
+    • Expected delivery: E2 readiness within a couple of days; full wrap-up within 2–3 days (taking into account Monday holiday); target roughly by Tuesday/Wednesday.
+
+
+Incident Handling Demo & Troubleshooting
+
+  • Demo and troubleshooting steps Walked through reserving tasks, marking True Positive, submitting and waiting for process bundles to complete. Team generated an incident (ticket ID shared via Slack). Minor UI filter inconsistencies noted (Active/Completed filter).
+  • Incident content changes Team to propose exact modifications to incident description — screenshot or list to be provided to devs to implement. ServiceNow portal URL shared for cross-checking.
+
+
+Rally / User Story & Task Creation Governance
+
+  • Accidental deletion / improper creation A developer accidentally created a user story (instead of a task) and changed parent/child relationships, causing disappearance of original product-created user story. Sindhuja, Samir corrected by adding the story back to the sprint and adjusting story points (set to 5 originally).
+  • Governance reminder Developers must not create user stories in Rally; product team or designated leads (technical EPIC owners / Max / Anand) own story creation. Developers should create tasks under existing user stories. If placeholder work is needed (e.g., production support monitoring), create a placeholder task (40 hours) under correct user story and then split later.
+  • Training/demonstration Anand/Sindhuja will give a Rally walkthrough and how-to create tasks (separate session/call).
+
+
+Sprint Work / Production Support Workflow
+
+  • Placeholder tasks For sprint start uncertainty, create placeholder tasks for production support with 40 hours and refine later. Sindhuja to brief and chase Jason for requirement clarity.
+  • Scheduling Proposed call at 9:00 PM IST (Anand, Sindhuja, Jason) to collect details — attendees to confirm availability.
+
+
+Security / ChatGPT Usage Guidance
+
+  • Sensitive data caution Strong reminder: do not share PII, confidential project identifiers, table names, or client names with ChatGPT or similar tools. Use only random placeholder data (Table A/B, anonymized fields) when using external LLM tools. Team training reference noted; follow guidance provided in previous ChatGPT sessions.
+
+
+📋Overview
+
+  • Access/EPIC mapping issue due to enterprise LPM/project mapping; interim use of production-support workspace and Raj to be asked to create epics.
+  • For RISI MX Test 61, SRE assigned to do DCU; need call to confirm how existing data (encrypted columns) will be handled; backup exists for two months of data.
+  • Demo for build planned for Tuesday; proceed with promotion after validation.
+  • DQIM human task UI needs justification box alignment and expected-value display fix; Athar to coordinate with Bhagwan.
+  • Incident creation works but email notifications are missing; plan to add configurable email utility with retry and correct conditional flow for true positives. Kundan to implement with reduced other workload.
+  • ServiceNow incident description is auto-populated; team to request specific changes via screenshot/requirements.
+  • Rally governance reinforced: developers must not create user stories; create tasks under product stories. Placeholder tasks for production support should be created when scope is uncertain.
+  • ChatGPT/data-sharing guidance reiterated: do not share project-specific or PII details.
+
+
+🎯Todo List
+
+  • Anand:
+    
+    • Initiate chat with Raj to request creation/assignment of new US Consumer Insurance epic (ASAP).
+    • Attend/demo validation on upcoming Tuesday to approve first part of RISI build (by Tuesday).
+    • Coordinate Rally walkthrough/demo for developers (schedule separate session).
+
+  • Samir:
+    
+    • Schedule and run call with SRE for DCU data handling (tomorrow ~3:00 PM IST). Deliverable: SRE confirmation on whether they will handle existing data and approach (backup / re-ingest / in-place DCU).
+    • Re-add/restore any missing Rally user story entries if still required (ASAP).
+
+  • Kundan:
+    
+    • Fix DQIM human task UI alignment/justification box with Athar, coordinate with Bhagwan and Saurabh (today).
+    • Implement email notification bundle in BPMN (configurable via property file; include retry logic) and ensure only true positive triggers create ServiceNow incident/email. Target: E2 readiness in 2–3 days (aim by Tue/Wed).
+    • Reduce capacity on self-serve to prioritize email utility implementation (immediate).
+
+  • Athar:
+    
+    • Discuss UI justification/ordering with Bhagwan and Saurabh and provide updated requirements to Kundan (today).
+    • Assist on BPMN condition logic to ensure true positive path creates incident (coordinate with Kundan).
+
+  • SRE Team (contact via Samir):
+    
+    • Confirm DCU approach for encrypted columns and handling of existing data (backup/restore/re-ingest), provide timeline for completion to enable RFC promotion decision (on call tomorrow).
+
+  • Sindhuja:
+    
+    • Re-brief developers on Rally process; provide step-by-step demo on creating tasks (separate session), and assist in adding placeholder production-support tasks (ASAP).
+    • Chase Jason for requirement details and confirm 9:00 PM IST call availability (today).
+
+  • Sachin / Production Support:
+    
+    • Create a placeholder production-support task (40 hours) in Rally so effort can be tracked; refine later (ASAP).
+
+  • Dev Team / All:
+    
+    • Do not create user stories in Rally. Only create tasks under existing user stories. If unsure, contact Sindhuja/Anand before creating or deleting items (immediate).
+    • Follow ChatGPT/LLM policy: do not share PII, table names, project identifiers (immediate).
+
+  • General (whoever to provide screenshots/details):
+    
+    • Provide screenshot or exact text changes requested for ServiceNow incident description to Kundan/incident owner so the description formatting/content can be adjusted (ASAP).
+
+If any assignee needs clarification or completion times adjusted, please reply in the project chat so items can be re-prioritized.
+
+
+Transcription
+
+00:00:02 - 00:01:45 Unknown Speaker:
+
+Daily Standard AMEX 27, 22nd January I think this seems to be an abscess issue probably because I am unable to open this one. Can you search it here once, Aman? Yeah. That's what I'm doing. Yeah, it's an access issue. Because when I did the same thing, I was able to open directly. How should we do this now? Which workspace is that created? Because in US he does have the product owner access. Okay. This is the one, right? Yeah, so I think it's because of this enterprise LPM. The project, right, is wrongly mapped even for this. If you can change this, I think you can access it. But I'm assuming there are other features already tagged to this one, right? So we should just check it once. Oh. Yeah, also this is a capability, right?
+
+00:01:45 - 00:03:07 Unknown Speaker:
+
+So, sorry, this is a bid, right? It's an epic. So epic doesn't really get created in our US consumer Galileo. Yeah. Thing, Uh, can you just then create, Um, this is the one, right? Like, Um, just tell me if I'm wrongly giving the epic. It says, um, GCS G U.S. Consumer team, and then, uh, 979, yeah, it says 20.6 U.S. Insurance, so it's our team, right GCSG U.S. Consumer. So I I did it using uh, nine, seven, nine. Okay, nine, seven, nine, five, nine does not have a Uh insurance epic. There are only three there, which is, uh, Lumi, Migration, UH, unified marketing, data layer, and global dining. Yeah, I think what you can do is probably get access to this enterprise LPM1, right? That should solve for it.
+
+00:03:08 - 00:04:16 Unknown Speaker:
+
+There is some, I think, navigator training which is like five minutes or something that you have to do for that, I think. I think... Anand, he must ask Raj for like another EPIC because I'm seeing like under, so this, whatever EPIC I gave a stack to a team called EAS and the UNCDO, right, like how it does not have anything for Q-Track, it again does not have anything for insurance. Like there are only three EPICs that were given to us, right? Thank you, sir. So, like, in the meanwhile, I think, like you guys said, probably you can use the production support. I will initiate another conversation with Raj and ask to expedite for, you've not heard back from him, right, for the new epic creation? Is that for me? Yes, yes, that's right.
+
+00:04:16 - 00:05:23 Unknown Speaker:
+
+Yeah, yeah, yeah, so I can, um, initiate in the same chat window for this and for us consumer yeah, insurance, sorry, insurance, yeah, yeah. For the time being, we'll continue in the field like production, support, right? Yes, yeah, for the time being. Just create so that Sachin can track his efforts there. We'll remap it as soon as we hear back from Raj. Okay, I'll, I'll create it when, uh, it's there for N. C. I'll just create a clone of it. I'll take care. Okay, uh, anything else? Someone from insurance side? Oh, you already had a connect, right? Yeah, I'm good. Okay, thanks, thanks, someone. Thanks, okay. Uh. On and starting with the Raze MX Test 61, right? So I had a discussion with, Uh. So, you know, now she has routed us to the SRE team who will be doing the DCU.
+
+00:05:24 - 00:06:18 Unknown Speaker:
+
+That is data correction. Okay. So, now my answer to her was that how she is going to, you know, even the SRE team is going to do the data correction because in that case, for those couple of columns, they need to encrypt the data, right, for the state and jail. And that's, again, like, whether they are going to do it, You know, RFC implementation or post RFCR implementation. But that guy has mentioned like his shift is getting over and he is not available to connect. Uh, so Samir, Uh, what you can do? Set up a call tomorrow at 3 p.m. Uh, I'll brief you what needs to be, you know, detailed discussion required with our engine. You're already part of that group, right? SAMIR Yeah, yeah, um, this lag group you are saying, right?
+
+00:06:18 - 00:07:14 Unknown Speaker:
+
+No, no, no, you are not part of that. Let me add you, okay, so let me brief you so that you know you need you remember what needs to be done. I already looked you into that email, right? Uh, it's just that, uh, you're not part of this group where we were having that, uh discussion with Sristi. Okay, I already looped you to this email, which, uh, you know, I have sent it to our other gen. Yeah, okay, uh. So what? You need to ask him? Like, we already have this data for this table on the warehouse table. Okay, and we are going to, uh, you know, make those two columns as SD address in with this RFC. Okay, so now how they are going to take care of the existing data? Oh okay, either.
+
+00:07:14 - 00:08:07 Unknown Speaker:
+
+They are going to take a backup post RFC implementation, they are going to, you know, re-ingest the data or what is the plan? Just understand that from their side. Okay, for this one, go ahead, yeah. So basically, this RFC is to update the metadata change. And we need to check like how they are backing up or like, taking care of the data in this project. Yeah, existing data is being there, right? And this is being reported in this incident number, so the incident is also mentioned over this email if you go to this incident. Okay, right now it has been assigned to our religion, okay, and the required approval we received it from the LDOT team, okay. So get this clarity, like when they are promoting this, uh.
+
+00:08:08 - 00:09:04 Unknown Speaker:
+
+MD to the E3 environment, how they are going to take care of the existing data. So, on and on the backup part, we already did a backup of those two months of data. So, that backup is ready, but if they are going to take care of the data with the DCU, then that would ease out our job not to migrate the data again for those months, which is on this one. Question, right? Apart from the one-month to seven-month data, you have the old data as well, right? Correct, correct, okay, so that you just like from your side also just check the data. Okay, uh, so this is something, uh, Samir set up a call immediately, otherwise you are going to forget it. So he has asked tomorrow post 2 30. So maybe around 3 p.m.
+
+00:09:04 - 00:10:01 Unknown Speaker:
+
+September call, and, uh, me, you know, just see the feasibility and can join the same call. And in case in case there is some discrepancy or something, let me know immediately so that I can log in. And then push back this RFC to maybe Wednesday or Thursday, based on your discussion. If they are, they are going to handle it, uh, by Tuesday, we are good, uh, but if there is some discrepancy where they are denying that, then we have to post the RFC back to future date. That is on that RISI MX test Anand. When the build is ready for the first part, so we are planning for a demo with you on upcoming Tuesday so that you just can validate and confirm us so that we will be promoting it to the next environment.
+
+00:10:01 - 00:11:14 Unknown Speaker:
+
+And the rest part is in progress Anand. Okay, sure, uh, on the insurance validation that is still, you know, in progress, like, you know, uh, we are validating and sending you the result. Uh, any questions on that on the insurance part? No such. And I already had a connector with our pass update, also I have communicated. And on this one, human task creation, the changes have been done on E2 Anand. We will demo it post this call. Any other update that you would like to check? No, we're good. Okay. So, Kundan, please bring up your screen for the DQIM. Okay, so what would we start from? Where? Such in, uh, just, uh, reserving the task, taking an accent, that's it, and then I'll breathe. Not, this is, yeah, go back to here.
+
+00:11:14 - 00:12:30 Unknown Speaker:
+
+This is the entry you are seeing, right? This open status, so this is one of the human has to be created. Okay, and this is the, you know, these are known, just just let you know the next step. So that's just one thing which is required on, and the alignment of this text. Uh, that justification, so you can see that expected value, actually a loser appearing over here, reserve it, so look right now if you see justification box is still appearing. So this is something we need to discuss with Saurabh. And, you know, Bhagwan, why it is being there, so Athar would take care, you know, be having a word with Bhagwan today. Post that. Once you select True positive, just select True positive and then and then. So here when you create it, submit it.
+
+00:12:30 - 00:13:14 Unknown Speaker:
+
+Now, go to the Ace Control Center. So here one challenge. Anand I am going to tell you now the incident has been created for this one in the Ace side. Okay, but you are not going to get notified as you are not asking for an email, right? So while you are, you would be doing it. You won't be able to identify the incident, so in case you need us, do let us know. We will join you. Uh, we will. And that is the functionality, if you remember, I asked you at the very beginning. At least for true positive. If it is a one or two case, you can incorporate that email functionality so that you know email would got triggered to that person immediately. Yeah, yeah, let's do the idea, let's add that.
+
+00:13:14 - 00:14:32 Unknown Speaker:
+
+Okay, okay, we didn't noted the incident ID. So you can, you can take the previous process process instance and then undo it. So one second, this no one store one thing. Search it via Active State, go to the Select Status one. Yeah, yeah, I was doing that filter. The thing is that would have been completed, that would have been completed, man, active one would have been completed. What I'm asking you right now, take one active one. Okay, just give me one second. I'm looking for the activity. This filter is not working. Okay, fine. So take this task ID, go to the details, take the go to human task. No, no, no, not like this. It would not work like that. Go to the human task. What is the task ID? Uh, this is zero, one, one, eight, two, late.
+
+00:14:32 - 00:15:53 Unknown Speaker:
+
+Uh. Just search it by the task ID. Go back. No, no. In that. Look. Uh, zero, one, eight. It is there, right? This is the same task ID. I think not this one. Oh, yeah, correct, let me take action on this one. Yeah, correct, that's what I was mentioning. Click on reserve and then again, true positive, then just submit it. Hold on for a second, let it let, give the east time few minutes. But the process is still active because the rest of, the, you know, the uh, corresponding bundles are getting executed. It takes a few, you know, 30 40 seconds. Okay, yeah, let it get completed. I will show you the incident ID. See, that ticket number got created. I'm pinging you this one, so you can, if you want, you can show him.
+
+00:15:53 - 00:18:52 Unknown Speaker:
+
+Show another teacher. Give it to me. I pinged you over Slack, so you can take this. Stopping. Just a second 69. 69. Then if you can go on mute. Thank you. Okay. This is the incident that we have just created. So over here, if you see this one, this is the description or whatever, you know, rule description that has been there. We have created it. You won't be able to remove this one because by default, this is coming from the API itself. So there is no possibility of this one. Again, this is the description. This is your DKID, table name, variable name, actual value, expected value. And then the justification that he has did okay, okay, yeah, I mean, this description, everything we can change a little bit, that's fine. Oh, okay, yeah, but I think this looks good.
+
+00:18:52 - 00:19:41 Unknown Speaker:
+
+Yeah, but I think I would probably need you on that call for sure, then, for this part of the game. We will try to integrate the email any time. What I'll do, I'll reduce Kundan's capacity on self-serve and let him work on the email functionality because email functionality is a utility which is just we need to use that. So we just need to incorporate one additional bundle over there in that BPMN and then use that re-utility. That can be built within couple of days. So, you know, at least on E2, it would be ready. And two to three days, it replies. Yeah, then it would be good, right? If you can just bring up your screen, then create an incident. It shows the incident in that email itself, and then you can copy-paste and show.
+
+00:19:42 - 00:20:36 Unknown Speaker:
+
+Yeah, correct. Let's see if we are receiving email. Right now, I don't think. Yeah, okay. So, that's the part. We will be sending the email with all these. Body details. Maybe two to three days. We would be able to wrap it up right Tuesday or Wednesday, and that's Monday's holiday in that session. Can you also make changes to this description as well in the incident? Yeah, let us know what changes you need. Yeah, just give me a screenshot or something of that existing details and I'll tell you. Oh, okay, let me give you a same sort of this one and I'll. And I have already shared you the URL also, so if required, you can, you know, go to that service now portal and check the incident from there. Also, where exactly I didn't get that?
+
+00:20:36 - 00:21:59 Unknown Speaker:
+
+Uh, let me see my screen. So if you would like to check the incident, right? So let's go to this one from here. Let me ping you this incident. You can check this incident also from there. Yeah, okay, anything else that you would like to discuss? So we have demo on second or 27. On second, one, third, we'll keep it right now. Yeah, but uh, Kundan, we Kundan and Ather, we have to push Saurabh and team because we are not. Uh, you know, we are still in E2. Okay, so just don't think, uh, with respect to 27 or 28. If you are doing a deployment by 27th on E3, right, then, uh? Data migration is pending, that needs to be done for the month of Jan. And then the validation need to be closed on E2 before moving to E3.
+
+00:22:02 - 00:23:17 Unknown Speaker:
+
+That's why I was just, you know. I think from Saurabh's side, just follow up on this, you know, sequence of the text box, right? Once that is sorted out, they just need to merge the PR on the E3 environment. That's it. There is no other dependency apart from that. Okay, so just check with the government today. Okay, okay, thanks, thanks. Uh. RICHna Uh, folks, uh, please take back. Yeah, that's fine. Just just try to see, uh, like, uh, uh, you know, if you're not scared, don't take any decision. Uh, do let me know over the call. Sure, okay, because this is production data and we have to be careful, if required, to lie apart to the call. Okay, uh, yeah, anyone? Uh, couldn't. You are speaking something? No, no, I will. I will discuss one thing.
+
+00:23:17 - 00:24:13 Unknown Speaker:
+
+Uh, that is a true positive, right? As we are creating that service now. Incident, uh, certain there, but with that bundle, BPMN and that should come under that condition only, it should not will will suit the email. So what will be the email content? Whom to send the email? All the body description that you are sending? And right now send it to Anand and CCS. Later on, they may ask us to send it to maybe the distribution partner, then we. We just need to modify the properties, give the details from the property file, don't hard code it into the code base. Yeah, yeah, I will configure it, that is okay, okay, okay. First, let's do the ad cell, uh, you know, the mail part, yeah, this bundle gets over here, right? And this is skipping.
+
+00:24:13 - 00:25:04 Unknown Speaker:
+
+For, uh, if true positive, it should not be bypassing in case of true positive only. We are creating the incident. Oh, that is, you know, the uh, condition is, uh, different, but yeah, we are handling it. Leave it right. No, no, but but modify this, would, you know, if somebody wants to view this BPM? And right, they would be into a wrong adjunction. That if it is true positive, we are not creating the service or incident, which is incorrect. In case of true positive, only we are creating the service of incident. Okay, I will update it, okay, this one, so you just need to twist it like this one. Create one more utility bundle over here. Okay, and this should be sending you the email bundle. Okay, just email.
+
+00:25:04 - 00:26:06 Unknown Speaker:
+
+Okay, and when you are, yeah, and when you are doing for the email. Keep a note, you have to apply the retry functionality the way we did it for you. For email, we should apply retry. Yes, you should apply a retry also. Sometimes when you're sending the email, there might be a chance that your notification vendor may get impacted with some TLS connectivity and your email would not go to the end user. So that is the reason, apply the retry functionality. Okay. Just real quick, just loop it over here. Okay? And uh, change this and then again, like this one right error boundary if system accepts and stop the process. Yeah, modify this one, make these changes ready, and uh, other you need to, you know, change that one.
+
+00:26:06 - 00:27:32 Unknown Speaker:
+
+Okay, uh, so I I ask all of you to stay back. Uh, please, we. Uh, you know, not this placeholder man, why did you change the context of this one? Yeah, sorry, sir. I should have created for the task. I don't know why I did that exactly. You need to go to this one under this one. Create a task with placeholder. Yeah, that's what I did. Details. No, no. Now your user story is coming as placeholder. Man. Add new. I did. Add new means. Did you created a altogether new user story? Chill story? Only? Where let me share my screen? Where share your screen. So this is the task I created by adding add new. This is not a task. This is not a task. This is a user story. What happened to the old one?
+
+00:27:32 - 00:28:38 Unknown Speaker:
+
+I'm not sure what happened to the old one. Either you might have deleted it. There was a spike user story was already in there, right? Deleted I only created a task then, where it went, man, where it went, I don't see it. Sindhuja Can you find that user story for him? Yeah, it's disappeared, not even I'm checking that. Just give me a second. You might have deleted it wrongly. Okay, then where it went? Sorry? Yeah, where, where? Where you are able to see this? Spike, uh, spike one, spike one, robot. Yeah, three, five, eight, only where? Yeah, the same story. It is actually four. Ah, six, four, one, eight, four, three, eight is the new one, old one is six, four, zero, eight, three, five, eight. So where this three, five, eight went.
+
+00:28:42 - 00:29:37 Unknown Speaker:
+
+Give me this story copy and then just said this story to me. I think he's created Okay, he's changed the pair and he's he's made the parent Yeah parent and child and he's created a new story For himself. Let me just read that back to the sprint. Okay. Yeah, uh. First of all, you know, you guys are not supposed to create any user story. Please. Uh, you know, keep in mind user story. Either it would be created by the product team, or if that is the technical user story I'll be creating, or Max in which I would be creating. Okay, you guys are required just to create a task under those user stories. Okay, uh uh. If you are doing that, uh, please share your screen. Let's have a, you know, little demo to these folks.
+
+00:29:41 - 00:30:47 Unknown Speaker:
+
+Uh, separately, I'll do that over the call. That was the agenda. But, um, yeah, he's made it parent. I'm not even able to add it back to the sprint. This particular user story. So, um, not sure. And that was the actual user story created by the product. Yeah, yeah, uh, delete that one. I think the actual user story still lies with. Uh, Samir. Yeah, yeah, yeah, I deleted it. No issues, no issues. I'm adding it back to the sprint. Okay, um, folks, I mean, um, just just call out if you need help on this. Do not alter anything on the Rally world, especially creation of user stories by developers are not allowed. Okay, Can you recheck? It must be appearing on the board now. Yeah, yeah, it's there. But it's zero story point here, Sindhuja.
+
+00:30:47 - 00:31:40 Unknown Speaker:
+
+Yeah, yeah. Do you remember how much we had assigned him? Five, I said, Sachin? Yeah, five. Okay, I changed it. I anyways have a call, like just now we were supposed to connect. I'll let them know how to create tasks and rally walkthrough and that, okay? Let's not waste every resource's time here. Okay, okay, then that's okay. And assuming for you, uh, there was no task created for production support, so just create one placeholder task. Uh, Sindhuja is going to brief you on that. Okay, okay. So the. The simple ask is the whenever the sprint start, right? We? We might not be sure, like, what are the tasks that we are going to perform for those 40 years, right? So if that is the case, just sure that you are creating at least a placeholder with 40 hours, and later on, you can break that 40 hours.
+
+00:31:40 - 00:32:37 Unknown Speaker:
+
+Like, if you're monitoring some job and something right later on, you can do that. Yeah, okay, Nirman, you are not supposed to create any task on the lazy one. Because we are still not clear with the requirement what exactly they would like to make. Uh, during this print. So, uh, Sindhuja, please try to chase Jason if we can have a connect with him, then. 9 p..m. Call with you, me and Anand. Are you available 9 p.m. IST? I'll join. So, yeah, hopefully, I also have initiated. I think he had not logged in yet, so he had not seen my messages from the afternoon. We'll probably get all the details in that call. Okay. Okay, and just one call out to all of you. Like, if you're using the chat GPT, Please be very cautious what details you are sharing over to the chat GPT.
+
+00:32:37 - 00:33:26 Unknown Speaker:
+
+OKAY, sharing any PII record, any confidential record with respect to the project is not allowed. Okay, so even if you're, you know, trying to create some, you know, utility something that should be on the raw data. When I mean to say any confidential details, you are not supposed to share the table name, the data, uh, the project name, the you know, whatever you can consider, right? If you guys have attended yesterday and day before yesterday's session for Chat GPT. Even there, they are not even placing the client name, right? If you have observed it, I don't know how many of you have attended that session. So they're not, even, you know, disclosing the client name for which they are going to create that market strategy or sales, whatever data that they are doing.
+
+00:33:26 - 00:34:31 Unknown Speaker:
+
+Okay, so, please make sure no details with respect to project to be shared on the chat GPT Ather. Even for your use case. If you are creating a UI screen, please make sure you're not providing any Uh data to that UH chat GPT prompt. I I hope this is clear to all of you. Generally, I just give some random, yeah, random data is fine, right? Random data here and there, like table A, table B, like that, with something that is fine. But don't give a specific name, like C360 or something, right? Those are all internal details of MX. Sure, okay, okay, then, uh, any any questions for me? Or we can close up? Okay, then thank you, thanks. Hello?

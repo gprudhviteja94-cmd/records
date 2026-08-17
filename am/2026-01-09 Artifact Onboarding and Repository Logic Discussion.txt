@@ -1,0 +1,239 @@
+2026-01-09 Artifact Onboarding and Repository Logic Discussion
+
+Creation Time: 2026/1/9
+
+
+📅About Meeting
+
+  • Date & Time: 2026-01-09 11:31 (Duration: 4214 seconds)
+  • Location: [insert location]
+  • Attendee: Anand, Sachin, Samir, Nirmal, Prithvi (mentioned), Kundan, Deepak, Rachana, Poonam, Raj / Rajendra (mentioned), others (not all explicitly named)
+
+
+📒Meeting Outline
+
+
+Artifact onboarding & repository logic
+
+  • Artifacts table & onboarding method The onboarding method reads records from the Artifacts table (artifacts and repository metadata). It inspects artifact rows, determines primary method and focus metric, and inserts the appropriate repository/threshold records. Demonstration requested to query and show the couple of created artifact records so the onboarding flow can be walked through starting from those records.
+  • Throughput / repository / primary method decision The repository contains fields that decide the primary method (e.g., primary method, focus metric). The process will pick the primary method and populate repository/threshold rows. Throughput data and thresholds are part of this flow; status flags (e.g., a boolean flag) will be updated to true after processing.
+  • Comparison & Q-Track insertion Once data is aggregated per the focus metric (count/mean/median) and compared against threshold, the result (true/false or required action) is inserted into Q-Track similar to existing Q-Track behavior. For one-time metrics, thresholds already exist and the pipeline selects focus metric and performs aggregation over the source table (e.g., last N days or months) to calculate mean/median/count.
+
+
+Daily & monthly checks, query logic, and code changes
+
+  • Daily Rank check / private methods A daily-rank check was implemented; some input structure was changed and the author wants confirmation whether the changes are correct. There are two private methods used for the daily check; the team will review the JSON/input format in code and update queries if needed.
+  • Aggregation frequency and profiling For time-windowed aggregations, the system should use frequency (daily/monthly) to pick the window. For monthly calculations, avoid hard-coding day counts — use dynamic date arithmetic (e.g., SQL functions to get previous month's day count or last month's date range). The recommendation: use SQL date functions rather than passing static day counts.
+  • Action items around code demonstration & sharing The presenter will show the JSON and related code parts and share the conference page; an update / changes will be sent by ~2–3 PM. The team noted a delay due to PI planning; target is to send to the reviewer by early afternoon.
+
+
+Script validations (ICMB / MGM1 / others) and DAG runs
+
+  • Validation status DAGs have been run and data segregated. Progress on validations is ongoing; team expects to complete validation tasks in about 1–1.5 hours for the current chunk. From the team: 30 scripts sent to Rachana for review (she’s busy and expected to respond today). Overall there were ~40 scripts; these were split into three groups and sent for review. Also sent for MGM1 review.
+  • Next steps on validations Wait for Rachana’s acknowledgement to enable unstable environments as planned. High-priority items (e.g., FGM) were flagged and Rachana and ANSI updates awaited. The team agreed to finish remaining validations; if no major issues, start building new scripts on Monday, otherwise fix issues.
+  • Work assignment Focus on ICMB1 first; park non-critical items in the ANSI bucket. If anyone has worked on other scripts, they can pick them up; otherwise concentrate on ICMB validations.
+
+
+Training, onboarding (Lumi Academy, Q-Track, Composer, entitlement access)
+
+  • Lumi trainings Team members must complete Lumi Academy trainings; expected readiness by Wednesday (max). Manager emphasized Lumi training as project-related and prioritized completion. Daily status updates on trainings are required in the designated channel.
+  • Order of trainings Complete Lumi training first. Then do Q-Track training (track overview, composer, demo, code, data transformers). After Q-Track, do Lazily/Resi/other tool trainings as needed. Quattro training material (PDF) will be shared later.
+  • Entitlement/access & Composer Raise entitlement/access requests as required (process guidance will be provided). A Composer setup doc exists and needs modification—owner will notify which document to update.
+  • Time logging When claiming hours in Clarity, productive hours should reflect project work and these training activities. Guidance: if spending 2 hours on company-mandated training, ensure remaining hours go to Lumi/project work.
+
+
+Control job migration & knowledge transfer
+
+  • Control tool & monthly vs daily jobs Action: complete the daily job first (twist code/query for daily check), then set up a monthly job. Samir to set up a call with Prithvi to explain the control tool so Prithvi can help create the monthly job; Samir will continue to own daily job. Plan to migrate existing Flips after control job setup.
+  • Monthly window logic Monthly job must compute last month's date range dynamically (not hard-coded). Use SQL date functions to determine the correct number of days per month.
+
+
+Office presence, coordination & communications
+
+  • Office days Suggested office days: coincide with Deepak (Monday, Wednesday, Thursday) — at least come two of these days, ideally three, for better coordination and visibility (esp. because Raj is not in India). Team members to confirm in-office dates.
+  • Stakeholder escalations ServiceNow integration and vendor communication delays noted. If external responses (e.g., Sara) are not received today, escalate to Rajendra. Team was advised to tag Rajendra if no replies to avoid delay.
+  • Language & inclusivity Manager requested use of a common language so all participants can follow discussions; avoid side conversations in other languages.
+
+
+Miscellaneous operational points
+
+  • Screenshots & documentation Document for R&D needs screenshot integration and grammar edits. Deadline: content to be shared by ~2 PM (penalty time mentioned). Manager asked where the doc stands; author to integrate screenshots and text and share.
+  • API readiness REST API details to be finalized by 2–3 PM so manager can review with Raj in the evening if changes needed. Once APIs are ready, notify manager and a call will be arranged if required.
+  • Upload/download & Excel folder Upload and download datasets (upload into Excel folder) — affirmed during the call.
+
+
+📋Overview
+
+  • Artifacts onboarding reads artifacts, decides primary method and focus metric, inserts repository and threshold records, and updates status flags.
+  • Daily Rank check implemented; code/input changes need validation and possible query updates.
+  • Aggregations use focus metric (count/mean/median) across the appropriate time window; use SQL date functions to handle month lengths dynamically.
+  • Validation progress: DAG runs done, ~30 scripts sent to Rachana for review; waiting for acknowledgement to enable unstable environment. MGM1 items also sent.
+  • Prioritize ICMB1 validations; park lower-priority items to ANSI bucket if needed.
+  • Trainings: complete Lumi Academy first, then Q-Track; daily training status updates required in channel. Target readiness by Wednesday.
+  • Control tool: Samir to coordinate with Prithvi to take on monthly job; Samir to finish daily job first.
+  • Office coordination: align in-office days with Deepak (Mon/Wed/Thu preferred); confirm calendar.
+  • Escalate vendor/ServiceNow non-responses to Rajendra if no reply today.
+  • Documentation to R&D: integrate screenshots, grammar edits; share by ~2 PM.
+
+
+🎯Todo List
+
+  • Anand:
+    
+    • Query and show the couple of Artifacts table records used for onboarding (ASAP, today by 2 PM)
+    • Share the conference page and code JSON snippet for the daily Rank check (by 2–3 PM)
+
+  • Sachin:
+    
+    • Complete remaining ICMB validations and share validation status (within ~1–1.5 hours from meeting update; aim today)
+    • Follow up with Rachana for acknowledgement on the 30 scripts (today)
+
+  • Samir:
+    
+    • Focus on ICMB1 validation and close outstanding items (continue immediately; finalize by Monday if issues)
+    • Set up a call with Prithvi to explain the control tool and create monthly job handover (schedule this week)
+    • Complete Lumi Academy trainings and provide daily training status in the channel (progress update daily; target complete by Wednesday)
+
+  • Nirmal:
+    
+    • Continue Lumi trainings (currently halfway) and post daily status updates (complete by Wednesday)
+    • Assist with Q-Track training after Lumi completion
+
+  • Training / Access owner (Kundan / Manager):
+    
+    • Provide guidance and tag training links in the channel; help with entitlement/access raising steps (ASAP)
+    • Share Quattro PDF and details for Q-Track training sequence (this week)
+
+  • Docs owner (author of R&D doc):
+    
+    • Integrate screenshots, correct grammar, and share document to R&D (by ~2 PM today)
+    • Update Composer setup doc as requested (owner will be informed which doc to modify; timeline: this week)
+
+  • API owner (who’s implementing REST APIs):
+    
+    • Finalize REST API details and inform manager for call/validation (ready by 2–3 PM)
+
+  • Escalation owner (team lead / manager):
+    
+    • If no response from external vendor / ServiceNow thread today, tag Rajendra and escalate (today)
+
+  • Operations (all):
+    
+    • Confirm in-office days (align with Deepak: Mon/Wed/Thu preferred) and share calendar (this week)
+
+Please update the shared channel with daily training completion and progress on validation tasks. If anyone hits a blocker, notify the manager immediately so it can be unblocked.
+
+
+Transcription
+
+00:00:00 - 00:01:53 Unknown Speaker:
+
+For that documentation part, Were you able to? Shows a table and the other is like, So to this onboard method process, what it will do is like it will. It will read the artifacts which you are having in the artifacts table, and as like it, it will take. Uh, so if you see here this is, there is a invoke, uh, let's not go like this. Can you, uh, query, uh, those records, those couple of records you've created, and then, uh, not this one where those couple of records are there? Yeah, yeah, right, if you can, just, uh, you know, just go in those couple of record and then I'll start from there. Then, okay, just give me a second, just do a select. So, this is the Artifacts table, Anand.
+
+00:01:53 - 00:03:11 Unknown Speaker:
+
+So, what it will do is, it will have the throughput data, actually. Okay. This is the repository part, where it will decide the primary method, what is the primary method, and it will have the data of what is the focus metric and what is the primary method. So here it will decide what is the primary method, and it will insert the data accordingly. Yeah, okay, so and so, and we have a threshold. Slow once. Uh, all right, that also I'm good. Can you just go back to the artifacts? Give me once? Yeah, you will tell it over there only. So music name, table name, just like close the right side part, that reference. I think one thing is when we look at the end-to-end flow now, from the self-serve you get these details as well.
+
+00:03:25 - 00:04:13 Unknown Speaker:
+
+Then I think that falls. You have created one, just go back to the artifact. Yeah, so this I think status flag you will update right as true. Probably. Yeah, got it okay, perfect. I think I'm good with the rest of the things. So repository and thresholds. You get created using that first tag, and then you can go to the second tag. Now the second tag is like this one. The daily Rank check. So for this have created, like we discussed, right for for that uh input. I actually changed that, but I am not sure whether it's a correct uh way or not. Like, I want to double check with you, and if the real query changes, also, we have to make those changes for the others. Well, there's two private methods.
+
+00:04:13 - 00:05:50 Unknown Speaker:
+
+So for done daily check, I just make a change and I have done this. Okay, but how are you calculating it? Can you show that like this actual JSOn is there, right? Actually? Separate? Like, uh, yeah, that part, go to the code, you can get it from that part, uh, on it. By lunch time. Is it fine if if we share the conference page. Because, like I said, even I need to make some changes and then share it with him. So, I had to send it yesterday night itself, but that's fine, I think. At least by 2 or 3, I am able to send it to him and that should be good. Yeah, I got busy with that PI planning and then it just skipped on the reminder. They are clear.
+
+00:06:56 - 00:09:54 Unknown Speaker:
+
+And then whatever data would be there, it would compare with the threshold and post comparison what it needs to do? The same thing as Q-Track, right? True or false, insert that into the Q-Track. Okay, so I understood. Like this onward metric is actually one time, so we already have the threshold data. We select the focus metric. This could be count if it is explicitly mentioned or we go for mean or median. And then based on the focus metric, we do the aggregations on the particular data, the source table again. If the source table has 12 months of data, for those 12 months we calculate either the mean or the median or the count. Basically, we calculate the uh, like which algorithm to pick right that, that part of it, the profiling of that and all.
+
+00:09:54 - 00:37:52 Unknown Speaker:
+
+So it is the primary method, medium and things like that, right? And then threshold also based on that same same data itself, yourself, one day or one month, based on the frequency. Basically, here we are getting yesterday's data. Treatment status. Since I'm. We gotta find that thing. By. So how many script validation we have done for ICMB till this point? Just give me one or one and a half hour. Like what I have done is. Like, as you mentioned, I have run the DAGs and have segregated the data. For all the I'm doing currently progressing this, uh, validation now, so maybe in one hour I can give the entire thing from your site. Yeah, from our end, Sachin, we sent for the review of total 30, we have sent to Rachna for the review.
+
+00:37:52 - 00:38:47 Unknown Speaker:
+
+So she was busy with some other work actually. She will respond by today, so once she given the validation reserved to sign up, right, we'll quickly enable. That is unstable, so that is the plan, and also we asked to. High priority was one of the skeptic FGM part, actually, so that one she will quickly respond to the ANSI I just got an update from ANSI. No, no, my question to you is 30. We might have said it, you know, considering FGM and everything. I'm just asking about ICMB, how many ICMB have been done? Yeah, I see if we are talking about total 40 for scripts was there, actually. So we have segregated it to three actually. So we have sent already yesterday to NC, sorry, Rachana for review, yeah. Validations. So we are waiting for acknowledgement from Rachana actually.
+
+00:38:48 - 00:39:40 Unknown Speaker:
+
+Apart from those ICMP, you have sent it for MGM1 also, right? That's what you are missing. Ah, yes, yes. Ah, yeah, yeah. MGM1. Okay. Let's try to complete rest of the validation. Right, so whatever, left, right, whatever and whatever, let's close this. And then you can start focusing on them. If there is an issue, you can fix it on Monday, otherwise you can start building the new script. Okay, yeah, sure. Some of the small changes, which are rewards Integrity ads is working on. Just now. I have connected with the status. You see, you need to focus on no, you need to focus on only ICMB1 and let's rest. Let, uh, park it to the Ansys bucket. Yeah, yeah, yeah, sure. And apart from ICMB, if you have worked on any other script, then you can take it off otherwise.
+
+00:39:40 - 00:40:36 Unknown Speaker:
+
+Uh, just move to the middle part. Yeah, yeah, sure, okay, thank you, thanks, thanks, yeah, if you want, uh, if you can share me the screen. Like, Uh, where we stand actually? Because, look, this is what has been missed from us. We have set up a deadline to send the document to R&D yesterday evening only, right? And I told you guys already, right? I have a number of initiatives with me. So I may forget it, but you should have come back with that date yesterday. Now they need it for the review before sending it to their directors. Like, you know, Poonam would be sending it to their VP. And that is the reason I'm asking you where we stand with the document right now. Have to just to integrate everything, basically the screenshots and text.
+
+00:40:36 - 00:41:30 Unknown Speaker:
+
+I have written it, but it's in a very plain just check for the grammatical change the function, right? So, as I mentioned, like by two o'clock, most probably before that, also two o'clock is the penalty time. And just share with the document content speed. Okay, okay, then, uh, then, uh, we are good with that. Uh, if you want, you can, you know, focus on the work that you're doing. Uh, yeah, to consume your lots of time over the call. Ready to take back those purpose? Thank you, thank you. Uh, Samir, Uh. First of all, I think step which, uh, hyper has asked you, okay? And then, uh, move to the control one and on the control. I would say, set up a call with Prithvi, okay, and make him understand what this control tool is all about.
+
+00:41:33 - 00:42:31 Unknown Speaker:
+
+Once he is ready with his trainings and all he can pitch in to help you to, you know, uh, create one monthly job, right? That we were discussing, and then you can focus on the daily job. And then you guys can start migrating the existing flips. Sure, and then, even before, you know, no man, don't set up the one true one, you would not understand. Yeah, so. I'm searching like for this print like at what, at which point where we are concentrating on like the first one, right? First one, first one, complete that daily one which he has asked you to complete it, right? Yeah. Close those one, the screenshot that you have said, right? Yeah, exactly that one, right? Correct. So first of all, when I'm seeing this screenshot, right? First of all, complete these two ones.
+
+00:42:31 - 00:43:30 Unknown Speaker:
+
+This is done, ever one is done. We are working on this daily one, which you need to just twist the code over the query, so close this one and then close this monthly one also, and again, take a consideration of monthly one. When you are doing it for FAB, it should be 29 days. When you are doing it for month of May, it should be 31 days, and when you are doing it for the month of Apple, it should be 30 days. So what I will do is like, I will do it. Uh, like, uh, like, I don't, uh, mention the number over there. I will try to, Yes, that's what. Yeah, that's what I, I was mentioning. Don't hard code it, uh. Current date minus 30 days, something like that. I won't do that.
+
+00:43:31 - 00:44:25 Unknown Speaker:
+
+I will try to pick as per the calendar, I will pick the last month's date. Do a select query, okay? Do a select query from some table. Just check whether it's a dual table or some other table in the GCP. Get the month, number of days, and dynamically pass that number of days to that query. No, in SQL we have a feasibility to directly get the date. We don't need to pass that. Okay, that is available, then you can use that one. Yeah, okay, and then don't, uh, provide a fifth via overview of this, uh, control. Right now, let me take a session of this existing rules first of all. And then we can, uh uh, ask him to pitch into this one, otherwise you do not understand this. All logic and all, and uh.
+
+00:44:27 - 00:45:22 Unknown Speaker:
+
+How many things you have done yesterday? For me, Sachin, I completed seven trainings. So, I should be able to complete them over the weekend. So, Monday, everything. By Monday, everything. It would be your choice with me. But, you know, I would not enforce you to sit and complete it in the weekend. No, no, no. We are not hardened for us to during your weekends. Okay, we are not. I am, I am. I don't love to be that kind of a person. Okay, you can be relaxed during your weekend, but if you have time, if you want to go ahead, go ahead. No restriction. But it's something not enforced on my side. But I need a daily status update from both of you over this step. Channel. What are the trainings you guys are completing?
+
+00:45:22 - 00:46:17 Unknown Speaker:
+
+Sure, okay, all morning. If you're learning on Lumi, if you need any direction, you can always reach out to Kundan. He's there in the Bangalore office. I already mentioned to you, yeah, um, if required, you can reach out to Samir. Or this training is actually, thanks. When I mentioned, um, that company related queue trainings would be there, right, unloading related things, so those are completing. So, uh, I mean, my guidance people have told me to close that everything in this week, okay, and with respect to Lumi trainings. So I would like to know like that need to be completed right away. Or, I mean, because you wanted to send me the rules. And then you would be claiming eight hours in the clarity, right? So when you are going to claim it in the clarity.
+
+00:46:17 - 00:47:15 Unknown Speaker:
+
+That means those productive hours should be first of all focused on these, uh, project related work. And those mandatory training. I can understand the training that you are doing from the square page, right? Yeah, yeah, okay. So when you mentioned trainings, yeah, I'm mentioning only Lumi trainings, I have not mentioned just as mandatory. Look, this Lumi training are your project related training. These squares are, you know, company mandate trainings, so company mandate training. If you are spending two hours, spend rest six hours for this Lumi training. Because you have seen that we have lots of work and and I need the bandwidth for that to use those work. Because again, now Razy would raise initiative would come right. Then I need to decide plate that when I can't give you an email to leave the lazy directly.
+
+00:47:15 - 00:48:07 Unknown Speaker:
+
+That Samir only need to do it because he has that hands-on experience on that lazy part. So now, when Samir would be leading control as well as Resi, he needed resources who can help him to move those things forward. And she would be busy on that, uh, Q trackman, and then Kundan would be busy on that, uh, self-serving. So we really don't have bandwidth. So I need both of you to be ready by Max by Wednesday. Sure, yeah, okay, so when I'm mentioning Wednesday, you should be completing this Lumi Academy training at least by today. Yeah, because once you are done with this Lumi training, then you need to go to this page, which I have said this training links. Okay, okay, I mean, sorry.
+
+00:48:11 - 00:49:09 Unknown Speaker:
+
+First of all, raise these access, also these are the entitlement access you need how to raise it, connect with something, just give an overview on this, uh, you know, access and all. Then right now, ignore the raising one. You can start with the Q track one. Okay, oh man, why the page is not getting scored? Yeah, so you can go through this cute. This comes with everything over there. You track overview, composure, demo, code work through, getting on the data transformers and complete these trainings for me. And it is for Quattro? Quattro, is there any? Quattro, no, no, it's a new tool. So, Quattro, we will share you the PDF. First of all, complete this Q-Track and then come back to me. Ah, sure. Okay, so first complete Lumi. Post Lumi, come to this Q-Track one.
+
+00:49:09 - 00:50:03 Unknown Speaker:
+
+And normally you can go through this ratio, but with me you need to go through point Q track and normally you can go through the lazy one. Okay, and then insurance one, I'll I'll try to set up a call as an answer to not take much. Then one day, if you want to go through insurance, well, you can go through this insurance also. Okay, fine, okay. And there is one document, yeah, set up the composer at your end, that document need to be modified. I'll let you know the document about it. Okay. Okay, I'll let you know which document I was talking about. So, you did not start it on the Lumi1 as of now, right? If I understood it correctly. Right, right, yeah. I'll let you start from today. What about you, Nirmal?
+
+00:50:06 - 00:51:17 Unknown Speaker:
+
+I'm almost halfway in the Lumi20. And then, you know, uh, whatever trainings you guys are doing, as I have said over that, uh, you know, definitely keep me posted. What trainings you are completing on a daily basis? Sorry, one thing that link you are talking about? Uh, where should I find that link? Uh, in the it's in the channel. It's in the channel itself and let me tag you guys over there. Okay, I found it, I found it, yeah. Thank you. So, our scrum team is daily leaving, is it? Sorry? Is there any name for our scrum, I mean team, scrum team? It's USCDO, I told you, right? US Consumer Data Office team. And we are the tech support team, perfect. Yes, okay, okay, yeah, okay, yeah, thank you. Okay. Uh okay. Thanks. Very much.
+
+00:51:17 - 00:52:31 Unknown Speaker:
+
+Thanks for three, thank you. But then, uh, there is a response from God of light, Uh uh, no such thing. I connected with him yesterday night. Okay, around 8 30. Um, so he, he needed some details. I provided him, told that I'm checking and I will update you, but after that I don't see any communication. Just remind him over that same thread, Is there any update on this? And you have decided when you are going to office on a weekly basis. I was thinking... Deepak used to be there on Monday, Tuesday and Thursday, right? No, Monday, Wednesday, Thursday. You can plan for the same date, right? Yeah, we can plan. Or if you want, because your presence would be visible to him also, right? He should not be too... Because look... Raj is not here in India, right?
+
+00:52:31 - 00:53:15 Unknown Speaker:
+
+So, you would be getting those input from Deepak whether you guys are coming to office or not. Correct? Correct. It would be better if you can at least go couple of days when Deepak is there in that Bangalore office. This is the same. Otherwise, he would report it to Raj mentioning that you guys are not coming to office. So, At least come at least two days when Deepak is there, and one day you can. I would recommend to go all those three days when Deepak is there. But if you guys want, you can speak to, skip one day and at least come two days when Deepak is there. So, right, so make it either either way and then confirm which dates you are there in office so that you know.
+
+00:53:15 - 00:54:08 Unknown Speaker:
+
+It would be better for me also to have a better coordination with you all three. And then on those rest API, please make sure that is ready. Uh, uh, two or three p.m. Okay, so that, uh. If there is any change, I can let you know because Raj would be available in the evening, right? So please let me know once you are ready with those API details. Okay, yeah, just no. No, don't share it to me. Once you are ready, just let me know. We'll have a connect over the call and if any motivation required, I'll let you know, otherwise I'll take those connection. So okay, and when, Uh, this service now integration, yes, otherwise we would be into a double. Like, we can't keep it right enough.
+
+00:54:08 - 00:55:14 Unknown Speaker:
+
+The thing is, it's, uh, platform dependence, it's not, you know, something we have to do. No, then we have to start suiting a mail, right the way Anand was mentioning yesterday in the PI review, all right, so they are not responding from couple of months. We need to include Rajendra over there, we don't have a other alternate option for that because the way right, Sara was not replying. We have created a group, so just see if they are not replying it today, I'll tag Raj over there, so we have to start tagging Rajendra if they are not replying. Because it would be very difficult to, you know, justify this to the team. Um, how it is being made, because this is going from long time, I think 29. Exactly, exactly. That's the reason I was.
+
+00:55:14 - 00:56:21 Unknown Speaker:
+
+I told you, Uh, do you guys understand Hindi a bit? Or no? Hello, Oh yeah, what about you, Kitfi? Sometimes what happens like, you know, people start conversing, right? So, uh, I just make. I want to make sure that, like, Samir doesn't understand that much, right? So I need to make sure that. When we are talking within a group, everybody should understand what other is speaking like, it should not go like, you know, you guys are sitting and, you know, not understanding what I am trying to convey to you? Yeah, for me, it's okay. Yeah, I can understand, I can speak a bit, I can read, right. Yeah, oh yeah. So we have it in class. So yeah, oh okay, no, even Samir there from other but this.
+
+00:56:21 - 00:57:16 Unknown Speaker:
+
+But I think, uh, so you went to Convent school or something like like that, right? Samir? I think Samir is not there, so Samir doesn't understand. Okay, so, no, no worries. We can communicate within a common language, right? So everybody can understand. And you know, basically from which part of Odisha you are? Um, okay, okay, okay, man. And guys. Feel free to, uh, share your input, anything if you need any, you know, sort of thing, like, uh, that is being required over the days. You call or some blocker or something feel free to do, let us know. Don't stick to a task where you are getting blocked. Okay, because until unless I know there is a blocker, I won't be able to help you guys over there.
+
+00:57:19 - 01:04:38 Unknown Speaker:
+
+Okay, all right, uh, then, uh, keep me posted and quickly, and you will keep on your trainings. And, uh, if required, if any details. You were too late, you know, sure. Thank you, thank you. I just came back. Is there any problem? No, no, no. Samir. Uh, you can focus on the ICMS validation because that you can start on the point. Okay, okay, okay, thank you. Thank you. Thank you. Thank you very much. Something like that. Um um. Inhale. Exhale. Inhale. Exhale. Exhale. No. Yeah, yeah. Um um. Narnia, our call is currently unavailable. Please leave a message after the tone. Come on, come on. Yeah. I thought the story was interesting. Yeah. Okay, upload and download, right? Upload and download, yes. Yeah. Okay. You are a... You're a friend of Asaf's now, right? Yeah.
+
+01:04:40 - 01:10:05 Unknown Speaker:
+
+Oh, okay. So we have we have edited anyway working yes. Okay, I don't understand. Anything else? No, they are not. Okay. Are you sharing both download and upload? Yes. Okay. And upload it to the Excel Excel folder. Excel Excel folder. Okay. Ah. So that's about it. Okay. .. .. .. .. .. Uh is. Okay. No, no, no, no, no.

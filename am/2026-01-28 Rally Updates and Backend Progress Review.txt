@@ -1,0 +1,318 @@
+2026-01-28 Rally Updates and Backend Progress Review
+
+Creation Time: 2026/1/28
+
+
+📅About Meeting
+
+  • Date & Time: 2026-01-28 12:01 (Duration: 3003 seconds)
+  • Location: [insert location]
+  • Attendee: [insert names]
+
+
+📒Meeting Outline
+
+
+Rally updates & story management
+
+  • Keep Rally updated Discussion emphasized that the Rally board must be kept current. Repeated lapses noted (Ayyappa absent; Kundan, Nirmal called out). PM stressed it takes only a few minutes and owners must ensure stories are visible and properly described. If team members cannot maintain Rally, they should escalate to Raj.
+  • Stories status and quality Several stories are in a "fine" state but lacked requested details/visibility. User stories ordering and visibility was discussed (some stories pushed down). Team asked to reduce hours logging errors and keep Rally accurate to get timely feedback.
+  • Action for specific folks Athar to keep Rally updated and connect with Saurav. Kundan and others to follow up with Anand for final email body content to avoid rework.
+
+
+Backend, DB & API progress
+
+  • Database and API timeline Backend DBA call scheduled; DB expected ready today or by end of the week. If finalized, some API responses might be available next week. The speaker may work over the weekend to deliver at least one API response for integration; Kundan to continue after that.
+  • Models/forms & UI UI tables completed. Next is connecting models and forms and including severity and category/subcategory fields (severity currently hard-coded to 5; future UI will allow user selection).
+  • Email distribution handling Input parameter will include distribution list email address; code must read this dynamically (not hard-coded) and store it in a property file. Enable sending only after Anand confirms body content.
+
+
+Email/ServiceNow incident body & metadata
+
+  • Incident email body contents Required: DQ ID and other incident details—without these emails are meaningless. Team to collect final body from partners. Severity, category and subcategory must be included and eventually selected from UI instead of hard-coded.
+  • CC and attachment handling Use the info parameter for distribution list; add DLL/CC similar to Q-track implementation when enabling.
+
+
+Scripts, automation, and code reuse
+
+  • Script repetition & future improvement Observed many duplicated scripts (especially for table creation). Proposal to create a single configurable Python file to avoid repetition. PM advised not to spend time on this now; will be taken up later.
+  • Build issues Kundan confirmed build issues resolved.
+
+
+Sign-offs, reviews, and production enablement
+
+  • Sign-off status For the insurance-related scripts: five scripts got sign-off; one role pending confirmation. Review comments expected today from Rachna. Three scripts under review by Rachna.
+  • E2/E3 environment actions Sign-offs are on E3. Enabling in production will be scheduled after checking with Krishna. Plan: use DQ Results test table first; after one more validation round, enable DQ Results table in production.
+  • Review impact Most review comments are configuration changes only with no code-level impact.
+
+
+Production monitoring & support expectations
+
+  • Monitoring gaps discovered A production issue (model ID 109484) had a syntax error; after fix, DQ results table showed no recent results (last ingestion June 2024). Team questioned why daily DAG/script monitoring failed for months.
+  • Expectations and responsibilities PM emphasized proactive monitoring: all DAGs/scripts running daily must be monitored. Weekend runs should be checked on Monday. Resource distribution to monitor daily scripts must be organized; if someone is absent, route tasks to others. Production incidents are top priority and must be fixed immediately.
+  • Immediate deliverable Sachin asked for monitoring report today; split monitoring responsibilities across team members and share assignment immediately.
+
+
+Incident tracking & knowledge artifacts
+
+  • Conference page / incident logging Create a central page to list production tickets, solutions provided, who worked on them and outcomes. Consider creating incidents to track and runbook fixes.
+  • Incidence table observations Some master dependency notifications show "not met"; 4 tables had incidents raised. Need to investigate why number rose to 6. Insurance scope: there are 15 tables total; 8 completed so 7 more to come.
+
+
+Resource onboarding & A-Score setup
+
+  • US resource onboarding One US resource joined ~1 month ago but A-Score not set up. Priority: Kundan to check and help set up A-Score today after DSU call; Suman to assist. Ensure US resource is aware of use cases and ready to support US hours.
+  • Knowledge transfer Kundan to KT the US resource on Q-Track workflows until more folks join.
+
+
+Data remediation & duplicate records
+
+  • Remediation tasks Samir waiting for RFC; aims to update datasets for November and December by 5 PM today and confirm at least one dataset moved. Duplicate data integration expected to take ~1 hour once started.
+  • Control design & prototype Clarified roles: some team members are to understand design and modeling, not own design. Tasks to be refined and assigned.
+
+
+JSON/email schema & thresholds
+
+  • Message schema and column lengths A JSON/email schema includes a column with large max length (~3996); team confirmed this is acceptable and matches metadata. Implement threshold checks according to existing implementation flow; follow current flow for delivery priority.
+
+
+AI/LLM tooling & data privacy constraints
+
+  • Vertex AI & LLM discussion Vertex AI use discarded—no collaboration permission between MX and Google for Vertex AI. Using public LLMs (ChatGPT) is restricted because sharing metadata/MD with external LLMs is not allowed due to privacy/PII concerns and required approvals from many table owners.
+  • Ownership and approvals Many tables are owned by different internal teams (e.g., insurance owned by Pune, A360 owned by others). Even internal teams require approvals before exposing metadata. Masking schema/column names for external LLM use was discussed and determined not feasible. Recommendation: build internal product/LLM if needed rather than depending on external services.
+  • Security cautions Team reminded to avoid pasting sensitive/PII data into external LLMs. VPN usage and internal monitoring may flag unsafe actions.
+
+
+Office attendance & collaboration
+
+  • Office days & coordination Team reminded to stick to assigned in-office days. Bringing folks to office facilitates faster KT and collaboration (example: benefit of Kundan being available in office).
+
+
+📋Overview
+
+  • Rally must be kept updated; owners must ensure visibility and descriptions for stories.
+  • DB expected by end of week; first API response potentially next week; team to integrate once available.
+  • UI tables done; connect models/forms and add severity/category enhancements later via UI.
+  • Incident emails need DQ ID and severity; distribution email must be dynamic (property file).
+  • Stop duplicated scripts eventually; defer creation of shared configurable script for later.
+  • Insurance script sign-offs mostly complete; pending items to be reviewed and enabled post-check with Krishna.
+  • Production monitoring is inadequate — team must implement daily DAG/script monitoring and remediate gaps.
+  • Create a central incident/conference page to track production tickets, owners and fixes.
+  • US resource A-Score setup is high priority; Kundan to assist today.
+  • Duplicate dataset remediation: Samir to update November/December by 5 PM and confirm dataset movement.
+  • Vertex AI / external LLM usage is not allowed now; building internal product is preferred.
+  • Maintain office attendance schedules for better collaboration and KT.
+
+
+🎯Todo List
+
+  • Kundan:
+    
+    • Help US resource (Suman’s assigned person) set up A-Score today (after DSU call), no later than today.
+    • Connect with Anand to confirm email body content and finalize requirements (ASAP).
+    • Continue after initial API response is delivered to integrate next steps (post-API delivery).
+
+  • Sachin:
+    
+    • Share monitoring report today; split monitoring responsibilities and assign who monitors which DAGs/scripts (today).
+    • Coordinate enabling of E3 sign-off items with Krishna and schedule production enablement once checks are done (today).
+
+  • Athar:
+    
+    • Keep Rally updated and connect with Saurav for any clarification (ongoing).
+    • Work on monitoring/reporting setup as assigned by Sachin (today).
+
+  • Anand:
+    
+    • Confirm final email body content for incident notification so team can enable distribution (ASAP).
+
+  • Rachna:
+    
+    • Provide review comments on pending scripts (expected today).
+    • Sign-off remaining role confirmation to complete insurance script approvals (ASAP).
+
+  • Samir:
+    
+    • Update and integrate duplicate datasets for November and December; confirm at least one dataset moved by 5 PM today.
+    • Complete control/design understanding tasks and coordinate with team if unclear (this week).
+
+  • Suman (or US resource owner):
+    
+    • Confirm A-Score service setup status; if not set up, coordinate with Kundan to complete today.
+
+  • Team (general):
+    
+    • Maintain Rally with descriptions and status for all user stories (ongoing).
+    • Monitor all production DAGs/scripts daily; review weekend runs on Monday and report success/failures (effective immediately).
+    • Create a central conference/incident page listing production tickets, owner, solution, and outcomes (owner: to be assigned; target: this week).
+    • Do not paste PII or sensitive metadata into external LLMs; follow internal security guidelines (immediate).
+    • Follow current implementation flow for threshold checks and complete at least one implementation by Friday (owners: Prithvi / assigned devs).
+
+Please insert actual attendee names, meeting location and any deadlines or owners not yet assigned where indicated.
+
+
+Transcription
+
+00:00:02 - 00:01:20 Unknown Speaker:
+
+Okay, that is one thing. And second, please keep this rally updated. Because if I see the Give me a second, let me just check this one. Even I've added the descriptions for each of the tasks. Yeah, because means this is really, you know, all of the folks joined, right apart from Ayyappa, so Kundan again, you know, this is a repeated ask. All your stories are in fine state. None of them have been requested. I was doing that one only. SACHIN Okay, so right, Nirmal, same for you Ayyappa. One of the stories, right visible to Raj. We are not going to get a very good feedback on this. Our user stories would have been down below this one till this point. 20 second, we were still on the mark. But right now, just see the graph, right?
+
+00:01:20 - 00:02:13 Unknown Speaker:
+
+So number one that you guys need to reduce your, you know, hours on this one man. Because next time onwards, I won't be, you know, making it like, you know, I'll talk to team, I'll talk to team. Whoever is the deporter, they need to talk to Raj in that case. This is a, you know, important thing that I'm discussing on a regular DSU call, right? And if you guys are not supporting, then you need to talk to Raj. What is the problem of, you know, keeping this rally updated? And that would hardly take a couple of minutes. Okay. Athar, I think just keep the rally updated. Let's try to connect with Saurav. Okay. Anything else from your side? No, that's all. And for the UI, I'm working on that. Tables are completed.
+
+00:02:13 - 00:03:47 Unknown Speaker:
+
+We'll be looking into the models and forms connectivity. Yeah, I do have a call with the DBA today. Even the backend database would be ready hopefully by today or max by end of this week. So once that is done, even we will help you with the API structure maybe on the upcoming week. Give me a second, I'm getting a call. Okay. Where I was. Okay. On the database structure, right, you know, most probably you would be getting at least few of the API response by next week. Okay. If the database is finalized, I'll try to work on the weekend to, you know, complete at least one of the API response that you can integrate and then the rest of the things, Kundan would proceed post that. Okay. Okay. Kundan, I already dropped a mail to Anand.
+
+00:03:47 - 00:04:37 Unknown Speaker:
+
+Let him confirm the body content. Because if I give some content, right, and at the end of the day, if we ask, again, make this change or that change, right, let's get the final requirement from them itself so that we would not be doing a repeated piece of work. So your build issue is sorted out, right? Yeah, everything is sorted out. And one more thing we needed at the end. Yeah, look, the email that you would be sending, you are already receiving the distribution list in that info parameter menu. From where we will save this in the executive file. Yeah, okay, that email ID we have to send. Yes, you have to use that one, and as intimated, keep that into a property file. Don't hard code it. No, I am not hard coding it.
+
+00:04:37 - 00:05:36 Unknown Speaker:
+
+But no, no, no, this would be dynamic, this would be dynamic. The the parameter that you would be receiving from the input file will be sent to those business group emails. Right, yeah, right now we are not going to enable it. Keep your code once. Once Anand confirms, then you have to enable that piece of code only. Okay, CC. We will add our DLL, right? Yes, and and similar to that Q track in this one. In case of any issue, right, you can, you could have just copied this part. Okay, same body, right? What we are sending? No, no, no, not same body, man. Uh, like this one. And at least copyright even. I thought to edit the simple email I sent it. Once you will send me the body, right?
+
+00:05:36 - 00:07:01 Unknown Speaker:
+
+Once you will share it, I will, you know, include this. Yeah, so this would be their their user incident and hopefully the rest of the details you would be asking about the service now incident, incident, body that you are passing. Sorry details. Uh, DQ, ID and all this one, right? Yeah, that is needed, man. Otherwise, what is the meaning of that email? I know, but I am expecting this from partners. Okay, they play tasks, and that is the reason I did not ask you to, you know, modify it, get a confirmation from them. Okay, one more thing, this one category and subcategory, right? If you see that started coming, yeah. And and and when you are sending the incident, even, you have to send the severity. Yes, that was the call we had yesterday with Purna and the business partners.
+
+00:07:02 - 00:08:01 Unknown Speaker:
+
+So, there are some few other plans that would be incorporated to that UI. That is a later part, but that severity also we need to, you know, include that in email. And even right now, we are deciding the severity, you know, just hard-coded. But later on, It would be coming from the UI itself, then region main. Right now we hardcoded at 5, that is the load. Yeah, correct, but till this point of time, it is good. But the future enhancement that I was talking about, even this severity, would place into that UI where user would be selecting the severity. We are not going to decide this, OK, once the changes will come, so, you know, we'll add up that. Yeah, so right now, as you're done with this one, uh, work on that Elf part.
+
+00:08:01 - 00:09:10 Unknown Speaker:
+
+Yeah, I have to work on few more things on this, uh, monitoring tool. Uh. I noticed that a lot of scripts are getting, you know, repeated script, so I thought, you know, first half, I will spend some time and create some dynamic script. That repetition occurred? What I noticed is for table creation, everyone is creating their own script. So that should be one Python file and it should be configurable. Okay, but I don't find any such script in our code. Don't spend time on that right now. No, no, don't spend time on that one right now. That one we will take it later. Okay then. Okay. Where we are with the sign-off for the eight insurance script? Yes, So five scripts gave the sign-off, except one role, which is pending for confirmation from home.
+
+00:09:10 - 00:10:14 Unknown Speaker:
+
+Based on one variable, there were three values were there and that, so seven by seven is not an expected value for that variable. Uh, that was under discussion, so, um, that rule, five tables, uh, we received the sign of rest, three. Uh. She is doing the review, hoping for the review comments today. Okay, um, and Sachin, uh. There was one production issue, um, model ID 109484, so there was a syntax error for that so that I had fixed. But um, after doing that, when I tried to validate, I found that, um, in the DQ results table, uh, there were no results for, um. Like, the last ingestion happened on, uh, 2024, uh, June, uh, this, uh, uh, this particular. That is what I need to hear from where we are with the script monitoring on a daily basis.
+
+00:10:14 - 00:11:16 Unknown Speaker:
+
+So what is we were doing for the last six month in that case? Right? Okay, uh, this was I observed. So every month it is executing. Uh, yeah, that one need to check, searching what exactly the gap? Um, guys, you need to be, you know, and understand the criticality. Now you guys are saying even the business partners are pitching in, right? Reverting over those even don't, you know, create a panic or something on those alert. This is due to this issue, right? So why we are not proactively monitoring the Dags that we have created? We don't have any production support team, right? So end of the day, even if 10 scripts are running for a day, right? We have a capacity eight resources, so it is not more than even one step per resource, right?
+
+00:11:16 - 00:12:17 Unknown Speaker:
+
+I don't think it would take more than an hour to validate the result when the diagram is completed. Why we are not monitoring this on a you know, regular basis and when the you know script division is also done? I'm not sure why this monitoring is not happening now. What you are going to do for those six month data app now, tell me, is there a way to, you know, uh, pull the data and get inserted to the database? I don't think so because that data would have been replaced by this tagging. Another issue. Yeah, maybe I will just look into that one. Is there any different parameters or such criteria? Maybe I will just cross it once. This is a remediation, right? This is a remediation. But we need proactiveness on this.
+
+00:12:17 - 00:13:10 Unknown Speaker:
+
+I am not asking you to monitor 10 scripts. I have just assigned you a task. Your responsibility to make sure that if 10 DACs are running per day, those all should be monitored by the resources. The DACs, those are running on Sunday and Saturday, those need to be reviewed on Monday, whether those have been ran successfully or not. Yeah, yeah, sure, Sachin. Today only I will share that report. I will split all the team, whoever need to monitor, that I will share it immediately. Yeah, yeah, just... So, definitely, we will monitor the running in production, right? Should be, someone should be allowed, and I will show you. In case of any, any production issue that is the first priority to fix it, leave rest of the work, you know.
+
+00:13:10 - 00:14:04 Unknown Speaker:
+
+Otherwise, it would be like you have created a product, product is giving you the output, but if you're not fixing the issues that product is having. People would lose the, you know, faith on that, and they would start, uh, discarding that product and not to use that product. Ultimately, ultimately, it would be a, you know, loose loose scenario for us. The hard work that we have put up for, you know, creating this Q track framework, right? Uh, that would be, you know, deprecated in that case. Yeah, and then how we are going to, you know, man, uh, make this. This is the detective check. We are. Future plan is for preventive check, and that's on the source table, the meeting that I am having with the product owner, the business partner, the BPS.
+
+00:14:04 - 00:14:58 Unknown Speaker:
+
+Now, the future scope is to have a preventive check. Like, you know, from the where the data is coming from, the, you know, having a check on the source table. Even to stop the ingestion, those are in pipeline, but if the current product is not being managed properly, how could you get? Those requirements? Then would be transferred to some other team, right? If you're not doing our job properly, I think the distribution is already being made, right? It's just that, you know, you have to ask each individual to say the result by your day, okay? If required, you utilize that dev group you know to monitor each job on a regular basis. And if somebody is not, you know, coordinating with you to let me know, I'll. I'll talk to that guy, whoever is not doing that monitoring.
+
+00:15:00 - 00:16:17 Unknown Speaker:
+
+Just check what is the number of script running on a daily basis and then distribute it around. And if somebody is on leave, make sure you're distributing that task to someone else, route it to someone else. Similarly, if there is an incident, do let me know the priority. We would assign it to someone to fix it immediately. Yes, it is. And who is working on those three scripts? No, three scripts Rachna is reviewing. We didn't receive any review comments. So these sign-ups we received on E2 or E3? E3. E3, right. So the one for which we received the sign-up, did we enable that? Not yet, Sachin. We will do that once we check with Krishna and schedule it today. Okay. So, what are the tasks you guys are having? One person would be looking into that product initially.
+
+00:16:17 - 00:17:44 Unknown Speaker:
+
+What about the other? So, apart from this, some review comments, I will work on that also today. Okay, and then this, what is the impact of this review comment on the existing script that is already being received as sign-off? Those are configurations actually, such in actually code modification only. It's no impact actually in the code level. Just moving to the configurations only, that's the impact. Okay, and as Kundan intimated, create a conference page. These all production ticket over there. Okay, and what is the solution that we have provided, who worked on that? And you know, what is the end result for that? Yeah, sure, okay. Or if we just check if we can create a incident and, you know, can track it over the. SACHIN Yesterday I just observed because we have the incidence table total 8, right actually, so total 6 tables properly.
+
+00:17:44 - 00:18:36 Unknown Speaker:
+
+Not receiving the link up of Master Dependency notification status, it is showing not met actually. So those one have raised the incident ticket to the product production, that one, yeah, 4 table. Anyhow, you are not going to receive alert. The reason being the data ingestion is still there. O. K. Why the number increased to 6? That is something I need to look into. If there is a failure on couple of more tables, that is something I will check and confirm. And just a heads up for you guys, insurance is not having 8 tables, it is having 15 tables. So, you guys are done with 8, you would be getting requirement for 7 more tables. Yeah, I guess so. So, Sachin, next action item is for insurance table. As soon as Rachana is signed off that in E3, right?
+
+00:18:36 - 00:19:28 Unknown Speaker:
+
+So if the master notification, once we receive, I mean to say, once it is we found in the Q-Track XCOM table, right? Then we will start with enabling the in-production as per the Rachana mentioned shared way. Then we will use currently DQ Results test table only. Once we done one more round, right? Then we will enable to DQ Results table. That is the plan. For regarding yesterday, right? As someone have some bandwidth. So I have assigned some description update to uh, 69 model IDs, right? Uh, that one I have assigned so he have updated some of the model IDs for the description. Once I review it. And I will, yeah, look, uh, Suman I, I asked you guys, right? One of the resources still need to join from the U.S. But by that time.
+
+00:19:34 - 00:20:32 Unknown Speaker:
+
+And if he doesn't have any work, ask him to set up the ASCore. Because he is the resource over there in the US, right? And if there is some issue with respect to Q-Track, the one that Kundan and Athar are working, he needs to work during the USR. Otherwise, Raj would be like, you know, he joined our team from almost one month, right? Why the setup? Is not there. So just check with him whether his A score is up or not. And if required, Kundan spend some time with Suman to, you know, do the A score setup in his system. Connect today itself. I append Kundan, post ASU call, connect with him. He should be aware with each and every use case that we are working till the time, you know, another folks join in.
+
+00:20:44 - 00:22:05 Unknown Speaker:
+
+Yes, yes. For Nirmal, right? Not Nirmal. Suman, Suman, Suman. Suman, I have given Sachin. Yeah, I think in the very starting we have given that. Check with him. First priority is, Kundan, check with him if A-score service setup is done or not. If no, help him to set up the A-score service today itself. Okay, all right. Him to ask him if, if you know any you know JAR file issues or something, ask him to, you know, connect with. Better than get his score set up. Reading system. So the highest priority? I may forget to do a follow-up, but this would be your responsibility and I have a responsibility to make sure that a score is running. In Raj, he is being monitored by U.H. Manju also over there.
+
+00:22:05 - 00:23:10 Unknown Speaker:
+
+Because we are aware he is the only only resource who is supporting us from the U.S. So please make sure he is up to speed now. Okay, thanks for the number. Samir. Uh uh, did you ran the DT flow again, or you are waiting for the RFC. I am waiting for the RFC Sachin I will confirm you by like for the due to data sets like for November and December I will update that by 5 today like I will I can do that like. By 5 once at least one data set entry is done confirm me. First of all we need to integrate the duplicate data that has been inserted. Least one data set move just confirm me. Yeah, uh, that can be done in like one hour. Yeah, and then, uh, what about control?
+
+00:23:10 - 00:24:01 Unknown Speaker:
+
+Are we ready with the presentation for today? Yes, yes, like, uh, the previous one, right, like, uh, for the first priority one, right? Like, I am ready, uh. I'm also preparing the data for that for today, so let me know like we can connect. Uh, yeah, I'll check with Anand and confirm you and. What about the second part? Did we started on that? Yeah, as I mentioned I was in middle of that. I can get completed by this split actually. No, then why didn't you leverage Prithvi in that? Yeah, yeah. Yesterday I have given a KT to Pundi, sorry. Prithvi and Nirmal. Prithvi and Nirmal also. For Nirmal I have given the KT for raising. Yeah. But I haven't gone through that code which like code review for that one.
+
+00:24:02 - 00:25:47 Unknown Speaker:
+
+But like I think Nirmala has connected with Kundan and taken the necessary changes which has to be done to that alert one. What design and model prototyping is about? No understanding that control, uh, design and model prototyping, and then discovery of quality metrics. So in that perspective, only you're not responsible for design and discovery. Man, no, I'm not designing it, but understanding the design is what I can create. A task like that one, right? Okay, okay. But when this one, somebody would understand like you are designing and discovering the, you know, control one which is already being done. Okay, fine, fine, I'll update it here. Yeah, refine this task. Uh, what about seen the JSon uh message like a reply, Uh, Sachin, or the email? So I've gone through that file. I think he had it, he added.
+
+00:25:47 - 00:28:54 Unknown Speaker:
+
+Uh, five columns, and that in one five in that one of the column is like, uh, maximum is like three thousand, nine hundred and ninety six. Uh, so is that okay? Like, Uh, I just wanted to three, double, nine, six. It's already been there right earlier also. So what is the problem with this? No, no, I just want like, okay, okay, they're really also having that launch length. Okay, then it's fine, I thought. Means metadata, okay, the table structure we used to call, start implementing that. One of the you know threshold check one in the Quantro one if you got the you know requirement understanding. Otherwise, reconnect with Samir. If you are still not clear with what needs to be done for that, okay, otherwise, your stories are not going to get accepted on upcoming Monday with a five story pointer.
+
+00:28:54 - 00:29:56 Unknown Speaker:
+
+At least one implementation, you have to complete it by end of this Friday. Uh, Prithvi, I have shared you that. Uh, no, if you have any query. First of all, don't divert from the way it has been implementation, as I intimated yesterday, also, go ahead with the flow, the way it has been implemented. If you have some idea later on, we can improvise the implementation, but right now, go ahead the way it has been implemented. Because delivery is all important and enhancement, we can take it later on. Sure, sure, okay, and just one uh update for you. We won't be able to use the Vertex AI, There is no collaboration between MX and JCP Google to use the Vertex AI. Okay, so that has been discarded. I got that confirmation, but I'm still trying to get some.
+
+00:29:56 - 00:31:14 Unknown Speaker:
+
+If there are some other, you know, channel through which we can leverage. But right now, that Vertex AI that is out of scope, although Chat GPT is there, but again, we won't be able to share the data to the Chat GPT. Because if you build a tool, you know what is the problem. We are not. How many tables are there in the Link Hub IFA? What is the number of tables registered in that link Hub? Any, any, 20, 30, 40. What is the number? Yeah, approximately 30 below such, 30 below, right? So for those 30 with me? We may need to coordinate with 15 different owner or even 30 owner who owns those table to share the MD to a external LLM. Just understand, okay, what these tables mean if you go to the insurance one, this is owned by different different persons.
+
+00:31:14 - 00:32:15 Unknown Speaker:
+
+So even 360, uh, for an example, right? It has been owned by some other folks. So we need to get, uh, you know, uh, right, uh from them. Because even in order to, you know, for 360, this is very crucial. Table this A360. This contains the customers. So even to use their API, we need to get a approval from them. I do have those emails, so it is not straightforward even to use their API. You need to get, uh, you need to raise a Jira ticket, get their approval and all. So I don't think we would be able to share the metadata, so these are all the tables being used in Q Track. Also, is it? Yes, yes, everything is being. So if I go to, just take an example, right? Where is that customer demographic one?
+
+00:32:15 - 00:33:27 Unknown Speaker:
+
+The one that we are using. This is the one, right? So if you go to this table, right? So this owned by some team. So you need to get who is the owner for this one. So look, you need to get approval from this guy, Amol Handa, who is the VP of this initiative. This would be difficult, such an idea. Exactly, exactly. That is the reason, you know, it's just one example, right? Insurance table owned by Pune, okay? Similarly, we have lots of other tables, right? Triumph, just take an example. You can't be sharing your MDE over a public domain directly, right? The Triumph, which one we are using? Maybe Triumph card account or something that we are using, right? Anyone, which Triumph? It was Moss me or someone else.
+
+00:33:27 - 00:34:24 Unknown Speaker:
+
+Can we mask the table and the column names since schema only? No man. Can we do that? No, no, no, no, not possible. Ultimately you are exposing their metadata to the external world, right? So there are lots of collaboration and everything is required, right? It's not straightforward. The way you think it's, you know, it's a financial industry, right? And all the data that they own, those are, you know, very confidential data, customers related data, their transactions and all right. So this crime card account contains all PII records. So it's, it's. It's not straightforward that you would be getting, you know, just switching the table that we own. Like, you know. For an example, Insurance one right, which owned by Puna, it would be easier to get those for insurance table.
+
+00:34:24 - 00:35:37 Unknown Speaker:
+
+But where some other teams are there, they won't be allowing you to, you know, use their empty until unless they gives an approval. Okay, maybe slowly we can work on the other tables. If the count is a small number, like 36, 40. Something you are saying, right? This is one example. I'll share you. This is Moss paper. But she was not even see, just declined our request. Okay, so, look, even Anand was following up, right, right? So they don't allow us, even. We have a multiple connect, right? So E3 was approved, but even E2 was declined. They did not given us access, even to use the you would be, you know, as you have that utility, you would just go ahead and, you know, leverage those tools. It's not that straightforward.
+
+00:35:40 - 00:36:52 Unknown Speaker:
+
+And what is the ratio, percentage of tables that are internal and external? Everything is internal, man. Everything has been owned by the MX only. It's just that different partners, Everything is which is owned by the RAZY team, but later on, MX has a collaboration they purchased Razy, Right, and then now even RAZY. It was not there into MX ecosystem, but now they are slowly pulling those systems to the MX. Like, you know, onboarding those tables to the Lumi warehouse. So slowly they are migrating it to the MX system. Also. So everything that the structures, everything that you are using, those all are intended to MX. Nothing external, yeah, but something like insurance. I mean, I understand that they represent internally, but those tables belongs to some external parties, right? So we need to get approvals, right?
+
+00:36:52 - 00:38:20 Unknown Speaker:
+
+Not external party. No, no, not external party. Again. Try to understand nothing is external. It's, uh, different, different different department owned by different different PP, so they own those tables. Okay, it's it's like that. Suppose. In insurance also, this is one of the document this might be one department, ATE and TCG, who owns this basic travel insurance policy. But if you go to this product config, this owned by this PCRI and legacy product coverage details. So this PCRP would be a different team, this Credit secure might be different team, ATI, Trip Codec and data it might be a different team, teams. Okay, so these, these are teams. But these all are part of American Express. Like ATI stands for travel insurance, this is Trip cancel card, this is premium car rental products and there's no additional cost.
+
+00:38:20 - 00:39:27 Unknown Speaker:
+
+So these are being managed by, uh, other teams only, and nothing with us, nothing will be with us. No, no, no, no, we don't own any, we are I.I told you, right, we are, man. This is my table. And if this columns get ingested with null data, give me an alert so that I'll take a decision on this one. What needs to be done for that? Just take an example this RESI user reservation, owned by RESI Team. We don't own it now. For this variable, if the count of reservation with the latest status expected to dine in the last month should it is not, it is coming as 218, then they would be taking some actions on this one. Got it, got it. So similarly, some other teams may come, like Razy team, there might be some other team, right?
+
+00:39:27 - 00:40:23 Unknown Speaker:
+
+Let me see if we have any other alerts. So most of the things like this is another table, right? GMDL, FIN, ROCL. So this won't buy a different team, so they have these checks on their table, okay, so, like these people have created these roles right now. They are just monitoring like if everything is okay or not, if everything okay. They are not getting notified, but if something wired occurred to their table with respect to data ingestion, right, then they would be notified. And then look, these people are taking action, right? These are the business people, Daniel's night job, right? So Prasanti, who is working right? She is explaining that don't worry about these alert or whatever, okay, concerning number that is reported, two venues are submitted, right? So they are monitoring their table.
+
+00:40:23 - 00:41:14 Unknown Speaker:
+
+Basically, okay, with respect to and and the these guys are on this table, right? He's an analyst, so he would be reporting to a VP. This Daniel singer. So we created a tool. We don't own any of the table, even a single table we don't own. Okay, so there are lots of stakeholder. It would not be very easy to, you know, get a confirmation, but if there are some internal tool which we can leverage. Uh, I, I told you, come up with a product building capability instead, of, you know, just utilizing the services or different services. So if we can, like Kundan was mentioning, right? If we can build our own LLM, that is fine, but we won't be able to leverage any other LLM like this. Queue track right this utility to rebuild it.
+
+00:41:15 - 00:42:11 Unknown Speaker:
+
+Right from the scratch, I would say. It's just that we have leveraged some of the query that has been provided by the product team. But this framework, we build it to create this data anomaly alert. They have that idea, but we build that tool. Okay, and the next step would be preventive one. Means you have to detect the data in the source table, even before ingestion. That is the next step that is in discussion. But but we have to be very you know conform on the Existing system that should be running up and fine. Then only you would be getting those requirement Okay, Okay, If we get, then we can do, but the final, let's wait for what. I'll wait for your confirmation. Look, look, a base system runs with their own set.
+
+00:42:21 - 00:44:48 Unknown Speaker:
+
+Yeah, otherwise, you know, you don't need my permission, whatever you want you to do. But if there would be escalation, it would be on your individual ads ID, it would not be on my ID. We are not allowed even to store a PII data, right, right? So if you are exploring here and there, even by mistake, even if you search MD to chat GPT. And if it got caught by internal MXD internal system that they are, they have created, okay, the escalation. I will share it to you. Okay, look, you are receiving this mail unwanted, so why this is? Sameer Menon has access PII, so this is auto-generated. No, my point is, Sachin, like, you know, even if he is curious about this AIML and all these things, first let's adopt our system and then, you know, once you'll be in the system, Prithvi, right?
+
+00:44:48 - 00:45:41 Unknown Speaker:
+
+Then, you know, if you'll come with something which is useful for our product, right? Yeah, exactly. So, at least those ideas will work fine. But directly, if you'll jump and, you know, come to a conclusion that will, you know, nobody will accept it. That's what I told them, right? Yeah, think from creating a product instead of just on the thought process of leveraging the services. We're not working for a service based company, please come out from that mindset. You're working for a product based company. You have to think about building a product rather than, just, you know, utilizing the services. These type of email would auto generated. I, I'll, I'll not be even intimidated, even if they. This would be again between you and us then. And then it might get escalated to you, means Manju also.
+
+00:45:42 - 00:47:30 Unknown Speaker:
+
+You have to get it down. Why did you place it? You're already being connected with a VPN. You're not, you know. Connecting to the system directly, you have to connect via VPN. So they have those checks already placed over there, which is monitoring these kind of activity. Be careful, like whatever data you are, I told you guys already, even if you are using Chat GPT, be very careful what piece of data you are placing over the Chat GPT. So hackers would not take much time, they would. Crack the system. Anyone having any other questions? I hope you guys are in office. Yeah, I am in office. Pradeep, you are in office? Even last week, you were not there on Monday, right? And Sindhuja, I think we had a discussion that these are...
+
+00:47:30 - 00:48:41 Unknown Speaker:
+
+Sindhuja, if you are there, right? Even... These are getting also monitored, right? Who is coming to office? Yeah, I think I've told them already. They've set their days. Just ensure that you guys stick to it. If there's any deviations, just let us know, okay? For any reason. The minor mistakes that we are doing, right? Now the organization is asking you to come for the three days, right? But if we are not following those things, later on, it would be on us. They would start asking. Otherwise, you know, at the end of the day, the whole team would be in control. Right now, if you don't follow those models, at the end of the day, the ask would be to each and every employee to come right to the office.
+
+00:48:41 - 00:49:10 Unknown Speaker:
+
+And the reason I am asking you guys to come to office is because Kundan is there, right? You guys can speed up. Otherwise, what is the benefit of recruiting the resources from Bangalore? picked up the resource from different location in that case so once you guys are there in office once you meet him then he would help you with lots of that happens such in last week we met him

@@ -1,0 +1,99 @@
+2026-04-28 UI Schema and Dropdown Behavior Discussion
+
+Creation Time: 2026/04/28 11:52
+
+
+📅 About Meeting
+
+• Date & Time: 2026-04-28 11:52 (Duration: 620 seconds)
+• Location: N/A
+• Attendees: N/A
+
+📒 Meeting Outline
+
+Dynamic UI schema and dropdown behavior
+
+• Dropdown value issue and field types:
+  Observed a dropdown opening without showing values. The field had a string value while UI expected option objects. Agreed to standardize field types/values.
+
+• Schema-driven UI:
+  Proposed moving from manual per-field mapping to a schema-driven approach. The UI should read a JSON schema from the backend (labels, types, options, dependencies) so adding new fields only requires backend updates.
+
+• Optional vs Required Handling:
+  Schema should encode optional/required fields to enforce validation dynamically without hardcoding.
+
+Backend contract and JSON structure
+
+• Backend-provided JSON schema:
+  Backend will send a structured JSON (list of objects or keyed by field names) containing metadata.
+
+• Dependent Fields Representation:
+  Nested dependencies will be represented inside field definitions containing conditions and child schemas.
+
+• Consistency and Parsing:
+  JSON contract must be consistent and easy to parse, avoiding custom UI logic for individual fields.
+
+Current implementation status and scope
+
+• Existing pages and latest page alignment:
+  Work on some cost pages has started. Need to align schema-driven UI with the latest page architecture to avoid rework.
+
+• Prototype-First Approach:
+  Agreed to prototype the schema UI layer first to verify feasibility and address edge cases (nested dependencies, array inputs).
+
+• Scope and Change Management:
+  Since the schema approach is a major change, the team will prioritize read-only functionalities (labels, types, options, required, dependencies) first.
+
+Data specifics and examples
+
+• Example: ARR/Run-rate field:
+  The ARR/Run-rate section has dependent child fields that should only render based on parent state. This will be the pilot use case.
+
+• Arrays vs Objects Debate:
+  Deciding whether to receive fields as lists (to preserve order) or keyed objects. Lean towards lists with stable keys.
+
+• Validation and Logic Separation:
+  Keep validation logic on the backend; UI should render and validate based on schema hints.
+
+📋 Overview of Key Takeaways
+
+• Dropdown options/values must come from backend schema to prevent empty value bugs.
+• Adopt schema-driven UI to remove manual field mapping.
+• Backend will provide JSON schema including labels, types, options, required flags, and dependencies.
+• Dependent fields will be nested inside parent schema conditions.
+• Prototype the schema UI first and pilot with the ARR/Run-rate section.
+
+🎯 Todo List
+
+• Backend:
+  • [ ] Define JSON schema contract and document fieldKey structure, by 2026-05-01.
+  • [ ] Implement schema endpoint for latest/cost pages, by 2026-05-03.
+  • [ ] Provide example schemas for nested dependencies (ARR/Run-rate), by 2026-05-02.
+
+• Frontend:
+  • [ ] Build prototype UI rendering from schema, by 2026-05-06.
+  • [ ] Implement dependent fields rendering based on conditions, by 2026-05-06.
+  • [ ] Verify dropdown behavior and fix empty dropdown issues, by 2026-05-04.
+
+• Team/PM:
+  • [ ] Decide on array-of-objects vs object-keyed schema format, by 2026-05-05.
+  • [ ] Prioritize pages to move to the schema approach, by 2026-05-02.
+
+Transcription
+
+00:00:04 - 00:02:13 Unknown Speaker:
+
+सब्सक्राइब करें और सब्सक्राइब करें और सब्सक्राइब करें और, तो तो तो तो तो तो, इन केस इन केस तुम आगे जाकर भी जैसे आज अभी ड्रॉपडाउन दोन खोल रहा था तो उसमें वैल्यू नहीं आ रही थी ड्रॉपडाउन में पट उसकी फील्ड की वैल्यू देख रही थी विच इसे स्ट्रिंग वैल्यू देख रही थी तो रिस्पेक्टिव ऑफ एनी, जितनी भी fields हमारे लिए हमेशा कामिया रहेगा अगर कोई नई field add होती है तो सिर्फ जाके हमें उस model के उस file में जाके एक field को add करना पड़ेगा कि ये drop down रहेगा या ये रहेगा but I guess बता की पुरोथा latest page है जो मैं बात कर रहा हूँ हम implementation already cost वाले pages शुरू कर चुके है तो, सब्सक्राइब सब्सक्राइब सब्सक्राइब,
+
+00:02:27 - 00:03:44 Unknown Speaker:
+
+कि यह बहुत इजी होता है इस पर मतलब रेस्ट पर रेस्ट पर हम लोग यह भी देख रहा है कि यह वाला ऑप्शन है ऑप्शनल का है बढ़ा देना कि मैंने बोला रहा है कि एवी एक्सटेंसिफ चेंज और यूवा यह अभी एक्सपेक्ट कर रहे हैं कि नहीं कर रहे हैं तो, कि बस पर मेरा यह है कि ऐसा कुछ हुआ थी तुम्हारा यूआई सिर्फ जैसे ले जैसे के बेसिस पर वह सिर्फ जो भी जैसे है उसको रेड करें उसके बेसिस पर चार्ज मतलब हमारा पूरा पूर्व जो है वह फ्री हो जाए तब यूआई का पूर्व फ्री है वह बेसिकल, तो वो इसके next आ जाओ जो भी हमारा block है उस block हम सिर्फ उसे पुछना JSON भेज दे उसके बाइसे इसको वो label भी उठा ले वो field का type भी उठा ले field के वो भी चीज़ों उठा ले वो dependent भी उठा ले फुद्धों को दिवाइड होगा हमने बेसिक तो इतना कर देंगे तो कल हमको नि,
+
+00:03:45 - 00:06:40 Unknown Speaker:
+
+तो यह है बट आईएपीड कि अगर वैसा कुछ करना है तो हर फील्ड की जो सिंगल इंडिविजुअल मैपिंग है ना वो हटा सकते हैं अगर ये वाले बेसेज आ रहे हैं ना इतना एक्स्टेंसिफ अगर हमें हर फील्ड के लाग रहे हैं तो हम UI पे ये कर लें कि उतना पार, सब्सक्राइब, कि अपने प्रोटोटाइप को, प्रोटोटाइप के प्रेसेस पे ताकि हम भी ये देखने शुक्रते हैं कि हमारे लिए क्या चीज कैसे यूज़पुल हो साथ है तो ये लेबल देने लिए यूज़पुल है लेबल के बाद तो फील्ड हो रहा है तो फील्ड को भी हम बोलते हैं कि आप ये ये करो और अगली, नहीं नहीं नहीं नहीं नहीं, तो जैसे फॉर एक्सांपल अभी यह देखिए आर्पीटी रन रेट वाला पार्ट है ठीक है यह मैंने पूरा पॉपिक दिया है अब यह समझ कि तेरी कोई डिपेंडेंट पी है तो वह बाहर नहीं आने चाहिए वह तेरी क्योंकि वह हमेशा एक्जिस्ट डिपेंडेंट ही क,
+
+00:06:47 - 00:10:05 Unknown Speaker:
+
+अगर तुम कुछ भेज रहे हो तो फिर तुम अरे ऑफ ऑब्जेक्ट होना चाहिए ऑब्जेक्ट अक्शनी ऑब्जेक्ट होना चाहिए बट इसको डीड करना प्रोसेक्ट हो चाहिए अब ठीक है चल दो अभी के लिए आइडिया यह है कि जैसे तुम्हारा यह है नहीं ऐसा �, सब्सक्राइब सब्सक्राइब सब्सक्राइब सब्सक्राइब सब्सक्राइब, सब्सक्राइब सब्सक्राइब, अब इसको जो यह डिपेंडिट फील्ड है ना उसको आरे की जाएगा ऑब्जेक्ट करते हैं अब मैंने डिपेंडिट फील्ड को आरे बनाया हुआ है आरे की जाएगा ऑब्जेक्ट करते हैं, कि अभी फिलाल के लिए अंडेस्टेंडिंग के साथ यह डिसाइड कर सकते हैं कि अपने लिए क्या ज्यादा बेटर है नहीं हुआ है कि यह में तो एक पेट यह कॉपी करके देगा कि अगर तो एक पेट अपने स्क्रीन को लगाता है हुआ है कि मैंने एक पेट स्क्रीन ए हा�, कर दो कर दो कर दो कर दो कर दो कर दो कर दो, यह समझ की है निफेंगेंट,
+

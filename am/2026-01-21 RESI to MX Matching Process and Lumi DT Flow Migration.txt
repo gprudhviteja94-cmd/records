@@ -1,0 +1,370 @@
+2026-01-21 RESI to MX Matching Process and Lumi DT Flow Migration
+
+Creation Time: 2026/1/21
+
+
+📅About Meeting
+
+  • Date & Time: 2026-01-21 13:03 (Duration: 3544 seconds)
+  • Location: Screen share / virtual
+  • Attendee: Sameer, Sachin, Putri, Reggie, Nirmal, Shamil (presenter), Prithvi (and others as on call)
+
+
+📒Meeting Outline
+
+
+DT flow migration & RESI–MX matching process
+
+  • RESI vs MX use case The team explained the business use case: RESI is an external application that captures users who book dining/appointments. MX (Amex) maintains Customer 360 data. The goal is to identify which RESI users are also MX customers by matching identifiers (full name, first name, last name, mobile number, email, service email) and produce a final table with matched results and derived columns (e.g., most denied over periods). Downstream teams will consume this final table for offers/communications; the data engineering team only prepares and refreshes the table (does not initiate emails).
+
+  • Source code and migration motivation Existing matching code is in Hive (on Cornerstone/on-prem). Cornerstone is being decommissioned and workloads are migrating to Lumi (GCP). To migrate, Hive SQL is converted to Lumi Data Transformation (DT) flows which visually represent the transformations and outputs.
+
+  • Matching logic and prioritization Matching is priority/order-based (not strictly binary). Examples discussed:
+    
+    • 100% match: full name + phone + email -> accepted.
+    • Partial matches: combinations of first/last name with phone, or other fields, are prioritized with thresholds (example: ~80% criteria). Only matches meeting certain business rules are retained; records failing to meet criteria are discarded. The team emphasized full-refresh daily runs (no incremental deltas), so matches can improve over time as RESI or MX records change.
+
+  • Output and downstream usage The DT flow produces a final table combining RESI users and matched MX customers. A downstream ingestion pipeline moves the DT flow output to a data warehouse table. Downstream business teams use the table for campaigns, offers, analytics; data engineering’s responsibility is to provide refreshed, correct match tables.
+
+
+Lumi Data Transformation (DT) tool — features & operations
+
+  • DT flow creation (import) The DT tool can import SQL/Hive/Spark/Postgres/BigQuery and auto-convert to a visual DT flow. Steps: choose SQL dialect (Hive chosen for this use case), upload SQL/Hive script, provide flow name/description, then import to get node-by-node visual flow. Maglian map (JSON) exists but SQL import used here.
+
+  • DT flow structure & debugging The left side shows source tables (e.g., MX Customer360, RESI source). Each node represents transforms/filters/joins; final node is the output table. Preview/Debug lets you inspect node SQL and run node-level debug. Typical DT flow here has many nodes (estimated ~25–30). Typical execution time ~15–20 minutes for complete flow in Lumi.
+
+  • Versioning and edits DT flows are versioned. Changes (adding a column, datatype changes, transformation logic) create a new DT flow version (e.g., v0.1 -> v0.2). To run a specific version via orchestration, the DAG config must point to that version.
+
+  • Common failure causes Schema/data mismatches (datatype incompatibilities, string length exceeding schema limit) can cause flow/job failures. Logs on nodes show where a step failed. After deployment, logs provide point-of-failure diagnostics.
+
+
+Orchestration — auto-creating DAGs & scheduling
+
+  • DAG configuration To schedule DT flows in Lumi, two configuration files are required:
+    
+    • a DT config file (DT flow name, version, execution mode default/debug, DT parameters, notification emails), and
+    • a DAG config file (DAG ID, task IDs [must match DT task IDs], schedule interval, start date, email notifications, retry policies). Task IDs in the DAG config must match the task names in DT config — otherwise the DAG will fail.
+
+  • Scheduling semantics The RESI job runs daily (full refresh). The DAG triggers the DT flow. The DAG also triggers ingestion pipelines that move DT output to the data warehouse (target table). Start date must be set earlier than intended run (previous day) to allow the DAG to pick up runs.
+
+  • Ingestion pipeline A separate pipeline (configured in Data Engines) does full-refresh ingestion from the DT output table to the designated warehouse table. Pipeline metadata defines target table name, refresh type (full refresh), columns, column lengths, etc. Sachin typically owns creating pipelines/target table names; DT/DAG team requests target names from him.
+
+  • Historical archive There is an additional monthly job that stores monthly snapshots/backups of final tables for history (full-refresh as well). This provides monthly backup/archival of matched data.
+
+
+Operational details, counts, environments, and hands-on guidance
+
+  • Data volume and frequency Example counts discussed: historical runs showed increases (e.g., 49,736 -> 73,736 -> 96,000 — approximate counts). These indicate periodic growth and updates; still described as “not extremely large” but full refresh is performed daily.
+
+  • Environments There are lower/dev environments (with smaller/dummy data) for testing, and production contains real data. Deploying a DT flow version saves and deploys to E1 (lower env) and must be validated before production DAG execution.
+
+  • Debugging practice Use DT preview/debug to inspect node-by-node SQL; run test/debug in E1. Use logs from the DAG and DT flow runs to find failing nodes/steps. Typical turnaround to run a full DT flow is ~15–20 minutes.
+
+  • Team responsibilities & onboarding
+    
+    • Data engineering (Sameer, Shamil, Sachin, others) maintain DT flows, DAGs, ingestion pipelines.
+    • Sachin typically creates pipelines and handles target table creation.
+    • Samir has done logic improvements (matching prioritization) and is a reference for the matching algorithm changes.
+    • New team members (e.g., Putri) will be assigned KT and small tasks (create DT flow + DAG) to learn; mentor sessions and follow-ups planned.
+
+
+Q-Track / Intelligent Data Quality Spike
+
+  • Spike objective Build an intelligent data quality tool (spike/story assigned) to detect anomalies/skews automatically via statistical analysis and light ML. The concept is similar to Q-Track rules: ingest rules, compute a focus metric (mean, average, etc.) over a historical window (e.g., 1–2 years), establish thresholds, and alert when daily metrics fall outside thresholds.
+
+  • Execution & automation Historically, Q-Track rules ran manually in Cornerstone; now runs will be converted to Lumi/BigQuery and orchestrated via DAGs. The spike: review the SQL/scripts for one focus metric (team will provide SQL), understand metric computation and thresholds, then extend to other metrics and create DAGs for automated runs.
+
+  • Next steps for spike Shamil will share one SQL/focus-metric example. The plan: review that SQL, understand business meaning of the rule and the metric, then create DAG/DT flow(s) for automated execution. KT session and pairing will be scheduled to onboard.
+
+
+📋Overview
+
+  • RESI-to-MX matching is implemented as a Hive SQL job migrated to Lumi DT flow; the DT flow performs prioritized matching and creates a final table consumed by downstream teams.
+  • DT flows are created by importing existing SQL (Hive dialect) and converting to visual nodes; they are versioned; changes create new versions that must be referenced by DAG configs.
+  • Two config files are required to auto-create/schedule DAGs: DT config (flow name, version, params) and DAG config (DAG ID, task IDs, schedule, notifications). Task IDs must match across configs.
+  • Jobs are scheduled daily as full refreshes; an ingestion pipeline moves DT output to a warehouse target table; monthly archive jobs capture monthly snapshots.
+  • Common failure reasons: datatype mismatches, string-length > schema limit, schema drift; logs allow node-level debugging.
+  • Q-Track spike: build/automate rule-based anomaly detection with statistical thresholds; team will provide SQL example for KT and tasks.
+
+
+🎯Todo List
+
+  • Sameer:
+    
+    • Review provided RESI Hive SQL / DT flow nodes and run DT flow in dev (E1) — due: 2026-01-23 EOD
+    • Create a DT flow and corresponding DAG for a small test case (end-to-end: DT -> DAG -> ingestion pipeline) — due: 2026-01-27
+
+  • Putri:
+    
+    • Go through the RESI SQL logic provided by Shamil; identify nodes that would need changes for a sample requirement (e.g., add 1 new column) — due: 2026-01-23
+    • Attempt to create/edit a DT flow version (v0.2) and validate in E1 — due: 2026-01-26
+
+  • Sachin:
+    
+    • Provide target warehouse table name and create/confirm ingestion pipeline for the test DT flow (or provide access/details to create pipeline) — due: 2026-01-24
+    • Assist on pipeline permissions and metadata (column definitions/lengths) needed for DT flow -> ingestion — due: 2026-01-24
+
+  • Shamil:
+    
+    • Share the specific RESI SQL and one example focus-metric SQL for the Q-Track spike (send SQL files / repo link) — due: 2026-01-22 (ASAP)
+    • Schedule a KT follow-up session to review the SQL and matching logic (suggested: morning next day) — due: schedule by 2026-01-22
+
+  • Samir:
+    
+    • Walkthrough of matching prioritization logic and recent changes (pairing session to explain order/prioritization) — due: 2026-01-25 (coordinate time)
+
+  • Nirmal:
+    
+    • Connect separately with Shamil to review errors/questions mentioned, follow-up discussion post-meeting — due: 2026-01-22
+
+  • Team (collective):
+    
+    • Prepare a short checklist/document listing common failure modes and how to remediate (schema mismatch, data length, datatype casts) for on-call troubleshooting — due: 2026-01-29
+
+Notes / Next steps:
+
+  • Shamil will stop recording and share SQL artifacts and repo links. Team agreed to pair for KT sessions; small first tasks assigned to learn DT flow -> DAG -> ingestion end-to-end.
+  • If any member needs production data visibility for business understanding, request access via Sachin (production read-only) or use production queries under supervision.
+
+
+Transcription
+
+00:00:05 - 00:01:52 Unknown Speaker:
+
+Let me share my screen and let me know if you're able to see my screen hope you are able to see my screen yes yeah let me record it. This meeting is being recorded. Is a application like Swiggy like, where we can, we can book our dinnings and everything, okay, so what? What we are doing here is like, we are getting RESI data, like RESI users data, and we are trying to match the data with MX customers. And we are preparing a table, basically, like the final table. Uh, so you got my point, right? Like, where we have the RESI users and we are trying to identify the MX customers who are using RESI. And also in the in this process, we are also, uh, as per the business logic.
+
+00:01:52 - 00:02:53 Unknown Speaker:
+
+We are also, uh, uh, finding something like, uh, most denied, or like, from our last one year or 30 days, uh, those those columns also like, uh. Additionally, we are adding to this table. So, if you see here, previously our RISI use case was in cornerstone system. So, as MX, in the MX, everything was going to Lumi, right? So, that's why like, so our RISI job also got migrated to Lumi. Let me see how can I, okay. So, I will explain. Uh, I will brief you, like, how we have migrated the Uh high code to bigquery, like in the Lumi, Uh high code to DT flow. Uh, so here we have an option, like you see, you can see that data transformation tool in the Lumi page, right? Like, if you go to SO Here directly.
+
+00:02:53 - 00:03:48 Unknown Speaker:
+
+We can see the Data Transformation dashboard, or we can go to manage and we can go to the Transform Transform data. So here in this way, also, we can, uh, uh, you like, go to the Data Transformation Tool dashboard. So how this dashboard will looks like is something like this. Uh, so here we have a few options like where we can create a new data Uh data flow or like. If you have any code like Hive, SQL or BigQuery or anything, we can import that and directly convert it into the DT flow. So, explore flows is like where we can explore the existing flows and explore parameters like system variables or like the parameter variables which we use are defined variables, something like that. We can define those from here.
+
+00:03:49 - 00:04:42 Unknown Speaker:
+
+So, once like as I mentioned earlier, the resume is in Hive, right? Like Hive code or SQL code. So what we have done is like, we use this data transformation tool and converted that high query to DT flow. So so as we have already high query, right? So we use the import flow here, we have a option to import any query and convert it into DT flow, so here we have selected this auto import. And if you see here, it will show something like SQL and Maglian map, like Maglian map is like JSON format. I'm not much aware of that, but like as our use case is in SQL, we utilize this option and converted this to a data flow.
+
+00:04:43 - 00:05:42 Unknown Speaker:
+
+So once we select that SQL, type is SQL, and we have to give some details like, Like, what is the flow name you are going to give to that DT flow? And we have to give some sort of description. And as well as you have to select, you see here. SQL dialect is there, right? Like in that you can see multiple options like where your queries in Postgres, SQL or Oracle, MySql, Spark, Sql, Hive, Bigquery, everything like. So here we have selected Hive and we converted that to a DT flow. So, once we have selected that one, we have to upload that Hive query or SQL query. So, you can see here the external Hive or SQL query got uploaded here. And once you do import, what it will do is like it will convert that Hive query to a data flow something like this.
+
+00:05:45 - 00:06:49 Unknown Speaker:
+
+So, do you have any questions still here? So basically, it's a transformation of data, so you, we initially start loading the data. Uh, yeah, so so what we are doing here is like, uh, we have the code in hive. And we are converting into a visual representation of a data flow, like how the data is flowing. Suppose if you see this data flow, the left side is around the source tables, some source tables like MX, Customer 360, or anything like customer data or anything. So those are the things how our business logic is flowing. So if you suppose, like, if you see here from the first two source tables, we are trying to convert some data, uh, like, we are only from those tables, right? Like, Then it is creating a further transformation.
+
+00:06:50 - 00:07:51 Unknown Speaker:
+
+And from there, if you want to do some filters or transformations, we can see the next flow, how this flow is actually moving. And finally, if you see the last node, that is the final output, the final table you can call. Okay, as I mean, literally, so okay. This is data transformation, and uh, so why is this? Hive is coming into picture, so why can't we write one something? Uh, okay, the data need to be flown like this from here to here. No, there is no particular rule that we have to use Hive only since our user is already existing Hive. And we have the High code, so we have transformed that Hive code to DT flow. So here we have lot of options, like if your coding is in Spark SQL, you can use that and you can convert that into a DT flow.
+
+00:07:51 - 00:08:45 Unknown Speaker:
+
+Okay, okay, there is no like we are. We are not saying that like Hive is only the option to convert it, but like, as our use case is already there in Hive, we just replace that option. So, as part of this, we are getting Hive queries and migrating to Lumi. Suppose like there is a new use case, you got a new use case and that is something like a post SQL file and they want you to convert that into or migrate it to Lumi to a data transformation tool. Then what you can do is like, you can upload that post Sql, sQl here, that file to here, and you can convert it to a DT flow. Okay, once that is done, they won't be running that hive program there.
+
+00:08:45 - 00:09:56 Unknown Speaker:
+
+In the big data, we are not running that time, we are running the DT flows only, but the whole hive thing. No. Existing Hive is running or we'll stop that completely? Yeah, we will decommission. As I mentioned, since Cornerstone is actually decommissioning, maybe next year or this year, so everything is moving to Lumi or GCP platform in MX. So in that way, we have migrated this one. So, I will show you how our resi one is there, like resi dt flow is there. So, let me show you the dt flow once and after that I will go to the air flow, how we orchestrated that DAG. The example that you have shown, This one is for just converting a query from height to some other language. Like On duty, as you have mentioned, not the Tatas, not only the Hive.
+
+00:09:56 - 00:10:54 Unknown Speaker:
+
+Like any file. Yeah, just for, like, converting the query from one language to the two. Duty, right? Yes, thank you. So, currently, all our use cases are written in Hive only in the on-premise system that is constant. Yes, yeah. On premises we are using MX, we are using high data warehouse, so or in the Lumi, we are using Google Cloud. Google Stories, Sorry, Google Stories. Okay, so if you see this one, I'm not sure like you're able to see, but like this is a big one. The transformation is big, little, big, and so this is how the transformation is looks like. And here also, we are finally creating a final table, like there is Z users and MX users, like both combined data you can see in this final table.
+
+00:10:54 - 00:11:52 Unknown Speaker:
+
+If you want the code, we can go to Preview and go to Debug here. It will show node by node queries, like you can debug here, like each node, what it will do. Okay, so I mean, if okay, you migrate some particular high code, high base QL here. And how how we will actually run. I mean, looks like this is so complicated, right? So because it's connecting to multiple tables and joints, it is doing so. It's it's very complicated. So how would we? How do we debug it? So it's. It is going to take a lot of time to go through each query and make sure it is up and running. Even in the Lumi side also is it. Yeah, like, no, it won't take that much of time, maybe like 15 minutes, the entire query will run in a 15 to 20 minutes of time.
+
+00:11:53 - 00:12:45 Unknown Speaker:
+
+So like, yeah, so if you know the basic knowledge, if you go through the code, like how they are matching the data, like the RISI customers and MX customers. So once you have some idea, like once you get a requirement that you need to add a column, like where, Uh, if if the RESI and MS customers are actually having the same match, you have to give a hundred percent of match. In a separate column. Then you have to go to the Put to that particular node and you can add that column. And you have to test it in E1 like you have to deploy it in E1, once you save it, it will directly deploy to E1. So so after that we have DAX, so once we trigger the DAG, it will actually trigger this DT flow and run the query for us.
+
+00:12:45 - 00:13:43 Unknown Speaker:
+
+So there we have logs, and and the logs you can see that at which point it got failed. One question, Sorry, basic question, I maybe I missed it. What is RESI customer and Amex customer here. So, see MX customer is like basically MX customers, right? Like who have purchased the credit cards are like who have the accounts in the MX. Likewise, the RISI users are like who are utilizing or using that app application, RISI application to book appointment or to book the dinnings. Okay. So, what we are trying to do is like we are trying to identify the resi customers and like we have the MX customers data anyway we as we are MX. Yeah. Right, but we don't who are resi users.
+
+00:13:43 - 00:14:27 Unknown Speaker:
+
+So, what we are trying to do is like we have the names like we have the like we are getting the data resi data to a particular table in our platform. So, what we are trying to do is like we are trying to read that each customer name. Mobile number, phone number, or like email address or service email address. And we are trying to match that data with our MX data, okay data, or we we are leaving that data. No, so suppose we have five records, and in and in this five records. You may be matched with a hundred percent. Like full name is matched, last name is matched, and phone number is also matched, and email address also match.
+
+00:14:28 - 00:15:18 Unknown Speaker:
+
+But there is another customer who like where the first name is not matching but the last name is matching and phone number is matching and email address is not matching. And there is another customer where the only full name is matching but rest are not matching. So this way we have prioritizing like and we are constructing a table like. So we are supposing this five records like first come customer anyway everything is matching. We are sure that that is the match data. And in the next four records, again, we are trying to check whether it at least matched for first name or last name and phone number. And I suppose sometimes what happened, as I mentioned, only first name or last name will match and phone number and email address will be matched.
+
+00:15:18 - 00:16:17 Unknown Speaker:
+
+So the criteria here is like not 100%, but like 80% matched. Something like that. So we have periodized an order and accordingly we are trying to match and return the data. So this is one use case, or this is how all the use, I mean, only so. With respect to RESI, okay, complete RESI is this one only? We get some records and we match it with the existing AMEX records. If the customer information is found, then we trigger out something. Is it some mails or something? Is that? Yes? If we, if the job got failed, we are trying to, uh, like, we will notify that, uh, business that today's daily run was failed. Okay, so only one job in raising, nothing else. Yes, okay, okay, got it, and we have others. Yeah, yeah.
+
+00:16:18 - 00:17:25 Unknown Speaker:
+
+So what is the like, uh, consequence of this? Like? If you? Uh, let's say some of the records are not getting matched, or let's say 50, 60 matches there, so you just store those records or do something with those reports. Now we only get the match data only. Like we have some set of business role, like, uh, this one, then, uh. So based on that we are trying to get match the data and we are getting that. Yeah, if it is 100% not matching, then we are not considering that. Okay, okay, okay. So if 100% match, we're just getting the data and if that isn't the case, then we just discard it, right? Yeah, yeah. Okay. So this is our daily run. So we have logs here.
+
+00:17:25 - 00:18:35 Unknown Speaker:
+
+So here if you see, so node by node are like the chunks we can see in that here, right? The preview. So you can find these in this logs and you can see that got completed successfully, that step. Okay, you got my part right. This is the query. This is trying to execute that chunk and it got successfully ranked and it will go to the block three. So how many blocks are there like that that I haven't checked, but yeah, it may be around 25 or 30. Okay, yeah, I have to check that one. So will there be any failures for this job? FS What would be the reason? What could be the reason? So, like, suppose if you are trying to add a column, and, uh, if it is a, uh, you are already added that column.
+
+00:18:35 - 00:19:35 Unknown Speaker:
+
+But the input we are getting as an integer, or like, if your column is an integer. And it is coming as a string or datatype server or something like that, you may get. Okay. Or like if you have a column length with the column length that the character should get only 50 characters. But like if you receive the data like 100 characters length and that length was not matching with this schema length and it got and it will fail. So those cases we can see till now. Sameer, Like, when did the like? Let's say there are some tables are there in the hype and in your Google cloud. Also, so that we can take those questions in the last. So that okay, so so till now, we were able to see. You know that how?
+
+00:19:35 - 00:20:21 Unknown Speaker:
+
+At least you understand how to create it like a DT flow based on a existing file, right? So once we have a DT flow, we have to, what we have to do, like we have to execute that and we have to schedule it for a day or like daily base or monthly base based on the frequency. So for that, what we are doing is like we need a DAG, which is this one, Airflow DAG. So to auto create this DAG, like we have to configure two files. One is like config file and one is like a DT config file, DAG config file. So what is this? This DT config file will do is like it will. Here we will give what is the DT flow name and what is the version you want to.
+
+00:20:21 - 00:21:07 Unknown Speaker:
+
+Trying to execute and execute mode, whether it is a default or debug mode. And we have to not. If you want to notify these values to the team, you have to give those email address and everything. And the parameter or the user variables you have you want to pass it and use in our query, this is a simple one. Like, you know, if you know, once you created a DAg, it will. Here, you can identify the version number and the flow name. This is the primary where or like the default values we have to give. So here you can see this uh, default name and this one, right? So this is a task, uh ID, the task name or task ID. Okay, you just need to give the same value in the deck.
+
+00:21:07 - 00:21:57 Unknown Speaker:
+
+That means we are interlinking this DT flow and DAG one. You go here, you are giving a DAG ID. And the tasks if you see here the tasks, so here we want to run this task, so this task will be matched with this task name. Okay, so if it is not fine, it will fail. And here you can see. That's like we are giving DAG ID and schedule interval, which on which schedule? Uh, at which time you need to schedule, whether daily or monthly or weekly. Something like and start date should be suppose you are trying to execute from tomorrow, this should be prior to this tomorrow date or today date. That means at least you have to give two days or one day back, that means yesterday date, you have to give clear to clear dates.
+
+00:21:57 - 00:22:47 Unknown Speaker:
+
+We have to give, that's it. There is no specific value mentioned, but like, we have to give it as a previous, uh, day, or like a pre pre-date value. So, the job gets executed when there is an input file or it will always execute daily once? I did not get your question. So, when, see, you said there is an input resif ID that need to be compared with our Amex data, okay? So, this file... No, no, no, no, no. It is a logic in the SQL query. What I am trying to tell you is like the entire query here written here, right? Like if you go to the preview, Yeah, you can see here they are matching the data, so they are trying to retrieve the data from RESI.
+
+00:22:47 - 00:23:34 Unknown Speaker:
+
+Yeah, and so it is user you got, and after that, uh, so it's connecting to the easy database itself, is it? Yeah, so we have a table and we have a customer 360 MX data here. Okay, so based on this data and RESI data. They are doing all these matchings, all file, all phone name match and everything, mobile number match. Okay, they are doing everything, bring every aspect of matching. That that's the thing I am trying to explain. Okay, this is the data flow. DT job, right? Yeah, DT job. So now what I am trying to say is like how to configure, like how to orchestrate or schedule the job. So we need to create a tag, and we have to create, we have to create a tag, something like this, and we have to schedule it right.
+
+00:23:34 - 00:24:22 Unknown Speaker:
+
+Okay, so. In this Lumi platform, we have an option to auto create a DAG and schedule it. So for that, we have to configure these two DAGs, so configs. As I mentioned, one is for DT config where we will give all the DT flow details and one is like DAG details, like what is the DAG name you are trying to give and what is the schedule interval that you need to schedule it for. Okay. And and you know, like, if you want that email to be raised on success, you can make it as true or false, and failure you can make it to what false or like. If it is failed and it is trying to retry, then also we can schedule it, like we can also configure it to Horizon email notification.
+
+00:24:22 - 00:25:17 Unknown Speaker:
+
+So here, this one should be the same task name task ID, which we are giving in the DT DT config file. So this is the uh thing we have to remember, and this is the other task where if you, so what here we are doing is like, if you see here there is a target table name, so this is a warehouse table. The final output of the DT flow, right, like as I shown previously, there is a final table, this one. So this data is actually migrating out, like moving this data to the target table, which is in data warehouse, which is this one. For this, we have an ingestion job always running like we have to configure it like so that what it will do, it will take the data from here and it will move the data to this warehouse.
+
+00:25:17 - 00:26:09 Unknown Speaker:
+
+For this, we have to configure a pipeline. So I will show you the pipeline, how it looks and so that you will get some idea. So the target name should be given here. So if you see here the same trigger ingestion, you can see here, right? Like, this will trigger that ingestion job. And it will migrate all the data which was created by the DT flow, like the final table of the DT flow will migrate that data to, UH, data warehouse. If you see here, we are trying to migrate these ones, like update or move the data to the data warehouse table. These many records and the pipeline, if you want to go see the pipelines if you go to the Data engines and view all engines.
+
+00:26:09 - 00:27:32 Unknown Speaker:
+
+For RESI ODL, we have a pipeline and I will show the pipeline how it looks. So this is the one resume X cursed clone is there, right? This is the pipeline name, and if you see here, these are all the pipeline details, so this is the metadata details. Like how the uh, so see, this is the target table name, and this is a type of full, full refresh. And if you see if you go below, you can also find what are all the columns and SD groups are given, and what is the length of each column. You can see and all the details will be there here. So I think like once you have like. If you look for any other use case from like by creating a pipeline, or like generally, these pipelines will be created by Sachin.
+
+00:27:32 - 00:28:31 Unknown Speaker:
+
+This task will handle like Sachin will handle these types of tasks. And once we have like, configured these and created these DAGs. And we have to take the target table name from Sachin and we have to give that name accordingly here, so that our ingestion will try to move the data to. I am missing actually some connecting points, I don't know for others, but uh, okay, I asked some maybe dumb questions. So there is, um, there is an uh query, okay, the how you carry that you migrated to Lumi, and that query is there, and uh, once we migrated it, that is an auto query. That is a DT flow, we have a DT flow, yeah, so we have a DT flow that is fixed, right? Okay, even if we change something, maybe you will have multiple versions of it.
+
+00:28:31 - 00:29:15 Unknown Speaker:
+
+Yes, okay, so that will keep changing is it will not be constant, it will keep changing. Got a requirement, and if you so suppose, it will start from zero zero point one. If you need to add a column to your node so you can click on that node. And, uh, you can see there there is a option to add it, and you can also write a code like it want. Uh, that should be into two office, another column, something like that. And you create a new column and the version you and you do save like. It will create a new version with 0.2, and for that version, we need to create, uh, so if you have a question, change there, then to creating a deck, you already have it. As I mentioned, we have to configure two config files.
+
+00:29:15 - 00:30:01 Unknown Speaker:
+
+So you already created for 0.1 version. Now what you have done, you have added a column and you have another version like 0.2. Now you have to update this file with 0.2 so that this tag will run this version. Okay, so when you run this program, then it will create one more tag. That is, with version 1.9. Yeah, the drag remains same here, pointing to the version is different, that's it. You will have only one tag for one DT flow. But if if there is any version change and you want to try to execute that version, you have to specify here which which version of that DT flow you have to run. Okay, so once it is executed, so it will give you a report, is it okay? What is matched and what is not matched?
+
+00:30:01 - 00:30:48 Unknown Speaker:
+
+No, it won't, it will, so yeah, it will give a report like, but like, that is little different. Like not matched on match, not something like that, we have some name and email, match ne Nep, something like that. If you go through that code and once you run that, like, final table, okay, uh, you can see that as it is in recording, right? Like, I just don't want to show it. But if you want, if you want, you can go to this target table name, right? Like, if you execute, select Star and limit with 10 resume excursed, you can either. You can see the data so that you will get some idea. Okay, there is no lower environment for this, is it. Now, you have the lower environment also, but like it will have some less data and it is a dummy data.
+
+00:30:49 - 00:31:38 Unknown Speaker:
+
+Okay. You get, if you want to get some idea like at the business side, like what type of data it is getting, then you have to go and see the data from production. So, then you will have better understanding of the data. So, Reggie, so what are we achieving with that by matching, sorry, it's related to business. My question is related to business. So we matched, okay, we found the customer. So what type of mail will trickle to him? No, uh, so we'll have that, uh. Resi users also, right? Like, maybe if you want to do some offers or anything, you maybe you can find the best customer over there. And the downstream team will take that, use the data and they'll perform some business logics and everything on that table.
+
+00:31:38 - 00:32:31 Unknown Speaker:
+
+So basically, we are finding the if those regime customers are our customers, and we'll give offers related to regime. Oh, we won't do anything. The downstream team, Yeah, I understand. Now we they are matching and giving it to that list to them, they will, uh, give that the particular mail to them. Okay? What we are trying to do is like, we are storing that data, a particular table, and we are notifying that every data was like, refreshed and updating into this table. That's it, the downstream, that team, what they are doing is like, we like. We haven't no idea on that, but like, they will utilize this data for their business purpose. Got it, got it. And why? These columns keep changing because they are coming up with new new, uh, columns, is it? RESI?
+
+00:32:31 - 00:33:21 Unknown Speaker:
+
+Resi is coming up in new columns. Suppose if you based on that existing data, they may to calculate maybe for two years of most denied. When you are like, location or like, maybe you have, you will book that dining. Maybe by the URL, or like by using the application, or like direct by a call. Something like that, right? Like, uh, and you have, like, uh, people made, like, uh, deny that, uh, maybe once book it got denied, like they may be denied, right? Like maybe with some other ideas or something like that, then so that, like, uh, business team may need that percentage of denial or anything. So that should be stored in a separate column so they will come up with some other requirement.
+
+00:33:21 - 00:34:16 Unknown Speaker:
+
+So this column should be needed for us so that in the final table, so the downstream team will use that column for other something like that. Okay. But Shamir, if we are having access to RISI database and we have access to NEMX, so once the customer is matched, do we store any information related to RISI in our system? We already matched this customer with our database. No, no, no. We are not doing that. Because this is a full refresh. Suppose, as I mentioned earlier, based on the percentage criteria, we are matching. Suppose there is a customer or that customer match with only, uh, last name and the phone number. Maybe in the tomorrow or like. One month later, he updated his profile by with the full name and as well as mobile number.
+
+00:34:16 - 00:35:09 Unknown Speaker:
+
+In that criteria, what it will do like it will match with hundred percent, right? Okay, so that way we will every time we are full, uh, doing the full refresh. Like. We are running the entire process and we are trying to match the data and we are updating every day. We have the fresh data, like fresh match data, so everyday lazy data is a fresh data for us. Yeah, and how many entries? Usually? I mean, any idea? Oh, how many millions of data? I haven't actually monitored that, uh, but like, it will be few only, like, not that much, but like, as, uh, as we. As I mentioned, it's a full refresh, right? Like, maybe, uh, it will get God updated, or maybe it will get new records, right, like, uh, so it's little like.
+
+00:35:09 - 00:36:12 Unknown Speaker:
+
+I never noticed that count, actually, we can notice that like today, it is like this much of count, right? Like maybe once tomorrow run was completed, we can see check and I can see, suppose, okay. Yeah, let me see if we can. Just a rough count, it doesn't need to be the same. Because I wanted to understand how many such records comes daily that we need to map it with our system. See here, this is something like four days back. So here the count is something like that, this 736. And after that, it got updated to this number, 236. Okay. 4, 6, 4, 9, 7, 3, 6. 4, 6, 4, 9, 7, 3, 6, right? 4, 6, 4, 9. See, 4, 6, 4, 9 means, like, suppose let's check only the last five digits. 49,736.
+
+00:36:12 - 00:37:10 Unknown Speaker:
+
+Yeah. And if you go here, 73,000, like, means around 23,000 data was, like, data increased. And after that, we got 96,000. And from last two days we don't get a new new data, but like, maybe there is a chance that already existing data may be updated. So this counter obviously will be increasing. So we will only take the differential data, or we run it on the complete data again, complete data. And that's why I'm saying, full refresh. Okay, okay, got it okay. So try to create a DT flow and try to, uh, create a uh, dag. Like if you were, like, if you have, uh. Like if you are having a free time. So that you will have get more doubts, or like, uh, to. To actually interlink this DT flow and the airflow deck?
+
+00:37:10 - 00:38:11 Unknown Speaker:
+
+Okay, also, let me stop the recording. I I think apart from this, if you have any doubts, maybe we can take it in the off record. Sameer, what was the frequency for this job to run? Daily. Daily. So daily we are comparing all the Amex customer records with all the WG records. And that's the job of the duty flow. And the DAG is just to trigger the duty flow, right? Yeah. Okay. And there is also another job which is storing those results into another table. That's a history job like which we such and just spoken, right? Like that is like, we are storing monthly data to a separate table. Okay, monthly data we are storing into that separate table. The pipeline that we have shown, yeah, yeah, not that pipeline, that pipeline is for this one.
+
+00:38:11 - 00:38:56 Unknown Speaker:
+
+We have another job for Reggie, but that job is actually for monthly, monthly store like we are retrieving monthly data and storing monthly. Like it will trigger for every month 28th or something like that. No, what is it? Again? It's a full refresh only, right? Full refresh of data, right? So why do we need to run it for a month again? So they need the data to be backed up at least for a month, what data that is the match data or the RESI data, the final table which we are creating, right? Like, okay, okay, that data, okay, suppose from, uh? In the first day you have 100 records, but like, in the next 30 days you your data got updated to 30, 300 records.
+
+00:38:56 - 00:40:03 Unknown Speaker:
+
+And that entire 300 records we are storing in a bag or taking every month back up to your table. Okay, duplicate values also duplicate data. Let me stop the recording. Yeah, we are getting, uh, for suppose the first month, one customer will come to the restaurant and maybe he will come on after three months we will get the data. Actually, uh, so these are all comes under the business, you are completely going to business law. This one, uh, since we have taken the like, we haven't, uh, like, wrote the code like from the scratch. Actually, we just got that and we orchestrated, like, orchestrated our schedule, this job. And we have some, like, very minimal knowledge on the business side. Like, maybe if you go through the code, you may get to understand, like, how it works.
+
+00:40:03 - 00:40:54 Unknown Speaker:
+
+But like, basically, we are actually trying to match the data and we are applying like, getting some business logic should be applied. And we are getting some new columns like, what is the denial ratio and what are who are? All the customers are the best customers, something like that. So for that you have to go through the code and you you need to understand like each and every week. So if there is no changes to the columns or anything, we are not doing anything. It will be regular job that will continue to work. Yeah, but like from next, uh, spring time, most probably in the next week. Also, like where you may get some user stories on ResI. Okay, as mentioned by Sachin, So, yeah, so it means we're adding some columns that we are we are interested in.
+
+00:40:54 - 00:41:44 Unknown Speaker:
+
+Yeah, so we have to understand the logic, and we have to add that, incorporate that new logic to this existing flow. And we have to move to production once every day. Yeah, I mean, this was not in production right now. This is the production. So once you got a new requirement, that should also go to production, right? That's what I'm saying. Okay, okay, okay. So the new requirements means they are changing the way you are matching the data. They might be matched to some other columns and store it in a new column. That's, let's see. Last time we got a requirement like to add another column. Check out the state details. No, observe it. You got my point, right? So we have added this too.
+
+00:41:45 - 00:42:45 Unknown Speaker:
+
+Maybe in the next time they want to add that city name and everything like which we had in the MX site, then we have to add this. Or like we have, if they have come back, like that character's length of data, we need to extend the limit, then we have to extend that limit. If you are getting a failures frequently, something like that, like recently, we don't get like only one time, we have more. And uh, once we after moving in this to Loony, we got like, roughly we got two requirements or three requirements, that's it. Wow, thank you. And we have another guy like Samir who's like a little experienced guy, that guy. Actually what he done is like, he actually, uh, perform some like he operates. The code of matching like previously, it was in a different way.
+
+00:42:45 - 00:45:09 Unknown Speaker:
+
+Now, uh, he actually prioritized the order, like how to match and everything Samir means. Apart from you, somewhere, or. So, try to go to the logic and I'll show you this. Check that code also, like the business logic code. How they are trying to manage this is very starting right. Like, I, I know it is like a little confused or like too many things in there. But like, once you start with this simple TT flow, yeah, let's try to start with a smaller chunk, of course, and so that you will get some idea. And if you also hadn't it out, uh, we can, like, if I don't know, also, like we can together, like we can commonly sit and understand. Like, what is the logic and what is exactly they're trying to do so?
+
+00:45:09 - 00:46:42 Unknown Speaker:
+
+Do you have any other questions? Like, or else you can? Uh, so I think Putri is going to be work on RESI, or like, I don't know for me, he told me. Yes, yes, yes, this one is that resiliency. No, no, the contrary is different thing. Uh, like, I think we have, maybe I will. I can schedule a call today or tomorrow tomorrow morning. Yeah, please. Yeah. And since you are anyway, stop recording. There is one story assigned on my name. Let me share. It's a spike story. I'm already recording, I guess, right? Yeah, yeah. You are going to share your screen? Yeah, yeah. Can you see? Yeah, see this? Yes. Okay, yeah, they understood, like, that's a spike user story. What? In the next day? Tomorrow morning?
+
+00:46:42 - 00:47:38 Unknown Speaker:
+
+The first first thing we can do is like, I will explain you what they are trying to do. The SQL part, so I will give the SQL and you just go through that code. Maybe by today or tomorrow evening or like something like. I will give you a task so that once you got understanding of that SQL, you can start working on, like doing that chunk of code. Okay, so I don't know. Create an intelligent data quality tool, which through statistical analysis and machine learning identify the right metrics and methodologies. Yeah, Okay. Can you just brief, I mean, I don't know, what is called for? Two minutes, maybe. Yeah. So, basically, what they're trying to, like, you know the Q track, right? Like, we are getting some set of rules, if you see. Yes.
+
+00:47:38 - 00:48:32 Unknown Speaker:
+
+And based on that, we are doing, right, like, and alerting the business team that this value is not matching with the actual value and expected value. Right. Something like that, right? Like in the quantum. What we are trying to do is like, uh, so first initially we get a new rule. There is a way where they, uh, where, uh, they will. We receive a route and business team like Anand and Rajna, what they will do, they will review the rule. Uh, whether this rule should be go to the like, we have to do it or not. Like, so that once you get an entry of a rule, what we will do? We will analyze that like that rule and suppose there is a rule where in a specific table or a column.
+
+00:48:32 - 00:49:30 Unknown Speaker:
+
+With this filter, we have to do a focus metric of average or mean, like, I don't know how this focus metric is deciding, but that is also we are getting as an input. So for that they are already given our logic. We are based on specific metric. Suppose there is a metric with mean. So we are finding an average for that entire period, like, suppose for last one year for that rule or metric. ID. What is the average value or other value? And we are creating a threshold. Suppose, uh, the value of the value aggregation values. The mean value should be in between, uh, minus one to one, or like 1 to 10 only. Okay. Then you like, now daily run. If the value is actually not in between that minus 1 to 1, or like 1 to 10 ratio.
+
+00:49:30 - 00:50:30 Unknown Speaker:
+
+What we are trying to do is like the data skewness, like suppose there is in the entire year, maybe in the December, the data. Maybe you have more variation like purchasing or something like, uh, maybe maybe like December. Generally in U.S areas, the data is like, uh, purchasing is more right like offers. So then in that case, what will happen? The data will be very and so that our thresholds may be very also right for the last long month in that. So when we run our particular algorithm, it will check that threshold. And if it is meeting that threshold, it is fine. If it is not, they're alerting it. Basically, that is like something like instead of checking manually, they're checking automatically and alerting that the data skewness is there.
+
+00:50:30 - 00:51:21 Unknown Speaker:
+
+Or like there is a big variation in the data. Something like that. Q-Track, you have a lot of rules for this one also. Yes. And the execution? As for the business logic, maybe I need to need to get like, more like. I have a knowledge on the coding perspective, but like, on which data, or like, what is this? D2 rules are like, actually representing that. We need to get more idea. Since we have started from last two weeks only, or like last one month, we have started. But like, that is completely automating the process. Only like they have the code, but isn't like they are running manually each, uh, each code. Now is it now? Now it is in GCP, okay?
+
+00:51:21 - 00:52:16 Unknown Speaker:
+
+So we have created a DAX for that and scheduled it like you each, uh, for the last two years or one year, it, uh, we have to run that, uh, for each pool, something like that. So, again, my jobs were present in Cornerstone previously. This one, Yeah, maybe, yeah, they used to run in Cornerstone only. But like for us. Like they've given the code directly to move to write it in like schedule, it in Lumi only. Okay, understood? Okay, yeah. I have changed a little bit, like based as per the big query, but like, that's not like a big deal. I guess. Very late, like based on the that is done previously in high right? So maybe some obligate, like APIS or like functions may be having a different format, like in the query, right?
+
+00:52:16 - 00:53:18 Unknown Speaker:
+
+Those changes I have done. Okay, okay, yeah. Tomorrow what we can do is like, I will, uh, I will explain you the SQL query, uh for, uh, suppose? There are four, four focus matrix, I will explain for a one matrix so that you can go through for the other matrix and you can. Once you get some knowledge, right, like, then you can start creating the DAG, try to create the DAG, and I will split some. I will give some little work to you so you can try to focus and run that, like, develop that code. Sure, sure, yeah. Nice. But if you, I mean, based on what you explained, I feel like your track and control similar only, but little machine learning algorithms like the mean and you said, right, the average. Yeah.
+
+00:53:18 - 00:54:16 Unknown Speaker:
+
+So more little, this one, algorithms are being executed to find the, yes, otherwise the procedure is safe. Yes, why they are running these is like something like they are letting before anything happen. Like you got my point, right? Okay, okay, okay. In that case, in Q-Track, it is something that happened and we are reporting it. In this case, we are alerting them that something could arise. It is a future step. Yeah, something like that. So I need to go through that little bit like, and I have to understand in the business perspective also. I just understand as per the code, but like, I need to understand why, how, this, how, like. How have they have defined this rule and what this rule actually indicates in the background? What they are trying to do?
+
+00:54:16 - 00:55:11 Unknown Speaker:
+
+We need to understand a little bit so that we'll get more understanding on that. As of now, I can explain you the at the code level. And yeah, we can, uh, start tomorrow from tomorrow, like, uh, and do some KT on that and so that you can pick some work. And uh, yeah, if you, if you, if you got to know something, maybe we can share the, uh, knowledge between us. So that sure, sure, yeah, yeah, thanks for. Right now, like currently, I'm dealing with too many things, though, that's why I'm not much concentrating on that. Yeah, I need to concentrate on that business logic also. And what is the code base for Contra? Can you think that I'll just check out and go through? Meanwhile, tomorrow anyway, we'll connect. Yeah, yeah, sure, sure, uh, okay.
+
+00:55:11 - 00:56:20 Unknown Speaker:
+
+Let me share. The previous one only like, uh, so the latest one? I haven't, uh, moved to that, uh, that one, like, Uh, to the repo. I am doing some changes. Let me share you that. Okay, let me let me check and share with you. Okay, it's a Java code or a Python code, man? Those queries are so big to understand, I don't know how long I'm going to take. If it is a Java. It is simple math, some functions, some variables, properly defined. Yeah, that too. We need to have understanding on table names also. I don't know, so yeah, yeah, I understood, like I completely work on data side only. Okay, so I am. Then these guys are like Java, and then and also we are doing on Python, so I am also aware of Python.
+
+00:56:20 - 00:57:27 Unknown Speaker:
+
+So yeah, okay, so mostly SQL and then Python, not Java, Python, Java, you know. Now there is a new use case where they are doing for ace, right, like Ace composer, though, that will was like, mostly the Java, only. Okay, mostly, completely Java. In on-site, everyone will work with the Java only. Then take me also when I'm there. I'll take the next flight. If Trump backs up, it's no problem. Trump will not allow. I'm cool with it. What is that? He is a composer. Can you tell me that? So, that is also something like a data flow. Actually, here we are representing SQL query. They are representing the Java code. Okay, that's why multiple functions they will write and then in the flow they will call those functions. I mean, the endpoints. Yeah, services.
+
+00:57:27 - 00:58:36 Unknown Speaker:
+
+Services is nothing but Java classes. And there are more like pre and post services. Like where suppose you want to run a service. But before that, you need to do something like, uh, retriever data, or like, you need to check something. Those will go to the pre-service classes or something. Yeah, I saw that actually KT was given. So there are multiple steps in that particular flow, so they'll simply call those, uh, java endpoints, okay, and they'll create a flow. Yeah, yeah, I, I remember. Suman Reddy Kotha was showing me that. That's same, right, Suman? Oh, yes. Okay, great. Okay, I think enough for today. I'm exhausted. Thank you so much, Shamil. Nice getting to us. Thank you, Shamil. Thank you. Thank you so much. Thank you Prithvi. Yeah, bye.
+
+00:58:37 - 00:59:03 Unknown Speaker:
+
+Nirmal, do you have, do you face any errors, like do you need- Yeah, yeah, I will connect separately somewhere, just right after this. Okay, do you want, like, then Prithvi and someone you can- Yeah, okay. Thank you. Actually, this will take a second to share the screen. What?

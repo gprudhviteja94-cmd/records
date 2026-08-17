@@ -1,0 +1,199 @@
+2026-03-09 Team Status Updates and Q-Track Automation Demo
+
+Creation Time: 2026/3/9
+
+
+📅About Meeting
+
+  • Date & Time: 2026-03-09 18:01 (Duration: 1753 seconds)
+  • Location: Virtual meeting / team call
+  • Attendee: Anand, Ansi, Sachin, Athar (absent), Anand (multiple mentions), Prithvi, Sindhuji, Sharmil, Nirmal (sick/absent), Ayapa, Sandesh, Rachna, Suman, Samir, IFI, Rajna, Rachna, others referenced
+
+
+📒Meeting Outline
+
+
+Q/A and Status Updates
+
+  • Weekly pivot & Excel write Team member reported completion of weekly pivot creation. Currently working on writing results into the Excel file (in progress). Production fix completed and scheduled deployment to Italy next year. Waiting for confirmation from the table owner; business requirement already sent. Team suggested waiting until this evening for a response and escalating if no reply (one week left).
+
+  • Q-TRIC UI site & data migration Changes deployed to ITO. Data migration work required adding a storage symbol but pending due to time constraints. Deployment planned for tomorrow. Raised a PR for dashboard creation and awaiting approval. Testing in progress.
+
+  • Human task driver / non-interpretable timer Continuing work on the human task driver (non-interpretable timer). Further updates to follow. Team requested clearer content added to updates.
+
+  • CSP model / max run date logic Discussion about implementing logic for CSP model tables: when table name is CSP model, code should identify model ID for each DQ rule, retrieve max run date for that model ID, and modify the WHERE clause accordingly before sending to onboard metric SQL. Team agreed this should be applied only for CSP model tables and to double-check consistency across existing CSP models (QTrack behavior indicates they derive max run date per model ID). Plan: in E3, detect CSP model table, extract model ID, compute max run date, construct WHERE clause per model ID, and forward to onboard metric processing.
+
+  • ICMV / MX storage use case & DAGs Work on MX storage use case SQL modifications completed. ICMV DL change DAG implementation mostly built; testing planned in E1 environment tomorrow. For USCS top 100 DL changes, DAG implementation is in progress. Concern raised about making code changes across multiple ICMB DAGs because of potential alert impact. Proposed interim approach: create a consolidated tag/report to send daily (EOD) for a few days to validate before removing individual emails and changing DAG behavior.
+
+  • Resource allocation and bandwidth Discussion about prioritization and resource allocation: one engineer (name referenced as possibly Anand or IFI) may be temporarily redirected to help Samir with RP checks and related work. If the resource helps Samir successfully, they can be pulled back to Quanto migration later. Need to evaluate Samir’s independent progress on Quantum migration to determine next steps.
+
+
+Self-service / Q-Track Automation Demo
+
+  • Self-service automation goal Prithvi demoed a Q-Track self-service automation prototype that generates SQLs automatically from entries in the DQ repository table. The envisioned flow: new requests create entries in the repository table → DAG reads entries daily → generates SQL file(s) for the corresponding table(s) and templates → places generated SQLs into a JCP bucket for review.
+
+  • Supported checks & templates Current implementation supports duplicate and stagnation (stagnant) checks. Duplicate check uses one template; stagnant checks use three templates. Existing requests (~1600) will map to these templates if applicable. New templates would require adjustments (not auto-supported yet).
+
+  • Template mapping logic The automation identifies the appropriate template using description, filter condition, and where clause; the check type in the request (e.g., stagnant, duplicate, null) helps routing. When rules map to templates, the system generates SQL per rule.
+
+  • SQL file generation & append behavior For a given table and frequency (daily/monthly), existing SQL files are identified and new rule SQL is appended to the same file (using appropriate union/unique constructs) so that one SQL file contains all rules for that schedule. If multiple templates are matched for the same table/frequency, the bot appends corresponding rule SQLs into the same main SQL file. This behavior was clarified and agreed upon.
+
+  • DAG and Git integration Current flow: the tool generates SQL files and places them in a folder or JCP bucket for review. Direct Git commits (automated PRs) are not yet implemented due to Git bot access and ADS ID constraints; R&D required to allow commit via bot. DAG conversion is in progress: code can be run from command prompt now and has been modified into a DAG format; impacts to existing DAGs must be considered when enabling automatic modifications.
+
+  • Demo details Prithvi demonstrated running the tool against CSV input representing rule entries, showed generation of SQL files for duplicate and stagnant checks, and how the tool picks existing SQL templates to append new SQL. The output SQL files were previewed and stored in a separate folder for review.
+
+
+Coordination & Next-steps discussion
+
+  • Escalation & blockers Blocker: awaiting response from table owner on business requirement; team to wait until tonight then consider escalation next week if no response.
+
+  • Testing & deployment Several items scheduled for environment testing (E1, E3). Data migration and DAG deployments planned in upcoming days. Suggested to validate consolidated reporting approach for DAG alerts for 2–3 days before broader code changes.
+
+  • Meeting logistics Meeting closed due to time conflict at ~18:30. Follow-up and demos planned for next call.
+
+
+📋Overview
+
+  • Weekly pivot creation completed; Excel writing in progress; production fix for Italy scheduled next year; awaiting table owner confirmation.
+  • Q-TRIC UI changes deployed to ITO; data migration storage symbol pending; deployment tomorrow; PR raised for dashboard creation and awaiting approval.
+  • Human task driver (non-interpretable timer) work ongoing; further updates pending.
+  • CSP model handling: agreed approach to extract model ID, compute max run date per model ID, and modify WHERE clause for CSP model tables only; double-check consistency across existing CSP models.
+  • MX storage SQL mods completed; ICMV DL DAG implementation in progress; tests planned on E1.
+  • Proposed interim consolidated DAG report/email to avoid losing alerts; test for a few days before removing per-DAG emails.
+  • Resource reallocation: temporary assignment to help Samir with RP checks; reassess after progress.
+  • Prithvi demoed Q-Track self-service automation: generates SQLs from DQ repo entries, appends new rules into existing SQL files, stores outputs in JCP/folder for review. Git auto-commit/PR not yet implemented.
+  • Need to R&D Git bot approach for automated commits/PRs; careful with DAG impacts when enabling automatic updates.
+
+
+🎯Todo List
+
+  • Anand / Request owner:
+    • Follow up with table owner for confirmation on business requirement; escalate if no response by end of day (today).
+  • Prithvi:
+    • Finalize DAG conversion for self-service SQL generator and ensure it runs in scheduled environment, target: prepare for review (by next meeting / tomorrow).
+    • Place generated SQL files into designated JCP bucket/folder for review (immediate).
+    • Share sample generated SQL files and mapping logic documentation with team (by next call).
+  • Team / E3 owner (Sindhuji / developers working on E3):
+    • Implement CSP model logic in E3: detect CSP model table, extract model ID per DQ rule, compute max run date per model ID, reframe WHERE clause, and pass to onboard metric SQL (actionable implementation; target: prototype in E3 for review).
+  • ICMV / DAG owner (Ayapa / assigned dev):
+    • Complete DAG implementation for DL change requests and test in E1 environment (target: testing tomorrow).
+    • Implement consolidated tag/report for ICMB DAG alerts and run for 2–3 days to validate before removing individual emails (deliver first consolidated report by EOD tomorrow).
+  • PR / Dashboard owner:
+    • Address PR comments and obtain approval for dashboard creation (owner: dashboard developer; target: ASAP).
+  • Git/R&D team:
+    • Investigate bot-based Git commit/PR flow (ADS ID constraints) and propose secure approach to allow automated commits from DAG/bot (deliver proposal within 1 week).
+  • Samir / Quantum migration lead:
+    • Provide progress update on Quantum migration and readiness to work independently; coordinate with IFI and supporting engineer (update by next sync).
+  • All:
+    • Review the self-service demo artifacts (CSV input, generated SQLs, mapping logic) and provide feedback in the channel before the next call.
+
+
+Transcription
+
+00:00:06 - 00:02:01 Unknown Speaker:
+
+I'm joining, uncle. On the performance thing, but I don't see anything else we can do right now. We have used to. Okay. Sorry about that. Yeah, I think let's discuss. Let's discuss on that one. How is your setup? Can I just get started with the DSU? And see, can you start with the updates please? So, I learned a lot of things in my post-med life. So, I was working on the weekly pivot creation. That task is done. And today I was working on writing the results into the Excel file. So that is in progress. And apart from that, we have a fixed production. So in the next year, the changes will be deployed to Italy. That's my update. Thank you. We are yet to receive confirmation from the person who owns the table.
+
+00:02:02 - 00:03:36 Unknown Speaker:
+
+We already gave him the business requirement and all, but we are yet to hear from them. Are they in that group? No, let me add you over there. Since we have a week left, should we be escalating? Has been blocked right from the last friend. Yeah, correct. So we have done the required thing from us. I tried, and even last Thursday we sent the requirement to you, but we haven't heard back anything from him. I just added, is in like a different time zone. Let's wait until today evening. If we do not get it, probably we can just see what we can do about it. Yeah. Thank you, Ansi. Thank you, Sachin. Athar? Athar is not there in the call. But let me demo it to Anand. Give me a second. We can complete. So.
+
+00:03:36 - 00:04:47 Unknown Speaker:
+
+I was working on this QTRIC UI site, so those changes I deployed on ITO, and after that I worked on this data migration one. I had to add the storage symbol so I didn't edit it, I didn't get time. Okay, changes and that is supposed to be deployed, uh, tomorrow, okay, and other than that, I have. I was working on this creating PR for, UH, dashboard creation, I raised the PR, waiting for the approval, and now I am testing this. Uh uh. Sachin If you remember that, uh, human task driver, right? Yes, yeah, so I am working on that part, so that's the non-interpreted timer. Yeah, non-interpretable. So I will give you the update after this. Okay, just add them content so we know what you are speaking about.
+
+00:04:47 - 00:05:54 Unknown Speaker:
+
+Okay, ah, yes, sir, I will add that one, so I didn't get time, so I will add that. I have connected with Anand today and regarding that like there is a issue like where I also connected with IPA and understand the Qtrak thing. How they are dealing with the CSP model Max and Date, so I am working on it. Yeah, I am trying to implement the same in the Quanto. Anand I have a question here, so Anand like, So, whenever we see a table name called CSP model. So, based on the slow speed model, if the wear class should get the max run date and should run accordingly, right? Like the wear class should be changed and accordingly, like suppose there is a model ID 1, 2, 3, 4, so respect to max date should be,
+
+00:05:54 - 00:06:39 Unknown Speaker:
+
+we have to get like, we need to write a intermediate code where it will extract the max run date for that model ID. And we need to process that. Correct, correct. But again, Not in all what I'd probably say, just have a check, I mean, definitely, right in the very class, if you're seeing Max and it will query, then definitely have it. But I mean, just double check that if all checks are utilizing the same way or not, that's all. Yeah, so yeah, so like, as of now, like, whatever the CSP models I see, right, like in that, uh, they are actually generating in the same format. Like, suppose, uh, so they are checking suppose. This is a model ID and a run date should be maxed it. This is the same filter condition I have seen for all this.
+
+00:06:39 - 00:07:23 Unknown Speaker:
+
+Yeah, it will be there, mostly, but I'm that's why I'm saying, just double check it if it's actually being used or not. In all of them, yeah, in Q Track. What they are trying to do is like they are actually based on the model ID. Suppose they know actually for which model ID they are running, right? So model ID. They are actually generating the max run date and they are getting the max date. So in our case, when we read the DQ artifacts, right? We have a where condition saying that where model ID in this 1, 2, 3, 4, and run max run date equal to max run date if there is such condition. When we read this where class, we need to modify that where class based on the model ID, we need to write like, change that where class accordingly after getting the max run date for that model ID.
+
+00:07:23 - 00:08:26 Unknown Speaker:
+
+And after that, we need to process the onboard matrix. So this is how I am planning. Yeah, suppose, only if it is a CSP model only. The table name is CSP model only we are doing this. So that condition I am trying to incorporate in our code. In E3 also, if it finds suppose the table name is CSP model, then it automatically try to get. What is the model ID for that record for that DQ rule? And based on that model ID, it will get the max run date and it will frame the where class and it will send to the onboard metric SQL code. Yeah, that's all from my side, Sindhuji, as of now. Thank you, Sharmil. Nirmal? He is sick out. Oh, yeah, okay. Ayapa? Yeah, hi, Sindhuji.
+
+00:08:34 - 00:09:31 Unknown Speaker:
+
+So I am working on this one ending with 34401. So today I just worked on the MX storage use case that SQL query modification is completed. And second thing I am working on the ICMV for the DL change. So that part DAG implementation currently work in progress. So most of the build part is completed. So probably tomorrow I will do the test in E1 environment. USCS top 100 DL change request. So that part, the DAG implementation, I'm working in progress. That's all about from my end. Sandesh. Okay, just one call out, Rachna here. So what I have suggested is that, you know, instead of making the code changes for all the ICMB DAG, right, because they might stop receiving the alert, okay?
+
+00:09:31 - 00:10:24 Unknown Speaker:
+
+So what I have asked him, first of all, Create a new tag which would consolidate the report and send it by EOD means on on every day with respect to the earlier report. And once we tested it out, if it works fine for two, three days, then later on we will start removing the you know, individual email communication. Right, right, such, and that works. Okay, that is one second, is that? Anand? I think now I have passed more of the bandwidth, right? He can work on the RP checks. Uh, there is a call set up by Rajna tomorrow, but, uh, we might not be able to, you know, utilize his bandwidth on point right now. Because that is something. I mean, just, uh, just allow him to at least, uh, help out Samir with that.
+
+00:10:24 - 00:11:30 Unknown Speaker:
+
+Yeah, yeah, that would be, that would be there. He would be working closely with Samir. Because, uh, you know, once he is done, then he can. We can pull him back to Quanto again, but just just for this print, yeah, calling it out, uh, that, uh, you would not be spending, uh, you know, much time on Quanto. And then I will be working on the use case that is assigned. Uh, let's call, uh. Take the update from P3 later. You need to do a demo, you can go ahead with, Uh, Suman, uh. We need to go to the on this one e3 and I need to connect with the Samir on the last Friday I have gone through the on the control for the analysis. Okay, so here also Samir I would like to know how much progress woman is able to make or.
+
+00:11:42 - 00:12:35 Unknown Speaker:
+
+So, If he is able to move ahead with the quantum migration, we can utilize. Otherwise. We need to think about what is day to day work complete day. You know, if he is not able to move, if he is not able to progress independently. So, Regarding the quantum section, like, what we are trying to do is like the part where we are doing to trying to migrate it right? Like IFI is actually hand hovering, that type of code, like, if anything required in his time, he IFI is actually hand hovering. Or like giving what he has to do as part of the code. Yeah, yeah, then fine. Then he can continue on that. In that case, it's okay. That's it, Sachin. That's it, Sachin. Yeah, thanks a lot. Prithvi, you can go ahead and do a demo for this self-serve one.
+
+00:12:38 - 00:13:38 Unknown Speaker:
+
+Sure, Sachin. Yeah, thank you. Let me share my screen. So Anand and Rachna, this is right now in his local, okay? And he's trying to, you know, migrate with the DAG and all. And hopefully that would be also done by end of this event. But let's at least review this process that we have built so far. Yeah, yeah, yeah, you can go ahead and share your screen with me. Please go ahead. Okay. Hello, yeah. I have been working on the automation for Q-Track self-service. So the plan is to automate generation of SQLs when there is a request into DQ repository table. So there is a self-service front end there working. So once they create an entry, record into DQ repository test table, from there the trigger would start.
+
+00:13:39 - 00:14:39 Unknown Speaker:
+
+I mean daily run it will go through and see what entries were made into that. Any new request has come into that it will pick those entries and it will create an SQL sort of it. So right now for demo purpose, right now for demo purpose, I created a CSV files here. Okay, so one is duplicate check and stagnation. These are the two implementations that we have implemented we have done in this print and last print. And for the these checks, we found duplicate. There is only one check type, one template. Sorry, so one. There is only one template, whereas for stagnant check, we found three templates. So any request, the existing requests, there are like 1600, in that whatever related to stagnant and duplicate. All would be falling under one of these templates.
+
+00:14:39 - 00:15:45 Unknown Speaker:
+
+Okay, if there is a new template that comes in and that needs rework right now, it supports only the existing templates. Okay, okay. One quick question Uh, so based on the input, how would it map which template to pick? We are considering the description, filter, condition and the wire clutch. ANAND Okay, okay, sure. I mean, you have the routing logic, right, based on which parameters. I'm asking more from a new requirement perspective. Existing, definitely you'll be able to map it based on these three templates. But if a new requirement comes in, I mean, definitely if something totally new comes in, that's a separate thing altogether. But if according to the three templates some requirement comes in, you have that routing logic, right? Yes. Even when we are going to enroll the new roles, right, that criteria and the where clause, right?
+
+00:15:45 - 00:16:41 Unknown Speaker:
+
+So, although the rules should be auto created from our side, but we will taking care of those field in this template. So, we use the description to find which template it is matching to and the check type we use this check type here is whether it is a stagnant check or a null value check. Duplicate check. So the check type will use it on the description to find which template it is matched to and generate an output SQL. So right now I am running it from the command prompt. So I even modified the code to make it as a DAG so that then it will go through the entries in the table and it will create a SQL sort of it. And these SQLs if you observe it, it will try to find if there is any table already for that.
+
+00:16:41 - 00:17:31 Unknown Speaker:
+
+Sorry, any SQL already for that table? And add it in the end of the file, so last, it will make it as a last entry in the file. And create an SQL file here. And this the plan is to. Once this SQL is generated, maybe we need to create a pull request. And once it is approved, then it will also get updated in the DAG as well. No, no, that is not the plan right now. It just would create a SQL file on it, and then it would place it into the JCP bucket for a review. Because Git, as I told, Git takes the ADS ID for a commit. So that is something we need to explore, which we haven't done till now, whether we can commit to the bot or not in the Git.
+
+00:17:33 - 00:18:25 Unknown Speaker:
+
+Because that requires that bot to provide the right access to that Git repository. And then only it would be able to commit the code directly to a branch. So that is something that R&D hasn't been done as of now. It would just create a SQL file. It would pick up the existing SQL file, which is there for that particular table, and then incorporate the added rule SQL to that existing query. Got it. But I think both files, that SQL file as well as the DAG file, would it require any... DAG also, DAG also. If you want to add free to the JSON, DAG is still working on. That's what he has mentioned. Yeah. But yeah, it is in progress. I'll do that as well. Yeah, correct. So that would, you know, modify the existing configuration that we did for that DAG.
+
+00:18:26 - 00:19:29 Unknown Speaker:
+
+And then once we view it, we can just place it into the environment. Okay. The problem is the existing DAG would get impacted. If we directly allow it to, you know, modify it. So, yeah. Go ahead, Prithvi, you can show us one entry and then just run it. Yeah, so I'm running it for standard check. This is the input. Can you show that CSV file once? Just show that CSV file once. What is the input parameter that you are taking in that CSV file? This is the input CSV that I copied. This is just like, you know, Basically the plan is to face these details from the SQL query or the big query. Now suppose it runs these four rules, go ahead Prithvi and run it. One question here Sachin. So right now there are these four rules, right?
+
+00:19:29 - 00:20:18 Unknown Speaker:
+
+So it will generate one SQL file for all of them because they are from the same table, right? Different templates of this stagnant data check, so that's that's where he was explaining. If it is a stagnant check, right? First of all, the bot is identifying how many, uh, rules is there for that particular table for stagnant check, right, right? If those falls under those three template, it would, you know, modify any one of them. Okay, suppose it falls under two different template, those two different templates. So it would modify two different template over there, and it would create two different files, not a single file. Got it, got it. Yep. Yeah. So do we need to do that? I mean, can we, using the template, we ultimately create the SQL, right?
+
+00:20:19 - 00:21:41 Unknown Speaker:
+
+So after creating the SQL, can't we append it to the same one main? That is what's happening. That is what's happening, Anand. The template is the existing query which is there in the production environment. It's just that we need to keep on refreshing this template whenever there is a new release. Got my point, right? Single file, right? Which has the existing rules plus the new ones appended to it. Yes, yes. I think you are not getting me. Let me save my screen. Now, suppose I have an AZ table. Okay. And it is existing one is a daily job. Okay. So for this daily job, I have one SQL file. One tag file right right and one is monthly job so again for this one i have one sql file and one tag now i receive couple of new rule id one two three which is for lazy.
+
+00:21:44 - 00:23:00 Unknown Speaker:
+
+For C 360 again, I received another rule So what is happening when this Tag would be running right? So this is even There are already a couple of files are there right? So first of all, It is identifying the easy one is identifying whether it's a Or it's a monthly job. Right now, suppose it is a monthly job. The month might be having three templates, a daily might be having three template, right? It might be having three template on the stagnant, stagnant type. So whichever template would be matched, that would be the existing sequence three templates within the same table. But the way we have it right now in the SQL scripts, all of these rules are coded in the single SQL file, right? For the daily ones. Irrespective of what template it's falling under.
+
+00:23:00 - 00:23:58 Unknown Speaker:
+
+No, no, no, no. It differs. It differs based on the schedule run. That's when I have started analyzing the framework, right? Resi table and it has daily DAG. So there will be only one file for the daily DAG, right? All the rules which have to be run daily will come under that only. No, if you see this one, CSP model, look these many SQL files are there. Yeah, CSP model score is a different case because that is based on the model IDs, right? The model IDs which are appended at the end of them. Single frequency Set a frequency, there will be only one file. Even, yeah, that is there, like, if you see this one risk first, right? So it would be having single SQL file. So what? My answer to your question is that?
+
+00:23:58 - 00:25:04 Unknown Speaker:
+
+It would pick up these existing SQL query, right, whatever it is, and then it would append the new query to this query and generate a SQL file. Yeah, but I think the way you're using template, word, right, such, and I think that is what is confusing us, so. Let me share my screen. You mean to say that based on template, right? You mean to say that different table might have different template, correct? No, no, no. Let me share my screen. There should be templates. I mean, across different tables. So Starlin and Chek, for example, might have one, two, three, three different templates, right? This is based on your parameters, like param one, param three, and param four, you pick this one, param one, two, three, this one, and then based on two, three, and something like this one, right?
+
+00:25:04 - 00:26:01 Unknown Speaker:
+
+This is your template, right? Based on how you want to write the query. Now what we're seeing is, see Rezi, Might be having a lot minute. I'm just specifically saying for daily, daily chips, right? There might be 10 different. Um, but one. One single query, but one SQL file, so that would, uh, that would suffice to one template, right? No, that is what I'm saying, right? So all your sequels are written in one file itself? Yeah, one SQL file. Yes, yes, correct, one single. Then what I'm saying is if I have three new rules, right? Let's just say 11, 12, and 13. And this is using template one. This is using template two. This is using template three, for example, right? What we're essentially saying is rule number 11 should take template number one and then append a new rule into the same SQL file.
+
+00:26:02 - 00:26:51 Unknown Speaker:
+
+Yeah, that's how it happens. Yeah, yeah. Yeah, that's how we are doing. Okay, yeah, yeah. That's just what we wanted to clarify. Again, like when you enter rule number 12. It should take up this template to write the SQL query, but write the SQL query inside this file itself. This is the correct understanding. Yes, yes, yeah, that's how we are doing it. I I can share it and show you that, yeah, correct, correct. Is this the same thing you're asking? Yeah, yeah, yeah, yeah, take it, take it, then we'll go here. Template is just, uh, you know, uniqueness between, uh, the query that we have defined for different tables, right? It is not specific to tables. Yeah, yeah. Correct, correct. Correct, correct. That is how it should be, yeah. Yeah. Okay. Shall I share?
+
+00:26:51 - 00:28:05 Unknown Speaker:
+
+You can continue, yeah. Yeah, you can continue. Okay. I may talk about it in the next couple of minutes. We have a conflict at 6.30. So, let's do one thing. Almost done, right? Yeah. This is the duplicate check. Out of five records that he has inserted, five different SQLs need to be updated because it will search for that table what SQL is present already for that daily or monthly basis. It will find that SQL and it appends in the end. So it will add union statement whether it is distinct or unique. So it will put that unique union statement and add that SQL here. Okay, and if you observe that SQL it's a duplicate check template, it is there is only one template and table name, everything it matches, and it puts it okay, okay, so this is duplicate check.
+
+00:28:05 - 00:29:00 Unknown Speaker:
+
+And similarly, first admin check. Also, it has totally five records are there, right? All file records, only one table is there. One SQL file is there, so that's why only one entry in there, one SQL it is. It has updated, so all would be here, and this is the file that you generated using that. Yes, yeah. So I'll take the copy of existing SQL from the monitoring tool and then append it to that and keep an separate folder and store it there. Let's, let's set up, I think probably tomorrow's call. We can leverage this to, I mean, go through, yeah, but I think this looks really exciting. Yeah, yeah, sure, sure, yeah, thank you. Okay, uh. And just before you drop off, okay, it's 6 30, so let's talk, maybe I'll helping you later. Thank you.

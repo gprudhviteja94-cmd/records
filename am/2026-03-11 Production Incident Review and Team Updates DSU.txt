@@ -1,0 +1,215 @@
+2026-03-11 Production Incident Review and Team Updates DSU
+
+Creation Time: 2026/3/11
+
+
+📅About Meeting
+
+  • Date & Time: 2026-03-11 18:00 (Duration: 1608 seconds)
+  • Location: [virtual meeting / conference call]
+  • Attendee: Anand, Jason (expected later), Sindhuja, Anasik, Suchin, Kundan, Samir, Nirmal, Pai, Sachin, Razy, Suman (absent), Prithvi, Bhagwan, Ayyappa, Raj, others (noted speakers)
+
+
+📒Meeting Outline
+
+
+Production incident & infra controls
+
+  • Production incident (GCP bucket / Composer impact) The team discussed a major production incident where a >29 GB file created from BigQuery was placed in the Composer/GCS bucket. This caused Composer to go down and impacted DAGs. The file was removed with Lumi/platform team support and Composer/DAGs were restored. Root cause: large file landing in composer bucket; process/controls missing to prevent large runtime dumps.
+  • Immediate mitigations and next steps Actions discussed: zip files before transfer to reduce size, change target location to avoid Composer buckets, control who can move files into E3/GCS (Ayyappa to be SPOC and must get approval before placing files in E3 buckets). Need to check storage quota limits with platform team (Raj) and consider segregating RISI initiative data into a separate bucket or project to avoid cross-product risk and billing issues.
+  • Cost & governance reminders Reminder that GCP storage is billable and teams must avoid dumping unnecessary data in E3; enforce approvals and follow SPOC flow.
+
+
+Team updates — individual status
+
+  • Anasik Completed: AFC build Excel export (multiple tabs) and email attachment functionality. In-progress: code refactoring per Suchin's review comments; refactor build code before finalizing PR.
+  • Suchin Working on data migration; DQIM data from 1–7 Mar migrated and available in workspace. Triggered today's DAGs (manually triggered part on AS). Non-interrupt timer backend work (self-serve) in progress; one phase of testing done, finalizing by EOD. Raised PR for dashboard migration; addressed review suggestions and updated PR. Production Airflow issue was raised and resolved; relevant tickets created. Clarification: After today's run, DQIM failures will resume flowing into portal in controlled manner; full scheduled flow expected from tomorrow.
+  • Kundan Data migration completed and validated in E3; dashboard migration PR targeted for Friday. Non-interrupt timer backend build for self-serve underway. Confirmed PR reviews mostly sorted.
+  • Samir Working on Quantum Player V3 changes (suggested by Anand): automatic detection of table name and auto-construction of weight/score for CSV model tables. Coding nearly complete; encountered BigQuery result iteration issue (need to parse iterable results to get max date). Will run tests across use cases and update on completion.
+  • Nirmal Assigned new task to update a status table for tags per diagram. Blocked waiting for hydration table details from SRE/platform; story blocked until hydration details available. Meanwhile assigned to manual tag monitoring capture and awaiting further assignments.
+  • Pai Worked on production issue (T-shirt dealer 1) — resolved; DAGs now running fine. Working on ICM new day creation for consolidated report — tested in dev with exception scenarios; PR raised and addressing review comments.
+  • Prithvi Implementing missing value check for Q-Track automation and consolidating single file creation for different types. Addressing feedback and implementing third validation. Automation will be deployed to environment and tested on E2 with new rules; further build and checks to continue in next sprint.
+  • Sachin Focused on production incident coordination, PR reviews, and audio metadata registration (in progress). Explained the large-file incident details and process limitations regarding generating large files from BigQuery for runtime SFTP transfer. Emphasized governance and asked to involve Jason on alternate data source to avoid future large-file transfers. Confirmed one PR got merged; two others pending Bhagwan's approval — asked Sindhuja to follow up.
+  • Razy / Contro work Samir provided update for Razy: created DT flow to extract platform project data and insert into loyalty history warehouse table.
+  • Suman Did not join; capacity to be checked by end of week. Potentially to work on Quantro/Contro depending on progress.
+  • General sprint & capacity Leave plan reviewed (calendar updated by Sindhuja). Most team members accounted for. Several members (Nirmal, Suman) have capacity to pick up work. RPA checks deferred to next sprint (build & validation). Q-Track UI deployment pending for A3; aim to close by Monday subject to approvals.
+
+
+Grooming / upcoming work & assignments
+
+  • Validation & new use cases New validation stories to be created for AFC/RPA/other upcoming use cases. Anand/Rachana initiated new use-case — NC (N C?) can pick up validation work. Business shared only 3 queries; further details pending. Sindhuja to create stories tomorrow morning; Anand to review. If additional urgent tasks arise, notify team.
+  • Self-serve integration Backend work continues (non-interrupt timer, DB connectivity). Aim to release initial self-serve with broad access and then refine access controls. Anand will finalize architecture with Raj on Monday.
+  • DQIM / Q-Track DQIM data migration completed for 1–7 Mar; normal scheduled flow expected from tomorrow (under monitoring initially). Q-Track A3 deployment targeted by Monday; if not approved, separate deployment story will be raised.
+  • PR reviews One PR merged; two PRs pending Bhagwan’s approval — Sindhuja to follow up.
+
+
+📋Overview
+
+  • Production incident caused by a >29 GB file landing in Composer/GCS bucket; Composer and DAGs were affected but now recovered.
+  • Immediate controls: zip files, change target locations, enforce SPOC approval (Ayyappa) before moving files to E3 buckets.
+  • Need to confirm GCP storage quotas with platform (Raj) and consider segregating RISI data into separate location/project.
+  • DQIM migration for 1–7 Mar completed and validated; scheduled runs will restore normal flow from tomorrow under monitoring.
+  • Multiple feature/bug tasks in progress: AFC Excel export done (Anasik); dashboard migration PR targeted for Friday (Kundan); Quantum Player V3 changes near completion (Samir); non-interrupt timer backend and self-serve integration in progress (Suchin/Kundan/Anand).
+  • PR status: one merged; two pending Bhagwan’s approval — Sindhuja to follow up.
+  • Sprint planning: capacity available for Nirmal and Suman; RPA checks moved to next sprint; grooming and new validation stories to be created by Sindhuja tomorrow.
+
+
+🎯Todo List
+
+  • Sindhuja:
+    
+    • Follow up with Bhagwan to get approvals on the two pending PRs (ASAP, today)
+    • Create user stories for new validation/use cases and AFC validation; coordinate review with Anand (by tomorrow morning)
+    • Update sprint/grooming items and ensure calendar/leave plan is reflected (ongoing)
+
+  • Ayyappa:
+    
+    • Act as SPOC for moving files into E3 GCS buckets; obtain approval from Sachin/Anand before placing files into E3 (immediate/ongoing)
+
+  • Sachin:
+    
+    • Coordinate with Jason to discuss alternate data source/process (avoid moving large E3 files); ask Jason about taking compressed/filtered data instead of full E3 dataset (ASAP, depending on Jason availability)
+    • Work with Raj/platform team to confirm storage quota and account-level limits; evaluate segregating RISI data into separate bucket/project (by next meeting)
+
+  • Platform / Raj:
+    
+    • Provide exact GCP storage/quota limits for the project and advise on options for segregating RISI data (by next working day)
+
+  • Suchin / Kundan:
+    
+    • Finalize non-interrupt timer backend testing and conclude testing by EOD (Suchin) and finalize deployment plan for self-serve backend (by end of sprint)
+    • Complete dashboard migration PR and target deployment by Friday (Kundan)
+
+  • Anasik:
+    
+    • Complete code refactoring per Suchin’s review comments and update PR (ASAP)
+
+  • Samir:
+    
+    • Fix BigQuery result iteration issue for Quantum Player V3, run tests across all use cases, and provide completion update (within a few hours / today)
+
+  • Pai:
+    
+    • Address PR review comments on ICM consolidated report; finalize and merge PR (in progress)
+
+  • Prithvi:
+    
+    • Deploy automation to E2, test with new rules, and continue remaining checks/build in next sprint (deployment/testing by next week)
+
+  • Nirmal:
+    
+    • Continue status table updates for tags; follow up with SRE for hydration table details (blocked — follow up tomorrow)
+    • Capture manual tag monitoring details as assigned (ongoing)
+
+  • Sindhuja / Anand:
+    
+    • Review and assign new validation tasks (AFC/RPA/other use cases) and reassign to available resources (Nirmal/Suman) as required (by tomorrow)
+
+  • All developers:
+    
+    • Do not place large/runtime-generated files into Composer bucket or E3 GCS without SPOC approval; follow new gating process (immediate/ongoing)
+
+Notes: Jason expected to join later half of the call (~18:30) — Sachin/Sindhuja to check his availability and address items needing his input. Suman absent — check Suman’s status/capacity by end of week.
+
+
+Transcription
+
+00:00:44 - 00:01:54 Unknown Speaker:
+
+Hey hi everyone hi everyone hi everyone um jason will be joining later on he said uh maybe later half of the call okay but i think we need. There was a production issue, right, which I was, you know, expecting quite earlier. Yeah, I did ask him if I have to move the call because, but I didn't get an answer. You know, his presence is required because few of the stuff that we would like to discuss, right, that gets pending and then that's gorgeous issues with, you know, deliberating timelines and then. The issues that we have faced, right? I was discussing this with Anand couple of days back. What is the significance of sending these many data? And that's suddenly, you know, completely blocked our use case itself. Yeah, should I move this call to later on?
+
+00:01:54 - 00:03:25 Unknown Speaker:
+
+But I'm not sure if he joined that also, so that that's why I just kept this call. We need to check with him of joining the call because we need him in that call. He did say later half of the call. So I'm thinking he might join by 6, 30 or something. Okay, then let's continue. In that case, okay, we'll just utilize the first five minutes to quickly go with the team's updates, and then, uh, one, just quick update again. Anand, the author would be out till this Friday because it was expected yesterday. But, you know, it didn't. Went to a normal, normal procedure. They might be going with C-section today, so you, you'd be joining, uh, coming Monday and Sindhuji. Just one note that Bhagwan approved one of the PR, but not the rest of the two PR.
+
+00:03:25 - 00:04:21 Unknown Speaker:
+
+So if you can just do a follow up again today with him. We merged the one of the PR but couple of PRs are still pending. Sindhuji you are speaking. I did ask him Sachin like did he give any review comments or something because I sent all the PRs from him yesterday. So I don't think any review comment is there. Let me still cross check till the time you are taking an update from the rest of the folks. Anasik, can you start with your updates please? Yeah, sure. So I was working on this AFC build and last year I was working on writing to the Excel file with multiple tabs and sending it to the email as an attachment. So that part is done. So I am left with code refactoring.
+
+00:04:22 - 00:05:37 Unknown Speaker:
+
+Suchin had given some review comments, so that part is left for me. So some code refactoring has to be done on the build part. So that's from my side. Yeah, yeah, thank you. See, I was just checking your ads. Kundan? Sindhuji, just one quick question before you go to Kundan. The call has been set up at 10 p.m. Is his calendar not free before that? Yeah, his calendar was not free before 10, so... Okay. And see, then in that case, if you skip the call, I'll take care. It might be late for you, so... So I was working on this data migration part so that is done and on E3 I can see the data I already validated it. Along with that I am going to trigger the DAG for today one.
+
+00:05:37 - 00:06:30 Unknown Speaker:
+
+I already triggered it so and on the AS side we have to manually trigger that one that is another part. Next thing is this non-interpret timer one. I am working on that part. Yesterday we faced some issue and that we fixed it. And one phase of testing I did it but another one I am doing with this one. So maybe by EOD we will come to some conclusion on that part also. Along with that there was one issue on the air flow on the production side. So I followed up on that one and we raised the ticket, followed up and then that issue is resolved. Have created few peers and that is that, and I created a PR for this, uh, uh, dashboard one. So that, uh. Some changes they recommended that we adopted and again, you know, updated that peer.
+
+00:06:30 - 00:07:25 Unknown Speaker:
+
+That's the update, uh, from my set. So just, uh, you know, just to add on a note, just to have more clarity. Data migration is the Uh, DQIm on in the data from 1st of March till 7th of March that has been migrated. And now it is available in a workspace. Next, he was mentioning about some build changes that he has done. That was for dashboard migration that we are working and targeting to deploy by Friday. Max So that PR reviews and all that has been sorted out. And when he mentioned about non-interrupted timer, so this was the backend build that we are doing for the self server. Okay, got it. One more question, right, Sachin. So, is that also live now? So, like, whatever DQIM rules, sorry, failures come up, are they getting automatically populated to the DQIM portal also?
+
+00:07:26 - 00:08:18 Unknown Speaker:
+
+That is resumed, but on a controlled manner. The reason being, we have to migrate those data, right? So, as we have now migrated the data, post today's run, it would be on normal flow tomorrow onwards. Tomorrow onwards, so it will go live is what you are saying, right? Yeah, yeah means not on a monitoring situation right now, we are doing it in a monitoring situation like we have that control with us. But yeah, no, what I'm saying is the normal flow, like everybody, yeah, that can happen. Yes, yes, yes, okay, perfect. Yeah. It was just blocked because, you know, your SMTP files are getting replaced, right? So if we don't have those control, then there would be, uh, data overlap or mismatch. So yeah, once, once he, uh, completed for today's means yesterday, data tomorrow onwards.
+
+00:08:18 - 00:09:12 Unknown Speaker:
+
+It would be a scheduled job both at Lumi and is correct, correct? Yeah, yeah, uh, we can move to Samir. Thank you, hey, hi. So currently I'm working on Quantum Player Three changes, which is, uh, suggested by Anand. So the table like automatic detection of table name is done, and as well as like, we are trying to automatically form a weight loss force. See for modern ideas, like for the table called CSV model like a table. So if there is a CSV model table, then as per the modality, the weight loss should be constructed. So here, like, the coding part was almost done, like in the validation, I have observed that there is a like we have. We are expecting as a max date after running the query, but like, like, we are getting a big query.
+
+00:09:12 - 00:10:16 Unknown Speaker:
+
+Iteratable as a result, like, we need to iterate and we need to get that result. So I'm just fixing it and after that, once I run, like, maybe in, uh, in an hour, like, uh. Once I run on all the use cases, whatever the use cases we upload, then I will update that. Uh, the completion to the session once done. Okay, yeah, yeah, that's it from my side signature. Thank you, Sameer. Nirmal. So I was assigned me a new task. So I was working on that. So like for every diagram, I need to update a table for the status of those tags. So I'm working on that. So Anind, over here, right, like we still not get the details for the hydration table details, which I'm still, you know, looking for.
+
+00:10:16 - 00:11:06 Unknown Speaker:
+
+Some SRE team, so this story would be blocked. Uh, you know, tomorrow onwards. And meanwhile, I have asked, you know, Kundan, to give him some other work which was related to the tag. Monitoring, which we were doing right now. Manually, right? The that's which are running on a daily basis. We have to keep in manual eye whether they ran successfully or not, right? So you just start awaiting that process to capture those details, uh, over the tables. Okay, okay, yeah. Hi, Pai, you can go ahead. Yeah, hi, hi, sir. Yeah, so from my side, today I worked on the production issue, which is facing the problem issue, right, with T-Shirt Dealer 1. So that got resolved. Now all the DAGs are running fine in production.
+
+00:11:07 - 00:12:08 Unknown Speaker:
+
+Apart from that one I working on the ICM, we are new day creation for the consolidated report one, so that one tested in the even environment with the exception scenario. Oh, I have raised the pier. So I got some few comments from the session, so that part I am resolving, right? That is in progress, that's all. But for me, thank you. I have a pretty yeah, based on the feedback, one comment that was provided. I'm working on that and also working on missing value check as well with respect to queue track, sorry, queue track automation, so I'm working on the third validation that is missing value check. So the changes on the specifying is the one that you have pointed out yesterday, Uh, trying to implement that one to create a single file for different type.
+
+00:12:08 - 00:13:06 Unknown Speaker:
+
+Yeah, yeah, sounds good. Yeah, thank you. So, mainly, I was, you know, today, I was involved in those production issues, code reviews, uh, and you know, this radio audio metadata registration. So that is still not being completed. I am still working on that. And few of the ask that Guna asked me over the call. So I was looking into that, you know, creating the incident and all for that to get those details. Sir, one quick question I had is you were mentioning on the email, right? You were sending that huge file to Resi and that's why... Yeah, so look, what happened, there was a bucket in the GCB, right? This is something I was mentioning to you, right? What he would do? .. those use record, right? So when we initially we just tested with a blank file.
+
+00:13:06 - 00:14:00 Unknown Speaker:
+
+And then, you know when yesterday, uh, we thought of just, you know, uh. Sending that last data to the SFT. This is in E3, this is in E3, because that much data is there in E3 only, it's not there in the lower. Yeah, you know, you won't be able to just run a query, create a file and send it to the SFTP. That is something not possible. Runtime basis. So we have to run the query in the BigQuery console. Create a file out of that, and then you can't send it directly to SFTP. You have to store in somewhere. Okay, so what is happening? When we created that file, that was more than 29 GB. Okay, and ideally, that should haven't been sent to that composer bucket, it was placed to the composer bucket, and your composer went down.
+
+00:14:00 - 00:14:51 Unknown Speaker:
+
+It's it's okay. And that's the reason all the DAx get impacted, so we have raised the incident, work with the Lumi team to delete that file. From there. The composure now gets up and the DAx are running. A couple of things I have asked. I have got to analyze number one to zip the file. Uh, let's see what would be the size. Once we zip the file, uh, change the location and then. If I have a chance to connect with Jason today, I would ask him to, you know, get the data instead of this used data. Yeah. Right? Because this is going to create a problem in future. This is, and, you know, all of you, whoever are working, right, I'm raising this concern with all individuals, the developers, from very beginning.
+
+00:14:52 - 00:15:43 Unknown Speaker:
+
+GCP storage is not free of cost. Okay? So even if you are consuming one MB or one KB of data which is being placed in the GCP bucket, uh, that would be first of all chargeable. And then we can't go ahead. Like, you know, you have a space so you can save one TB of data. That is not feasible because based on the billing and all. We have been confined to a certain limit of memory size in the GCP. So, please make sure not to dump any unnecessary file in the A3 environment and. Ayyappa would be the single point of contact. He would get a tribute from me before moving any file to the E3 G6 bucket. So there is an incident which I was suspecting 6 months or 7 months back. And unfortunately that happened.
+
+00:15:44 - 00:16:41 Unknown Speaker:
+
+Because we were not thought of like you know even 29 GB would have those impact. Ideally there should be 200 GB Ananda I am guessing but. We still need to check with the platform team what is the exact memory size that they have provided us. And even, you know, if there would be a different central car ID or something, I need to talk to Raj if we need to segregate this RISI initiative completely to a different location and all. Because this is now under a different... product leader, right? So we can check that part also. Sure, yeah, that was the issue. ANAnD So right now it has been resolved. And, uh, you know, we'll we'll analyze it. Uh, deeper, uh. How can we either reduce the file size, or, if it is required?
+
+00:16:41 - 00:17:52 Unknown Speaker:
+
+Um, anyhow, then we have to check a alternate route for this. Just just, uh, for your info. There was no review comment on those couple of peers which I pinged you, um, from, uh, bug one. Or sort of. Check with him in that case, such, and I'm not sure why he didn't approve. Okay, yeah, I think that's it. Suman did not join the call. So he was working on this. Razy, I know, like on one of the DT flow I have asked him to work on and. Samir, you can update what piece of work he is doing on Contro. So, Contro, yesterday he worked on this history one, Sachin, where loyalty history one, like he created a DT flow where it will extract the data from the platform use case, not platform, project use case, and to insert into the history data warehouse table.
+
+00:18:08 - 00:19:33 Unknown Speaker:
+
+That was the update from the teams on the use case that we are working even proceed with sprint planning. Um, I sent out, um, the leave plan. Do you guys have any other plans other than the ones I've sent out? No, I do, I don't have anything. Anyone else. Did you check that calendar, which was sent by Sindhuja? Like Samir, is having seven story pointer. Apart from them, rest of the folks are having H3 pointer. Yeah, and Athar also has like three leaves, so I've accounted that. Yeah. Okay, so we'll... Actually, on Ugadi, it's optional like for me, so that's why I have picked it for Ramzan and I'm working for Ugadi. Okay, no issues. As long as the calendar is updated, I think we should be good. Yeah. Okay, now moving on is the magnetic holiday, right?
+
+00:19:33 - 00:20:48 Unknown Speaker:
+
+No, everything is optional. Okay, moving on to grooming now. Uh, should I go? Initiated by his Uh, Anand and Rachana? Yeah, we can go, uh, initiative. Go for the deployment. Now we would be able to and see how much work is left. Apart from the review comment that I have provided to you, so apart from the review comment, uh, the validation, uh, the access is required, right? That access, so you can just carry over that validation story. Uh, and there is a new use case coming on which Rachna was mentioning, Uh, so that one NC can pick it up. Only the validations he can take it, the AFC one itself or the RPA one, no RPA one. We had a discussion yesterday. Anand So that would, anyhow, I about be working on that.
+
+00:20:48 - 00:21:44 Unknown Speaker:
+
+Okay, we already have a user story for this pin, so you can at least start the analyzing and then start implementing. Maybe from Friday, or maybe from, you know, Monday on that, and then we can carry over that build to the next point. Because all the queries and all other details was not shared by the business partner, okay, only couple. About three queries have been shared. And then we need to check. Apart from RPI, I think Rachna mentioned there are another use case. Yeah. Or if AFC itself okay, then then we can, uh, you know, assign that to N. C. Again. Sure, okay. So ANSI would be working on this pay now. Build validation, create the story. Let's just have a review with Anand, and then maybe I'll, I'll create it, and then he can review it tomorrow.
+
+00:21:44 - 00:22:33 Unknown Speaker:
+
+Uh, on this Q track UI right on in the It just. The deployment is pending for A3, so we will try our best to close it by Monday if there is back. And then, if they approve it otherwise, only a deployment story would be required for the next one for decline. Yeah, okay. And in case you have anything else, just do let me know if we need to incorporate into that DQIM. I think as of now, nothing. So if it comes up by Monday or Tuesday, I'll let you know. Okay, okay. And then on this self-serve, we have, you know, started integrating. There are some challenges that we are facing, like, you know, connecting with the database and this. Non-interpreted timer and all. Uh, from the back end side, we are working on this one.
+
+00:22:33 - 00:23:25 Unknown Speaker:
+
+Uh, and again, like, Uh, as I given you a timeline by made of Apple, this would surely go, you know, live. So we would carry on the back end build as well as the front end, both both. You will see the integration. It would just, uh, you know, I need to work on the access. Maybe at the initial release, everybody can access, like, you know, even like, um, approving it or something like that, right? And then, as this progresses, we will refine that access part. Also because I'm still working on that architectural level. So, uh, as I was busy with lots of stuff, right? I did not get a time to finalize that one. I have to review it with Raj on upcoming Monday, so I'll I'll try to close that also.
+
+00:23:25 - 00:24:23 Unknown Speaker:
+
+Yeah, okay, okay, control, go as it is. Uh, like, you know, rule, uh, migration, uh, automation. Job is not required. So I'll see. Like, if you have some tasks, then we can assign it to Nirmal, otherwise. Uh, uh, okay, right now, uh we, uh, nirmal is, uh, we do have bandwidth with Nimble, okay. Because till the time I am analyzing that hydration part, there is no build part left for Nirmal. Yeah. So we have bandwidth with Nirmal. RPA checks would move to the next sprint with build and validation. Next world, Sindhuja. There will be one more use case, Sachin. I think with UMTL, there might be some requirements that can come in. So we can leverage Nirmal for that if required. Okay, then if that gets into the bucket then we can assign it to Nimble.
+
+00:24:24 - 00:25:24 Unknown Speaker:
+
+Now for Prithvi this automation would go ahead but we would deploy to the environment and we'll see how it works with at least on E2 with new rules. The testing and then he can carry over the rest of the build that he is doing for the other checks type. From my side, SME support, the insurance and other support that I am providing that would carry on. So we have Nirmal and Suman. Those are having capacity. I would check the progress of Suman maybe by end of this week, how he is doing on Cointreau. If he is doing well, then we will carry on. Or Quantro with Suman. Otherwise, we'll pull IAPA to control. And maybe the new use case that you are asking, right? We can assign it to someone. Sure, sure, okay, okay.
+
+00:25:24 - 00:26:36 Unknown Speaker:
+
+So maybe by tomorrow morning, Uh, Sindhuja, I'll create these stories and just check with, Uh, Jason. In case he is having some work, then please place it earlier before we finalize this. Sure, Sachin, I will ask him to add, or I can. We still have tomorrow's call also, right? We can utilize that also for grow media. Yeah, yeah, and Ananda also like, you know, just do let us know. Uh, in case you have any other task which is, uh, uh, you know, required to be taken up on an urgent basis, let you know. Yep, yeah, okay, uh. Anyone having any other questions? Well, no, such it. Can you be on the call? Yeah, I'll be there and I need Apple also. You guys can stay back or let's jump into my bridge, like, let me share my bridge to you, both of you can jump over there, okay?

@@ -1,0 +1,205 @@
+2026-02-17 Repository Sensitive Data Incident and Process Controls Stand up
+
+Creation Time: 2026/2/17
+
+
+📅About Meeting
+
+  • Date & Time: 2026-02-17 11:34 (Duration: 1324 seconds)
+  • Location: [not specified]
+  • Attendee: Sachin, Raj, Prithvi, Nirmal, Suman, Sindhuja, Samir, Ayapa, Anand, Rachna, Prithvi, Sachin (multiple mentions), plus unnamed team members (approx. dev team and product partners)
+
+
+📒Meeting Outline
+
+
+Repository sensitive-data incident & process controls
+
+  • Incident description and origin The team discussed a CSV file containing credit card numbers and other sensitive data that had been committed to the repository. The file had been deleted previously (around five months ago) but resurfaced in the develop branch. Participants reviewed history and commits to identify the origin; one hypothesis was that deletion occurred in a fork and not in the main branch. A renamed branch that was not deleted was identified as part of the cause. Ayapa was mentioned as possibly involved in changes that led to the file reappearing.
+
+  • Risk and organizational impact Tools (scanners) flagged the repository with many credit cards and passwords linked to the environment; the report shows 42 credit cards and passwords associated with the team. Leadership visibility and perception were a concern — the incidence is considered high risk because the organization is financial and handles PII/PCI-sensitive data. Team leads expressed that repeated occurrences create a poor impression and could be escalated by leadership.
+
+  • Expectations & rules Strong instructions were reiterated: do not commit PII or any sensitive information (credit cards, passwords, HD fields) to any repository branch (dev/feature/main). Developers must be cautious about local activities and commits. Team members were reminded of previous guidance (e.g., not using PII with LLMs). It was noted some members are new and may not fully understand the risks.
+
+  • Immediate mitigation & scan behavior The scanning tool’s refresh/scan results were questioned — post-deletion scans did not appear to reflect removal immediately. It was mentioned that secrets were still visible and branch renaming/retention complicated cleanup. A plan to investigate commit-by-commit was discussed to find the originating commit. Team ownership and buy-in for cleanup were highlighted; one suggestion was asking developers to clean up their own forks/branches.
+
+  • Process change: mandatory review A lead (appeared to be Sachin) decided that no code commits to the developer branch will be allowed without their review going forward. They will enforce reviews even if it delays merges up to two days. This is to prevent future PII/secret commits into the dev branch.
+
+
+Quantro build, priorities and resource allocation
+
+  • Current build status Quantro-related changes: one developer reported approximately 70% complete (30% remaining). That remaining portion should be wrapped up immediately (even if taking extra time), per instruction.
+
+  • Priority work & migration of use cases The third priority (P3) is to migrate existing threshold-type use cases (prefix: threshold checks). There are ~1200 records across these use cases; migration has not started. The team emphasized that one completed use case is needed before giving estimates to product partners.
+
+  • Assignment and support From tomorrow, the developer who completes the remaining 30% should pick up threshold use-case migration. Suman or another person may assist. Nirmal is on automation (P3) so resource constraints exist; the lead will check availability (possibly Apple) to support the work. Code reviews pending for Nirmal will be checked and updated.
+
+  • Progress checks Prithvi confirmed progress and no blocker. Team members were asked to provide end-of-day updates before logging off for the next couple of days for oversight and to share status with leadership.
+
+
+Data access, environment guidance, and UI feature changes
+
+  • Data access policy & requests For data queries the team should request only Data Reader access (not HD) on individual IDs for environments E1 and E2 (avoid E3). PII fields will be encrypted for Data Reader roles; if additional validation is needed, product partners can run queries. The team should not request HD/sensitive access.
+
+  • UI: distribution list, use case registration and workflow Current UI includes distribution list, use case list and “Register your use case.” Discussion covered replacing free-text “register your use case” with dropdowns:
+    
+    • Proposed behavior: distribution list dropdown → auto-populate use case dropdown based on selection; then user submits.
+    • If a user’s distribution list/use case is not available, a non-mandatory text box for “register your use case” can be provided (with justification/notes). On submission, if text box has value, backend should call API to register the use case; if it's empty and other values present, initiate the watcher.
+    • Backend complexity concern: auto-registering entries into use case table without an approval workflow may lead to issues (no approval flag exists currently) and makes deletion/cleanup harder. The lead will consult Anand and Rachna before implementing auto-registration.
+    • Interim approach: park the auto-registration change, add a justification/notes field for approval/rejection workflow, and share use case table/column details with the UI owner to proceed on safe changes.
+
+  • Next steps for UI implementation The UI should:
+    
+    • Remove the redundant “register your distribution list” field.
+    • Make use case selection auto-populated from distribution list where applicable.
+    • Provide an optional text box for ad-hoc use case registration only when necessary (non-mandatory).
+    • Backend and product team alignment required before enabling auto-registration.
+
+
+📋Overview
+
+  • The repository contained a CSV with credit card numbers that had resurfaced despite prior deletion; the root cause may include branch renaming/fork differences and unremoved branches.
+  • Scanning tools flagged multiple PII/credentials; scans may not refresh immediately after deletions.
+  • Team leads reiterated strict prohibition on committing PII/PCI/sensitive data and requested developer buy-in for cleanup.
+  • Enforced process change: no commits to developer branch without Sachin’s review (may delay merges up to two days).
+  • Quantro build: 70% complete; remaining 30% must be finished immediately, then team to begin migrating threshold-type use cases (~1200 records).
+  • Resource planning: Nirmal on automation, possible help from Suman or Apple; code reviews to be completed for pending items.
+  • Data access: request Data Reader role for E1/E2 only; do not request HD or E3 access.
+  • UI changes: distribution list-driven use case dropdown preferred; optional text box for new use-case registration is feasible but backend/product approval workflow required before auto-registering into the use-case table.
+
+
+🎯Todo List
+
+  • Sachin:
+    
+    • Enforce review gate: Prevent any commits to developer branch without Sachin’s review (effective immediately). No deadline specified — ongoing.
+    • Complete investigation of repository history and identify originating commit(s) for the sensitive CSV and leftover branches (including renamed branch). Deliverable: list of offending commits/branches and recommended cleanup steps. Target: ASAP (investigation to start immediately).
+
+  • Ayapa:
+    
+    • Be online/available to assist Sachin in sorting the branch/commit issue that may involve their changes. Time: ASAP.
+
+  • Responsible developer (owner of Quantro changes):
+    
+    • Wrap up the remaining ~30% of Quantro build today (may require extra time). Deliverable: completed build and status update. Deadline: today (end of day).
+
+  • Developer(s) assigned to threshold use-case migration (to be confirmed: Suman / Apple / assigned owner):
+    
+    • Start migrating threshold-type use cases after Quantro wrap-up. Deliverable: migration plan and progress updates; initial estimate after completing one use case. Start: tomorrow.
+
+  • Nirmal:
+    
+    • Resolve pending code review items; notify when review completed. Time: ASAP.
+
+  • Prithvi:
+    
+    • Share end-of-day updates with Sachin before logging off for the next few days. Time: daily until notified.
+
+  • Sindhuja / Product liaison:
+    
+    • Coordinate weekly or twice-weekly status share with leadership (e.g., every Friday) as requested by Sachin. Deliverable: regular status summaries. Start: next Friday.
+
+  • Any developer requiring data access:
+    
+    • Raise Data Reader access requests for E1 (and E2 if needed) on individual IDs only (do not request HD or E3). Deliverable: Data Reader access ticket. Time: as needed before testing.
+
+  • UI developer / frontend owner:
+    
+    • Implement UI changes: remove redundant “register distribution list” field; implement distribution-list dropdown → auto-populated use-case dropdown; add optional text box for ad-hoc use case (non-mandatory) and justification/notes field. Deliverable: updated UI mock/PR. Park auto-registration backend change until product/backend approval. Time: prepare changes and share with Sachin for review; target: next UI iteration.
+
+  • Sachin to consult Anand and Rachna:
+    
+    • Discuss backend implications of allowing ad-hoc use-case registration and the need for approval flags / workflow in the use case table. Deliverable: decision and guidance for backend/UI. Time: today.
+
+  • Backend owner:
+    
+    • Share use case table schema and column details with UI owner (so UI can populate fields correctly). Deliverable: table/column list and any constraints. Time: ASAP after Sachin/Anand discussion.
+
+  • Team (general):
+    
+    • Each developer to check their forks/branches and remove any sensitive files; ensure no PII/credentials exist in commits. Deliverable: cleaned forks/branches and confirmation in the channel. Time: ASAP.
+
+Please let me know if you want this exported to a tracker (Jira/Trello) with owners and deadlines added, or if you want a shorter one-page version for leadership distribution.
+
+
+Transcription
+
+00:00:00 - 00:01:04 Unknown Speaker:
+
+So let me know, how can we commit a CSV file having the credit card numbers? Yes, so I saw this. So, uh, if I remember last time, uh, this file was removed, right? Um, I remember this file. Uh, it was flat, and uh, yeah, but how it could? I just made the commit okay, uh, it was five months back, but somehow this file was there. I just, uh, deleted it. I'll show you the commit also. So, yeah, I checked already the history, so it was in September 2025, something, so I just deleted this file. Okay, so, uh, if it was, uh, deleted last time, then I'm not sure like, how again it got? You guys are not maintaining the repo in that case properly. What is happening? We might have deleted from your fork, right?
+
+00:01:04 - 00:02:03 Unknown Speaker:
+
+But it was still there in that develop branch. And again, I can route it like from where this file came. But again, I need to check all these commits. Uh, which is already present over here, right? I have to go one by one commit to identify, uh, from where that file came. And you know, look, just take an example, somebody can, you know, uh, send your, uh, credit card number, the CBB, everything. We are doing the same kind of stuff over here. I I already, uh, you know, mentioned. It's not only for you, even for all the folks who are in the call, right? Uh, we are working for a financial organization. And there are n number of tools that they have applied over here, which would identify what piece of activity we are doing.
+
+00:02:03 - 00:02:58 Unknown Speaker:
+
+And and this generated a report. And again, you know, uh, again, uh. Our name is on top with 42, uh, you know, credit cards and passwords over there in the repo. So so this is not good, man means, you know, uh, I don't know how to, you know, make a call on this. But this is not creating a good impression to the leadership. And even I don't need to pretend to, you know, provide any information they can go to. You know, if he is pulling up that report, he can directly go. And you know, check who has committed this one, you can directly check who is doing it. So please be very cautious going forward. Okay.
+
+00:02:59 - 00:04:13 Unknown Speaker:
+
+First of all, you should not be committing such files, which is having PII records, any sensitive information, although it is a developer branch or a feature branch, we should not be containing any, you know, sensitive information over there in that GitHub, first of all, that leaks the details over there, right? So even if you look, there is a, you know, in this one, right? Risk is not there, but even this has been highlighted, so again, we need to check what is the problem over here? And I think the scan has been done, but still it is not getting refreshed. Who has joined again? There was a you know report that has been generated, right? And we are again on, you know, on a not on the right track.
+
+00:04:13 - 00:05:12 Unknown Speaker:
+
+I would say, right again, these many credit cards and password have been linked to the environment. Quite high than the GCS team, right? Even though the number of team members is less. Yeah, that that's what, uh, you know, I was asking, like, Uh, we all are, you know, uh, mature enough to understand what? We are a piece of activity doing in our local system, or what piece of code we are committing to the environment, right? And, you know, it would be very difficult for me to, you know, identify each individual going to their systems and all right, and that's the reason they have placed these tools. So you guys need to be very careful when you are, you know, making any piece of activity over the environment. You have repeated this n number of time.
+
+00:05:12 - 00:06:43 Unknown Speaker:
+
+Don't try to access any PI data, don't commit any credit cards or anything, right? So that's going to be very, very, you know, problematic going forward. And even post my commit also, right? I don't see there is a scan is happening, right? So you have to wait till this gets sorted out. Know, it's still there, man, such as I'm entirely not sure. But then there is something in the developer system, right, via which they themselves can identify, um, they themselves can identify, right? In his team meeting, right? He will ask the folks to check those things and keep it clean. Something I vaguely remember this like this used to happen, like two, three months ago. Can we ask the developers to do this cleanup by themselves so that this does not come in?
+
+00:06:43 - 00:07:34 Unknown Speaker:
+
+Like, it's not good that Raj has reached out twice in the same week, right, for the same same data, exactly. And and you know, it's not. I can understand. Like Prithvi and Nirmal are new, right? But rest of the folks they are working from last one year, right? And even in the system from quite a long back. And and I was repeating it, right, even when Prithvi was trying to, you know, utilize the data in the LLM. I asked him firmly, right? You should not be using those, right? And I don't know, means what other instruction I need to provide. Because these are, you know, uh, sensitive data that we can identify by our own right. It's something not, you know, business folks who is not having any technical skills.
+
+00:07:34 - 00:08:45 Unknown Speaker:
+
+I can understand they might not understand the criticality of leaking these details to the environment, right? Yeah, I think, um, we can ask them. Team member Sachin I think, uh, as wiring will not change anything. Like if we don't get a buy-in from them, right? That they've understood what this is about exactly. And and you know, we are just blindly doing a commit. And going forward, I'll not allow any things to be committed to the developer branch without my review. Going forward, I'll make it a firm. Let the review be delayed for two days, but I have to place that placeholder. No code commit is going to the developer branch without my review going forward. It must be done with my review, then only you guys would be able to move it from your fork to the developer branch or any of the branch.
+
+00:08:51 - 00:10:10 Unknown Speaker:
+
+Committing I don't know what is the challenge over here? It's still not getting refreshed, and the secret are still there. Oh man, this branch is no more there, right? We have renamed this branch and somehow we not deleted it. I got the issue now. It's going to be very difficult for us. This was, I know what is the issue there. I think it was Ayapa who was, you know, making these changes, and from there it went. Let him be online, I'll sort it up. Samir, let me get back to the agenda now. On the Quantro, where you are with the build? So that is like the changes that currently he requested, right? Like those changes I'm doing, Sachin, it's almost like maybe around 30% is remaining. I'm, yeah.
+
+00:10:11 - 00:11:04 Unknown Speaker:
+
+What about the third part where we have to implement each use cases, the threshold use cases? Priority We haven't started it right, then what is the ATS? I mean, we can't keep on just, you know, building it. The third priority is to migrate the existing use cases. Right? And if it is a threshold type, right, those are threshold type only, right? Uh, those are threshold checks. Yeah, yeah, right. So that is having almost 12, right? 1200 records, so until unless you complete one, right? How can I give the estimate to the product partners? Then do one thing wrap up this 30 percent of build today itself, even if it is consuming bit more time, spend some extras, and, you know, wrap up that, uh, 30 percent of build.
+
+00:11:04 - 00:12:18 Unknown Speaker:
+
+And from tomorrow, uh, pick up the uh, this one, uh, the threshold one. Okay, and um, with that, I'll try to pull, uh, this guy. Suman Suman Okay, uh, someone would be working with you. Because P3 is on, uh, you know, automation, Nirmal is on automation, so we don't have any other folks. Or maybe Apple. Let me check if I can pull up over there. Okay, okay, uh, nimel, your code review is pending. Uh. Let me cross check and I'll update you on that. Prithvi, you're able to move ahead or is there any blocker? You're on mute, Prithvi. I'm moving. Hello, yeah, yes, Sachin, yeah. Yeah, you're able to progress or you're blocked? Yeah, no, no, I'm able to make a good progress.
+
+00:12:20 - 00:13:06 Unknown Speaker:
+
+Okay, so just before, you know, just before, uh, logging off, uh, you know, connect with me, or, you know, give me the complete uh details before logging off. For today. Because it would be only for next next couple of days, right? At least post me the updates I need to share. And Sindhuja, One more thing, right? I need now. Going forward, we need to share these details to us. Raz has given me a call. And then, uh, I just summarize what we are doing right now, but we need to going forward the way we were doing. At least. Uh, you know, twice, uh, once a week, or maybe once, uh, weekly, we can do, because every week this was not working out, right? That's why we stopped. Yeah, um, yeah, probably.
+
+00:13:06 - 00:14:49 Unknown Speaker:
+
+Since you've shared this, we'll share it every internet Friday, I'll reach out to you, Sachin know, in case you have any query over there. Okay, and I thought you can continue on the UI changes that we discussed. Yeah, and see, yeah, yeah. I was, um, telling that I would need that access, um, because that is the first step. Uh, after running that query, we would get the result and that test it on E1 or E2. Anyhow. The the ID that you have provided to me, right? The data reader access or the SD, right? Uh, most probably these address, phone name would be there only. I need to raise for travel record and I have up to that TLS booking table. Wanted to see the what result it was generating. Go ahead and you know raise for the data reader.
+
+00:14:49 - 00:15:45 Unknown Speaker:
+
+Data reader you can raise it. Don't raise for the HD. Okay. HD is sensitive data element. Okay. So don't raise for the HD but raise the data reader access on your individual ID so that you would be able to query those tables over there. Okay. And these address travel record phone and name that would be coming as encrypted that is fine. Like, suppose you are searching for a table. The table is having one address field, having a PII called NGP DSD address, and you won't be able to view that address completely. It would be encrypted for you. Okay, and raise it only for E1 and E2, don't raise it for E3, then individual access for the access you are going to raise, just raise it. Mostly, I would say for even, not even for E2.
+
+00:15:45 - 00:17:11 Unknown Speaker:
+
+But even if you feel like Even doesn't have data, then raise it for E2, not for E3, avoid raising it for E3. And in case required to validate the records, we can connect with the product partner. They would run the query, the one that we have created to help us validate it. Okay, okay, we have to work with them, we are not going to raise these. Is my screen visible? Yeah, your screen is visible, okay? So currently we have this distribution list, use case list, and Register your use case icon. Okay, so what changes, uh, should be added, even this, even this register. Your use case would come as a drop down or auto populated the way they have, you know, if they have selected based on the use case, this should be auto populated.
+
+00:17:11 - 00:18:01 Unknown Speaker:
+
+And they just need to submit it. Oh, oh, no. This use case would also come as a drop down, so if we have this distribution list as a drop down, use case as a drop down, okay, correct? Initially, we planned, uh, to register this use case as a text box where the user can give their own use case name. Now you are mentioning like this should also come as a drop down. Your use case is not, uh, correct, right? In this, it will be against the distribution list that the use case has to be provided. That's it. You are getting confused, man. You are getting confused over here. If you look closely at the distribution list, again, if you are selecting the distribution list, then why would you be selecting this register your distribution list again?
+
+00:18:01 - 00:19:00 Unknown Speaker:
+
+No, no. This field is removed. Okay. That field is removed, right? Yeah. So, why we were doing earlier is that? Have to select their distribution list, and based on that distribution list, use case would get populated. Okay, and they just need to submit it correct? You won't need to give this register your use case. This text box is not required. Okay, now, suppose, in case, uh, users comes in who is not having, uh, a distribution list of his team, right? Which is already being here? So in that case, what we will do? We would, uh, you know, like, submit button? Here, we can provide a another button called Would you be able to open up another pop-up on our pop-up? Is it feasible? No, no, no, that's not recommended. Also, that's not recommended, right?
+
+00:19:00 - 00:20:02 Unknown Speaker:
+
+Then, how can we give a register your use case over here? In this one, this text box, but with a proper message, Okay, and this will not be a mandatory field. If the user doesn't have any option to select the distribution list, he can enter this name and then submit it. And what we can do on click of this will check if this field has the value, then probably we'll make an another API call to register the use case. If this field is empty and the other two fields have, the values will initiate the watcher. Am thinking from the background perspective, if I register them right for this DQ rule ID, and if they're, you know, details are all not present already, then I have to check the back. And that would go as a request.
+
+00:20:02 - 00:21:05 Unknown Speaker:
+
+Um, it's feasible, but the back-end complexity would increase. Maybe we can take some time, because because right now, what is happening? Uh, if we are just allowing them, right? I need to talk to the product team on this. If I'm just allowing them to register their use case, that means I have to make an entry to the use case table. Okay, irrespective of their approval or rejection, that entry would go to that table because there is no, there is no approval flag over there in that use case field. Okay, and now, suppose, as they are adding as a watcher, right? In future, if they comes back with approval or, you know, D approval or the rejection part, then. It would be difficult to manage because I am not going to run a delete query, right?
+
+00:21:06 - 00:21:58 Unknown Speaker:
+
+When the use case is already going to get ingested to that use case table. Let me talk to Anand and, you know, Rachna over this today. Sure. And then we can finalize. You can park it right now for time being. Sure. And this one will just share more details of this column. Maybe the use case table name and other details. And as you mentioned. Be giving a text box for justification or notes to approve or reject it. Yeah, correct. And then I'll proceed with these changes, and for the other ones, maybe we can discuss with Anand and then work on that. Okay, okay, then, yeah, anything else. No, that's all from me. Okay, thank you guys, bye.

@@ -1,0 +1,232 @@
+2026-02-16 Data Ingestion Issues and UI Improvements Discussion Stand up
+
+Creation Time: 2026/2/16
+
+
+📅About Meeting
+
+  • Date & Time: 2026-02-16 18:30 (Duration: 2157 seconds)
+  • Location: Virtual meeting (conference call / screen share)
+  • Attendee: Anna, Om, Karthik (referenced), Sachin, Ather, Prithvi, Kundan, Anand, Arun (referenced), Anthony, Nirmal, Razi, Suman, Jason (referenced), Monica (referenced)
+
+
+📒Meeting Outline
+
+
+Data ingestion & missing-file investigation
+
+  • Missing files for 12th and 13th The team reviewed an ingestion gap: the last successful JSON post was on the 11th; files for 12th and 13th did not appear on the Lumi platform. Karthik had previously indicated a pause in support. Lumi shows the next received post after the 11th as the 14th; team suspects the 12th/13th files either did not land or were corrupted. There were no alerts triggered when the files did not arrive, so the lack of landing prevented downstream alerts.
+
+  • Verify using last-update timestamps Om requested aggregating by last-update timestamp (column LST_UPDT in the demographic table) to determine whether the rows labeled 14th/15th actually correspond to 12th/13th data. Team member confirmed the timestamp variable exists and agreed to run queries to validate mappings.
+
+  • Maestro / notification reliability The group noted Maestro-based notifications are unreliable at times: some ingestion notifications have been missed (example: only three table notifications were received last Friday). Because of this, the team cannot fully rely on Maestro for daily ingestion awareness and is coordinating with Monica’s team to address that.
+
+
+UI: Register / Watcher / Approval flows (Review / Register update / Watch list)
+
+  • Register update page and review queue The register update UI has two primary areas: the dequeue/alerts (task list) and register update (rules and tables). The current demo shows static data; once integration completes it will display real data. Users can search/filter by use case name and date; selecting a result shows the table with relevant values (table name, variable name, rules, watchers, actions).
+
+  • Watcher list & adding use cases Users can view watchers (distribution lists) via an info icon to see which tables a watcher observes. The plan is for distribution lists (DLs) to populate a dropdown; users must select their DL to register a use case. To prevent arbitrary DL creation, the team discussed adding an approval step for new DLs/use cases.
+
+  • New-use-case flow & self-registration Proposed changes: add a "Register new use case" button (and similar for DL) that allows users to submit a request when their use case or DL is not present in the dropdown. That request goes to an approval page where approvers can view full request details and approve/reject with justification. The UI will include a confirmation dialog with request details and a justification box (reason for approval/rejection). Email integration will notify requestors of decisions; backend work required.
+
+  • UI tweaks & UX Feedback included reducing the search box size, changing certain icons to text (e.g., "Watch list"), reducing heading size, making "Add rule" / "Watch list" more discoverable, and adding pagination for large result sets. Ather demonstrated the "register your use case" flow; team asked for clearer navigation and a page where full request detail is visible before approval.
+
+
+Rule creation, templates & self-serve automation
+
+  • Automation checks & prioritization The team discussed automation checks and their current status:
+    
+    • Duplicate check: 1 template identified.
+    • Stagnant check: 7 templates identified.
+    • Valid value checks: ~114 scripts under analysis.
+    • Threshold checks: ~1200 items identified; this is currently backlogged to be addressed later. Stagnant and duplicate checks are prioritized for initial automation POCs.
+
+  • POC & roles Prithvi is building a POC for stagnant checks (seven templates) and duplicate checks. ANSI led analysis of templates with support from Prithvi and Kundan. Anthony (new team member) will enhance the UI and contribute to threshold check design once higher-priority items are in place. Team agreed to consolidate template complexity where possible so users selecting a check type (e.g., stagnant) are not presented seven different forms; rather a single form with mapped inputs. The system will generate rule descriptions; users will provide business justification and filter criteria only.
+
+  • Template mapping & filter standardization The team agreed to standardize inputs: check type, description, and filter criteria as primary columns. Some input JSON variable mappings may remain empty for certain use cases; integration work will map these to framework fields. Missing-value logic will be handled by filter criteria (e.g., null vs percentage null).
+
+  • Email attachments & notifications For some checks (insurance in particular) notifications must include attachments. Email-send changes and backend implementation need to support sending attachments as part of alert emails.
+
+
+Insurance-specific work & production support
+
+  • Insurance ingestion checks & alerting The insurance alerting build is ready (for analysts). Nirmal has code changes to address recommendations; after modifications the insurance build will be ready for acceptance. The insurance story is intended to trigger specific error reports and send to the appropriate distribution list when ingestion fails.
+
+  • DAG and analyst workflow Plan to create a dedicated DAG for insurance analyst tables (and one for the pack engine). Once table source(s) are confirmed, additional DAGs will be created for other groups. For onboarding other tables, the team needs to analyze ingestion source (SFTP vs other), audit tables, and whether ingestion entries exist for a given date. This analysis determines the right monitoring approach.
+
+  • Table onboarding & scale The default check set that applies when a table is onboarded (QTrack checks) will be used as baseline. There are roughly 40–50 tables to plan for; team needs the confirmed table list to schedule analysis and onboarding. Insurance tables are well-known to the team as those were onboarded earlier.
+
+  • Firewall and environment dependencies Backend work is in progress: firewall configuration meetings are scheduled (next meeting on Wednesday). Some backend tables still need finalization; Arun will be consulted to finalize schemas (team had a short call scheduled). Deployment to E3 environment will proceed after code and firewall changes are completed.
+
+
+Stories, acceptance & next sprint work
+
+  • Pending stories and acceptance There are four pending stories awaiting acceptance: three stories assigned to Razi (or Rezi? referenced name) and one production-support (insurance) story assigned to Om / requires OM acceptance. Nirmal and Suman have stories pending acceptance as well. Jason is the person expected to accept three of the stories. Team members were asked to follow up to ensure acceptance.
+
+  • Next sprint priorities Short-term: finalize insurance acceptance, finish code recommendations, deploy in the next sprint. Continue automation POC for stagnant and duplicate checks. Postpone threshold checks to later sprints; coordinate Anthony with the team to define threshold template formats.
+
+
+📋Overview
+
+  • The ingestion gap for 12th–13th needs verification via LST_UPDT aggregation in the demographic table to determine whether later-dated rows correspond to earlier data.
+  • Lumi did not receive 12th/13th files and did not raise alerts; need improved detection and notification.
+  • Maestro notifications are unreliable; team is coordinating with Monica’s team to resolve missed notifications.
+  • Register/update UI needs workflow for adding new DLs / use cases with approval flow; include full request details and approver justification.
+  • UI changes requested: reduce search box, replace icons with text, add pagination, change headings and button labels (e.g., "Register new use case").
+  • Automation POC prioritized for stagnant and duplicate checks; valid-value and threshold checks remain in progress/backlog.
+  • Insurance alerting build is nearly ready pending code modifications from Nirmal; will be marked ready once changes are accepted.
+  • Need the confirmed list of tables to plan broader onboarding and DAG creation.
+  • Firewall and backend table/schema finalization are in progress; meetings scheduled to resolve discrepancies.
+  • Four stories remain unaccepted and require follow-up (Razi/Rezi’s three, insurance production-support one).
+
+
+🎯Todo List
+
+  • Om:
+    
+    • Run aggregation query on demographic.LST_UPDT to verify mapping of 14th/15th rows to actual ingestion dates (ASAP).
+    • Follow up and accept the production-support (insurance) story in the backlog (ASAP).
+
+  • Ather:
+    
+    • Update UI: add "Register new use case" and "Register new DL" buttons, reduce search box size, replace icons with text labels (watch list), add pagination and adjust heading sizes (next UI sprint).
+    • Implement view to show full request details for approvers (including variable name, table name, description, filter criteria).
+
+  • Nirmal:
+    
+    • Apply code recommendations for insurance alerting build and provide updated build for acceptance (before next sprint).
+    • Work with backend to enable email attachments in alerts for insurance (coordinate with devs).
+
+  • Prithvi & Kundan:
+    
+    • Continue POC for stagnant and duplicate checks; prepare single-form input mapping for stagnant templates (POC delivery in upcoming sprint).
+
+  • Anthony:
+    
+    • Share threshold-check analysis and proposed template format with the team; coordinate with Prithvi post-sprint to finalize threshold template approach.
+
+  • Anand:
+    
+    • Provide the confirmed list of tables to be onboarded for ingestion checks (list of ~40–50 tables) so scheduling and DAG planning can proceed.
+
+  • Arun:
+    
+    • Finalize table schemas and resolve discrepancies with Anand’s table definitions (meeting follow-up in next 10 minutes from meeting time).
+
+  • Sachin:
+    
+    • Ensure approval page includes justification/notes box and confirmation dialog; coordinate backend email integration to notify requestors on approve/reject.
+
+  • Monica / Maestro team:
+    
+    • Investigate missed ingestion notifications and ensure Maestro reliability for daily notifications (coordinate off-line).
+
+  • Jason:
+    
+    • Review and accept three pending stories (Razi/Rezi’s stories) so development can progress.
+
+  • All:
+    
+    • Prepare for next sprint planning: prioritize final insurance acceptance, continue automation POC (stagnant/duplicate), defer threshold work until initial items complete.
+
+If any attendee needs clarifications or an updated action timeline, please confirm owner availability and expected completion dates so the todo list can be updated.
+
+
+Transcription
+
+00:00:02 - 00:02:12 Unknown Speaker:
+
+Hello? Anna, join over. One minute, I'll join over. Okay. Are you joining over? Yeah. Are you on mute? Yeah, I'm on mute. Hello. Hello. Hello. Hello. Hello. Hello. Hello. Hello. Hello. Hello. Hello. I just would like to take five minutes for insurance. So, Om, you might have seen the messages from Karthik, right? Yeah, yeah. Right, and again, you know, just mentioning that he would pause, right? We won't be able to support in this way, man. We, we did not receive the file for 12th and 13th. Okay, uh, I, I already did that analysis today morning. Okay, so if you see this file, right? Uh, the last successful in JSON post 11, right? This was the 11th one. I hope my screen is visible to you. Yeah, it's visible. Can you just zoom in a little bit?
+
+00:02:12 - 00:03:10 Unknown Speaker:
+
+Yeah, so if you can see, this is the stage on mean of your 11th not receive the file on 12th and 13th, okay. Although he is mentioning that they have received, they have sent the file. But somehow, Lumi did not receive the file and we did not even being communicated through any alerts or something. Because, you know, if the file did not land to the Lumi platform, it would not going to send you any sort of files. So what, what it meant? It corrupted you? I, I don't know how it. Can we check out last update timestamp level in the data once to see if this 14th and 15th that we see here corresponds to like 14th and 15th data or does it correspond to 12th data itself? I've seen, I've saved this one already.
+
+00:03:10 - 00:10:18 Unknown Speaker:
+
+Post 11th, it is 14th. This is lumination time, right? I'm saying if we can just aggregate it once on last update timestamp. And I'll thank you. Not be there in this one, right? So I have to go back to that Lumi. And then, okay, the variable is there, I can see on my end. What is the name? If you can, just let me know. LST underscore Okay, UPDT, Yeah. So this is on the demographic table, right? This is the timestamp that would be saved for us, and from the end, list and end as well. See some data for 12th, right? As you just ran the query. But the count there is, as it happened last year. And he's on leave today. And then the request and register the update queue.
+
+00:10:18 - 00:11:25 Unknown Speaker:
+
+In the review, dequeue alerts will be the initial queue track UI where we just list all the tasks and then take actions on that. In the register update, we will be showing all the rules and tables. So we have given our option to search user based on use case name and date. The user can filter the data and when selected in search will be showing the table with the respected values for that particular use case. Currently, all the data are like static or it's just for the demo purpose. Once the integration is done, we'll be showing the actual data. The column for the use case name will have the similar table name, variable name, rules and watcher and actions. In the watchers, User can click on this and get the list of distributions and use case name as a drop-down values where the user can select.
+
+00:11:25 - 00:12:51 Unknown Speaker:
+
+And if the use case is not registered, a new use case can be given and submitted. So for that particular rule can be submitted as the voucher in the modify, basically that particular rule can be given up. So in the actual integration, whatever the here, we have given the option to add rule. So initially, it will be loaded with the use case drop down and table name, and with all this, first, the user can submit a rule. Okay, yeah. This info icon is given to show all the watcher list which has been there, so what table watch it? And that particular rules can be seen here. Multiple. I mean, would this be like, can we easily navigate this tab? So this is a table basically? And pagination would be added so similar to when what you see here.
+
+00:12:51 - 00:14:26 Unknown Speaker:
+
+If there are more numbers and more than 10, probably we can just show a pagination here to navigate. As of now, there are like clustered and there are these are the just static data just for the demo purpose, so that's just. But as you mentioned, it will be user friendly to navigate. I think. Just change the heading also right, set size to a print, and then just beside add rule. You can just mark that also as a button, as a watch list, your watch list like that, with a text instead of yeah, like your watch list, got it yeah? Or the watch list. Whatever is feasible. Just reduce the size of that search box. Yes, that would help you to get some space. One will be changing this button and removing this icon, giving a text, and the other one is the title for this one.
+
+00:14:28 - 00:15:23 Unknown Speaker:
+
+So, Ather, can you show that part again where we can add use case to the watcher list? If you could open that. This one? Yeah, this button part that register your use case. So, How exactly is the user supposed to? .. a new user? And I want to add myself as a watcher. So the distribution list, Rachna, it would be, you know, they have to request you to, you know, add their distribution list. First of all. And that would populate from here. Because the restriction that we are providing right tomorrow, suppose somebody may just create a distribution list ABC or whatever, right at the rate. AXP.com. So in order to avoid that, there should be a proper mapping. If you, we can create a different page for that to register their use case where you can approve or reset.
+
+00:15:23 - 00:16:14 Unknown Speaker:
+
+But anyone who would like to be a watch list from here, they need to select it from this drop down. That would not be, you know, updated. My question in that case is like, if they have already reached out to us and then their email is already present in this distribution list, drop down. Right. What exactly are they doing here? They are just like writing their use case name and submitting it, or like, correct, correct addition. They need to select their distribution list. Based on their distribution list, we will populate their use case name and then just register it from there. So, uh, such a like the approval thing that you are suggesting, right? So can we do it from here itself? Like if they're entering the DL as well as the use case here, and then it comes to us for approval, something like that.
+
+00:16:14 - 00:17:10 Unknown Speaker:
+
+Because if they have to separately reach out to us for adding a TL. I mean, it's again increasing the number of steps. Yeah, then instead of submit, right? If they don't have a use case, after what you can provide, add another one. Signing Uh, sign up your use case, another button. So that would give them an option to register their use case and that that would go to approval here. Let's give them an another button option where they can submit a request to like. Here. You have this register your use case, right? Instead of that, it can be like, registered new use case. So what is already not there in the drop down, right? Similar thing for the DL also. Okay, would that work? Yeah, yeah, that would work. Uh, that would work.
+
+00:17:10 - 00:19:10 Unknown Speaker:
+
+I'll tell you what needs to be done. Got their requirement so we can do that. Okay, so any more session of feedbacks on this? So that I'll move to the approval page, case name table, and then the description. Here, we have given the option to either approve or reject that particular request. So, once the user clicks on to be approved, a confirmation box will be showing up with a message. And they request details and why they are approving or rejecting it. Got it. Sure, I'll add those. And two more things. One is that there should be a place wherein we click the request and all the details come up, right? Because you are taking a full form on the previous page, like variable name, table name, description, filter criteria, everything.
+
+00:19:10 - 00:20:10 Unknown Speaker:
+
+So we need to see that before we can approve or reject it, right? So we can see it somewhere here. So currently, if you'll see, we have this three data. We can list all the details for that particular request. Maybe the table name, use scale, all the other details. And as Sachin mentioned, we'll be showing a justification or description box just to give notes like why the user is approving or rejecting and then we can submit it. Okay, okay. And then here, the second part is have an email integration as well, Sachin, I think. Over a jet rent and justification goes to that person, plus telling them of like, is it? Has it been approved? We are taking into implementation stage, those things would be taken, those are the backend implementation. Right now.
+
+00:20:10 - 00:21:53 Unknown Speaker:
+
+These have been done with the mock-up. JSON only right? Yeah, yeah, you know. On the back end, we are still working on just getting those tables ready, right? Because once that is ready on the, you know. I am still working on the firewall aspect. That is still in progress. I have a set of meeting on Wednesday again with the firewall team. So, you know, I may need to carry over that story again for the next print along with the table and for the table also I am having a call with Arun in the next couple of next 10 minutes to finalize the table. They have sent some but that is having some discrepancy. We should be able to integrate more of the stuff on the self-serve. Okay. What about this automation job thing?
+
+00:21:54 - 00:22:47 Unknown Speaker:
+
+This self-serve automation is about the next part where we would like to, you know... Wait, wait, I'm just saying what is the current status of that? So on that one, as per the checks, right, there are different checks. So we have identified for duplicate check, there is one template, okay? For stagnant check, The number of rows was... out of that, we were able to figure out seven different template okay for valid value the number of Uh, script 114. That analysis is still in progress, along with the another one. What was? That threshold was around 1200, so we have parked it right now in the backlog. We would take it at the very end. Right now. What, uh, Prithvi is doing, he is trying to, you know, create a POC kind of stuff where he would be able to implement.
+
+00:22:47 - 00:23:48 Unknown Speaker:
+
+That stagnant one where we had different seven template uh, along with, uh, duplicate values one, so ANSI was primarily involved in the analysis of these. When, right? What are the template and all that is required? Along with Prithvi Kundan? And okay, so at least you would be able to see some. Some of the automation that we would be building over there. So stagnant and duplicate would be the first one post that valued value and threshold. We would be picking it at the very end because that is having very, uh, used number of rules over there. Yeah, sure, even so, uh, Anthony has joined the team, right? He's also working on enhancing that UI a little bit with some analytics, so he is also working on how to capture specifically for threshold checks, so I think post sprint or something right?
+
+00:23:48 - 00:24:28 Unknown Speaker:
+
+We can also leverage him to see how exactly he's trying to correct. Because I've given that us to kind of come up with a format or a template right for threshold checks, so he's talking analysis. So I think you guys can probably start, I mean, focus on the rest of those things first, and then probably move on to threshold. And then, like, both him and you guys can then sit together and understand what? What is the right way for threshold? Actually, if you can, just give us a brief, right what he's trying to do, right? At least we can discuss on that maybe tomorrow. I think he's doing the same thing. He's looking at different scripts, identifying what is the right pattern, right? Okay. Okay. So this was the pattern. Yeah.
+
+00:24:29 - 00:26:04 Unknown Speaker:
+
+Like if I share my screen, this was the mail. Yeah. So this is the final template that we have created. Duplicate one template we have for this stagnant one, based on this would be one template, this would be one template like that. Okay, yeah, here. Also, what I was saying is, let's have a discussion as to what exactly are the difference between the seven as well, right? Because, see, ultimately, when you'll take the input on the form, that should not be like a like. Let's just say if you select stagnant check, right. There shouldn't be seven different forms. Probably getting populated. User user is not going to bother about that, they just need to rules and all. This is what happened. We are segregating this template on first of all check type, plus description, and then, if required, the filter.
+
+00:26:04 - 00:27:08 Unknown Speaker:
+
+These are the three columns we are taking. Let's just see how the input also gets mapped to that, right? I just want to see rule description anyhow. We are going to create it, we are not going to leverage the user to create the description. They can provide the business justification and the rules, we are going to create it over there, the rule description, basically. So we would be considering these template, like, you know, showcasing that description to the users also, that would be in our hand. Anand Good, okay, table he has created, but actually, the number is not that much. Ideally it should be one for this one as well. The reason is missing value is either like completely gone null or some percentage of it right. Based on the filter criteria we can segregate that one.
+
+00:27:09 - 00:28:54 Unknown Speaker:
+
+Yeah filter again is very such and I think filter also we will have to audit into one template from a form. And the channels input on. Have gone through the requirement and we have analyzed the requirement for that. So we are going to incorporate that into the framework itself, it can get fit into the framework, no problem with that. Okay, okay, it just that the input jSon variable mapping that is going to be blank for this particular use case. And there would be some changes with respect to the email send, because in this case, we need to send the attachment also so that that also we will should be doing it. I think Nirmal's one stories they're still in, uh, like, not. Can you, first of all, mark it as completed?
+
+00:28:54 - 00:29:43 Unknown Speaker:
+
+So this is the insurance one, uh, this one for, you know, getting the alert for the insurance, the data in this and failure. So the build is ready. There are some code recommendations that I have asked Nirmal to modify it, and this would be also ready in the this one. Can you mark it as completed? First of all, something for, um, to accept, right? No, no, no, this would be, you have to accept it only. Yeah, because, uh, this was not taken care into the insurance. Ask like, you know, we would be here, yeah. And what about the rest of the investigation? For all tables? Right now we are taking care of insurance. And then once it is, uh, live, then we can.
+
+00:29:43 - 00:31:10 Unknown Speaker:
+
+We need to get the list of the tables that you would like to, you know, check for the ingest and then we can plan it. Okay, sure. Because we don't have... The list is basically all tables. All tables? There are a number of tables, Anand, right? Right, right. But we had checks for all tables itself. Like, whatever is there on QTrack, right? That's like a default check whenever we onboard any new... table, then that's like a default check that we enable for it. Then can you just give me the list so that I can plan it out? Okay, be like 50, 40, 50 tables or something, okay. And and in case of failure, the report would go to okay, okay, got your point? So, you know, right now this would be ready for insurance, and that's only for the analyst.
+
+00:31:10 - 00:31:59 Unknown Speaker:
+
+One, okay, and post that we would start onboarding. The rest of the tables also look insurance, I am aware with the insurance stuff because I have onboarded those tables right. So I know end to end, right from where the data ingestion is getting started. Okay, uh, so your analyst is done, packaging would be ready. Uh, in the next print, uh. But for the rest of the table, I have to first of all, analyze from where the data is getting ingested. Is it coming from the same SFTP medium, or if it is coming via some other source? Then in that case, basically, I mean to say, whenever there is a ingestion, right? There are a couple of ways you can identify. One is directly going to the table, check whether there is a data for today's date or not, that is number one.
+
+00:31:59 - 00:32:45 Unknown Speaker:
+
+Second is second is via SFTP, if it is for the insurance, right, those are coming via SFTP. So they used to maintain an audit table, so if there is a the access it, the. So, that would have again a detail. So, error description and all. Yeah. I mean, not looking at the source, what I am thinking of is you already have that Maestro dependency set up, right? It can't be done with Maestro. And with Maestro, every time it might not be possible because in Maestro, we are facing challenges. Sometimes, we are not getting the ingestion also. For which we are working with this team. Where did it go? Monica and team, right? We are not receiving the notification every day on this one. But for 8 tables?
+
+00:32:45 - 00:33:36 Unknown Speaker:
+
+Yes, I checked from ANSI today morning we received the notification but last Friday we received the notification only for 3 tables. So second night it's become bit difficult and this is one of the template that we are trying to create it for insurance one. So in case of insurance, if there is any error, then we can send this error also to the sort. So this is the plan right now. So so through this, they would be identifying so for insurance. We are going to create one dag, uh, for analysts, that would be taking care of all those analyst table, one dag, maybe for the pack engine, where, say, the rest of the tables? Once you confirm me, right? I need to first of all check from where the source is if they are getting entry to this table or not.
+
+00:33:36 - 00:35:12 Unknown Speaker:
+
+So that would require analysis and then we can from some other part, right? So that would be today again, Maestro. We can't rely on all the time due to this constant and all, so this is an even environment. Hopefully, once he make the changes on the code and all, we'll review it and then we'll try to deploy it in the E3 environment. At least in upcoming spring, this means starting from tomorrow. There's only one story which is not accepted, right? Is it Razi? Three stories, one is on my name, one is on Suman's name, one is on Nirmal's name. Those all three would be accepted by Jason. And one of the stories, production support, right, for insurance. I asked OM to accept, but if you can follow. So, one, two, three, total four stories are pending. Three are for Rezi, one is for insurance. So, the production support one, OM has to accept, right?

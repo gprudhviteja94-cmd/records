@@ -1,0 +1,155 @@
+2026-01-26 Notebook Workbench Access and Provisioning Training
+
+Creation Time: 2026/1/26
+
+
+📅About Meeting
+
+  • Date & Time: 2026-01-26 15:24 (Duration: 1133 seconds)
+  • Location: Virtual — Lumi Portal / Notebook Workbench session
+  • Attendee: (not explicitly listed in transcript) — session presenter Santosh S., participants included James, Alok and other Lumi Notebook Workbench users
+
+
+📒Meeting Outline
+
+
+Notebook Workbench: Access & Provisioning
+
+  • Creating a Notebook Workbench instance The presenter demonstrated how to create a Notebook Workbench instance from the Lumi Portal: navigate to Insights → Notebook Workbench → Notebook. New users will be prompted to create an instance; existing users can start their pre-existing instance. The presenter provisioned a demo instance during the session to illustrate the steps.
+
+  • Project requirement for creation A minimum requirement is access to an analytical project in Lumi (project tags like PRJ-P-AU indicate E3 environment + analytical project). When creating, select the analytical project from the dropdown, confirm creation, and wait for the provisioning lifecycle (requesting → creating → running). Once running, the buttons Restart / Stop / Terminate / Open notebook become enabled.
+
+  • India projects restriction Notebook Workbench is currently not enabled for India-tagged projects (IND tag) due to India data localization rules; users must not attempt to create instances under India projects. The presenter noted this is a documented restriction and the documentation page will be the first place for updates.
+
+
+Authentication & First-time Setup
+
+  • Required authentication steps (one-time per instance) After opening the notebook, users must authenticate the notebook to their AXP account and the selected project. The presenter walked through the two gcloud commands from the documentation:
+    
+    • gcloud auth login
+    • gcloud auth application-default login These commands must be run in the notebook terminal. Each command opens a browser link where users must sign-in using their Amex (corporate) email, copy the verification code, paste it into the notebook terminal and confirm. This is a one-time activity per newly created instance; it is not required again when stopping/starting the same instance.
+
+  • Common pitfalls Users sometimes mistakenly use personal emails during the auth flow, which causes errors. Reminder to use the corporate (AXP) email. If an instance is terminated and recreated, authentication must be re-run for the new instance.
+
+
+Notebook Usage, Features & Limitations
+
+  • Opening and using the notebook Once the instance is running, the presenter clicked Open notebook to demonstrate the environment and perform authentication via terminal.
+
+  • Terminal usage & scheduling alternatives Participants asked whether notebooks can be run from a terminal and about long-running / scheduled executions:
+    
+    • Running the notebook itself from a terminal (as in direct background execution) is not currently supported in the same manner as traditional server terminals.
+    • SQL queries can be executed in BigQuery; scheduling in Lumi is typically done with BigQuery scheduler or via DAGs in Cloud Composer (Airflow) rather than running notebook processes from a terminal.
+    • The presenter will follow up regarding terminal-based operations for scheduling or background runs if needed—participants were encouraged to raise requests in Slack for follow-up.
+
+  • Idle timeout / session duration A participant (James) reported apparent 30-minute idle timeouts. The presenter acknowledged prior settings were longer (1–2 hours) and will raise the user request with the team to check whether a recent change caused shorter timeouts and follow up.
+
+
+Documentation & Support
+
+  • Reference documentation The presenter shared a compliance/documentation page containing step-by-step screenshots and the latest Lumi Portal screenshots (including the create-workbench UI). The recording of the session will be shared with attendees. The presenter pasted the documentation link in chat for attendees to keep.
+
+  • Questions & clarifications during demo Participants asked clarifying questions about what constitutes an India project, timeout settings, terminal workflows, and whether authentication is needed more than once. The presenter answered live and requested follow-ups via Slack for items needing investigation (terminal scheduling, timeout behavior).
+
+
+📋Overview
+
+  • The Notebook Workbench must be created from Lumi Portal: Insights → Notebook Workbench → Notebook.
+  • You need access to an analytical Lumi project to create a Workbench instance; India-tagged projects are currently not supported.
+  • Provisioning goes through requesting → creating → running; once running you can Open notebook and use control actions.
+  • First-time authentication inside the notebook is required (gcloud auth login and gcloud auth application-default login) — run in the notebook terminal and use your AXP email.
+  • Authentication is a one-time step per created instance; restarting the same instance does not require re-authentication.
+  • Running notebooks purely from an external terminal is not supported in the same way; scheduling and background jobs should use BigQuery scheduler or Cloud Composer (DAGs).
+  • Presenter will follow up on reported idle timeout reduction (participant-reported 30-minute timeout) and on whether terminal-based/background execution options are possible.
+
+
+🎯Todo List
+
+  • Santosh S. (Presenter / Session lead):
+    
+    • Share session recording and documentation link with all attendees (ASAP).
+    • Follow up with platform team about idle timeout changes (investigate reported 30-minute timeout) and report back (target: within 3 business days).
+    • Investigate whether notebook operations can be executed from a terminal or whether alternative workflows exist for background scheduling; respond in Slack if requested by participants (target: within 5 business days).
+
+  • Platform / Infrastructure Team (action via Santosh):
+    
+    • Confirm and publish current idle timeout settings for Notebook Workbench instances and, if changed recently, provide rationale or remediation (deadline: by Santosh’s follow-up timeline).
+    • Provide guidance or a recommended pattern for running notebook-based jobs in background / scheduled mode within Lumi (e.g., Cloud Composer DAG examples or other recommended approach).
+
+  • James (participant raised timeout issue):
+    
+    • Provide detailed reproduction steps and timestamps to Santosh via Slack to help troubleshooting the timeout issue (no strict deadline — please provide soon).
+
+  • All users:
+    
+    • When creating a Notebook Workbench instance, ensure you select an analytical project (non-IND) and plan to run the two gcloud auth commands in the notebook terminal the first time you open a newly created instance.
+    • If you require follow-up on terminal scheduling or timeout behavior, post details in Slack and tag Santosh for tracking.
+
+If you need, I can extract the documentation link shared in chat, compile the exact gcloud commands used during the demo, or produce a short step-by-step quick-start checklist for new users. Which would you prefer next?
+
+
+Transcription
+
+00:00:01 - 00:01:01 Unknown Speaker:
+
+Python notebook on BigQuery. Good morning, good afternoon, good evening wherever you are joining from. I welcome everyone to the domain notebook workbench session. So what is that we are going to cover in this particular session if you ask me. The main thing that I would be highlighting in this particular session is the recent update. Where? All of the existing Notebook workbench users and any new user who would like to create a Notebook workbench instance has to get started. Their journey from the Lumi Portal from Lumi Portal Where do I go? If you ask me, you have to click on Insights within the Lumi Portal and from Insights. All you need to do is go to Notebook Workbench, and with the Notebook Workbench, all you need to do is click on Notebook right.
+
+00:01:01 - 00:01:49 Unknown Speaker:
+
+So once you click on Notebook, you will get into that actual Lumi Notebook page within the Lumi Portal. So if you are a new user, right? So this is what it will show, where it will ask you to create a workbench instance. And I think for most of the users who had their existing notebook workbench instance already, right? I think it was available where you just had to start your workbench instance and open the Jupyter notebook. But I have dominated by notebook workbench instance completely just to showcase it for the new users who are going to join this particular session. So for those people who have already done it, it is going to be a repeater. So bear with me.
+
+00:01:50 - 00:02:46 Unknown Speaker:
+
+And in order to create a notebook workbench instance or work with notebook workbench instance in Gumi, The bare minimum criteria is one should have access to a analytical project in Luby. So when I click on create workbench instance, it shows me this drop down select project under which it is giving me two options. Where you see this PRJ-P, this indicates it is a E3 environment. And within E3, AU indicates it is an analytical project. So, The bare minimum criteria is one should have access to an analytical project, so if you have access to an article project, it will show. In the drop down, choose the project of your choice, click on Continue. And then it is asking, Are you sure you want to create a GCP Notebook Workbench instance under this project? Right?
+
+00:02:46 - 00:04:13 Unknown Speaker:
+
+I'll click on Confirm and it might take a few minutes because it is going to provision me the notebook, right? So I'll click on continue here. As you see, currently, it is in the requesting state where the instance is in the requesting state. And and will be enabled to proceed until unless the requesting state is completed. Right? So once this is done, you should be able to see all this button enabled, Restart, Stop, terminate, Open notebook, all these things will get enabled. So in the meanwhile, while this is happening, I would like to share an important compliance page with you, wherein you have all the latest updates, documentation, everything present in that particular place. Let me search for it. That should not be an issue. Let me search for it. That should not be an issue.
+
+00:04:24 - 00:05:28 Unknown Speaker:
+
+Guide So for those of you who have joined right, just a recap I'll do so. The bare minimum criteria If in case, if you want to work with notebook workbench instance, right, you should have access to a analytical project. So that is the bare minimum criteria that one should possess because otherwise will not be able to work with it. See, one more latest update is also available here. It says, note, India project users. So this particular notebook is not enabled for India projects. So please do not try to create a notebook workman's instance for India projects from Lobby portal, right? So any new updates will be updated in this particular page first. So let me copy this and paste it here with you in the chat so that you have it ending with you.
+
+00:05:29 - 00:06:40 Unknown Speaker:
+
+And yes, the recording of the session will be shared with all of the attendees. So why I brought you to this particular page, if you ask me, like whatever steps that I am carrying out is available in the form of screenshots. But I think that screenshots, yeah, they have updated the latest screenshot itself here, the Lumi portal. So select the project, and once you select the project, right. And once it is available, so it will be the running state. And once it is in the running state. Like, Okay, what does India Project means? Okay, that's a good question. I think you might be a new user. Like, you know, those India data localization, right? So because of this, RBI has instructed that all of the India transaction data should not go out of India, right?
+
+00:06:40 - 00:09:53 Unknown Speaker:
+
+Because of this restriction, like AXP-Lumi is a global data warehouse, right? So Lumi data. Similarly, you have your, like... the project for india project itself which contains only the india data now whatever the project that i have used here prj-p-au boomi academy so that. So I will project so far India project you'll have to you'll be able to see this IND within your project tag. James, I didn't get your question, so this area you would increase the timeout. Maybe 30 minutes now. Can you unmute yourself and be? More clear. I didn't get your question completely. Are you okay? Yeah, I'm okay. Sometimes I may be looking at something, and then I go back, and it kicks out, and I have to restart the system, or it's asking me to restart.
+
+00:09:53 - 00:10:49 Unknown Speaker:
+
+So it appears as though it's maybe only like a 30-minute timeout where it times out. So I was curious where to change that setting. I couldn't find it. I think either the notebook, sorry, asking about the refresh or the entire notebook. I think idle time is what it is. Yeah, idle time probably makes more sense. So initially it was set to one to two hours itself. So, but I'm not sure if they made any recent, uh, changes to it or not. But yeah, so obviously I'll put on your request to the team that few users are facing this issue and maybe I can get back to you on it. Thank you. Yeah, so yeah. There are a lot of things available in this particular documentation so you can go through it whenever you have some time post this particular training.
+
+00:10:49 - 00:11:58 Unknown Speaker:
+
+But we will try to cover most of the things that we have in this particular stuff. So it's if you see currently, after the request requesting it has gone to the creating state, your workbench is being created. Uh, please allow a few minutes, so that's what is happening. Let me just click on Refresh State. It's still in creating itself. Uh. Meanwhile, I'll just quickly take a look at the chat. Is there a way to run notebook from terminal? No, so, uh, you, you cannot do that, so notebook, you cannot run it from terminal. So, this is not available currently. I think it should be possible, I guess. So you can do it, the SQL queries, but not the hook one. And so what is the terminal? In that case, it will not be the gold terminal, right?
+
+00:11:58 - 00:12:54 Unknown Speaker:
+
+So I am assuming there will be some different terminals. Like when you say terminal, like what does that mean? So it is for a Windows user, it happens to be a command prompt, right? Or otherwise, you can make use of a putty terminal that is available. Yeah, exactly. So basically I connect to Gold Server and then then run five query on the server, right? So can we? Can we do that in the Lumi environment too? Like, basically, you do that for your scheduling purposes, right? So you make use of that, know how to run your queries in the background and like. Basically, for scheduling purposes is what, as a FIIM operator, you make use of it. But in Lumi, the equivalent of FIIM happens to be BigQuery. I think within BigQuery itself, you have a scheduler feature available.
+
+00:12:54 - 00:13:48 Unknown Speaker:
+
+And in order to schedule, we also make use of something called as DAGs in Lumi, which comes under the Cloud Composer part. So these options are there, but I haven't used Terminal. That is something maybe I can check and get back to you, but you can just drop a note to me in Slack so that I do not miss it. Okay. Perfect. So coming back to the session now, you see it got changed from the creation state to running state now. All I have to do is click on open notebook, which is going to open a notebook for me. And since we have created this notebook for the first time, we will have to do certain steps. Like we have to authenticate this particular notebook with our ADS ID and the project that we are going to use.
+
+00:13:48 - 00:14:52 Unknown Speaker:
+
+So only then, like post the creation, like whatever queries you're writing to connect to BigQuery, right? So those things would be successful. Otherwise, most of the times it doesn't work, right? So that's why, like, the... authentication step is must so, which most of the users miss. So even if in case if your instance gets terminated by mistake, right? So if you're creating a notebook workbench instance again, right? So you just have to do this step, which I'm going to do now. So all you can do is just click on this particular using gcloud commands again. So that is going to take you to the documentation page, which I shared with you, right? So there are a few commands present here. This gcloud auth login and gcloud auth application default login.
+
+00:14:52 - 00:15:54 Unknown Speaker:
+
+So these are the things that you need to perform. Yeah, I'll just close one thing. So once you're here. So the first thing that you need to do is click on terminal because that is where we'll have to execute those two commands, which I mentioned. Copy this command gcloud auth login from here and go back to the notebook terminal, paste it, hit on enter. So it is going to ask you, do you want to continue? Yes. Hit on continue. So this will give you a.Browser link click on it and complete the sign-in prompts. So please do choose your mix account. So I know some people would have by mistake sometimes they might give their personal email ID which will cause an error. So just be cautious that you provide your American Express email ID here.
+
+00:15:57 - 00:16:58 Unknown Speaker:
+
+So click on continue again, you can scroll down. Click on hello. So these are certain authentication steps. And then finally, you need to copy this verification code. Come back to the notebook. Paste this verification code and hit on enter. So now it says you are now logged in as santosh.s at the rate axp.com, right? This is a one-time activity. You need not do it again and again, right? Yes, Alok, yeah. I see your hands raised. One time, Santosh, you mean that, so today, you know, when I'm going to use it, so the first time I'll do it, so again, let's say, you know, if it is logged out, like I have to, you know, restart the workbench. Yeah. So I'll have to authenticate it again? No, not required.
+
+00:16:59 - 00:17:54 Unknown Speaker:
+
+So, only when you are creating a notebook workbench instance for the first time, you just have to execute this two commands post, which you can stop your instance. Whenever you're not working it, you can come back after two days or a week again, start it, and you can start working directly. You need not do this stuff, okay, so that won't be required. So here I see the project ID is mentioned, right? That this is the project ID that's going to be in use. Uh, but and you mentioned that, uh, I can't really use India Project ID on. Currently, that is not available. I think the team might be working on it. Okay, cool, thank you. Yeah. So let's go with the second command, that is also pretty the same steps, you just have to copy the command paste in the terminal, so you have to hit on Enter.
+
+00:17:54 - 00:18:12 Unknown Speaker:
+
+So the same thing we have to carry out. Even this is going to give us a browser link. The same authentication steps we have to carry out using our Amex email ID. So Google Auth library, click on continue.

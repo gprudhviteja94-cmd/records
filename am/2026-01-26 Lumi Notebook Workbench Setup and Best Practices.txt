@@ -1,0 +1,351 @@
+2026-01-26 Lumi Notebook Workbench Setup and Best Practices
+
+Creation Time: 2026/1/26
+
+
+📅About Meeting
+
+  • Date & Time: 2026-01-26 15:43 (Duration: 3357 seconds)
+  • Location: Lumi Notebook / Jupyter workbench session (virtual)
+  • Attendee: (names not explicitly listed in transcript) — Presenters/Speakers: Santosh (presenter), Ganesh Venkataraman (POC referenced), James, Alok, others who asked questions
+
+
+📒Meeting Outline
+
+
+Lumi Notebook workbench setup & first-time authentication / restart behavior
+
+  • Authentication and ADC / Quota project The presenter explained that after authenticating in the Jupyter/Lumi notebook, credentials are saved and the chosen project is added to Application Default Credentials (ADC) so client libraries use it for billing/quota. The authentication step requires a notebook restart to fully activate the workbench instance (click “Restart” then confirm “Workbench notebook activated”) before continuing work.
+
+  • First-time vs returning user behavior First-time users must perform the authentication and restart steps. Returning users launching a notebook will typically see the notebook workbench page with project ID and resource ID and can click "Open notebook" to start directly.
+
+
+File persistence, storage mounting, and workspace best practices
+
+  • Dedicated Cloud Storage (bucket) and mounting Each analytical user has a dedicated GCS bucket (e.g., AXP-US-SS1010 or similar naming with ADS ID). Files edited in the bucket are persisted even if a workbench instance is deleted. Users should mount their bucket to the notebook (via the file browser: drag, then select “mount storage”, enter bucket name including ADS ID) to ensure file persistence.
+
+  • Recommended workflow Best practice: create and work directly on notebooks/files stored in the dedicated bucket so work is not lost if an instance is corrupted or recreated. The bucket is the persistent location for code and notebooks.
+
+  • Temporary export area (Temp data) There is a temporary bucket/folder (Temp data) intended for exporting large files (CSV, etc.). Files in Temp data are ephemeral and will be removed automatically after three days; users must download/export to local storage if they need longer retention.
+
+  • GitHub integration Users may clone GitHub repositories into their mounted bucket; cloned code will be governed by the ADS (bucket governance) and persisted in the bucket.
+
+  • Support for mounting and issues Mounting is a one-time activity per user/instance. If mounting fails or files are missing, use the Lumi workbench Slack channel for instance issues. The presenter also referenced Ganesh Venkataraman as POC for feature requests or follow-ups.
+
+
+Notebook UI, kernels, and environment management
+
+  • Jupyter-like interface Workbench UI matches Jupyter behavior: new launcher (+) and Python 3 kernel to create .ipynb files. Notebooks created in the UI can be created directly in the mounted bucket.
+
+  • Folders & file operations Users can create folders within the mounted bucket via the file browser. The bucket should be used to store code permanently; Temp data is for temporary exports only.
+
+  • Package installation Users can pip-install Python packages directly from within the notebook environment. The environment looks to Amex Artifactory first; if a library is missing there, installation may fail. Use pip install and verify availability with pip list | grep .
+
+  • Limitations of the analytical workbench The workbench instance is a lightweight analytical environment (e.g., M2D standard). It is intended for analytical use-cases (exploration, queries, transforms). For heavy modeling or large distributed compute requirements, users should request clusters from the IDA team (separate service) which provide larger compute for model training.
+
+
+Connecting to BigQuery and running queries from the notebook
+
+  • BigQuery client from Python (pandas-based) Demonstrated steps:
+    
+    • Import pandas and google.cloud.bigquery client.
+    • Create a BigQuery client object (uses ADC / authenticated project).
+    • Run SQL via client.query(sql) and convert result to pandas DataFrame (result.to_dataframe()).
+    • Use df.head() to preview results.
+
+  • Writing pandas DataFrame back to BigQuery Demonstrated steps:
+    
+    • Create table schema (SchemaField entries).
+    • Define table_id (project.dataset.table).
+    • Use bigquery.LoadJobConfig(schema=...) and client.load_table_from_dataframe(df, table_id, job_config=...).
+    • Call job.result() to ensure completion; then confirm in BigQuery console (refresh dataset).
+
+  • Loading CSV from GCS to BigQuery via Python Demonstrated steps:
+    
+    • Use client.load_table_from_uri(gs://path/to/file.csv, destination_table, job_config=...).
+    • Provide schema and destination table name; the table will be created if it does not exist.
+
+  • BigQuery magic commands & SQL editor Notebook supports magic commands (%%bigquery) to run SQL directly in cells. Users can also open the SQL editor or use the BigQuery web console when appropriate. The notebook workbench is optimized for Python workflows; for SQL-only tasks, BigQuery console may be preferable.
+
+
+Working with larger-than-memory datasets: PySpark vs BigFrames (BigQuery-backed DataFrames)
+
+  • Pandas limitations Pandas is suitable for small datasets but not for large-scale data. For larger datasets consider PySpark or BigQuery-backed dataframes.
+
+  • PySpark setup and behavior PySpark and Java are available in the workbench environment. To enable BigQuery connector dependencies, users must download or copy the required jar (spark-bigquery-with-dependencies.jar) into the environment (command shown). The jar must be accessible from the notebook instance (attention to current working directory when executing copy commands). Create SparkSession with the jar added to spark config, then read tables with spark.read.format("bigquery").option("table", "project.dataset.table").load() or via SQL using spark.read.
+
+  • PySpark caveats PySpark runs on distributed compute and cannot directly write its distributed DataFrame to BigQuery in the same way pandas does. Typical approach:
+    
+    • Convert PySpark DataFrame into a BigQuery DataFrame (BigFrames) or collect and then write (but collecting is not feasible for large datasets).
+    • Because of limitations, best practice is to migrate PySpark logic into BigQuery (via BigFrames / SQL) when possible.
+
+  • BigFrames (BigQuery-backed DataFrame) Introduced bigframes.pandas as bpd (BigFrames library):
+    
+    • bpd.read_gbq(table_or_query) returns a BigQuery-backed DataFrame (bigframe) that provides a pandas-like API but executes on BigQuery.
+    • BigFrames scale to large data and leverage BigQuery’s petabyte-scale processing.
+    • Methods are similar to pandas and allow easier conversion and write-back to BigQuery.
+    • Encouraged migration best practices and documentation links were shared for converting pandas/PySpark workloads to BigFrames.
+
+
+Hive-to-BigQuery conversion helper (magics / accelerator)
+
+  • myMagics.py and Hive-to-BigQuery conversion The Lumi analytics team built a magic command (%%hive_to_bigquery or similar) contained in mymagics.py that converts Hive/Cornerstone SQL (e.g., HiveQL) into BigQuery-compatible SQL. Steps:
+    
+    • Place mymagics.py in the environment and load the magics by executing the cell that loads it.
+    • Use the magic command with either a stored query variable or reference an input file; the magic returns a converted BigQuery SQL string.
+    • The tool handles many Hive constructs and maps them to BigQuery syntax (the in-house team built in parsing logic). Users were encouraged to try it and provide feedback for improvements.
+
+  • Limitations Magic only converts SQL syntax. It does not create connectivity to Cornerstone/Hive tables directly from Lumi. If data resides in Cornerstone/Hive, it must first be brought into Lumi/GCS/BigQuery before running converted queries.
+
+
+Q&A highlights / support & next steps
+
+  • Switching projects within a notebook Project is selected when the workbench instance is created; you cannot switch the project for that instance post-creation. Choose the intended project at creation time.
+
+  • Mount persistence Mounting the bucket is usually a one-time activity; if an instance shows missing mounts later, contact the Lumi workbench support Slack channel.
+
+  • GitHub governance Cloned repositories stored in ADS bucket follow bucket governance/policies.
+
+  • Package installation pip install is available in notebook; installation may fail if the package is not in Amex Artifactory.
+
+  • PySpark jar issues If users get file-not-found when copying JARs, ensure terminal working directory is correct (instance base path vs bucket), and copy the jar when terminal is at the correct path or use gsutil from the instance base. The presenter offered follow-up help for that step.
+
+  • Magic conversion accuracy The magic works for many constructs but may require validation (for example, date handling or nuances). Users should verify converted queries and provide feedback for edge cases.
+
+
+📋Overview
+
+  • Authentication saved credentials to a file and sets ADC quota project; a restart is required to fully activate the notebook workbench.
+  • Always mount and work from your dedicated ADS bucket (AXP-US-SS1010 or similar) to preserve notebooks and code; Temp data is ephemeral (3 days retention).
+  • You can clone GitHub repos into your bucket; cloned code will be under bucket governance.
+  • The notebook UI behaves like Jupyter: create Python 3 notebooks, install packages with pip, and use the file browser to manage folders/files.
+  • Use google.cloud.bigquery client to read/write DataFrames (pandas) to/from BigQuery for small data.
+  • Use load_table_from_uri to import CSVs from GCS into BigQuery via Python.
+  • PySpark is available but requires adding the BigQuery connector jar; distributed Spark DataFrames are not straightforward to write back to BigQuery—recommended to use BigFrames or convert logic to BigQuery SQL.
+  • BigFrames (bigframes.pandas) provide a scalable, pandas-like API that executes on BigQuery and should be used for large datasets.
+  • Lumi magics (mymagics.py) offer Hive-to-BigQuery SQL conversion; useful accelerator but verify converted SQL and report edge cases.
+  • For workbench issues or feature requests, contact Lumi workbench Slack channel or Ganesh Venkataraman (POC); presenter also available to escalate.
+
+
+🎯Todo List
+
+  • Santosh / Presenter:
+    
+    • Share the mymagics.py file and sample usage cells with the attendees (no deadline specified).
+    • Follow up on the JAR copy issue experienced in the terminal and provide a step-by-step note for copying spark-bigquery-with-dependencies.jar into the workbench instance (ASAP).
+
+  • Ganesh Venkataraman (POC):
+    
+    • Review and respond to feature requests or follow-ups raised by users about additional connectors and enhancements to the workbench (ongoing).
+
+  • Attendees / All users:
+    
+    • Mount your ADS bucket (AXP-US-SS1010 or appropriate ADS ID) to the notebook workbench and store notebooks/code there (one-time).
+    • If you plan to use PySpark with BigQuery, test the spark-bigquery-with-dependencies.jar steps in your instance and report any issues to Lumi Slack channel (ASAP).
+    • Try the Hive-to-BigQuery magic tool on representative queries, verify results (especially date logic), and provide feedback via Lumi Academy Slack or to Santosh (within 1 week suggested).
+    • For large exports placed in Temp data, download or move to persistent storage within 3 days to avoid automatic deletion (ongoing practice).
+
+If you want, I can convert this into a shareable email or add explicit assignees and deadlines for each action item — tell me who should own each item and any target dates.
+
+
+Transcription
+
+00:00:06 - 00:01:18 Unknown Speaker:
+
+Python Notebook continue. Yeah, so it says credentials has been saved to this file. So, quota project This particular project was added to the ADC right, which can be used by our client libraries for billing in quota. Right now, whatever the query is that we are going to run right up here with respect to this Lumi Notebook, which will be directly tagged to this particular project. So we have well and good. So all we have to do is now close this Jupyter notebook. Whatever steps we did, come back to our Lumi portal. I'll scroll down and you see this right after this authentication, so create second step is authentication. After authentication, you have to restart to activate, like whatever the steps that you executed in notebook terminal. If it should actually reflect, you should click on Restart right.
+
+00:01:18 - 00:02:27 Unknown Speaker:
+
+Only then. So you should get this notification which says Workbench notebook activated, right, so I'll click on continue. Now again, you can go back open your notebook. Start working, write a Python query, which will connect to BigQuery table. You can query the data, perform some data transformation. Again, load the data back to BigQuery as a new table. So these are all the things that you can perform with the Lumi notebook workbench instance, which we will be looking in a while. So let the notebook load. At the other things that you can perform, perform so that you executed in notebook terminal. If it should actually reflect, you should click on Restart right. Only then so you should get this notification which says Workbench notebook activated, right? So I'll click on continue.
+
+00:02:27 - 00:03:29 Unknown Speaker:
+
+Now again, you can go back, open your notebook, start working, write a Python query, which will connect to BigQuery table. You can query the data, perform some data transformation. Again, load the data back to BigQuery as a new table. So these are all the things that you can perform with the Lumi notebook workbench instance, which we will be looking in a while. So let the notebook load. But yeah, so this is how the process looks like. And this you have to do it only for the first time if you are a new user. If you're already an existing user, when you launch a notebook, by default, this is the page that will show up to you. So notebook workbench is there, project ID, resource ID, everything, it will show up.
+
+00:03:30 - 00:04:27 Unknown Speaker:
+
+All you have to do is click on open notebook and you can go ahead and start using it. And one more important thing that I'll show you, like so many people keep reaching out to us asking, right? But sometimes by mistake, the instance got dominated and whatever the files that I was working was, is not available to me right now, right? What do I do in those cases? See, just for this particular training purpose, I deleted my notebook workbench instance. But even though whatever the files that I was earlier working, I still do have it with me. Like how is the question that you might be asking? But all the files have been backed up into my bucket, right? So you can easily mount your bucket to your notebook workbench.
+
+00:04:28 - 00:05:24 Unknown Speaker:
+
+All you have to do is just drag this towards your light. And you see this three vertical, so three horizontal lines, which says mount storage. All you need to do is click on this. Type your bucket name, so here you are seeing AXP-US-SH1010 instead of SH1010. You have to type your ads ID name so that will be your bucket. So I request each and every one to take a copy, right? Or you can directly work here itself, right, so you can keep all your files, codes in this particular place AXP-USSS1010. You can directly start working here itself, so I'll click on this workbench guide so you can directly start editing here itself. Save it so that even if your workbench instance is gone right, you can create it from the scratch.
+
+00:05:24 - 00:06:29 Unknown Speaker:
+
+And all you need to do is just mount this bucket, right? So that's what you have to do. And you have everything in your bucket. So yes, come on here. A quick question. If we wanted to connect to, let's say, ETL results or EMR map results, would we just connect to a bucket the same way? Just mount the bucket where the data results are? Or is there another way to connect to... different data sources besides the S3 buckets. In the notebook workbench instance you're asking me? Yes. Currently the features that they have enabled is like you can directly connect to the bucket or the one thing is if you have your source code in GitHub, You can just directly clone the repository whatever you have it, right.
+
+00:06:29 - 00:07:27 Unknown Speaker:
+
+You can provide that clone link over here and you can clone this here and you can start working it. Currently, only those are the two options that is available. But yeah, if in case you can, if you have any other further queries, right? Or if you feel if this thing is there that would be helpful, then. Ganesh Venkataraman, with the POC available for this. So we're aggressively working on all of this latest releases, all those things. So you can reach out to him. And yeah, if you do not get any response from him, you can also reach out to me so that I can get in touch with him and I can get back to you. Sounds good. Thank you, Satosh. Yeah. Great.
+
+00:07:27 - 00:08:20 Unknown Speaker:
+
+So yeah, first let me, before we go through this particular guide, whatever we have, right, I'll just quickly take you through this notebook workbench. I know each and everyone will be aware how this particular interface works. It's exactly equivalent to a Jupyter notebook if you've already worked with. So this plus icon, which is a new launcher, where our Python 3 kernel is there. So this is what we should be making use of, either, otherwise we can make use of this dominant as of now, right? You can just click on Python 3 kernel where it is going to open a new iPYNB file and where you can get started, right? See whatever the new iPYNB file that I opened, it was directly created in my bucket, so it is not getting created in my instance.
+
+00:08:20 - 00:09:15 Unknown Speaker:
+
+So that is one thing again. I wanted to highlight. So the best practice is always you start working directly on the bucket so that you never lose any of the work that you're doing it. In this plus icon, you can create a new folder within this particular area itself because this is directly integrated into your Jupyter notebook. You can create a new folder here, you can log. And this is only for your, this bucket is only for your codes, right? Because this particular bucket is a permanent bucket and it has some size limitation, right? If in case. If you want to export any large volumes of data, right? So you see an extension of my SS1010, which says Temp data. So this is where we can export all of our CSV files, right?
+
+00:09:15 - 00:10:05 Unknown Speaker:
+
+But anything that you export here, right, can be any large file that you would like to export. So you can do it, but you have a limitation of three days after three days, automatically, whatever the data that is present over here, it would be closed, right? All you have to do is you have to download this to your local system. That's all from your TIM data bucket, right? So because, like in the previous session, whatever I have exported right now, I do not have it here, right? So the name itself says it is a Temp data, so that's what you need to keep in mind. So all of my code, I have it in SS1010 and anything that I want to export. I keep it in my large volumes of data, I keep it in my Temp data bucket.
+
+00:10:05 - 00:11:10 Unknown Speaker:
+
+But I do store it locally because as it is a temporary space. And so yeah. These are all options that is available in this particular file browser, and you can directly connect to BigQuery as well from your notebook. See here, my PRG-P-UMI Academy is available over here. I click on this dropdown, common data set, my personal data set, accessible, and I have a few tables that is created, right? You can also search for tables and data set. You can also click on add a project here, and you can add AXP-Lumi, right? And you can pin this here, and you can add a few tables that is created, right? You can also search for tables and data set. You can also click on add a project here, and you can add AXP-Lumi.
+
+00:11:14 - 00:12:16 Unknown Speaker:
+
+Right, and you can spin this, and you'll see with the AXP-Ruby, you have the DW data set, with the DW data set, you have all of your E3 tables, right? So this is how we can directly create a BigQuery from here, right? So that's pretty much I just wanted to cover here with respect to this Jupyter Notebook interface. We'll just quickly jump on to the workbench guide. Yes, Alok, any questions? Question on this. Yes, so can we switch on the project space? I mean, do we have to use just one project space when we are using this Jupyter file, or can we switch to the other one while working? Like in BigQuery, I think it is... No, even this, I think by default, whatever project and notebook gets created. So that's what is available here, I guess.
+
+00:12:16 - 00:13:09 Unknown Speaker:
+
+You just have to choose that while your workbench instance is getting created. So after which we cannot switch it. So it gets created by default, the project you choose. All right. Thank you. Yeah, I think there were other questions from... Yeah, this is James. I had just a couple questions follow up. On the left, there where you have your ads ID, so this will save all the files directly, right? If you, if you go to the main folder, you'll lose the notebook. Is that what you're saying that I need? Yeah, yeah, this particular notebook, right? So what happens? Let's say there is some issue in the GCP notebook itself, right? Let's say whatever instance that you got created, it got corrupted due to some reason. XYz. And the instance that you were working for these many days is not available.
+
+00:13:10 - 00:14:00 Unknown Speaker:
+
+So it's not getting refreshed. You're unable to open it. So the only option that you have is you have to create it from the scratch. So when you do it, all the files that you were working for these many days, so for example, this notebook template, this will not be available when you create a new workbench instance. So it is like you are starting from the scratch. So no matter if you start from the scratch, all you need to do is again, whenever you create a storage, sorry, whenever you create a workbench instance, you can mount your bucket, which is available for you always. This is the cloud storage that we have. So within the cloud storage, a dedicated bucket is created for you because you are a analytical user. So that bucket you directly integrate here.
+
+00:14:00 - 00:15:04 Unknown Speaker:
+
+So this data is available permanently for you. Always. Okay, second follow-up to that. When I connect to GitHub here and clone, it's within my ads ID. So that has the governance then, right? It's the let's save accordingly, correct? Yep, yeah. Okay. And then I'm not sure if this is the right time, but I had two other questions just up there about packages and then keys. So I didn't know if this is the right time or later. Yeah. Thanks. Yeah. So I see others have raised your hand. Please ask any questions that you might have. So I want to know, do you have to know the button every time you scan the cluster? Or is there something permanently? Can you please repeat your question? Your wire is a bit low. Can you please? Can you hear me now?
+
+00:15:04 - 00:16:00 Unknown Speaker:
+
+Yeah, yeah, great. Now, I'm saying that whenever there's a new cluster with the Lumi analytics, we need to mount the GCS update to this workbench, or is there anything permanently that we don't have to repeat this process? No, this is a one-time activity again, but in case if you're facing any issues, So I think then it should be a issue with your... notebook walkbench. Because I remember that I just did this one time. Like, mount a bucket. And this is always available to me whenever I log in. And that should be the case for others as well. But if you are facing any issues, there is a dedicated Slack channel called as Lumi walkbench instance issues. So they are available only to resolve any issues that you are facing with the walkbench instance.
+
+00:16:01 - 00:17:07 Unknown Speaker:
+
+So they should be able to help you out with that. Now quickly getting on to the topic like using Python or can we get connected to BigQuery. So all those things is what we are going to look now. So these authentication steps, we have already done it, so maybe we can get started directly from this particular place, which says, verify if the bucket is mounted right. So this query will give you some output only if in case. If your bucket is directly mounted to your Jupyter notebook, so only then it has access to go and read your bucket, right? So if I run this, so this. Run button allows me to run within the cell itself. You see this. So it says run the selected cell. Or otherwise, you can make use of this run button at the top.
+
+00:17:07 - 00:18:09 Unknown Speaker:
+
+Or otherwise, you can also make use of a shortcut, shift enter, which is going to execute the cell. So we have three options which we can make use of. So this particular cell was able to get into my bucket and it was able to read, which means. We have mounted our bucket and the notebook workbench instance. So that is one thing I just wanted to show here. And while you're working with your Jupyter notebook, right, this analytical workbench instance, and one more thing that I would like to highlight here is this is specifically meant for analytical users, right? So that AU project, which you see here, PRG-P-AU, where AU indicates you are an analytical user because this is a lightweight instance that is getting created. You see this, right?
+
+00:18:10 - 00:19:10 Unknown Speaker:
+
+M2D standard for, so I think it is a lightweight and this is not a cluster that is getting spinned up where you can leverage the Jupyter notebook for your modeling purposes, right? There might be some users who was going to build a model in order to predict some values, right? Some use cases. For those kinds of people, this is not the right place, right? This workbench instance is not the right place. As you said, there is a IDA team separately where they allow you to spin up a cluster. And on top of that cluster, you can create a Jupyter notebook, and you can work there, you can do modeling stuff. But this is meant only for the analytical users, right? And as an analytical user whenever you're working.
+
+00:19:10 - 00:20:06 Unknown Speaker:
+
+And if you have any need to install a library, right, you can just do this PIP install a library. So if I run this, so that is going to download the library and it is going to install in our environment here. So that that particular library is available for us and we can make use of it, right? This is just a random library that I installed to showcase to you, right? So yeah. And if in case, if you're looking for any library, if that library is available or not, you can do PIP list, GREP and this streamlit, right? So that will tell you if this is available. It will showcase that particular library name and what is its version, even in case if it is not displaying anything so which means that particular library is not available.
+
+00:20:06 - 00:21:11 Unknown Speaker:
+
+So that's the takeaway for us, right? So we can also install so that is doable here. Can you install lotteries in the notebook you're working, or you have to go back to the Central I.Like I didn't get your question. I'm working on a notebook. I don't have a library. I can install it there, right? I don't need to go back to that. Do I need to go back to that? You can directly install in the notebook. Okay. Yeah. Thanks. And one thing that I would like to tell this, right? So let's say it's right looking in indexes. It basically looks into the Amex Artifactory. Rarely there might be some cases where the library that you're looking for might not be in this Amex Artifactory. If that is the case, then the library installation might fail.
+
+00:21:11 - 00:22:07 Unknown Speaker:
+
+But for most of the cases, it is available. Just for your information, I'm just putting it. Now coming back, so you're good, like you got an auto-mount your library, sorry, mount your bucket, and how you can save your files, and then if there is a requirement, you can install your own library, and you can clone it from the Git as well, in case if your source code is in the Git. So these are all some of the features that are available. Now let's actually get into the topic as in how we can run the queries, right? So before we get into the Python, you can directly run your BigQuery query as well in the notebook cell by using something called as magic command. Like how you were doing it in common stone, right? Percentage, percentage high.
+
+00:22:08 - 00:23:04 Unknown Speaker:
+
+Similarly, you can make use of percentage, percentage BigQuery. And you can directly run your SQL queries here. And you can also do that using the SQL editor that is available here as well. You can click on this button. You can click on open SQL editor and you can do it. But if that is the need, then you can directly go to BigQuery web console and you can do it. So this is completely developed for the Python user site where they want to write a Python code and connect to BigQuery query the data. So it is exclusively meant for that. But we don't have those options which we are showcasing yet. So try avoiding this and try to leverage the BigQuery console that you have, right? And please do leverage this when you have Python need, right?
+
+00:23:05 - 00:24:07 Unknown Speaker:
+
+Let's go to the next cell where we are loading data from BigQuery, right? And we are creating a data frame basically. That's what out of the BigQuery table. First, I'm showcasing it, how we are going to do it with the pandas, the native library that is available within the Python, right? And in order to do this, the BigQuery library plays a very, very important role, right? Because that is the one which allows us to create a client object, which is going to establish a connection between the Python and the BigQuery, post which we can write a query, run it, create the data frame, everything, right? So that is the step. You import pandas as PD, you import the BigQuery library inside which you have this client class using which you create this client object.
+
+00:24:07 - 00:25:03 Unknown Speaker:
+
+Now, once you have created the client object, it's all the SQL query. You write a select SQL where I'm selecting from my personal data set, I have this particular table and I've just limited the data to only 10 rows, first 10 rows, right? And what I'm doing, so this particular client object, whatever I have created, it has a method called a query method to which I can pass my SQL. It is going to execute and it is going to provide me the result. Again, using that result, I'm directly converting it to a data frame. So once the query is executed, I'm directly converting it to data frame using 200 score data frame, right? And once I have the data frame available, I am displaying it using the head method. So this head method is available within the Pandas data frame.
+
+00:25:03 - 00:26:08 Unknown Speaker:
+
+Let me run this, which is going to display you the data as a data frame, right? So my table just has only one column, which happens to be a country ID, and those country IDs is being displayed over here. So, you can work with pandas when you're dealing with small amounts of data, right? But you know, Pandas is not compatible with large volumes of data, right? So it will fail. That is where PI Spark came into picture. So that is what most of the users were making use of it in your hive days. But moving on to Lumi, we have a way to run PySpark, right? But the recommendations or the best practices is to convert your PySpark queries into big frames, right? Like a Pandas data frame, we have something called as.
+
+00:26:09 - 00:27:19 Unknown Speaker:
+
+BigQuery data frame, which in short is called as big frames. Because what big frames does is ultimately the background, it leverages the processing power of BigQuery, which is a petabyte scale data warehouse, which can scan petabytes of data in minutes, right? So yeah, we will see one by one now. So first use all to read a BigQuery table. And create a data frame. Now in this, we are going to see how to load a Pandas data frame back to BigQuery, right? So that is what we are going to look at. So we are reading it. We are creating the data frame here, and so from that particular data frame, we are selecting only these two columns, which is short name and effective date. Now, I am storing back this particular two column, this data frame as a table into BigQuery.
+
+00:27:20 - 00:28:14 Unknown Speaker:
+
+So for that, what I'm doing here, I'm creating a schema first. So schema field short name, this is a string, schema field effective date, this happens to be a date. I'm also creating a table name here, right? So here I have it as df1. Let me change it to df2 so that if it is existing, so it doesn't throw any error to me. So table idea I have given, I have given the entire path. So this is my project. This is my personal data set. Create a table of this name, right? And now all I have to do is BigQuery. So this BigQuery library as a function, LoadJobConfig to which I'm going to pass my schema and then my client object as a method called as load table from the data frame.
+
+00:28:15 - 00:29:11 Unknown Speaker:
+
+So it's just simple as your English which says load the table from the data frame that you have. So what all you need to pass? Pass the data frame and where the table has to be created. So that is available in this variable table ID. And job config. Simple as that. So this is going to create and then finally job.result to see if that table has got created or not. So now I'm going to run this particular query. So which is going to create a table for us in my personal data set. So you see at the bottom, it says my kernel was busy. So it means it was executing so far. It finished the execution. It says loaded 10 rows into this particular table. Now I can go back to my BigQuery.
+
+00:29:11 - 00:30:17 Unknown Speaker:
+
+I can refresh here. I'll scroll this. SS1010 and I have DF2. I'll click on this. And I want you to look at the details. 10 rows. It was created on 12th November, right? It was just created right now. So that's what I just wanted to highlight over here. I can also click on preview to look at the data, right? So this is how you can load back your data into BigQuery, right? So that is a data frame. Like what if I have a CSV file, how do I read my CSV file? And then I would like to write it back to a BigQuery table, right? So again, it's very simple. The process is going to be same. Identify the column names, create a schema for it. So same, provide the table ID.
+
+00:30:18 - 00:31:21 Unknown Speaker:
+
+So after table ID, this time the CSV file is present in this particular path, right? So, this is my data set AXP-US-SS1010. Within this, I have this lumi-trainings.csv, right? You see here, I have my csv, lumi-trainings.csv. So, this is the path and same, you load the job config. This time, I'm not reading it from a data frame. Instead, I'm reading it from a URI. So, load table from URI. Provide your URI where the CSV file is present. Provide the path where the table has to get created. And the job config. That's it. So this is going to run. It is going to create the table for you. Maybe I will call the table as CSV2. Let me run this. Yes, I see I've raised your hand. Please do ask.
+
+00:31:24 - 00:32:26 Unknown Speaker:
+
+So is it possible to just load the data from the URI itself, like write them into the table with this function? Are you asking from this function? That's what we're doing here, right? So can you be more clear of the question that you're asking? But you're writing to the table. Okay. No, no, this table is not available at all, right? So I just avoided the table name. Like when I say table ID, this is the path. So within this path, so this name gets created. Maybe I can just show it to you here. Currently, if you see, only CSV1 is there. So the moment I refresh, so a table that gets created with this name. So you're just providing the path, along with that, you're providing the table name as well.
+
+00:32:26 - 00:33:31 Unknown Speaker:
+
+So it's not that the table should be existing. So we are creating a new table, and this table gets created just right now to us. Okay, yeah, oh, actually, I'm asking, like, if you want to simply reload the CSV file from this Google Cloud, Um, storage, uh, should. Could you use the same function here, or just use the like PD already CSV and provide the GS location? If you're using a Python way, this is the option, right? Like, you have to make use of the. You should provide the table ID path URI, and this is the function that you need to make use of, right? So, that's what we have to do. But, if you're directly working with Ruby, BigQuery, Web Console, so you have a different way there where you can import or export the data.
+
+00:33:31 - 00:34:40 Unknown Speaker:
+
+So, that is different altogether. But, if you're doing a Pythonic way, this is the approach. Okay. Yeah. So, till now, whatever we did, Looking at all this particular process was related to Python. When I say Python, the native library, so Pandas, it was working directly with Pandas, right? But if you're working with large volumes of data, right, so that is not going to work as expected. So it is going to throw in the dirt. So that is where I said 10 cornerstone days. Use of PySpark, right? So we will just show you as well as in how we can run your PySpark code. But the only problem that we face whenever we are running our PySpark codes, right? You cannot save the data back directly from your PySpark into a BigQuery table because you know, right?
+
+00:34:40 - 00:35:32 Unknown Speaker:
+
+PySpark is going to work on a distributed system. So that's what the usage of Spark itself right now, whatever the task that has completed on that particular distributed system, so here, in particular in the GCP. So it is not able to save that data by collecting all together all of the data and save it as a big query table. So that is the only place we face the issues where we will have to convert the PI Spark data frame, whatever we have into a big frames. And then we'll have to save it, right? So these are the challenges we face. That is why we suggest users, instead of using PySpark, you can directly convert your code to big frames where big frame is nothing but BigQuery data frame that gets created.
+
+00:35:33 - 00:38:02 Unknown Speaker:
+
+You can do all of the stuff, everything. Again, save the data back to BigQuery table easy, right? But yeah, so we will also show you how to work with PySpark over here. So by default, Java is available to you. PySpark is also available to you. The only thing that you have to do is copy this command. Go to terminal. I want to open terminal now. Go to terminal. Paste this command. This jar file is must, right? Let's see. Okay. Maybe I'll just click on New Notebook Workbench Guide. I think I've copied the entire command. The command just happens to be gs colon. So that's the command. Let me paste the command now. Let me hit on enter. Okay, it says no such file or directory. Try to run this in the notebook.
+
+00:38:11 - 00:41:24 Unknown Speaker:
+
+Okay, it doesn't work over here. Just check one last time. Jar using terminal, so that's what it says. As-salamu alaykum. Okay, maybe I can just get back to you on this as in why we are getting this particular issue. But maybe let's just quickly go back to the workbench guide. But this step is muscle. This is needed. So we have to copy this particular jar file without which we will not be able to work with. I spark in the notebook what makes instance So that step is pretty much needed, but they are just let's see how it behaves in my house cleaning method so it gave me the java version everything. I'm trying to see if this chart file is present. Okay, so Spark is available, Spark version 3.0.0.
+
+00:41:24 - 00:43:05 Unknown Speaker:
+
+But it says it cannot access the Spark BigQuery with dependencies.jar file. So that is not available here, but that should be the command which will copy, or it should be the entire command. Not sure why it is not working? Tell you why it was not working earlier. So you cannot copy the JAR file to your bucket, right? So, earlier I was into the bucket and I was trying to open the terminal. So my terminal by default got opened in this particular path. So since I was executing that particular command, so it was unable to execute it. But right now, you see Terminal 2 is by default opened in our base. So this gets opened at my notebook workbench instance, and where upon executing this, so it had this jar file over here, and now we can easily work with our PySpark code.
+
+00:43:17 - 00:44:15 Unknown Speaker:
+
+If you see, so, this is the PySPark code that I just wanted to highlight over here, so you can import your PySpark. Create the park special. And where? You can create your Spark session by create by providing your app name Config file, right? So this is very, very important because you provide that JAR file in the Config. And then you do this settings right, where you just create your Spark session. Basically, right? And once you have your Spark session created within your Spark, you can directly write the query, right? So you can write an inline SQL query where you want to load this particular table, right? So select this particular, select everything from this particular table, right? This is going to show only 10 rows because I've written only 10.
+
+00:44:16 - 00:45:08 Unknown Speaker:
+
+It is basically going to create a PySpark data frame to you, but it is going to return the data. You can directly write the query or you can separately write the query, store it within a variable, and you can pass that particular SQL query as well. It was easily able to read the table that I have created within my personal dataset within the BigQuery. Similarly, you can also connect to your . AXP-gumi data warehouse as well, right? So you can do this. So you can, this time I've written the SQL, I've stored it within a variable, and I have passed it, passed the variable instead of passing the query. So this is also doable. The steps remain same. You have to create a Spark session, right? That's all.
+
+00:45:08 - 00:46:04 Unknown Speaker:
+
+Once you have a Spark session, you can read the table that is present within the BigQuery, right? And now, if you want to read a table directly, right, you can mention the table name which you want to read. So there is one nested repeated fields, like a table that I have created using this particular feature that is available in the BigQuery. This time, I'm not writing any query. I'm directly reading the entire table, right? So that is what I am doing here. So load the table. Right. So it is capable of loading it. And I just wanted to see this is my parent fully because it is a nested repeated fields. The repeated fields will be available as a nested array. That is what we call it as a nested repeated fields in BigQuery. Right.
+
+00:46:06 - 00:47:15 Unknown Speaker:
+
+So that is there. And using PySpark, if you want, you can also create session tables as well. You do it using this create or replace temp view, which is going to create a session tables and whatever the session tables that you create, you can also create it to a Pandas data frame. All of the stuffs are available over here, right? And yeah, so one final thing that I would like to showcase here as well as we were. Insisting right to you. So start using big frames, right? Big frames is an alternate solution to Pandas, PySpark, providing better scalability and performance, right? While unlocking additional features. So we do have provided some documentation here which you can go through, right? So this is the library. Import bigframes.pandas. As BPD, right? So this is the table that we have provided here.
+
+00:47:16 - 00:49:03 Unknown Speaker:
+
+And from this library BPD, you can read the table, right? Using the read GBQ, you can read this particular table. This is going to create a big frames for you, big query data frames, and which is what we're going to display here. So I want you to take a... Okay. CRT load DF is not there. I'll give DF one. So the query job is getting executed. So zero bytes processed. So 137 bytes processed. Yeah, you see? So, it's showing the data for us, the short name and effective date, right? And df.info, I'd just like to show you that this is of type big frames. When I say big frame, it is nothing but BigQuery data frames, right? So, whenever you're working with large volumes of data, start working with this directly.
+
+00:49:05 - 00:50:10 Unknown Speaker:
+
+This is something similar to your pandas, whatever methodologies you add over their methods, the eight years that you were performing. A similar kind of methods are available within the BigQuery data frame as well, so you can easily work with it. And this is going to leverage your bigQuery data warehouse processing, so your work will be done easier. And again, saving the data back to a bigQuery table is also easy with the big frames. Yeah. And with this, there are certain migration best practices that is listed out here for those people who are getting migration to Lumi. And there are few magics, like the magic commands that is available, which was built by our Lumi analytics team. This is like an accelerator for you. If you're working with certain I queries and if you want to convert those I queries into BigQuery format SQL, right?
+
+00:50:10 - 00:51:23 Unknown Speaker:
+
+For that you have to do two things. One is I would be sharing this particular .Txt file with you which says mymagics.py, right? So this mymagics.py is what has the logic. Which will convert your high query into your sequel way, right? Wherever you are working so place this my magics dot py Load your magics by executing this particular cell That is very very important, which is going to load your magic command So this is my I am query that I have and now All I will do is use this magic command percentage hive to BigQuery. I am passing my SQL query, right? I've stored it within this variable. If I run this, like whatever the hive format it goes there, it has converted into BigQuery SQL format and it has returned me the output, right?
+
+00:51:24 - 00:52:20 Unknown Speaker:
+
+So that is how it is going to give it back to me. Currently, I don't have any input file to showcase, but you can also pass an input file. So you can also pass an input file where it is going to provide the output to you. So this is going to be very, very useful for five users. And then I can also directly pass a query over here. You see this. I am doing a select count star from cstone db3 table. So cstone db3 happens to be a cornerstone database. When I run this query, it just correctly gave me select count star from txp-lumi happens to be the database and it correctly mentioned the format .Dw because within the dw dataset is what this particular table will be there.
+
+00:52:21 - 00:53:26 Unknown Speaker:
+
+Instead of using your SQL translator feature, You can directly start using this particular magic commands, right? So, yeah, this is what, uh, I had pretty much to cover for, uh, today's session, uh. Please feel free to ask any queries that you might have. Yeah, here's a look, yeah. So while converting the hive queries to big queries. You know, sometimes you have to really look at things like date or something else, and then I've not really used that a lot. But I'm just checking if this command the magic command, which is saying if this is like, better option. Yeah, just try using this, right? So they have written the background logic over here, right? Like whatever the magic command that are that you are trying to utilize. I think they have tried to address almost all of the things, right?
+
+00:53:27 - 00:54:23 Unknown Speaker:
+
+Let's see, there are some admins, hive parser, right? So there is a lot of work that has done by the in-house team to develop this. So I think instead of the SQL translator, you can directly start making use of this. And please do provide us the feedback as how this works so that we can start improvising it. Maybe we can provide the... feedback to the in-house team and they can start working on it. Just to add one more question here, Santosh, if in case we have, let's say, any ODL we have created as a repository in Cornerstone using Hive, and the data is very large, and now because we are migrating to Lumi, but we still want to really use that repository, but we do not really know how to do it.
+
+00:54:24 - 00:55:20 Unknown Speaker:
+
+So this way, the cstone command, you know, which you mentioned, the magic command, wherein we can directly, like, I think, you know, pull it using, and we can pull entire data into the data frame, and then we can probably insert it, or, you know, that can be done. What I was trying to showcase here is, You have a query in Hive that gets converted to your BigQuery format. We'll be able to connect to a ODL table available in Cornerstone, so that is not possible from here. Okay, okay, we can't really connect to Hive. Yeah, yeah. So we have to bring in the data in the domain, the data should be available, understood, so. Any other question anyone has, if not, I have opened a poll. Please do provide your feedback. And then, yeah.
+
+00:55:20 - 00:55:51 Unknown Speaker:
+
+So in the meanwhile, please do ask any questions, if in case, if you have. And yeah, if there are no questions now, you can always reach out to us via the Lumi Academy Slack channel whenever you have any queries related to the Python notebook that you are working with. Yeah. So thank you very much for joining today's session. Have a great day, everyone. Bye-bye. Take care. Thank you so much. Bye-bye.

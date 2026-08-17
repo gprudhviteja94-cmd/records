@@ -1,0 +1,79 @@
+Yes — the "8-Dimension" rule set (also called "eight dimension checks" / "CDDT and 8-Dimension Checks Automation") comes up multiple times in this transcript, both in the structured meeting notes and in the raw discussion. Here's everything relevant, pulled together and organized.
+
+Where it appears in the structured summary (Future Objectives section)
+
+CDDT and 8-Dimension Checks Automation (bullet point, future objectives):
+
+Scripts created with minor changes expected. Output formatting to align with self-serve backend template for standardized display. Ongoing POC to improve coverage and alert generation. Validation module to ensure business relevance of generated SQLs.
+
+It's also listed as an action item:
+
+Lead implementation of CD and 8-dimension checks automation, ongoing
+
+What the raw discussion reveals (the detail behind that bullet)
+
+Pulling together the scattered dialogue across the transcript, here's the fuller picture:
+
+1. What it is / how it works
+
+The 8-dimension automation generates SQL directly — it's a script-based module that outputs the parameters/queries needed for checks.
+It currently only covers 2–3 dimensions per variable, not the full set — this was flagged as a gap, with more dimension coverage expected "eventually" once the POC completes.
+One speaker questioned whether self-serve backend integration is even needed since the module already generates SQL — the group agreed self-serve integration is still needed for standardization (see below).
+
+2. The core problem being discussed
+
+Output isn't coming through properly from the 8-dimensional module — specifically, DQ rule descriptions and related details aren't rendering correctly.
+Decision: the 8-dimension framework needs to map to the existing self-serve back-end template so it produces standardized output. If it can't map cleanly, the fallback is to mark it as a "complex check" and onboard it that way.
+Manish's team is expected to rework the module itself to improve output quality and dimension coverage.
+
+3. Integration with other pipelines
+
+There's a plan to combine schemas/logic so that CDs (presumably "Complex/Conditional Dimensions" or similar) and the 8-dimension output can share a common result table/DB.
+The CDs produced by the upstream module are meant to feed into the eight-dimension rule generation as input — i.e., 8-dimension checks consume the CDs generated elsewhere, so a consistent pattern must be maintained between the two.
+This part hasn't been sized/estimated yet.
+
+4. Prioritization
+
+For Manish's team, "CDE and A-Dimension" (referred to variably as "CD and A dimensions" / "8-dimension") checks were confirmed as the #1 priority, ahead of AI-based automation checks and "Controls" work — this was explicitly reconfirmed near the end of the discussion.
+AI-based automation is currently deprioritized because production deployment is blocked on a lengthy (2–3 month) approval process and pending API key/council approval; once that's unblocked, focus would shift there.
+
+5. Next steps mentioned
+
+A separate call (suggested for Friday) to align specifically on the CD/8-dimension tables and next steps, including a "count" logic issue involving a variable appearing across multiple BRI (likely a system/table reference) instances, used to determine something referred to as "CV."
+Quick note on the terminology
+
+The transcript is a rough voice-to-text transcription, so the term surfaces in several near-synonymous forms: "8-Dimension," "8 dimension," "eight dimension," "A dimension," "A-Dimension," and once combined as "CD, A dimensions." These almost certainly all refer to the same "8-Dimension Checks" workstream — "A dimension" looks like a transcription artifact of "8 dimension" (or "a dimension" in fast speech), so I'd treat them as one thread unless you have reason to think otherwise.
+
+Want me to pull the full verbatim transcript lines into a document, or focus on any one of these threads (e.g., just the prioritization discussion or the self-serve integration decision)?
+
+list course of actions w.re.t that
+
+Distilled framework dimensions into actionable implementation steps
+Distilled framework dimensions into actionable implementation steps
+
+Based on everything said about the 8-Dimension rule set across the transcript, here's the course of action, organized by owner/theme:
+
+1. Module Output & Standardization (Manish's team)
+Fix output rendering issue — DQ rule descriptions and related details currently aren't displaying properly from the 8-dimension module; root-cause and fix.
+Map 8-dimension framework output to the existing self-serve back-end template so results display in a standardized format across the self-serve portal and DQIM.
+If a clean mapping isn't possible → fallback: mark it as a "complex check" and onboard through that route instead.
+Rework the module to expand dimension coverage — currently only 2–3 dimensions per variable are covered; target is to cover more/all dimensions once the POC is complete.
+Minor script changes on the already-created 8-dimension scripts (small revisions, not a rebuild).
+2. Integration with CD (Complex/Conditional Dimension) Pipeline
+Combine schema/logic between the CD output and 8-dimension output so both write to a shared result table/DB.
+Establish a consistent output pattern so CDs generated upstream can be reliably consumed as input by the 8-dimension rule generation step.
+Size/estimate this integration work — currently unsized; someone needs to own scoping it and give a rough effort estimate.
+Build a validation module to confirm generated SQLs are business-relevant (guardrail before checks go live).
+3. Counting/Variable Logic (flagged as unresolved)
+Resolve the open question on counting a variable that appears across multiple BRI instances — determine how that count feeds into calculating "CV."
+Confirm how chargeability logic is kept separate from this counting logic (agreed it should not be included in the same line/output).
+Set up a dedicated alignment call (proposed for Friday) between the relevant owners to close out next steps on these tables.
+4. Prioritization & Resourcing
+Confirm CD + 8-Dimension automation as Manish's team's #1 priority, ahead of Controls and AI-based automation checks — this was explicitly re-confirmed.
+Keep AI-based automation checks deprioritized until the API key and GNI council POC approval come through; once unblocked, shift focus there.
+Ensure enough resourcing/bandwidth is allocated given the team is described as "new" — capacity planning should assume CD/8-Dimension work will consume most of the sprint before anything else (e.g., Controls) gets picked up.
+5. Production Readiness
+Produce a production checklist/list from the team building the scripts, since "we would rely on you guys to have a production list" was called out explicitly.
+Anticipate similar self-serve/backend integration requirements for 8-dimension checks as were done for other check types (i.e., don't treat it as a one-off — plan the same integration pattern).
+
+Want this turned into a tracked action-item table (owner / task / due date) as a Word or Excel doc for follow-up?

@@ -1,0 +1,378 @@
+2026-01-28 Project Coordination and Data Management Discussion
+
+Creation Time: 2026/1/28
+
+
+📅About Meeting
+
+  • Date & Time: 2026-01-28 18:00 (Duration: 3838 seconds)
+  • Location: [insert location]
+  • Attendee: Saurabh, Sindhuja, Bhagavan, Antariksh, Sahaj, Sameer, Sachin, Cinderella, Arnand, Swarup Dutta, Kundan, Prithvi, Shamir, Prithvi, Anand, Jason, Nirmal, Anushree, Kartik, Aaradhya, Radhya, Aman, Om, Nirmal, Suman, Abigale, NC, Ajay (and others on the call)
+
+
+📒Meeting Outline
+
+
+Coordination & Communication with Saurabh and Sindhuja
+
+  • Ping Saurabh / CC Sindhuja Action requested: Ping Saurabh to connect (mention Bhagavan asked to connect on this issue). Create a new thread (not reuse the old one) and CC Sindhuja if she is present; if not, proceed without. Make clear Bhagavan is busy on another use case and asked this connect.
+  • Intern introduction Introduced Antariksh (six-month campus intern). Sahaj referenced as previous intern.
+
+
+Data ingestion, backup and duplicate/partition issues (Nov/Dec/Jan)
+
+  • November backup & counts Sachin shared a backup table for November (table count 53,731,252). Action: copy that count to the expected place in the system/record.
+  • Update dates & incidents Discussion on correct update/partition dates — ensure date values in ingestion are correct (e.g., 2025-11 for November, 2025-12-01 for intended inserts). Decision: raise incidents instead of deleting records when necessary.
+  • Duplicate ingestion & Lumi scheduling glitch Duplicate ingestion observed for January (duplicate run). Root cause: Lumi job scheduling glitch running jobs twice (previously fixed but reappeared). Resulted in duplicate partitions (~10M records deleted when partition removed). Team to decide scheduling (e.g., run on 31 Jan or 1 Feb) and notify operations.
+  • Retention and re-ingestion constraints Lumi retention is two weeks; files older than two weeks may need manual ingestion. For pipelines failing beyond retention, manual ingestion by SOR might be required; otherwise Lumi can re-ingest within retention window.
+
+
+ServiceNow integration, deployments and E2/E3 planning
+
+  • ServiceNow / E2/E3 readiness Swarup Dutta confirmed E2 is ready; minor justification pending. If fixed, deploy planned for upcoming Monday. Need a demo call (preferably in E3). Team to arrange testing and validation stories for E3 deployment.
+
+  • User stories & assignments
+    
+    • Create a user story for E3 deployment and validation for ServiceNow integration, copy and assign to Kundan, tag as “ServiceNow integration — E3 deployment and validation”.
+    • If deploy on Monday, must validate integration and enable testing.
+
+
+Self-serve UI, backlog prioritization, and frontend constraints
+
+  • Self-serve UI progress and prioritization Current sprint: focus on self-serve UI enhancements. Front-end resources constrained (one front-end dev working on bulk update); plan to pause or stagger self-serve and bulk update work to make progress. Raj to be looped in for design alignment.
+  • Automation job (post Lumi ingest) Automation job discussed (reads files, track progress, report tasks completed). Assign as an “automation job” feature for this sprint and owner = Prithvi to take full capacity. Plan to produce a phased plan (read file → progress → tasks) and distribute across sprints.
+
+
+Control / Contra / Validation / Backend API work
+
+  • E3 testing & validation Need one user story for E3 testing for deployed ServiceNow integration. Validation copy required for the build done for use case — allocate capacity for validation.
+
+  • Q-Track, AFC, role modifications Q-Track role modification and pending script changes (Maestro dependency) discussed. Maestro notifications missing for some builds; platform team follow-up required. Validation required post-deploy; assign validation to NC once E3 deployed.
+
+  • Assignments and pointers
+    
+    • Assign AFC check & build to NC.
+    • Role update and Q-Track: allocate small story pointers (e.g., 2–3).
+    • Validation tasks for Contra: allocate capacity and one story to Samir (or as discussed).
+
+
+Maestro notifications, platform dependencies, and outstanding scripts
+
+  • Maestro notifications missing For some partner scripts (Axiom/Hilton, rewards integrity), Maestro milestone notifications not arriving. Platform team follow-up required to enable notifications; builds completed and signed off, awaiting notification to proceed.
+  • SFTP / SFT profile blocking SFTP profile creation is still blocking SFTP-related works — these tasks will move to next sprint until profile available.
+
+
+RAZY metadata updates, ODL table builds, other story assignments
+
+  • RAZY metadata & JSON updates Metadata update in progress; testing may complete but deployment planned for upcoming sprint. Create a clone of feature and assign to Nirmal for testing/deployment.
+  • Build new ODL table Feature exists (row 10). Assign to Nirmal; discuss real support for raising production tasks (26.1).
+  • Assignment clarity If Nirmal is overloaded, temporarily assign to another with guidance — team will support.
+
+
+Production support, Lumi escalation and roles/responsibilities
+
+  • Production issues & expectations Several pipelines failing in production (seven pipelines on hold). Concern raised about lack of proactive support from SOR team to engage Lumi; delays have cost ~48 hours in response and resolution on some issues.
+
+  • Incident handling & escalation Current Lumi process auto-creates incidents when a pipeline fails and the file with correct sequence number is present. For other cases (HTTP/connection issues causing copies to fail), incidents may not be auto-created. Team agreed to:
+    
+    • Set up a call with Lumi product owner (Jane) and relevant participants to clarify roles, responsibilities, and escalation matrix.
+    • Clarify timelines: Lumi retention = 2 weeks; manual ingestion responsibilities when older than retention.
+    • Create a mechanism for incidents created by Lumi to also notify this team (so they can chase SLAs).
+
+  • Points of contact Identified Anushree (project manager) as a better POC when engineer doesn’t respond. Use escalation matrix if standard channels fail.
+
+
+Board, story points, and capacity planning
+
+  • Story point assignments
+    
+    • QTrack role update: 2–3 points.
+    • AFC check: 5 points assigned to NC.
+    • Self-serve build: 3 points (front-end limited).
+    • Automation job: assign to Prithvi (full capacity).
+    • Business Health feature: create a story (5 points) and assign to Anand.
+    • Production support stories: create small support stories for monitoring & incident follow-up (1 point each) for Suman and ANSI as discussed.
+    • Venue table update / JSON / Razy tasks: assign to Nirmal (3 points where noted).
+
+  • Board visibility Showed the board; teams to reassign if insurance tasks are not required. If insurance needs support later, will assign Nirmal or others.
+
+
+Meetings & follow-ups
+
+  • Tomorrow calls
+    
+    • Call with Lumi product owner (Jane) to align roles/responsibilities and escalation (attendees: SOR leads, Lumi PO).
+    • Call requested: Jason to set up a call tomorrow to give requirements for the automation job. Invitees: Jason, Nirmal. Jason to send invite and forward to Nirmal if needed.
+    • Raj to be contacted for design alignment and to check whether platform issues are affecting other teams.
+
+
+📋Overview
+
+  • Ping Saurabh (new thread) and CC Sindhuja if present; mention Bhagavan asked connection.
+  • Antariksh introduced as a 6-month intern.
+  • November backup count is 53,731,252 — copy it into the target location.
+  • Raise incidents instead of deleting records where possible; ensure update dates set correctly (watch year/month: e.g., 2025-12-01).
+  • Duplicate ingestion observed due to Lumi scheduling glitch — fix scheduling and choose reschedule date (end of month).
+  • E2 ready; aim for deployment Monday if outstanding justification fixed. Create E3 testing story for ServiceNow integration.
+  • Prioritize self-serve UI but manage front-end capacity; assign bulk update work accordingly.
+  • Create automation job feature; assign to Prithvi; deliver phased plan for file read and progress tracking.
+  • Maestro notifications missing — follow up with platform; validation will be required post-deploy.
+  • SFTP blocked until profile created; move those tasks to next sprint or hold.
+  • Assign RAZY and ODL tasks to Nirmal (create clones where needed).
+  • Production support process needs clarity: auto-incident notification to this team, escalation matrix with Lumi; call with Lumi PO (Jane) tomorrow to finalize responsibilities.
+  • Story points allocated for Q-Track, AFC, self-serve, automation, and business health features; small support stories created for monitoring/incident follow-up.
+  • Jason to schedule automation requirements call with Nirmal.
+
+
+🎯Todo List
+
+  • Saurabh:
+    
+    • Receive ping from Bhagavan’s request (new thread) — Saurabh to respond (ASAP).
+
+  • [Owner: Sachin]
+    
+    • Copy November table count (53,731,252) into the specified place (ASAP).
+    • Raise incident to correct update/partition dates (e.g., set to 2025-12-01 where required) (ASAP).
+    • Coordinate with Lumi and decide reschedule for duplicate-run partitions (confirm whether to run 31 Jan or 1 Feb) (by next business day).
+
+  • [Owner: Jason]
+    
+    • Schedule call tomorrow to detail automation job requirements; invite Jason + Nirmal (send invite today).
+    • Confirm SFTP profile status and update stakeholders (ASAP).
+
+  • [Owner: Prithvi]
+    
+    • Own automation job feature — produce phased plan (read file → progress → task completion) and start implementation (plan by next sprint planning).
+
+  • [Owner: Kundan / Sindhuja]
+    
+    • Create/copy user story for ServiceNow integration: “E3 deployment and validation” and assign to Kundan (ASAP).
+    • Create validation copy/story for the control/contra build and assign to relevant validators (ASAP).
+
+  • [Owner: Anand]
+    
+    • Create Business Health story (SM) with 5 story points and accept assignment (ASAP).
+    • Coordinate design alignment for self-serve with Raj (within 3 days).
+
+  • [Owner: NC]
+    
+    • Take AFC check & build (5 points) and Q-Track validation once deployed (ASAP after deploy).
+
+  • [Owner: Nirmal]
+    
+    • Take RAZY metadata/JSON updates and ODL table build tasks; coordinate deployment/testing (assign clones, discuss with Jason if required) (Next sprint).
+
+  • [Owner: ANSI]
+    
+    • Follow up with platform team for Maestro milestone notifications for the pending partner scripts (Axiom/Hilton, rewards integrity) (ASAP).
+    • Take up small production support story for monitoring/incident follow-up (1 point).
+
+  • [Owner: Suman]
+    
+    • Accept one support story (1 point) to help with monitoring/incident follow-ups across RAZY and Q-Track (ASAP).
+
+  • [Owner: Team / Jason / Anand]
+    
+    • Schedule and conduct call with Lumi PO (Jane), SOR leads, and other stakeholders to clarify roles, responsibilities, incident auto-notification to this team, and escalation matrix (tomorrow; invite to include Jane, Lumi contacts, SOR leads).
+    • Share and finalize escalation matrix and SLA expectations with Lumi and internal stakeholders (post-call, within 48 hours).
+
+  • [Owner: Raj]
+    
+    • Review and align on design for self-serve UI and confirm if platform issues affecting other teams (check and report back in 2 business days).
+
+  • [Owner: All / Platform team]
+    
+    • Enable/verify Maestro milestone notifications to ensure builds can progress without blocking (ASAP).
+
+Notes:
+
+  • If any attendee is missing contact/email (e.g., Nirmal), Jason will forward invites as required.
+  • Tomorrow’s Lumi call will define accountability and manual vs. Lumi ingestion handoffs for >2-week retention windows.
+
+
+Transcription
+
+00:00:01 - 00:02:12 Unknown Speaker:
+
+Please ping Saurabh and let him know that you would like to connect with him. And in that group, just do a CC to Sindhuja. Sindhuja is not there, then that's fine. Yeah, that's fine. Just ping Saurabh instead of Bhagavan because he would be having an expectation. Just ping him that Bhagavan asked me to connect with you on this issue. And create a new thread instead of the same thread. Just make like, you know, mention clearly that one has asked me to connect with you on the same issue as he is busy on some other use case. Okay. Want to introduce quickly we have antariksh who has joined us uh from campus uh for a six month internship so if you remember right we had sahaj also yeah yeah yeah yeah. Let's wait for Sindhuja.
+
+00:02:12 - 00:04:20 Unknown Speaker:
+
+I think I'm waiting for Sindhuja and Jason is not joining the call. Okay, Jason is there. Even if something comes up that creates a problem in between. Till the time Sindhuja is joining, Sameer, December data moved or you're still moving the changes to this year? But like before that, maybe I can also check the data once. That would be very good. I mean, anyway, I'm asking you on that. I just want to make sure that everything is good. You are asking for the November ones? Yeah. You can share your screen. Just bring up your screen and let's at least revalidate the records, like count at least. It's not up right now. We can see you still. So basically this is the backup of November table, Sachin, which is from our use case data set.
+
+00:04:23 - 00:06:29 Unknown Speaker:
+
+So the count is 53731252. Just copy that count and put it into that same place. Yeah, sure. This is our warehouse, this table. So yeah, if you see here, um, run rate is this one and this one, yeah, this one. So this is November data which is 11 you can see here. On 25th, then only it would make sense as update should be 2025 11. Uh, to make the changes to this. I think you can raise an incident and we can create this one instead of deleting it. Yeah. Let's do that. And I think the below one, the same one, right? That was due to which we already raised an incident to delete these records. Date should be 2025 12 0 1. Yeah, sure, sure, that one I will do. So, why are you asking?
+
+00:06:29 - 00:07:28 Unknown Speaker:
+
+Like, update is like, I think on October or sometime, like we are actually run twice. One is towards the end of the month. Actually, that's why the issue. Like, see, ideally you had to run it on August, September, right? September 8th, but it ran like October 9th. That's right, that's fine, still fine. Yeah, yeah, at the time actually we thought to change the date to this one, but like, yeah. But if there is anything in this update only we can do, or nothing, otherwise, just just update this. As it is for the sixth one, we already raised the incident to delete and for the discipline, the one that you are, uh, you know, going to insert right now. Please make sure the age of date should be 20-25-12-0. Keep the year in mind sometimes.
+
+00:07:29 - 00:08:25 Unknown Speaker:
+
+Don't run it for January or early February, right? Now, since you have run it already for the Jan month, let's run it in Feb end. Okay, so we don't want to run it for Jan. See, for Jan, you have run it already, right? Duplicate ingestion that have that has happened right now, so just that is like one part. Yeah, that would be, oh, look. There is a glitch in the Lumi system. Okay, whenever you schedule the job, okay, they used to run it twice. That is a, you know, glitch in the Lumi system, which we raised it earlier, also they have fixed it earlier. Again, the same issue appeared right now. The same thing was happening for multiple tags when we were scheduling it for the, you know, DQ level checks. But when we ran...
+
+00:08:25 - 00:09:56 Unknown Speaker:
+
+That's right. I'm trying to ask Sachin. Here is that. Are you getting the entire partition deleted or only half of them? No, no, no. Complete one. Complete 10 million records are there, right? Those complete one is going to get deleted. And on... I'll leave it to you. If you want to run it on 1st of Feb. Or... you know, 31st of Jan. Do let us know we will run it. Uh, let's continue with what we are doing right now. The other change will make it later. First. Okay, on the 31st, okay, okay, okay, okay uh. Cinderella joined, Uh, Cinderella over to you, uh, for the strength planning. Sorry, I was late. Um, I'll just share my screen. Okay. That you have added like new features onto the page.
+
+00:09:57 - 00:11:42 Unknown Speaker:
+
+Does that mean you need these new features on the PI planning objectives page? They should be on there. Oh, sorry, I forgot to paste the details in there, but I can do that. So the feature numbers are available, right? Arnand, any story that you want to pull for the upcoming sprint? Right, so here, one thing, Sachin, I wanted to check is next week. Like, hopefully, we'll go live with ServiceNow and everything, right? The things that we had planned already. On E2, it is ready. I can confirm post, you know, having a conversation with Swarup Dutta today. He has given a tagline that suffering of that justification is remaining. If that gets fixed today, then we can plan for a deployment on upcoming Monday. Okay, okay, yeah, I mean, please get that sorted.
+
+00:11:42 - 00:13:35 Unknown Speaker:
+
+Like I said, we were planning that, uh, demo call, which I I wanted in E3 itself, that should be better. Okay, just give us today's with Saurabh, based on his availability required to stretch a bit. Uh, because we need to fix that one. For now we are working on the self-serve UI. So that's the plan which we are taking right for this print. There are not like major, there are some enhancements which we are taking, the self-serve UI. So there's some time left in this print or maybe in between the API integration, then probably I'll take. Where we have to add the title and description. We have only one front-end guys. I asked him to do work on bulk update and we have to pause the self-serve. Okay, let's get some progress on self-serve Abigale.
+
+00:13:36 - 00:14:30 Unknown Speaker:
+
+And then we can think about some sort of problem in the following sprint or something. Okay. In the meantime, what you can do, Sachin, is probably have a discussion with Raj and let's just say internally, let's design how we want to take this forward, right? Because ultimately, the design part of it, we have to think. Okay, okay. I'll take care of that one. Yeah. So, nothing on this front, Sindhuja, I think, on this feature for the upcoming sprint. Okay, I'll move on to control. No, no, can you go back? Can you go back? Uh? So Anand, on this one, we would need one user story for E3 testing. Uh, because if we deploy it on Monday, also, right? We need to check whether the service integration is working or not. They have enabled it, right?
+
+00:14:30 - 00:16:58 Unknown Speaker:
+
+But one, uh, you know, user story would be required for A3 deployment and testing on the service now integration. Uh, Sindhuja, you know, just create a copy of that and assign it to Kundan, marking it as, you know. UH, service now integration, uh uh. E3, E3 deployment, E3 deployment and validation. You can market. What he is saying is, if we add the class before that, actually that is not needed. It is wrong to add that. On this one on, and like, you know, first part is done, that is something we can demo it, post this call. And the second one would continue, so the quantum same build story would carry forward. Or, okay, I'll create a copy of that that would be with the five-story pointer. I think both Shamir and Prithvi were walking on it, right?
+
+00:17:06 - 00:18:48 Unknown Speaker:
+
+He was new. I was just trying to give him some input on the, you know, Lumi workspace and all. But I'll be assigning a different initiative in the upcoming spring. Okay. Anything else from Contro for the upcoming spring? Can you go back to there? Validation would be required. Like, you know, the validation copy would be required. The build that he would be doing for the use case, right? He would need some capacity for validation. Okay, anything else? Would be starting on the backend API design means build and all. Okay, so one question Anand, do we have any new script that required a build? For Q-Track, right? Yeah, for Q-Track. We are in discussion, so yesterday also you were there on the call, right, for UMDL. So we will start getting those requirements, but I highlight out.
+
+00:18:51 - 00:21:30 Unknown Speaker:
+
+Then assign one same build to ANSI from this one. Then we can focus on the self-serving between the non. Yeah. Okay. And in between, if there is something that is being required, then we can pull up to take care of those. Sindhuja, you can assign those. Do you assign this to Apple? Instead of fancy? Okay, okay, let's move to the next. So this would once come. Then we can assign that to probably, like, on Friday we have discussion, so next week we'll get some. Yeah, yeah, like, obviously we'll do our testing and everything. But the second half of the sprint right there, probably there will be some work for AFC. Then then assign that to NC, uh, AFC check and build is there, right? Assign that to NC. The next one, I think the next, is QPAC.
+
+00:21:30 - 00:23:08 Unknown Speaker:
+
+Role modification. Um, no, not insurance. The other scripts, uh, the other pending scripts to which we were doing modifications earlier. Yeah, so uh, which had some Maestro dependency, right? Said that we don't have access here, so we could not apply it or something. Yeah, so, uh, two scripts. We haven't received those notifications for the Racium Xcast. I had, uh, sent the results to you, uh, yesterday, which is that I have for which other one? Uh, then, uh, for the axiom partner Hilton, and um, uh, one script from, uh, the rewards, integrity. We haven't received this, uh, maestro, uh notification, so uh that we have raised with the platform team. Yeah, so such, unlike the build, is complete, so we don't need anything on the build. I have given sign off also for these.
+
+00:23:08 - 00:25:10 Unknown Speaker:
+
+It's just that the Maestro notification, uh thing is not there. I'm trying to figure it out. Like once the milestone notification is enabled, right? Is there a work to do or? There is no work. Right, Ansi, can you please confirm? It's just the follow-up, Ansi, that is required, right? Yeah, the validation will be required, Sachin, for those scripts. Okay, for E3, then once it's deployed, one level of validation, yeah. Assign that one to nc uh it's already there in the second second one rule update 26 1 2. If you're there, yeah, sorry. Sachin. Uh, it's 20 this one, right? Support for raising? I'm not sure, Jason, Have you created any feature for production? Support for? I have not? Sorry. Okay, no worries, I think Sindhuja. What we can also do is leverage that feature that we created yesterday for business health, right?
+
+00:25:10 - 00:26:54 Unknown Speaker:
+
+Yeah, yeah, let's do that. So probably I can take want to delete this entirely? Yeah, I was thinking, No, no, no, no, no, no, no, don't delete it because there are. There are capacity being utilized for 26.1, right? So if you delete it, then that would reduce the capacity of the resources. Those have been, you know, created the task into this one, so keep it if you want you don't you. We will see that as good and then we'll decide on it. One thing, Anand, the automation job that we were discussing yesterday, right? Post sending the data to Lumi, under which feature we have to work on it? That is also self-serve, right? That comes under self-serve? For this print, or is there any holiday like public holiday is not there, I know, but anyone on leave?
+
+00:26:54 - 00:29:15 Unknown Speaker:
+
+Just a second I'd open it up. I just want to add the business head before I miss it out. I'll do that, we'll just complete this and then I'll go to the capacity. Okay, you wanted me to go to some feature, right? Uh, the self-serving, the self-serving. And today is 28th. Okay, so if you have a three days and at least keep us posted, like, you know, at least getting an alignment from Raj. One day, one day holiday, that's right. Yeah, you might have to drop an email, a copy of that one. And instead of back-end design, you can create, you know, automation job. I'll think about a better name for this one, but right now you can keep it as an automation job and assign it to Prithvi.
+
+00:29:15 - 00:30:22 Unknown Speaker:
+
+So, basically, this is the one that I was giving you overview today. The requirement, Yes, sir, so so he would be working complete, full capacity to that automation job. Uh, and Anan, on this one, I'll come up with a plan. What are the stuff that we are going to do? Because it would be a phase wise. Like, you know, first of all, reading the file, phase wise. Uh, how the progress is being made and what are the tasks that we have completed? Sure, sure, yeah, let's like I mentioned, let's put that plan together as soon as possible. And then execution can just think about how to distribute in different sprints. Yeah, yeah, I think we are done from this. Yeah, business head, you wanted to add something here, right? No, no, no, don't go to this, we'll take it later.
+
+00:30:25 - 00:32:13 Unknown Speaker:
+
+JSON For the RaZy one, the metadata update is in progress, right? Hopefully it would be done, and even even in JSON would be done. Go to that metadata update feature. I think it is the RAZY or existing table announcement 26.1, right? Again, create a clone of this. Assign this to Nirmal. We might be able to complete the event testing, but the testing and deployment would be unified in the upcoming sprint. On the SFTP part, Jason, That would be still blocked because the SFTP profile is still you would like to take it forward to the next one? No, for the SFT one, I, I told you, right, that would be kind of blocked until unless we get the SFT profile right. Got it, so any other to build a new ODL table, so it would be in the row 10, I believe that feature.
+
+00:32:13 - 00:33:54 Unknown Speaker:
+
+Yeah, then assign this to nirmal, uh uh, that we will discuss raising your real support. 26.1 Correct. Okay, this one and this one. Assign it to normal, or hold on, hold on, hold on, assign this to someone, assign this to someone, because otherwise you want not there. But. But we will guide him. No worries. Okay, okay, okay, anything else. And I mean, are you, uh, clear on what has to be done for this story? Or, uh, you guys want to discuss now? This one I'll discuss with Jason? Uh, maybe later. Um uh, rest that, uh, FDA update that we are doing. I'm clear with that requirement. This one's something I'll talk to Jason. TP Uh, one, I'm, I'm already working on that. Uh so Raze done uh. Q track. I think we covered up everything.
+
+00:33:54 - 00:34:58 Unknown Speaker:
+
+Uh, yeah, and and everybody having something on their bucket, apart from my upper right, I didn't have any. Oh, no, Ayapa is also being assigned. Can you? Can you just show us the board once? And there is no major thing on the insurance one. So in case required, uh, talk to them. Because in case they need any support or not. If they know if they are not going to require any support, then then we will not be taking any task for the insurance one. Okay, can you hear me? Oh yeah, I mean, okay, okay, yeah, yeah. Support is required, right? The tables are there in production, so obviously the continued support will be required. And as you mentioned, like seven of our pipelines are on hold, so I would need your support there, working with the team and because last week also it was us.
+
+00:34:58 - 00:35:47 Unknown Speaker:
+
+We have to reach out to the Lumi team and got that issue fixed for two of the pipelines, right? So that's where I need proactive support from your team, which is I don't see right now happening, right? We are reaching out to the Lumi team and working with them and getting things prioritized. So that's where I would need the support, which is not happening right now. I mean, the the reason for this one is the discrepancy of the decision that has been, you know, taken in the last week. Right when we made like from the SOR team, the decision was made earlier that to go with the manual remediation, right, and when we are chasing. Before I was on, I was going on leave right on Thursday, right before I logged up, I logged up around 10.30 p.m.
+
+00:35:47 - 00:36:30 Unknown Speaker:
+
+IST hours, right? So. Till that time also it was manual remediation, right? Even I asked clearly whether I required to create an incident, I can create it within 30 minutes. There was no answer. It was still manual remediation. And then suddenly when I come back, you know, the incident that I have created, right, it has been taken care with the, you know, Lumi team to sort it out from the Lumi side, right? Yeah, so I reached out to the Lumi team. Because the issue is in the system from last 15 to 16 days, right? And it's a production issue. We can't say four of our pipelines are on hold because we don't know what is the reason, right? So I reached out to them.
+
+00:36:30 - 00:37:21 Unknown Speaker:
+
+They joined the call within 15 minutes, helped us identify the root cause, fix two of our pipeline within one day, right? So that's where something which the support which we should get from your team. Because otherwise then, like, you know, why do we have a tech team there, right? So that's, I would say, which is missing right now. I'll, I'll, I'll again, you know, tell that we are there to help, right? But the problem is the you know, finalizing approach, right? When there is a, you know, a ball being passed to one bucket, to another bucket, right? I was into a impression like it would be done through the manual remediation, right? The incident was already being created the day. Oh, masters, right, we, we already created the incidents, right? I got your point now.
+
+00:37:21 - 00:38:06 Unknown Speaker:
+
+The problem is that if let's say the SR team is saying that last time. The approach was taken that the files are already with Lumi and we got that clarified that for two weeks, Lumi keeps the data with them right, so two weeks anytime, anybody, they can go ahead and. Re-ingest the data. We don't need SOR because the file is there in the system, but it got failed because of some issue. Right? So that's where, first of all, for 10 days or 2 weeks, we don't need anything from SOR. Now, as it's been around 20 days, right? So that's where we worked with the Lumi team and they agreed and Kartik was also there and he aligned on that, okay, from 6th till 8th or 16th, something like that, the date we decide on.
+
+00:38:06 - 00:38:45 Unknown Speaker:
+
+For these days, he will do a manual ingestion. For rest of the dates, Aaradhya can go ahead and do the ingestion from LUVI. So that kind of, we need to think is like, it would be a load for them as well, right? They would have their own KRAs. So if let's say we put everything on them, that okay, you do the manual ingestion, we can't solve it. That's not the right approach, right? We should work with the LUVI team. We knew the contacts. Incident raising is fine, but we should reach out to them and find the RCA and get the issue fixed in at least three to four days, right? If we are doing this from last two to three weeks and we don't have any resolution, the data is still not there for seven of the pipeline.
+
+00:38:45 - 00:39:30 Unknown Speaker:
+
+Because now we have to hold everything. They have a batch ingestion, and all seven seven tables are interlinked, so that's the problem. So that's where I would say, we need support. Uh, so, as you mentioned, like, if the production support is required, always whenever a production issue is there. We need somebody from your team work with, so our team or Lumi, in order to, uh, fix those issues. We are there right from last one year, we are there, right? The problem here is that, uh, the you know, confirmation, right? Uh, I I met with you on Thursday, uh, at 1 30 p.m. Right? Uh? The approach was not being finalized, right? And then, you know, although we create the incident, the incident never get picked up, even if we chase the Lumi Uh channels, right?
+
+00:39:30 - 00:40:25 Unknown Speaker:
+
+Why you? You have got the point of contact on Friday because the incident was two days older, right? That's the reason, and you know, our Adya and Sukriti, or whoever, right? They pissed in. Uh, as the SLA was prior to two days, right? If I create a ticket today, even if I reach to Arvind the Teja, who is the one of the director, right? Even they don't respond it okay. And, uh, today also, I'll tell you today. Also, we have raised one incident to delete the record, which I was discussing with Anand. Uh, when the call gets started, there is a duplicate data. We already raised that ticket, it is almost, we raised it around 12 p.m. Right till now, it hasn't been assigned. And then I, I created a group chat with Srishti and Aradyan, the same person to whom you are asking, right?
+
+00:40:25 - 00:41:21 Unknown Speaker:
+
+I let me share my screen quickly. So look, uh, if you are able to see his product, his project manager. ANUSHRI Yeah, so she looked in the engineer, so it's not like I reached out to her. Because obviously he would not pay attention, or he would have his own carriers, right? So I reached out to the project manager, Yeah, so you can reach out, she is the great manager. Yeah, uh, so you are asking me to, Okay, and you see, I was not aware because. I can give you the name. So, Anushree is the project manager. Okay. So, see if she can assign this incident to Aradia or whosoever engineer has the capacity. Again, that's the... Yeah, I got this point of contact from you only, right? The group that you have created, right?
+
+00:41:21 - 00:42:15 Unknown Speaker:
+
+That's the reason I pulled him. Sameer was not aware with who is Aradia. That's why I am not questioning. We are trying to keep a call tomorrow with Jane and you all. And kind of have the rules and responsibilities clearly laid out that if this happens anyways in future, right? So that who will take responsibility, whose response is what? So that it's not like that. We have to pitch in every time and go and go ahead and find the contact. Because down the line we won't be in the system, right? It will be you working with them directly. I am not denying that part, and you know, I told you, right, the handshake was not being proper. If we have a live Tuesday night, right? That this would be a manual intervention, why didn't he let us know?
+
+00:42:15 - 00:43:05 Unknown Speaker:
+
+Like, you know, no man, I won't be able to do it. Let's work with Lumity. Although he didn't confirm, we still raised the incident on the same day. Right? Uh, but suddenly post 24 hours, right? If somebody come back and mention, right, like, you know, we won't be doing this for you, you have to go and work with Lumi team. It has wasted 48 hours, someone, please keep in mind, this has wasted our 48 hours. There was no steps taken from the SOR team, there was no step we are advised to take, right? So it was a kind of a complete block, so that caused the delay. And and and, uh, you know. And when there is a production issue, people are mentioning that I am not available for a connect, right?
+
+00:43:05 - 00:43:56 Unknown Speaker:
+
+I am busy with some other stuff, right? If they had a connect on Thursday, we could have sorted out on Thursday night only, correct? But there was no, no accountability. I would say they need to understand if there is this is an issue. I saw that, yeah. That's why we are keeping this call tomorrow. And we'll just keep his product owner, Jane, as well. So that we all are there and have these accountability rules and responsibilities clearly laid out. So that if these issues happen any time in future at Lumi, right? If the data, I mean, if the issue is persisting from last two weeks and Lumi has the files, then it's your team's responsibility or our team's responsibility to work with Lumi and get it fixed. If it's more than two weeks, then the SOR will do the manual ingestion.
+
+00:43:56 - 00:44:50 Unknown Speaker:
+
+So we'll clearly laid out those responsibilities and I think that will. That should suffice. Rest. We can discuss that tomorrow. Uh, with them, okay, okay, I like, Um, I mean, with that, okay, so uh, just, uh. Keep a couple of story pointer uh, for the production support for now. Uh, and uh. We were talking about the, you know, another alert mechanism, uh, that we would like to set up from our side, um, which we were having a discussion with home. Uh. So, if that is something need to be taken care in the upcoming sprint, do let me know. We'll, uh, you know, assign the capacity to the resources for that. Yeah, and I'll let you know. And another thing is just for information, right? So, uh, as per our conversation with Uh, Aradia and Anushti, right on this.
+
+00:44:51 - 00:45:35 Unknown Speaker:
+
+So whenever any pipeline fails in production, an incident is auto-generated which is assigned to the Lumi team. I ask them that whenever this happens, an incident is created, it should be communicated to us as well and that's why they are asking for the grow. I have given that. So that's again a mechanism. Lumi has this capability that if pipeline is failing in production and they go ahead and raise the incident automatically. We should be aware of that and we should be kind of. Then we can chase them down on the SLA part. What is the SLA and by when it should be fixed? So that's why they they are accountable as well, so everybody will be accountable on that one. Also, I'll give you a clarity.
+
+00:45:35 - 00:46:26 Unknown Speaker:
+
+That incident would only gets created once they receive the file with the correct sequence number in case them a file with incorrect sequence number. Our incident is not going to create it at loom. Yeah, that's true, that's true, but this one happened because of some new issue, right? It was not a sequence problem, so it started because initial initial interest was happened due to Lumi issue. Because they have some HTTP connection issue, uh, in between, uh, the GCP server were not, uh, not connected. And that's the reason the stage on copy, uh, the data copy from, you know, their staging table to the main warehouse table got failed. Okay? And post that it was all... They have other files as well, Sachin. So, they have other files.
+
+00:46:27 - 00:47:16 Unknown Speaker:
+
+The other files they saved with incorrect sequence number, they were able to show us all those files as well. So, they can ingest it. It's just that the first file, if it's... Yeah. So, the first file, if it's... The retention period is two weeks. So, If it's more than... themselves, if it's within two weeks. The two of the pipeline they have already fixed, because for those two files it started, uh, I think it was less than two weeks. So they have already fixed that and the files are already flowing in in system for other pipeline where the ingestion started failing on 6th of Jan. It's more than two weeks now and that's where we have to come on a timeline that okay for starting from 6 to, I think 13 or 14. What was the date, right?
+
+00:47:16 - 00:48:06 Unknown Speaker:
+
+So that date, Karthik will do manual ingestion and then Aaradhya will share a new sequence number with him and then he can start sending the files. So that's how it was happening. But anyways, we can talk that tomorrow in detail. I'll again tell, you know, the same stuff I already explained this to Karthik on last Tuesday call. I'm not sure why he was stretching everything on the Lumi team. I already asked him that you know the files which is being there for the last two week. That is something get sorted out from the Lumi team, but those which are older, but uh, that is not going to sort it out by the Lumi team. And if he didn't start it in Jason, I am not sure what was the reason for that, right?
+
+00:48:06 - 00:49:39 Unknown Speaker:
+
+Yeah, if Home is there with you, uh, I think Home can confirm you. I already stated this statement to him already on that day. Yeah, yeah, I'm aware of all this. We can kind of talk that in detail tomorrow, but yeah, okay, okay, uh. A couple of story pointer for me for this sensor and support, um, and let's check the dashboard once sharing my screen. Story pointers for ANSI What is it for QTRACK? Role update I think two story pointers, because that is not a big change, as Krishna was mentioning. Or make it three and AFC check as five, so on the role update. If there is some production support that is required, ANSI will be doing that. One self-serve build, you can mark it as three as you would be only for three days.
+
+00:49:39 - 00:51:25 Unknown Speaker:
+
+Okay, okay, Samir, uh, build is five. Two on this contra validation and one that is the one that you are talking, right? That business support, so for that one assigned. One story pointed to him so that, you know, he can help on, you know, raising, monitoring and all that. So you want me to create a support story under the Business health feature for him? Yeah, you just told me, is there? Or did just the No. It's just the feature. For now, we'll have to. Yeah, and you want to create, yeah, one second. So you want to create this for Suman too, but with how many story pointers? Suman, again, keep it one. We will see if we are sufficing with that. So he would be doing on both Razi and Quantro.
+
+00:51:26 - 00:56:07 Unknown Speaker:
+
+We will see the board and then I'll review it. Okay. Hold on, venue table update is three is fine. Accept data transfer No, no, no, this array accepted data transfer should not be a.This is a different one. Yeah, this is not for the discipline because SFT profile creation is in progress, so this would be picked up in. So, again copy of that production support to app also. Not this one right, this we have take some leverage if Aman and Om comes up with that insurance bill then I will leverage Nirmal. Otherwise I will assign him some internal task to complete on that. Maybe on production support. So let's wait till we get an input from Aman and Om. Okay. We always have a planning also so we can reiterate our work there. Yeah.
+
+00:56:08 - 00:58:08 Unknown Speaker:
+
+And Anand to Business Health section Okay, then on the Business Health. You can create one SM story with five story pointer, assign it to me. Sure, yeah, instead of waiting for the novel. Yeah, you can do what you can. Can you just reach out to Radhya once? I don't believe he has shared the sequence number and record count for the last successful injection for pending two tables, right? Let me open note. That is the problem. That guy is not, uh, that doesn't use to revert. He has responded because, uh, I mean, you have reached out to that, uh, her manager, right as well. And if still you won't get any response, let me know. You can include Anushree as well. Just reach out to Anushree and ask that we need update on that.
+
+00:58:09 - 00:59:09 Unknown Speaker:
+
+Aman, one quick question. For every incident, we won't be able to reach out to Anushree, right? This is not for you, even for Anand, right? Because you guys know, right? Lumi mein support nahi mil raha hai. Even if we poll the incident over the Lumi Channel mail base, and you have seen the response from Srishti, right? So we need, we need some, you know, communication channel through which we can at least expedite these products and ticket. The problem is that it's not one single individual. Even if we reach out to Urban, the I.I given you a point of contact, right is? He also doesn't support the time, and those channels are useless. Nobody bothers, even I have to work on a public holiday. Just to get this RFC approved from their side.
+
+00:59:09 - 01:00:22 Unknown Speaker:
+
+I was working on that 26th late night just to get that RFC approved. So we need somebody right, because we won't be reaching to individuals, directors or manager every time right there. To escalate these incident because incident create, although we make it high priority. But those people are not, you know, serious enough to even look into, I would say, any escalation. Just remember when all that email. I think his name is very funny. Ed Parson. Ed Parson. Ed Parson. There is one other person he was talking about that she is dedicatedly for USCS. I forgot the name. Last time they connected. Got it. Got it. It's their responsibility. It's still going to escalate. Like the way we did last time. So we escalated it.
+
+01:00:22 - 01:01:08 Unknown Speaker:
+
+It got to... those leaders, and I think within a day or two we got like, we reached out to Ramki as well as a leader to not drop this note, right? So I think if there is no support, always escalation matrix is something which we should follow, right? But like, as I mentioned, if we can try things at our part, that's great. If not happening at last, aspiration is the only option we are left with. Right? Yeah, that is the reason, uh, I mean, uh, we were discussing, right, like, uh. Let's try to fix it at our end because if we are reaching to Lumi team, this delay would be there. That is what we are trying to convey to the SOR team. It's not that we are not supporting, right? We try to convey them.
+
+01:01:09 - 01:02:07 Unknown Speaker:
+
+What do you mean? From the SOR team fixing that standpoint, we have already sent an invite for tomorrow clearing our roles and responsibilities. From Lumi standpoint, that's an enterprise thing. They are direct partners, so over there we can fix things, you know, kind of, because anyways, they have to take it from going forward, so it will. James job will be easier if all these things are sorted out, but. So, for Nuri's standpoint, that's something we can't continue. Also, one suggestion. Just check with Raj as well. If he is facing the same issue with other teams within his remit or let's just say within Manju's remit, right? Because you guys are tape, right? And you would be interacting with platform very recently. So, if it is happening across your world, I think then there is some communication that your leadership can have with the platform as well.
+
+01:02:08 - 01:03:02 Unknown Speaker:
+
+Okay, I'll check with Raj on that also. Because, as as I know, I think right now we are leveraging the platform. But still, let me cross check with Raj once. Sure, okay, and ohm, just check the feasibility with Karthik. If he's available. I, I am available to have a connect with him today. Sure, yeah, okay, uh. Before we close. Jason, just one request if you can set up a call tomorrow, uh, you know. Just to give us the requirement of that job that needs to be created. We'll set up a call tomorrow so that we can go through the requirement and we'll start working on it from there. Sounds good. Who all should be on the call? Myself and Nirmal. That's it. You can send the invite to me.
+
+01:03:02 - 01:03:48 Unknown Speaker:
+
+I'll forward it to Nirmal if you don't have Nirmal's email ID. OK. That sounds good. Yeah. Thanks. Let me ping you back, Shamir. Just give me some time. okay then like yeah yeah okay thank you thank you

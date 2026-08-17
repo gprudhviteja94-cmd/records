@@ -1,0 +1,203 @@
+2026-01-12 Access and Validation Workflow Updates
+
+Creation Time: 2026/1/12
+
+
+📅About Meeting
+
+  • Date & Time: 2026-01-12 18:05 (Duration: 1526 seconds)
+  • Location: Remote (video/voice meeting)
+  • Attendee: Aman, Anand, Rachna, Raj (mentioned), Sachin, Om, Jean (mentioned), Kundan, Samir, Nirbal, Prithvi, Nirmal, Suman, Sindhuja, Ayapa, Kundal, (others referenced: VPS/VP, platform team, Lumi team)
+
+
+📒Meeting Outline
+
+
+Access & Validation Workflows
+
+  • Insurance table access The team lacks access to the insurance table needed for end-to-end validation. Aman raised the access request today and asked Raj to approve. Because access is pending, testers could not complete validations; meanwhile developers were asked to continue building remaining script logic without waiting for the access.
+  • Hand-in-hand result checks / sharing results Suggested closer collaborative checks where rule interpretation and code are validated together (hand-in-hand result check). If teams cannot do live pairing, at minimum they should share intermediate results for review to avoid repeated rework.
+  • Existing script results sharing The team is already sharing results for existing scripts and many have been signed off from the reviewer side. Remaining fixes are being tracked. The team agreed to keep sharing results and continue incremental sign-offs.
+
+
+Script Development Status and Assignments
+
+  • Script progress & prioritization Current status noted: 3 tasks highlighted — one done, one in progress, one to start. From ANSI side a couple of scripts are done; one C8 (?) to start as it needs basic validation. Team to continue building scripts even while some resources are blocked.
+  • Test calls scheduling There are multiple testing calls for different people. Discussion about attendance: organizer will attend initially; other reviewers may join based on availability. Calls were kept separate intentionally so each person’s usage and perspective of the platform/rules can be observed independently.
+  • Script distribution and resource utilization Team to allocate script validators across team members: recommendation to assign ~3–4 scripts per person per day to distribute load. Samir was underutilized last week; upcoming assistance expected from Nirbal and Prithvi. Backup arrangements: Prithvi to be backup for RISI MX Cust history table.
+
+
+Quantro / Dashboard / Platform Blockers
+
+  • Quantro / Dashboard blocked Dashboard work (Quantro) is blocked pending platform team’s action since 29 Dec. Aman escalated to Raj and tagged relevant platform contacts. Some code changes are required to complete A2 build and validation with variables discussed — screen share planned to show details and fields needed.
+  • Incidents assignment and routing Currently incidents get assigned to USCDU group; planned routing is for incidents to land in the correct stakeholder’s bucket. A discussion about incident assignment routing will occur once details are available.
+  • Human task on updates & SFTP/Lumi flow For valid update requests, the process would create a human task. There is a pending discussion with Raj about why a human task is required again. The bundle of information from ACE will be sent via SFTP to Lumi portal/warehouse. Rejected entries should not appear on main screens; team suggested building a separate date-range filtered screen to view rejected requests if needed. Design will be reviewed with Raj and REST APIs / BPM components will be finalized afterward.
+
+
+Rules Versioning / Audit Behavior & UI Expectations
+
+  • Versioning model explained Example discussed: a rule inserted on 8 Jan and approved -> active/displayed in UI. Same rule updated on 9 Feb and rejected -> becomes disabled; audit table will contain multiple entries (insert/update/reject) and UI should show the active/latest approved version. If an update is in-progress (neither approved nor rejected), it should be viewable in UI for approver action. The SFTP file generation will take only the active entry as of the date for Lumi ingestion.
+  • Rejected items / audit screens Rejected entries won't show on the main UI. The team can add a separate screen for rejected requests filtered by date range; created timestamps and flags exist in data for filtering. Final design to be approved by Raj.
+
+
+Insurance Deployment / Schema Freeze & Replan
+
+  • Deployment timing & RFC A deployment (insurance) was blocked due to schema-freeze/phase period up to 12 Jan (no schema change allowed). Replan set for stable redeployment on 15 Jan; RFC created. Aman will update the group when deployment progresses.
+  • Handover to Jean Jean will take over insurance work, but no firm handover date yet — not started. Jean assigned to take it eventually; schedule TBD.
+
+
+Pack Engine & Packaging Tables
+
+  • Data availability & slowness Pack engine data mostly available; one packaging table lagging due to slowness that needs platform fix. Four other packaging tables are available and have timestamp variables ready. Team awaiting platform fix for the remaining table.
+
+
+Upstream Data Quality & Audit Expectations
+
+  • Data quality emphasis Leadership stressed not to load junk/corrupt data into upstream systems. Upstream failures impact downstream processes and high-level reporting; these are monitored at VP level. If upstream issues are found, stop processes and fix immediately.
+  • Ownership & fixes If individuals lack bandwidth, assign fixes to others (ANSI, Kundan, Samir, Nirbal, Prithvi). Daily jobs must run reliably; prioritize upstream data correctness over speed.
+
+
+Technical Issue: Ambiguous Column causing query failure
+
+  • Symptom & preliminary analysis A previously-working query now errors due to column ambiguity (same column name in two joined tables). The code ran earlier without issue; suspicion that a schema change added the column or modified tables. Team to check last modification timestamps and change notifications (mod on 9th Jan referenced).
+  • Next steps for resolution First run internal review with Ayapa or Kundan to confirm whether table schema changed and whether the product team should be engaged. If internal review is inconclusive, then contact Rachna. Team to add table prefix or qualification for the column or reverse/roll back unintended schema changes if feasible. Sindhuja can make hosts on the call if needed for ad-hoc troubleshooting.
+
+
+Coordination & Immediate Steps
+
+  • Short meetings & follow-ups Nirmal, Prithvi and Suman to connect in next five minutes for immediate handover/coordination. Organizer reminded attendees they can continue work/discuss offline; some attendees left to rejoin shortly.
+  • Availability window Aman offered availability at 08:30 for follow-up if additional details are needed before escalating to Rachna.
+
+
+📋Overview
+
+  • Insurance table access requested today; Raj action pending — testers should build scripts while access is awaited.
+  • Hand-in-hand validation or results sharing recommended to reduce misinterpretation between rules and code.
+  • Existing script results are being shared; most have been signed off; remaining fixes in progress.
+  • Quantro/dashboard work blocked by platform team since 29 Dec; escalated to Raj; code changes needed for A2 build variables.
+  • Incident routing needs adjustment so incidents flow to correct stakeholder buckets; details pending.
+  • Versioning and audit behavior clarified: audit table keeps all versions; UI displays latest active approved entry; rejected items excluded from main UI (option to create a rejected-screen).
+  • Insurance redeployment replan set for 15 Jan due to schema freeze; RFC in progress; Jean will take over insurance later (handover date TBD).
+  • Pack engine: most data available; one packaging table still lagging due to platform slowness.
+  • Emphasis on upstream data quality — stop and fix on any corrupt data; VP-level visibility demands strict auditability.
+  • Query failures due to ambiguous column likely caused by schema change; internal review to precede escalation to product team.
+
+
+🎯Todo List
+
+  • Aman:
+    
+    • Follow up with Raj to approve insurance table access — immediate (ASAP).
+    • Continue escalation to platform team for dashboard/Quantro blocker (ongoing) and share status updates.
+    • Share screen & required field details with stakeholders for A2 build validation (this week).
+
+  • Raj:
+    
+    • Review and approve insurance table access request (ASAP).
+    • Review design for rejected-request screen and REST APIs/BPM and provide approval (TBD).
+
+  • Dev/Test team (owners: Anand / Sachin / Om):
+    
+    • Continue building remaining scripts without waiting for insurance table access (ongoing).
+    • Share script results for review and iterate fixes (daily).
+    • Distribute scripts across validators (assign ~3–4 scripts/person/day) — implement immediately.
+
+  • Jean:
+    
+    • Prepare to take over insurance work; coordinate handover plan with Aman (date TBD).
+
+  • Platform team:
+    
+    • Resolve platform blockage preventing dashboard deployment (issue open since 29 Dec) — priority (ASAP).
+    • Fix slowness for the remaining packaging table affecting pack engine (ASAP).
+
+  • Nirmal / Prithvi / Suman:
+    
+    • Connect in 5 minutes for handover/coordination on RISI MX Cust history backup and related tasks (immediate).
+    • Prithvi to be backup owner for RISI MX Cust history table — coordinate knowledge transfer (this week).
+
+  • Data/Product owners (Ayapa / Kundan / Rachna):
+    
+    • Review the ambiguous-column query failure internally; confirm if schema change occurred and whether to engage product team (ASAP).
+    • If unresolved, Rachna to be involved after internal review (before further escalation).
+
+  • Aman / Team:
+    
+    • Create a date-range filtered screen or design for rejected requests if team wants rejected visibility (design review with Raj needed) (TBD).
+    • Finalize REST APIs and BPM flow after Raj’s design sign-off (TBD).
+
+  • All:
+    
+    • Ensure upstream jobs do not publish corrupted data; if issues found, stop downstream processes and fix immediately (ongoing).
+    • Monitor modification notifications for schema changes and track freeze-window constraints (ongoing).
+
+
+Transcription
+
+00:00:02 - 00:01:03 Unknown Speaker:
+
+So sometimes what happens is like the rule is being understood and the code is being written wrongly. So I would suggest like a hand in hand result check. Or at least if they can share, that would be better, otherwise, what will happen? They will work the same way to you for a review. Yeah, yeah, sure, that works. Now the problem is we don't have that insurance table access. I just raised it today. I already asked Raj to approve that one. And that is the reason they were not able to, you know, complete the end-to-end validation. So I asked them. Till the time we are, you know, getting the access, let's not, you know, wait and watch for that. You can go and start building the rest of the script. Sure, sure, that works.
+
+00:01:03 - 00:02:38 Unknown Speaker:
+
+Such a thank you. So three are with so one, one done, one in progress and one. He would start, uh, three with ANSI, so couple of them from ANSI side are done. One C eight to start because he is a bit initial level of validation. Okay, yeah, okay. And on the existing scripts, uh, we are already sharing you the results. And I can see, like, you know, most of them have been, uh, signed up from your site also. And uh, whatever other fixes are there, we, with respect to that, you know, progress on the Quantro one, uh, give me a second on this one, uh, the dashboard one, uh, it is kind of blocked, uh. Now I have already escalated to Raj. Also, I tagged them and this is something being, you know, waiting on the platform team since 29th of December.
+
+00:02:38 - 00:04:41 Unknown Speaker:
+
+I'll share my screen, uh, and I.And. And there is some code changes that is being required from just to complete our A2. Build on with respect to the validation with those variables that we talked about. Okay. We still have a week. I still need few field details because right now those incidents are being assigned to our group, that USCDU group. But ideally, that would go to your bucket and the, uh, you know, the respective stakeholder for that, with respect to the, you know, whenever you are free, do let me know. I'll just say the screen and then once we get the details, we can wrap up that one. Also, these testing calls, right? I think you have already seen them. Yeah, I already did it. But one question, am I required on all those calls or can't we club?
+
+00:04:41 - 00:06:57 Unknown Speaker:
+
+I've just intruded you and that's not to be there if you want to just pitch in anything, but not necessarily. You can see based on your availability here. Maybe first of all, I'll attend and. And then can't we keep those calls at the same time for all those three different people? No, I wanted to specifically keep them separate just to see their own, what do you say? Okay, I got input and go. Yeah, I got it. Because the way they are using the platform or just say the rules, right, that itself is different how they're thinking about it. So I just, that's why I wanted to keep it separate. Anyway, I think it was for the last person, right? US. Thank you for watching. Not create a request if the request is valid.
+
+00:06:57 - 00:09:11 Unknown Speaker:
+
+My bad, I I opened a update one, give me a second, okay? So in case it's a valid request, it would go and create a human task again. Why a human task again? This is a point of discussion I need to take up with Raj. This would be basically this bundle piece of information would transfer to the SFTP file, and then that would go to the Lumi portal. Those all are different. Right now. I am just talking about the ace part. Okay, yeah, in case of updates. And again, the valid request, if it is a watcher list, not the case ID, rule ID. Just for a hypothetical scenario, if it is a rule ID 1, which has been inserted to your database on 8th of Jan, if it is approved, it would remain active and that would be displayed to your UI.
+
+00:09:12 - 00:11:20 Unknown Speaker:
+
+The same rule ID, when updated on 9th of Feb, it has been rejected, so it would remain disabled, So you are still seeing... the same rule, this would become active, this would become inactive, so you would be viewing this 10th March rule. Okay, now again, somebody has come on 10th of April, updated it, uh, and it's still in, you know, in progress status. Like it's not approved, not reject. It would be viewable to you over the UI screen, where you can approve or reject. But actual rule, this is the planning that we had right now. So these all four entry would be there in this audit table. But at the end of the day, whichever rule is with the active status, that would be displayed to Okay. Now somebody has updated this role and this went for a approval.
+
+00:11:20 - 00:12:36 Unknown Speaker:
+
+Yeah, okay, but but no, no. Just take an example, uh, let's not come to this step, okay so, or just take an example of this one. So this remains in progress, but this is not visible. Request or rejected. Oh yeah, and you are still viewing this one, yeah, but if you have approved it, in case you have proved it. Previous person inactive was I go okay. And now in this, in this part, you will be viewing the latest version of this 10th module. Whatever I did, my question is, where are you saving these versions? This all person would be stored on the create a SFTP file that would be taking the latest date. Active one entryway for that day, and then it would be sending it to the Lumi Warehouse. Uh, such, in one question, uh.
+
+00:12:36 - 00:13:34 Unknown Speaker:
+
+The rejected ones won't be showing up in any of the screens. Now, if you want, I can show you the reject one also to a different screen, those which has been rejected. With our date range, we can create a date range within that data, which whichever request is being rejected, we can add another screen, uh, uh, like this one where you can see the rejected request over there. Okay, okay, if you want, if that is something that we can discuss first, yeah, yeah. So if you want, we can create another screen for the rejected request. And we'll give our date range. Because I won't be displaying all the rejected lists. Makes sense. The date range, we already have this created timestamp and all these flags are already included. I just need to review this design with Raj once he approves.
+
+00:13:34 - 00:14:39 Unknown Speaker:
+
+This one, the BPM in that I have shown and some of the REST API that we are going to create it for this one. So once I review, I'll update you guys on this one, on this Qt Excel. Yeah. Okay, Sachin. Yeah. Okay. Okay, that's it from my side. Anand and Rachna, any questions? Otherwise, I'll go to insurance one. All good. All good. Thank you. Thanks, Anand and Rachna. Aman and Om, I already dropped an email regarding that deployment. I think this was due to that phase period that is still intact, 12th of Jan. And due to that reason, They are not allowing any schema change that would break the existing schema. And that's the reason I had to replan for the insurance. Do stable redeployment on 15th, so RFC is already being created and once that deployed, I'll keep you guys posted on and on.
+
+00:14:39 - 00:16:12 Unknown Speaker:
+
+With respect to Pack engine, I think now all the data's are already available. That's the only thing we're doing right now. Oh, that's the only thing. Uh, because on the uh, all those four packaging table, because one is still not lying, you know, right there. That is some. Due to the slowness they need to fix, rest of the four tables are already with respect to those timestamp variable. Okay, thank you. Okay. Yeah. Aman, just one quick question. This would be taken by Jean on this insurance one and if yes, by when we are planning to have our handover, a complete handover to Jean? No, I won't be able to give you the date. She will take it, but when she will take it, we have not started.
+
+00:17:11 - 00:19:15 Unknown Speaker:
+
+If it has been made on 4th, if somebody has observed, why did we waited a week to fix that one? Thank you. Not be dumping junk data over there. Please be, uh, you know, these all are auditable records, please make sure the report are going to form, the alerts are going to get formed. Uh, there are lots of, uh, dependency. This is the main upstream process, based on which the there are two more downstream processes are there, right? That would get impacted if your data is corrupt in the upstream leadership. Okay, so that report are being viewed by the VPS label people, it's not that, you know, even Purna is viewing it. It has been monitored at the VP level. So please make sure the upstream runs without any issues, and if you find any issue, stop everything and fix that immediately.
+
+00:19:15 - 00:20:11 Unknown Speaker:
+
+Yeah, and then I'll leave it to you, you have to read it how you want to, and I'll leave it to you. Jobs on a daily basis. Okay. Even if you don't have a time, if you want, let ANSI to fix it or Kundan to fix it or whoever pitch in. If you have the bandwidth, go ahead and fix it. Otherwise, whoever is free, ask them. Right now, last week, Samir was completely free. We did not utilize him properly apart from those script validators. And now we would have Nirbal and Prithvi also pitching in from upcoming week. So please make sure that the script is being assigned to respective folks. Maybe three or four script per day, that would not be a lot.
+
+00:20:11 - 00:21:20 Unknown Speaker:
+
+Even if you are running 10 scripts, even if you distribute a couple of scripts, that would not be lots of work for each of the folks we are working in the team. We have a backup for RISI MX Cust history table. Basically, I would love you with Prithvi. So, make Prithvi as your backup so that in case you are not working, Prithvi can take care of that. Sure, sir. Okay. Okay, then. Nirmal, Prithvi and Suman, let's connect in next five minutes. Anyone have anything? Sure. Not sure, like, why it is wrong, it is getting an issue. But previously it was wrong due to some ambiguity of a column, so we just need to add that specific table before that column name. So that one. I just want to check with her and I have to push the chain, you know, no?
+
+00:21:20 - 00:22:06 Unknown Speaker:
+
+But first of all, did you discuss with Power Kunden on that? Because it should not be, I am aware with the issue right now, it should. Yeah, I have a question. No, no, it should not be. That is directly going to the product team. So I have an internal discussion. First of all, review it, either with Ayapa or Kundal. And then, uh, if if required, uh, you can reach out to Rachna. First of all, have an internal view. Yeah, sure, okay, yeah, yeah. In case in case required, you need any details from me, I'll be free at 8 30. Do let me know, uh, before reaching out to Rachna. Is that issue like, I know what it is? But I just want to double? Just have a review, man, just add a second opinion.
+
+00:22:06 - 00:23:14 Unknown Speaker:
+
+If we can fix it by our own. No need to reach out to Rachna, but, uh, if you guys are still confused, do let me know before reaching out to Rachna. Yeah, rest of the folks feel free to wrap up, so maybe you can continue such a if you are able to see, it's coming up. Yeah, so there is a problem. So this code is actually ran fine previously, but like now, it is showing an ambiguity. Because this same column is present in both these two, where it is these two tables, so so why? Why it was not coming earlier? Did they modify this table. But this column should be added to one of the table or like... These are the SOR tables, right? So, I see the leisure event and this fulfillment one.
+
+00:23:14 - 00:24:17 Unknown Speaker:
+
+So, did they added this new column or to any of the table due to which it is coming and camping? Yes. First of all, analyze that one. Is there a modification to this table? Because look, this was a freeze date. Here. So we are not expecting any schema change. So how it was running earlier in that case, uh, that part, like, I'm, I'm really surprised, actually. No man. Look, this is the problem right? When we when we go to the product team, right? Um, so how it was running earlier in that case, because. I think you continue. Make me host or submit host. I will check that. Let me make you the host. No, man. I don't have the rights. I think Sindhuja was having the rights to make you the host.
+
+00:24:17 - 00:25:22 Unknown Speaker:
+
+Or you guys can connect over your own hands. No, no. Whoever is on the call will become the host. So you don't have to worry about it. Okay. Yeah, you can continue if you need. I will not end the call. I will just leave. Okay? Yeah. Okay. Anything else for me can I drop off? Yeah, yeah, yeah, no problem. Cindy. Thank you. Thank you. I'll be. I'll be. I'll be joining in a couple of minutes. Uh, just have a, you know, a glass of water. You guys can join over that place. I'll join you. Okay, yeah, check this one. If they have added new new column, right, there would be a notification sent on the your email box. I can see that last mod was on 9th, I don't know what was the daily stand up. January 12th, Amex.

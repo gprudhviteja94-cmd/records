@@ -1,0 +1,290 @@
+2026-02-11 Code Implementation Review and Automation Strategy Discussion
+
+Creation Time: 2026/2/11
+
+
+📅About Meeting
+
+  • Date & Time: 2026-02-11 17:01 (Duration: 2997 seconds)
+  • Location: Virtual meeting / Screen-share session
+  • Attendee: Sachin, Nirmala, Satyajit, Kundan, Raj, Pungan, Ayyappa, S (speaker/new dev), and others (names referenced: Renuga, Nirmal, Kundan, Ayyappa)
+
+
+📒Meeting Outline
+
+
+Implementation & Code Quality (Data ingestion status job)
+
+  • Code structure and naming The current implementation used file names like qtrackframework.py and framework.py (copy-paste). Attendees asked to rename files to meaningful names (examples suggested: insurance_data_status_job.py, data_ingest_status_job.py). Utility modules should be grouped under clear names (example: automation_utils.py). Avoid duplicate naming and use distinct module/file names to make debugging and reviews easier.
+
+  • Implementation completeness and readability The code partially implements the expected behavior (uses existing functions like QT.target to run SQL, converts results to dictionary, checks ingestion counts and sends notifications when today's count is zero). However, reviewers noted the implementation is not complete: missing additional query/if-else logic, more comprehensive checks, and support for all tables. The developer must be prepared to explain flow and each method if asked (Raj may deep-dive).
+
+  • Runtime task creation & framework approach Current approach creates tasks at runtime (union-based queries for multiple tables). Concern raised that this will become hard to maintain as tasks increase. Recommendation: rework design so framework handles multi-table checks cleanly and does not create unnecessary runtime task churn. Keep business logic clear for multi-table alerting.
+
+  • Error handling & logs Implementation must fetch error summaries from audit logs when tasks fail and attach to email alerts. Ensure error details are read from audit log entries using table name and task id.
+
+  • Debugging and deployment readiness After changes, debug thoroughly. When pushing code, communicate errors clearly to the group (not just screenshots). If issue appears platform-side (e.g., parameter compilation issue after adding parameters), escalate to platform engineers (Renuga) without delay. Keep ops owners informed so C (ops) can work during their hours.
+
+
+Business Logic & Alerting Rules
+
+  • Primary flow for alerts For each monitored table:
+    
+    1. Check if there is ingestion entry for today's date. If none, consider failure alert.
+    2. If entry exists, check latest "staging to main copy" task status for that table — if failed, get the error summary from audit logs and include in the alert.
+    3. Email alerts are sent only on failure. If N tables fail, N emails should be triggered (one per table), not a single email for all.
+    4. The value/error details for the alert should be derived from audit logs (match by table name and task ID).
+
+  • Scope Initially implement for one table (insurance table / TV06x example), validate end-to-end, then extend to all ~10 insurance-related tables. Once stable, scale to more tables.
+
+  • Queries There are at least two queries expected: the ingestion check and the additional audit-log status/error query. Owner to provide missing query text (Sachin/Kundan to share).
+
+
+DQ Templates & Automation (Self-serve automation)
+
+  • Template approach overview The group reviewed DQ repository rules and identified that most checks can be mapped to a small set of templates. Proposed mapping keys: check type + description (+ filter criteria when needed). The description will be standardized from the DQ repository content; users should not freely author arbitrary descriptions — automation will use the standardized descriptions.
+
+  • Stagnant data check Analysis shows stagnant checks likely fit into 1–3 templates. The team observed about 70 stagnant rules (out of ~1588 DQIDs) — manageable. Approach: map existing stagnant rules to templates (daily/monthly/weekly variations may require separate templates). If some queries do not fit a template, modify queries (while ensuring final results match current DB outputs).
+
+  • Valid value / Expected value / Missing / Duplicate checks
+    
+    • Valid value checks appear to share common patterns; templates can be created where filter clauses are parameterized.
+    • Expected value may become a user-supplied input parameter going forward — product team to confirm.
+    • Missing value checks and duplicate checks: duplicate checks are relatively few (e.g., 9) and can be closed quickly; missing value counts around 110 — require template mapping.
+    • For checks whose SQL changes by frequency (daily/monthly/weekly), create separate templates per frequency group.
+
+  • Template key components To minimize template count, template selection should consider:
+    
+    • check_type (stagnant, valid_value, missing, duplicate, threshold, etc.)
+    • rule_description (standardized human-readable description)
+    • filter criteria (if present and impacts SQL structure) Combined these produce a deterministic template selection for SQL generation. Dynamic parts (filters, columns, constants) will be parameterized into template placeholders.
+
+  • Next steps for templates
+    
+    • Analyze all stagnant rules (70) and classify patterns to determine final template count.
+    • Perform similar classification for valid value, missing, duplicate checks.
+    • Aim to finalize at least one stagnant template and POC by tomorrow (target: lunch).
+
+
+Work tracking, communication & process
+
+  • Excel tracking Kundan shared an Excel template. Team members should create their own Excel copies to analyze rule descriptions, filter criteria, and map them to templates. Do not overwrite the shared master; instead produce analyzed sheets and share back.
+
+  • Counts & prioritization Snapshot counts (referenced in meeting):
+    
+    • Total DQIDs: ~1588
+    • Stagnant: ~70
+    • Valid value: ~1104 (approx)
+    • Missing value: ~110
+    • Duplicate: ~9
+    • Threshold checks: ~1100+ (biggest group) Priorities agreed: handle duplicate (small) and stagnant first; then missing/valid; threshold last.
+
+  • Scheduling & availability Sachin will be available to assist (logs in ~07:00–07:30 if needed). Team to escalate platform issues quickly so Sachin can coordinate with platform senior engineer (Renuga) if unresolved within the week.
+
+
+📋Overview
+
+  • The ingestion-status job currently checks ingestion counts and sends failure notifications when today's count is zero, but implementation is incomplete and must add the second query and if/else logic.
+  • File and module naming should be improved (avoid qtrackframework naming); create clear utility modules (automation_utils.py).
+  • Task runtime creation method needs rework to avoid unmanageable growth; framework should handle multiple-table checks cleanly.
+  • Alerting logic: check today's ingestion entry, then verify staging->main copy task success; if failed, fetch audit error summary and include in email. One email per failed table.
+  • Template-driven DQ automation is feasible: use check type + rule description + filter criteria to select parameterized SQL templates.
+  • Stagnant checks (70) are prioritized for POC; duplicate checks (9) can be completed quickly.
+  • Validate queries and template modifications against current DB insert results to ensure parity.
+  • Platform/compile errors after parameter changes must be posted and escalated quickly; don’t only share screenshots — include clear error descriptions.
+
+
+🎯Todo List
+
+  • Sachin:
+    
+    • Share the missing query for the second check (audit log/status) and confirm exact expected output fields, by EOD (no specific hour given).
+    • Provide final list of the ~10 insurance tables (names) so implementation can extend from POC (ASAP).
+
+  • Developer (S / new dev):
+    
+    • Rename files and tidy codebase: change qtrackframework.py to a meaningful name (e.g., insurance_data_status_job.py) and create automation_utils.py for common utilities — before next push.
+    • Implement the second query and if/else logic: check staging->main copy task status and fetch error summary from audit logs when failed; attach error in email — target: complete initial implementation for one table (POC) by tomorrow lunch.
+    • Ensure code is fully debugged and prepare to explain flow/methods line-by-line for reviews (Raj may ask) — immediate/ongoing.
+    • After updating code, post clear error messages (not just screenshots) to the group for any platform/compilation issues; escalate to Sachin/PL if platform issue suspected — ongoing.
+
+  • Kundan:
+    
+    • Share the Excel template and standardize how team members should submit their analysis (create personal copies) — already shared; re-confirm format by next morning.
+    • Provide the analyst table query and DQ repository descriptions as requested (ping developer with the exact SQL / analyst table name) — ASAP.
+
+  • Team (collective: Satyajit, Kundan, others analyzing DQ rules):
+    
+    • Analyze stagnant rules (70 items): classify into templates, list number of templates needed, and produce example parameter mappings (target: finish by tomorrow lunch).
+    • Analyze duplicate rules (~9): implement templates or ad-hoc code to close these quickly (target: finish today/tomorrow).
+    • Analyze valid value, missing, threshold groups to produce template mapping estimates (deliver consolidated counts and proposed template numbers by next meeting).
+    • For DQ template mapping, each member to prepare an Excel with: DQID, check_type, description, filter_criteria, proposed template id/name, any non-conforming SQL — share consolidated result by next meeting.
+
+  • Platform/Ops escalation:
+    
+    • If compilation/parameter errors persist after reverting, promptly escalate to Renuga (platform senior engineer) via Sachin, including exact error text and steps to reproduce — escalate within this week if unresolved.
+
+  • Product / PM:
+    
+    • Confirm expected value input behavior (whether expected value will be provided by user going forward) so templates can accept expected_value as parameter — pending (Kundan/PM to confirm).
+
+Note: Team agreed to reconvene tomorrow (DSU) to finalize stagnant-template mapping and aim to close at least one stagnant POC by lunch; follow-up meeting/time to be scheduled via group.
+
+
+Transcription
+
+00:00:28 - 00:02:23 Unknown Speaker:
+
+So what information you have made? The accident happened and it was full of traffic. It was more than an hour. Okay go ahead and share your screen let's close it up for you first. Then just wait for maybe 10 to 15 minutes. I will close with Nirmala. That's the reason I just invited him to the plan so that I can review and close it out and then post that we will resume the self-serve discussion. So this is the dummy table and some data. I don't have that table. Like in the code, the table is configured to that table, the insurance table. So, in the PR website, it's the insurance table. So, for the QBase, the table is even existing in the YouTube environment, man. And I don't have access to run any QBase in that table.
+
+00:02:25 - 00:04:02 Unknown Speaker:
+
+I asked clearly yesterday, right? No tables should get created. Who did create this table? It was created by me long ago. So that's what the ask was, right? Give me a couple of seconds and I'll just update that and add the info. It's not about that. Can you check whether you are able to run that table or not? When it's a cloud environment, be very conscious of the activity you guys are performing over there. There would be unnecessary escalation. Try to understand that. Ideally, we should have been using a service ID, but as you know, we don't have a service ID. That's the reason if everybody start creating tables, uploading the files, and what is what has happened right now, that would continue. Mess around over there when you should not be checking this table, right?
+
+00:04:02 - 00:05:48 Unknown Speaker:
+
+I did not ask you for the table. Okay, uh, okay, you're trying to see the initial for the table, look fine, uh. That would be not there in data that would be there in your DW and on underscore and answers that table. That would not be there. In your use case folder, the table would reside in low midi. Okay, leave this part. First of all, make this part. Uh, show me what did you implement? Okay, and this is the player. Uh, no, you need to work with what? What piece of code you have written, make me understand, and this is, uh, what? While we have created, like qtrackframework. Py file into framework.py file, names should be different. Okay, not, names should be different, right? Okay, if you are doing a copy paste, right, apply a logic that we can give it a different name, right?
+
+00:05:48 - 00:07:06 Unknown Speaker:
+
+Okay, okay, these many blocker would be there. Then. How could I understand how, you know, this piece of code is working, so this is the main code I'm just using. The existing functions like QT. Target will have the function to execute any SQL query and get those records and format those reports to convert them into a dictionary. And then I am just checking the long ingestion time and adding the count for the today state, and if it is zero, then I am just sending a notification to the website. And what is the query we have written? The query given to you right? That is one query, I think I have given you another query, or I did not given you another query. Okay, you have to implement another query, we have to do if and else, let me send you that query also.
+
+00:07:29 - 00:08:42 Unknown Speaker:
+
+And this is for, uh, so now, uh, we need to, you know, do it for all the tables, right? And there would be individual mail to be sent. So suppose if I have 10 insurance taken, right? Even if? And then? This email would be sent only in case of failure with a single DAG. Sir, earlier I was doing that only to create multiple tasks under one DAG. But Pungan told me to do it as the framework, like the part of the framework that is implemented to it as it is. So I will just use the union writing the same query, correct? Explaining that is, you know, that will create a mess for you. So you are creating the, you know, the task at runtime. And you know, going further, you will start adding them.
+
+00:08:42 - 00:10:15 Unknown Speaker:
+
+You know, it will impact the process. What I understand is once there is the exception, you have to trigger this one, right? Still look fine, but your implementation is partial. It's not 100 percent okay. Code looks fine, but you have to make some adjustment to your code so that I can load into development. Okay, so if you can break me like the task, then, you know, I can better help him. The business logic, right? If you have taken the task, you should have been able to explain you, but let me explain it again. You know, multiple tables, right? And tables we have for analyst, so number one, what he has shown, right? So if I search for this TV 064, we could say do the stack. I'll take the confirmation of our runtime, right?
+
+00:10:15 - 00:11:18 Unknown Speaker:
+
+So for today's date, there is an entry right today's date, so there should not be any failure alert for this one. So this is one table that we are checking into, that table itself, right? Correspond to TB06. But additional check what we can do is apart from this one, right, we can do one additional check on this one? It's already info you remember, right where those logs are there. So what we can do? Over here? We will check whether, uh, this one stays to main copy, right, the last task for this particular table. Status will be successful. Okay. This is the second one. Okay. This is the another check, right? In case we are, and then make sure you are checking this test to make copy task. And when you are returning the, this one, right?
+
+00:11:18 - 00:12:14 Unknown Speaker:
+
+Suppose if it is failed, then you need to get the error summary. Get the summary out of it and then attach that to the email. This will happen for all the tables, right? All the 10 tables. Because I don't want again, you know, 10 tags for 10 tables. Okay, tell me just one thing. First, we will check whether there is an injection is there or not for today, right? Correct. And then, you know, if there is an entry is there, then we will check it. This is what I am thinking, because even this question... is not required. We can go with this query also. Sometimes what happens? The stays on main copy remains success, but data is not there. And that's the reason I asked Nirmal to do a query on this table. Also.
+
+00:12:14 - 00:13:28 Unknown Speaker:
+
+Okay, can you ping me this? Query? Uh, where it is? Analyst table? Okay, ping me this. So we have to group it. Correct. Even if it is a failure, we have to trigger an email. That's it. Only in case of failure. Right. If you want a list of analyst table, I'll give you all those 10 tables name. Like this is travel insurance policy. Similarly, We do have other six, five on all all these tables. I'll give you this list, okay, but first of all, let's implement one. If it start working. And, you know, on this table, you can just do a union and then apply this. Basically, I mean even 10 tables, even 5 failed, so 5 emails should be triggered, correct? Yes, correct. And if you are citing the error, error you would be getting from this one only, right?
+
+00:13:28 - 00:14:24 Unknown Speaker:
+
+Yes, correct. We will pick from the audit log corresponding to the table name and task ID, right? Correct. Correct. Correct. Yes, okay. I understood. That is fine. It will be done, Sachin. This is not that big. I didn't know about the requirement. This is not that big. This is just... no, no, it's. It's fine. He is new to the pain, right? So he would take time, I understand, right? But uh, if the minor thing, uh, you know. Like we need to take care when we are doing those increments and then make those changes. Right now, at least the house that I have did right? Rename those files name and all right. Instead of Q Track framework, you can just mention right data ingest and status job, right? So rename that file as that Q track.
+
+00:14:24 - 00:15:27 Unknown Speaker:
+
+Uh, Q track. No, you can mention data in, uh, insurance data and status job. Like that Dot PY file file is still fine, but that should not be cute track, right? If you guys are creating Utils, Utils means all those common utility, right? So you can create that. The trapper has been created for automation, so you can mark it as Automation Utils. Py. Yeah, exactly, exactly, and then one more step, like, you know, if you have, build it, right? If you are doing it, debug it thoroughly. You never know Raj would ask you to make him understand each and bit of pieces of lines of code. And I am repeating this one from very beginning, right? You have given me overview, I am fine with that because I know what piece of code has been written in that U-Track framework.py file.
+
+00:15:28 - 00:16:30 Unknown Speaker:
+
+But in case Raj checks suddenly, then you need to explain what method, how the flow is traversing here and there. He checks it, you can check with any of the folks, right? He checks it suddenly. Okay, you can continue name it on your field record rocker. Okay, who would take the lead for this self-serve automation? Okay, so, Satyajit, I have sent a file over the mail. Yeah, I have seen, but nobody has responded to that, right? Post that. That's what the expectation was that everyone will respond there. That's why I tagged everyone there. I created Excel. I mean I just didn't respond but I have it locally with me. So I actually took up one check type as mentioned in the morning Sachin. I gone through. So as I said in the morning.
+
+00:16:31 - 00:18:38 Unknown Speaker:
+
+So let me share my screen. Hello. So there is one hbl file for this. So what I understood is if. So how many template is there for threshold? What is the number? I could see like 3 to 4 are there nearly. So that is fine right? 3 to 4 is manageable right? Yes. I could see three different templates right now. I said, I mean, one maybe it will increase, but otherwise three to four are there. And I... Sorry? How many SQL you traversed, first thing? Yeah, this is what I copied, but I went through almost 20 rules and I found that. Okay. But six is still more, right? Six is still more. Sorry? That based on description, something that they are twisting this template. One thing is when I uniquely saw what are the different descriptions available, so I found this most of the times.
+
+00:18:38 - 00:19:24 Unknown Speaker:
+
+Max run is there, okay, and then so is that now. Now suppose Max run is there. Are. They are following the same pattern for Max run date when they are applying a max. Yes, yes, yeah, that they are doing. Is it is, it is, it, is it same for all Max run date? Yes, yes, yeah, yeah. Then that could be a one template, and then if it is for model, ID equals to this max run date is. This should lie within pause 45 days. Is that remain same, and then if the case is percentage customers is that remains same. If if that is the case, then we can, uh, finalize the template for stagnant check. Yeah, this, I think this is possible today. Stagnant data check is possible. Maybe possible, right?
+
+00:19:24 - 00:20:22 Unknown Speaker:
+
+One or two templates, which is, uh, I mean, the few, one or two SQLs, which one we cannot put in a template. Maybe we will try to modify that those queries to make sure they are using the existing templates. So what I thought is, for example, if we found all are coming under 1, 2, 3 templates, if 2, 3 are not coming on any of these templates, maybe we will modify those queries to come under one of these templates. Yeah, correct. I agree. I agree. So maybe such in my session is lazy and this we can pick it up. I mean, two options, either by check type or by use case type, so now use case type. You know, you won't be able to do it with the use case time, you won't be able to do it.
+
+00:20:22 - 00:21:18 Unknown Speaker:
+
+Today is lazy, right tomorrow? Some more use case would wait, and what it? Check type is still fine, along with the description. If we are getting a part with check type plus description, then this template we can write a Python code for that. Okay, it will be combination object type and description. Okay, yeah, yeah, so stagnant. We are good, right? Uh, I'll take it as a positive, then. Yeah, stagnant. Data based on data. What? I went through, almost 20 scales I went through, it looks, uh. Template is possible for this if you agree that we are okay to modify the scales for one or two. Till the time your end result is matching with V, right, till the time whatever end result right now we are inserting to the database, if it is matching.
+
+00:21:18 - 00:22:33 Unknown Speaker:
+
+Post modifying the sequence, there is no harm to make those changes to that sequence. We can do it, we can do it, okay, it as like, we can take it as a template. What next? Who is analyzing the next part? Searching for this threshold? Check right? I found different different templates, I checked the, you know, the 10, I think 12 or 13 SQL files. Okay, so these are not different. But yeah, there is a, you know, new approach. What the way I suggested is check with description, right? Give me some time, maybe tomorrow I will update you, okay with the description. Also, if we can come up with a template for each description, and if any of the rules are not following the template with that description. Keep that as an uh, okay.
+
+00:22:33 - 00:23:46 Unknown Speaker:
+
+If the query should be matching with the template description, we are going to create it quickly. Okay, we are not going to leverage. Uh, give this leverage to the end user to create the description, right? Let me share my screen. What I mean to say, so what we are going to do is so. Suppose user put their input like this right, use case, check, type, frequency and all. All blah, blah, blah, right? So this is going to create a role description, we are not giving the user to create the role description, right? So we can consider whatever you know description is there in the DQ repository already? We would be creating that description over here. Yes, yes, yes, it's in our hand, man, so it's not that description before, only we will design the template.
+
+00:23:46 - 00:24:45 Unknown Speaker:
+
+Okay, this is an input from before that you won't be able to. It's just that whatever existing data is there in that, uh, repository, those need to be come to a same pattern. The way the description is, those would match each other, and then, once user put it right, whatever new rules would be inserted to the DQ repository. Then we have to see what are the different type of description over there, and then we would auto populate over here based on the user. And that way, check type plus role description equals to one template, or two template, or three template, whatever it is. What about other check type? Stagnant? We have final threshold, we will get to know tomorrow morning from Kundan. You, what about other check type? Um, yeah, I'm sharing.
+
+00:24:45 - 00:25:52 Unknown Speaker:
+
+Okay, yeah, go ahead, that's, yeah, uh, that valid value check. Okay, so here, uh, two tables I have just gone through. Or is he next question, or is he user reservation? So here is observable green color, one of the common pattern. Okay, so, um, if you compare this query data actually a sortable where class condition, right? So suppose the RESI user, they're applying the different filter criteria, so that will be varying. But pattern way, template wise, it's the same, only compared to below one. Let's say we will compare with the other one. Suppose if we consider with the user reservation, right? So here template is my same, but where it has condition, right? Wherever they are putting the bore filter, right, that will be the only the change.
+
+00:25:52 - 00:27:02 Unknown Speaker:
+
+So here from where, from where you would be getting, is it in the description or where? So we need to compare with the actual. Description it's nothing but the human readable. What exactly they do action item, but we are comparing with the actual code, right? So, let's do one thing, let's come with a fresh approach where you know, let's see both the things. Let me finish this one. Maybe you can give the comment. So if you can compare with other DQIDs. The places only. And conditionally, it will be changed based on the filter criteria, something they are mentioning in the not in condition. Okay, so this not in or this in right from where we are deciding that is, I would like to know, right? Like RESI user version type not in, right?
+
+00:27:02 - 00:28:32 Unknown Speaker:
+
+So is it coming from the filter which Kundal mentioned filter criteria? So so that comes from the filter criteria area. Then then your combination becomes a rule description, plus check type, plus filter condition, and then this would become your template, right? If you can see. If you can compare these four, right? Suppose if you can compare this one as a common one template and source the filter criteria. What is the filter criteria here? Not here. Pick query console. Pick query console. Let's check it here because it's a small one. Let's select that and put this declaration. Yeah, correct. Filter criteria and description also will be added. Where DQid equal to, you know, give that number. 16th February, is there any festival? Is there which one? Sorry, 16th February?
+
+00:28:40 - 00:30:00 Unknown Speaker:
+
+They all have put on, you know, status being leave on 16th, I don't know like, is there any festival or something right? Otherwise? I was aware with you. But you know, recently I found, you know, have been reached out by some different folks. Yeah, you know, status I can see today like, you know, they are also leave on 16th. So we just make that use case equals to what table equals to this one, right? You don't need even that EQ ID. S-T-A-C-T not in this one, right? And what is the condition we are adding, Ayyappa? So, that's, this is the no-show expected one, Dino, Dino is unconfirmed, this one. Yeah, yeah, so that is taking from description itself, Kundan. Yeah, yeah, yeah, that is coming from the description itself.
+
+00:30:00 - 00:31:33 Unknown Speaker:
+
+So, if we, Kundan and, you know, Ayyappa, we can take these three conditions. Criteria description and then that check type 14-1 is matching. Go down. Down, down, down. Not there in the Excel. Go down. Last one. This is matching, right? 1, 2, 3, 4, 5. Now we have at least an idea from where it is getting. This is the column. Name is changed actually here is the type. Is there? Type? Underscore ID was there. Here? Column name is changed. S v R v c. Underscore. RT column name is different. This column. Name would be there in the description, man, that would be there in the description, just a different central link. Here is the SVC ID is the name actually, so if you similarly below 114th row, this is the one actually.
+
+00:31:33 - 00:32:48 Unknown Speaker:
+
+Yes, look, you have a.It would be your template, right? And then when your application, that automation would be generating a SQL, right, what it would do? It would copy the source to this feed key and then, based on the template it has selected, it would apply that. And user as VRCD. Not in this, this, this, that is how the template would work. This piece would be dynamic in the curly braces and user as BT, not in this as E.Okay, that would your application that automation, uh, would be generating based on the description that it receives. So, the table it is I am just observing expected values right. So, currently this is following the same feature as an expected value. But some other table is zeroed actually. This expected value could be an input parameter from the user.
+
+00:32:48 - 00:34:00 Unknown Speaker:
+
+I am going to talk to the product team for this one. We are not going to output this expected value going forward. This would be coming from the user itself. So the expected value, yeah, yeah, this is comes after a valid value check such okay, so very, very check, stagnant check. We are good and see, I will tell you know, do a cross check again. Okay for this valid value check and match with the description if it is matching or not. Okay for the missing value check. So this one, this is one template. The inner subcarriage is changing, and this is the common one here. The role description is null for both. Then, when it comes to this table for Triumph Build and Build, we have monthly and the daily deck.
+
+00:34:00 - 00:34:56 Unknown Speaker:
+
+So here there is a filter condition there here for this, so here the subquery is changing based on this filter criteria. This one, like daily, the pattern would be different, monthly would be different, interact with different, and even the weekly would be different. Okay, so if it is really, there would be one pattern or two pattern, or three pattern. Again, for monthly, there would be one pattern, two and three pattern that can differ. Okay, and based on that pattern, just see if even this missing value look right now we have sorted out even. You know, we need to do more analysis on that. Let's try to map it with the description, check type and the filter criteria if these are matching or not. And then we can, you know, close this to a conclusion.
+
+00:34:56 - 00:35:49 Unknown Speaker:
+
+Then okay, okay. So you need to see the daily ones and the, uh, among the daily ones. We have to compare if the template is same or not. Exactly exactly because daily would be different, monthly would be different. Okay, there might be some some changes in daily and monthly, and then I am okay. We are creating two template for daily, two template for monthly or two template for annual one. No problem with respect to that. Anyhow, your daily tag would be different, right? Monthly tag would be different. Annual tag would be different, right? So basically when you would be generating that SQL, right? You would be modifying the daily SQL file, not the monthly one, right? So we can have couple of template for daily, couple of for monthly or couple of for intraday. Okay.
+
+00:35:49 - 00:36:48 Unknown Speaker:
+
+Yeah, so okay, this is still, you know, we were able to figure out a few of those stuff. Uh, utilize today's time and then let's meet tomorrow DSU, and let's try to close in tomorrow, DSU at least. And then, you know, we can start at least doing a POC for small table. Like if we can start on the stagnant one and then and see, you can start on the raisey one. Okay, yeah, but before POC we should have those clarity. And if you first of all check how many stagnant rules are there, what is the volume of that stagnant? Yeah, 70 are there, actually 70 are there, right? So try to analyze all those 70 and see out of those 70 rules how many. Pattern you are going to create at the end.
+
+00:36:48 - 00:37:54 Unknown Speaker:
+
+So that number is also important. Suppose for 70 template, you come and tell me I need 10 template for 70. The reason being for those stagnant check, 30 are daily or 10 are monthly like that. So I need that template numbers also. 70 is still not a huge number. Right, so see if you would be able to complete it by tomorrow morning, maybe max by lunch, right? So at least we can finalize one, uh, stagnant one, and then if that has been finalized, then we can start working on that. Okay, and threshold continue would be coming back to me. I would be checking the valid value one and then see the. Duplicate one right you're checking on the duplicate, correct? Missing value. Yes, it is missing value one. Okay. Okay, then let's connect tomorrow again on this.
+
+00:37:55 - 00:39:06 Unknown Speaker:
+
+We still need to you know deep dive into these check type and the filter. And while you are doing you know analysis consider description as well as the filter criteria. That could help you to reduce the number of templates. Otherwise what would happen? We could start implementing and then suddenly we could realize that this is not getting fit into any of the template. Okay, I think that is the, you know, the most important thing. Exactly that is the reason. All the way up, I told, right, we started around 22nd last week of Jan, right? We are still on second week of him, but I am not in a hurry to close. Start the implementation. First, this analysis needs to be done.
+
+00:39:09 - 00:40:18 Unknown Speaker:
+
+Okay, tomorrow we will come with, you know, some more conclusion and try to, you know, close it tomorrow only without the input what, you know, we will observe. Yeah, so we will try to close it by tomorrow only. Just one clarity required actually, come and help me on this one. Because as a template point of view, I am a bit confused here. Uh, we'll connect separately, but then, don't worry, I'll get confused. This one is the ish number, right? Oh yeah, this is only the ish number, correct? So look, even check the count, right? Like stagnate or split. We said 70. Right, out of 1588, 70 is stagnant. We can close the 70 first and then check what is the count for rest of the check type. Value value 114 was there, total EQIDs.
+
+00:40:19 - 00:42:17 Unknown Speaker:
+
+And 814 is still large, what about rest? For listing, it is missing value 110. Okay, so all and all are nearby, right? Right, okay. How many rows are there for this? 1177 Check We have duplicate check button account. Woman, it has that request, right? Yeah, OK, if duplicate is 9, right? I am saving the count for everything on the check time. Okay, if it is nine now, we can close the nine one today itself. Yes, correct. If it is just nine, the duplicate one, right, we can close it today itself. Then pick the duplicate one first. Ah, correct. So okay, so I will, you know, check the duplicate one first. That's fine. Keep it for the last. So stagnant with we duplicate you and see, you can continue on the one that 110 and 114 and we will pick the threshold at the very last.
+
+00:42:17 - 00:43:45 Unknown Speaker:
+
+By that time, at least, we will also get, you know, get an idea, how we add, you know, exactly. Once we are implementing the stagnant one, right? So meantime the duplicate and stagnant with, we can implement and then we can pick up the rest. One. I'm sharing the count with you. Okay, give me seven, double, seven. Okay, what is the? Another? One is 110, missing value is 140, threshold is 1100 something. The missing value check is 110. Yeah, 110 and then valid value is 1104. Yeah, anyhow I will put in the group the consolidated one which is after this call. Okay. Okay, then close the doggie gate and then if we try to close the stagnate one tomorrow. By tomorrow it's around lunch hour right so we can go to the partners to close it yeah yeah.
+
+00:43:57 - 00:45:03 Unknown Speaker:
+
+Yes, Sachin. So after pushing that code, they have suggested two new parameters. So after adding that, it threw an error. So we again reverted that. Only the scheduled interval we kept. That was a valid parameter, Sachin. Then why that message is not there in that group, man? Put it, that error message I told you to put on the globe, right? Ah, yes, yes, yeah, uh, actually thought of analyzing that one. Um, okay, that is the compilation issue. We can't do anything on that because the number of parameters is very big, so they they will only come up with the solution. Okay, okay, yeah, I'll paste that screenshot here. Just don't paste the screenshot. Explain the issue. Yeah, the error is there. Just highlight that and tell that once you are in decline.
+
+00:45:03 - 00:46:29 Unknown Speaker:
+
+If it is an issue from our side, we can debug and still find out the root cause. But if it is something from the platform side, don't wait. Just go ahead and let them know immediately so that everything is working in the ops. So at least C can work. During his working hour. Okay. Because if it is not getting sorted out, then I need to talk to Renuga who is their senior engineer. I will pull Renuga in case if it is not getting sorted out within this week. Okay so let's not delete from our site if we know that this is something very sure just let them know immediately. Okay, I can anyhow intimate with all of you, right? I'll be log in around 7, 7.30. Okay, and you know, give me a call in case anything required from my end.
+
+00:46:30 - 00:48:01 Unknown Speaker:
+
+Sure, sure, Sachin. Do we have any call after this? No, we don't have any call. We have canceled our commutes date. So, you guys can utilize this time for these. Thank you Thank you. Yeah, he was asking something about the excel mandate. Oh, yeah, so I'm just sharing my screen So this one right when we need to update the excel sheet that you shared right on excel sheet You create your own excel app, okay, okay, okay, So what I write here have to do. You check the description and filter criteria and see how these conditions are varying. Okay, whether it's based on the description or based on the filter category. Okay, yeah, got it. And then, you know, you create your own Excel, don't create. Uh, you know, copy and paste in my Excel, you can create your own Excel.
+
+00:48:01 - 00:49:25 Unknown Speaker:
+
+And then, you know, understand the script, and then, you know, conclude the thing and then share over the mail. Okay. Thank you. Kundan, just can you just stay one minute. I just wanted to ask, how do we check this time which took. Before the death pending, we were checking that one right in the stand-up call. Yeah, open this one. Sometime back when we checked, I couldn't find that. See here, first run start time, last time, right? Start, okay. The duration is also there, right? Max run date, Max run time is... what is the duration? See maximum duration 11 minutes, right? Okay, but this is which time we have to click on here. Uh, yeah, so if I click on the recent one, uh, I am not able to. Okay. Run duration one minute 17.
+
+00:49:25 - 00:49:40 Unknown Speaker:
+
+Uh, yes, correct seconds, okay. And there will be less messages, right? It will not take that much time. Okay. Thanks. Thank you.

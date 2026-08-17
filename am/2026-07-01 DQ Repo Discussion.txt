@@ -1,0 +1,415 @@
+
+
+Detailed Meeting Summary
+
+Meeting: Meeting Recording 20
+Date: 1 July 2026
+Duration: ~12 minutes
+Primary Topic: Migration of complex Data Quality (DQ) rules from the DQ Repository to the DQ Artifacts table and UI support for complex rules.
+
+Overall Objective
+
+The team discussed completing the migration of complex Data Quality (DQ) rules from the existing DQ Repository into the new DQ Artifacts table while ensuring:
+
+No data discrepancies between both systems.
+Existing complex rules are preserved without modification.
+The UI can identify complex rules and allow editing of the rule description.
+Frontend changes are limited only to supporting existing migrated complex rules.
+Current Migration Status
+
+Speaker 1 mentioned:
+
+Total DQ rules: 286
+Successfully migrated: 230
+Remaining rules:
+Approximately 40–56 complex rules (discussion referenced different remaining counts)
+These remaining records are all complex rules.
+
+The priority is to finish migrating these remaining complex rules.
+
+Major Decisions
+1. Complex Rule Description should become Editable
+
+Current behavior:
+
+Rule description is generated/formatted automatically.
+
+New requirement:
+
+For complex rules, the Rule Description should be:
+
+Plain text
+Editable
+Not automatically generated
+
+Reason:
+
+Many existing complex rules cannot be represented by the template engine.
+
+Instead, the original text should be preserved.
+
+2. Editable only in Modify Mode
+
+Speaker 1 clarified:
+
+The editable Rule Description should only be available when:
+
+Modify Rule
+
+It should NOT be editable during:
+
+Add Rule
+
+Reason:
+
+New rules are expected to follow the simple rule template.
+
+The editable description exists only for supporting migrated legacy rules.
+
+3. Do NOT Refactor Complex Rules
+
+Initially there was discussion about cleaning up:
+
+Filter Criteria
+Missing Value checks
+Allowed Margin
+Conditions
+
+Final decision:
+
+Do NOT modify complex rules.
+
+Instead:
+
+Migrate them exactly as they currently exist.
+
+Reason:
+
+The system is not expected to generate SQL for complex rules.
+
+Therefore there is no benefit in restructuring them.
+
+Migration Guidelines
+
+Speaker 1 instructed:
+
+Migrate data exactly as-is
+
+Do not:
+
+rewrite
+simplify
+optimize
+reformat
+
+unless absolutely necessary.
+
+Only migrate the existing information.
+
+Preserve Original Rule Description
+
+Whatever exists in the old repository
+
+↓
+
+should be copied directly into
+
+DQ Rule Description
+
+No transformations.
+
+Complex Flag
+
+A very important requirement.
+
+For every migrated complex rule:
+
+complex = true
+
+This is needed because:
+
+Frontend receives this field via API.
+
+If
+
+complex = true
+
+then:
+
+UI should
+
+enable editable Rule Description
+treat it differently from simple rules.
+Simple Rules
+
+Existing simple rules already have
+
+complex = false
+
+These should remain unchanged.
+
+UI Changes Required
+
+Frontend should:
+
+When API returns
+
+complex = true
+
+Then:
+
+Rule Description becomes editable text.
+No automatic template generation.
+Display plain text.
+
+When
+
+complex = false
+
+Existing behavior remains.
+
+Database Changes
+
+Several fields were discussed.
+
+Active Flag
+
+Should be
+
+active = true
+
+Speaker 1 noticed some records marked false.
+
+Those should instead be true because:
+
+All migrated records are active.
+
+Approved Flag
+
+Should be
+
+approved = true
+
+for migrated records.
+
+Complex Flag
+
+Should be
+
+true
+
+for all migrated complex rules.
+
+User ID
+
+Use the same existing user ID.
+
+Do not invent new values.
+
+Business Context
+
+Maintain existing Business Context.
+
+History Count
+
+Verify whether History Count needs migration.
+
+Developer should validate this mapping.
+
+IDs
+
+These IDs are unavailable for legacy data:
+
+Table ID
+Variable ID
+Rule ID
+
+Therefore:
+
+table_id = 0
+variable_id = 0
+rule_id = 0
+Data Mapping Instructions
+
+Speaker 1 emphasized multiple times:
+
+A mapping sheet already exists.
+
+Important columns:
+
+Column L
+
+↓
+
+DQ Artifacts
+
+Column M
+
+↓
+
+DQ Repository
+
+Developers must carefully use this mapping during migration.
+
+Failure to use it may create inconsistencies.
+
+Rule Description Mapping
+
+Old Repository
+
+Description
+
+↓
+
+New Table
+
+DQ Rule Description
+
+This mapping must be preserved.
+
+Data Consistency Requirement
+
+One of the major concerns raised:
+
+If developers change values only in DQ Artifacts
+
+and
+
+do not update DQ Repository,
+
+then:
+
+Both repositories will become inconsistent.
+
+Therefore:
+
+Any migration must ensure consistency between:
+
+DQ Repository
+DQ Artifacts
+Records to Ignore
+
+Discussion included newer records.
+
+These include:
+
+New rules added by Aipa
+Around 20 production records
+
+Decision:
+
+Ignore them for now.
+
+Current sprint focuses only on:
+
+Existing complex legacy rules.
+
+New rules will be migrated later.
+
+Test Data Cleanup
+
+Speaker 1 approved deleting testing records.
+
+Specifically:
+
+Delete:
+
+ID = 325
+
+Reason:
+
+These were temporary testing records.
+
+API Discussion
+
+Some brief discussion occurred regarding:
+
+API response
+Camel case naming
+
+No action items were finalized except:
+
+Frontend should consume the new
+
+complex
+
+flag.
+
+Questions Raised
+Speaker 2
+
+Asked:
+
+Should frontend know whether a rule is complex?
+
+Answer:
+
+Yes.
+
+Use
+
+complex = true
+
+Asked whether filter criteria should be cleaned.
+
+Answer:
+
+No.
+
+Leave everything unchanged.
+
+Asked about production records.
+
+Decision:
+
+Ignore for now.
+
+Risks Identified
+1. Data Discrepancy
+
+Biggest risk.
+
+If migration isn't consistent:
+
+Repository
+Artifacts
+
+will diverge.
+
+2. Mapping Errors
+
+Developers must follow mapping sheet carefully.
+
+Incorrect mapping will break migration.
+
+3. UI Dependency
+
+Frontend depends entirely upon:
+
+complex = true
+
+Missing this field will prevent editable descriptions.
+
+Action Items
+Owner	Task	Priority
+Backend Team	Migrate all remaining complex DQ rules to DQ Artifacts	High
+Backend Team	Preserve rule descriptions exactly as they exist	High
+Backend Team	Set complex = true for migrated complex rules	High
+Backend Team	Set active = true	High
+Backend Team	Set approved = true	High
+Backend Team	Use mapping sheet (Column L → Column M)	High
+Backend Team	Map old Description → DQ Rule Description	High
+Backend Team	Keep Table ID, Variable ID, Rule ID as 0 where unavailable	Medium
+Backend Team	Delete temporary testing record (ID 325)	Medium
+Frontend Team	Make Rule Description editable when complex = true	High
+Frontend Team	Editable only in Modify mode	High
+Frontend Team	Keep Add Rule unchanged	High
+Team	Ignore newly added production rules for current migration	Medium
+Key Takeaways
+Around 230 of 286 DQ rules have already been migrated.
+The remaining complex rules should be migrated without any functional changes.
+Rule descriptions must be preserved exactly as plain text.
+Every migrated complex rule must have complex = true, enabling the frontend to display an editable Rule Description.
+Editable Rule Description applies only in Modify mode, not during Add Rule.
+Maintain consistency between the DQ Repository and DQ Artifacts to avoid data discrepancies.
+New production rules are out of scope for this migration and will be handled later.

@@ -1,0 +1,161 @@
+2026-02-17 VS Code LLM Extension Development and Adoption Discussion Sachin call
+
+Creation Time: 2026/2/17
+
+
+📅About Meeting
+
+  • Date & Time: 2026-02-17 18:15 (Duration: 1055 seconds)
+  • Location: Virtual call (screen share)
+  • Attendee: Sachin, Sir Jin, Prithvi (mentioned), Raj (to be contacted), Nirmal (mentioned), Suman (mentioned)
+
+
+📒Meeting Outline
+
+
+VS Code LLM Extension Demo and Architecture
+
+  • Extension overview The presenter (Prithvi) shared a custom VS Code extension project named "extension master 2" (local extension) built to interact with an LLM for automated generation tasks. It is not published to the VS Code Marketplace; it runs locally as a developer extension and can be launched via the VS Code "Extension Development Host" (F5). The extension can be shared as code for others to run locally.
+
+  • How the extension works The extension orchestrates multiple agents (orchestrator agent, LL agent/interpreter agent, etc.). Each agent interacts with an LLM to collectively generate outputs. The example workflow: select an input JSON file → run the plugin to "generate skills" → agents call the chosen LLM(s) and produce outputs (updated JSON, reasoning text, final SQL, etc.).
+
+  • LLM integration The extension uses built-in VS Code LLM integrations (e.g., GitHub Copilot's LLM variants like "Cloud Haiku"). No external LLM installation was required; the extension invokes the LLM available within the environment (similar to how Copilot responds to prompts).
+
+  • Outputs produced The tool is capable of:
+    
+    • Creating JSON files from inputs
+    • Updating existing JSON/tag files
+    • Producing explanatory reasoning text for changes
+    • Generating final SQL queries The presenter emphasized end-to-end automation potential, including updating tags and producing traceable reasoning.
+
+
+Deployment, Usage Concerns, and Next Steps
+
+  • Running vs selling a product Participants discussed that while the extension runs locally and benefits the developer, it needs to run in an acceptable environment (e.g., shared environment, GCP, or approved deployment) before it can be adopted organization-wide. Local-only operation limits usefulness to the broader team and reduces chances of leadership approval.
+
+  • Governance, security, and approvals Concerns were raised about organizational policies, secrets management (an example of an exposed secret/password was referenced), and compliance in a financial environment. Approval from leadership (Raj) is required to proceed. The group agreed that security and deployment concerns must be addressed before a demo to leadership.
+
+  • Hand-off and points of contact Sachin indicated he might not be the best person to present the technical details to Raj; if Raj is interested, a follow-up call involving Prithvi (who performed the POC) should be arranged. Sachin manages a large team and prefers dealing with leads rather than many individual contributors.
+
+  • Scheduling and availability The presenter offered to be available for a demo; Sachin requested confirmation from Raj first. Potential windows discussed: Friday or upcoming Monday for a leadership-level demo. The presenter noted he may be on leave soon but can accommodate the requested demo times if scheduled.
+
+  • Potential broader impact If approved, the extension approach could be used to automate other tasks/processes across the team, increasing productivity and reducing manual effort. The presenter encouraged including that point when Sachin speaks to Raj.
+
+
+Interpersonal/contextual notes
+
+  • Communication and team adaptation A short conversation covered onboarding dynamics and the need for time to understand working styles. Sachin affirmed he values productivity and is supportive as long as outputs are solid. The presenter apologized for any perceived stress in the conversation; both parties emphasized collaboration and alignment.
+
+
+📋Overview
+
+  • The extension is a locally-run VS Code plugin ("extension master 2") built to orchestrate multiple agents and call an LLM (e.g., Cloud Haiku via GitHub Copilot integration).
+  • It accepts input JSON, runs agents to produce updated JSON, reasoning text, and final SQL.
+  • No external LLM installations were used; the solution leverages existing VS Code LLM integrations.
+  • The extension can be shared as code for others to run locally (start debugging with F5).
+  • Organizational adoption requires addressing deployment, security (secrets management), and compliance concerns.
+  • Sachin will discuss with Raj to determine if leadership supports exploring or approving the approach.
+  • If Raj is interested, a demo involving Prithvi (POC owner) should be scheduled; potential times: Friday or next Monday.
+  • If approved, the solution could be scaled to automate additional tasks across the team.
+
+
+🎯Todo List
+
+  • Sachin:
+    
+    • Speak with Raj to get initial confirmation/interest and feedback (by end of day: 2026-02-17 if possible; otherwise as soon as Raj is available).
+    • Inform Prithvi whether leadership is open to a demo and propose available times (target: within 2 business days).
+
+  • Prithvi:
+    
+    • Share extension code repository and run instructions so Sachin (or others) can run it locally (deliverable: code + README, target: before demo).
+    • Prepare a concise demo script showing input JSON → generated updated JSON + reasoning + SQL (target: ready before scheduled demo).
+    • Address known secret/exposure issues and document security considerations for leadership (deliverable: short security note), prior to demo.
+
+  • Sachin / Leadership (Raj):
+    
+    • Decide whether organization-approved LLMs/AI services exist that should be used instead, or whether the presented approach may proceed (deliverable: direction/approval).
+    • If approved, schedule a follow-up demo with Prithvi and relevant leads (target: Friday or next Monday, based on availability).
+
+  • (Optional) Dev/Ops / Security:
+    
+    • Provide guidance on acceptable deployment environments (internal server, GCP, etc.) and secrets handling for LLM integrations (deliverable: deployment & security requirements document) to support adoption.
+
+
+Transcription
+
+00:00:08 - 00:02:12 Unknown Speaker:
+
+Hello Hello. Hey, hi, Sir Jin. Can you hear me? Yeah, yeah, Sachin. Okay. Can you just give me a demo with respect to the LLM that you were presenting earlier, the tools and all, right? I have a meeting with Raj today. Nice. I'll discuss with him on the same. Sure, Sachin. Okay. You want me to give it now or? Yeah, just a high level. Exactly what that is all about, how you are using it. Uh, so that I, you know, I can talk to him on this. Okay, so, uh, okay. This is the project that I created. You can see my screen, right? Sorry, I I can just. Yeah, I can see your screen. This is the project, uh, I have created. Okay, it's a VS code extension plugin. Okay, so. I mean, plugins we know, right?
+
+00:02:12 - 00:03:00 Unknown Speaker:
+
+In VS Code, we have different plugins. Like for JSON, you will have a plugin. Yeah, through the markets, you might have installed it. Yeah, that is third parties one. So, somebody wants to put that in their marketplace, they can put. But if we want to create plugin for our own usage, you have a use case and you want it to do, you can do it. You can create your own plugin. And it will not be published in marketplace, but you can run it locally, like an extension on top of VS Code, basically. This is the extension code that I have written. So it has connection with the LLM. So since it is a VS code. So how that plugin you have installed, that's what I would like to understand. Where you did it?
+
+00:03:01 - 00:04:01 Unknown Speaker:
+
+First of all, what is the plugin that you have installed over there? No, I have not installed anything. This itself is a plugin. This is extension master 2 I created. You created this plugin, right? Yes, yeah, okay, and uh, how did you created this one? It's just a project that you have created, post that, uh, this project. And then I implemented Python code, uh, I, that connects to the VS code, LLM, Okay, so that's VS code. How we are, you know, providing the dependency basically over here. You got my point, right? Yeah. Yeah. So this is the orchestrator one. Okay. It has, this is the orchestrator agent. Okay. There is an LL agent that is intercept, interpretation agent. So different agents that are created and they all get coordinated in generating the final SQL query.
+
+00:04:02 - 00:05:10 Unknown Speaker:
+
+Okay. So these are the... So you receive these bits of code or this plugin from somewhere, right? Or you have written it by your own? So these are all my utilities, and this is the VS code, uh, I mean, library that I am using in Python. Okay, I'm still bit confused, man, I'll be very honest, and still bit like import packages, right? Yeah, see, basically it's an extension, maybe I can let me see if I can execute. There should be something right from where we can get the plug-in or something in that yes. Oh, yeah, so this air mainstream This is okay. Just open the view you can see this. This is the extension plugin Okay, you can see extension development host. So if I command shift P if I do I can Select my particular plugin generate from rule JSON.
+
+00:05:10 - 00:06:02 Unknown Speaker:
+
+Okay Generate this is the plugin that I have created. It is executed and it is ready to run. So now when I choose that it will ask me to select an input JSON file. So in my case this is a JSON that I am selecting and if I ask it to generate a skills from it. So it will go through that input request. It will run all the agents. Each agent interacts with the LLM that is I showed you right. These are the different LLMs available for us. In the VS Code. So, Cloud Haiku is the latest one, right? So, I am using Cloud Haiku. This one and then it provides the context to it. So, it will take all the existing. Trying to understand this Cloud Haiku that you have shown, right?
+
+00:06:03 - 00:06:56 Unknown Speaker:
+
+So, basically that is one of the installer that you have installed in your VS Code first. No, no, no. This is Cloud Haiku given by GitHub Copilot. It's an LLM. So even if you open your SBS code, you will have all these extensions. I mean, LMS. Okay, it's not. I have not done any external installation, it's completely within Amex and not even single code that I have checked out. Or, I mean, everything is created here itself, so only thing is small hack. So, for example, you are using GitHub Copilot, you put some prompt and you give it and it generates a response, right, same thing. Instead of going through Chart you, I have written a plugin that interacts with this LLM behind the scenes. There is no chart bot, so now, yeah, it is generating the responses it will generate.
+
+00:06:56 - 00:07:43 Unknown Speaker:
+
+Okay, I can show you some sample also, I got it. I think last time you have demoed it, right? Like this would be there and then that would be going to create some output for for you. And you know, the JSON that you have created, yeah, it's not only SQL Sachin, it will generate the JSON, it will update the JSON, so this is actually creation of JSON. I did, but my plan is to update it, the existing one. This is the tag file update. Okay, it will update the tag and it will create a reasoning text to understand on what basis it has updated it, so this is a complete reasoning it will put. And then the final SQL it will create like this. The problem is that we won't be able to run it on the environment.
+
+00:07:43 - 00:08:34 Unknown Speaker:
+
+That is the challenge. But Sachin, if you ask me, lot of advantages with respect to generation. See, that by generation, everything end-to-end automation can be done. I agree, right? But you need to address the challenges, right? Suppose there is a holiday or something, right? And then nobody is there, right? In that case, intent is not to create any manual task. Yeah, yeah, and uh, let me see, I need to demo it, give me a second, okay, and one more point, if you are going to discuss with Raj, I would request you to put another point. That once, if if we can make this successful, no. We can automate a lot other things within our work that we are doing with respect to that generation.
+
+00:08:34 - 00:09:28 Unknown Speaker:
+
+I'll check with him first of all, give him a confirmation and then maybe know I might not be the right person to explain him all the stuff. Because you have did that POC, right? Yeah, so maybe if he is interested, if he has shown that interest, then I'll ask him, let me set up another call with Prithvi, who has done that POC. Fine, yeah, I am not completely aware, right? I might not be able to explain all the stuffs to him, right? My question to him would be straightforward that are we allowed? Utilize that then then we can come up with some plan over there. Okay, yeah, okay. So suppose if I go over here, anything that you see over here, like, Uh, from where I can get those plug-in over this tool?
+
+00:09:28 - 00:10:22 Unknown Speaker:
+
+No, no, this is a plugin, you have to install it. Uh, shall I? I can share you the code, you can copy that locally and run it. There is a start debugging, I mean, you can open that extension in. If you press F5, it will run that plugin. Okay, okay, we have to install it over this. Yeah, so this is a marketplace such in. I mean, this is I'm not getting anything from this, and it's not recommended. Also, we don't do that like this. This is one of the GitHub Copilot, right? If I install, yeah, this is an extension and we will go through that. Yeah, Github Copilot. They have a you what we say, collaboration, right? Yes, there is no restriction, but, uh, with respect to, because even if I, you know, go ahead with rest of the LLM and all right.
+
+00:10:22 - 00:11:10 Unknown Speaker:
+
+That is something we need there. And you have seen right now, even for this, a small secret password, right? Unnecessary jobs have been created, right? So how can I give you a go ahead? You can go ahead and do it right. Because, as I was stating right, he would never reach out to you guys. Okay, because when I am managing the team, it's all on Sachin's uh, head. Uh, because he, he's not going to interact with, uh, you know, eight different resources again, right? He won't be having that time because I am handling eight resources, but he is handling more than 100 to 200 resources, right? So that is the reason he has kept some leads right? With whom he can just connect, maybe, you know, 10 10 leads with him.
+
+00:11:10 - 00:12:08 Unknown Speaker:
+
+He can connect to get the, uh, you know, result from rest of the 10 resources, 100 resources. Okay, so that's the challenge, that's the challenge, right? So he is never going to come to you until unless it's a major break, major break. In the sense you might have leaked a credit card of a consumer, he raised a worry, you know, worry. Oh no, that is a it's worry. Means a customer request where he can escalate it to your leadership, directly to your leadership. In that case, if any worry gets opened right, then the whole team would be in trouble, understand? Then he would reach out to individual like who committed this, then he would deep dive to find out the root cause in that case. Yeah, and Sachin, I'm available tomorrow, day after tomorrow, but I will be on leave.
+
+00:12:09 - 00:12:54 Unknown Speaker:
+
+Only thing is, I will not be available when you want. No, no, no. Go ahead. If you are taking a leave, I don't think anything burning with respect to the work that you are doing currently. Actually, if you want to let me have a call with Raj, don't worry about timings. Just let me know the timing. I will be available. I will take some break when I want. I will ping you and I will take it. But this time, I am okay to... hardly cause. Don't worry if we need a connect with Raj, in that case, we have to avoid with you his timing. We won't be flexible. Like I am available at 8, Let's Connect, I'll be very rich. That would not be feasible. He is director mentor. I don't understand, okay, right?
+
+00:12:54 - 00:13:37 Unknown Speaker:
+
+So in case a Connect is required, I can set up on Friday or maybe upcoming Monday, right? It is nothing like, you know, it's burning, right? Also, don't worry about, let me, first of all, get his input. If he suggests the team is already using some LLM, some AIS, and which we can leverage, right then we can explore those part also, right, instead of this tool, right where we can have that deployment plan and everything. Yeah, yeah, and such an. If he sees that it is running locally and if we give him a small demo, definitely he will like it. I feel so maybe I can give you the code, you can run it locally and show him in the call today. No man. Look, until unless we are not 100 percent sure that it would run on the environment.
+
+00:13:37 - 00:14:29 Unknown Speaker:
+
+Nobody would like your idea. Okay, okay, got it and just. Ultimate goal is to not only just look when you're working, right, just think about it. If you're creating a product, okay, and you're not able to sell it, basically, right, you're not able to sell it, then you're not going to make a profit, right? Yes, so. Even if I build a product which is just running in my local for my ease, for my, you know, to increase my speed, right? To deliver the stuff. It is just fruitful for me, not fruitful for the previous users. Okay. So, look, the car ID and all those are all get built. You know how IT industry works, right? They have a budget planning at the very beginning of the year, right? Team size was... six or seven.
+
+00:14:29 - 00:15:19 Unknown Speaker:
+
+Right now, three resources have been added, you, Nirmal and Suman, so these all are build right. So until unless now, how would they get that bill out of the investment that they have did? Right? Once you deliver something, so till the time it is in your local, nobody is going to, you know, uh, give a go ahead with your ideas. Once you're able to run it on the environment, any environment utilize this or maybe GCP, then they can accept your ideas in that case, right, right? Yeah, yeah, sure, you discuss and let me know, I'll I'll check with him. And that's the reason. Look, man, if something new, right? I don't, uh, feel like I'll be the person who would be taking a decision and resting it right away. Until unless I am very confirmed.
+
+00:15:19 - 00:16:05 Unknown Speaker:
+
+Okay, if it is a, you know, idea which we can't go ahead, I should have told you, no, a direct no, right? But there is a possibility. Let me talk to Raj, right? If you give a go ahead, right? We can sit with him, maybe have a demo in that you can plan it out accordingly. Nice SaChIN Yeah, thank you so much. Yeah, my mentality is always try to automate the things. I don't directly do some kind of work. So that's why I know, man. It's not that the world. Look, the world is moving toward AI, right? And if I restrict you that? I am restricting my knowledge over there. Correct? I don't want to do that, but as we are working for a financial organization,
+
+00:16:05 - 00:16:49 Unknown Speaker:
+
+I have to take care of some points because I know what else is running in the background and what are the challenges I face when interacting with Raj or the leadership. Due to that, I have to avoid it. Till I get a confirmation, so let me check with him today and I'll give you a confirmation today. And one last point. SAchIN Sorry if I'm, I mean, if at all. If you feel that I is stressing on some point, don't think that. I mean, I just want the team to be. Maybe, you know what happens. You have joined newly, right? It may take time sometimes to understand a person, right? You might have a different approach of working, I might have a different approach. Right at the end of the day. Our goal is to be productive for you.
+
+00:16:49 - 00:17:31 Unknown Speaker:
+
+Studio, right? Whether it's me or you. Tomorrow, you don't know, right? Whether Sachin would be there such it might not be there, right, even either for three would be there if you would not be there, right? Yeah, so it's just that we need to come to a place where we can understand what Sachin is telling or what P3 is trying to convey. It's just that thing it may take, maybe, you know, sometimes with some people it may take a week, sometimes with the people it may take a month. To understand what is his nature, how he works, and all right, so that's fine. Am not worried with that man till now. I am not worried till the time you are productive. Okay, okay, let's jump into that. 6 30 p.m. Call. Yeah, okay, waiting over. Sure, thank you.

@@ -1,0 +1,95 @@
+2026-01-16 Composer Environment and Airflow UI Overview
+
+Creation Time: 2026/1/16
+
+
+📅About Meeting
+
+  • Date & Time: 2026-01-16 09:31 (duration 338 seconds)
+  • Location: Google Cloud Console / Virtual session (screen share)
+  • Attendee: [Not explicitly listed — presenter and participants]
+
+
+📒Meeting Outline
+
+
+Composer environment overview
+
+  • Composer environment discovery and metadata The presenter showed how to find Composer environments in the Google Cloud Console by searching for "Composer" and selecting the project. The Composer environment list displays metadata such as creation time, logs path, and DAGs path. Clicking an environment name opens the environment details page.
+
+  • Monitoring dashboard The environment page contains an Airflow component monitoring dashboard showing status and metrics for scheduler, workers, webserver, database, and other components. Visible metrics include DAG statistics (successful runs, running tasks, DAG size), DAG parsing time, and CPU/memory/disk usage for components.
+
+  • Logs and configuration The Logs section contains component logs (scheduler, worker, DAG processor manager, database operations). Platform/engineering configuration items (environment settings, environment variables, labels) are present but not required for general users; these are primarily for platform engineering.
+
+
+DAGs storage and deployment
+
+  • DAGs folder (GCS path) The presenter explained the DAGs folder (GCS path) where .py DAG files must be placed. Files in this location are parsed by the Airflow scheduler to create DAGs. Example: multiple .py files present in the demonstrated bucket.
+
+  • Upload / CI/CD process Recommended practice: upload DAGs via CI/CD into the Composer GCS bucket and the DAGs path. To update or override DAGs, follow the same CI/CD or upload process to ensure changes are picked up by the scheduler.
+
+
+Airflow UI walkthrough
+
+  • Accessing Airflow UI From the Composer environment page there is a link "Open Airflow UI" which opens the Airflow UI for that Composer environment. The Airflow UI landing page shows the Composer name and a listing of DAGs with details.
+
+  • Airflow DAG list details The DAG list displays information per DAG: owner (example: "airflow"), run count, last run time, active/paused status. DAGs can be triggered manually from this list.
+
+  • DAG views and navigation Clicking a DAG opens its page in the default Grid View. The presenter demonstrated switching to Graph View to visualize task nodes and dependencies. In the demo, one DAG had no task dependencies defined so the Graph View showed unconnected nodes. Presenter noted that some actions or uploads might be restricted to admins (access limitations for non-admin users).
+
+
+📋Overview
+
+  • Environment page shows creation time, logs path, DAGs path and other metadata.
+  • Monitoring dashboard provides component-level metrics (scheduler, workers, webserver, DB) and DAG parsing/usage statistics.
+  • Logs section includes all component logs relevant to Airflow operations.
+  • Platform/configuration items exist but are primarily for platform engineering and not necessary for basic users.
+  • DAGs must be stored in the Composer GCS DAGs folder (.py files); scheduler parses these to create DAGs.
+  • CI/CD to GCS is the recommended method to deploy and update DAGs.
+  • Airflow UI is accessible via "Open Airflow UI"; it lists DAGs with status and allows manual triggers.
+  • DAG pages support Grid and Graph views; Graph View shows task dependencies (not present in the demo DAG).
+  • Some UI actions or uploads may be restricted to admin roles.
+
+
+🎯Todo List
+
+  • Presenter / Platform team:
+    
+    • Provide list of attendees (names and roles), due: ASAP
+    • Share the Composer environment GCS DAGs path and access instructions (including CI/CD example or template), due: 2026-01-19
+    • Share any role-based access controls and which actions require admin privileges, due: 2026-01-19
+
+  • Dev/Users:
+    
+    • Prepare DAG .py files and CI/CD artifact to deploy to the shared Composer GCS DAGs path, owner: Dev team, time: next sprint (proposed within 2 weeks)
+    • Validate deployed DAGs in Airflow UI (verify Grid and Graph views and parsing times), owner: Dev team, time: within 48 hours after deployment
+
+  • Platform engineering:
+    
+    • Provide documentation or runbook for reading component logs (scheduler, worker, DAG processor manager, DB), owner: Platform Eng, time: 2026-01-23
+    • Document monitoring metrics (where to find DAG parsing time, CPU/memory/disk per component) and alerting thresholds, owner: Platform Eng, time: 2026-01-23
+
+If any of the above owners or deadlines need adjustment, please reply with updates.
+
+
+Transcription
+
+00:00:02 - 00:01:05 Unknown Speaker:
+
+Hello, everyone. Welcome to another session of Google Cloud Composer and Airflow Introduction. In this session, we'll talk about the best practices of Composer and Airflow, and we'll go through the demo of Airflow UI and the Composer UI as well. With that, let me share my screen. So, when you log in to Google Cloud Console, choose your project if you search for Composer and click on it. If you have a composer environment created in this particular project, you will see this kind of a where your composer environment. Instruction. Now, the creation time, the logs path, the tax path, all those details will be visible. So from here, if you go and click on the name of the computer environment, you will land in this particular page.
+
+00:01:05 - 00:02:04 Unknown Speaker:
+
+Where you will see the monitoring dashboard of the airflow components like scheduler, workers, web servers, now the database and all those things. And then you can see your DAG statistics, right? How many successful diagram completed diagrams, then how many tasks were running at a certain point of time, what is the DAG-DAG size, how much time it is taking to parse all of your DAGs in the environment, all those details you will see. And you can see the CPU, the resource usage, CPU and memory and disk usage of each of the components. Then if you go to the log section, you can find all the components, logs, scheduler worker, DAG process manager, database operations. All the underneath component that Airflow is using to run your tags, those logs will be available here.
+
+00:02:06 - 00:03:01 Unknown Speaker:
+
+Then there are certain tags which are for the platform engineering team. As a user, you don't have to understand these things. These are nothing but the configuration of your Composer and Airflow environment, and the settings also available in this, and the environment variables, certain labels. Those are available. Those are not important to us now before we move on to the Airflow UI. So this is the DAX folder, as I mentioned earlier, the X folder are nothing but the path. Where we need to keep our Dot PY file or the tag files, which will be used by Airflow Scheduler to create your tags. So if you see here, I have kept a lot of Dot PY files and those PUI files has been used by Airflow Scheduler to create the tags. Right?
+
+00:03:01 - 00:03:53 Unknown Speaker:
+
+So if you want to upload the tag, you can upload by the CICD process to this particular GCS bucket and the Path. And if you want to override or update anything, the same process you need to follow. Now, let's go on, move on to the Airflow UI. So when you, when you are present in this GCP console, there is a link called Open Airflow UI. If you click on that, it will take you to the Airflow UI of that particular composer environment. And this is the landing page, where you will see the composer name, and then all the DAGs, how many DAGs are present, how many are active, paused, and then all the DAGs. These are the main landing page representation of your DAGs. So for example, this is one of my DAG.
+
+00:03:55 - 00:05:36 Unknown Speaker:
+
+Then the user owner is Airflow, how many times it has run, when was the last run, and all those details will be available here. And if you want to manually figure that DAG, you can do it from here also. And if you want to go inside and check each of the DAG, Then, for example, I'll go inside this particular tag. If you click on the tag name, it will open the by default a grid view. Right? This is the grid view, and here, if you want to change the view of your tag, you can click on the Graph View. Also, okay, and it will open this kind of node. The tasks here, I have not created the dependency between tasks, that's why it is showing like this. Let's open a proper one, or let us upload a date file and see this access users will not have, the admins will have, so I.
