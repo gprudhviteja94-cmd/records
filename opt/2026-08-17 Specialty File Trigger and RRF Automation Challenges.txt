@@ -1,0 +1,184 @@
+2026-08-17 Specialty File Trigger and RRF Automation Challenges
+
+Creation Time: 2026/08/17 19:30
+
+
+📅About Meeting
+
+• Date & Time: 2026-08-17 19:30  
+• Location: Online Meeting  
+• Attendee: Curtis, Kevin, Govindan, Stephanie, and other team members
+
+📒Meeting Outline
+
+Specialty File Trigger and Azure Blob Storage Issue
+
+• File Trigger Problem  
+  The team discussed an issue where specialty files with headers were not triggering the Azure Blob Storage event as expected. Curtis explained that the C# code used to push files required a specific file closure method to trigger Azure functions properly. Despite files being pushed, the Azure trigger was not activating because the files were not arriving on the Azure Blob Storage side. The problem was not with the trigger itself but with the files not being delivered after a credentials issue was resolved on August 12th. Since then, new specialty list IDs have been created without corresponding files arriving to trigger jobs.
+
+• File Delivery and Trigger Workflow  
+  Curtis clarified that the file arrival triggers his job, and since files are missing, the trigger is not broken. The team agreed to investigate why files are not arriving and planned a follow-up meeting to align on the process and responsibilities. It was noted that Databricks cannot directly connect to on-prem SQL Server, complicating alternative data pulling methods.
+
+RRF Request Automation and Manual Intervention
+
+• Manual vs Automated Processing  
+  The discussion covered whether new RRF (Request for Repricing Flow) requests require manual intervention. It was confirmed that except for some automation on line 6, most RRF requests need manual action within the RA system. The Petal system picks up requests automatically only after certain conditions are met, but currently, Petal does not scan the new ITBR database where Curtis pulls data, only the Datamark database.
+
+• Petal System Integration and Code Changes Needed  
+  To fully automate, Petal needs code changes to scan the ITBR database and monitor the RF tag SK table populated by Curtis’s jobs. This integration is feasible but not yet implemented. Stephanie was asked to create a story for this enhancement. The team discussed the complexity of setting up this integration and the priority of these changes.
+
+• Testing and Access for Automation Requests  
+  The team agreed that to test end-to-end automation, non-production RA team members need access to act on RRF requests manually. Curtis suggested cloning existing requests to simulate new ones for testing. The team acknowledged the dependency on RA intervention for the flow to progress and discussed the possibility of development team members getting access to facilitate testing.
+
+Automation Request Status and Job Processing
+
+• Current Status of Automation Jobs  
+  Curtis shared that automation jobs run every five minutes and pull data from MongoDB tables. Some automation requests submitted recently were stuck in the "ETL automation prep" status, indicating the job responsible for advancing their status was not functioning as expected.
+
+• Job Processing Delays and Fixes  
+  The delay in processing was attributed to job scheduling and sequence, with some jobs running before others. Curtis and the team agreed this is a minor issue expected to be fixed shortly. Once fixed, the automation requests should progress through the expected statuses, enabling further testing.
+
+Reporting and Output for RRF Requests
+
+• Output Reports and Underwriter Access  
+  The output from RRF requests varies but often includes PNL and RPT reports. Underwriters access these reports via links stored in a specific table. The team discussed ensuring these reports are accessible and integrated properly with the RA system.
+
+• API Integration and Future Work  
+  The team mentioned ongoing work to integrate APIs for report access and other functionalities, with plans to explore these as the project progresses.
+
+Summary of Dependencies and Next Steps
+
+• Dependencies on RA and Petal Teams  
+  The automation process depends heavily on RA team actions and Petal system enhancements. Coordination with these teams is critical for progress.
+
+• Planned Follow-ups and Story Creation  
+  Stephanie will create a story for Petal code changes. Curtis and Kevin will investigate file delivery issues and automation job fixes. A follow-up meeting between Curtis and Kevin is planned to clarify responsibilities and next steps.
+
+📋Overview
+
+• The specialty file trigger issue is due to files not arriving at Azure Blob Storage, not the trigger itself.  
+• Manual intervention is currently required for most RRF requests, with limited automation on line 6.  
+• Petal system needs code changes to scan the new ITBR database for full automation support.  
+• Automation jobs run every five minutes but some requests are stuck due to job processing issues, expected to be fixed soon.  
+• Testing end-to-end automation requires RA team access; development team access is being considered to facilitate testing.  
+• Outputs for RRF requests include various reports accessible to underwriters via links in a database table.  
+• Dependencies on RA and Petal teams remain significant; coordination and story creation for enhancements are underway.  
+
+🎯Todo List
+
+• Stephanie:  
+  • [ ] Create a story for Petal system code changes to scan ITBR database and support new automation requests. (No deadline specified)  
+
+• Curtis:  
+  • [ ] Investigate and resolve the issue of specialty files not arriving at Azure Blob Storage to trigger jobs. (Urgent)  
+  • [ ] Fix the automation job that updates scenario statuses from "ETL automation prep" to the next stage. (Expected to be fixed today)  
+  • [ ] Set up and test cloned RRF requests for end-to-end automation testing. (Coordinate with Kevin and Govindan)  
+
+• Kevin:  
+  • [ ] Review automation request records and monitor their processing status in the system. (Ongoing)  
+  • [ ] Schedule follow-up meeting with Curtis to align on file delivery and automation processes. (By next day)  
+
+• Govindan:  
+  • [ ] Provide quote IDs for automation requests to assist in monitoring and testing. (Immediate)  
+
+• RA Team Lead:  
+  • [ ] Provide access to non-production RA team members to act on RRF requests for testing purposes. (As soon as possible)
+
+Transcription
+
+00:00:00 - 00:00:59 Unknown Speaker:
+
+I already caught up with Curtis offline. The guys, we had a problem today with our specialty stuff. Curtis. Disappointing. Yes. I agree. I figured it out. Anyway, yeah. I'm going to push another one manually just to see does that pass to work. Okay, yeah. And then, so the issue is the trigger, is that right? When you see new ones, it's not triggering it? Whatever generates the file? Yeah, so we push the file regardless, but it seems like the code that we were using in C Sharp, if we didn't close it in a very specific way, then the Azure trigger wouldn't kick in. So... The Azure trigger is something on your side, is it? I don't think it's on my side. I mean, is there something... Maybe I'm missing it. What's not working?
+
+00:01:00 - 00:01:51 Unknown Speaker:
+
+You know the file that you sent me, which has the specialty header table? Yeah. You sent me that file. So that gets dropped to Azure Blob Storage, which is what triggers my job. But those files are not arriving. Oh, they're just not arriving. Period. Yeah. Okay. So we did have a problem with the credentials, if you remember. So that was obviously fixed because the file arrived. But that was on the... The 12th or something like that, we fixed it. And since the 12th, there's been about, it was 911 that I got, it's gone all the way up to, is it 925 or something like that? There's a whole bunch of new specialty list IDs that have been created, which has not delivered a file to my side. Okay. So it's not my trigger that's broken.
+
+00:01:51 - 00:02:57 Unknown Speaker:
+
+The file arriving triggers my job. The files aren't arriving. Okay. That helps scale. Let's see what happens by not sure yet, why would that be the case? Okay, yeah, that's my answer. Operation, because it is, I'd say. It's whatever way you're identifying that there are new records, like, I don't know how that process works on your side. But when a new record appears in that table, be it from custom specialty list or if it's a specialty update from Stephanie and Co. Any of those circumstances where there's a new record created in your table need to actually send a file over my side so I can ingest the data as well. Does that make sense? I think that's what we agreed. Yeah. It's supposed to be doing that. Okay. We can leave it for today.
+
+00:02:57 - 00:03:50 Unknown Speaker:
+
+I might set up some time with you tomorrow, Curtis, just the two of us, so we can make sure that we've agreed on what's going to happen. Because there is always the option that if ever I see a new specialty list, I start pulling from your side. But the reason I don't want to do that is files arrive, it triggers the penile batch, and all that kind of stuff. And then within... I can't remember which table name there is. The PL input table, I think it is. They have those IDs. So I do source the IDs from a table, and then I use that to filter the specialty header and the specialty detail tables, which gets put into the P&L report. I mean, I can't see when I get no results, but what I would have to do, Databricks is incapable of connecting to.
+
+00:03:51 - 00:04:45 Unknown Speaker:
+
+SQL Server on-prem stuff. So I would have to drop back out of Databricks, go back into ADF, complete the ADF job, and then go back into Databricks, which is a complicated thing to build. If I don't have to do it, I don't want to. I believe you. Okay. Okay, we believe that. I'll stick in some time for the two of us tomorrow, then. Please have a look in the meantime to see what's gone wrong. Yeah, for sure. Yeah, so coming back to our story, so this will be like for new RRF request, do they need any manual intervention needed, like for example now, if I raise a request in RRF, right, so do RANVs have to manually put the final petal that shares the national location, right, or is it something which happens on the floor?
+
+00:04:48 - 00:05:41 Unknown Speaker:
+
+Yeah, so typically, unless there's some automation that you have on line 6, then it is a manual sign. So, yeah. So, for line 6, is it like automatically, like, will it put it in the client file or that the petal trigger is there, right? So, if I write it like a similar request, then directly it will go to petal? So there's a little bit of work on our side, just our automatic job to grab the carrier count group, sort of a key, but the pedal picks it up after that. So there's very little work on our side. Okay, but still, do any, I mean, RA person has to log into RA system and then act on that one.
+
+00:05:41 - 00:06:29 Unknown Speaker:
+
+Then, why I'm asking all these questions is like, No, we are raising RRF request rate, but we are not in a position to test this one end-to-end, because, I mean, like, from RRF, someone has to act on that one, right? Until someone acts on that one, it won't go into the next level, and that end-to-end flow will not get regenerated. So that's why I am thinking if there is a way, like, either it is an automated thing, then we will follow that one. If not, it is just one of our... in person if they can get access, right? Like, so that's where I'm thinking, like, if that's possible. Yeah, so number one, definitely need other people to get access because it is manual. But number six, we don't. Okay.
+
+00:06:29 - 00:07:28 Unknown Speaker:
+
+So today, if I raise an automation request, right, then it will directly go to Petal, and what are subsequent actions are that they will follow on with? No. I don't think it will. And the reason it doesn't go to Petal is we scan the legacy table for scenarios that satisfy Petal automation. So there's the UMR request, but we don't scan the new table. We could set up Petal so it also scans the new table, but we haven't started doing that yet. So when you say new, what do you mean by the new table? No, the table on Curtis' side. At the moment, we scan the Datamark database header and scenario table, but Curtis is pulling the data into the ITBR database. And Petal does not scan the ITBR database for these open automation request things.
+
+00:07:29 - 00:08:29 Unknown Speaker:
+
+Yeah. So, yeah, we need code changes on this one. Yeah. No, not in our batch, but on Petal's side, we would need co-changes. So future stage, if we start submitting these UMR, I can make that change. It's just a question of where it fits in and my priorities. This is not a complicated change to make, but I need to agree with the Petal guys that I can stick it in. So this one, can we ask Stephanie to create a story so that it will be added? And then, Curtis, on that, the one thing that we need to satisfy these EMR requests is the RF tag SK table. Is it a process on your side that populates that in data mart at the moment? Yes.
+
+00:08:29 - 00:09:35 Unknown Speaker:
+
+So we have the same job that's populating the ORX data mart, the SK table, but also the same exact table name. In ITBR now in stage so that this new process can pick up too. Okay. So if there was, so if I point Petal to also point to ITBR stage and monitor this table for UMR requests, if we were to kick off UMR requests, I would then be able to retrieve the RF, I guess, K data from your stage environment. Right. Okay. Yeah, it's complicated enough. I would have to set this up. But I mean, it's doable. It's not ready right now. It's not set up right now. Yeah, so first party, like, we submitting an automation request, and at least this part lately, can we test whether, without RA intervention, whether that is coming to Petal or Margaret, so that...
+
+00:09:35 - 00:10:36 Unknown Speaker:
+
+It works. I know it works. Okay. And then on a new RF request, why don't, like, if you guys want to test the end-to-end process, I don't know how you feel about this, Curtis, but I would just clone a real one, write a new request having cloned a real one, and just resubmit the file. Yeah, on our side, it's not hard. It's just, yeah, you do need someone to do that. Yeah. Yeah. I mean, for example, the end-to-end thing is dependent on RA. For example, I will raise a request flow if I close that one. Someone in non-POD RA environment has to get it right and I think we have to do that action. Then subsequently that flow will again start working again. Yeah.
+
+00:10:37 - 00:11:34 Unknown Speaker:
+
+That's where I'm thinking, like, if some of our team forgets, right, so at least they can, I'm not sure, because I think your team is busy, right, if they can help on this one, but I'm thinking if I can, at least non-prod in some of our development team gets access, so they can just take the easiest one, like, for example, regular scenario, but if it's a complicated thing, that is another case. Yeah, I think Colson was saying that it would have been impossible last week, but this week there's some bandwidth for the team to help out with that. But I think here, once the team starts testing this one, the expectation is that it is working right. They are testing, right? But I think only new RRF request is really, I believe, right?
+
+00:11:34 - 00:12:43 Unknown Speaker:
+
+Like where they can test all the scenarios. At least whatever real-time production scenarios are there, right? Because VMware automation request is not yet ready, right? So we can't test this one. And other request also... Yeah, correct. And other request also still it is not ready, right? I think you are working on this one. Right. One last question on this one. So for VMware automation, right, but before that, so where is this logic in there? For example, I think it's in the R&S system only, right? For example, I write an R&S request, whether to process that by a manual R&S system, but I think that tension is happening in R&S identity, right? So, We are looking for a very specific thing of one carrier, one account, one group, or less information.
+
+00:12:44 - 00:13:45 Unknown Speaker:
+
+I think the scenario has to be marked as, what is it, occupation prep or something like that. Yeah. Yeah. I think it's automation prep. And then it changes, as long as it meets those conditions, it changes the status to ETL automation or something like that, isn't it? Right. And then Petal will pull that table and see that there's a satisfying record and process the record. But the changes are not just needed in RA. They need to be done in Petal as well, so it points to these new data sets. Yeah, I am agreeing with that point like Petal is related. So, like for example, I am dividing this test case into two parts, okay. Like one, whether automation is working or not, where without RA intervention, okay, where it reaches to the next step, right.
+
+00:13:45 - 00:14:50 Unknown Speaker:
+
+Then the second part is like automation is working where we are able to get that status right where you are saying that AMR, sorry. Yeah, that's a good point. We could check that first piece, Curtis, by submitting some records. And, Govindan, if you could give me the if you could give me the quote ID, I can go and poll those tables and see if they've gone through the steps that we would expect to get Petal to pick it up. Uh, our UI side only right? Like, uh, playing with this data, like all these rules, yeah, for this or something, I think, just talking. This is the metanalysis chain. Um, automation. Okay, yeah. So from part, maybe one scenario will take. And so this we will raise today, uh, or at least to be tomorrow one, at least two to three, um, we can raise.
+
+00:14:50 - 00:15:58 Unknown Speaker:
+
+And we will see, uh, how it is working. If something is not working, at least it will give us a clue where we need to work. So you are on request anyhow. Any other scenarios on top of your mind? Because every time I am evolving, there are only these three, which I feel like, where are we? We are dependent on Ari, right? Apart from these, I think, when you see from production perspective, right, Like, where RRF team might reach out to you, so any other scenarios you think like we should check now? I mean, yeah, I think what people is is going to cover it. So you know, you're saying this three should be fine, yeah. And any target that you have for this other request? I hope to finish it this week. Okay.
+
+00:15:59 - 00:17:03 Unknown Speaker:
+
+And another request, I don't think there is any dependency with Petal, right? I think it is entirely within RIS only, right? This other request. Yeah. Okay. And just last question on this other request. So, For RRF request, I think we have this PNL and RPT report as the outcome, right? For RRF request also, is it something like on a similar line, or is it something like what will be the output of this RRF request? It's kind of miscellaneous. It's some standard reinforcement. It could be anything, really. And under writer, like... So once the RE system works on these underwriters, will you put in some address where the underwriter will be going there and searching those reports? Yeah, I think one of the tables is a list of reports that are now available for the underwriter, and there's some kind of a link to them.
+
+00:17:05 - 00:18:24 Unknown Speaker:
+
+Okay. And for other requests also, I hope you have on the API thread like which you need from our website. Yeah, it looks like it. We'll find out once we get there. But yeah, I think so. I think we're good. Okay, so to answer your question, one, this first part, human automation request, and we'll check with, say, one person from Dev Team can get basic access, right? So that he can submit, I mean, He can act on that RA request, right? That is possible. Then end-to-end, we will not go through RA list. Yeah. Any other point, Kevin, or anyone, like, which we should consider? No, not at all, sir. Just some introductory automation requests. I just submitted three automation requests, basically some existing records. Can you share the code IDs? Yeah, sure. Thanks.
+
+00:18:35 - 00:20:11 Unknown Speaker:
+
+So do you want to check them now or offline? I'll check them now if you want. Curtis, do you want to do whatever you need to to get them to population in your scenario and header table? Do you just need to open the RA application or something like that? Okay, so I'm sorry, are these our automation ones? Or manual ones? Okay. They're automation ones. Okay. Yeah, our job is running every five minutes, so it should just pick it up. But yeah, we'll definitely see what's going on. Share my screen. Sorry, I grabbed that without asking anyone. Sorry. It's okay, buddy. Come through. I don't know if there you are. Let's see what status it has. TL automation prep. So on your side, Curtis, that should kick off something that changes the scenario status to equal scenario status automation.
+
+00:20:12 - 00:21:32 Unknown Speaker:
+
+Yep. Later on. I don't know how that happens. Yeah, it should be within five minutes as well. Okay. It's starting to come through. I guess 17 minutes passed. And the job that pulls the latest scenarios happens to be the same job that does the ATL stuff. So we would hope to see this one change 23 minutes past and the other two to be pulled through. So is it a case that it takes up to 10 minutes because you pull and then next time you run the existing ones get checked and the new ones get pulled through, is that it? Yeah, something like that, right. I think the CAG part runs first, so there would be a delay in that. So maybe after 5 minutes like when you get chance could you check like if you are saying it gets processed data that info can help us.
+
+00:21:32 - 00:22:48 Unknown Speaker:
+
+Yep. For sure. So these tables got populated from RRM batch data which is processed data. No, it's nothing to do with Databricks. Okay. This is Curtis's process. He pulls your MongoDB tables. So why these two didn't come through? It could be just by the way that you submitted it, and then these are obviously created afterwards. Yeah, okay, here they are now. Okay, so they're stuck on the ETL automation prep, Curtis, by the looks of it. Okay, yes. If that's a job runs and sees that they're, okay, what is the, yeah, if these are going to set it to ETL automation or it's going to set it back to repricing, set it to repricing. So the job's not doing what it's supposed to do, I guess. Yeah, because if you look at this, there's none that are coming through with ETL automation.
+
+00:22:49 - 00:24:13 Unknown Speaker:
+
+Yeah. Which to me suggests that it's not doing what it needs to. Yep. Sorry. Do my one first. Yeah, if you don't mind. I'm blocked. But yeah, I dropped the SQL in the chat there of those examples. They're around. Sounds good. Go ahead. Yeah, one last question. So, this one, like, when we check from RRF community perspective, right, like, I raise a request. So, once we raise the request, then it goes to ARIA, right? In this case, like, do ARIA process insert in these tables? These, I think, we are. So, through our APIs purposes, inserting these reports in RTP, right? Yeah, so the three we see here, those exist only because the job has been pulled fully every five minutes. Okay, and so because I think Weibo raised it now only, right?
+
+00:24:13 - 00:25:08 Unknown Speaker:
+
+So within the several, so the timestamp match they are saying, right? So the job had to be free. The job which runs for every five minutes, it had to be free. And it was able to identify that ETL status, automation status. So, I mean, like, do it is working as expected or do we need any change here? I think it's fine. So it's half working as expected. It pulled it into our system, but the part that's doing the tag automation, the UMR automation thing, for some reason it's not keeping noticing it needs to be done. So, yeah. But it should be fixed today. I mean, that's, I'm sure, a simple thing. Okay. And once it is done, we'll bring up your record. We can test that, right? Like whenever you've that chance, I think that will help.
+
+00:25:10 - 00:25:40 Unknown Speaker:
+
+Sounds good. Okay. Any other thing before we stop? Yeah. Okay. Thanks a lot. Thanks. Thanks. See you. Bye. Thank you.
+
