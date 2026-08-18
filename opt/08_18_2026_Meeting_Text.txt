@@ -1,0 +1,80 @@
+Here's the full, unabridged breakdown of both meetings with nothing trimmed.
+
+Meeting 1 — 13:32, "Screen Control and Blob Storage Integration" (Telugu transcript)
+
+This is a short, informal discussion — appears to be a preliminary or side conversation covering the same general territory as Meeting 2, but with much less detail and no clear speaker attribution (all marked "Unknown Speaker").
+
+Discussion points:
+
+Screen control / pausing — The team talked about stopping or temporarily pausing a "screen" at a certain point, and making sure it's properly adjusted or kept stable during operations. The focus was on managing the screen's state effectively during ongoing operations — likely referring to a UI screen in the RRF workflow that shouldn't be interacted with mid-process.
+Handling Blob Storage requests — Discussion on how incoming requests to Blob Storage should be handled — specifically, storing requests properly in Blob Storage when needed to improve efficiency.
+URRF compatibility with Blob Storage approach — The team explored whether the same Blob Storage handling approach used elsewhere could be applied to URRF (possibly a system/module name). They considered that similar methods could be used for saving and managing data across both.
+"Mules" and saving requests — It was noted that certain data or requests referred to as "mules" need to be properly saved or recorded, to maintain state or data integrity. (Note: "mules" is likely a mistranscription — possibly "modules," "MULEs" as in Mulesoft, or another domain-specific term. I can't confirm which without more context.)
+Follow-up — The team agreed to revisit these topics in 1–2 weeks to make sure all issues are resolved.
+
+Full task list from Meeting 1 (Team, no owner/deadline specified):
+
+ Implement the discussed mechanism to stop/pause the screen — no specific deadline
+ Develop the approach for handling and saving Blob Storage requests
+ Investigate applying the Blob Storage approach to the URRF module
+ Ensure "mules" data is properly saved and recorded
+ Schedule a follow-up meeting in 1–2 weeks for review and clarity
+Meeting 2 — 13:39, "JSON Data Handling and RRF Request Mapping"
+
+Attendees: Pawan, Ganesh, Gautam, George (referenced for a future call, not present)
+
+Discussion 1: Current JSON Storage and Retrieval
+The call's purpose was framed around the JSON currently being stored for RPT and sent to Satyam.
+Ganesh agreed to give Pawan the JSON currently stored for RPT/Satyam.
+The blob storage location is retrievable from environment variables.
+The existing RRF code maintains two separate blob storages — one for "given" (RPT) data, one for Satyam data — distinguishable by naming convention.
+If the naming convention isn't clear enough to identify which is which, Pawan was told to ping Ganesh directly.
+Ganesh will help pull whatever JSON exists in that blob storage.
+Discussion 2: Mapping Fields for New RRF Requests
+In the current Adhoc RPT flow, there are only a few values, so mapping is simple.
+The open question: for new RRF requests, which fields actually need to be sent to the RPT team?
+It was noted that the same information sent in the Adhoc RPT flow is generally the same information needed for normal new requests — but there may be additional validations before sending, and George is likely the right person to clarify those validations.
+Walkthrough of the RRF screen: client name, opportunity ID, and run date were called out specifically.
+Client name — reliably present (comes from the RRF request/home screen).
+Opportunity ID — reliably present (also visible on screen), though it needs to be double-checked whether it's always populated in a new RRF request.
+Run date — uncertain. It was flagged as possibly empty in a new RRF request. There was a back-and-forth: run date is not clearly visible in the current "custom PC" or informational views, so the team wasn't sure whether it would default to today's date or be missing entirely. This was left as something to check further, and Pawan was told he'd receive copies of the existing data to work from.
+Gautam suggested screen-sharing so mapping could happen visually and be easier for Pawan.
+Discussion 3: Validation and Status for Sending JSON
+Question: when exactly should the JSON be sent to Satyam?
+Clarified: the standard RRF request process doesn't complete until the "petrol" (ETL) process fully processes it — it shouldn't fire prematurely.
+The trigger point discussed: JSON should be sent only when the petrol/ETL status is "completed"/"ETL submitted" — not before, and not for every segment.
+It should apply at the entire quote ID + scenario level, not per-segment — this was explicitly confirmed ("entire quote ID level... quote ID and scenario, right").
+The exact required status (ETL submitted vs. submitted) still needs final confirmation from George in an upcoming call. Pawan was specifically asked to help identify this — which status triggers sending, and whether it applies per scenario or at the full request/quote ID level.
+Current code implementation was mentioned as a useful reference/hint in the meantime, even before George's confirmation.
+Discussion 4: Differences Between On-Prem and Modern RRF
+Initial confusion: it was first stated that JSON isn't currently being sent to Satyam at all on RRF submission.
+This was corrected mid-conversation: JSON sending does happen already, but only in on-prem RRF (a change Ganesh made previously).
+Modern RRF does not have this functionality yet — this is the actual gap the team identified and the main piece of work coming out of this meeting.
+Action: Ganesh needs to explain the on-prem logic (where the data is picked from, how the JSON is built and sent) to Pawan, so Pawan can replicate the same approach in modern RRF.
+Discussion 5: Ad Hoc Request Processing
+The ad hoc JSON-sending process is already fully built and working — this was confirmed as complete, separate from the new-RRF-request gap.
+On submission, the JSON is saved to two blob storages: one temporary (currently used/taken by "Gavin"/possibly a mistranscription), and one intended for future use by Satyam. Both are being written to now.
+Since this part is already done, Pawan was told he can start working on it immediately without waiting on further clarification.
+Ganesh offered to send Pawan the specific storage locations.
+Discussion 6: Coordination and Next Steps
+Pawan will work closely with Ganesh to get up to speed on current implementations and field mappings.
+If open questions remain, the team agreed to reconvene.
+Gautam emphasized this collaboration is important to close the identified gap (modern RRF JSON sending).
+Full Task List — Meeting 2
+
+Ganesh:
+
+ Provide the JSON data and blob storage locations for RPT and Satyam to Pawan
+ Explain the on-prem RRF JSON-sending logic to Pawan in detail (data source, JSON construction, send mechanism) so it can be replicated in modern RRF
+
+Pawan:
+
+ Map the fields required for new RRF requests — specifically verify client name, opportunity ID, and run date (confirm whether run date is populated or needs a default/today's-date fallback)
+ Start working on the ad hoc request JSON-sending task immediately (already built, no blockers)
+ Work closely with Ganesh to understand existing implementation and clarify data mappings
+ Join the upcoming call with George to help pin down: (a) the exact status required (ETL submitted vs. submitted) before JSON should be sent, and (b) confirm it applies at the full quote ID + scenario level, not per segment
+ Implement the modern RRF JSON-sending functionality, based on the on-prem logic Ganesh walks him through
+
+Gautam / Team:
+
+ Coordinate a follow-up call with George to get final confirmation on the ETL/status trigger condition for sending JSON on new RRF requests
