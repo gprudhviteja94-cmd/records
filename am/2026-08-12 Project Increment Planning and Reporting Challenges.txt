@@ -1,0 +1,278 @@
+2026-08-12 Project Increment Planning and Reporting Challenges
+
+Creation Time: 2026/08/12 18:02
+
+
+📅About Meeting
+
+• Date & Time: 2026-08-12 18:02 (Duration: 43 minutes 30 seconds)
+• Location: Virtual Meeting
+• Attendee: Sachin, Rachna, Rishabh, Sravan, Krishna, Ayyappa, Kundan, Rajendra, Bhagwan, and others
+
+📒Meeting Outline
+
+Project Increment (PI) Planning and Feature Verification
+
+• Sindhuja's Availability and Role  
+  Sindhuja is currently unavailable due to her involvement in PI planning for the GCS team and is expected to return by tomorrow. The team agreed to proceed with the features and user stories created so far and to incorporate any modifications Sindhuja suggests upon her return.
+
+• Feature and Story Review  
+  Rachna and Sachin, both relatively new to Jira, sought Sindhuja’s cross-verification of mandatory fields such as attestation in the created features and stories. Sachin plans to review the features and stories by the end of the week and proceed accordingly.
+
+• Sprint Planning Timeline  
+  The team aims to start sprint planning on Tuesday after Sindhuja’s return and confirmation of the current work.
+
+Reporting and Data Quality (DQ) Rule ID Migration Challenges
+
+• Reporting Progress and Challenges  
+  The team is working on updating DQ rule IDs to a generic sequence across multiple repositories and databases, including TQ results, ACE side, DQ Artifacts, and control Quanto repository. This migration affects around 2400 to 3300 rules.
+
+• Prioritization and Pausing Migration  
+  Due to strict timelines on the reporting project, it was agreed to pause the broader migration exercise temporarily and focus on completing the reporting project for August. The current migration of approximately 300 rules to environment E3 will continue, with priority on updating these rules across all relevant databases.
+
+• Partner Portal Launch Timeline  
+  The self-review portal for partners is targeted for mid-September, with the August end as the internal commitment date. The team emphasized not launching the portal until all modifications and validations are complete.
+
+• Pipeline Setup and Data Migration  
+  The pipeline setup to move data from ACE to Loomy is in progress, with a build ongoing and a completion target by August 31st. The team discussed managing pipeline certifications and ensuring timely completion by next week to support upcoming initiatives.
+
+Enhancements and UI/UX Discussions
+
+• Register DQ Rule Page Enhancement  
+  The request to add a "Previous Page" button was clarified as redundant since a "Back" button already exists. This enhancement was dropped.
+
+• Date Filter Functionality in DQ Review Alerts  
+  The current date filter only applies to the data loaded on the UI page and does not support API-level filtering by run date or date range. This limitation means users cannot retrieve all alerts for a selected date range, only those present on the current page.
+
+• API Limitation and Future Fixes  
+  The API used by the GCS team lacks run date filtering capability, causing the date filter to be ineffective. The team agreed to escalate this issue to Bhagwan for resolution, copying Rajendra and Sravan for follow-up. Sravan will discuss this with Bhagwan in person to emphasize the business need and future scalability concerns.
+
+• Approval Project Enhancement  
+  The enhancement to enable a text field for rejection reasons was confirmed as implemented via a note update mechanism.
+
+Technical and Operational Updates
+
+• Direct Call to Lumi for Query Execution (POC)  
+  Rajendra suggested a potential improvement to bypass SFTP dependency by making a direct call from ACE to Lumi for query execution before creating a human task. Sachin will explore this feasibility with the Lumi team, noting it will require time and is not an immediate fix.
+
+• Database Connection Management  
+  Kundan highlighted issues with idle database connections causing resource problems. Team members were reminded to disconnect their database sessions at the end of the day to avoid exceeding connection pool limits.
+
+• DQID Cleanup and Data Validation  
+  The team is finalizing data validation and cleanup activities related to DQIDs, focusing on missing records and updating related repositories. The cleanup is targeted for completion by Friday, with migration to environment E1 followed by RFCs for promotion to E2 and E3.
+
+• Pipeline Certification and Timestamp Field Issue  
+  Sravan reported a pipeline certification delay due to timestamp fields being marked as strings. He plans to revert these to datetime to meet Lumi team requirements.
+
+• Communication and Issue Escalation  
+  Team members were encouraged to post challenges on the development group or email to ensure timely follow-up by IFR or NC teams, rather than waiting for scheduled DSUs.
+
+📋Overview
+
+• Sindhuja is temporarily unavailable; the team will proceed with current PI features and stories, pending her review.
+• Reporting project timelines require pausing broad DQ rule ID migration except for critical 300 rules.
+• Date filtering in DQ review alerts is ineffective due to API limitations; escalation to GCS team for fix is planned.
+• Enhancements such as rejection reason input are implemented; some UI enhancement requests were dropped.
+• Pipeline setup and data migration are ongoing with a target completion by August 31.
+• Database connection management practices need improvement to avoid idle connections.
+• Data validation and cleanup related to DQIDs are on track for completion by Friday.
+• Direct ACE to Lumi call POC is under exploration for future efficiency gains.
+• Communication protocols reinforced for quicker issue resolution.
+
+🎯Todo List
+
+• Sachin  
+  • [ ] Review created features and stories by end of week and proceed with sprint planning post Sindhuja’s confirmation.  
+  • [ ] Prioritize updating the 300 migrated DQ rules in E3 across all relevant databases.  
+  • [ ] Explore feasibility of direct ACE to Lumi call for query execution (POC).  
+  • [ ] Coordinate with Bhagwan, Rajendra, and Sravan to escalate and resolve API date filter limitation.
+
+• Ayyappa  
+  • [ ] Pause broad DQ rule ID migration exercise and maintain utility readiness for E2 environment.  
+  • [ ] Focus on completing updates for the 300 rules already migrated to E3.
+
+• Sravan  
+  • [ ] Discuss API date filter issue with Bhagwan in the office and follow up for resolution.  
+  • [ ] Assist in pipeline certification fixes, including reverting timestamp fields to datetime.  
+  • [ ] Ensure pipeline setup completion by next week to support August 18th initiative.
+
+• Rachna & Rishabh  
+  • [ ] Cross-verify mandatory fields in features and stories once Sindhuja returns.  
+  • [ ] Post any development challenges promptly to the dev group or via email for timely support.
+
+• Kundan  
+  • [ ] Monitor and manage database connections to prevent idle connections exceeding pool limits.  
+  • [ ] Confirm DB issue resolution and ensure proper disconnection practices.
+
+• All Team Members  
+  • [ ] Disconnect database sessions at day end to avoid idle connection issues.  
+  • [ ] Report any blockers or challenges immediately on the dev group or email.
+
+• Data Validation Team (April and others)  
+  • [ ] Complete data validation and DQID cleanup by Friday, including identifying missing DQIDs.  
+  • [ ] Prepare for data migration to E1 and subsequent RFC for promotion to E2 and E3.
+
+• Rajendra  
+  • [ ] Provide support and sign-off on current design; assist with POC for bypassing SFTP dependency.
+
+• Jason (for future discussion)  
+  • [ ] Address backend updates and access management concerns during upcoming call.
+
+Transcription
+
+00:00:24 - 00:01:47 Unknown Speaker:
+
+I think Sindhuja won't be joining, right? Actioner is not there. And she is running. Do you have anything specific that you would like to check? Hi, Sachin. Hi, everyone. We had this call right to make the new features for the PI. And I think me and Rachna have some doubts. Like, and we wanted Sindhuja and you guys to take a look at it. Okay, then Sindhuja is out. I think till tomorrow. Basically, it's not that she's not working, it's just that she's busy with her PI planning for GCS team. Yes. That's fine. I think we can proceed with whatever we have created so far, the features and user stories, and then if any modification is suggested by Sindhuja later, then we can adjust that. Okay.
+
+00:01:47 - 00:02:50 Unknown Speaker:
+
+So, I think let's in the job to be there and then we can go for this sprint planning starting Tuesday. Okay, because even some of the features, right, even some of the features and all, right, even I'm not aware. So once you'll be back, right, then it would be better to have a confirmation because I won't be able to clone the stories from these PI to the next. So we have created the features and stories, Sachin. Richard, can you specify like what's the doubt? Is it like specific to the tool or also regarding like what we have created? No, no, I think Shenduja created this meeting, right? So, I think I am new and Rachna is also new working with Jira. So, like we wanted like Shenduja to just get. Like, just have a look at it.
+
+00:02:50 - 00:03:42 Unknown Speaker:
+
+It's just for cross-verification, right? So, Sachin, this is just regarding, like, there are a few mandatory fields that Sindhuja had mentioned, that attestation and stuff. So, we just wanted her to cross-check it later once we have created the features and stories. So, I believe that's what Rishabh is mentioning. That's correct, Rishabh? Or something else? Yeah, yeah. I am assuming that this is the... meeting for that, but I'm, uh, no, this is not the meeting for that. Uh, this is the roaming call. So here we discuss with tech, like, what? Uh, what we have planned for the next thing? And then, uh, if they have any, uh, suggestions, like anything regarding resource capacity or what? What is to be picked, what can go in next to next print? All those things, that is what we discuss here.
+
+00:03:42 - 00:04:40 Unknown Speaker:
+
+Okay, sure. Okay. So, Rachna, as I stated, right, let Sindhuja to be there to proceed with these, you know, plan planning. And maybe I'll go through the feature if those have already been created and stories are there, then I'll try to create this by end of this week. Okay, Sachin. Yeah, we have created the features and stories. Yeah, you can have a look. Accurately, and then if everything looks fine, then we can proceed with this call once symbolized. Path. Okay, and any specific thing that you would like to check the update because all the folks are working, right? I already have a overview, so anything specific you want to check. Because most of the folks are right now busy with that initiation, right, that complete life cycle from rule submission till, you know, rule removal.
+
+00:04:41 - 00:05:32 Unknown Speaker:
+
+Right, right. And I think we connected separately earlier in the day, so I think I am updated, yeah. Okay. If there is anything else, I will ping you if there is something I need to know. Okay. Okay, Roshna. Just regarding this thing, Sachin, regarding the reporting part, if you could share a quick view of like what's going on because I have a DSU with Purna after this. So, I need to let him know the progress. On that one, number one challenge is as we had an alignment with you, right, to update the DQ rule ID to a, you know, generic sequence, right? So now, now IFI is working on that, but that is having multiple challenges. Challenges in the sense, first of all, you need to update it into that repository and the results, right, TQ results.
+
+00:05:32 - 00:06:33 Unknown Speaker:
+
+Yeah, yeah. Then whatever TQID which has been processed earlier, right, in the ACE side, right, even Kundan have to align with those new rule and then he need to update those records over there in the TQ results. Right, that is one. Then then we have to update the IS data side, where we have created those new rules, even those needs to be updated. Then the update is required in the DQ Artifacts, where the data is getting, you know, sent from age to artifact. And then right. And then another setup update is required on the control. Also Quanto repository. Uh, so it's a.So, Sachin, just one question. I think I received one mail from Ayyappa today that was asking for E3 sign-off, like E2 sign-off for E3 deployment. So, that was regarding the TQ repository, right?
+
+00:06:33 - 00:07:37 Unknown Speaker:
+
+Like, how much of this has already progressed is what I am trying to understand. Ayyappa, how many rules we have migrated so far? Yeah, so far 303, Sachin. Or we have replaced. Almost 3300 to 2400 roles are there including PONTRA and everything. Including CDE also. I would also need your suggestion on this considering this is spread across like multiple databases and tables, right? Should we just pause at these 300 until we are done with that reporting one because. For that we have a strict timeline and if we are kind of stuck with all these changes for all the rules then that would get delayed, right? No, that is not going to delay but my concern is right now with respect to once people would start using this tool, right? The number would increase. Correct?
+
+00:07:39 - 00:08:34 Unknown Speaker:
+
+Number is going to increase and those numbers are not going to look pretty good, right? No, no. Sachin, we will continue this exercise. I am not asking to abandon the exercise. I am just saying that should we pause it while we are working on the reporting part for this month? Because if this is delaying that project, then I am not sure because... This is kind of an internal cleanup we had planned right now. It's conflicting with an actual project priority. Okay, that's a good call out. But one challenge that I see, right, the failures are getting injected on a daily basis, right? And at some place, we have to take a call. To complete this activity. So what we can do, let us restrict this till later.
+
+00:08:34 - 00:09:35 Unknown Speaker:
+
+Once reporting is done for this month of August, then we can touch base those details. Right, I think that would be better. Because eventually we will do this, but just because this is conflicting with the entire reporting project, because once we start doing all these, that can change them. There would be, like, all of that will also reflect in the reporting, right? And then we have to then wait for these changes to be done across all the A's, D's, B's, across the control D's, everything. So, the dependency would become high because these are, like, a lot of changes. Correct. Correct. So, I would say let's not do that. Let's proceed with E2 and whatever 300 rules that AFR is saying that those 300 have been moved to E3.
+
+00:09:35 - 00:10:34 Unknown Speaker:
+
+For those rules, maybe we can get these changes done across the DPs, like across all. Okay. And by when you are expecting these partners to start using this portal, this self-reviewed portal? That would be somewhere around September because August end is what we are committing but for partners we are committing like September mid or so. Okay. And I would like to close this all, you know, modification because partners start using it, because then definitely, of course, like such and see that. We will not launch the partners until we are sure that everything is in place. So that is still in our hands, even though like there is leadership, alignment and everything, but still like, we will definitely not hand it very halfway to our partners.
+
+00:10:38 - 00:11:37 Unknown Speaker:
+
+Okay, then Aipa, if you can do one thing, pause or you have to pause this exercise or at least keep your utility ready till E2 environment. Okay. Yeah, and I would say within that, like if Aipa is trying to prioritize, then please prioritize modifying those 300 which you have already done in the T2 repository. So, for those 300 or however many rules it is like, Please ensure that those ones are updated in E3 across all databases. That includes like DQ results and your ACE TVs. And then after that, once you have time, you can proceed with the rest in E2. Okay, I like. Right, Sachin? I think that should be the way to go. And then, okay, let me think about it, Rachna, but this reporting would not be getting impacted.
+
+00:11:37 - 00:12:39 Unknown Speaker:
+
+I'll make sure that it doesn't get impacted. Okay, okay, thank you. So, anything that I can share regarding the reporting part with Runa for today? Right now, we are, that pipeline setup is running, right? We are creating those pipelines to move the data from ACE to... Loomy, and then the tag has been created, which would be running in the Loomy site, right? The build is still in progress, you can mark it as. And we should be able to close this by next year, for sure, with data migration and everything. Date right? Yeah, yeah, 31st is the date. I believe there is a Raksha and then in between, so I am off. I believe some of your team members will be off for one or two days. Okay, uh, give me a second.
+
+00:12:39 - 00:13:49 Unknown Speaker:
+
+So this is 15th, we have 22nd and 29th, right? Okay. Once this data gets migrated, the pipeline set up would not take time. We should be able to do it. Sure, sure, Sachin. Okay. Anything else, Rachman? No, I think that's one thing. And any other updates from Aadhar regarding the enhancements going on? Yeah, so as I stated, right, all those would be live, you know, by next week, not on E3. And then as we have communicated till 31st, right, everything would be pushed to production environment. Right. Because we need to improve testing on that, right? Oh, yeah. So that would again require one week because this is not just a create part. We have to update the modify too also.
+
+00:13:53 - 00:15:00 Unknown Speaker:
+
+So most of the cases like once this create part is done I would say 70% work would be done because they even when the tag and all right which would be picking up the record. Irrespective of creation and modification, right? The flow would remain same for the rest of the automation. Right? Even if the TQID is there or not, right? That is the part. So once this creation is done by end of this week, we should be able to close that modification also. And I did review the design with Rajendra. He has some recommendation, but he has provided his sign-off to go ahead with the current design. The recommendation would require some POC, and that's something I'll do. And then actually, his thought process was, let's try to figure out a solution to bypass the SFTP dependency.
+
+00:15:00 - 00:15:52 Unknown Speaker:
+
+And then, when the request is submitted, even before creating a human task for you, We can directly make a call to Lumi where we can execute the query. Get the result, and then create that human task so that that would be available to you with the result itself. Yeah, yeah, that was the ideal scenario, yeah, but that I need to work with the Lumi team to figure out a feasibility. How can I make a direct call from Ace to Lumi? So that is something working on I.I just got that idea from RAS, so. I'll explore that part and I'll let you know, but that would take some time. It would not be an immediate fix. Got it, got it. Okay, but with the current design, he's aligned, so I'll modify flow also accordingly. Okay, sir.
+
+00:15:53 - 00:16:52 Unknown Speaker:
+
+Sure. Yeah. Anything else, Krishna? No, I think I'm good. Okay. Thank you. I wanted to discuss on three pointers which we finalized as the enhancement from Rachna. Can you just go ahead? Go ahead. Let me share my screen. Rachna, this was the part of the enhancement plan which we shared in the show. So we needed some clarity on this. So this register DQ rule page, we... Have an enhancement where it mentioned like add a previous page button alongside back to dashboard button to the top. Oh, okay, okay. I think, no, no, this is like a miss from my end. I believe this is the back button, right? Because initially when I was taking notes, that time I did not see that back button at the end. Okay. Currently, we have implemented a back button.
+
+00:16:52 - 00:17:42 Unknown Speaker:
+
+So, I think this enhancement is proper. This can be skipped. Yeah, this is not relevant. Okay. And in the DQ review alerts, update date filter to date range selection instead of a single date selection. Yeah, this is regarding that range selection we discussed earlier. Yes. So, currently, the date filter what we have applied, that is the run date, right? In the ADQ filter. So currently whatever the data which we are showing in the page, we are filtering the data based on that current loaded data only. It's not like an API or overall filter we are having it. So should we provide a date range because in that case that would be limited to only 10 to 15 records. It will not help you to fetch all the records from a longer date range.
+
+00:17:42 - 00:18:31 Unknown Speaker:
+
+I did not understand. So suppose I go to the BQIM portal and I want to see all the alerts from 1st of August till today. So if I select 1st of August till today, will that not show me all the records corresponding to this period? No, it will not show you the actual record because the API doesn't support the filter based on run date. The API which we are using doesn't support. So what we are doing is. Whatever the data which is being loaded in the UI in that page, we are just showing that. So in that case, the user has to load a maximum of like 100 data. And if a filter is applied... So how is the single date selection working? So if I suppose select 5th of August, then how is it showing me everything corresponding to 5th of August?
+
+00:18:32 - 00:19:36 Unknown Speaker:
+
+Yeah, it will show you the same page data. It will just log in and display. So here you will see we have 7th date only. If I will try to just filter out for some other date, it will not give me. It will show me only the date corresponding to 37th only. What? No, I did not understand. This date filter was working fine earlier, right? So if I select 5th of August, it will not give me the results. It will give you a result only if 5th of August data is present in this current page. Oh, okay. Basically, we are applying a filter on the current page data only. It's not like an overall data. So if you'll see, we have overall 47 data. So even earlier this was in HUR you were saying.
+
+00:19:36 - 00:20:38 Unknown Speaker:
+
+I thought that earlier like for the single date it's scanning the entire data set. It's not? No. The API doesn't have the patient data. Then I think this date filter does not make any sense. Like it's not even giving the correct results. Even for a single date selection then. Yes. So in that case we have to load the whole data. So. Even if we load 100, there can be more alerts, right? And there can be that specific data alerts on the next page. Yes, I think while implementing this was based, right, Sachal? Yes, there is a consent from the API that DC's team has built. So, Sachin, will this be a problem in the eventual reporting also that we were planning for ACE, the reporting dashboard? ACE reporting dashboard? The emails that you have sent to me?
+
+00:20:39 - 00:21:31 Unknown Speaker:
+
+Yeah, yeah, the earlier discussion which we are not planning immediately. No, no, for that, as I have stated, right, we are going to create a separate table. Without having a dependency on all all of these, right? So there we are going to create our own API, having our own control. But then can you suggest something regarding? Just because this date filter is really redundant in this case, like even even the single date selection, even that does not work as expected. I, I was of the idea that this is fetching everything across the selected date. This is something, you know, there is a constant from the GCS side. Let me take a, you know, having a word with Bhagwan if they can fix it from their side. Yeah. Because this is a problem.
+
+00:21:32 - 00:22:50 Unknown Speaker:
+
+I don't think this is an issue. Athar, let's bring that again to Bhagwan. This is something, you know, even I agree. Create a conversation, CC Rajendra and Sravan over there. And Sravan can, you know, just have a word with Bhagwani in the office itself. Okay. So, Sravan, you understand this point? Not really, sir. So, look, this is the page which is currently displaying you the... 10 records close this we, we don't need to, uh, we don't need to go to that, uh. So if you see this one, right? This is the API that the One and team has built, which is giving us that response. Okay, so there is a option called filter. Okay, click on that filter. So now if you select the status, can you select the status? Just open, open.
+
+00:22:50 - 00:24:22 Unknown Speaker:
+
+So when we are selecting it as open, scroll down a bit in the below. Scroll, scroll, scroll. So look, this is having three pages. It brings all those 25 records which is of open status. Okay, clear on this. Sachin, am I naming the one? No, no, you can drop up. Just one last one. This is the approval project. If the user selects reject option, enable a text file to mention the reason for rejection. This is the same that we discussed with the note part. The note gets updated with reason for approval slash rejection. What is happening when he is filtering these data with any status? Uh, any work basket, right? They are providing us this data with this filter criteria, okay, but that same filter criteria doesn't work for the uh, this one, uh, this date.
+
+00:24:22 - 00:25:54 Unknown Speaker:
+
+If select uh, suppose, go to the next page, No, no, go to the next page 17-09-2025. Go back to the previous page. 17-09-2025. Now select the date as 17-09-2025. 17-09-2025. Look, data is not there. But actually, for 17-09-2025 also, I do have data. Remove this date range. Now if you go to the next page, you are already having a data for 17.09.2025. Now how this data would be bring? Go back to the previous page. Go back to the previous page. Now select the page size as 100. Now select 17.09.2025. Now the data is coming. So the problem is the API is not working based on the run date. They haven't applied a filter using the run date where API can take a request of this run date and you know give you the result from this.
+
+00:25:56 - 00:26:51 Unknown Speaker:
+
+Now let me know if you are clear or you still have query. Got it, Sachin. But where are we fetching this data from? Is it from ASTB? No, no, it doesn't come from ASTB. Everything is coming from ASTB, but it is wrapped via the wrapper of that ACE. It doesn't pull directly from the ACE. The GCS team maintains its internal database, which syncs with ASTB. Okay, okay. So here the problem is, What they have done is that they have not put a filter on the date range. When the API calls, it does not come on the base of the date range. They have to apply this. And we had a discussion. Athar would reiterate those comments again to Bhagwan. But just change Bhagwan and say this is not only our requirement.
+
+00:26:51 - 00:28:05 Unknown Speaker:
+
+Even in future, whoever is working in workbasket or ASS workspaces, they are going to face this challenge when the... You know, data size grows to 100,000, right? If it's 1000, then I won't go to the last page and apply the filter, right? I want that data. Okay. This is an implementation miss from their side. This is specific to our team, right? No, no, this is not specific to our team. It's just one parameter which we have configured, right? Even they might have, if you go to their spaces, can you click on dashboard? Now this is their UI, okay? This is the actual Ace Workspaces UI. This is like something this. Even, look, they have, This created date, right? Okay, okay, so even they have this created it now, they doesn't have that much of user the way we do have.
+
+00:28:05 - 00:29:26 Unknown Speaker:
+
+But in future, even their their partners would grow right? And then, even then, they won't be able to search it out over there. Okay, ultimately okay, and Raj knows about this issue. Okay, okay, what? Whatever technical challenges that they have, they need to fix it. Now. It is almost a year that, uh, you know, this process is working, right? So I don't know why it has been unnecessarily being, you know, prodded as a bigger issue. But but put those comments at that so that that can you come up with that. No, no. Go to that slide. Just one thing, Sachin. No, don't explain this. No, no. Don't explain this. They will get confused. Let's not go to these quotes and all that. You would not understand these all configurations. Let's just talk what we...
+
+00:29:26 - 00:31:22 Unknown Speaker:
+
+Can you go to that conversation which we have communicated to Anand and Rajendra? Anand, Rajendra and me can have a conversation. Anand and me. No, no, no. I think we were having a conversation with Rajendra also. Yes. You have explained that. Oh, that's the message. This is the one where we just shared. He just mentioned him like, currently, DQ rule run date filter is not there. Bhagwan mentioned like, yeah, that's what I was coming to. The correlation key which we are mapping to this run date, they don't have the feasibility to like filter date on that. Copy that comment. Hi Bhagwan. And then again, reiterate that the business team again chasing for this one. And as the data is growing, right? We would need this functionality. We need to, like, bring in these group only.
+
+00:31:22 - 00:32:35 Unknown Speaker:
+
+Yes and CC, CC, yeah, CC. Rajendra and Sravan along with me so that Sravan can chase Bhagwan in the office. OK, Ok. This is a basic requirement, right? Again, I don't know why that is a challenge for them. Okay, just put that into the AS group. Okay, and Sravan, once you get into the office, right, today or tomorrow, just bring it to Web1. Anything at your side, Sravan, that you need to discuss? Had some crazy things, but I think we have a call with Jason anyways, right? We can discuss at that time. I think he again updated some things in the back end, so I'll call it out. Reverb his access. If he's not listening, so whoever is going to create a pipeline, we have just given him the taxes for his feasibility.
+
+00:32:37 - 00:33:33 Unknown Speaker:
+
+If he is not abiding to the, you know, the rules and regulations, report his access right away and then nobody is going to identify who has revoked it. Don't let him know that I have revoked it. Okay. And one pipeline I couldn't submit for certification because there are timestamp fields and he has marked it as string. So I'm sure Lumi team won't approve it. I need to revert it back to date time or something. Okay, that is one and I need you to get rid of this pipeline setup as quick as possible. Because you know, we have that very initiative coming from 18th of August. And it would be lots of work for me to manage everything. Because we have two new platforms, two new UI platforms.
+
+00:33:33 - 00:34:51 Unknown Speaker:
+
+A press pipeline to set up, right so that even needs, so let's wrap it up these pipeline by Max next week. Yes, yes, okay, sure, sure, I'll almost that. Yeah, so so let's close all to E3 and then we can move to the actual mode. Okay, okay, so okay. And uh, I think someone had some concerns about, uh. If you are facing any challenges, as we know most of the product team sits in ISTS, just post those challenges on the dev group. Okay, if you feel right, there are certain challenges which needs to be addressed. Just post that into the dev group. Once I log in or maybe IFR or NC, whoever is working on that usage, they would follow up with Rachna or Rishabh. And then they can help you with those details.
+
+00:34:52 - 00:35:37 Unknown Speaker:
+
+Don't wait for this DSU. I have already posted it out to the seven also. If you feel there are certain details, which is... uh, waiting right, like right now? I asked someone right to follow up with one. Because I know, like, even if I ping him, he might not give me time, right? But as Seven is there, he can just do a follow up. It's reaching to new text. So if you are getting stuck somewhere, uh, put it into the dev group or over the email, uh, and once officer teams comes in, they would get into it. Yeah, yesterday I did both of them. Consumer Tape Business Group, and that one has shared in mail also. So I think they have already reverted, right?
+
+00:35:39 - 00:37:43 Unknown Speaker:
+
+I was talking about the DQID thing that you are working on and then that one is working and that one is going to pass, right? Such a new one, huh? Okay. Okay, I think there was some communication gap or something. I think what Suman did, I have also read the same things, right? So, I just wanted to make sure that... I think I just appreciated and we have done Suman on that. Yeah, I read. I can update it right now also, right? I'm not waging for that now. Sir, I think it's independent. Okay. How many people will come if a person comes from there? How many people will come if a person comes from there? Yes, that's it. There are two people back then. Okay. Okay, I'll talk to them. Thank you. Thank you.
+
+00:37:46 - 00:38:45 Unknown Speaker:
+
+Thank you. Thank you. Then we can mark those to the DPO artifacts, ASTB. ASTB no one is using right now, as he stated, right? It would be used mid of September. So we are good from the ASTB side. So if you guys can wrap it up by this Friday, and even I would say if some details need to be updated, assign some tasks to someone, he can take it up during his working hours. Oh, okay, okay, okay. So, right now I think, you know, that only one thing is pending is that data validation. Correct, April? Yeah. Yeah, that one record, if you are able to figure it out, then, Sachin, then one line of one loop we have to introduce to update DQ record in parallel. And that will be updated in JSON object too, right?
+
+00:38:46 - 00:40:01 Unknown Speaker:
+
+That is already done. Okay. Not in JSON, man. Yes, yes. We are creating a new copy of that copy. That is already done. And where are the other impact area? Did we analyze that? Is it only DQ repository, DQ result? Artifacts I know. As I stated, artifacts in Quantro can go later on. ASD we can go later on. Any other areas where these DQIDs are getting mapped? Like any profiling table, anywhere else? No, no. Okay. Okay, then go ahead and let's do this cleanup activity by the end of this Friday. Yeah, sure. Let me just figure out, just compare those DQIDs and see what DQID is missing. Yeah, sure. Okay, then do that, and then we can do that cleanup activity on artifacts and then to the ASTB, because ASTB wants to do it only once.
+
+00:40:01 - 00:41:04 Unknown Speaker:
+
+So that we will move those data to E1 and then from there I'll raise RFC to promote it to E2 and E3. Ah, okay, okay, I won't be able to execute any update or delete query on E3 by my own. We need a RFC. Then along with this, that, that migration, right, that as data migration part, what, what? Those three columns we are introducing right in BQ result, right along with this migration, we can include that also. Right? Yes, yes, okay, okay. So I have to just, you know, close this one, then we will start on BQ result. Okay, I'm barely looking into that part. So you just figure out that one DQ item, which one is missing. Yeah, yeah. Sure. Okay. Okay. I need seven and... Yes, seven you can stay back.
+
+00:41:04 - 00:42:10 Unknown Speaker:
+
+At least you can... It will drop out. Kundan, did we get any update for the DB issue? DB one... You can check right now. It's working. It's working. You can check now. But make sure you guys are not creating any idle connection, okay? As I already intimated to all of you, right? This is the same this guy was mentioning, okay? Lots of idle connection and these are getting created because you guys might be just connecting to the database. And even if you are connecting to the database. Make sure when the day gets over, just right click on it and then disconnect. Even if you are connecting to the DV visualizer or something, what is the connection? Pool size? Connection pool size is this? Sorry, 10, 10, 10. 10, right.
+
+00:42:11 - 00:43:09 Unknown Speaker:
+
+So, I think if I am connecting another two connections, right, that will be ideal. No, it's not like that. You have connected through the ID today, left it. Again came tomorrow, connected, left it. So, that connection size is increasing. If I close it and go, then it would be connected in the backend. Yes, agreed. But that is one connection, right? That is somehow everybody is using, right? Right now, everybody is using. So that is going beyond that connection size. So don't have a connection basically from your ID. And if you're using any tool, make sure you're closing this connection before logging up for the day. Okay. Because that ideal connection, somehow those are not getting closed. And that's creating a problem. Okay. I think I have a call again at 7. Yeah. Any update on this RISD?
+
+00:43:10 - 00:43:25 Unknown Speaker:
+
+Like this MD were released last time, right? What else? Any new that we have released? No, right? No, but we are ready for deployment for those three in UAT. Yeah.
+

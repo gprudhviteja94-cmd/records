@@ -1,0 +1,137 @@
+2026-08-14 Human Task Output Handling and Code Improvement
+
+Creation Time: 2026/08/14 12:12
+
+
+📅About Meeting
+
+• Date & Time: 2026-08-14 12:12  
+• Location: Not specified  
+• Attendee: Sachin, Kundan, Nirmal, Prithvi, Vargav, Mr. Jin, and others
+
+📒Meeting Outline
+
+Human Task Output Handling and Code Implementation
+
+• Reading Human Task Output Variables  
+  Discussion focused on correctly reading human task output variables, emphasizing the need to read from the context data rather than querying the database. It was clarified that process instance ID is necessary to read human tasks, and multiple human tasks might be returned, requiring fetching the last instance.
+
+• Updating Implemented Date and Assignee  
+  It was agreed that only the implemented date and assignee fields need to be updated in the JSON object containing business justification and other details. Other fields like resource actual value are not required for the human task update. The update should preserve existing JSON data by merging new details without discarding previous information.
+
+• Context Data Management and Bundling  
+  The team discussed saving updated details into context data and creating a final bundle to clear irrelevant context data at the end of the process. Suggestions were made to modularize the code by moving update details to a lower layer class rather than a single bundle.
+
+Code Quality, Exception Handling, and Logging
+
+• Understanding Code Purpose and Impact  
+  Emphasis was placed on understanding the purpose of each code segment, especially around exception handling. It was noted that throwing system exceptions without proper alert prefixes results in missed alerts. The team was advised to ensure that exceptions generate alerts correctly by using configured prefixes.
+
+• Improving Code Consistency and Style  
+  The discussion highlighted inconsistent coding styles, such as different ways of throwing exceptions and logging errors, which affect maintainability and alerting. The importance of writing clear, purposeful code to facilitate team management and code reviews was stressed.
+
+• Removing Unnecessary Code and Retrying Logic  
+  The team agreed to remove redundant retry logic and unnecessary email content, such as implemented status in emails, to simplify the process. Constants should be used for email body content to improve maintainability.
+
+Task and Project Updates
+
+• Data Migration and Story Points  
+  Shukundan is currently occupied with data migration and analysis related to a story assigned with five story points. The team plans to close this part soon and discuss further with Rachna on Monday.
+
+• TED-DB Issue and Task Blocking  
+  Mr. Jin raised a concern about the TED-DB issue blocking a task. It was noted that the responsible person is expected back around 1 p.m., and the issue should be driven to closure from their side.
+
+• SFTP Changes and Artifacts Update  
+  There was clarification that most columns are passed in the artifacts, and new parameters recently added may not be required immediately. Prithvi’s automation will add passed releases after implementation approval. The SFTP bundle will be scheduled separately to update DQ artifacts and repository after approval, enabling pipeline creation to push details to the DQ repository.
+
+📋Overview
+
+• Human task output variables should be read from context data, not the database, and process instance ID is necessary.
+• Only implemented date and assignee need to be updated in the JSON object; existing data must be preserved.
+• Context data should be managed carefully, with irrelevant data cleared at process end.
+• Exception handling must include proper alert prefixes to ensure alerts are generated.
+• Code style and consistency need improvement to facilitate maintenance and alerting.
+• Unnecessary retry logic and email content should be removed; constants should be used for email bodies.
+• Data migration and analysis tasks are ongoing, with plans to discuss progress on Monday.
+• TED-DB issue is blocking a task and needs to be resolved promptly.
+• SFTP and artifact updates will be handled in separate scheduled processes post-approval.
+
+🎯Todo List
+
+• Sachin:  
+  • [ ] Update implemented date and assignee in the JSON object without discarding existing data.  
+  • [ ] Save updated details into context data and prepare a final bundle to clear irrelevant context data at process end.
+
+• Prithvi:  
+  • [ ] Make changes to remove unnecessary retry logic and redundant email content.  
+  • [ ] Use constants for email body content.  
+  • [ ] Coordinate automation for adding passed releases and scheduling SFTP bundle for artifact updates.
+
+• Team (General):  
+  • [ ] Review and improve exception handling to include alert prefixes for system exceptions.  
+  • [ ] Remove redundant code and ensure consistent coding style across the project.  
+  • [ ] Study Kamunda BPMN concepts to better understand process flows.
+
+• Shukundan:  
+  • [ ] Complete data migration and analysis task; prepare for discussion with Rachna on Monday.
+
+• Mr. Jin / Responsible Person:  
+  • [ ] Resolve TED-DB issue blocking the task by 1 p.m.  
+
+• Vargav:  
+  • [ ] Connect with Mani Sanya for upcoming meeting discussion.
+
+Transcription
+
+00:00:01 - 00:01:29 Unknown Speaker:
+
+Okay. In this human task response, it would be there in the output. Look, task output variable contains key. You have to read it like this. Okay. Can you... Okay. We just need to take this. Okay. Let me share it to you. Thank you. Implemented date null, blank, null. Do we really need it? This would be never being a person, but still fine. Leave it. Why do I need a process ID now? This would move in the top, but we don't need a process ID. Do I need process instance ID to read this human task? Yes. You need it, right? Okay. These would move to up block where you are getting those output variables. Okay. Okay. This code would be read first. And I guess you will be getting two human tasks to get that. Correct.
+
+00:01:31 - 00:02:34 Unknown Speaker:
+
+Very good point. There would be two human tasks, right? So maybe check if you can read it through this work basket. Okay. Check that part. This is something you need to test it out. We haven't done it till now. But test it out. When you would be getting the human task is quite correct. Like you would be getting two human task instances with this process ID. Okay. And basically you need to fetch the last human task. Okay. Then resource, actual value. These are not required for human. Why you are getting this? These are the values that we... going to store it in the database. No, it is already being updated. You just need to update only... No, this is for mailing purpose. Oh, for mailing purpose. Okay. Data source. Then why do I need a data source?
+
+00:02:34 - 00:03:28 Unknown Speaker:
+
+To connect to the DB. No, no. Why a DB connection? Just read it from the context data. It would be there in the context data. Okay. Why do I need to go to database? No need to go to the database. So, Sachin, we don't have to update the... Okay. You need to update it. Okay. Save. Save. What is this save, ma'am? No, no. Verifying if that field is properly present or not. It's a utility method. No, but it's a utility method? Yeah, utility method. Okay. You are already getting it from the context data. My bad. You're already getting it from the context data. And then you're implementing it over here. So here is the problem. You don't need to update these one. These things you don't need to update it. You just need to update the implemented date.
+
+00:03:28 - 00:04:52 Unknown Speaker:
+
+And is there any additional column is there? Where is the upper man? Upper or normal? There would be implemented date and any other thing is there in that. Yeah, you just need to update the implemented date, that's it, nothing else, okay? Those other values should be updated by the automation that we are working. Yeah, okay, not your part. A bundle written by Kundan. You are updating in Artifacts. Ace. One is being updated by Nirmal's service vendor. Okay, Yeah, assignee we can update. For assignee, I have asked you to update into that JSON object. Okay. You have to update the assignee also who has did it. Update implemented date and assignee. Like if Ayyappa has worked on it, it should be on Ayyappa name. And then adjust this to that JSON object. Just check with Nirmal.
+
+00:04:53 - 00:06:18 Unknown Speaker:
+
+Author they know which is that json object as you know right this json object i am talking about where we are passing the business justification and all right creating a key to update this, but please make sure when you are updating it, you need to paste these details, right? Otherwise, previous one, JSON object would be discarded, correct? Yeah, then, you know, whatever these details are, just save these to the context data so that he can reformat it to a JSON object and then save it to the field. With update varying. Okay. Okay. I'll put that into the context data. Or you feel this would be very large. Question code 1, 2. 3. These are small. 3 are small. Right. I'm asking about 1 and 2. Yeah. Just put it onto the JSON object.
+
+00:06:18 - 00:07:25 Unknown Speaker:
+
+And then pass it to the JSON object. So that. Look, whatever details you're getting, keep saving it on the context data. And then we need to create a final bundle for this over here to clear those context data, irrelevant context data. Okay, I'll create one more bundle. I'm not creating it right now or will you be able to do it? And see, what a pipeline. There's a lot of things. Yeah, okay, leave it. We need to. Plus the context data also at the end of the process. Okay, where it is, just connect with the normal on that uh. Application accepts and logger accepts, and these remove these, retry and all. Okay, sure. This is for all of you, you know, small feedback. If we are writing this piece of code, right?
+
+00:07:25 - 00:08:18 Unknown Speaker:
+
+Please try to understand what is the piece of job this is doing. Is this really being required? What impact if I remove this piece of code? Right? When you would be moving to a next level, right? When you would be managing a team or, you know, reviewing a code and all, right? Until unless you have those, if you have built those understanding writing, it would be difficult for you to manage the team. Whatever piece of code you are writing, right? Understand why I need this piece of code. Why I need to throw a system exception over here again. Right? You're already in the catch exception block. Here it travel again system exception and this is not going to generate a alert. Kundan, you are mentioning, right? We are not receiving the alerts, right?
+
+00:08:18 - 00:09:11 Unknown Speaker:
+
+These are the reason. No, we already defined few prefix, okay? But those are not here. Yeah, because if it is just see this piece of code, right? If it is coming to this exception block, it would throw a system exception for sewer, right? But as this prefix is not being appended on this. It would log the error also, but it is not going to raise the alpha alert. Correct. Logger dot error, basically alpha alert. It will bypass it, it will not see it. You have to do it here. When you are throwing system exception. It is not in this block. It will not happen in this. That's what I am asking, right? Understand what piece of code we are writing. Otherwise this is not going to work. And then this check this part.
+
+00:09:12 - 00:10:13 Unknown Speaker:
+
+And just giving a comment update. JSON string also. With a sine value. And even this update details right. We can move to a down layer type of. Class instead of writing everything into a single bundle. Here it would work. Here it would work. Here it would work. You are throwing a SQL exception, you are throwing a system exception, you have added a key, this would generate an alpha let if this key has been configured. But this is not going to generate it, right? So the same person who is writing code, there are two different style of code writing, right? And then that is why we need to understand what this piece of code would do, what piece of code this would do. You guys are fortunate that you are not meeting Rajendra, okay?
+
+00:10:14 - 00:11:40 Unknown Speaker:
+
+Otherwise, he would take your class very seriously. Okay? Okay. Just remove this one. I am not putting those part. This is you are creating those, right? Email with details. Email you take. Okay. Remove this one. No need to give this. No need to display this in the mail, is it? No, no. Why would I tell him that I have implemented it or not? No need to give this assignment. Implemented is fine. Result expected actually. These are fine. Again, we retry. We are unnecessarily doing retry. Remove all these. If you're not clear with these BPMN and all, read Kamunda. Kamunda BPMN. Sure, sure. Go and just understand the concept what these BPMN and all are. Build email body. Again, these, right, try to keep it into a constant file. Okay, safe here.
+
+00:11:41 - 00:12:40 Unknown Speaker:
+
+Then, why we have named it as safe? Any particular reason? No, just not much of a thing. Is it safe to use it or not? That mindset. Is it being generated by the co-pilot? Yeah, yeah. Okay. Make this change, Prithvi. Yeah. And apart from this, I have asked, Shukundan is being occupied, right? He is super occupied with the data migration. That analysis which we were discussing with Rachna, right? Yeah. Close that part also so that we can discuss with her on Monday. Sure. Because that story is assigned to you with five story point. Check your rally once. I'll take care of it. Right, just take care of that and then just let me know. Vargav, let's connect with Mani Sanya. We are meeting in five minutes, right? So, I think we can discuss over there.
+
+00:12:41 - 00:13:48 Unknown Speaker:
+
+Anyone having any other question before we drop, sir? Mr.Jin, just put to just check on the TED-DB issue because I'll be... I agree, but somehow that's blocking a task, right? Yeah. Let him be back, right as I stated you would be there around 1 p.m. Then we won't be able to do anything. Yeah, I'm just keeping you posted, like, since we have an email. Uh, now you need to drive it so that, uh, and see, uh, right, that should be closed from your side. And did you made your changes to the SFTP to add those new parameter to the artifacts? The artifacts, what like most of the columns they are being passed. The last like couple of parameters that have been added, I don't think those are required in the artifacts.
+
+00:13:48 - 00:14:48 Unknown Speaker:
+
+I guess Pruthvi's automation will be adding those passed releases, right? No, no, no. Once this implementation is done, we need to read that. That I'll tell you later. Because if it is approved, right? Then again my automation should run at a different time and then update those results in the DQ artifacts. Because from there I need to create a pipeline. Which would be pushing those details to the DQ repository. So your SFTP bundle, uh, need to be scheduled at a different time, and that would be picking up all these. Approval, implementation date and all right was artifacts and repository may be updated. I'll take care of that and maybe we'll discuss on that data. You can complete the existing book right now. I'll let you know what needs to be done. Yeah, okay, then, thank you, thank you everyone.
+

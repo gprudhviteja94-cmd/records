@@ -1,0 +1,89 @@
+2026-08-12 Data Processing Workflow and Validation Discussion
+
+Creation Time: 2026/08/12 19:30
+
+
+📅About Meeting
+
+• Date & Time: 2026-08-12 19:30
+• Location: Virtual meeting
+• Attendee: Kevin, Curtis, Sachin's team representative, Gulsan, George, and others
+
+📒Meeting Outline
+
+Data Processing and Workflow Integration
+
+• RRF Request Processing and File Flow
+  The discussion clarified the workflow starting from raising a dev RRF request, which is processed by an RA side analyst through the RA tool. The repricing analyst picks the request, generates a claim file, and drops it into the NAS directory. Petal then picks up the claim file, processes it, and sends data to both the legacy SQL server (rsdatabricks) and the dev databricks environment. In the dev environment, the data is processed to generate a P&L file and insert an RPT record into the on-prem dev database to maintain legacy compatibility.
+
+• Access and File Handling on NAS
+  It was confirmed that repricing analysts already have access to the NAS drive. The team discussed the possibility of requesting repricing analysts to place files directly on NAS for processing, treating these files as normal claims files to ensure seamless integration into the dev environment.
+
+Data Validation and Issue Resolution
+
+• Comparison of New and Old P&L Files
+  Kevin is currently working on fixing discrepancies between the new P&L files generated from the RRF Databricks process and the old ones. Issues include misaligned columns in competitor analysis tabs and differing metric values. Kevin is personally handling the testing and fixes to ensure 100% match or explainable differences before handing over to the testing team.
+
+• Testing and Sign-off Process
+  The team agreed that once Kevin completes his validation and fixes, the testing team, including Gulsan's group, will be given sign-off to begin their testing activities.
+
+RPT Job and MongoDB Integration
+
+• RPT Job Status and Updates
+  The RPT job remains on-premises and is an existing process with no new major work. George has an open item related to updating status back to MongoDB, for which an API has already been provided. Progress on this integration is underway.
+
+Miscellaneous
+
+• Audio Work Coordination
+  Kevin plans to work offline with Curtis on audio-related tasks.
+
+📋Overview
+
+• The RRF request processing workflow involves multiple tools and environments, ensuring data flows from RA tools through Petal to both legacy and dev environments.
+• Repricing analysts have NAS access and can place files there for processing as normal claims files.
+• Kevin is actively resolving discrepancies between new and old P&L files, focusing on data alignment and metric accuracy.
+• After Kevin's validation, the testing team will be authorized to proceed with testing.
+• The RPT job remains on-premises with ongoing work to update MongoDB status via an API provided to George.
+• Offline collaboration planned between Kevin and Curtis for audio work.
+
+🎯Todo List
+
+• Kevin:
+  • [ ] Complete fixes and validation of P&L file discrepancies, ensuring alignment and metric accuracy, no specific deadline mentioned.
+  • [ ] Coordinate offline with Curtis on audio-related tasks.
+
+• Team Lead / Manager:
+  • [ ] Request repricing analysts to place claim files on NAS for processing, no specific deadline mentioned.
+
+• George:
+  • [ ] Continue progress on updating RPT job status back to MongoDB using the provided API, ongoing.
+
+• Testing Team (including Gulsan's team):
+  • [ ] Begin testing after Kevin completes validation and provides sign-off.
+
+Transcription
+
+00:00:01 - 00:01:00 Unknown Speaker:
+
+Happened to him. Okay. Oh no, he said he's got a conflict. Yeah, but as we are connected here, one small question I have given. So, if the file is, like for example, if I raise a dev request, right, dev RRF request, and if someone from RA side analyst process that, then do RRF batch process can pick that one, like for PML and RPT report generation? Or, You know, yes. So the way it works is someone puts an entry in the GUI, so your bit, that generates the output that goes to Curtis in the RA tool. And then the repricing analyst needs to pick it out of the RA tool and generate the claim file. They drop the claim file in the NAS directory that Petal pulls. When Petal sees a new claim file, Petal runs and it egresses data to RF data marsh.
+
+00:01:02 - 00:01:56 Unknown Speaker:
+
+Sorry, rsdatabricks, which is the old SQL server, but it also sends it to our dev databricks environment. And when it arrives in the dev databricks environment, I process it as normal and generate a P&L file. And then the other thing I do is I will insert a RPT record in the on-prem dev database, which is the way we will, in the future, keeps the on-prem stuff working when we turn off RF legacy. But as well as that, I think Sachin's team also generates the RPT output as well. I'm not sure, though, if they have it turned on in dev. But everything that's supposed to generate it is being sent. Yeah, yeah. So if we have access to NAS, for example, like...
+
+00:01:57 - 00:02:48 Unknown Speaker:
+
+Mostly I'll check with Curtis, like, in non-for if we get access for repricing and list of tool ways, if we can, I mean, we can put that file you're seeing, right? Yeah, the repricing analysts already have access to the NAS drive. Okay, okay. We should request them to put that file, okay? Yeah, so they process it exactly like a normal claims file. So turn their brain off, forget the fact that it's come from us, and just pretend it came from the normal GUI. And process it that way. And it will flow through to our dev environment, and I'll produce the files at the end. Okay. And the penal file generated, right, like from the, I think, from the RRF Databricks process, so that one, by any chance, had we compared with the old one? Yes.
+
+00:02:49 - 00:03:35 Unknown Speaker:
+
+So you know the ticket I have for this sprint, where I'm fixing stuff? That's because there are differences between them. Okay. So I'm working, I'm actually, right now, I have code in front of me where I'm working through the comp intel tab, and it's misaligned, so some of the competitor analysis has columns aligned badly with the Excel spreadsheet, so I'm fixing that at the moment. But there are other problems, so there are other, like, the values, the metrics that come out are different, so I haven't been able to figure out why they're all, like, I haven't had the time to look. But right now I'm looking at that. I'm trying to fix it up. So I don't need someone else to do that testing for me. I'm going to do it myself and fix it to the best of my ability.
+
+00:03:35 - 00:04:17 Unknown Speaker:
+
+And then at the end, when I'm satisfied that on the examples that I'm looking at, I have 100% match or I have an explainable difference, then we can throw it over to the testing team and they can go and find differences as well if they want to. Sure, that helps actually. So, once you are ready, then maybe we will... So, yesterday in that call, Gulsan was saying, right, like their team wants to test these things, right? So, maybe once we are ready, like, then I think we should give sign-off to them. Meanwhile, I'll check with George also, like for RPT, he has some open item, right? So, because RPT, luckily, it is on-prem only, so it is an existing job. I don't think, like, he has any new work done there, right? So, only thing is...
+
+00:04:18 - 00:04:48 Unknown Speaker:
+
+He has to update the status back to MongoDB. That is the new thing. Yes. So were you going to provide him with an API to do that? Yeah, correct. It is given to him. I think one minor observation is this. So it is already in progress. Okay, great. Okay, Kevin. I think that's all I have. Maybe I'll work offline with Curtis for the audio work. Okay, great. All right. Thanks, guys. Thanks. Thank you. Thank you.
+

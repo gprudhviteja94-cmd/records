@@ -1,0 +1,428 @@
+2026-08-10 Project Planning and Coordination for UI and API Development
+
+Creation Time: 2026/08/10 11:35
+
+
+📅About Meeting
+
+• Date & Time: 2026-08-10 11:35 to approximately 12:43
+• Location: Virtual meeting (conference call)
+• Attendee: Sachin, Nirmal, Pithvi, Athar, Sameer, Kundan, Aipa, Varkav, and others from the offshore and OpsR teams
+
+📒Meeting Outline
+
+Project Planning and Team Coordination for New UI and Backend API Development
+
+• The upcoming Program Increment (PI) starting 18th August will be very busy with the introduction of new UI screens on Razy, requiring both front-end and back-end resources to create APIs for pulling records.
+• Emphasis was placed on proper leave planning and communication to avoid blocking critical development tasks, citing recent issues with unplanned leaves affecting delivery.
+• Clear communication about leaves is mandatory to enable proper work planning and avoid last-minute disruptions, especially with a freeze date starting November.
+• The team was reminded of the importance of coordination and maintaining a good impression by timely communication and collaboration.
+
+Rule Creation and Modification Workflow
+
+• The current focus is on completing changes related to rule creation, including rejection email updates, with additional work pending on rule modification.
+• The entire offshore team is involved and must understand the criticality of the initiative.
+• Detailed instructions were given on handling JSON objects for business code questions, including saving yes/no answers and associated ORE (Operational Risk Event) details in separate database fields.
+• Specific data handling rules include:
+  • For question 3, if "yes" is selected, ORE number and issue overview text fields become mandatory; if "no," these fields remain blank.
+  • Boolean values should be used instead of strings for yes/no fields.
+  • Complex SQL queries related to rules must be stored as text fields and executed safely.
+• Validation logic should be implemented primarily on the front end to avoid unnecessary backend database calls, including case-insensitive comparisons and trimming inputs.
+• Exception handling has been centralized to a single handler to avoid duplication.
+• New use case registrations involve passing zero for "others" and no retry logic on failures to avoid duplicate data.
+• Distribution lists for existing teams are fetched via database calls and used to populate alert fields.
+• The process flow for rule creation includes immediate database entry, human task creation, email notification, and a daily batch process to update DQ artifacts with rule details.
+• Approval or rejection of rules is managed via human tasks, with UI blocking approval actions until the rule status is ready.
+• Auto-rejection occurs if no decision is made within 15 working days, triggering email notifications and status updates.
+
+Automation and Data Quality (DQ) Artifacts Integration
+
+• After rule creation, a scheduled batch process runs at midnight to update DQ artifacts with rule execution results.
+• Complex checks require executing user-provided SQL queries in BigQuery, with validation to restrict queries to SELECT statements only, preventing insert or update queries.
+• The business user inputs SQL queries for complex checks; access and syntax errors must be handled and reported accordingly.
+• Execution results (actual value, expected value, pass/fail status) are saved back to DQ artifacts.
+• A CSV file is generated nightly by ANSI, containing these results, which is then transferred via SFT to ACE for further processing.
+• The automation DAGs are planned to be triggered sequentially or scheduled, with ongoing investigation into triggering DAGs from other DAGs to optimize scheduling.
+• Email alerts for failures will be enhanced with capitalized "ALERT" tags in the subject line to help the tech team quickly identify and prioritize issues.
+• Separate failure emails will be sent directly to the tech team without involving business users.
+• The implementation phase involves creating human tasks for the tech team to deploy approved rules into the E3 environment, followed by email notifications confirming rule activation.
+• Bulk implementation is supported, with tracking of who implemented each rule for accountability.
+
+Reporting and Database Updates
+
+• Reporting APIs will be created to extract active rule counts, variables tracked, and tables covered from the DQ repository.
+• Queries will be grouped and optimized to provide counts rather than names for variables.
+• Data migration scripts exist to preserve historical data during repository updates.
+• Some database parameters and fields are pending updates from the DBA architect; the team is advised to proceed with implementation despite these pending changes.
+• Coordination with the DBA is ongoing to finalize database schema changes to avoid repeated work.
+
+Timeline and Deliverables
+
+• The goal is to complete all development by Wednesday to allow sufficient testing before the next PI.
+• A demonstration to stakeholders is planned for the following Thursday, with deployment to E3 environment to follow.
+• Emphasis on team coordination, avoiding blockers, and proactive communication to meet deadlines.
+• Sachin offered to assist with code build if needed but encouraged the team to maintain their pace.
+• Reporting and modification tasks are prioritized to be completed by the end of the week.
+• The team was reminded to use input/output variables effectively in bundles to avoid unnecessary database calls.
+
+📋Overview
+
+• Proper leave planning and communication are critical to avoid blocking key development tasks.
+• Rule creation and modification involve complex JSON and database field handling, with strict validation and exception management.
+• Automation includes executing complex SQL queries securely, updating DQ artifacts, and integrating with scheduled batch jobs and email notifications.
+• Approval workflows include auto-rejection and reminders to ensure timely decisions.
+• Reporting APIs and data migration are essential for tracking rule status and historical data.
+• Pending database schema updates should not delay implementation progress.
+• The team must complete development by Wednesday for testing and stakeholder demonstration by Thursday.
+• Coordination and proactive communication are vital to meet aggressive timelines.
+
+🎯Todo List
+
+• Nirmal:
+  • [ ] Complete modification of DQ rule ID updates and reporting bundles by Wednesday.
+  • [ ] Implement automation to update actual value, expected value, query execution date, and result in DQ artifacts.
+  • [ ] Coordinate with Pithvi and Sameer on automation and query execution integration.
+  • [ ] Ensure no retry logic on new use case registration failures.
+  • [ ] Modify human task bundles to include output parameters for DQ rule ID.
+
+• Pithvi:
+  • [ ] Work on automation to execute SQL queries for simple and complex checks and update DQ artifacts.
+  • [ ] Collaborate with Sameer and Nirmal to ensure smooth data flow between systems.
+  • [ ] Assist in implementing the rule approval and implementation workflow.
+
+• Sameer:
+  • [ ] Implement execution of complex SQL queries in BigQuery with validation for SELECT-only statements.
+  • [ ] Collaborate with Pithvi and Nirmal on automation and data updates.
+
+• Sachin:
+  • [ ] Coordinate with Hiro to bypass SRE review and add additional BPMN for rule response updates.
+  • [ ] Follow up with DBA architect to finalize database schema updates by tomorrow.
+  • [ ] Provide guidance on input/output variable usage in bundles.
+  • [ ] Assist team with any blockers and ensure coordination among members.
+
+• Kundan:
+  • [ ] Develop SQL queries for reporting active rules, variables tracked, and tables covered from DQ repository.
+  • [ ] Prioritize closing reporting tasks by end of the week.
+
+• All Team Members:
+  • [ ] Plan leaves carefully and communicate in advance.
+  • [ ] Maintain coordination and avoid last-minute blockers.
+  • [ ] Review and understand the entire rule creation, modification, and approval workflow.
+  • [ ] Test and validate changes promptly to meet the Wednesday deadline.
+
+• Sachin & Team:
+  • [ ] Implement email alert enhancements to highlight failures with capitalized "ALERT" tags.
+  • [ ] Set up separate failure notification emails for the tech team.
+  • [ ] Schedule and coordinate DAG executions for automation workflows.
+
+• Sachin & Rachna:
+  • [ ] Discuss and finalize handling of complex SQL query inputs and dataset access for users.
+
+• ANSI:
+  • [ ] Run nightly job to generate CSV files from DQ artifacts and transfer via SFT to ACE.
+
+• All:
+  • [ ] Prepare for stakeholder demo by next Thursday and E3 deployment planning thereafter.
+
+Transcription
+
+00:00:00 - 00:00:52 Unknown Speaker:
+
+Especially now when we are going to get some new UI screen on the Razy, right? It would be not just the front-end resource I would need, I would even need a back-end resource to create those API, to pull those records. So this PI starting 18th August, it is going to be jam-packed. There would be lots of work. And then with the pressure of losing the build and release by that end of PI only, because starting November, there would be a freeze date. So, number one, plan your leave on a better manner. And second, even if you have a planned leave or something, right, communicate in advance. I'll talk to Echo on this. But rest of you guys, I feel like, you know, you should be clear with this one. That if I have leave, call it out clearly.
+
+00:00:53 - 00:01:40 Unknown Speaker:
+
+I really don't have a problem till the time you are communicating it properly. Because then accordingly I would plan out the work, right? But if it is a last moment leave right now, ANSI was on sick leave, right? Now even IFI is not there, that CD would be completely blocked because Suman won't be able to drive it alone. Right, so if I would have known that IFI might be joining late, I could have asked ANSI to, you know, not to take the leave today. I really don't have an objection if you are taking a leave, but just plan it on a better note. No, you know, unplanned leave. Varkav, just set up the call and you can feel free to drop off. I just need to discuss with this complete forum.
+
+00:01:40 - 00:02:32 Unknown Speaker:
+
+I already, you know, given that brief overview last Friday. If you want to stay back, it would be your call. But basically, I really don't need you right now on the call. So I'll leave it to you. Okay. Okay. Let me say my statement. The reason I am reiterating it, there are, you know, the discussion that we had last Friday, right? And this is urgent and that is the reason the whole team is being involved in this initiative. So, number one, the coordination that I have talked, if that break, then that would create a bad impression for yourself itself, okay? And I will just reiterate, just kundan for you, okay? The reason this was built by you. Okay. So in case I am not available, just help them to drive this to a closer.
+
+00:02:34 - 00:03:37 Unknown Speaker:
+
+And one more call out. I need these to be closed this week only so that we can test it out in the next week. Number second, the changes that we are making on the rule creation. The same step need to be done for the modify rule also, right? So don't think that this ends your loop. Okay, so we have bunch of work in the modify also. As we were quite interested to pitch in with the API build and all, right? Who joined? Oh, okay. Thanks, Aipa. Thanks for joining. Okay, I thought of like, you know, there was no communication and your Slack was like, you know, it's till 10 p.m. out of office. Okay. Okay, so even you are there. Well, we are on this because this create rule is done, right? No, it's not done.
+
+00:03:37 - 00:04:36 Unknown Speaker:
+
+It's not done. It's the changes that you have done for the rejection email that was only done, right? There are lots of other changes which I discussed with the team last Friday when you were on leave. Okay. So I'm reiterating and this is even you need to understand what exactly we are doing because I may pull you to this initiative also. So understand the whole offshore team is on this one. So all of you need to understand the criticality of this initiative. Okay. Number one. Okay. Number one, this starts with that validated form request. Okay. One change, Athar, which I want in this. I shared the JSON object, right? This JSON object. There are more changes in this. What are the most changes? I'll tell you. This would be modified by you only because I don't have those keys.
+
+00:04:36 - 00:05:55 Unknown Speaker:
+
+That is something you might be having handy. Okay. What are the changes? Look, for business code, right? If five questions you are sending. Yes. Correct. Next is. Let me go to that screen. That would help me only. And please be attentive and in case you still have some query, feel free to ask me. Because I don't want to hear back while you have done the implementation, I missed this part. I don't want to hear back that. Nirmal, specially calling out to you. If you are not understanding the requirement, call it out immediately. What is the delivery date of the complete flow? By next print. By next print on E3, including all back-end automation, to and forth everything. Release means I need this to be built on this week itself and test in this print itself.
+
+00:05:55 - 00:07:01 Unknown Speaker:
+
+So that we can get a UAT sign-off and E3 release in the next print. Both the BPM and you are targeting, right? Exactly. And that is the reason. And you have already reporting one, right? So that is the reason I need you to close that as soon as possible so that I can pull you to this modify one. Modify may aur complex checks lagging hai. Or if... It is reporting, right? So reporting we don't have tape and all those things, right? What is table? I told you that you have to modify the results. Let's talk one by one. So this one, you are marking it as yes or no. Yes, sir. This is your question number 3. Correct. Correct. Post that, it would be your yes or no, right? Yes. This question to be yes or no.
+
+00:07:01 - 00:07:51 Unknown Speaker:
+
+So try to save it like this one. A hyphen yes or no. Otherwise, how will you map it? Will you be able to do it? Yes, it will be done. Leave it. Just save it as yes or no. Current request, we gave that hyphen, what you told us. Parameter differentiator. So hit control Z. Yeah. Yes, see, yes. No, no, you don't have to do it like this. You don't have to do it like this. I'm just changing it. For now, it's okay. If it has went like this, this style. But for this, I don't want it like this. I'm telling you. ORE, even I was able to convince this database team, they are going to create an additional field for ORE. Okay. Their architect who was Morley, right, even he was agreed that that is a critical field.
+
+00:07:52 - 00:09:11 Unknown Speaker:
+
+This one. So he agreed to keep a different field all over there. Okay. Don't go ahead with his designation. He is almost equivalent to Rajendra's post. Okay. So they are going to create this ORA text. Okay. So that would store your ORA details. I'm just writing over here. Store ORA number or details. This is one and now if you are marking it as yes, if you are marking it as no, it would be blank. Right? Correct. If you are marking it as no, so this is non-mandatory. So take those considerations. Nirmal. Nirmal, got it, right? If he is marking as no, then he will not send the ORE number. But if it is yes, Then issue overview. Right. So issue overview would be another field over here. Okay. And in order to map it, let's do like this.
+
+00:09:14 - 00:10:25 Unknown Speaker:
+
+So that we would know what exactly these fields are. Okay so you can map this with this is for question number three any question rather than business justification question right we can put question code you know that kind of that will be you know. No, that's fine. Let it be again. You guys need to do lots of code changing, right? Because it's not just a UI change. Again, you have to change the JSON parameter. Leave it for time being. We'll refactor it later. Okay. Okay. And then issue over view. And now if it is yes, right? Yes. Then this text box is going to get saved over this one, right? But for this yes, no, you have to make one more field. So, this is going, look, let's go one by one. This is first one.
+
+00:10:26 - 00:11:42 Unknown Speaker:
+
+This you have marked it as yes. Next is issue overview. Okay. Next is your, what an issue or worry raised. So, worry raised, yes or no, and then actual number appears. And please make sure to have an alignment with Nirmal and, you know, UI. Just save it as yes, no. Don't mark it as true, false. We can cast it later. Okay. And then this would be the ORE number. Got it. Okay. An overview or debate or whatever. Okay, so see if this is an object like this. Clear with this yes, you can edit this one. Question three also just put this in just for the reference question code three line number 22. That will be coming only as yes, yes, okay.
+
+00:11:44 - 00:12:49 Unknown Speaker:
+
+Okay, so like this and for this, I'll help you with one, you know, oh, okay, ORE text would be, but this would not go under your JSON object. Please make sure. Separate field would be provided. Just one thing, Sachin, this ORE region, ORE text, right, this will be for each question. Yeah, this would be for all questions, but it's not a mandatory field. Let's say for question 1 also we have ORE, question 2 also we have ORE. No, only for 3. Only for question 3. Only for question 3 and only if the user selects yes. And if it is no, then there would be no ORE to be sent. Based on this yes and this yes, those next field gets enabled. And if somebody is having implementation challenges, go through this UI once.
+
+00:12:49 - 00:14:21 Unknown Speaker:
+
+You all have credentials. Nirmal, Pithvi, you all have credentials. Especially this is for you, Nirmal. Got it? These are the Boolean properties. This would be one change for this or even, okay? Can you go to that payload again? So this is a separate field in the DB, okay? So nothing to do from the UI or payload. UI is going to send this as a JSON object. What Nirmal has to do when he is creating that JSON to store in the DB for rest of the question, right? This should not be the part of JSON object. It would be save to a different field in the database. Okay. Just like you are saving this null valid or mean valid, right? So similarly, this should go and save into the database.
+
+00:14:22 - 00:15:34 Unknown Speaker:
+
+If required, you can take this one, but that would not look good, right? So it would be better if you maintain this question 33333. If it is false, these three becomes non-mandatory. If it is true, At least these three becomes mandatory. And if it is false, then this becomes non-mandatory. So that's something you can navigate through the UI. That much of, you know, intelligence you have to apply. And in case if you are still struggling, just let me know. Sure. We can change this question five also to true-false. Yeah, yeah. That's also you can do that as true-false. So, instead of string, just give it in a Boolean value. It will be, I mean, removed from code, Sachin. Yeah. For the other two also. Okay. Got it, right? Let me see if there are further modifications and I'll let you know.
+
+00:15:34 - 00:16:38 Unknown Speaker:
+
+Sure. One is the SQL query that would be passed. Is it being there or no? It is not being there. So one more information you are going to get. That is the SQL query. That is for the complex true. Yeah, that is for complex from your side, but it would be applicable for simple checks also. And that would something come from the SFT update. That I'll explain all of you while I'll get back to you on this one. Query execution date. Query execution date is not required. It will come from the backend. And approval rejection reason is not required. It will be updated from human tasks. So, this much things would be required. Okay. If complex is true, then you have to power this SQL query also. And they might upload a file also. Right.
+
+00:16:38 - 00:18:47 Unknown Speaker:
+
+So, even try to save this in a such a way, maybe a JSON object itself or a text field. Right. Because understand this can become bit complex like this. A SQL query can be like this also, right? Itna bada bhi ho sakta hai. Right? So, better, you know, just, ye bada ho sakta hai, kuch bhi ho sakta hai. Right? I have to create a service ID group like this one. I did it for the GSD fraud. Right now save it as a text. Okay. Later on we will go by IS3 route when they would be uploading the file. But this is again non-mandatory field but you are going to get this one if it is a complex text for SEO. Okay. So now we are done with your first bundle which is you know validating the request.
+
+00:18:48 - 00:19:49 Unknown Speaker:
+
+Then again, hear it back in IP also. In case of, you know, suppose somebody is trying to save a use case, right? And use case already. On use case part, what my recommendation is, let's not keep that validation in the backend. Okay? You are already getting all the use case details, right? So when when they are putting suppose somebody selects other and somebody bit smarter region right apply a trim functionality and compare it yourself only. Because back-end me agar mai compare karunga toh what would happen, I have to make a additional DB call to pull again all the team details, right? Agreed, agreed, not a problem. We'll do it for the Y. We'll check for the case also. Like if somebody is adding like this, right? We can't restrict it. Yes, we will do a train check and then...
+
+00:19:50 - 00:20:44 Unknown Speaker:
+
+Case check. So I convert this to lowercase. Lowercase and compare it. Right. And normally you can avoid that check at the backend level because unnecessarily it would be a DB call again for you. Okay. Okay. So that is one. So again, Kundal, like, you know, if there are certain business validation error, right, like which we were discussing, then we just need to stop the process. Yeah. Right. Just confirm me if you're good or not, because even you have worked on this validated request bundle initially. Yeah. Right. So this is just doing the validation in case of business exception. We are stopping the process. And again, in case of system exception, also, we are just stopping the process. I modify this. This is to Nirmal and Fitzvi. I have created just single exception handler.
+
+00:20:45 - 00:21:41 Unknown Speaker:
+
+So, you both don't need to create an exception handler. Now, everything is getting matched over there only. Okay? Yeah, sure. Who all is working on this? Everybody. Everyone. Athar, Nirmal, you have already did it, right? So, multiple folks are working, but I have segregated the task in such a way that they would not conflict at any case. It's just that. Create a fork out of it from the branch so that you would not get a code conflict. Okay, just take the update and then try to commit it. Okay, let's move forward. It's already 12, right? Now, in case of new use case registration, what exactly we are doing over here? We are, if they are selecting it as others, right? We are just passing zero and then you can register the new team. Okay.
+
+00:21:41 - 00:22:55 Unknown Speaker:
+
+And as it is a DV operation, there might be a chance of system exception. So, we would directly go to that exception handler. There should not be any retry because it is a DV operation and we might end up saving the same data couple of times. So, no retry functionality over this one, Nirmal. Please take a note of it. If it is failed, you have to fail the use case and then they need to register it again. Okay. This bundle code is done, right? Let's say the user has entered a new use case and then while submitting it, he submitted the rule. So in that case, if this use case will fail, the rule submission will also fail, right? So this is that one now, this is here if they are selecting others, otherwise, in case of same right one call out normal.
+
+00:22:55 - 00:23:54 Unknown Speaker:
+
+If it is same team, then you have to make a database call to fetch its distribution list. Okay. And if we are making a DB call already, right, you can also do a validation at your end, a double validation with the same use case. Let it be to be on the front end and even you can do it at your end. Anyhow, we are going to do it, right, because based on this, whatever distribution list is, you need to populate this field which would not be shared by the front end anymore. This field would populate only if it is a new team, existing team. Otherwise, this field. Why do we need this field? We need this field. There is a mapping while we are sending the alert. I think I have explained it to you last time.
+
+00:23:54 - 00:25:08 Unknown Speaker:
+
+Yes. So let's say if it's already existing user, will not be passing this field, right? You are not supposed to pass it, let back into, and you don't want to pass this one, right? Yeah. Let's say if it's existing use case selected, so we are not passing this, so why should we pass for a new use case also? Anyway, it can be picked up from that field only. We have one more field that team did it, right? Will you be able to remember or should I remove it? From json object back and to which details from details for adjusting use case. And for others, you are already getting this failed over here. Where did it go? Here it is. Okay? So, I have marked this. This will remove it from the authority.
+
+00:25:09 - 00:26:19 Unknown Speaker:
+
+And normally, you have to understand this one, right? You will not get this property in the future. Okay? Okay. So, any other question on this? No. Okay. Next step is we are just submitting the data to the database. It would create a new rule. Okay, with all these entry. So this would be... Tell me. No, create was happening at the end, right? No, it would have happened earlier. I am telling you why it would have happened. For this, the change is very big. That's what I was trying to tell you. This would create a role immediately. Okay? In the database. And even it would create a human task. Okay? Now, what would happen? The UI is displaying the details using the human task. Okay? Now, if I have created 4 roles, 5 roles, 10 roles, even 100 roles for today's date.
+
+00:26:19 - 00:27:19 Unknown Speaker:
+
+Okay? Now, There would be a pipeline which would read these details which Nirmal is working on, right? Where is Nirmal? Here. Okay. He is already working on that part, right? He would take all those details and dump into the DQ artifacts. That pipeline is already existing, right? Okay. If we are pulling today, we have to maintain a status as well, right? No, no, no. We will not do it today. We will do it in the previous state. Even for the previous decision, we will have to maintain a status. So that let's say in between, someone comes and approves it. We will not do it. We will not let them approve it from the UI. Until they understand the flow and then we will talk about it. We would not let it approve until and unless...
+
+00:27:19 - 00:28:28 Unknown Speaker:
+
+There is some status being displayed and that mapping would be done. It would be blocked from the front end side. Nobody would be able to approve it. Okay. Now what is the plan? You save those data to the database. Human task is being created. Email notification has been sent to the user who has created that rule. Mentioning your rule request submission has been done. These blah blah blah are the details which we are already doing. No change on this bundle. Now, this role would sit for the whole day till 12 a.m. right? If there are four roles, five roles, whatever number of roles would be, it would pick up all those roles. Okay. And then populate the DQO artifacts with the respective details. Any questions on this? Anyone? Okay. Now, after the approving, right?
+
+00:28:30 - 00:29:21 Unknown Speaker:
+
+Approval, we haven't reached till approval. Wait to the point. Right now, just role created. It was not being approved or rejected. Okay. It just make an entry to the database. Okay. Human task has been created. This task is waiting on the list, but no accent. Even user can take it. I'll tell you the reason. Maybe once you have confirmed that you are understood till this point. Rule created. Email has been sent. Human task has been created. It is being displayed to the product team to either approve it or reject it, but they won't be able to take any accent. There is a flag for that. Okay, so now once the rules gets populated on the UI, SARPAT 12, Nirmal's job would run. Send the details to the DQ artifacts. One call out to all of you.
+
+00:29:21 - 00:30:16 Unknown Speaker:
+
+We are getting N numbers of email every day. Right? Nobody is looking what pass, what fail. I need a change on this approach. Can you guys start? Quoting it in a such a way may be a alert to tech team or a task to be done. May be something in the subject so that now suppose there are no new rules right for today's date. That means there is nothing to be processed and we really don't need to bother about any you know exception or something that might have happened due to the previous instances. But if there is a rule and if there are some failure happening on the backend, right? I need to identify those emails because look, these many emails are there, right? Why would I bother to check all individual one, right?
+
+00:30:16 - 00:31:13 Unknown Speaker:
+
+Even the failure one, right? And if something is getting failed, right? I need to have a key, right? A unique key so that whenever I locks in for the day, I can just go to this my, you you know, respective folder and then search it with that key so that whatever piece of process has been failed for today's date, I can just check and work on that. Maybe that would be applicable even for the DAG, even for the ACE automation, everything. Maybe write this alert in a capital letter on all these cases. Right? No, what I'm telling is, let it be how it is, okay? What we need is, we will just customize, one more email will be triggered just only for the tech team for the failed one, okay? No, that is not feasible.
+
+00:31:13 - 00:32:02 Unknown Speaker:
+
+There are couple of two different platform. Again, you won't be able to create a BPMN and all together a new deck. Whichever, like, suppose tenure is failing, right? Tomorrow is tenure's run, right? I should not be creating a tag again just to monitor the 10 years run. UMDL is running, right? No, I am not telling to create a new tag. What I am telling is, see, the email is common, right? We are triggering the email. What we will do is for the, you know, the failed scenario, right? Just we will write one, you know, util or we can say custom util, okay? Normal flow will work. In parallel, if there is any system exception or BPMN failure or DAG failure, right, one more email will trigger. That will directly go to our tech team, okay?
+
+00:32:03 - 00:33:01 Unknown Speaker:
+
+That will not interact with us. That's what I'm telling you. Even these past results are coming to tech team, right? Let's include alert with caps, right? So that would signify these are the process I need to check today. As why this has been failed. Okay. So, going forward, all of you, wherever you are creating those failure scenario, mark this alert as a capital so that, you know, anyone can know and then they can work on it. Okay. Now, let me get back. Role created, human task created. SARPAT-12, minimal process run. It has updated the DQ artifacts with all those details, right, which we have talked about. Next is your preface automation. You are there in the call, right? As of now, whenever you are receiving a complex text, you are not doing any activity.
+
+00:33:02 - 00:34:13 Unknown Speaker:
+
+One change I need for complex text, you are going to get this SQL. Okay. So one twist. Work with Sameer. Sameer, you are also there, are you? Yes, Sachin. Yeah. So even for the complex check, you have to execute the SQL query in the BigQuery, get the result, and update the same row over there. Okay? Even if it is error. No. Why we have to solve it? Complex one. Whether, look, What you need to do in the DQ artifacts. Sachin, who would enter that SQL query there? The user. Okay. For the complex one, if you go to this screen, now if you enable this complex, they would enter the SQL query over here. Okay, Sachin. Like if they have entered any syntactical errors, right? So that would fail, right? That would fail. That's it.
+
+00:34:16 - 00:35:12 Unknown Speaker:
+
+It's not safe, I think, because we are executing on the DB and we are trusting the user, right? So you have to do a validation. It should not be an insert or update query. It should be select query only. That's something we have to... groom our automation that it should not execute any insert or update query. Sachin, if you have some pattern, let's say it starts with select or update. Yeah, yeah, that's right. Look, if somebody is trying to do an insert query, they can do only when the insert statement would be above or update statement would be above. You can't write insert over here inside this. Okay, so let's say a query is starting with insert or update. That will be only validated. It will throw an error in the URL to enter the valid query.
+
+00:35:13 - 00:36:08 Unknown Speaker:
+
+Exactly. So, the business user is going to give that query, is it? For the complex one. They would write a query over here in this field. Oh, okay. Like this, they would write it. And they would not come up with this project data set and data set. This is something, let me talk to Rachna on this because if you are not providing this, it would anyhow going to get failed, right? Yeah. We need to talk to Rachna on this one. I'll talk to her in the, just take a note, okay? I don't know, like we are giving such things to the user, right? They can easily, I mean, if not misuse, at least they can create a problem out of that. Why don't they provide a text to us? We will verify it and then we will approve that, no?
+
+00:36:10 - 00:37:00 Unknown Speaker:
+
+No, no, no, no. That is the requirement. Suppose there is a table section and they want to select API data. You are running its service ID, man. Why you are bothered about it? That's what I told you, right? Somebody suppose trying to create a query, write a query on this GAM summary CA, right? Yeah, if my service ID is not having access anyhow, it is going to get failed over there. Okay. Right, if I don't have those all access, right, I just need to give a error response, right, access issue. That is what I was discussing last Friday with both of you. I need that to be captured as access issue. Or, If it is a syntax error, then syntax issue. But this is something we need to talk to Rachna.
+
+00:37:00 - 00:37:52 Unknown Speaker:
+
+Like, you know, we are providing these use cases and project data side, right? Even inside some of the query, right? And if they want this to be formatted for the complex query, then we would need a sprint effort for enabling their complex data check type. Because user would not, user would just fill this, right? They would not write this use case data set and data set and all, right? So that is something we need to discuss with how to, you know, deal with this. But the requirement is whatever SQL query they have submitted, if it is not insert and update, execute it and then save the result into the TQ artifacts in that SQL query. Clear or not? Yeah, except for next print only, right? Not now. No, it's now only, man. It's now only.
+
+00:37:53 - 00:38:41 Unknown Speaker:
+
+Why would I waste my time again to do a revision again? Okay. This spread only. Okay. So, right now you guys, Samit doesn't have a very big change, right? He just need to execute that query, save the result, right? When he is already executing it for the simple check, why can't he execute the same for the complex one? We just need to, you know, right now you might be stopping the flow for the complex one, right? Just rewrite. The code in a such a way that once you receive a complex check, instead of straight away marking it as fail, just route it to that query execution step. It is not a big change, man, right? I already did those analysis and then I am, you know, providing you work for that. Yeah, fine. Okay.
+
+00:38:42 - 00:39:39 Unknown Speaker:
+
+So, if it is a complex check, execute that SQL. And the details that you have to update, I think I have already called it out last Friday, right? You have to do save actual value, expected value, pass, fail, right? And then this SQL query to be saved on the DQ artifacts. For DQ artifacts, again, you have to be pretty clear. Like if it is a complex SQL query already would be there. No need to update the details. If it is only for the simple check, then the query that you have generated, that you have to store over there. Got my point. For complex check, when Nirmal is transferring those data to the DQ artifacts, for complex checks, you would already have those SQL query. No need to update that SQL query.
+
+00:39:39 - 00:40:26 Unknown Speaker:
+
+But for the simple check, The template which is creating those SQL query, you have to update to that artifacts table. Sachin, if the model ID and then the feed key, these values we are replacing, right? So, for complex also we will store it, no? That is what I told, right? I need to talk to Rachna and that is the reason I kept a note, right? Check with Rachna today. We will discuss with her today. No, no, that is fine. What I am saying is. If it is a complex, also we will store that query what is generated because we need to know what is the... If it is complex query, that query will already be available, right? But not with the replaced values. So, there is placeholders, there might be what we are executing exactly.
+
+00:40:27 - 00:41:20 Unknown Speaker:
+
+Let's keep a copy of that also. Anyway, we have the column for that. Wait, wait, wait. Why there is a check of this human? Because even if query executed successfully gives a result, right, this is where IAPA, ANSI or anyone's human would come into a picture. If that complex query is also not storing that, then they would need to modify it and then save it to the DQ repository. Why I did not make this a full automation. I got your point. They might not add those feed key and all, right? But here, that is the reason this human is in place. This is their roles and responsibility before implementing it to the production environment. You don't need to worry about that. You just need to execute the query the way they have given it.
+
+00:41:21 - 00:42:08 Unknown Speaker:
+
+Okay, fine. Can we skip storing complex ones? Yeah. No, no. Query storing in the sense you have to store this value, expected value, actual value. The actual query, a still query I am saying. No, no, no. No, no, no. No need to do that. Let's not make that much complex. If that is their requirement, then that needs lots of effort over there. Because we really don't know what piece of query they are going to send it as. Right? And in order to execute this query, Samir and Prithvi, you can just refer to the method created by APA. That should not take much time. I believe we should have been done by today, but I don't know where you guys stand right now. Because this has already taken lots of time, right? You started working from Wednesday.
+
+00:42:10 - 00:43:06 Unknown Speaker:
+
+Let's take the update later. Yeah, I'll give you update. We executed the feed key and those model ID values are not present in even environment. Not required. I told, right? Not required. You just need to execute the query. That's it. Okay. I'll keep it as zero and then execute it as is. Correct. So now, If you receive four query, irrespective of simple or complex, execute it. And now Ayapa and Kundan, once they execute those four or five query, right, with those five or four roles which they have received at the DQ artifacts, there would be a job which ANSI would be running maybe around 1 AM IST. Okay. Now out of those roles, C would be creating a CSV file. Pulling these actual value, expected value, results and the SQL query. Move to a SFT file.
+
+00:43:07 - 00:44:14 Unknown Speaker:
+
+Okay. So what I mean to say if I receive four roles. It went from ASTB to DQ artifacts. And now we are pulling it back from the DQ artifacts to the ASTB. Where Nirmal would be updating those details with actual value, expected value, result. And here Nirmal you have to update these details now. Implemented date No. Not implemented date Query Result You have to update this query execution date, the query result, actual value, expected value, and the implemented date. SACHIN Anyway, when we are creating the query we have, we are only executing that, right? So, we have all the correct values. So, we will only update these values in the DQ artifacts table, not self-service automation only. You only update into the DQ artifacts, but from DQ artifacts, I need to pull it back to the ASTB, right?
+
+00:44:14 - 00:45:20 Unknown Speaker:
+
+So, for that, I need those type of automation. Okay, okay. Got it. You won't be able to directly interact from the Lumi to ASTB, right? That is not feasible. You have to go via that. Okay, right. That is the reason. There would be another couple of jobs. One would be for ANSI and one for Nirmal. Understood. Now tell me, are you guys clear? He has got the overall ideas. There are a lot of things. This is the second session. That is the reason I am taking, right? We have received... If you stay in my place, how will you design? It's not about designing, Sachin. Suppose you received four rolls. Okay? Four new rolls. Okay? It's become RY. It's become R. So, it is right now in Ace. Okay? It went to Lumi. Lumi artifacts.
+
+00:45:21 - 00:46:21 Unknown Speaker:
+
+DQ artifacts. Okay, with same details, it updated with some of the it executed in the big query. Okay. And the status might be like, you know, query might fail with syntax error, query might fail with access error. Query might fail with, you know, some here and there error. Or it may get executed. Okay, if it is get executed, the result might be pass, might be fail, the way we we used to get it, like it can be pass or fail like this. This is the reason. When I I get, suppose I need to search for a failure. Now I have to go via each individual, that's the problem. Like, right, it can be fail, it can be pass. So basically, we are getting back those four, uh. The rules right now back to each database with these details.
+
+00:46:21 - 00:47:14 Unknown Speaker:
+
+Okay. So execute in BigQuery and then from there create a file because you need this SFT mapping and then from SFT it is getting back to the ACE. Okay. So that is the reason if you see this rule would be updated in a scheduled batch with a query execution result. Now you have updated the same set of DQID in the database. And that is the reason. That is something not possible with the human task and that was the reason I had to pull back this bundle before the human task. Because you can't update the human task until unless you reserve a task. Right? And we are not supposed to reserve a task. Now do you understand why this came next? Hmm. I got it. Okay. So now this would update it into a batch and now when Athar would be comparing those DQID, right?
+
+00:47:14 - 00:48:07 Unknown Speaker:
+
+Now he would be getting this implemented data as done right with you would be displaying those result with these actual value and all right, this result would be done now. This would enable the admin team to take a call on this once the role gets updated. Now it is ready for either approval or the rejection. Okay, Now, the functionality remains same. Although it is ready for approval or rejection, they haven't taken a decision in two business days. First reminder email would go to them. If they haven't again taken a decision within nine specific days, again a second reminder email go to the business team. Right. Now, if they did not take a decision in 15 working days, then it would be auto rejected. Okay. That's the reason this flag would go over this.
+
+00:48:07 - 00:49:08 Unknown Speaker:
+
+That we are rejecting this. Rule. Okay. Email would be sent to the user mentioning it as auto rejection. Okay. It would go and update that rule as rejected in this approval rejection date with approval rejection reason and there is a flag already in the DB as rejected. Okay. So if it is auto rejected, we need to send the email, update this. And if you come over here, it is stopping the process. Okay. If it is auto rejection. Now, if it is being rejected by the folks also, we are just handling over this response because again, we have to take a call, right? Whether it's being approved by human or rejected by, because if it is rejected, again, we need to just send that email to the user, right? And then again, say the result.
+
+00:49:09 - 00:50:15 Unknown Speaker:
+
+That again gets over here. If it is approved by them, again it would be saved with approved. Okay. Now tell me on this list, there are lots of things are being running. If you guys are clear on this, then I'll move to the next part. Okay. Just one thing Sachin, if it is rejected, right? We have sent the rejection email. And then here it is rule creation response. You will update that role that it has been approved that it has been rejected. Correct. I will change the name. Okay. What is this one? Rule implementation one. I will come back to you first. Tell me till this point is it clear or not? Yes, till here I am good. Because look, this would be same in the modification also, right? I'll be not going to repeat it again.
+
+00:50:15 - 00:51:24 Unknown Speaker:
+
+I'll just skip the design and then you guys need to implement it. Okay? So, once this is rejected, process gets stopped. Now, if approved, what next? Rule has been approved, right? So, there are stages in the rule. First is submission. Next is testing. Testing means that query execution and the result. Next is approval or rejection. And now we are at the approval or rejection state. Last is the implementation. What is this implementation? Implementation is nothing but you are going to enable it using the data quality framework in the E3 environment. So for that. Once it is approved, we are again creating a human task. Okay. Now, this human task is for the technique. So, for every approval, you know, every approve rule, there will be a human task being created.
+
+00:51:24 - 00:52:20 Unknown Speaker:
+
+That human task could have details like rule ID, variable name for which table, what is the description and blah, blah, blah. We have rule ready with that. Automation. We just need to pull that SQL file, plug it within that JSON object in that framework file, whichever you are doing. Then have a dry run again. Send it to Rachna for a sign-off. Once he provides you the sign-off, you need to come to this same portal. And then you need to mark it as either implemented or not implemented. If you are marking it as implementation done, if you just mark it as done, we would be sending an email communications to user mentioning your rule is now live in the E3 environment. So this part is for tech team.
+
+00:52:22 - 00:53:23 Unknown Speaker:
+
+So for every 10 rows that you are going to implement it, now that would be tracked through the same automation which is being used by the business partner team as of now. Okay. So, if API is implementing, it would be assigned to API's name. If it is ANSI, ANSI. If it is Suman, then it would be Suman. So, your ADS ID and everything would be done. So, it would be basically a tracking who has implemented this rule. So, that in case of failure also tomorrow, I can track it down who has worked on this. Okay. So right now these three parts being worked by Pithvi. These were being worked by Nirmal. Okay. And now tell me like for this one Nirmal you need to modify this one. This one. No need to touch this one.
+
+00:53:24 - 00:54:23 Unknown Speaker:
+
+No. There would be slight modification on this human task. No need to touch these two. Not this one also. You have to do a slight modification to this. That's it. So, four to five bundles you have to modify. No need to touch this bundle also, exception handler. So, this way you are having with two bundles and maybe normally you are having with two to three bundles. Now, tell me if anybody have any query. So, this is a big flow. So, if you are planning to deliver per Friday, so, So that's where, like, you know, it should not be like, you know, even Prithvi, you guys are sitting. And I am still working on the automation. Because once this role comes till this flow right.
+
+00:54:23 - 00:55:11 Unknown Speaker:
+
+Your automation should be flexible enough to pull those records and save it to the DQ artifacts and send back the result. It would be a manual trigger for the DAG that you guys are working for timing. We would schedule it later. But if Nirmal says my part is done till this point and I am still waiting to test out the next flow, I should not hear back from you guys that we are still working on it. And that is the reason on Friday I have called it very clearly. I need a better coordination from all of you. Like, even Athar should not be struggling, man, ye API nahi bana hai, which Prithvi, you are working, how can I display the record over there? Yeah, go ahead, Prithvi. Sorry, maybe you would have answered this.
+
+00:55:11 - 00:56:20 Unknown Speaker:
+
+So, this one, after NMS1, extracting the data to, and updating it in the DQ artifacts, the DQ self-service automation, the DAG that I have created, will be executed, right? So, after that only we can trigger out a mail, right? So, are we triggering my dog anywhere from this floor? Yes, not from this floor. That would be scheduled one. We need to schedule that. But, so, if you, as part of execution, this task. Understand. Look, understand. Again, let me repeat it. Suppose four rules register today. Yeah. Forget about four rules. Forget, just. Think one rule is, uh, employee, I mean, you know, requested by the business today, right? First it gets saved to, uh, HDB, HDB, and then it will come to us. Yeah, then at at 12 a.m. normal automation, but it is already there.
+
+00:56:20 - 00:57:26 Unknown Speaker:
+
+Yeah, uh, we'll, we'll pick this, uh, one rule. Right? And update to the DQ artifacts. Yeah. Now, once it is updated, your automation, now here your automation. Yeah. So, it would run on the same date because I think on 12 AM I used to just check the conversant between the UTC. If it is taking the UTC, we have to be careful with respect to the UTC. Okay? Then your automation would pick one rule. Yeah. Okay. After picking that one rule now it is already checking if it is complex or simple. Yeah. And generate the report. Right. If it is if complex just run the query in the BigQuery and then come back and update again DQ artifacts. You have to again update the DQ artifacts. Yeah. With all data, like actual, right, actual value, expected value, pass, fail, right?
+
+00:57:27 - 00:58:25 Unknown Speaker:
+
+Yeah. This you have to do. Once you are done, right, if it is complex, if it is simple, then apart from these, right, apart from these. Query also need to be stored. You have to store SQL query also. Yeah. One more part, send email with the result to partners. The execution. Correct. You already created that report, but we are not sending it, right? So, we have to send it as an attachment to the partners. For time being, keep it US tick until unless we get a sign up from the product team. Once we get a sign up, then we have to send this email also to the partners. So, if it is two rule, then again flow just changes, right? It would be just a loop, right? Now, once your part is done, ANSI job would run.
+
+00:58:27 - 00:59:26 Unknown Speaker:
+
+Just to pick up these details from DQ artifacts. The updated one, right? And then just store it to the SFT. That's it. With a CSV file. Correct? Now, again, Nirmal have to create a job. Yeah, that would be routed back to... Again, it would be SFT to ACE. This is the complete flow. And now it is once ACE, Ather API would just, you know, compare those DQI rule because DQ rule is going to be, DQID is going to be unique every time between the human task and the rule response that he is getting and then he would display those details. Until and unless this details comes into the UI, he would mark those approval flag as block that approval flag basically. Once these displays getting displayed on the UI, then that approval or rejection would be enabled.
+
+00:59:27 - 01:00:17 Unknown Speaker:
+
+Right. But Sachin, actually I am going back to that question. Now, this flow I got it. Okay. Anyway, it is good that you repeated. The question is. Nirmal's automation would pick it and update in DQ artifacts, right? So, what time are you planning to run my automation? So, look, this is going to be a scheduled job. Don't think that we are going to trigger it manually or Nirmal's automation would trigger it. That is something we can check the feasible date. If that is possible, that would be better. Once this diagram gets completed. Let's research it if we can trigger a DAG from another DAG. Then we don't need to schedule it because then I don't need to schedule it at 1 a.m., right? If it is getting over at 12.20 a.m., right?
+
+01:00:18 - 01:01:06 Unknown Speaker:
+
+It would be always better if it's done, right? Let's trigger it at 12.20 a.m., right? This DAG can trigger this one and then this DAG can trigger this DAG. This one we have to schedule it. This AS one we have to schedule it because we really don't have a control on these means you know between AS and Lumi. But it take this part also Nirmal or Prithvi whoever. Yeah I will check this one triggering one deck from another. Sachin can you go back to that BPM sorry only one clarity. Here can you go to the tasks that are assigned to me the bundles. So here. If your rule implementation response, you are again sending out a mail, right? We are doing one from the automation self-service and one more from here. Okay. This is a task level.
+
+01:01:08 - 01:02:09 Unknown Speaker:
+
+I have created four roles. One by suppose Sachin, right? Two by suppose Nirmal. And one by suppose Arthur. Right? So, once this implementation is done, emails would go to Sachin. Now, if Nirmal is having two new rows, so two email would go to Nirmal. But, so somewhere in between the getting the data, updating in the DQ artifacts, after that, and sending out the mail, we should execute my automation, right? So, this is the continuous flow, right? Are we stopping anywhere here in this flow? Because, The step that you have given me, that bundle you have given me, it will go and read the data, actual value, test pass are successful. So, those values and the query, all that would be presented only when my automation is executed. No, man, you are not again understanding.
+
+01:02:09 - 01:03:11 Unknown Speaker:
+
+Your automation part is done over here. Okay. Your automation actual value and everything would be done over here only, right? Right, and when we are updating this human task, right, one more thing, this would be, you know, add the output parameter nirmal. Actual value, what would happen? He don't need to make a DB call, right? From here, this DQ rule ID, he can select those directly from this DQ ID. Right? Now, suppose this human task is creating this DQ rule ID, right? Correct? It is as an input parameter, right? What I mean to say, suppose this is going to, let me copy it, how to make you understand, you guys. Suppose this is the DQ rule ID. Now, on this one, create an output flag. Call it as DQ rule ID.
+
+01:03:11 - 01:04:13 Unknown Speaker:
+
+This is going to be unique every time. Okay. Now, this DQ ID, you can use in any of the bundle where you want to. So, here, DQ rule ID, I can pick it from this DQ rule ID. You don't need to code it or do something. This would auto pick those values. Okay. Similarly other like post human task right we can make those in a output variable and that would be globally available to all these bundles. And if you are not sure just either connect with Kundan or let me know if Kundan is not able to explain it how this input and output variable works I will tell you how this works. Yeah, this one is dependent Prithvi. The reason being Ayyappa may need a day or two, right, to implement the DQ role into the E3 environment.
+
+01:04:14 - 01:05:14 Unknown Speaker:
+
+Correct? That is the reason we are sending again an email to partners mentioning now your DQ role is live in the E3. These are the steps, right? I think I deleted it. Number one is that submission, post approval, then implementation. Suppose he might have received 100 rules, right? Because we are planning for a bulk action also, right? But 100 rules he may need a week to implement, right? He might not be able to implement 100 rules in the same day. Correct? So in that case, whenever he is marking this rule is now live in E3, then we need to send a communication to that part that this rule ID is already being implemented. Now you would be getting an alert like this. Okay. Got it. Okay. Anyone having any other questions? No, Sachin.
+
+01:05:15 - 01:06:18 Unknown Speaker:
+
+I think I have explained it very deeply to all of you. And I'm expecting this to be done as Nirmal was stating was quite correct. If we are able to wrap it up by Wednesday, then we should have a couple of more days to do our testing. Yeah, because I would need some time to integrate. Exactly. I'll target by Friday sometime. So that is the reason I'm taking these go at it. Okay. Okay. So the reason I'm taking that longer session with all of you, the intention is just to, you know, make sure that you understand. And now. Everybody has a dependency. Now, Nirmal, Pithvi, Sameer, Athar or NC, right? And it should not be, I am sitting for a, Nirmal works is not done, UI may, that automation is not running, right?
+
+01:06:19 - 01:07:16 Unknown Speaker:
+
+Please, if required, get into a bridge. Don't come into a state where you would be arguing with each other. Make sure whatever the details have been provided, you are working with that and in case of any problem, just reach out to me. Okay, yeah, go ahead. I do have other tasks. Also, some of the database parameter are still not being updated. Right? So on those cases, you just need to write a SQL query in such a way that you are saving everything, right? It's just that some of the details are not getting saved, so that is fine. I'm still having a call with this DBA partner. I tried to reach out to them on last, you know, Friday only, right? But she mentioned let's connect on Monday. Oh, great. How it come?
+
+01:07:16 - 01:08:06 Unknown Speaker:
+
+Look, it is 12.43 p.m. okay, Okay. So she is still away, right? She is the DB architect. And I could have went and updated the DB with the details I was showing you two guys, right? But why I am not doing it? Because if I do it, I can ask Kayapa to make these changes to that artifacts table right away. But the problem is, again, if they come back with certain changes, right? I don't want to do those repetitions of tasks. So once they finalize, Because this DK rule table would be a... identical table of the DQ artifacts. So maybe wait for today's or tomorrow's time. These DB should be updated, but it should not stop you from the implementation. It just that one or two field would not be there in the database, so just wait for those details by tomorrow.
+
+01:08:06 - 01:08:59 Unknown Speaker:
+
+Hopefully she would connect today and then I'm not sure if she is going to connect because I have set up a call at one and she did not. I don't see her online, so I'll chase with her. Uh, to get it done today itself. Okay? But that should not stop you, right? Like, if you are not able to save all the value, at least some of the values you should be able to save it. Okay? And the most important point is the coordination. Now, my whole OpsR team is being involved on this, right? And I need this to be implemented. And I do have some work related to Rezi with respect to design and all, right? And I might not be able to reach out to you in the evening hours, okay?
+
+01:08:59 - 01:10:04 Unknown Speaker:
+
+I have calls with Jason and Subban and all. But feel free to reach out to me in case you have any query. Sachin, if we have like 5 minutes or 10 minutes, since everyone is there in the call, can we just get the rough times? We have another call with Poonam on next to next Thursday. So I need this to be done by end of this week so that we can test it out here and there. If small fixes are there, we can do it on Monday, not beyond that. My intention is at least we should be able to showcase it to him by end of next week. The Thursday basically meeting may come soon. And then we can plan for a E3 deployment. Okay. Okay. And now I need one thing from your side.
+
+01:10:05 - 01:11:00 Unknown Speaker:
+
+And that is the reason I'm asking you guys. I'll be very honest. If I sit for the day. I can wrap up this code build within a day. If you want to try me out, I can complete that for the modification one. But I am leaving to you guys. You can work with your speed. But at least try to wrap it up everything by this Wednesday. One BPM and additional BPM and NIRMAL you would be requiring or getting the response back. So that is something let me talk to Hiro today. To bypass that SRE review and add additional BPMN. So I'll talk to him and get it approved. Okay. So that part which is going to update your role response on the database. Okay. Now why I have mentioned it to you.
+
+01:11:01 - 01:11:57 Unknown Speaker:
+
+You need to close those DQ rule ID modification by Wednesday. Everything should be done so that I can plan it out for the HDB also. The reason being they have started their office demo call starting tomorrow. Okay. And if people start using this utility, they should not face any trouble. That this is not working, that it's not working. So wherever you have paused, close that one. Max by Wednesday. If you can wrap it up by today, that would be better. Okay. And close it out so that we can update the DQ artifacts. And then once you give me a heads up, then I'll update that database also. And then, you know, they should be able to use that tool which we have built. Okay. Okay.
+
+01:11:59 - 01:12:41 Unknown Speaker:
+
+For you, you need to close that reporting as soon as possible so that I can pull you to that modification one. Okay, so the reporting part, Sachin, we have to get the result first, right? In one query, you want all these things? No, no, it won't come in one query. Then what are all the APIs we are looking for, you know? This won't come in ACE. This is going to get created in the Lumi. Why are you talking about ACE? Yes, I understood that. Okay. That I got it on the phone. You just have to do BigQuery from use case table. Where did the API come from? There's a number of rules, right? If I share my screen.
+
+01:12:43 - 01:13:36 Unknown Speaker:
+
+And look, again, you need to understand, Kundan, the reason, you know, not to give you the self-serve and assign this task because I need my little intervention on this report so that you can close this by your own. Okay, if I assign it to someone else, again, I have to need to guide it to them. Okay, so we don't have that much time. This active rule, variable tracked and tables covered, you can get it from the DQ repository. So create one SQL query for this. Okay, okay. Extinct the table name, variable, you will get the rules, right? Max count, right? Now, create a query for this. This entire thing, right? Okay. Create a query for this and if it can come from the upper query, then bring it. How much is the threshold check?
+
+01:13:36 - 01:14:44 Unknown Speaker:
+
+How much is the valid value? Okay, I will group it and bring it. Okay. This escalation is not a priority right now. This is not going to be there because we don't have a field for this. Okay. And bring out the rest of it. True positive. Just like you want true positive, right? So, again, what you need to do is make a column in DQ repository. You guys take interviews, but after that, no response. I mean, not only you. Don't take me wrong. I'll attend, but you'll not call me back only. At least as far as saying, okay, we're not selected. This is not a small task. It's time-taking, but again, the SLA is the end of this video. Yeah, I'll share the resume sometime. All the variables used, right? Distinct variable.
+
+01:14:48 - 01:15:49 Unknown Speaker:
+
+Do you want to display the name or just the count? No, just the count, not the name. We want everyone's count. And if there is a query somewhere, it will be reached. But this also, our priority needs to be closed by the end of this week. Okay, I'll make a DAG, that's fine. And we have to migrate the data as well. It's not like we just have to report it. Yes, for data migration, we will have to sync it one day. I have a script, I had written it before. Keep the data pulled from this TV, it will get lost, which I was showing to Rachna that day. Keep the data pulled now, otherwise it will be known that the old data will be deleted. From this TV, No, no, no, no. Who told you man?
+
+01:15:50 - 01:16:25 Unknown Speaker:
+
+Who told you? It is not the case. Go to, oh no, Asus. We have already changed that. If you go to this DQIM portal. Go to this alert report. Select any walk basket. Select all the status. Customize the date range. And suppose you want to trigger it from 1st of Jan to the current date. It will give you all the data. Submit it and it will come to you.
+
