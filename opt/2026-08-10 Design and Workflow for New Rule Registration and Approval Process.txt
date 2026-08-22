@@ -1,0 +1,353 @@
+2026-08-10 Design and Workflow for New Rule Registration and Approval Process
+
+Creation Time: 2026/08/10 18:01
+
+
+📅About Meeting
+
+• Date & Time: 2026-08-10 18:01 (Duration: ~51 minutes)
+• Location: Virtual Meeting
+• Attendee: Sachin, Rachna, Sindhuja, Sameer, Prithvi, Nirmal, NC, Athar, Shravan, Ayyappa, Bhargav, Kundan, Suman, Raj, Purna, Raja, others
+
+📒Meeting Outline
+
+Design and Workflow of New Rule Registration and Approval Process
+
+• Backend Validation and Form Submission  
+  Sachin explained the backend validation process that complements UI validation to prevent invalid or duplicate team registrations. If a user bypasses UI validation, the backend bundle stops the process and throws a business exception, requiring resubmission. This validation bundle was already in place and ensures data integrity before proceeding further.
+
+• Team Registration and Duplicate Checks  
+  The system checks if the team is new or existing. For new teams, registration occurs with duplicate name checks to prevent conflicts. Upon successful validation, the rule is saved in the database and displayed in the approval section.
+
+• Rule Execution and Approval Workflow  
+  Submitted rules are executed via a daily batch process at midnight to include all submissions up to 12 a.m., avoiding missing late submissions. Execution results are emailed and displayed on the UI. Approval or rejection flags are enabled only after execution results are available. Users cannot approve rules before results are received.
+
+• Reminder and Auto-Rejection Mechanism  
+  If no decision is made within three business days, a first reminder is sent; a second reminder follows on the ninth working day. If no action is taken by the 15th day, the rule is auto-rejected, and the business partner is notified via email.
+
+• Approval/Rejection Notifications and Process Termination  
+  Upon rejection (manual or auto), the partner receives an email with rejection details. The process stops for rejected rules. Approval triggers the next phase involving the tech team.
+
+• Manual Intervention in Deployment Process  
+  Post-approval, a human-in-the-loop downloads the generated SQL queries, logs them into JSON configurations, and manually integrates them into the production environment using the QTrack framework. Full automation is not feasible due to potential query errors, access restrictions, and the need for initial human review before deployment.
+
+• Clarification on Automation Limits and Deployment Steps  
+  Sachin clarified that automated deployment is limited to SQL script generation. Code commits, pipeline triggers, and RFC approvals require manual steps and human oversight. The team agreed that skipping approval before deployment is not viable given current constraints.
+
+• Terminology Clarification on Testing  
+  The term "testing" was clarified: backend validation of inputs is different from the implementation test run of the entire role. Implementation testing occurs after approval and is distinct from the approval flow.
+
+• Team Involvement and Progress  
+  Six to seven resources including Sameer, Prithvi, Nirmal, NC, Athar, and others are working on the end-to-end flow involving SFT automation and SQL automation changes. The build has started with a targeted completion date.
+
+Data Quality (DQ) ID Updates and Repository Synchronization
+
+• Issue with DQ ID Renaming and Impact  
+  Shravan raised an issue where DQ IDs were renamed in the DQ repository but not updated in the DQ results table, causing mismatches and incorrect outputs in reporting and history checks.
+
+• Requirement to Update Historical Data  
+  Sachin emphasized that to maintain data integrity, DQ results and repository tables must be updated consistently, including historical data, to ensure correct mapping and reporting.
+
+• Impact on ACE Integration and Controls  
+  It was confirmed that ACE integration is unaffected by DQ ID changes as it does not rely on these IDs. However, controls and artifacts referencing DQ IDs must be reviewed and updated accordingly.
+
+• Action Plan and Deadlines  
+  Samir was tasked to update DQ repository, DQ results, and artifacts tables within two days, prioritizing repository and results first, followed by Quantro repository updates. This is urgent to avoid issues as users start using the portal.
+
+Data Processing and CDE Element Identification
+
+• Handling of KRI CSV File and Duplicate Removal  
+  Bhargav was instructed to process the KRI CSV file by identifying and removing duplicate CDE elements while storing the count of repetitions for each variable.
+
+• Marking CDE Elements Based on Usage in QTrack  
+  After deduplication, Bhargav needs to check if variables are used in the DQ repository (QTrack) and mark them as CDE elements with a true flag in an additional column.
+
+• Next Steps and Coordination  
+  The initial focus is on deduplication and marking CDE elements, with further discussion planned on Calibra integration. Kundan will confirm on Calibra-related tasks.
+
+SQL Query Handling and Reporting Adjustments
+
+• Storing and Displaying SQL Queries  
+  SQL queries generated by automation need to be stored in the database (rule table) and displayed to users during approval or rejection. Special characters and formatting must be handled properly.
+
+• Adjustments to SQL Queries for Reporting  
+  Queries referencing DQ repository tables need modification because new DQ IDs may not exist yet in the repository, causing execution failures. It was suggested to replace references to DQ repository with DQ artifacts for reporting purposes.
+
+• Simplification of SQL for User Display  
+  Inner joins in the SQL queries are not required for user display and can be removed to simplify reports. However, the full query with joins should be preserved for developer use and integration.
+
+• Collaboration and Analysis  
+  Sameer and Prithvi are responsible for analyzing the exact SQL needed for user display and developer integration. Sachin emphasized the need for developer support on these technical details.
+
+Pipeline and Data Ingestion Issues
+
+• Ongoing Pipeline Failures and Incident Management  
+  Issues persist with the global dining user pipeline, including table registration failures and source ingestion timestamp problems. New incidents have been raised and assigned to Ramya.
+
+• Source Ingestion Timestamp Missing in Files  
+  The source extract date time is missing in some JSON files, causing pipeline failures. Samir was identified as the best resource to assist with resolving JSON-related issues.
+
+• Guidance on Pipeline Data Structure  
+  Sachin reiterated the importance of having the source extract date time in the file header for proper pipeline functioning and offered to provide further clarification.
+
+Other Updates and Announcements
+
+• Sindhuja and Sravan informed about their limited availability due to GCSP commitments and early log-offs for the next few days.
+
+• Ayyappa was reminded to ensure consistent updates of DQ IDs across all relevant tables and environments.
+
+• Resub will share approximately 200 new CD checks for the team to pick up after completing current tasks.
+
+• The design review by Raj is pending; Sachin will follow up for sign-off and communicate any changes.
+
+📋Overview
+
+• Backend validation ensures data integrity by preventing invalid or duplicate team registrations.
+• Rule execution is performed daily at midnight; approval is only enabled after execution results are available.
+• Reminder and auto-rejection mechanisms enforce timely decision-making on rule approvals.
+• Deployment requires manual intervention due to query complexity, access restrictions, and approval dependencies.
+• DQ ID renaming requires synchronized updates across repository, results, and artifact tables to maintain reporting accuracy.
+• KRI CSV processing involves deduplication and marking variables used in QTrack as CDE elements.
+• SQL queries need adjustment for reporting and user display, balancing developer integration needs and user clarity.
+• Pipeline ingestion issues are being actively managed with incident tracking and resource allocation.
+• Team members communicated availability constraints; new CD checks will be assigned post current workload.
+• Design review and sign-off are pending but in progress to meet project timelines.
+
+🎯Todo List
+
+• Sachin:  
+  • [ ] Follow up with Raj for design review and sign-off, communicate any required changes, ASAP  
+  • [ ] Coordinate with Sameer and Prithvi on SQL query adjustments for reporting and user display, ongoing  
+  • [ ] Ensure communication of rule execution reports and approval status to business partners, ongoing  
+  • [ ] Oversee deployment process and manual integration steps with tech team, ongoing  
+
+• Samir:  
+  • [ ] Update DQ repository, DQ results, and artifact tables with new DQ IDs consistently, prioritize repository and results, within 2 days  
+  • [ ] Assist with resolving JSON and source ingestion timestamp issues in pipelines, ongoing  
+  • [ ] Analyze required SQL query modifications for user report display, collaborate with Prithvi, ongoing  
+
+• Bhargav:  
+  • [ ] Process KRI CSV file to remove duplicates and store count of repeated variables, ASAP  
+  • [ ] Mark variables used in QTrack as CDE elements with a true flag, after deduplication, ASAP  
+
+• Kundan:  
+  • [ ] Confirm details and next steps regarding Calibra integration, ASAP  
+
+• Ayyappa:  
+  • [ ] Ensure consistent update of DQ IDs across DQ repository, DQ results, and artifact tables in all environments, ASAP  
+
+• Nirmal, NC, Athar, Prithvi, Sameer:  
+  • [ ] Continue development and automation work on SFT and SQL automation changes, target completion as per timeline  
+
+• Sindhuja, Sravan:  
+  • [ ] Inform team about limited availability for next 3 days due to GCSP commitments  
+
+• Resub:  
+  • [ ] Share ~200 new CD checks for team to start after current tasks completion
+
+Transcription
+
+00:00:01 - 00:01:02 Unknown Speaker:
+
+Hi, everyone. Hey, hi, Rachna. Rachna. Sweet. Or Sindhuja. Okay, Sindhuja is there, right? I'm here, Sachin. Okay. So, Rachna, let me, you know, walk you through your design for the new requirement that has been placed. Okay. So, as I stated in the previous call, right, most of the folks are working on that. Yeah, okay. Six to seven resources are working on that. So let me tell you what we are doing now. There is a change right now with respect to previous design. Let me know once you are able to view my screen. Okay. Yeah. Okay. So the very first bundle that you are seeing validate form request, right? So this is a backend validation. Okay. That we were doing, suppose, if we, due to certain reason, right? Like, User is able to bypass the UI validations, right?
+
+00:01:02 - 00:01:51 Unknown Speaker:
+
+So we are just doing a revalidation at the back end side. Suppose somebody is trying to register a team called Razy again, right? Or something like that, right, maybe front-end validation. It was failing, right? So in that case, we would be, you know, stopping the request from further processing. And we will be throwing a business exception. Mentioning user invalid request with the exact, uh, you know, error. And then stop the process. That means you need to resubmit the form. Will this go to the business partner or will this go to you? No, no. It would be just stopping the process. Okay. But then like suppose a user has entered all these details, right? It didn't throw them an error while entering then how will they know like what happened? No, no, no.
+
+00:01:51 - 00:02:49 Unknown Speaker:
+
+Suppose due to certain reason, right? Some filter condition or kuch. If they are, you know, sending some bad request, basically, somebody is trying to bypass the UI validation. Yeah, yeah. So, in that case, this bundle would stop them from processing it. So, they would be still in the same form. They can just modify the details and again then just submit it. So, it will throw an error here itself, right? Yes, yes, yes. Like while we are filling it. Exactly. Thank you. It's not that this bundle was introduced newly. It was already been there also. So it would just stop the process. Now if the request validation is successful, the next part we are checking is the team registration. So if it is the existing team, we would bypass this step. We don't need this step.
+
+00:02:50 - 00:03:47 Unknown Speaker:
+
+But. If it is a new registration, it would register that new team. Again, a fallout like, you know, suppose RISI team is already being there, right? And somebody wants to register it, right? So we are handling those kind of checks also over here. So it would not allow them to register with the same name. So they will be getting that error. And then once these validations are done, right? Once you are able to do bypass these validation steps, Then that rule would be created and it would be saved in the database. And for the same rule, it would be displayed to you in the approval section page. Okay. Now, here is the case. Although you are going to view that rule in the approval section, you won't be able to approve that rule until unless this query execution result is being shared to you.
+
+00:03:47 - 00:04:42 Unknown Speaker:
+
+So the plan is. I'll explain it to you. Suppose you have submitted five roles today. Right. Okay. And we plan to execute it based on a daily batch process at the end of the day. Right. So it would run soft at 12 p.m. Okay. Why I am not taking the 10 p.m. suggestion given by Purna? Because what if somebody registered a role at 11 p.m.? We would miss that role. You can't restrict the right user. Right. Let them submit those requests. Right. So 12 a.m. Suppose these five rules they have submitted. We would be running those five rules. Sameer, do you have that report handy? Can you share it over email to me? Even I'll show that to Rachna. The one that you are showing to me. Sameer or Prithvi, whoever is having that handy.
+
+00:04:42 - 00:05:40 Unknown Speaker:
+
+Can you send it back to me quickly? Yeah. Let me show that summary report also, Rachna, which would be sent to you as an email communication. Just let me know once. Either send me over the Slack, even that would work. Sure, Sachin. Wherever it is. Screenshot is enough, right? If you can give me the report, that would be better. Okay. So, basically, Rachna, once those five rows would be created, right, at 12 a.m., this role would be updated with the query execution result. Okay? Okay. And then your approval or rejection flag would be enabled over here. Okay? So, can we like display a message over there until it's not enabled that, you know, this is pending implementation or something? That UI would handle, don't worry about that. Okay?
+
+00:05:41 - 00:06:30 Unknown Speaker:
+
+It's just that as soon as the role gets created, The flow remains same. They would be notified with an email with those details that this is the rule that has been created. Okay. Whatever details we are sending it to them. And then this human task would be in active state till the time you get those results and take action on this. Okay. Sameer, is it done? Yeah, yeah, yeah. Just keep in mind that it is not able to download such results. Okay. Okay. I'll show that maybe to you later, Rachna. Okay. So now you have five roles. All five roles suppose got updated over here. Now that is visible to you. Although it is visible to you, you haven't taken a decision into three business days. You would be getting a first reminder. This remains same.
+
+00:06:30 - 00:07:47 Unknown Speaker:
+
+Okay. Okay. Suppose you still not taken a decision on that on nine working day. Again, you would be getting a second reminder. Okay, okay, now, in case you haven't taken a decision in 15 days, then in that case, we are going to close this rule. As a auto rejected, Okay, yeah, yes, right, yes, and while we are doing an auto rejection, I'll getting a call from Rajas, give me a second. Okay, okay, sure. Okay. So, you know, if you're not taking a decision in 15 days, first of all, it would be auto-rejected. And even the partner would be sent with a communication mentioning that the rule has been auto-rejected. Connect with the product partner for this or whatever message we want to display over there. Yeah.
+
+00:07:48 - 00:08:44 Unknown Speaker:
+
+Now, in case you have rejected or you have approved, okay, this is a bundle which is handling that approval or rejection. So in case even you are rejecting it, it would send an email communication again to the partner mentioning that business team has rejected your request. Connect with the business team for that. Okay. And this will also include that node part we are taking in from UI. Yeah, yeah, yeah. I'll review it with you. And then if any modification is required, we can do that. Okay. So. Auto rejection or rejection by you? Partners should be getting notified with an email. And the same would be saved to the DB, mentioning it as a rejected. And the process would stop over there itself. Okay, but in case you approve this request right now, we if you have approved the request.
+
+00:08:44 - 00:09:47 Unknown Speaker:
+
+We have gone through this step, submission, the step one, testing with those query, execution, result right, and then approval or rejection. This is the third step where the code would be over for you. Your task is done, partner task is done. What we are doing, we are creating a task for ourselves, for the tech team, this is for the tech team. Okay, this is because, whatever suppose I receive these five rules, right? I need to enable these in the production environment using that QTrack framework, right? So I need a human in loop to download that SQL query that has been generated, right? And then even... log it into that JSON configuration and all whatever activity IFR or MCs are doing. So, Sachin, I have a doubt here. Like, last task for the callback corner, right?
+
+00:09:47 - 00:10:41 Unknown Speaker:
+
+That's what we aligned. This part also needs to be automated. The part where we were seeing that we are still doing manually. No, we won't be able to do it. Understand the reason why we can't automate it. Suppose, Samit, that is the reason I am asking for that. Report. Have you sent it? Yes, yes, sir. I shared the bucket if you can open that. The reason being for this, Rachna, there might be certain tables where the service ID might not be having access, right? There might be chances that the query which would be generated by the system, it might be having some error. There might be a chance that for the complex role, right? The query might be having some syntax error, right? It would not be always a pass result. Number one is that.
+
+00:10:41 - 00:11:44 Unknown Speaker:
+
+Second, we won't be able to enroll a query directly to the production environment until unless we have at least a initial review by you or by the developer, right? Right. Those are the part that we need to consider because we can't directly push anything to the production environment. One good call out by Prithvi today for complex checks, right? You are providing a SQL query into the text. What if somebody write an insert query or update query over there? Right. So even when we are executing it, right, we need to consider those expect over there. I just have like one route over here for complex queries. I understand. And other than that, like, suppose we are saying this for the templated queries, right? So those are like fairly minimal and simple.
+
+00:11:44 - 00:12:42 Unknown Speaker:
+
+I agree, but we don't have a capability directly right into the GitHub co-pilot. Sorry, GitHub repo. We can't commit the code directly through a bot over there. Okay, okay. So those code commit, those code refactoring, right? So that part we need a human in loop over there. My only concern over here is because then when we say that we are doing automated deployment, we are not really doing automated deployment. We are only doing automated generation of SQL scripts, right? Yes, yes, yes. Then there is this whole dependency that until a tech partner reviews the entire code and then goes and manually updates it, until then it will again stay waiting. Look, because you need to understand, suppose this is my file, right? Where it was data monitoring tool, right?
+
+00:12:44 - 00:13:36 Unknown Speaker:
+
+So this is my... config JSOn object where I used to inject the, you know, the new rule, right? Yeah, these are the some of the DQ ID suppose new DQ ID gets generated, right, and that needs to be entered over here. This file needs to be updated, compiled, and then the pipeline needs to be triggered to the E3 environment. And that even need a RFC. Correct? Yeah. How can I just automate it directly to the E3 environment? There are lots of processes. One thing, like if we don't do it in E3, can we push it to E1 or E2 so that at least that RFC generation, like whatever data you need, right? And then that approval you need from us. It's not only that part, Rachna. Look, this is some summary, right? I have given, right?
+
+00:13:36 - 00:14:24 Unknown Speaker:
+
+There are lots of process in implementing a simple check to the production environment. It's not that, you know, it's a straightforward that SQL has been generated and I'll just plug in and then, you know, these steps are already communicated to Puna also when we are planning for a E3 CD. So he is aligned on this. Is he aligned? Yeah, because that's my conflict concern because earlier like Purna was the one who was pushing for this. So I'm just wondering if he's aligned, then I think I should be okay. I mean, I do understand that those additional steps are required. If you need this, right, I can share you these tips. Okay, I already communicated this to Purna last time, right? We need to have those access for the table that they are creating those roles, right?
+
+00:14:25 - 00:15:11 Unknown Speaker:
+
+Correct. You know, execute, validate the SQL, configure the DQID, right? Then we have to integrate to the framework, build the pipeline. There might be a chance that your pipeline would fail, right? When you have committed a new code. Correct. And then we need a sign up from you also, right? Just to... Right. So there are lots of steps and then we need a RFC to promote it. And that is the reason we need a human in loop over here. Okay. Okay. And then suppose IFI is working or NC or myself, whoever is working, right? Once they onboard it to the E3 environment, they would just mark it as implemented and then we would send a communication to the partner mentioning your role is now live in the E3 environment. And then you can crack it.
+
+00:15:12 - 00:16:15 Unknown Speaker:
+
+Where is that approval step when we are getting that approval part? You are approving it over here. I believe, can you open that notepad where you were showing that first the rule is submitted, then it is tested, then where is this testing part? Testing is over here, right? Once you are submitting those rules, right? You are calling that back in validation testing. Correct. But then, Sachin, if the service ID doesn't have access to that table, how will the testing go? That is what I told Seven. Those would be the challenges, right, to make it fully automated. And just hold. Sameer, where is the file, man? Why there is a lag in... The last one. The last one. Give me a second. Let me show you the file. You put the .Html. You put .Html. Download.
+
+00:16:18 - 00:17:07 Unknown Speaker:
+
+So, look, these are the issues. REchneR Right, suppose I have onboarded these four roles today, right? This is still in build phase, so don't consider this as sorry, these five rows that we have onboarded right. Out of those five, only one rule which was executed and the actual value was zero, we received it as zero. The result was passed. I just asked to remove this status, right? So in case suppose this DQId right for this table, we don't have access, so in that result, we would mark it as access issue. Right? And then, so there are lots of to and fro are there where we won't be able to automate it straight away. Right, right. And for this DQID, we are even giving you that complete, you know, what is the SQL being generated from here.
+
+00:17:08 - 00:17:58 Unknown Speaker:
+
+Right, right. You can just go through this SQL. So this report would be basically this step. This step. So once that report would be generated, you would be communicated with all those five results over an email. And again, the same would be visible on that UI also to you. Okay. Okay. Got it. Okay. And here you are approving or rejecting. And if you are mentioning that once you approve, we really don't need a further approval from you, then we can just go ahead and then implement into the E3 environment. That's it. If you are. Need that RFC approval, right? So, there itself we will be reviewing it. So, like a separate approval is not needed and we give sign off for E3 deployment that itself can be counted. Okay.
+
+00:17:59 - 00:18:51 Unknown Speaker:
+
+So, that is how once IFR or whoever is working, they would mark it as E3 deploy, we would mark it as implemented. Okay. One reason for not bypassing this step and disabling this approval. No, no, that is needed, Sachin. What was, no, the flow, I think, I think we are confusing the testing part, like the term I am using for testing the term NOAA. So you mean to say that whatever input we are taking that. Testing when we are doing on the input itself that you are calling as testing. What me and Purna was referring to as testing was the like implementation test part that the first run that happens of the entire role, we were calling that as testing. Uh, so probably there was like that term interchangeability, but yeah, like, that's what we meant.
+
+00:18:51 - 00:19:42 Unknown Speaker:
+
+That no, should not be connected to the approval flow. Like, uh. Yeah, so that doesn't need to wait on us for approval. That should directly go to that part, like the implementation part. No, look, why we are not straight away implementing it until unless we get approval from you, right? Suppose you are rejecting that request and internally I am doing integration and doing a backend testing. Doesn't make a sense, right? If that rule is being rejected, my all effort would be wasted on those. Testing, right? Once the rule is approved, then if I go plug in and then do a testing and then share you the result and then get a sign up and then deploy. That makes a sense. You might be receiving five roles, right? And out of five, suppose you rejected three?
+
+00:19:42 - 00:20:33 Unknown Speaker:
+
+Why would I do a testing? Yeah, but I'm just trying to think of scenarios such as like, why exactly we would reject the rules? It's probably because they did not provide complete info, say in the business justification. Something is missing or something is not as per what we needed. So like, when we reject it, they can, like, come and provide that additional info, like whatever was missing. Yeah, so anyhow you are taking a decision and I am relying on your decision. If you are rejecting three rules out of five, I should not be consuming my resource time with those implementation of those three rules. Until unless it is being approved. Yeah, I mean, considering it's not fully automated, this makes sense. I believe like when food was suggesting that we go ahead with the implementation without approval step.
+
+00:20:34 - 00:21:24 Unknown Speaker:
+
+So that was considering that the entire thing is automated. But if not, definitely like we don't want to use this capacity. Yeah. And there is a.Challenge with this one, right? I already told you like, access issue there query, although you might have. You can also ping me those details which you have shared with Puna and Raja. So if I need to align, I'll check with that. And I think, let's let's also call this out clearly in next demo call with Puna because. So that there are no like misaligned expectations that he's expecting this will be fully. Anyhow, this is not the final design. I asked Raj for some time. He just called me, right? I would get it reviewed from Raj. Once even he gives his heads up, then I'll confirm you.
+
+00:21:24 - 00:22:11 Unknown Speaker:
+
+We already started working it because we need to meet the timeline. But I did not get time from Raj to get it reviewed. I'll connect with him today to get it reviewed and sign off, right? Even the last status that we have said, right? I clearly called it out that uh, design is, uh, design review is pending. Yeah, yeah, right, right, so uh, this one where it is, uh, review pending, right, I already called it out. So once Raj review this today, then then I'll confirm you. If he comes up with some certain, you know, changes, then I'll let you know. But this is the overall plan for this, and this same same would go for the modify one also. Modify one, I haven't drawn it as of now.
+
+00:22:12 - 00:23:04 Unknown Speaker:
+
+So once this create one gets approved, then I'll create the modify one also. Sure, sure, sure. That works. Okay. And here, once you are approving it, we are not sending an email because that would be lots of email to the user. We are already sending one for registration and then... Yeah, yeah, I think that should be fine. That's what the portal is for. It should show that. Exactly, exactly. But if you need, I can draw another one, but I feel that would be lots of email. For approval, that's all right, yeah. Anyhow, we are sending a mail on rejection, right? So, approval is not needed. Rejection is fine. Okay, so on this one, like Nirmal is doing some work, NC is doing a part, Pithvi, Sameer are doing a part. Who else left?
+
+00:23:04 - 00:23:57 Unknown Speaker:
+
+I think most of the six resources, Sameer, Pithvi, Nirmal, NC, Athar, right? These people are involved on end-to-end flow because there are lots of, you know, SFT changes are there in the SFT automation. Automation changes there in that SQL automation which we are generating, okay, so those changes are in it. One call out for the SQL query when we are selecting the complex so complex one, right? If you see this one, right? How to tackle this? Because people might send any type of query a straightforward correct, they will only send us the code. Right. They will not send it to us in the format that we need. Because then that is. That has to go via the manual route. And I don't think we can do something about it.
+
+00:23:57 - 00:24:52 Unknown Speaker:
+
+Because anyway, like the code can be very complicated and we might not be easily able to fit it into a Python template. Yeah, exactly. And even these like, you know, just these parameter platform data set and all, which is required. Right. They might not provide this also. Correct. Correct. They will not. Okay, then aligned, Rachna. For the complex checks, anyhow post your approval. SQL, we need to pick it up from that particular column and then we need to convert it to a BigQuery that is not there and then manual integration would be required for that. Right, right. Okay. That was all about this automation. We have started the build and hopefully we can close this by the targeted date that we have communicated. That's great, Sachin. Okay. And anything else that you want to discuss?
+
+00:24:55 - 00:26:15 Unknown Speaker:
+
+No, I believe we discussed the rest in our call earlier, so I'm all in. Okay. Anything from your side, Sindhuja, Sravan? No, Sachin. Just that I won't be attending the evening calls for the next three days as it concerns my GCSP at Lanix. Just letting you all know. This is DSU, right? Yeah, DSU. One call out. Even I'll be logging off early tomorrow evening. Maybe 6.30. I'll try to join this DSU and maybe post DSU. Okay, such innovations. Okay. Aipa, just one heads up for you and Suman. Resub will be sharing around 200 new CD checks. Okay. So once you're done with your existing work, start picking up those. Yeah, sure. The same Excel, okay? The location that was being shared earlier. Sachin, Rachana, I had one question. Rachana, the other day we were discussing about that TQID update.
+
+00:26:16 - 00:27:14 Unknown Speaker:
+
+Have you had a chance to connect with Sachin? Oh, yeah. Thank you for the call out, Shravan. So, Sachin, this one is for you. Actually, there was that one Resi R42 issue, right? And while investigating that, Shravan and Suman found out that what was happening is Ayyappa has renamed, like, reconfigured the DQ IDs in that DQ repository table, right? But the same has not been done in the DQ results table. So now when we are searching something with a DQ ID in the DQ results table, it's obviously not giving the correct output. And this will eventually also impact your DQ IM reporting and everything else. So even that needs to be taken care of. So how to do it? Because then there would be huge work, right? So, it should be done for all the past data only, right?
+
+00:27:14 - 00:28:17 Unknown Speaker:
+
+Like going forward anyways, reading the new DQID, so everything is generated as per that. But for the past data, it needs to be renewed. No, if we do that in the DQ result, right, we won't be able to map it from the ASTV then, AST data. Oh, why so? AS data would be having those previous DQID, right? Again, we need to map it. But then how are we planning to handle the renamed versions like the now? So, how are these even coming on DQID? Okay. Because DQ result would be having lots of data, right? Yeah, yeah. So, you have to modify the DQ results also then. Also, is the ACE integration broken right now because of the new DQIDs? So whatever is running now, it's not going into DQIM, is it? No, no, no.
+
+00:28:17 - 00:29:19 Unknown Speaker:
+
+That doesn't have a dependency with that, right? DQID doesn't have a relationship. So if there is an alert, right, it would just register with a new DQID, but there should not be any impact on that ACE side. So, there is no impact on his side, right? No, no, no. There was no, because it doesn't have a relationship and all. Just, Ayyappa, please make sure that wherever you are updating, right, even in the DQ result, you have to update those DQ ID with the new DQ ID that you have created. And, please make sure we are closing this activity in next couple of days. Sachin, I have to jump to one of the calls. I'll just drop a mail for sign-off and you can just test it and give it. I'll work with Park 12 to deploy it in E3.
+
+00:29:20 - 00:30:26 Unknown Speaker:
+
+Okay, okay. Sure, Arthur. Thank you. Bye. Okay. So, I just noted like wherever you are updating the DQ repository, right? Just update the DQ repository. Sir, actually I didn't understand what was the problem in the DQ repository. Look, suppose in the DQ repository you are updating suppose 101 rule is there. 101. Now you have updated it to 101. Now, 101 is already being entered in the DQ repository. If it is a daily job, it might be getting entered on a daily basis. Now, whenever you are trying to map it with the DQ repository, you are not going to find that details, right? The reason being, you have updated that 101 to 1 in the DQ repository, but it doesn't have a reference and it is very simple, right?
+
+00:30:27 - 00:32:06 Unknown Speaker:
+
+Yeah, that I understood, but that context also, because that context having very few scenarios. Very. No, ma'am. How few scenarios? All the DQ repository, DQ IDs are only going to the DQ result, right? So how there would be a small scenario? It would be all the data, right? If you are updating, so that means you have to update all those DQ ID from last one year. Even for the previous year, that is having a global impact. And even we have to update for the control also. Samir If you are storing those DQ ID for control, right? What I need to say is because this is your DK repository. Oh man. Now suppose this is one DQID. 1, 2, 3, 4, 5, 6, 7, 8, 9, 10. Let me copy this. Okay. And DQID equals to suppose this one.
+
+00:32:11 - 00:33:05 Unknown Speaker:
+
+Okay. Now, suppose you rename this to 1. Just take an example. In the DQ repository, you have renamed it to 1. But in the DQ result, it still remains as 102222, right? There is no data, right? We may need to find out a data for which there would be a result in the DQ repository. Yeah, yeah. I understood, Sachin. Actually, the problem is actually... So, the problem over here is that if you remove that reference, right, how would I understand for this TQ ID how many pass or fail result are there in the TQ results? This only will cause the issue at the time of history checking purpose. Yeah, yeah, correct, correct. And I need this reference, man. Right, for the previous failure, right? So, if you are updating the repository, then you have to update the results also.
+
+00:33:14 - 00:34:03 Unknown Speaker:
+
+Hold on. So, suppose this is the DQ ID, right? Which you have updated as 1 over here. Now, suppose Poonam wants to search for this, how many times it has passed or failed, right? He won't be getting a reference in the DQ results. So, we need to update that also. Yeah, sure. Okay. So, just... Yeah, go ahead. Uh, no such thing. I am saying, like a one, zero, one, double, one, four. That is like a.It's already moved to the art, so whichever you guys have moved, it just makes you that you are updating the DQ results for that. Also. Okay, and one more thing that why didn't we called it out on the depth channel? Then? We could have looked into it from today morning, only if you guys have figured it out, we could have intimated on the depth channel.
+
+00:34:03 - 00:35:07 Unknown Speaker:
+
+Okay. Okay, if I make that change also for the DQ ID that you are updating in the DQ repository, right? You need to make sure that you are updating on the DQ repository. And again, there would be a reference in the control also. So, Samir, identify where it would have an impact on the control. Okay. Because if you are updating it on that... Repository, there are multiple places now you have to update. One is Quantro repository also, Quantro results also, Dequeue results also, Dequeue artifacts also. But first of all, wrap up Dequeue repository and Dequeue results, okay? And then go for Quantro maybe at the last moment because as it is having its independent repository table, right? It would not have a direct impact right now. So, first your target would be repository result and the artifacts.
+
+00:35:08 - 00:36:07 Unknown Speaker:
+
+I need this in next two days. And then once we are done, we can pick it up this one. Got it, right? Am I audible? Yes, yes. Sorry, I was in mute actually. Yeah, I got it, Sachin, your plan. Yeah, so I will follow that. Yeah, Quantro, you can take it up later, but make sure repository results are updated and then post that, update the artifacts so that I can update it over the ASTB by end of this Friday. And this is urgent, guys, because then again, you know, we should not be planning it later, then people would start using that portal. And now going forward, if you are updating anything on the repository, you have to update it into three places. One is artifact and one in the ACE database also.
+
+00:36:07 - 00:37:15 Unknown Speaker:
+
+And that's all in all three environments. To be insane. Yeah. Okay. Got it. Yeah. Okay. Anyone having any other questions? Yeah, Bhargav for you. Bhargav, you understood what they are asking, the KRI's CSV file that you are receiving, right? On that CSV file, what you need to do, first of all, whatever results are being shared, right? Suppose you need 7000 something CDE, right? Identify the duplicates and remove the duplicates from that, number one. Okay? While identifying the duplicates, identify the number of times a particular variable or the CDE element being repeated. We need to store that count also. Although we need a distinct of that, but at the same time, I need a count of that also. Okay. So here, the CSP output, we are only expecting all the lineage, like total columns and source table and the target columns.
+
+00:37:15 - 00:38:12 Unknown Speaker:
+
+So the columns that you receive, right? Suppose for customer 360 table, right? Because I have a customer 360 table, and out of that customer 360 table, suppose I have a first name for that particular table. Right now. On that ARI. Check how many times this first first name has been repeated in the end result. Is it being repeated five times or eight times? Okay, okay. So whatever count is, you have to store the count also for those variable. Okay, okay, but but. At the final output, it should be only one first name in the CD. Okay. That is number one, right? No duplicates. So that is number one target. Second target is once you identify that one, then we need to see whether that variable being used in Q track. Okay.
+
+00:38:13 - 00:39:12 Unknown Speaker:
+
+Q track means in the DQ repository, whether it has been used in this DQ repository or not. And from here, you can find it out in this variable. There is a column called variable name. Yeah, this var name. Okay. Or the table. Okay. Okay. So, if it has been, you know, used in this GQ repository, mark it as a CDE element. You need to create an additional column CDE as true. Okay. Okay, that is second. And then first of all, wrap up this part and then maybe I'll discuss on that Calibra. Okay. Okay. And Kundan, you have to confirm me on this Calibra also. The one that I have given to you. Yeah, I will do that. Okay. So basically right now you're doing this one Bhargava and this one Q-Track. First check this one.
+
+00:39:13 - 00:40:32 Unknown Speaker:
+
+Unique element and then check whether it has been used in the queue track or not. Okay. Yeah. Anyone having any challenges on this implement different between Irmal, Athar? Sachin, do we have to save that SQL query to the database? Yes. To the database, right? On the rule table. Yeah. We have to save it right now, comment it out. And just explore what is the best way to store it into a DB. Yeah, I was doing that. Because I have to display that query to the user. All the this admin folks when they would be approving or rejecting that request. There would be curly braces, there will be special character and all, right? You need to handle those. Even not that look this query which would be generated by this automation, right?
+
+00:40:33 - 00:41:44 Unknown Speaker:
+
+So if you go to this report, right? Just check any of these one, right? So this is look having star, right? Pithri, one more thing. Pithri, you are there, right? Pithri. Man, this is the problem when I'm talking, right? I'm not getting a response. Sameer, you are there, right? Yes, so look, I don't want to send this to the product team. Use this project, use this data set DK repository. Okay, uh, this should be replaced with no, and then we would be exposing our details, right? Leave it, leave it, that's fine, leave it. No need to provide this one field key. If we are able to get the feed key, then replace it with the actual feed key. Okay. But this one leave it as it is. That is fine. Use this, use this data.
+
+00:41:44 - 00:42:37 Unknown Speaker:
+
+Model ID, we need to replace it or else. Yeah, yeah. If model ID is there, then you can replace the model ID. Like, this is giving this, right? DQ repository, DQ ID equals to this. Man, we have generated the DQ ID, right? Yeah. So, this should be DQ ID. And then, this is DQ repository, right? This should create a problem because till now, Check this query that we are generating. You're not having an entry of the DQID in this DQ repository. So this query is again going to get failed while you are executing it. Oh, okay. In the reporting module, you need to think about these changes. The executed query should be different from the generated one. And that is the reason I was searching for P3. Where is he? P3, are you there? Great.
+
+00:42:38 - 00:43:32 Unknown Speaker:
+
+When we search, that folks is not there. So, there should not be DQ representative. Check this part. Because this, when you are doing an inner join, right, you are not going to get this. I don't know how the first one is passed for you. It might be the existing. The existing DQ, yeah. Right, but when you are going to run it, right, this is not going to work for you. You have to change this one then. Okay. Okay. Check with PIPV on this one. Okay. This is not going to work if you are referencing the DQ repository. You can replace it with DQ artifacts. DQ artifacts should be having this role ID on all these details. Yeah, I need to check once as in all the comments are exist or not. I will ask P2.
+
+00:43:33 - 00:44:24 Unknown Speaker:
+
+Yeah, these you need to change because DQID is not there, business group and the name are different in the DQ artifacts. Yes, sir. Okay, but that you would show over here, executable format, but this SQL would remain as it is because when UNN loop would be working, they would be inserting this role first of all to the DQ repository and then executing this one. So that task is over this human in loop. Okay. So we need to provide them this exact query which we were seeing over right now. But in order to display to this guy, right, a business team, we need to replace it because that data would not be there in DQ repository by that time. Yeah. Okay. So these are the small analysis I need from new developers. Okay.
+
+00:44:24 - 00:45:15 Unknown Speaker:
+
+I should not be spending time on this. I've already explained you the business logic, all the design, the work and all, right? But these minute changes, if it is getting missed from my side, I need those analysis from your side. Got it. So when we are displaying the results to the users, why do we need that artifact part, like that whole joint thing? Artifacts is also not required. Artifacts is also not required. We can just run it on the above select query. This inner join is not exactly required. So, that is what I am asking Sameer and Priyay. They need to come up with that analysis. What exactly piece of code we just need to run it and then display it to the user. I think this piece of this much would work for you.
+
+00:45:17 - 00:46:14 Unknown Speaker:
+
+Sameer, this inner join is not required. But, I need these details. When you would be providing this SQL to the developer, who are going to integrate this SQL in our framework. Because this is, this matches with a pattern that we have built in this SQL. That is the reason he is creating like this. Okay, just to, we are doing a union, right? That is the reason we need this inner join. Yeah, maybe like, yeah. Here it should display something like only select statement. Exactly. Only the select statement. This inner join is not required. But you need to save the same the way it is getting saved into that file. Leave it as it is. Right. But in this generated SQL you just need to remove this inner join. That part you need to check with Prithvi once you would be online.
+
+00:46:15 - 00:47:12 Unknown Speaker:
+
+Yeah, Sachin, this one, we are only displaying it for the previous report. But right now, with the new query that we are going to execute, I'll add that whatever is we are going to execute, that much only I'll display it. Exactly. This is good for, you know, sending these details to the developer. Okay, because they need to plug in with the existing framework, right? But for the user, the report that you are going to generate, you just need to restrict yourself till this point. That's it. No need to do a join, do a inner join over there. Okay. Okay, Sachin. Yeah. Okay, then anyone having any other query? Searching for that lazy thing, the ingestion, just wanted to give a quick update that global dining user pipeline is still not working. I've created another incident for it.
+
+00:47:13 - 00:48:08 Unknown Speaker:
+
+Like last week they resolved one incident where the table registration was failing, but now the table registration is failing. Yeah, the one that we were discussing on that previous data, right? Correct, correct, correct. So that I've already created. I haven't heard back anything yet. Is it being assigned to anyone? Again to that same person, that Ramya. Create a group. So that we can chase that person. And what about rest table? We are still having lots of tables, right? So for the three new tables, again with that new profile mapping that you created, it's again fading due to some source ingestion timestamp issue. I did not understand that. So I again raised another incident for it. Source ingestion timestamp, he is not sending it from his site, Jason. Source ingestion timestamp is there in your pipeline.
+
+00:48:09 - 00:49:19 Unknown Speaker:
+
+If you go to the pipeline, so there is a column called source in JSON timestamp. Whenever there is an issue, right, first of all, try to pull the file from JSON, the file that he is sending. And Samir would be the best fit person. Loop him on all those data in JSON issues. He would help you to sort it out. Okay. He has already built lots of pipeline previously. So suppose if I open anyone this one, a user venue, right? So that your work is not going to stop if you pass on those information to the offshore team, right? They can work during their working hours. So if you go to this, not this one, target. Under target, BNC control, right? Where is your BNC control? Source. Under source. Under source. Yeah, this one.
+
+00:49:19 - 00:50:56 Unknown Speaker:
+
+He might not be sending this source extract date time in the file. Okay. And that is the reason it is failing. This one, I think I have explained it to you, right? Previously. I don't know if I have sampled data. Let me reiterate it to you once more. If I found a pipeline. So look, this is your footer and this is your header. Okay, it should have timestamp in the header. Right, right. So if we have put this source extract date time, right? This is a header or we made it as a footer, man? I don't think this is right either. It's a header, right? Where did we added this man? I don't think we have the source extract date time. Which one is working? Can you tell me?
+
