@@ -1,0 +1,33 @@
+Here's the column-by-column breakdown from Sachin & Prithvi's ~15-minute discussion on the DQ Artifacts table (roughly 00:04–00:19 in the transcript):
+
+Column	What to do
+DQID	Query the DQ Artifacts table, get MAX(DQID), insert new records as max + 1 (sequence ID).
+Group Email ID / Individual Email ID	Not currently mapped. Since these are CDE-related, the distribution list should always map to Rachna's team — check with ANSI/AIRPA for the correct email ID to use.
+Use Case ID	Query DQ Artifacts / DQ Repository (SELECT * FROM DQ_artifacts) and filter using use_case = 'USCS CD Activation' to identify CD rules. (Note: DQ Artifacts doesn't yet have CDE-rule identification migrated — pull this from the DQ Repository instead.)
+Business POC	Set to Rachna.
+Table Load Frequency	Default to daily; confirm with business team if a different frequency is needed.
+Rule Name	For the new "null rate anomaly" rule (AI-generated name) — do not use as-is. Categorize it under the existing "Missing Value" check type (create a new template under Missing Value rather than a new category, to avoid UI changes). Any of the ~56 unmapped entries should first try to fit under Missing Value; only escalate to "Others"/new category if Rachna's team aligns on it.
+Filter Condition / WHERE clause	Refine the query to fit the existing template — this should naturally reduce large filter conditions. No restriction on filter length if genuinely needed after refinement.
+DQ Dimensions	New column to be created if required — pending confirmation from the business team. Post the specific ask in the dev group.
+Rule Source	Audit column — value should be "Profiling" (indicates the rule was generated from existing data/metadata analysis, not from metadata directly). Provide sample values for Sachin to review.
+Rule ID	Same pattern as DQID — decrypt/increment (max + 1).
+Filter Var Name	This is the variable/column name of the table as it appears in the DQ Artifacts table (pull from BigQuery) — not related to Lumi ingestion time.
+Lumi Ingestion Time	Not relevant to rule creation — it's just the data-ingestion timestamp for the table, not something to populate when creating a rule.
+History Day Count	Used for valid-value checks (e.g., 40/45 days). For new rules being onboarded, default to 0 — leaving it blank has no impact.
+Aggregate Type Name	Leave blank — used only for count/sum-type aggregations; mostly empty in existing DQ Artifacts data.
+Null Value / Max / Mean / Threshold fields	Leave blank — only applicable for threshold checks.
+Actual Margin Count, Latest Version, Approve In, Complex In, Act In	Leave blank (use default values); Complex-type fields can be true/false where applicable.
+Model ID	Leave blank.
+Feed Key	Leave blank.
+Var Type Name / Var Name	Already present/mapped — keep as-is.
+Load Mode	Sachin flagged this isn't actually a valid column in the source (seen at line 19) — verify/remove, don't populate from a non-existent field.
+Duplicate Prevention	Not required as a column — duplicates are already handled via the last updated timestamp.
+Active/Inactive, Duplicate ID	Already exist in both the Artifacts table and HDB — no new work needed.
+
+Additional context/action items flagged in this segment:
+
+Sachin noted the "800+ rules for one table" figure Prithvi gave the product team was incorrect — 800 rows come from combining multiple tables' automation runs (KRI parsing + Kundan's CD automation), not one table having 800 DQIDs. This needs correcting with Rachna.
+Some sample data Prithvi used came from a deleted temp folder (per Sindhuja) — Prithvi was told to reconnect with Kundan to get accurate source data before continuing analysis.
+All further clarifications should go into the dev group, not 1:1 with Sachin, to avoid delays.
+
+Want this exported as an actual spreadsheet (columns + action + status) so your team can track it, or is the table above enough?
