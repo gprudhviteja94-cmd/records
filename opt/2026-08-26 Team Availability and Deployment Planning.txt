@@ -1,0 +1,345 @@
+2026-08-26 Team Availability and Deployment Planning
+
+Creation Time: 2026/08/26 18:02
+
+
+📅About Meeting
+
+• Date & Time: 2026-08-26 18:02
+• Location: Virtual Meeting
+• Attendee: Sachin, Sindhuja, Jason, Shravan, Suman, Edward, Vargav, Preeti, Nirmal, Atherman, Kundan, Sameer, Raj (mentioned), Manish (mentioned), Umang (mentioned)
+
+📒Meeting Outline
+
+Team Availability and Deployment Planning
+
+• Leave and Availability Updates  
+  Sachin informed the team about his upcoming leave starting the next day, mentioning he would be reachable by phone for urgent matters but response might be delayed due to medical appointments. Team members confirmed their availability and blockers, with Sindhuja and Jason absent from the call.
+
+• Deployment Restrictions and Environment Stability  
+  Shravan emphasized avoiding any late-night deployments starting from the next day on the E3 environment due to multiple team members being on leave. Only urgent fixes could be applied the following day, but no new releases should be pushed to maintain environment stability.
+
+Data Pipeline and Audit Table Issues
+
+• Registry Table Data Fetching Problem  
+  Sachin reported an issue with the registry table where data could not be picked up during Airflow runs, causing exceptions. Other tables like audit, composer, and final sets were functioning correctly. He is working on resolving this by adjusting cron expressions to correctly fetch data within specific time windows based on DAG schedules.
+
+• Audit Table Enhancements for DAG Monitoring  
+  Sachin highlighted the need to insert all DAG statuses into the audit table, including failed and never-started DAGs, to improve monitoring. This would help capture DAGs that did not trigger for various reasons and potentially create ServiceNow incidents for failures. The goal is to make the tool applicable across multiple teams facing similar challenges.
+
+RFC and Table Deployment Updates
+
+• RFC Creation and Deployment Schedule  
+  Jason confirmed the RFC for seven tables has been created and deployment is planned for the upcoming Monday. Shravan will hand over a couple of tables to Suman for live deployment next week. A story for E3 deployment will be added to the backlog and assigned to Shravan.
+
+• EMT Document and API Design  
+  Discussion on the need for an EMT document from Jason’s side to finalize components and requirements for API design on Snowflake. The design will consider whether SFT is necessary and logging requirements. Jason will coordinate internally and update the team.
+
+• E3 Environment Bid Follow-up  
+  Jason will follow up with the Lumi team regarding bid approval for the E3 environment, noting the responsible person is currently out sick.
+
+Code Sharing and Repository Management
+
+• GitHub Repository Setup  
+  Vargav requested a GitHub repository for code sharing instead of using email or Slack. Sachin agreed to create the repo by the end of the call to facilitate better code management.
+
+Report Template and Data Quality (DQ) Rules
+
+• Report Template for SQL Review  
+  Preeti completed changes and is reviewing mapping and filter conditions. She plans to create a report template to review SQL queries for multiple rules quickly. The report will compare existing and new queries generated from the DQ dimension.
+
+• Data Flow and Sequence Management  
+  Sachin explained concerns about rule ID sequencing when new rules are generated and how data movement between ASDB and DQ artifacts should be managed to avoid sequence conflicts. He will discuss with Rachna for final alignment.
+
+UI and API Modifications for Role Management
+
+• Modification Flow Changes  
+  Nirmal and Atherman discussed UI and API changes needed for role modification requests. Key points include restricting changes to use case names and variable names, not requiring business justification or ORE numbers on modifications, and ensuring backend APIs handle these scenarios correctly.
+
+• RFC and Sanity Testing  
+  Sachin reminded the team to close builds by tomorrow for sanity testing on Friday before the Monday deployment. Coordination with Nirmal on backend and UI changes is ongoing.
+
+Code Review and Merging
+
+• Code Review and Conflict Resolution  
+  Kundan confirmed all review comments have been addressed and the code is ready for merge. Sachin approved the changes and requested removal of timestamp from filenames. Kundan will deploy and test in E2 environment and migrate data accordingly.
+
+• Data Migration and Pipeline Setup  
+  Sachin emphasized completing data migration by tomorrow before his leave and ensuring the pipeline is enabled post-deployment to run daily. He advised creating separate tags for data migration if needed.
+
+API Integration and Load Frequency
+
+• API Calls for Load Frequency  
+  Sameer confirmed implementation of API calls to fetch load frequency for missing initial check user stories. He will coordinate with Vargav and Kundan who have integrated the Lumi MDM API.
+
+Work Planning and Expectations
+
+• Initial Analysis Requirement  
+  Sachin stressed the importance of team members providing initial analysis and solution approaches for assigned tasks before implementation. Sravan and Sachin will review and approve or suggest changes.
+
+• RACI Document and Leadership Communication  
+  Jason is expected to finalize requirements and create a PMD document for API design after discussions with Raj. Sachin will monitor progress and support in Raj’s absence.
+
+Test Case Management and Compliance
+
+• Test Case Creation for Deployments  
+  Sachin highlighted the critical need for capturing test cases for all deployments, including new rule onboarding and modifications. Without test cases, PRRs will not be approved, risking compliance failures. Team members were reminded to attach test cases to Jira tickets.
+
+• Sprint Planning and Time Management  
+  Sachin encouraged transparent communication during sprint planning regarding time requirements, especially for test case preparation. He also suggested leveraging AI tools like ChatGPT to improve execution speed.
+
+Incident Management and Data Access Issues
+
+• Pending Pipelines and Incident Follow-up  
+  Two pipelines are pending in the RAC cycle, with Suman assigned to handle deployment up to E2 validation. An incident affecting access to some E2 tables (RAISI Global Dining User and Amplitude User Location) is being followed up by Sachin.
+
+• Data Access for Jason  
+  Discussion on granting Jason direct access to query warehouse tables instead of sharing data via email. Jason already has access but some tables remain inaccessible due to incidents.
+
+Meeting Closure
+
+• Sachin confirmed all updates and reminded the team to share status updates by Friday. No further questions were raised.
+
+📋Overview
+
+• Sachin’s leave and team availability were communicated; deployment restrictions on E3 environment were set.
+• Registry table data fetching issue identified; audit table enhancements planned to capture all DAG statuses.
+• RFC for seven tables created; deployment planned Monday; EMT document and API design in progress.
+• GitHub repo to be created for code sharing; report template for SQL review under development.
+• UI and API modifications clarified for role management; business justification not required on modifications.
+• Code reviews completed; data migration and pipeline setup prioritized before Sachin’s leave.
+• API integration for load frequency confirmed; team reminded to provide initial analysis for tasks.
+• Test case creation mandated for compliance; sprint planning should include realistic time estimates.
+• Incident affecting data access is being addressed; direct access for Jason encouraged.
+• Team reminded to provide status updates and maintain communication.
+
+🎯Todo List
+
+• Sachin:
+  • [ ] Create GitHub repository for code sharing by end of meeting (Immediate)
+  • [ ] Follow up with Lumi team on E3 environment bid approval (ASAP)
+  • [ ] Monitor and support API design and EMT document progress with Jason and Raj (Ongoing)
+  • [ ] Follow up on incident blocking access to RAISI Global Dining User and Amplitude User Location tables (ASAP)
+  • [ ] Collect and share status updates with Sindhuja by Friday (2026-08-28)
+
+• Shravan:
+  • [ ] Hand over couple of tables to Suman for live deployment next week (Before Monday)
+  • [ ] Complete build and coordinate with Nirmal on backend/UI changes for Monday deployment (By 2026-08-28)
+  • [ ] Add E3 deployment story to backlog and assign to self (Immediate)
+
+• Suman:
+  • [ ] Work on assigned tables and handle deployment up to E2 validation (Ongoing)
+  • [ ] Coordinate with Sachin for RFC and deployment next week (Ongoing)
+
+• Vargav:
+  • [ ] Complete code refinement and share code with Manish via GitHub repo (By 2026-08-27)
+
+• Preeti:
+  • [ ] Finalize missing value mapping and share code review (By 2026-08-27)
+  • [ ] Create report template for SQL review of multiple DQ rules (By 2026-08-27)
+
+• Kundan:
+  • [ ] Remove timestamp from filenames and merge code (Immediate)
+  • [ ] Deploy and test changes in E2 environment (By 2026-08-27)
+  • [ ] Migrate data and prepare report for Pune by 31st August (By 2026-08-31)
+  • [ ] Capture test cases for reporting and update Jira tickets (Ongoing)
+
+• Sameer:
+  • [ ] Implement daily and monthly load frequency API calls (Ongoing)
+  • [ ] Coordinate with Vargav and Kundan on Lumi MDM API integration (Immediate)
+
+• Jason:
+  • [ ] Finalize EMT document and API requirements (By next meeting)
+  • [ ] Coordinate with Shravan and Sachin on deployment and design plans (Ongoing)
+
+• All Team Members:
+  • [ ] Provide initial analysis and solution approach for assigned tasks before implementation (Immediate and ongoing)
+  • [ ] Capture and attach test cases for all deployments and modifications in Jira (Ongoing)
+  • [ ] Communicate realistic time estimates during sprint planning (Next sprint planning session)
+
+Transcription
+
+00:00:02 - 00:01:05 Unknown Speaker:
+
+So, Sindhuja, like Rachna mentioned, right, so you won't be joining the call and Jason is also not being there, right? Should we just utilize it for our normal updates then? Yeah, exactly. So, like, you know, all of you know, right, I'll be on leave starting tomorrow for next couple of days. I'll be reachable over my phone. And, you know, even try to pitch in in case you need something urgent, but I'll be away here and there to a medical. So, you know, the response might be delayed, but feel free to reach out to me in between if you need any help from my side. So, for your case, I have any blocker. No, Sachin. This one, I'm just checking that one. I have shared that Excel sheet to you. I'm also going through is there any modification is required.
+
+00:01:05 - 00:02:19 Unknown Speaker:
+
+I'm just going through once again all the things. Okay. I'll see if I can review it and then give you a final approval to modify those data on the environment. Give me some time. I'll see if I can review and give you approval on that. Okay. Even if, you know, I am not able to response it back today, I will try to respond it back tomorrow and then please incorporate these changes to the equal artifacts on all the environment. Okay. Okay. Nothing else in your bucket, right? No, Sachin. And this one, right, for CD1, right, that one, I think someone has to commit those changes actually. So that one we plan to deploy today, Sachin. But please make sure not to do any late-light deployment tomorrow. Because Friday, Shravan, myself, Kundan, we all are on...
+
+00:02:26 - 00:03:22 Unknown Speaker:
+
+So please avoid any further deployment starting tomorrow itself on our E3 environment. Just make these up unstable, right? So don't push anything. If you want to do anything today, go ahead and do that. And if some mind fixes are required, we can do it tomorrow. But please don't release any new changes to the environment because major of the folks would be out. Okay. Yeah. Sure. Just take care of that part. Okay. So, where are you with the build that we discussed yesterday? So, step by step, we have given you the steps. Can you tell me which are the steps that are being done? Now, the problem we are creating is like the registry table is there, right? That one, I am unable to pick the data from that while we are running the airflow.
+
+00:03:24 - 00:04:13 Unknown Speaker:
+
+They are dropping, it is trying to go the exception. So that's what I am thinking, I need to work on that one. But except that one audit table is fine and composer is fine, and the Never Started is also fine, and total level final set is also. I am getting alerts and everything is fine. And from the I need to work on the register table, that one, I need to see that one today, yesterday I have completed. That should not be a problem, right? In every use case, we are just trying to get the data. But in that, you have created the table, right? In that table, actually we have that schedule interval is there, the prone expressions. Like while running the prone expressions, I think I need to add something.
+
+00:04:15 - 00:05:05 Unknown Speaker:
+
+Because I need to follow because the weekly, monthly, daily is there. So, if I go with the daily means it is like a past one day, can I, we have discussed about it the last time. Not past one day, not past one day. So, again understand. No, yes, yes. I need to just fetch those DAG, right? Even if it is being scheduled at daily, right? It might be running at 6 PST, right? Suppose my DAG would be running at 7 PM. Right. So it should pick up the records from last two hours. That is between 5 p.m. to 7 p.m. Right. In between these intervals. So that DAG falls at that window. Right. So you can get the time itself from that cron expression. Okay. And then with that time you would be able to find the DAG ID.
+
+00:05:06 - 00:06:10 Unknown Speaker:
+
+That should not be a major challenge. Just try it out. Just only that one is pending. Actually, can I share and I will show my mail actually. We can discuss on an elaborate manner maybe later on. Because I need to complete the... Just two minutes left. Okay, it's fine. Go ahead. If it will take time, two minutes. Yeah, it will take only two minutes time. If you see here, only the registry table is not picking up for me and everything audit table composer and the final set is everything is getting. But look, for the email, I would not be, you know, needing these. Okay. And are we inserting these records to the audit table? Yes. Okay. The audit table from the audit table which are failing. So that one I am taking, I'm picking up here.
+
+00:06:10 - 00:07:04 Unknown Speaker:
+
+What are the some? No? So, understand, right? Even some tag, which has been scheduled at 5 p.m. You did not find any entry into that audit table. I need to enter that tag also to this audit table, marking it as failed. Okay, I told you yesterday, right? Suppose? Yes, yes, one of my dad, right? If, if it's never being started, right? And that is my major goal to achieve in this functionality, because if I am going to achieve that functionality. Then. As I was communicated with Rachna yesterday, right, I already discussed this part with Raj. Also. Then this tool would not be only applicable for us, we can leverage this tool throughout the MX because if this tag monitoring is not applicable to us, right? We are not only the team who are facing these challenges.
+
+00:07:04 - 00:08:02 Unknown Speaker:
+
+There are other teams who have been onboarded to Lumi, right? They might be also facing these challenges to monitor the DAI on a regular basis, right? Yes. So one way that Raj proposed was, I'm looking into that also, like, you know, creating a ServiceNow incident. But again, that I need to explore, right? We can create a ServiceNow incident, but how much fruitful it would be, that's something I need to check it out. My major goal is if a DAG did not trigger due to XYZ reason. Okay. Okay. Whether it's a DT flow, whether it's normal flow through the framework that we are doing, I should be able to capture the DAG. In the audit table? Yes. In the audit table. Okay. And then from there, I would route it. Who has rejected this one?
+
+00:08:08 - 00:09:25 Unknown Speaker:
+
+Okay, I'll check this one later. You got my point, Suman, right? Yes, everything, whatever we are getting, any output or anything, it should be inserted into the audit table. If the tag is started or missing or whatever it is, each and every tag, it should be inserted into the audit table. Yeah, correct. Yeah, okay. Okay. I think Jason is... Yeah, yes. Yeah, thank you. Hey, hi, Jason. Hey, Sachin, how's it going? Yeah. All good. So, Jason, like, with respect to the update site, the RFC has been created for those seven tables, which was being mentioned by Shravan. Okay. So, we will deploy those on upcoming Monday. Number one is that, and then, you know, as Shravan mentioned, those couple of tables, he would hand it over to Suman, and we can work on those to even make those live by next week.
+
+00:09:25 - 00:10:19 Unknown Speaker:
+
+So, maybe... As today is also the spring planning day, just keep a story in the backlog for E3 deployment for those two tables, one story pointer. And again, just assign it to seven. And the discovery would continue because based on our conversation with Raj yesterday, right, we would need that basically EMT document from your site, right? What are the components we're looking to build? And based on that, we would start. Designing it like if we need to create an API on the snowflake, right? Because once that requirement is faced, based on that that, you know, API designing would be done. Like Ross was having a Jimson, right? One or two API would be sufficient, but once you analyze those requirements, right? One of them. I already told you, right? That SFT part is not required, right?
+
+00:10:19 - 00:11:17 Unknown Speaker:
+
+Again, you just to check on those loggers and all right, if you really need or not. If that is something required, just place that on that PMD document, and then based on that document, I can come up with a plan to start with the self-listening of that, and then can review it with Quest then. Okay, that sounds good. Yeah, so maybe one story pointed, assign that to Sravan only. I'll be working internally with him, but just assign that ticket to Sravan for time being. Okay. Okay. Any other updates which you are seeking? No updates, no. Okay. And what about those E3 environment, Jason? Once we posted that bid, right, whether it has been approved or not? Yes. Let me follow up with the Lumi team. Okay. I think the person who is managing this is out sick right now, actually.
+
+00:11:17 - 00:12:27 Unknown Speaker:
+
+Oh, great. Yeah. But I will send an email to follow up with the... with a request. Because I think the conversation or the, uh, sorry, the um. It was presented last week to the finance team and I haven't heard back from from anybody. No, okay, but they, they should have backup, just being Durga, right? If he's not there, there should be someone who can help us on that. Okay, I'm on it. Okay. Awesome. Anything else that you want to check? No. Have we started the planning yet? No, I think like as discussed yesterday, regarding this planning, those two stories would be required. If you have something other than that also, we can plan it out. Just let us know. Yes. I need to add the user stories for this, but we need to start planning the decommissioning of the cornerstone tables.
+
+00:12:28 - 00:13:24 Unknown Speaker:
+
+Oh, okay, okay. But that would be post these tables gets live, right? And then you would be sending a notification, right? Yes. So I don't think we need that in this sprint, right? Let's reach able to go out, do an announcement on this upcoming sprint, And then, accordingly, we can take a call. Because decommissioning would not require more than a week, right? It would just require us request submission and then the approval from the respective stakeholder, maybe B40, B45 approval over the email. Okay, and then we. So, let's first release these tables to A3, or if you feel all the tables have been migrated, then then we can plan for the decommissioning. You can create a story. We can pick it in, you know, let's be there in the backlog and then we can plan it out.
+
+00:13:25 - 00:14:21 Unknown Speaker:
+
+Okay, yeah, I'll start adding things to the backlog. And then one other thing I need to verify on the tables is we might need to add a column to the loyalty status tables. Okay, okay. Yeah, yeah, we can do that. That is still going on with the incident, so I'll check with you on that. Will update you. Okay. Thank you. Yeah. Thanks, Jason. Thanks for your time. Thank you. Suman, done. Edward, done. Vargav, man, I think you are already progressing, right? And we had the discussion with Manish. Any blocker for you for next couple of days? Nothing, Sachin. So I'm just refining that and for that particular table. So I will be done by tomorrow. Then I will share the code with Manish. Then we'll see. For other tables, we don't have the data and even the tool.
+
+00:14:21 - 00:15:12 Unknown Speaker:
+
+So I can't work on other tables. Two tables which we don't have data. Out of six, only four I have worked on. That I will discuss with Manish regarding that. What to do there. Okay. And look, when we are sharing the code, don't share over the email or Slack. Send that GitHub. Let me create that, man. I forget that. Same to my to-do list. Let me create a GitHub repo for you and then you can commit the code over there and then share that GitHub link to it. Okay, sir. Don't over the email or, you know, over the Slack. Okay, sir. Just create the repo and share that. I'll just create just by end of this call. Okay, sir. Yeah. Suman, do you have any query? Suman Ayyappa Varga.
+
+00:15:13 - 00:16:12 Unknown Speaker:
+
+If no, you guys can, you know, feel free to drop off and then you can continue on the work that you're doing. Yeah, go ahead. That CD, I have shared one PR on the last, yesterday, I think. That one, Shravan has suggested like a, he said, We need to add the insert statement in the values like, what are? We are passing? But in that also if you are passing that one, we need to change all the select lines. Also, right in that time, the line should be, yeah, it should be increased. Check with him once, what is his thoughtful of this? Okay? And then, uh, code it like that way. And then get the approval over the PR. Check with him once. Once he would be available. Okay. Okay. Preeti, where are we with your implementation?
+
+00:16:13 - 00:17:09 Unknown Speaker:
+
+Yeah. I am done with the changes. I am just reviewing the things, okay, with respect to mapping. Because of some filter conditions, I have to make sure that they are properly presented or not. And one more thing is that missing value mapping you said, right? I am seeing if I can tweak little bit on the missing value and use that for the remaining rules as well. Valid value we have a very good mapping whereas missing value mapping is something that I am checking where and all we can map it. So that I will try to close it today or tomorrow and I will share the code review. Okay. One more thing I need from your side, the way you have created that report template, right, where we were able to review those SQLs, the formatting and all, right?
+
+00:17:10 - 00:18:05 Unknown Speaker:
+
+Yeah. Go ahead and create that report also for this part also. So when you would be running three, four roles, right, we can just review it quickly to that report itself. Okay. So, okay. Existing query and new query we can create. Yeah. Yeah, yeah, yeah. Not existing query, whatever query that you are going to generate from the DQ dimension. A dimension. Yeah. Once I insert into DQ artifacts, so we already have that DQ, this one, right? Automation, right? Automation. We'll just run that report on those rules that we created. So, existing and for our latest. Existing application only we can run it and generate the report. I can't get it for other. Yeah, yeah, yeah, got it good and anyhow. Your data flow would not be on to directly to the DQ Artifacts right now.
+
+00:18:05 - 00:19:11 Unknown Speaker:
+
+For the time being, I have mentioned it to DQ Artifact. But that may come up by a. Is DB okay? Just a headset? Because if I bypass the ASDB, the same could be, uh, distracted between the Ace and the Uh, lumen database. So, force still remains the ace because the UI stands over there, right? So, the sequencing is important. So, if I bypass and somebody else is registering a new rule, right, then my sequencing would be distracted. Yeah. And one more question, Sachin. Currently, that particular app that they have created runs in Airflow only, right? Will they have access to HDP? No, right? So it should be updated in the... No, no, I can create a CSV file, move it via SFT and then first enter it to the H database and from there I can read it back to the artifacts.
+
+00:19:13 - 00:20:07 Unknown Speaker:
+
+Okay, fine. So I'll create CSV then? No, no, no. Go ahead right now, insert it to the DQ artifact, do something. I need to take alignment from that now. My concern is suppose right now rule ID 98 persist in the ASDB and the artifacts and even the DQ repository. While you are running these 8 dimensions it might generate 10 more rules, right? So sequence goes till 107. Correct? In between you did not move the data to ASDB. Someone else have created couple of rules. So their sequence is now 100. Our sequence is 107. So that would create a problem. So ideally if it is 110 right we should append it and then from there we can pull it back to the artifacts to the pipeline which is already being created by Nirmal. Okay.
+
+00:20:07 - 00:21:13 Unknown Speaker:
+
+So that is my thought process but let me discuss this with Rachna how she wants these all details. Okay. You can just insert it to the artifacts. I'll give you update once you'll be back on Monday. Sure, sure. Okay. Nirmal and Atherman, where are we with the modified flow? Hi, Sachin. I got to know about the update, the flow, the preload which we are currently sending. So as for Nirman, I think we have to set all the data and that same as shown in the UI. So that changes is one which you have started doing it. On UI, you really don't need to see any other changes. It's already been reflecting. Just one change like right now you might be getting the details like just take an example. Suppose UCS, right, which you are displaying on the UI.
+
+00:21:14 - 00:21:58 Unknown Speaker:
+
+When you are going to do a modification request, right? We would not need that use case name. We would need that use case ID, right? So what I have asked Nirmal, if that API, the backend API, if it is not sending you those details, you need to modify that API with those details, number one. And then when you would be submitting that request, right? You need to send all the details the way you are sending it for the pivot role. Okay. Yes, I got it. So that is one thing. Whatever the data which we're receiving in the API, we can just pass the same in the payload. Correct. The other thing is, what all changes? Currently, we are restricting user to change the table name. Yes. Use case, sorry, variable name. And there's one more check type.
+
+00:21:58 - 00:22:59 Unknown Speaker:
+
+So apart from this, I think we have to restrict user to change the use case name also, right? Yeah, yeah, yeah. Use case name, they won't be able to change it. That is completely prohibited. And one more thing you have to understand for this one, you might not be sending business justification JSON object for this. That is all fine. And Nirmal, you need to make sure we are not even expecting those business justification for the modification flow because that would be a one-time registration. I hope you guys are getting my point. When somebody's new role, why they are registering those new roles with business justification, ORE number, blah, blah, blah, those all are required. The second piece details basically. But when somebody is modifying that role, we are not expecting again business justification and those ORE number and all.
+
+00:22:59 - 00:24:01 Unknown Speaker:
+
+So those value would come as null only. They would be modifying only the screen level details, like changing the condition, changing the filter condition. Changing the SQL query, right? If it is a complex type, they can update the SQL query, so these details should be only modified. So, please keep an eye on that you should not be modifying or inserting any business justification, worry number and all those details while somebody is doing a modification request. Got it. Got it, right? Yes. So, again, like, you know, I have already raised the RFC for upcoming Monday. Please make sure your players are closing this by tomorrow so that at least you can have a sanity on Friday. Okay. Okay. Close the build. Coordinate with Nirmal. Whatever changes would be required in the backend or the UI.
+
+00:24:01 - 00:25:24 Unknown Speaker:
+
+And again, as I said, feel free to give me a call if you guys are struggling over some places. Sure. Okay. Any questions? So far, for those like business justifications, those have to be picked from the previous load. Not required. I think you did not hear me clearly. What I have been, when somebody is registering a rule for the first time, very first time, that is the DQID does not persisted in the database. So in that case, those business justification, URI number and all those questionnaire, right? But when somebody is modifying that rule, those field would remain blank. The entire. For the entire row, those fields will remain blank. Let me see my screen. What is the problem? Let me know if you are able to see my screen. Yes. Okay. Now suppose DQID 101.
+
+00:25:25 - 00:26:39 Unknown Speaker:
+
+It's a new register. New role registration page. Hmm. So here you need to save this business justification and ovary number. Okay? This is persisted in your DB now. Okay? Now somebody come, they are modifying this same DQID 101. You really don't need to insert another record. You need to insert another record for sure, right? But that record, would not be having these business justification and ORA details. Those column would remain as null. Okay. Then in all the APIs that author is like fetching for the details. We are never showing them these business justification and ORA details anywhere. Okay, okay then. In that case, yeah, it's fine. We are never showing these one, right? And once you are picking up this modified role, yeah, whether this SQL has been executed or not, right, when it executed,
+
+00:26:39 - 00:27:33 Unknown Speaker:
+
+what is the results and all, those needs to be updated again when you would be updating this role in a batch. The rest of the flow remains same, but these details, right, these are going to be saved in the DB when you are modifying a role. Okay, okay, got it. Okay. And again, I'll confirm this with Rachna again. If they have some purpose, then I need to just call an API to get these details from the previous DQ ID and then update it over here. But for timing, you can go ahead with the approach that I have suggested right now. I'll cross check with Rachna on this. Okay. Okay. Okay. Done or any other query if you have? No, done. Okay. Kundan. The TRI has been updated. You have asked me to wait for some changes.
+
+00:27:33 - 00:28:49 Unknown Speaker:
+
+No, you can. I already, you know, fixed all those things so you can, you know, review and merge it. And do one thing. Remove the timestamp from the file name. That is good. Okay, I will remove it. I will remove it. You have already addressed those review commentaries. I already addressed it. You have to just. Yeah. Anyhow, you can go through that. No, no, that's fine. If you have already done that, I'm just going to approve it. I have that much of trust. Don't worry. I'll remove that file mapping which you have asked for. I'll do that. I'll do that right away. So this has been merged. Okay. Okay. There was a conflict. Move AS data to Lumi.java. Just resolve that conflict. So, one thing Kundan I need, you need to deploy today or test it till E2.
+
+00:28:49 - 00:30:07 Unknown Speaker:
+
+Okay. Post that, your tomorrow's work would be number one. We won't be able to move it beyond Monday because Hira is on leave. So whatever new data, those have been closed, right? When you are logging up tomorrow, make sure you migrate those data also. And even those data... Now I just modified that as per the, you know, the Java class and again I have to move to the older ones. Okay. No, man. Let's use a logic, right? If I know I'm going to do that activity till the time my pipeline setup is ready, right? How can I remove that piece of code? So we have to now go through that pipeline. We have to go through the pipeline. Look, I am not denying that we don't need to go through that. We need to go through that.
+
+00:30:07 - 00:31:28 Unknown Speaker:
+
+But till the time your pipeline is ready and enabled in the environment to run on a daily basis, right? You have to make that adjustment, right? Hmm. What got your point? So, I just removed that extension. Okay. You are not going to get that anymore. Which extension? The date extension which you are looking for. Okay. Okay. One hour ago, I guess. I guess there is something wrong with that BPM and I am still seeing that error. The event definition is done. Okay. So, basically, you really don't have an issue, right, with respect to your implementation, right? And again, as you would be going on leave on Friday, makes you number one, the data migrated by tomorrow. And then again, when you logged in on, okay, immediately, Get the data till 31st of August, OK, on Monday.
+
+00:31:28 - 00:32:24 Unknown Speaker:
+
+So that in case they need a report, right? Because the targeted date that they have set it up, it was on 31st only, right, so till 31st. Whatever task has been closed, that should be there in that EQ result, and then we should be able to populate that report and send it to Pune, OK. And then post Monday or Tuesday deployment, we can set now, enable that pipeline. So if that data migration requires a different tag, create a different tag. No need to merge the code with a similar tag where you'd be getting those configs. Okay? Thank you. Okay. Sameer, I think I already had a connect with you, right? So you should put your implementation also. Yes, and the only thing is like, Weekly one, like I told, let's not reiterate those things which we already discussed right?
+
+00:32:24 - 00:33:17 Unknown Speaker:
+
+Weekly. I told, keep it into the backlog. Right now, focus on the daily one and monthly. Is there a blocker on daily and monthly? No, no, okay, then go ahead and implement that one and again. Like, in case you still have any query, just reach out to me over the phone. Okay, okay, yeah. Anything else? You suggested me that instead of reading the direct query, right? Like I have modified which you suggested, Sachin. I'm directly reading that file based on the DQID. I'm saving that name as DQID.SQL and directly reading it based on that if it is a complex query. Okay. Yeah. And there is one more thing. One user, other user story for API call one, Sachin. That is also... Yeah, is there a query, is there a issue on that?
+
+00:33:18 - 00:34:12 Unknown Speaker:
+
+No, no, no, we thought to like API call one such and like where we need to get that load frequency, right? Call API for get the load frequency for missing initial check user story, what I am talking about. Right, what is the problem in that? So you said that like we need to develop a code right where we need to call an API and get the load frequency, right? Yes, so that is has been implemented connect with Vargov or right they are already calling that Lumi MDM API. Okay, then I will connect with you. Vargov you have already integrated right? Kundan has done but I could not have visited Kundan right now. So, can you confirm if you have integrated or not? Lumi MDM API, right? Yes, sir. Yeah, so just connect with Varga Samir.
+
+00:34:12 - 00:35:05 Unknown Speaker:
+
+You just need to clone that basically those method and the way it has been done. That's it. Okay, okay, okay, sir. Okay. Anything else? No, sir. That's all for myself. Okay. And one expectation from all of you. Okay. Next time around when we are starting working on our initiative, right? I need at least a initial level of analysis from your side only. Okay. What are my plan? How I am going to solve a solution for it? Okay. And then my and Sravan work would be to review those plan, and then if we feel that that is okay, we would just approve it. Or if some changes are required, we will do it. Or in case it again require an additional review from Raj, then we will take it back to Raj and then implement it.
+
+00:35:06 - 00:36:10 Unknown Speaker:
+
+Okay. Leaving Suman for timing because he is still quite junior. But rest of you guys, right? At least come up with some tentative plan, right? If a task has been given to you, what is your approach to solve that problem? Got it right? No answers. Okay, uh, seven, uh, uh, seven. Did you had a discussion with Raj, Uh, regarding that raise? Even? Any further discussion? No, there is some leadership summit going on for this couple of days. So Raj is pretty occupied. Oh, okay. So Raj will not be able to connect, right? You're not audible. We are working on an initiative and we have a deadline of Thursday. Can you hear me? Yeah, I can hear you now. Actually, we are working on a different initiative and we have tomorrow's deadline.
+
+00:36:11 - 00:37:03 Unknown Speaker:
+
+So that's why we couldn't collect on the RACI part. So on the RACI part, what I told Jason is just to create a PMD document. Okay. So that I asked him, right, at least finalize your requirement, right? Whether you really need that loss, what are the, you know, template basically you are looking for, right? And then, based on that, we can start saying that we need a one API, two API, or three API, right? Uh, so just. I think even Raj will also expect the same thing. Rather than really finalizing the requirement, it should be Jason who should be, you know, after that discussion with Raj. He should come up with the requirement. Like what is needed and what is not. Yeah, So that's where just give him a heads up today again.
+
+00:37:03 - 00:37:54 Unknown Speaker:
+
+I already conveyed it in this meeting. Right. Just tell him that share a PMD document to us and then we can plan for a designing of that. Okay. Okay. And then keep me posted tomorrow. Right. So that I can take it forward for Monday in your absence. Sure. You might be having with Raj or Jason regarding this one. Right. Just keep me posted on the Slack or. I'll see if I can log in for half an hour tomorrow. Then I can get those details from you so that we can continue on the work even starting Monday. Okay. And also look to get those API details if possible so that we can test it out locally and see if it is... The existing API, right? Yeah, he was saying that he would provide those snowflake API details, right?
+
+00:37:54 - 00:39:04 Unknown Speaker:
+
+So I'll try to test it. Yeah, just check with him if they can integrate those ones. And even if you are able to fall it out, right, as Asit stated, right, we need to integrate it with EAG. Okay, okay. B2B to make it secure. So just check it out and then we'll check how to integrate it. Okay, okay, sure. Yeah. Okay, yeah. Okay, so I think, Sindhuja, we covered up everybody. And again, with respect to the status, I'll collect those details and will share to you Friday. Or if I'm not able to do it, just share the status that I'm going to share for today on Friday. That works? Yes, Sachin. Also Sachin, so they have started sending out review emails. For workspace review, I just want to highlight, see, like, I bring up adding UAT test cases in the stand-up, but it's still not done, right?
+
+00:39:04 - 00:39:59 Unknown Speaker:
+
+Not to take anybody's name here, but Kunten did a production deployment yesterday, and there is absolutely zero test cases. I'm telling you, our workspace will fail if this happens, and Raj, we all have to answer to Raj if that happens. So that is where Emre sticks. Each one of you to parade away with the E3 deployment. Now, if you are even doing a DQID modification, new rule onboarding, you need to start capturing those test cases, what exactly you did in E2. Otherwise, your PRR is not going to be approved in future. Even the new CD is one which you are going to add to the workspace. You need to create a test case for that. Otherwise, those are not going to move to the production.
+
+00:40:00 - 00:41:01 Unknown Speaker:
+
+So, just keep an eye until unless they share a link through the rally with, you know, test cases being attached, we are not going to approve those here. Okay. Because if these are getting audited, it's on an organization level and then I don't want a place, you know, USAID would be to the very bottom with, you know, these, uh, compliance issues. Basically, okay, so whoever wants to move, even, uh, like Ather was doing it. NIrman You need to capture your test cases for the back-end API, whatever API you have built, right? This P.h. D. Sample test case. This is my input, this is the sample, output everything and capture it into that Jira ticket. For the user story that has been assigned to you. Okay, see you, Sachin. Okay, and Kundan, you are already doing it, right?
+
+00:41:01 - 00:42:11 Unknown Speaker:
+
+So, please continue doing that. And Kundan, for these, this one, right? Once you move to the E2 environment for these reporting, right? Capture the test cases update over there so that we can move it to the next week. E2, we don't have data, Sachin, okay? So, it will... I'll... Yeah, going forward if you guys feel that don't have a time then call it out during the sprint planning. That man three story point would not be sufficient. I may need half day again for the test case plan. Okay, call it out. Clearly, that's what I was telling you all every time, right? Until unless you speak, we won't be able to know right where your times are going. And at the same time, few of the stuff that we are observing.
+
+00:42:11 - 00:43:09 Unknown Speaker:
+
+Some of the tasks being, you know, tracked to eight hours, that is not really a eight hours task. So again, on that part, you guys need to improvise your execution speed. When we do have these four pilot chat JPT, everything is handy with us, right? So some of the parts can be fast enough with these AI tools. And then, if you still feel like, if I still need half of the day, call it out during the sprint plan, okay. Okay, anyone having anything else to discuss? So, Sachin, there are two pipelines still pending on the RAC cycle. So, I'll hand it over to Suman to take it to deployment. Yeah, yeah, correct. At least till E2 validation, right? And then, yeah, then he can just let me know and then I'll raise the RFC to deploy it next week.
+
+00:43:09 - 00:44:56 Unknown Speaker:
+
+Sorry? Yeah the only point is I think you are getting break in between so if there are any incident right just pass on those incident to me I will take care else is facing challenges or is it only me? No, no, no. We are also here facing the same. Yeah. Okay. Okay. Then seven, just pass on those. Yeah, we can hear you. Okay. So what I was saying is someone will need access to those IIT groups to access data in E2. Like for sharing the results with Jason. No, why we are going to send the data to Jason? Why can't he query directly from there and then fetch those results? We can get those access, right? Those are anyhow getting stored to the warehouse table, right? Can you come back? Sorry, I lost you for a second.
+
+00:44:57 - 00:45:50 Unknown Speaker:
+
+I am just mentioning why can't Jason raise a... access to those tables directly and then he can just run a query and get the data by himself. Okay. Okay, okay. So just ask, right, yeah, just ask Jason to get those access and then he can just, you know. No, he already has that access but the standard practice we used to do was we used to share those sample results on email and get this sign in. But, no, and then we can send an email to him. So what is the blocker right now with those two pipelines? One pipeline is okay. The second one, we are not able to access even though we have IRQ request approved. Both Jason and me are not able to access that data. So is there an incident going on?
+
+00:45:50 - 00:47:01 Unknown Speaker:
+
+Yeah, I mentioned that incident between you, me and Jason. Okay, thank you. That incident. One of the one where Umang is there, right? Not that one. Jason, right? Yeah. Even the incident details there. I see that incident. Okay. I'll follow up on that incident and other table is good, right? Yes, the other table is good. Instead of giving multiple emails to him, we will just... have one email for sign-off on all of the tables. No, sir, look, RAISI global dining user, we are not able to access in E2, right? Correct. So, this is pending. Global dining user is pending. Amplitude user location is pending. So, we have three tables pending, right? The only global dining user and amplitude user location. Okay, RAISI global. We are promoting to EC, although we did not have those access in EC, right?
+
+00:47:01 - 00:48:01 Unknown Speaker:
+
+No, no, no, no, no. One second, you are getting confused. There's only two tables, Razy Global Dining User and Razy Amplitude User. Okay, you have missed Razy from there. We left it. While creating the pipeline, we have updated as Global Dining User. Yeah, got it. So, for that one, I will chase for that incident and what is with Amplitude User location, that is ready, right? That is ready, yes. Okay. So we can get sign up all done together and deploy them together. Correct. Okay. And I'll take a leave it to me. I'll let Suman to work on the, you know, the data which is working right now. Okay. Sure. Okay. Anything else? No, I'm good. Okay. Anyone else having any other question? Then I'll take it as a no. Thank you all.
+

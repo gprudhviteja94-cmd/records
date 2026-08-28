@@ -1,0 +1,206 @@
+2026-08-25 Data Quality Rule Management and Reporting Enhancements
+
+Creation Time: 2026/08/25 17:31
+
+
+📅About Meeting
+
+• Date & Time: 2026-08-25 17:31 (Duration: ~41 minutes)
+• Location: Virtual Meeting
+• Attendee: Sachin, Rachna, Sindhuja, Nancy, Bhargava, Sanusha, Shamir, Nirmal, Apov, Suman, Prithvi, Kundan, Raj, Purna, and others
+
+📒Meeting Outline
+
+Data Quality Rule (DQR) and Use Case Management
+
+• Use Case Table Update  
+  The team discussed adding a new use case "USCS CD activation" to the AES use case table. The insertion should be around row 16 or 17, with the final list saved to P3 containing use case IDs and names. Email configuration for rule creation will use the point of contact and distribution list from the DQ artifacts table, with Rachna as the contact and Purna responsible for B40 email ID configuration.
+
+• DQRT Factory Table Migration and CD Checks Deployment  
+  Suman is migrating 700 DQ rules related to the CDE use case to the DQRT factory table. He completed deployment of 195 CD checks in the E1 environment and is working on deployments to E2 and E3, followed by testing. The CD build and development are complete, with testing in progress. The remaining CD checks build is done by Soman.
+
+• Rule Modification and Testing  
+  Nirmal and others have completed code changes for rule modification and email flow, with deployments ongoing. Testing will follow, and promotion to E2 is planned upon successful validation.
+
+• Handling Large Number of Rules from 8th Dimension  
+  Prithvi reported generating over 800 test rules from the 8th dimension. The team discussed that such a high number is unlikely for a single table and likely involves multiple tables. Mapping these rules back to the DQ rule requirement sheet is pending review. Sachin and Prithvi plan to cross-check and align on this.
+
+• DQ Artifacts Data Mapping and UI Alignment  
+  Prithvi is reviewing DQ artifacts data migration and will coordinate with Sachin to ensure alignment with the UI before inserting data into the AS environment.
+
+Reporting, Dashboard, and Monitoring Enhancements
+
+• Dashboard and Reporting Updates  
+  Sachin reviewed the Q-Track reporting requirements and is coordinating with Kundan and Krishna on dashboard modifications. A new SQL query has been created for accurate metric outputs, expected to be ready by the end of the week. Sindhuja will follow up with Kundan on the build status.
+
+• DAG Monitoring and Triage Solution  
+  Suman demonstrated DAG monitoring in E1, with plans to move it to G2 for thorough testing. A triage email solution is in progress to monitor DAG failures and compliance tags, expected to be live by the end or mid of the next sprint. The broader plan includes expanding this solution enterprise-wide, integrating with systems like ServiceNow and ACE Click.
+
+• Enterprise Monitoring and Controller Team Concept  
+  Sachin proposed an enterprise-level monitoring solution to replace manual monitoring by a "controller team" currently handling around 230 DAGs. This team monitors job completions and reports issues via Slack channels. The proposed solution aims to automate monitoring and reduce manual effort. However, concerns were raised about business prioritization and resource availability.
+
+Coordination and Next Steps
+
+• Communication and Follow-ups  
+  Sachin emphasized the need to follow up on reporting and triage solutions. Rachna and Purna will coordinate on triage alignment and broader enterprise adoption. Sachin will discuss business significance with Purna and Raj to gain alignment.
+
+• Code Reviews and Minor Updates  
+  Sachin reviewed code implementations and RFCs related to RAZE table movements and minor configuration tasks.
+
+• Pending Clarifications and Testing  
+  Bhargava awaits feedback from Rachna on KRI table analysis. Prithvi will update on mapping and Jira ticket creation for DQ artifacts. Testing of CD checks and 8th dimension rules is ongoing.
+
+📋Overview
+
+• The AES use case table will be updated with "USCS CD activation" and configured with appropriate email contacts.
+• Migration of 700 DQ rules to the DQRT factory table is underway with deployments and testing progressing through environments E1, E2, and E3.
+• Code changes for rule modification and email flows have been deployed and are pending validation and promotion.
+• The generation of 800+ test rules from the 8th dimension requires mapping and clarification to ensure alignment with DQ requirements.
+• Reporting and dashboard enhancements are in progress, with new SQL queries and pipeline setups targeted for completion by the end of the week.
+• DAG monitoring and triage solutions are being developed to automate job monitoring and compliance tracking, with plans for enterprise-wide adoption pending business alignment.
+• Coordination among team members continues for code reviews, testing, and data mapping to ensure smooth progress.
+• Concerns about resource prioritization and business significance of the enterprise monitoring solution were raised and will be addressed with leadership.
+
+🎯Todo List
+
+• Prithvi:  
+  • [ ] Add "USCS CD activation" use case to AES use case table and save final list to P3.  
+  • [ ] Review and create Jira ticket for DQ artifacts data mapping; coordinate review with Sachin before data insertion.  
+  • [ ] Cross-check mapping of 8th dimension generated rules to DQ rule requirement sheet and update team.  
+
+• Suman:  
+  • [ ] Complete deployment of CD checks to E2 and E3 environments and conduct testing rounds.  
+  • [ ] Continue development and testing of DAG monitoring and triage email solution; target live deployment by end/mid next sprint.  
+  • [ ] Share DAG monitoring demo results with Sachin and team.  
+
+• Nirmal:  
+  • [ ] Deploy and validate rule modification and email flow code changes; plan promotion to E2 upon successful testing.  
+
+• Sachin:  
+  • [ ] Follow up with Kundan on reporting dashboard build and pipeline readiness.  
+  • [ ] Discuss business significance and prioritization of enterprise monitoring solution with Purna and Raj.  
+  • [ ] Coordinate with Rachna and Purna on triage solution alignment and broader adoption plans.  
+
+• Sindhuja:  
+  • [ ] Follow up with Kundan on reporting part build status as per Sachin’s request.  
+
+• Bhargava:  
+  • [ ] Await Rachna’s review of KRI table analysis and schedule discussion for cross-verification.  
+
+• Rachna:  
+  • [ ] Review KRI table shared by Bhargava and provide feedback.  
+  • [ ] Coordinate with Purna on triage solution and enterprise monitoring plans.  
+
+• Team:  
+  • [ ] Continue testing of CD checks and 8th dimension rules; provide updates on progress and issues.
+
+Transcription
+
+00:00:58 - 00:02:07 Unknown Speaker:
+
+Even in the AES table, right, we do have that use case list, correct? Yeah. Can you add one more use case called that is there in that artifacts, right, which Pithvi was mentioning for the CD? It should be USCS CD activation. USCS CD activation, okay. Okay, insert a row into that use case table, right? And pull the record from the table and set the list to brickway. Okay. I have given you over that side or let me send it to you individually also. This one. And now this would be, might be row number 16 or 17, right? So whatever list is, save that final list to P3. And that should contain that use case ID and then this, you know, the list of use case names. What would be the mail for this one? Mail?
+
+00:02:07 - 00:03:59 Unknown Speaker:
+
+Why do I need a mail? We need a mail for the rule creation for this one. Why do you need to create a rule for this one? Email ID you're asking? Email ID? Yeah, email ID. Email ID would be the one check the DQ artifacts table. The point of contact would be Rachna and the distribution list that they have mentioned, right? You need to pick up that from the DQ artifacts. Okay. Okay. And configure that email ID over there. Okay. B40 would be Purna. Okay. In the E1, I think... We are not mentioning it. Right? Then leave those flags. Sachin, I see Sahaj. Do you guys want to start or wait for Rachana? Hi, team. Hi, Shinduja. I guess we can wait for another five minutes for Rachana. She is actually in another court with Putna.
+
+00:03:59 - 00:07:21 Unknown Speaker:
+
+She will be joining. Okay. Okay, says. Till the time, you know, Rachna is joining, anyone having any challenges with respect to the use case that you are working? As of now, no, Sachin, from my side. Okay. Sachin, one question. That DQRT, so can I add for the remaining that seven columns to the rest of the E2 and E3 environment? Hi everyone, sorry for being late. I was on a call with food now. No worries, Rachna. Sindhuja, we can get started. Nancy, can you please start with your updates? Yeah, sure, Sindhuja. Hi team. So today I was working on the code changes for the role implementation, modify flow, and for the send email UH modification. So, uh, I had, uh. The changes were pushing, the PR was raised and merged.
+
+00:07:21 - 00:08:21 Unknown Speaker:
+
+So, um, Normal is doing a deployment, so after that I'll be validating the changes. Yeah, that's my updates. So I was working on some of the enhancements I have set by Resonant on the track package basically to show a definition of the status on over of it. So that's done. And we also have to show task, sorry, some details for the implemented task. So then this change is also done. There were some more enhancements that was there in the new role page. Basically where we have to show the variable. Once the user typed in some of the text. So it's kind of an auto-suggestion part. So let's say the user typed first three words, we had to auto-populate the variables which are starting with that word. So these changes are done and push into the one.
+
+00:08:21 - 00:09:54 Unknown Speaker:
+
+I am working on like the conditionally showing the fields in the approved project page and enhancing the UI currently for the approved project page. I think your voice is breaking in the last two minutes. I'm not sure if it's only me. But yeah, moving on. Regarding multivariate, I have completed analysis on one table. And with respect to the KRI, Rachna, have you gone through the table I have shared? No, Bhargava, I didn't get time yet. Once I go through it, I'll let you know. Sure, sure, sure. So I've made the changes as per you suggested. So if you want to cross-verify with your data, then we can have a discussion. Sure, I'll do that. That's it from my side, Sanusha. Thank you. Time is back up, Kundal. Is Kundal not on the call?
+
+00:09:58 - 00:11:00 Unknown Speaker:
+
+I don't think so. Shamir? Hey, hi, Sindhuja. Hi, team. So, Sindhuja, regarding the Quanto, so, we had a connect with Rachana. So, as per discussion with Rachana, like, I'm trying to check the values between Q-Track and Quanto. So, once done, I will share the same with Rachana and Sachin on Quanto side. And regarding the missing initial checks, I'm making few changes with respect to, like, where table name is reading from JSON file. Once done, I will check with Sachin like how to implement that API to read the load frequency and I will start on that as well. Yeah, that's all from my side, Srinuja. Thanks for the meeting. Hi, Srinuja. Hi, team. So I'm working on the rule modification part. So the code changes has been done. Right now, I'm deploying those changes.
+
+00:11:01 - 00:11:59 Unknown Speaker:
+
+After the deployment, I will test the flow. So, if everything goes well, I will plan to promote it to E2. So, there is an order for testing. Sure, Nirmal. Hi, Apov. Hi, Tim. So from end, I'm working on the DKRT factory table updation. So that is a migration of the CDE use case. So 700 DQ rules. So I'm moving to the DKRT factory table. So that part I'm working on. So I'm just coordinating with Prithvi on this one because since we have some additional columns are there. So what are the needs to be filled on this one? And I'm working on this part. And apparently yesterday I have deployed the 195 CD checks in the DQ repository table in even environment is completed.
+
+00:11:59 - 00:12:54 Unknown Speaker:
+
+So today I'm deploying in E2 and post this E2 deployment, I will do the one round of testing with all the CD decks. Then I will proceed for the E3 deployment. Yeah, this activity I'm currently working on. I have one more thing. Sorry, I'm not. Asking the right person, but regarding the remaining CD checks, right, which show as build in progress in that article. So, who is working on that and if I could get an update on the same? Currently, CD build and development, everything completed by Soman already. So, I have done the mapping of the respective DQIDs. So, that one, once we have done the testing, right, I will make it as moving to done those things. Currently, those testing in progress. So the build is complete, is it? Yes. All the remaining rules.
+
+00:12:55 - 00:14:01 Unknown Speaker:
+
+Correct. Yes. Okay. Okay. That's great. Thanks. Thank you. Sorry for the background noise. I just came out. Yeah, me, with respect to that eight-dimensional one, I got clarity on with multiple callers from searching today. I mapped all those, and a few columns needs confirmation. Once we get clarity, then I'll be able to test by today itself. With respect to the test today's discussion, I didn't schedule the call because we wanted to check whether it is really generating that 800 test rules or not. We ran the tag again today. And it generated actually 800 plus rules. So, we'll discuss that. Okay. I'll have a conversation on that and then I'll discuss it. Yeah. These are actually 800 plus rules as much. So, Prithvi, just one question.
+
+00:14:01 - 00:14:48 Unknown Speaker:
+
+Have you tried mapping these back to the DQ rule requirement sheet that the rest of the team is implementing? Because this similar module we have used for generating those rules, right? So maybe if you could just pick one example, like one table where you are seeing these 800 plus rows and try mapping it. Sorry to interrupt. Practically, it is not possible to have 800 plus rows for a single table. Yeah, exactly. That's what I'm wondering. Where are these coming from? You know, the 8th dimension which is generating those rows, right? It is not for a single table. It might be a combination of multiple tables. Right, I did not get a chance to look into that. I'll cross check and I'll get back to you.
+
+00:14:48 - 00:15:33 Unknown Speaker:
+
+Yeah, that's what I was telling Prudhvi yesterday as well, that these should not be from the same table, like one single table giving you 800 rules might be a case for like one or two tables, but will never be the case with all the tables, right? There are a few big tables like that R42 loyalty legend even, that might give you a lot of rules, but even so, I don't think it would be 800 rules. And then anyhow, look, I'll talk to you on that mapping, right? How we are planning from KRI to CD and then to the 8th dimension. What I asked him, don't focus on the number of roles. You just need to make sure that the template being created based on the number of roles we are getting from the 8th dimension.
+
+00:15:34 - 00:16:55 Unknown Speaker:
+
+Anyhow, 8th dimension are going to get the filter. It's not, you know, it's not like we are going to apply those MDE checks also, right? Nunchuck is already being there, right? We anyhow going to reduce those parts, so anyhow we are never going to get these many rows for a single table, right? So so that in that part, uh, leave it with me, I'll, uh, cross check. Maybe maybe we can connect once you're back from the vacation. And Prithvi, did you created a Jira ticket which I have asked you for the raise even? I mean, the DQ artifacts mapping is here, right? I'm going through that data also. So I'll do it. DQ artifacts for data mapping? Yeah, yeah, that DQ artifacts migration from DQ repository for artifacts. So you told him to review it with me, right?
+
+00:16:55 - 00:17:58 Unknown Speaker:
+
+So I'm going through that data also. Okay, okay, okay. So please make sure that that would be aligned with the UI that we did last time. And I would say don't insert the data until unless you have a once review it with me. Because the same data would be pushed to the AS environment which would be reflected in the UI. Yeah, sure. Good. Yeah, that's it. From my side, first of all, there was a, you know, implementation, wrong implementation was being adopted for modification part. So I just reviewed that with Nirmal. And then, you know, we are working on that, you know, fixing that part. So most probably the pull that he has created that would sort out that issue. So that part I did review today. Some of the code review shared by the different resources.
+
+00:17:59 - 00:18:50 Unknown Speaker:
+
+And then I went through this Q-Track reporting requirement document, Rachna. And I already analyzed it from my side. I would need a ConnectWrite because there are a few parameters for which we need a discussion on that, how we are planning to, you know. Sorry, Sachin, is this regarding the dashboard or something? Yes, yes, yes. Okay, okay. Sure, sure, we can connect on that, yeah. So, I am considering this reporting as the dashboard only. Yeah, yeah. So, there were two parts, right? One is Kundan that he is working on. Yeah. So, and the other part is the dashboard part. Yeah, correct. So, I was going through the dashboard only that the part which Kundan was doing, right, that is already being done. Right, so such an.
+
+00:18:50 - 00:19:39 Unknown Speaker:
+
+Actually, we would need some modifications on that, like right now, the way the output is coming, uh, we have not covered, like all the fields. Maybe it was also because, uh, I appended a few PS later and shared that revised version, so that is fine. Like I.I don't require them immediately because apparently, uh, we were also working on the code. So Sage has created like an overall SQL query to give us that exact output because we also have access to that table, right? Like we will share that code with you once we have aligned all the like metrics and everything with Purna. And later like this, this is again like not a restrictive requirement of 31st August. But for 31st August, we would need that pipeline up and running for that daily ingestion, right?
+
+00:19:39 - 00:20:27 Unknown Speaker:
+
+That is a requirement. Other than that, on the metric pulling side, I think we should be good with the code that we have built. And then it needs to be implemented into what Kundan has built. This new code setup we have built, right? We will provide that to Kundan. And if he can, like, you know, just get that running on the DAG that he has built. Yeah, yeah, we can do that. It's just a SQL query change. It would be major. Yes, yes, exactly. Yeah, that's fine. So, you know, that should be ready by end of this week. And Sindhuja has communicated in the morning. Can you please follow up with Kundan with respect to the build of that? Reporting part which Krishna is mentioning. That's a priority job. So just do a follow-up today.
+
+00:20:29 - 00:21:25 Unknown Speaker:
+
+Yeah, yeah. I have Sachin, but I have not received any response from him on the messages. I will check with him. Okay. Thank you. Yeah, so. That's the major update from my side. And, you know, some of the PRC configuration and all, I'm doing it parallely and some, you know, RFC creation for the RAZE table movement. So those are some of the minors. So I think seven is more on RAZE, right? So I don't think update would be required from him, but seven, if you can just update it. Certain changes from Suman's side on the CD or anything because I don't see him on the call. He was working on that. I didn't care back on the CD side. I explained to him why we did not approve the PR yesterday. He's been working on it.
+
+00:21:27 - 00:22:20 Unknown Speaker:
+
+And for the DAG monitoring part, he was able to demo something in E1 for me. So I told him to share the results as well with me and you. And then we can probably plan on moving it to G2 and do a thorough test in there. Yeah. And Rishna, there was a broader plan for that, right? I sent an email to Poonam. So if you can just get us some time, right? And then that tries email, right? Yes, yes. So actually right now we were also occupied with a couple of other things. So I believe Purna did not get time to go through that. But I will sit through that. Like I read the entire document. So I like overall understood like what it is. Once I catch up with Purna on the same, then maybe we can set up a call for that.
+
+00:22:21 - 00:23:11 Unknown Speaker:
+
+Also Sachin, when are we planning to pick that up once that's aligned? Which one, Rachna? The triage one, right? That management. Look, we are building for our team, right? Yeah. This should be ready by end of the sprint. So that email communication, that email you have seen, right? That test email, which I have mentioned over that email itself, right? So Suman is building on that. Anyhow, that is going to support us, right? Oh, so this is already a work in progress? I thought this is like a new thing. No, no, this is already a work in progress. If you remember, right, like as that requirement is to keep an eye on every tag that needs to be done with respect to compliance and all, right? We are already working on this.
+
+00:23:12 - 00:23:59 Unknown Speaker:
+
+And anyhow, by end of this sprint or maybe mid of the next sprint, it would be live on EPM. That would help us as a team, right? Right, right. But I'm aligned with Sachin. I mean, it does seem very helpful. Right, but I... But I just want to understand, are you planning to launch the entire full-fledged thing as per the document by mid of... Because it said a lot of things, including ServiceNow integration and other stuff. Yes. So that is a broader plan, Rachna, to make it widely used in the MX instead of just the US ADO team. That is my thought process, but I would need an alignment from both Poonam and Raj to start working. Because the way we have started working right now, it would not be applicable to 12 dynamics.
+
+00:24:00 - 00:25:33 Unknown Speaker:
+
+It would be dedicated to US CDO team only. But if they are aligned to take up that work, and this is not respect to the only the DAG failure, Even I thought of integrating systems like Ace Click another, where the automations are running. Okay, okay, got it, so more like an enterprise solution in the long term. Exactly, Yeah, exactly, got it. So that is going to. You know, I have some example where I don't know exactly the team name, but I would suggest share my stream. Okay, they used to do it manually every day. Okay, like these guys where it was. I used to get those. It's my bad, right? When I'm trying to search it. Is it Fira? I don't know. It's my bad, but might be like, you know, I look, these people are doing it manually.
+
+00:25:34 - 00:26:37 Unknown Speaker:
+
+Okay. So even these one, we can track over that. That we are planning for reverse-connected or not. This one basically did not receive the queue report for this automation, right? So this is like a combined ACE channel where all the tech teams who use ACE, they are reporting their results. Yeah, exactly. Like, you know, we have multiple Slack channels or an email alert, right? Yeah. Uh, they used to call it as a controller team or something, I forget their name, so they used to do these manual activity on a daily basis. Okay, uh, look, these guys, right? We have not received the Q report for yesterday, right? Uh, the process is complete, rolled out, right? Uh, I forget the they used to be called as controller team or something, right? Like now we have 230 DACs.
+
+00:26:38 - 00:27:27 Unknown Speaker:
+
+Maybe by end of this year or next year, we might need to, you know, move those DACs to a sustainment team who can monitor those jobs. Because I won't be able to ask my dev right just to look into it because they would not be then getting a time to... Sorry, Sachin, can you please repeat who it would be assigned to? It would be a controller team or something. I would fetch that exact keyword and will share it to you. Look, this has been done for... No, I just want to understand like... Suppose there is this controller team, right? So they would be actively supporting us in that case. Look, that is, I am not sure, Rachna. That is something, if we are aligned, right? Yes, migration is already being done, right?
+
+00:27:28 - 00:28:21 Unknown Speaker:
+
+They have almost 500 or 700 process automation, which is already running, right? So now we won't be able to support, right, from a debt perspective. So what happened there, over there, that was their alignment, right? They have moved those monitoring to a control tape. Now they used to monitor it 24 hours. Okay. Now they won't have access to run those DAG, resume those DAG and all, right? Right. Yeah. So whenever even an issue happens, they just wait. The time to trigger this job is at 6 p.m. If they did not receive the report by 6.30, they just go to that Slack channel and report it, right? Right, right. This kind of thing can be solved with that trials solution which I have proposed. Yeah, it's a great idea. I mean, considering you are suggesting an enterprise solution, right?
+
+00:28:21 - 00:29:15 Unknown Speaker:
+
+I just have like one, like I'm just wondering if this might be a concern when we do it as a part of this thing, right? Since you are currently supporting the U.S. CS Data Office, so one question might come up that what's the like business significance of this for, like, our product perspective? So one is definitely that we are spending a lot of manual effort currently in monitoring these. So that is one. I can think that one other would be that, you know, sometimes when there is a failure and there is basically downtime for any of the ongoing DQ checks, then that is a problem for us that that part of data quality monitoring. Yeah, just check with Poonam. Like he would be the right person to write. I did check with Purna.
+
+00:29:15 - 00:30:07 Unknown Speaker:
+
+I did not get a chance to discuss in detail, but that's what he asked me that like, what is the business significance of this for us? So that's why I'm wondering that, you know, there is something else like any other angle for our team in this, or this is something of any like tech oriented solution that is being suggested. I would say both. The reason, you know, whole MX has moved to Lumi now, right? It's not only us monitoring 230 DAGs, even different team would be having those number of DAGs over there, right? Even they would be dependent on those. Yeah, but that's what I'm wondering, like, considering this would take a significant amount of effort from our side, right? So, if we are trying to aim for something like an enterprise solution.
+
+00:30:08 - 00:40:06 Unknown Speaker:
+
+I'll be honest, I did not think about those business perspective and all. It's just technical feasibility that we have proposed. Right. Right. Because it will be resource intensive and we do have a lot of other priorities ongoing. That's why. Okay. Okay. Yeah. Okay. I will discuss it with him, but that's what just wanted to give you a heads up because his concern was that from business perspective, this might not be a priority item for us. Right. So it might get pushed back until like we have some additional bandwidth above and over our projects. Right. Yeah. Okay. Okay. I just need to drop off. I have a call with Raj. Thank you. Thank you, Sachin. Thank you, everyone. Thank you.
+

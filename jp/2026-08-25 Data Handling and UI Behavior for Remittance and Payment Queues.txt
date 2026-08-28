@@ -1,0 +1,102 @@
+2026-08-25 Data Handling and UI Behavior for Remittance and Payment Queues
+
+Creation Time: 2026/08/25 14:41
+
+
+📅About Meeting
+
+• Date & Time: 2026-08-25 14:41
+• Location: Not specified
+• Attendee: Raul, Abhi, Ashutosh, Omar's team, Mana, and others involved in Pilot 1, 2, and 3 development and deployment
+
+📒Meeting Outline
+
+Data Handling and UI Behavior for Remittance and Payment Queues
+
+• Sequence Number and Primary Key Usage  
+  The sequence number is an editable field and not shown in the UI for BAU (Business As Usual) or uplift versions. It is not required to be displayed on the UI. Instead, the remittance ID serves as a unique primary key for the remittance table. The current BAU approach does not pass the primary key back to the UI; the UI holds the entire data set even when modifying payments. The team discussed aligning Pilot 2 and Pilot 3 with this logic but noted challenges with pagination and data handling.
+
+• UI Data Submission and Staging Table Usage  
+  The UI is expected to send the entire data set back after user modifications. To support multiple edits before submission, all data is loaded into a staging table, where modifications, deletions, and additions are applied before final submission. There is a hard limit on the number of records shown in the UI drawer (initially 1000, considered to be increased). For Pilot 3, a more scalable solution is needed due to expected higher data volumes.
+
+• Handling Large Data Volumes and Hybrid Approach  
+  For large remittance counts, a hybrid approach is proposed where the backend reads modified remittance data from the staging table instead of relying solely on UI payloads. This reduces UI bottlenecks and improves performance. This approach will be evaluated after Pilot 1 completion.
+
+• Batch Processing and Modify Batch Functionality  
+  Modify Batch currently handles one recipient at a time, allowing deletion or editing of recipients in the payment queue. Similar logic and functions need to be applied to the remittance queue for add, modify, edit, and delete actions. The sequence number is not significant for these operations and can be removed to avoid complications.
+
+• Type Field and User Interaction  
+  The 'type' field drives the state of remittance entries (change, old, delete, new). User edits should not immediately remove old entries until submission, allowing cancellation without data loss. This behavior needs to be carefully managed to avoid premature data removal.
+
+Deployment and Pilot Progress
+
+• Pilot 1 and Pilot 2 Status  
+  Pilot 1 clients (from the US) are using the batch functionality. For Pilot 2 (India), batch processing is currently not included as per recent decisions. The backend code is ready, and UI code has been deployed to QA3 but is experiencing slowness. Deployment timing is uncertain.
+
+• Cascading Effects on Other Teams and Features  
+  Omar's team is waiting for deployment to proceed with batching QA and to merge PRs for SEPA credit and other features like Swiss payments. Delays in deployment will cause a domino effect impacting these related projects.
+
+📋Overview
+
+• Sequence number is editable and not shown in UI; remittance ID is used as primary key.
+• UI sends the entire data set back; staging table used for multiple edits before submission.
+• A hybrid approach is planned for handling large remittance volumes to reduce UI load.
+• Modify Batch functionality for payment queues must be extended to remittance queues.
+• The 'type' field controls entry states; old data remains until submission to allow cancellation.
+• Pilot 1 batch functionality is in use; Pilot 2 batch is currently excluded.
+• Deployment delays affect dependent teams and features like SEPA credit processing.
+
+🎯Todo List
+
+• Abhi:  
+  • [ ] Increase the drawer display limit from 1000 to accommodate more records, time: before Pilot 3  
+  • [ ] Implement UI logic to send full data set back to backend for staging, time: Pilot 2  
+• Ashutosh:  
+  • [ ] Rethink UI behavior for 'type' field to ensure old entries remain until submission, time: ASAP  
+  • [ ] Align remittance queue handling with payment queue logic for add, modify, edit, delete actions, time: Pilot 2  
+• Development Team:  
+  • [ ] Deploy UI code to QA3 and resolve performance issues, time: ASAP  
+  • [ ] Prepare scalable solution for Pilot 3 to handle high remittance volumes using hybrid staging approach, time: Pilot 3 (October)  
+• Omar's Team:  
+  • [ ] Proceed with batching QA and merge PRs for SEPA credit and related features after deployment, time: post-deployment  
+• Mana:  
+  • [ ] Confirm batch processing exclusion for Pilot 2 and communicate to relevant teams, time: completed
+
+Transcription
+
+00:00:00 - 00:00:49 Unknown Speaker:
+
+Was key? Sequence number is a unique key sort of field which we'll use to identify, right? But sorry, but sequence number is itself is an editable field. In the Figma. For the uplift, however, it is actually not shown. I think in the Bau ember, correct? No? Raul, I think we we spoke, uh, I think it. It's not required to be shown in UI, right sequence number. In BAU, we don't show it. I think in Figma also, we don't. Sorry, so maybe I saw it in the other UI then, whatever version. But it's true for a remittance ID, which can be unique. You can make a primary key in that table. Is there a primary key? That is already there. Currently, we don't pass it and all. But how does it happen in BAU?
+
+00:00:50 - 00:01:45 Unknown Speaker:
+
+In the BAU behavior, in single venue, there is that primary key is never passed back to the UI and UI holds the entire set even for the modify payment scenario. So, how do you do it for Pilot 2? Check it out in Pilot 3 in October. Yes, so I am weird. I'm thinking basically we will handle the whole thing. We'll ask UI to send the whole thing, like, you know, back. Whatever user changes, they have to send it back. The problem with pagination is that you have to look at the primary key concept. Because otherwise, we'll have to introduce a hybrid approach where some part may be, you know, let's say, changed or not. I mean, if we do change, we take it from staging and whatnot. Because the implementation of the drawer is also tightly coupled with that.
+
+00:01:47 - 00:02:45 Unknown Speaker:
+
+Versus the actual payload that submit or the modify submit logic needs, you know, from UI. What plan do you have? Abhi we are thinking we will basically have UI store all of it in staging and show it also on the drawer. Jitne bhi hai. There is a hard limit I think 1000 ka daala tha which I am thinking to increase to kind of show in the drawer and all. Creation magare me to be able to restrict, right? Creation ke time me remittance ka kuch 500 discuss kya tha. 500 or whatever. 200 nahi tha. Time pass kar raha. Okay. But all I'm saying is that pilot two is I'm okay. But for pilot three, you have to give a good solution because client will be using the volume is more and definitely be more. Okay.
+
+00:02:45 - 00:03:36 Unknown Speaker:
+
+So you have to make a solution for that. So basically, if we store it partially in staging and don't modify it, will it work? Is it just a matter of showing? Because in the current BAU mechanism, everything goes to the UI and the UI, based on the user actions, makes the final set and sends it back. In the backend, the old set is completely deleted and the new set is created. That is the current BAU logic for single BNA. GSP. We are trying to align against that same logic. This logic will never work. We have to see that if you are sending it completely, you will have to load it in staging first. Then apply delete action or modify action on staging and then submit. You will have to put it in staging.
+
+00:03:38 - 00:05:01 Unknown Speaker:
+
+Yes, we put it in staging because to edit multiple times, we have to show it in staging itself before it is submitted. You load everything, basically. Yes, put everything. Yes, correct, correct. In UI, I won't suggest keeping 5000 lines. Same thing happens with your batch also, right? You load everything in staging in Modify Batch. How are you doing that? Basically, in Modify Batch, technically, it is for one recipient at a time. No, no, sorry. Multi remittance delete on the single recipient? Recipient delete itself. Recipient delete itself. From the payment queue. From the payment queue. If you delete or edit, then you are not replacing it, right? You are modifying that particular recipient. Correct. Yes. So that function has to be added here. Is there any significance of sequence number in this? Nothing.
+
+00:05:01 - 00:06:10 Unknown Speaker:
+
+You can read over that for a primary key. I am okay with that. Because I was thinking that in between, if someone deletes or adds, then there is no problem. Sequence number, if we are okay. In fact, it will create more problem for the client. If someone deletes the middle one, the sequence number will get... Correct. Sequence number is not there yet. We can remove it. Remove the sequence number. Okay. You are saying that you don't want to show it, right? On the UI at all. Correct. And you can repurpose it for primary key. With remittance ID, the primary key. But whatever you are doing for payment queue has to be done for remittance queue also. Treat it as remittance queue. This would be add, modify, edit, edit, delete. Same action, sub-action. Same logic apply.
+
+00:06:13 - 00:07:16 Unknown Speaker:
+
+But type is also a field which drives, right? Which one? Change, type, as good as old, delete, and new. Type, and if I start entering, then the old one should fly away. And only at the same time. Not at like, when I type and the RF changes again, it should probably give me, give it back. Isn't it? I don't know. Maybe. Unless I think. Unless he doesn't submit. Until I submit, it should remain. Because I may cancel the process at any point of time. That means, let's say I RF it. At the same time, if you blow it up, it's a problem. No, it won't happen like that. It won't happen like that, mostly. Ashutosh, we need to rethink then. Till now, we thought he would hold the whole UI and send it.
+
+00:07:23 - 00:08:57 Unknown Speaker:
+
+We also discussed one hybrid approach in which if the remittance count is more, the backend will read the modified remittance from the staging table to create the payload. Like, pull all the data into staging table. This is the same approach, but let's say UI is sending the payload for the remittance also, then that will become a bottleneck for the UI. If the remittance count is high, we will read it from the staging table instead of reading from the UI. For the high count of remittance. But for now, let's see what happens. For now, don't think too much about it. Pilot 1, do it on the remaining functions. Okay. In Pilot 2, we are not giving this batch, right? We are giving. Mana said that the batch is not going in Pilot 2.
+
+00:08:57 - 00:10:27 Unknown Speaker:
+
+That is the call from yesterday. That is the work. Okay, are we so bad? No, no, no, we are very good. Okay, forget about it. Okay, let's try to do whatever because there will be a cascading effect. Poor Omar's team is waiting for you to deploy him in the batching QA. Then he will merge his PR for SEPA credit and all. That will be a domino effect later. SEPA, Swiss, etc. Will be stuck if this is not done. We are going to deploy, definitely, right? I mean, the backend code is already there. The UI code just needs to be deployed on QA3. The UI code was deployed today, but it is slow. I am not sure when it will be free. But we have the clients of Pilot 1. Are those clients using this batch? Pilot 1 is from the US. Not Pilot 1, Pilot 2 you are saying, India. He just said we use...
+

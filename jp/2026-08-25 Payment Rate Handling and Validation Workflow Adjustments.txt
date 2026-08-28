@@ -1,0 +1,141 @@
+2026-08-25 Payment Rate Handling and Validation Workflow Adjustments
+
+Creation Time: 2026/08/25 13:58
+
+
+📅About Meeting
+
+• Date & Time: 2026-08-25 13:58  
+• Location: Not specified  
+• Attendee: Yogesh, Santosh, Armando, CP, JP, and others  
+
+📒Meeting Outline
+
+Payment Rate Handling and Contract Booking
+
+• The discussion clarified that the indicative rate shown to users is not sent during the submit phase, and the visible rate scenario differs from the indicative rate scenario.  
+• At release time, the actual rate is accepted, not the indicative rate. The visible rate is triggered only if the rate type 004 is sent during submit.  
+• Without sending rate type 004, the visible rate will not be triggered, and the backend does not currently send this rate type in the submit call, which is identified as an issue.  
+• The rate type 4 is crucial as it determines whether an XSFX API call is made to get the visible rate, which may be treated as an auto effect.  
+• It was noted that this behavior applies across all rate types, and the contract booking depends on sending the correct rate type.  
+
+Payment Queue and Payment Grid Field Display and Labeling
+
+• There is a discrepancy between the payment queue and payment grid in how the "from account" or "ordering account" is displayed.  
+• The user preference controls whether the account number or account name is shown, and this preference should be respected in the payment queue display, specifically for the ordering account column.  
+• It was agreed that the payment queue should render only the account number, applying user preferences such as suppressing leading zeros.  
+• Label changes were confirmed:  
+  • "Ordering originating account" replaces "from account number"  
+  • "Instructed amount" is preferred over "payment amount" or "receipt amount" for clarity and consistency with the payment activity grid.  
+• For currency and recipient account fields, the label should reflect either recipient or debit account number depending on the transaction type (ACCR or ACSDR).  
+• The column header will remain "recipient/debit account" without "number" to keep the label concise.  
+• Bank ID labeling will be standardized as "bank ID" to avoid confusion with ID type fields.  
+• Four label changes were identified and will be communicated to the team.  
+
+Validation and Pre-Validation Workflow in Payment Batch Creation and Modification
+
+• The current workflow includes pre-validate calls and validation calls during drawer operations (create or modify batch).  
+• It was proposed that validation errors during pre-validate in the drawer should be ignored to allow users to save and close or save and add another without interruption.  
+• The final validation, including value date validation, should occur only at the submit level.  
+• A pop-up will appear on submit if there is a value date error, directing the user to update the value date field.  
+• The value date field is not present on the payment queue page but on a previous page, which complicates immediate correction during submit.  
+• The team agreed to remove validate and cutoff validations from subsequent pre-validate calls after the first one, but the initial pre-validate call remains necessary.  
+• There was discussion about whether to handle ignoring errors at the UI or backend level; the consensus leaned towards ignoring validation errors on the UI during drawer operations.  
+• Pre-validate calls happen regardless of whether the user intends to save or submit, so ignoring errors during pre-validate for drawer saves is important to avoid blocking user actions.  
+• The create batch process may have cutoff validations that should stop the process and prompt the user accordingly.  
+
+📋Overview
+
+• The indicative rate is only for display and not sent during submit; sending rate type 004 is essential to trigger visible rate and proper contract booking.  
+• Payment queue display should respect user preferences for showing account number or name, with agreed label changes for clarity and consistency with the payment activity grid.  
+• Validation errors during drawer pre-validation should be ignored to allow saving actions, with full validation deferred to the submit stage.  
+• Value date errors will trigger a pop-up on submit, guiding users to correct the field on the relevant page.  
+• Labeling and field naming conventions were standardized to maintain consistency across grids and queues.  
+
+🎯Todo List
+
+• Yogesh:  
+  • [ ] Share the label change details (ordering originating account, instructed amount, recipient/debit account, bank ID) with the group chat. (ASAP)  
+  • [ ] Verify and implement sending rate type 004 during submit to trigger visible rate and contract booking properly. (Next sprint)  
+
+• CP:  
+  • [ ] Adjust validation workflow to ignore validate and cutoff errors during drawer pre-validation but keep initial pre-validate call. (Next release)  
+  • [ ] Ensure value date error pop-up and navigation to the value date field on submit is functioning as designed. (Ongoing)  
+
+• JP:  
+  • [ ] Coordinate handling of cutoff validations during batch creation to ensure user is stopped and prompted appropriately. (Next sprint)  
+
+• Development Team:  
+  • [ ] Implement UI changes to respect user preferences for account number display with leading zero suppression in payment queue. (Next sprint)  
+  • [ ] Standardize column headers and labels across payment queue and payment activity grid as agreed. (Next sprint)
+
+Transcription
+
+00:00:00 - 00:01:07 Unknown Speaker:
+
+You will not have the rate booked, no? In release also, it will not show. No, in release, there was a scenario with a visible rate, right? Yes, it's indicated, right? But we are not sending the rate in the submit. No, in that, the scenario with a visible rate is different. I don't think it will get rejected, but my... But where they will actually fix the rate then? Right now it is indicative. I'll submit. This is just to indicative rate is just to show the user that this rate is going to happen. But normally in release time you accept the rate. It's always at the time of release. But at the time of the release, they should get this rate, right? No, they don't get the indicative rate. At that time, we do an XSFX call with their APIs and the contract.
+
+00:01:08 - 00:02:17 Unknown Speaker:
+
+And this is coming from... And depending on the rate type, we may call, but we are not booking the contract here. Yes, but the issue is... In backend, we are not sending the rate type in such scenario if the proceeds in submit. Submit time we are not sending, is it? Correct. We should send the rate type 004, right? So that is not happening. Oh, then there is some issue. Correct. But we do book the contract, right? Contract is going in visible rate, right? No, it is not going. Visible rate is not visible here, right? Rate is not visible here. No, no. Once you release. No, no, it's not coming. We just tried that. I did not get that accept rate call, right? And I believe that is based on the rate type that we send at the time of submit, right?
+
+00:02:17 - 00:04:21 Unknown Speaker:
+
+Submit, correct. Without that, visible rate will not trigger. Okay. Indicative rate 4, right? Yeah, rate type 4. Yes, rate type 4. This behavior is across all irrespective of rate type. Whatever the rate type is, we have to send it to back office based on which the indicative rate are triggered. Indicative, sorry, visible rates. Rate type 4, rate type is important, basically. Rate type 4 will decide whether it has to call access or not. If it is a 4, then it will go access FX and will get the visible rate. It may be treated as auto, like auto effects. Okay. We want to combine this with tonight's, no? Along with that. What is the effort? Yes. I'll log in the 95. I'll just check. I believe 95 is rejected by user. Right, Santosh? The code, status code?
+
+00:04:22 - 00:06:08 Unknown Speaker:
+
+Yes. 99. 95. Let me confirm. 95 is rejected. Rejected, right? 99 is deleted. Rejected is 95. This is rejected by user who rejects. By rank or clearing, it's different. Delete is different. What's the amount? Okay rejected by user saying wrong amount. Quickly, so two things. One, the column name on the payment queue, for the, basically, first from account, and then on the payment grid, the name is ordering account, right? But the second associated question is that apparently there is a user preference for that field, which tells whether the amount should be displayed or. The name should be displayed. Now, in the... Yogesh, can you open that question? Like, the email where... I'll share it. No, no, no. We have a question. We need to just decide. Payment queue may look different versus payment grid.
+
+00:06:09 - 00:07:22 Unknown Speaker:
+
+Payment grid may have certain behavior for that field. But on our payment queue, we want to confirm what we want to. Ultimately sort of show so other other so one part is the label change for that column. But what do we have in the main grid? In the main grid, we see the ordering account. Okay. So, in the ordering account, what do we show in the current? This is the response of the ordering account. In which there is display value, tooltip, bank ID, account number, account name. So, display value can be either account number or account name depending upon the user preference. Okay. So, now our question is, what should we show on payment queue? In ordering account, display value, which can either be account name or it should be only account number suppressed by the leading zeros.
+
+00:07:22 - 00:08:32 Unknown Speaker:
+
+So, it should be the account number, but which should follow the user preference, leading zeros or without leading zeros. Okay, so you have to render only account number and if there is leading zero in user preference, then apply it. Correct? Correct. Yes. Okay, so that is one part. Second question is, do you want to change your label name? We have already done this. Ordering originating account already. From account number. Okay. And this payment amount is called instructed amount. Because in main grid it is instructed amount. If it is DR, then payment amount. If it is DR, then receipt amount. For CR, you are saying payment amount. And for DR, receipt amount. But CP, in the main grid, regardless of ACR and DR, we are only showing the instructed amount. Where? In the payment activity grid.
+
+00:08:32 - 00:09:35 Unknown Speaker:
+
+Yes, in the payment activity grid. We may have to change that later. Are you showing the amount or the payment amount? Instructed amount. Instructed amount. Actually, instructed amount is not better, CP, because it will be common for any payment. Yeah, that's maybe better. Hold on. Instructed amount is better. Let's do that. Instructed amount. Then same question for currency also. And this is the recipient account number, but this can be recipient or debit account number depending upon SHDR. Okay, this is correct. And what is the name of the recipient here? SHDR, recipient account number to recipient. What you are doing in free form, that is on single money. Use the same name here. Recipient or debit account number. But the grid that is defined in the column is the same as recipient slash debit party.
+
+00:09:36 - 00:10:31 Unknown Speaker:
+
+No, no, it's not like that. Actually, recipient slash debit party is the account number. Where is the account number? I can't see it. No, we are not showing recipient account number in the payment activity grid. Recipient slash debit account number, it will be like that, right? No, it's just recipient slash debit party. Debit account number doesn't make sense. Debit party. But that one makes sense on the grid. Because on the man grid, we are showing both. It is showing CRV and DRV in the man grid. So it makes sense. But here, you will show either the credit or the debit, not both. The point is that the grid column, this is fixed. So we are not changing the column for CRDR. The column headers are fixed. So, that should... So, we will have to slice it.
+
+00:10:31 - 00:11:27 Unknown Speaker:
+
+Yes. Wait, wait. Okay. In this, we have kept the beneficiary ID type and we have kept the beneficiary ID in the grid. It has not been changed. It is an outstanding item in the customized column. Okay. In which it should be recipient slash debit party ID type. But in this case, if you are an ACCR, you are a recipient. When you make a single penny, what do you call it? Once you select ACCT, account type, ID type as account, then what is its label? Account number, right? Recipient account number or debit party account number. It is like that. So, we have to do it like that. So, what is said in row number 3, Did Armando say it or did you guess it? Recipient slash debit account number. No, no, we were making it like that.
+
+00:11:28 - 00:12:22 Unknown Speaker:
+
+Okay, so this is based on ACSCR. If it's ACSCR, then it's recipient account number. If it's ACSDR, then it's debit account number. It should look like that. If we don't approach it with a slash. It will be labeled with a long slash. But that is not possible as of current. Because for that, what happens is... Then we call and display column names. Right, so we don't know if it is for CR or DR.So we have to call different UIs every time. Okay. Then to keep it small, keep the recipient slash debit account. Remove the number. So that the label remains small. We will see later how to do this. Okay. So we use the existing one and clean both. Yes, recipient slash debit account. And recipient name is fine. Recipient slash debit party.
+
+00:12:23 - 00:13:52 Unknown Speaker:
+
+This is okay, right? This is in sync with our payment activity grid. Correct, yes. Okay. And bank ID, in the payment activity grid, it's ID. So shall we show bank ID or ID here? No, we'll change it. Because there are two fields, ID type and ID. So that's why there's a little problem. We'll keep it as bank ID. Did Armando say anything? No, he didn't say anything. We didn't even ask him. His bank id is not mentioned here. So let it be. Okay, so basically we have 1, 2, and 3 labels. Sorry, 4 label changes. 2, 3, 5, and 7, right? Line number. Yes. Paste this and send it to our group chat. I will send it. Bank ID and location. Instructed validate. Prevalidate. So, basically, we have our batch create and flow, right?
+
+00:13:52 - 00:15:04 Unknown Speaker:
+
+Or even, for example, modify flow maybe, for example. User is modifying something on draw, right? And currently, so there are two different scenarios. So first I'm covering the question you asked today, right? On the drawer, there is a pre-validated call and there is validation of the validation. And that cut-off has been made, let's say, in the pre-validated call while the user is on the drawer. So what should be the next set of action? Because are we saying that? Then evaluated, but we. There is a pre-validate call for the recipient, which we have implemented and we have currently we are considering the validated validations also as part of pre-validate. Should allow the user to save and close and save and add another. Validate we can ignore at a dropper level. It should only happen at a submit level.
+
+00:15:05 - 00:15:57 Unknown Speaker:
+
+Yogesh, let me share the screen for a moment. I will show you the submit level which they have just implemented. So CP, what you are saying is that we will ignore both validate and cutout. So CP, what we have communicated right now is that. In the submit payment, if we get this value date error, then we'll show this pop-up and we'll go to that particular field to update the value date. No, but are we allowing the user to submit on this payment queue? No, not on the payment queue. I mean, this is for the final submit, which we do for create batch. That button is hitting, right? Yeah, let's close the payment. When we close, we come back to the payment queue. Correct. Is there a value date in it or not? No, it's not here.
+
+00:15:59 - 00:16:56 Unknown Speaker:
+
+But we show, right, I think, some, I mean, the actual field is in another place, but it's on the table. It's on the previous page. That's where I was saying, look, there's no value date on this page. We've just combined group name and batch reference. Ultimately, So this is what Armando has communicated. Whenever there will be a value date error, we'll show this pop-up. Then if the user clicks on update value date, we'll take them to this value date field and show this error. This is very complex. Is this already done? Yes, this is what my team has implemented. So what is the problem? No, no, I'm saying so this can be the final one, right? We won't be doing any validation on pre-validate. Validation, validate, validation. One will happen when single menu is made.
+
+00:16:57 - 00:18:04 Unknown Speaker:
+
+After that, add another menu is made. So in that drawer, validate, validation, cutoff validation, we can simply ignore. Okay? CP, we already implemented pre-validate in each drawer, right? No, no, we do here. No, no, we do validate. But validate error, we ignore and allow to save. We will remove validate and cutoff from each pre-validate call from that end. No, no, Yogesh, first one is needed. First one is needed. You can't remove. First one is needed, subsequent save is not needed. Subsequent pre-validate is not needed. Like that. There is no way to modify the value date. You are not allowing him to save. Prevalidate does validate other stuff also. This is what I was saying. In the time of prevalidating, can't we just simply ignore that error for drawer? Instead of like.
+
+00:18:05 - 00:19:02 Unknown Speaker:
+
+Error ignore karna UI pe ya back end se hi. UI, UI, UI, UI pe. He's saying. But error aa raha hai then like we are ignoring that error. We are not handling that. That way are we saying? Or back end error. Back end should not give the error altogether, right? But back end cannot know it is for drawer. So we didn't stop at any point, right? Can't be for the timing, I understand. Can't we just simply ignore it for drawers and just allow them to save? Because save for later, maybe you would have ignored it. For save for later, we don't do any validation, CP. No, no, but the call is being pre-validated, right? He doesn't even know if he will save or submit. Pre-validate is called irrespective of whether he will save or submit.
+
+00:19:03 - 00:19:12 Unknown Speaker:
+
+But JP, we have two scenarios, right? So, the create patch may technically cut off, so we wanted to sort of stop and ask.
+

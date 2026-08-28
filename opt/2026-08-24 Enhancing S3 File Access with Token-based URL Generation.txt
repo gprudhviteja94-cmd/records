@@ -1,0 +1,124 @@
+2026-08-24 Enhancing S3 File Access with Token-based URL Generation
+
+Creation Time: 2026/08/24 17:01
+
+
+📅About Meeting
+
+• Date & Time: 2026-08-24, 17:01
+• Location: Virtual meeting
+• Attendee: Tim, Deepak, and other team members supporting GSG use case
+
+📒Meeting Outline
+
+Enhancing Pre-signed URL Usage for S3 File Access
+
+• Current Limitations of Amazon Pre-signed URLs  
+  The team discussed the inherent limitation of Amazon pre-signed URLs, which expire after a maximum of seven days. This is problematic as business requirements often demand links valid for longer periods, such as three months or one year. Additionally, sharing encrypted files via these URLs requires a controller to decrypt files on download, which raises security vulnerability flags due to passing URLs in the API.
+
+• Proposed Token-based URL Generation Solution  
+  To overcome these limitations, a custom token-based URL generation handler was developed. Instead of relying on Amazon’s pre-signed URLs, this handler creates tokens encoded in base64 or base32 that include configurable expiry durations (e.g., 7 days to 365 days). The token validates access and expiry, allowing secure and flexible link generation that supports encrypted file downloads without exposing direct URLs.
+
+• Implementation Details and Configuration  
+  The handler is integrated at the tenancy level with configurable properties such as secret keys, process names, S3 access keys, endpoints, bucket names, and expiry settings. The token validation occurs in a controller that decrypts files on demand and serves them securely. The downloadable URL generated can be embedded in emails or templates for stakeholders to access reports anytime within the token validity period.
+
+• Demonstration and Code Walkthrough  
+  A live demonstration showed how the token-based URLs are generated and validated. The team reviewed the code structure, including methods to generate URLs, handle file uploads with encryption, and validate tokens during download requests. The solution is already deployed in production for daily reports with extended expiry (up to 365 days), successfully mitigating previous security vulnerabilities.
+
+• Adoption and Future Use  
+  The solution is open for use across various projects and tenancies. It addresses flagged security issues and meets business needs for longer-lasting, secure download links. Team members were encouraged to review the shared repository and documentation to implement this approach in their respective use cases.
+
+📋Overview
+
+• Amazon pre-signed URLs have a fixed maximum expiry of seven days, which does not meet longer-term business requirements.
+• Passing pre-signed URLs for encrypted files causes security vulnerabilities flagged by API security checks.
+• A custom token-based URL generation handler was developed to create secure, configurable expiry links that support encrypted file downloads without exposing direct URLs.
+• The handler uses tenancy-level configurations for secrets, S3 credentials, bucket info, and expiry settings to generate and validate tokens.
+• The solution is already implemented in production for daily reports with expiry extended to 365 days, effectively mitigating security vulnerabilities.
+• The approach is available for all teams to adopt and includes detailed documentation and code samples for easy integration.
+
+🎯Todo List
+
+• Meeting Organizer / Presenter (Deepak):  
+  • [x] Share the repository link and README documentation with all team members (immediate)  
+  • [ ] Provide support for any queries regarding implementation (ongoing)  
+
+• All Team Members:  
+  • [ ] Review the shared documentation and code samples (within 1 week)  
+  • [ ] Evaluate and implement the token-based URL handler in their respective projects as needed (within 2 weeks)  
+  • [ ] Report any issues or questions to Deepak for resolution (ongoing)
+
+Transcription
+
+00:01:02 - 00:02:26 Unknown Speaker:
+
+Good evening, guys. I hope you can hear me. So thanks for setting this up. So this is just an effort to share some knowledge internally. Right. So and hopefully it will help you somewhere in your assignments for your information. OK, so I think. Maybe you can wait a minute, see if anybody else is joining. And the number you might want to just quickly introduce, like which project did you work on, then start with the problem statement and share. We may not need like a whole half an hour, but yeah, we can get just in case somebody has more questions or want to share something. Sure, thanks. Okay. Hi, Tim. Currently, I'm working with Deepak and supporting the GSG use case. Okay. And we came across a recent issue, not exactly issue, we have the limitations where let's just suppose, right, we...
+
+00:02:27 - 00:03:25 Unknown Speaker:
+
+Generally, when we generate the report, right, we use to save the link, right, pre-signed URL to the user, right, along with the report. Many of you does that, right? So, the thing is, when we generate the pre-signed URL, right, using the Amazon, which provides, right, they have some limitation. The limitation is like the link will get expired in seven days. And sometime, right, the business ask is like the link should work for like three months and one year. But since the capability is not provided with Amazon, so we can't really use that recent URL. And second issue was sometime when you share the link, right, so what we used to do is we used to create a controller. And from the controller, right, When the user clicks on the pre-signed Url, right.
+
+00:03:25 - 00:04:15 Unknown Speaker:
+
+So if something, the file is encrypted and that encrypted file, we need to decrypt it. And, uh, give them the downloadable one. So for that we need to create a controller, and from the controller we need to pass the URL for the S3. So, uh, the problem was like, this will flag as a security vulnerabilities. And we had couple of vulnerabilities. Because in most of the project, we use that encrypted file. And this the preset Url, so to, uh, overcome that, right? What I have done is like I created one handler, so where what exactly we are doing is instead of creating the preset URL, right? Um, I am creating my own token, okay, token based logic, where you can configure the token as per your tendency generate the URL.
+
+00:04:16 - 00:05:07 Unknown Speaker:
+
+And the token, right, which I used to generate it, that is like base 64 or base 32 encoded value based on that and based on the expiry date, you can provide your own. So let's say suppose somebody wants for like 365 days and somebody wants for like seven days, right? So based on that, we can generate the token and it will validate against that. This feature, right, we have already implemented in one of the tenancy where it is working fine. I can, I'll just walk you through the code. So this S3 handler is already available. And so you just need to use this char in your code and tenancy basically. And then you can use a couple of methods for that to generate the link.
+
+00:05:07 - 00:07:17 Unknown Speaker:
+
+And the downloadable one will automatically work because the controller will activate it if it is there in the tenancy. So no need to take care of the download part. But for upload, you just need to use one of the methods. And some configurations are there related to that to set up in your tenancy. Let me just quickly share my screen and show you how it works. Give me a moment. You have any details for a real thing, like it's a pre-signed URL that you guys used to send? Yeah, yeah. I just want a second. Let me run my code. Let me know if you guys can see my screen. Yes. Okay. Used to generate for some of the other. Okay. If you see here, right, So this is how we used to generate it.
+
+00:07:18 - 00:08:09 Unknown Speaker:
+
+This is the earlier, maybe this is not implemented in the other tenancy, but you will see here, right? So this is our gateway URL. Here we provide the tenancy name and then file name, whatever the file name is there, and then this is the URL, which we pass it. But this will flag as a, since this is, basically this is the, S3 Pre-signed URL But the problem is, this might be this file is encrypted. So in order to decrypt that, we used to pass it in the controller, and there we decrypt it and return it. So, but here the problem is. The two limitation is one we are passing as a AP security vulnerability, it will flag it because we are passing the URL. Second thing is, this pre-signed URL has a seven days of limitation.
+
+00:08:13 - 00:09:13 Unknown Speaker:
+
+And that you cannot change. That is like by default by Amazon, max of seven days. So this is how it is. Now the point is, what I am trying to do is, here you see this code, right? When you run it, I just created a sample one where you can generate your own event and it will upload the file. I just created a sample file which will generate the file and maybe put the encryption and decryption as per your need. And it will generate it like this. The downloadable link and I'll show you how the structure will be and how it looks like. So basically, uh, the controller will look like this, the token and the token we pass it, so token will contain your, uh, the encryption v64 of Base 32, whatever you will pass, right?
+
+00:09:13 - 00:10:09 Unknown Speaker:
+
+Based on that, it will generate the URL. And as per your time. I mean, the days so we are passing here, so how we are configuring it. This is like we are getting it from the VMarts, so I'll quickly go through one by one. One is like, at the tenancy level, we are defining the secret, this secret. You can generate your own base 64 year, 32 encoded one that is up to you. This is as per your tenancy and your use case, because in tenancy we have multiple use cases, right? So this is the tenancy level. You have to define and you have to define your process name. Basically, I just given the multi export and then your access key and secret. This is for S3 upload, second, the endpoint, the S3 inputted.
+
+00:10:09 - 00:11:01 Unknown Speaker:
+
+Whatever you have, you can provide. This is again port, then the bucket name and then the reason, and this is the object expiry and the token expiry object expiry. That is like set in the bucket level, whatever the object you you are creating at the bucket. So generally we define both the same value. Because the once the bucket get expired, there is no point of putting this expiry. Because it will go and download it from the same bucket. So it really keep the same one day or whatever you want, it's up to you. Second thing is, uh, the gateway URL you need to define for local way using Localhost, and for whatever, uh, like, let's suppose ideally you have to define your ideal reason this URL, or maybe for globally, you need to define.
+
+00:11:01 - 00:11:54 Unknown Speaker:
+
+Without this IR, then this property, it's up to you. I mean, in some of the cases, you need an encryption enable, right? So if you need an encryption enable. So here two things one, it's like if you have to add the encryption one, right? Then you have to define this property you generally don't need to define, because this is like I'm using the A side door type. Generally, we use the same encryption from the platform, right? So it will take it from there. The height one. If we you are using true, if it is false, then this property is not good and then rest are same. And then once, uh, you define all this property. Right? Configured as per your need, then you are able to generate this URL once the UrL is generated, right this token, right?
+
+00:11:54 - 00:13:13 Unknown Speaker:
+
+I'm just validating the token against the property I have defined or the secret. So that it will be secured and it will fetch it from your vault decrypted and check the expiry token days, and then it will allow you to download it. So if you see here, this is like a S3 one where we have defined, uh, this is like a previous one. Uh, let me just show you, okay now. Pollutancy we have already implemented, so if you see here right, this is based on the token and the deployment ID. What we are passing, that's it. So once you click on that, it will download. So this is how it it works. You, you just need, uh, in order to do that right, you just need, uh, this bundle, okay, and a couple of methods are there, so here I'll just quickly show you.
+
+00:13:13 - 00:14:14 Unknown Speaker:
+
+This is the class where you need to just get the instance of that. And then you need to pass the development ID, process name and the file name. And then this is basically how you generate it based on the system or whatever that you need. And then the file extension. So file extension, we have all the file extension defined. If you see here, we have all this media type I have already defined. And then using that file extension, you need to provide the content. Content is nothing, but you need to just provide the byte array. It will automatically take care of that, converting to a respective CSV or PDF format, whatever you define it. And then it will give you the downloadable Url, that url you can put it in your template or wherever in email if you want to share.
+
+00:14:14 - 00:15:21 Unknown Speaker:
+
+Once this download URL is generated, right then you have the code for downloading this. So here. Basically, this is a uh, controller I have created, okay, and in this controller we are validating, uh. Using the token. So this token, right again, it will extract the token, validate the token against that, whatever the token we have generated, right? And basically go and put it one. And then again, it will validate the expiry token, expiry date, format, everything, it will validate it here, and then it will go and download it once it is validated. Right then here, basically, we are going to download that S3 S3 key. Also we are getting it from the token. Because where there? We are passing it and then again comparing it. And then we are generating our S3 client, and then it is letting you download it.
+
+00:15:23 - 00:16:27 Unknown Speaker:
+
+So you can use in any of your use case wherever you need to generate that. Any questions or any queries you guys have? I think I'm pretty much done because this is still two things I just wanted to share with you. So basically you just need to remember this. Uh, configuration, and that configuration you can read, uh, go through this reading file, which which is already there in the Uh bit of repo. So I can share that uh with you guys. You can go through it and if you have any queries, uh, you can ask me now or even later. So, one thing, this pre-signed URL is sent via email to the CCPs? Yeah, right. No, to the CCPs. So, this one, right, we used to send it to, like, all the stakeholders, right?
+
+00:16:27 - 00:17:32 Unknown Speaker:
+
+So, we generally do, they don't need email to be attached, I mean, reboot to be attached. They just need a portable link. So, whenever they want, they can. When they click on the email, you would start the other process of downloading it. So, yeah, that controller will be activated if that S3 downloadable is there. Because I'm using the same one, the package, right, the controller one. From add-ons, I'm using. So, it is getting activated by default on the runtime. So one aspect you said that the remove was that, uh, ppl, right? So instead of seven days, it can go to anything right, and what? What else you said it would help? Uh, second thing is, uh, this one, um, okay, so here, right? Um, basically in encryption, right, when the file is encrypted, right?
+
+00:17:32 - 00:18:26 Unknown Speaker:
+
+So we pass this URL, right? So this will flag in the AP security vulnerabilities because the URL, which is not allowed, allowed to be passed. And we already have two, three security vulnerabilities created for this. So that's something we need to take. So instead of doing that, we can directly use this. How is the plan now to use this like this will be used across now. Yeah, I mean, any latency, whatever the use case we have, right, wherever we want to use, this is open for everyone, so they can use it. So, for now, we are rolling out for our use case. Some of the use case we have already added, and a few have been already been flagged, right, so that we are taking care of. Okay.
+
+00:18:26 - 00:19:47 Unknown Speaker:
+
+And this is now, like, we're in E3, or it's still in the desktop? No, no, no. This is already the report, right? This one which I am showing you. This is like a daily basis report. So, this is the production one. And the below link, right? This we have already increased to 365 as requested by the user. It has now mitigated the vulnerability. Any questions anyone has? I'll share this link with you guys. You guys can go through it and you can just... check the readme file. I think hopefully it is like, self-understood, but if you have any queries or anything, just let me know. And you can implement same in your use case as well. And that's the discount, though. Yeah, thanks for the summer. So I think spiritually, we're not able to attend the end of the content list.
+
+00:19:47 - 00:20:12 Unknown Speaker:
+
+Okay, you can share the request, pass it on to them. If anybody has any questions, they can reach out to you directly. Sure, um, yeah. Thank you everyone. It's a very good schedule and thanks folks to attend this. Uh, thanks. So much. Appreciate your time early morning on Monday. Yeah, thank you guys.
+

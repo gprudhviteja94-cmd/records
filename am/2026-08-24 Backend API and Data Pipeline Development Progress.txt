@@ -1,0 +1,244 @@
+2026-08-24 Backend API and Data Pipeline Development Progress
+
+Creation Time: 2026/08/24 18:01
+
+
+📅About Meeting
+
+• Date & Time: 2026-08-24 18:01 (Duration: 1927 seconds)
+• Location: Virtual Meeting
+• Attendee: Ansi, Athar, Rachna, Bhargava, Sindhuja, Nirmal, Sameer, Rajmila, Prithvi, Manish, Sahaj, Sachin, Sahil, Steve, and others
+
+📒Meeting Outline
+
+Backend API Development and Data Pipeline Progress
+
+• Self-serve Backend API Enhancements  
+  Ansi updated on progress with bundles for role implementation responses and sending implementation emails to users. He plans to validate changes locally and continue development. He also mentioned starting work on DQIDs queries for UMDL after receiving inputs from the business team.
+
+• UI Enhancements and API Integration  
+  Athar is working on new requirements from HNA and UI enhancements planned for the 31st August release. He is integrating APIs for the modify page and approve/reject page, with validations and backend changes ongoing to address findings.
+
+• Automation Pipeline for Data Movement  
+  Bhargava reported completion of data migration for August and is developing an automation pipeline for moving data from Qtrak to Lumi. Testing is in progress, with Lumi side expected to close today and ACE side by end of the week. Deployment depends on RFC approvals. Discussion highlighted the need for test cases before production deployment and coordination on RFC timelines to meet end-of-August showcase expectations.
+
+Data Quality and Rule Management Discussions
+
+• KRI and CDA Analysis  
+  Rachna shared analysis on KRAs and CDAs referencing Q-Track, DQ Repository, and Collibra. She clarified counts and explained the methodology of excluding certain source columns. Bhargava requested splitting columns to clearly indicate presence in Qtrak, Collibra, and KRI usage for better clarity. Rachna agreed to update and share the output for cross-checking.
+
+• Contro Rules and DQID Issues  
+  Sindhuja explained identification and resolution of an issue causing an inflated count of new rules due to mismatched old DQIDs pointing to new IDs. The root cause was manual updates during data migration and lack of old DQID maintenance. The issue has been resolved and communicated. Further, complex queries in Contro require manual analysis due to missing filter criteria and multiple subqueries, limiting automation. A KT session is planned to onboard Sahaj on the code and process for rule onboarding.
+
+• Rule Modification and Testing  
+  Nirmal is finalizing code changes and performing end-to-end testing for rule modification flows. He is segregating created and modified rules and plans to create a CR soon.
+
+• CDE Checks and Rule Mapping  
+  Sameer is working on 195 pending CDE checks, incrementing DQIDs, and preparing for deployment in environments. Rajmila is mapping 8-dimensional rules to the DQ artifacts table, noting that while some tables have a high number of rules (up to 800), discussions are ongoing to reduce this count to around 160-250. Future tables are expected to be onboarded similarly.
+
+Testing, Deployment, and Operational Updates
+
+• Data Monitoring Tool Testing  
+  Manish reported completion of E2 testing for six tables and plans to work with Sachin on RFC creation for E3 deployment. He also mentioned a request from the Lumi team for impact notifications on SD tag element changes, which will be escalated.
+
+• Snowflake API Capabilities Discussion  
+  Steve shared plans for a meeting to explore Snowflake’s capability to expose APIs for retrieving logs, table data, creating S3 mappings, and checking job statuses. The goal is to have API-based operations hosted externally for better integration.
+
+• General Coordination and Follow-ups  
+  Several attendees discussed pending test cases, RFC timelines, and coordination with Sachin and others to ensure smooth deployments and data availability in environments. KT sessions and meetings are planned to address knowledge transfer and clarify complex issues.
+
+📋Overview
+
+• Backend API bundles and email implementation are progressing with local validations planned.  
+• UI enhancements and API integrations for modify and approve/reject pages are underway with ongoing validations.  
+• Automation pipeline for data movement from Qtrak to Lumi is near completion, pending RFC and test cases.  
+• KRI and CDA data analysis clarified with updated reporting requested for better visibility.  
+• Contro rules issue with DQID mismatches resolved; complex queries require manual handling; KT session planned for knowledge transfer.  
+• Rule modification code finalized with ongoing end-to-end testing and CR preparation.  
+• CDE checks nearing completion with deployment plans; mapping of 8-dimensional rules in progress with discussions on rule count optimization.  
+• Data monitoring tool testing completed in E2; RFC for E3 deployment planned; escalation for impact notifications initiated.  
+• Snowflake API capabilities to be explored for operational integration in upcoming meeting.  
+• Coordination on RFC timelines, test cases, and environment data availability emphasized to meet project deadlines.
+
+🎯Todo List
+
+• Ansi  
+  • [ ] Validate backend API bundles locally and progress development (ongoing).  
+  • [ ] Start work on DQIDs queries for UMDL after receiving business inputs.
+
+• Athar  
+  • [ ] Complete API integration and validation for modify and approve/reject pages.  
+  • [ ] Address backend changes based on findings and close tasks.
+
+• Rachna  
+  • [ ] Update KRI and CDA report to split columns for Qtrak, Collibra, and KRI usage for all variables.  
+  • [ ] Share updated output for cross-checking with Bhargava.
+
+• Bhargava  
+  • [ ] Review updated KRI and CDA report from Rachna and provide feedback.
+
+• Sindhuja  
+  • [ ] Schedule and conduct KT session for Sahaj on Contro rule onboarding process and code.  
+  • [ ] Prepare Excel sheet detailing complex and non-complex queries for upcoming discussion.
+
+• Nirmal  
+  • [ ] Complete end-to-end testing for rule modification.  
+  • [ ] Create and submit CR for rule modification by tomorrow.
+
+• Sameer  
+  • [ ] Complete remaining CDE checks and deploy in environments (even and A2).  
+  • [ ] Schedule call with Sachin and Rajmila to discuss rule count reduction and mapping.
+
+• Rajmila  
+  • [ ] Continue mapping 8-dimensional rules to DQ artifacts table.  
+  • [ ] Participate in call with Sachin and Sameer regarding rule count and future table onboarding.
+
+• Manish  
+  • [ ] Follow up on data monitoring tool testing in E2 and coordinate RFC creation for E3 deployment with Sachin.  
+  • [ ] Escalate impact notification requirement for SD tag element changes with Lumi team.
+
+• Steve  
+  • [ ] Lead meeting to explore Snowflake API capabilities for operational needs (logs, data retrieval, S3 mapping, job status).
+
+• Sachin  
+  • [ ] Coordinate RFC approvals and deployment timelines for automation pipeline and monitoring tool.  
+  • [ ] Participate in discussions on rule count optimization and future table onboarding.  
+  • [ ] Support KT sessions and testing coordination.
+
+• Sahaj  
+  • [ ] Attend KT session on Contro rule onboarding and code understanding.
+
+• All Team Members  
+  • [ ] Ensure test cases are added before production deployment activities.  
+  • [ ] Coordinate on RFC submissions and approvals to meet project deadlines.
+
+Transcription
+
+00:00:31 - 00:01:47 Unknown Speaker:
+
+I think we'll get started as we have everyone. Hi, everyone. So today I was working on this self-serve backend API. So I was working on the bundles for role implementation response and sending the implementation email to user. So I have made the changes for those bundles. Yeah, I will be progressing on that. We'll take a build and I have to validate the things in my local. And also for the UMDL, we had received the queries for the DQIDs which we were awaiting from the business team. So I will be starting working on that as well. Yeah, those are the things I'm working in today's solution. Thank you, Ansi. Athar? Hi, all. Good evening. So I was working on the new requirements that were shared by HNA and there were a couple of like previous existing UI enhancement that was planned for the 31st August release.
+
+00:01:47 - 00:02:52 Unknown Speaker:
+
+So I'm working on a couple of those and there were some more API integration that needs to be done for the modify page and for the existing approve reject page. I was integrating that API, and still, the validation is needed. There are some, uh, findings we have done after the implementation was done. So few changes would be done from the back inside. And probably I can just test into it and close it, so I'll continue working on those. Thank you. So, today I was working on multivariate analysis of G-Core MLL was locked and I was like, as of now I am working on the supervised model on that particular table. So, and then later I will be working on determining the threshold levels. And then coming to the KRI part, let me share my screen.
+
+00:03:02 - 00:04:09 Unknown Speaker:
+
+So, Rachna has discussed in the previous on Friday. Yeah. So, out of 629 KRAs, candidate CDAs, so, 132 are with reference to the Q-Track and DQ repository. Right. And then, as per your, like, which are unique KRAs, which count more than 10. They are around 55. So these are the difference. Could you check it on those few examples that I had shared? Was the count matching for you? Count is around like there are plus or minus 5 with respect to the... Okay. Because like what I can say, if we see... Yeah, I'm wondering why... That's the case. If we are using the same file, it should be the same, right? Yeah, Rachana. But here you can see here with respect to QTRA and DQ repository, the CM11.
+
+00:04:09 - 00:05:25 Unknown Speaker:
+
+So, which are not in this only those source columns and source tables I have considered. So, once they are taped in this particular reference QTRA, I haven't considered them because they are already CDs. Okay. So, apart from those. So, but even apart from those, I meant to ask that the count of like KRIs in which a particular variable is used, is that matching? Yeah, yeah. So, you checked it across some examples, it was exactly matching, right? Yes, yes, yes. Okay, okay, then it's fine. And you told the number 132, is it? 132, total 187. 132 coming from only the QPAC and Colibra. 132 with reference to DQ Depository and Colibra. And then after including these ones, you are saying it's 187. 187. Got it. Okay, let me check that number once. Okay. Also, Bhargava, one more thing.
+
+00:05:26 - 00:06:24 Unknown Speaker:
+
+Can we have these columns split up? Because actually right now what is happening, since you are giving preference to QDRAG, DQRepository over the KRI usage, right? If one variable is checking the list for both, then I cannot know what are those lists. So if you can just split up... Yeah, like if you can split up the columns like present in Qtrak VQ repository, then present in Collabra, and then KRI usage count greater than equal to 10, so that even if one variable satisfies all three, we know which ones those are. Okay, okay. Like this, like, right? Here, the Qtrak reference count I have included, Collabra reference count I have included, and if these particular KRIs are not present in this, to Colibro or Q-Track, then only I'm counting these with respect to the...
+
+00:06:24 - 00:07:22 Unknown Speaker:
+
+No, no, then maybe just populate this for all the variables instead of counting only for those not present in this one. Okay. Yeah, I think the other two columns are fine. Just populate this for all of them. Okay, I'll do that, yeah. Yeah, sure. Okay, this is good then. Also, if you can send me this output, then maybe I'll cross-check it with my family. Okay, I'll do that correction and then I will send you the... Sure, sure. Okay. Thank you. Thank you. Thank you. Thank you. Thank you. Thank you. Thank you. Thank you. Thank you. That's already been, uh, completed on Friday, but deployment is pending. That we are going to start at 6 30 because we have a valid RFC after that.
+
+00:07:22 - 00:08:23 Unknown Speaker:
+
+Okay, and before that, uh, there was some data migration activity that was pending, uh, so for this August month, so I already mandated those data to production. Uh, and then finally I'm working on this, uh uh, automation. Automation of this, you know, from Qtrak to on the Lumi side. So I am creating a pipeline and that code I already am testing on even. So that is in progress. So that's that. Also, can we just check on this one? Yeah, I was saying you're saying today is a production activity, but I don't see any test cases attached. No, no. I will add that once in the job. So, first let me... Can you please add it? Yeah. And also, I see there's already a UA story.
+
+00:08:23 - 00:09:21 Unknown Speaker:
+
+So, if you're done with it, move these to done and then add the test case before you do the production case. Yes. Yeah. Yeah, yeah. So I was saying that this pipeline for moving the data from ACE to Lumi, right, on a daily basis. So by when are we expecting to build this pipeline? Just wanted to know. It's in progress right now. So on the Lumi side, we are about to close it today. But on the ACE side, maybe, you know, by end of this weekend. Uh, end of this week, right? So maybe on Thursday or Friday we will be live on that part. Okay, so by end of this week, or we see all of the data on a daily basis in E3. Yeah, that that is actually planned. Yeah, yeah, yeah, okay, uh.
+
+00:09:21 - 00:10:12 Unknown Speaker:
+
+A3 we have to check, you know, because, uh, of the RFC and all those things, right? So. But yeah, in the lower environment, it will be available till Thursday. But on an RFC, we can raise, right? And I believe we have moved this data to E3 only as of now. Then are we planning to move it to lower environment now and then move to E3? No, we already moved those data to lower environment. But last time... Yeah, last time I checked, you said that we are not getting any results from that. Yeah, the reason is, you know, we have around 1 lakh plus record in DQ region in the production, but in, you know, dev, we don't have that much. So it was not matching exactly. So we tested on production only.
+
+00:10:12 - 00:11:11 Unknown Speaker:
+
+We created a temp table and tested it there. Okay. No, but the thing is what I had aligned with Sachin earlier, we were expecting like this data pipeline to be built for E3. So that's why I am asking. Yeah, we will, you know, we will move it to E3, but for, you know, for end-to-end testing, right? So at least for with some dummy data, we have to do, you know, this activity to be performed on lower environment, right? After that, you know, once. That's not my concern. I know that's the standard process. But I think it's just the timeline is the concern. Because what Purna is expecting is by end of August, we are planning to showcase this to the entire data office team that when I run this query, it's giving me the latest up-to-date reporting data.
+
+00:11:11 - 00:11:53 Unknown Speaker:
+
+That is why I'm asking this. Yeah, that is planned, you know, uh, you know, this week to be, you know, all these things to be completed. Okay, so I will check this, then it would be a problem. That's why I was asking this. Ah, yeah, okay, so I will check with Sachin. If we have available RFC on the you know, on the Friday, so then we can deploy it, otherwise we'll plan on Monday we can still raise an RFC, right? If that's the only yes correct. Two days before one day, we have two days we can let me check with him. Okay. Sure, sure. Yeah, please do. Because I did check with him earlier during the day as well and he was pretty much telling me that end of this week we should be able to have the data in E3.
+
+00:11:53 - 00:12:50 Unknown Speaker:
+
+Yeah, yeah. Then, you know, we are, you know, good with that part. Sure, sure. Okay, okay. Sure, thank you. Yeah, thank you. Just one more thing regarding this, that requirement I was telling you regarding the CD and crew alerts part, right? So, uh, I am okay. If we are saying that, you know, this is a new requirement. So what? I was thinking that instead of like? Our team works on the query, and if we are able to provide you the final query, which we need to run, so would you even thank you? So, on the strip side also, we have to manipulate, so we have a mapping there with these keys, okay, So, that is some, you know, the additional effort. Even morning Sachin told to modify some more thing than I told, you know, let it go as, you know, the, you know, phase one.
+
+00:12:50 - 00:13:50 Unknown Speaker:
+
+In phase two, you know, we will gather all those inputs and, you know, in one shot we'll implement everything. Okay, okay. Okay, then let's focus on at least the pipeline build for the whole thing in Lumi then. Anyway, We can... also pull this data from your people, right? So I think, yes, okay, okay, thank you, thank you. Hey, hi Sindhija, Hi Rachana. So I'm currently working on the new rules of contouring variant. So on the last Friday, we have a connection, like I had a connect with Ayyappa. And we have identified the issue why we are getting that too many like 370 new rules. So we identified that there is a case like where DQ positive, like in the DQ positive. We have a column called Old DQ ID, where even it mentioned as a old DQ ID.
+
+00:13:50 - 00:14:39 Unknown Speaker:
+
+For almost like 375 records, it is still pointing to the new record new ID. So, that's why when we do the left join with this DQIDs, right, like old DQID and the DQID of control. So, what happened since that is not exist in the control, it is taken as a new rule. So, like DQID is the only one which says that that is a new rule. Otherwise, like we cannot identify that is actually already exist or not. So, that's why we got three sanctify rules. So, what we have done? We have updated. I hope this has been raised with Ayyappa, right? Ayyappa, can you please let me know the status of this, like why there is this mismatch? Yeah, yeah. So, what happened is when we start the data migration activity, right?
+
+00:14:39 - 00:15:29 Unknown Speaker:
+
+So, that time I started with this process actually manually updating the DQIDs actually. Okay. That that time, what happened? Is the old DQID replacing with the new DQID actually, and moreover, we haven't been maintaining the old DQID that time actually. So that time, we have initially only 303 DQids only migrated. So that's what are we planning to do with these? We do not have that mapping anymore. Oh, no, no. I have maintained the tracker, actually. So, as per the, when I communicated with Shamir, actually, the last Friday, then I notified that one. So, these are the award DQID. So, that one I have updated with the award DQID column, actually. We sorted the issues. So, now, now it's sorted in the. Yes. Yeah. We also shared a, like, email as to, like, on Friday.
+
+00:15:29 - 00:16:14 Unknown Speaker:
+
+Yeah, yeah. I saw the email. So, do you need something from my end because I provided sign up on the same mail chain. Is there anything else? So, what happened is like in Contro, so once we dump the data from DQ repository, right, like we need to check multiple things. Rational like manually, few of them, we have to check which is like focus metric, because like in the code, it will read the focus metric based on the description part. So first we have to. First of all, we need to dump the data, then then only we can identify whether we are getting null or not. Not none values. If you are getting null values, then we need to check with you. Like this is the case where in the description, we are not having any clue that which metric we have to follow.
+
+00:16:14 - 00:16:59 Unknown Speaker:
+
+So like, what, what method we need to follow, we need to check with you. So for that purpose, we first like identified that 53 records and we tried to dump in the uh, contra artifacts. So later, like, we will do some multiple analysis on that. Like, so that whether the DQID is like, uh, filter criteria is missing additional filter like, we need to go through the code first for each DQID. And and should check whether the same filter criteria is actually the existing. In the Q track code also, otherwise, like, if there isn't any extra filter, is there what happened? It won't match with the control results, there will be some mismatch in the control and the Q track, so whatever the filter that is, those are missing, we need to note down and we need to.
+
+00:16:59 - 00:17:47 Unknown Speaker:
+
+Is this the same thing for me that you were coordinating with Anand earlier, or is this a new finding? No, no, no, this is the same like generally, like when we are. So this was solved for all the rules, or is it not. Yeah, it is sorted, Rachana. Now, like, this is the actual process, general process, if you need to onboard a new rule to that control. So, because, like, the part D333 having the filter criteria, but, like, it is also missing few of the filter criteria, I don't know. Like, in the Q-Track process itself, those filters are getting... So, we need to do some analysis, right? Like, we have done that. And also we identified some complex queries in this. Like we are currently going rule by rule so that like today I will complete it and prepare my Excel sheet.
+
+00:17:48 - 00:18:34 Unknown Speaker:
+
+I see most of them are complex only. Also, one question. Sorry to cut you off. But in your mail, right, you had shared that Excel. And in that Excel, there were certain rules marked in red which you are not picking. And then the rest of the rules is what consists of those. 90 something rows that you are moving now, right? Yeah, out of 90, yeah, 42 are like not to pick instead because like when we check with Anand, right, Conro is not in the state like to handle the complex query. Like we have a filter point in here, then we will do a focus metric, whatever the focus metric we are getting, we apply that focus metric. So how are you planning to handle those now which we were not able to handle earlier?
+
+00:18:36 - 00:19:24 Unknown Speaker:
+
+So, yeah, like, no, no, no, no. The complex was not at all, like, not at handling in the contrary. So, at that time, Anand mentioned that we can pick it later or, like, not to pick it later. Then, how are we picking it now? Like, it still does not handle that kind of complex queries, right? Yeah. Maybe tomorrow we thought, like, I had a call. Then, how are we picking those 40 rules which were, like, earlier paused because of this? Now also we are not picking like we are filtering like what are all the control DQ rows which can be processed now. So we are identifying these like what are the complex core signals for like what are the neurons we are having. Understood. Also, I need one help from you.
+
+00:19:24 - 00:20:16 Unknown Speaker:
+
+Can you give like a KT session to Sahaj, just explain him the entire code and the end-to-end process that you do for onboarding any new rule on Contro, right? Because even like code level details, even I am not very much aware of because Anand was completely working on this and then this got transferred to Manish. And right now, the status is that Manish is involved in a few other projects. So he's not directly coordinating on this. Then maybe if you can explain all of this to Sahaj, he can start coordinating with you if you need any support from us. Right. So then what I will do tomorrow, I will schedule a call. I will check and like I will also add you and Sachin also. Yeah, yeah, whatever the KT, uh, I have prepared for Manish right?
+
+00:20:16 - 00:20:57 Unknown Speaker:
+
+Same, I will give, like, if there is any questions, that same call, but tomorrow also I will prepare this. Like, what are all the complex and what are the non-complex queries on the out of 50 GB? Yeah, yeah, if we can also go through this list that you are onboarding now, those 92 rules, so that would also be helpful. Yeah, yeah, so that, like you can aware why we call that as a complex and why it is not been handling it. Yeah, yeah. Right. Like the core structure itself, like it will expect the filter criteria and it will go based on the time, like time series. Because, like, what are all the algorithms we are using? Those are statistical algorithms. Right. Those need the time series of data.
+
+00:20:57 - 00:21:46 Unknown Speaker:
+
+So based on that, it will predicate the next one year threshold, or like the next day threshold or the next month threshold. It will based on the parameter we pass, it will predicate it and will forecast it and will give the result for us. But for the complex, like that is not happening like that. Like there are multiple criterias and multiple sub queries are there like which cannot be fit in that filter criteria. Like we have multiple tables also there which need to be created in the process to find that actual value. So those cases we cannot directly dump that entire query in the filter criteria. Yeah, I got it. So I'm aligned on this. Thank you for sharing. Yeah, so apart from that, like, I'm also working on the machine ingestion checks, like for the data warehouse tables.
+
+00:21:46 - 00:22:56 Unknown Speaker:
+
+So for that, I'm actually correct with section on multiple times. Like to find, like, what are all the columns we need and how we can get it? Some doing some analysis. So mostly I'm working on the quantum for today, but like from tomorrow, I will mostly concentrate on the ingestion checks. Also, once this, uh, identification was done. Okay, okay. Sure, Sameer. Thank you for sharing that. Yeah, no worries. Thanks. That's all from my side, right, Sundhija? Nirmal? Hi, Sundhija. Hi, Tim. Hi, Resna. So today I will be working on the rule modification part. The code changes are finalized and I'm doing end-to-end testing for that. Uh, the entire agreement flow for the rule modification. And also, yeah, we're analyzing those to have to segregate those rules which are already, which are created and which are modified.
+
+00:22:56 - 00:24:03 Unknown Speaker:
+
+So I'm also continuing with, uh, to segregate. On the AP call. Uh, so I'm working on these things, so hopefully, uh, by tomorrow I'll be creating that CR for the modification part. Sure, sure, Nirmal. Thanks for sharing. So whatever end-to-end testing you're performing, Nirmal, I had it here as a test case, okay? Okay. Okay. Okay. So, from my end, currently I am working on the CDE checks actually. So, those are 195 which is pending. That one I am currently started actually. So, whatever the DQ repository current last DQID was there. So, from there I have started the incrementing the number and allocating to those 195 CDE checks actually. So, currently I completed most of the things. Only 5 tables only left. So, once those finish today, I will plan to deploy in even and A2 environment.
+
+00:24:04 - 00:25:23 Unknown Speaker:
+
+Yeah yeah with respect to that eight dimensional one right now i have done my analysis okay um i started mapping uh those entries that node 8 dimensional rules into the DQ artifacts table. So this mapping would help us to migrate 8 dimensional rules to DQ artifacts table. So what I understood, I mean I even discussed with Sachin as well, for each table there are 800 rules that they are creating. That's a very huge number. Maybe that would be reduced to 160 or 200 is what Sachin is saying. So, that is in discussion, but otherwise mapping to the DQ artifacts table should be done, there should not be any issues as of now. Sorry, what did you mean by that number will be reduced to 250? So, that current count is 800 plus for one table, we are creating 800 rules under different dimensions.
+
+00:25:24 - 00:26:15 Unknown Speaker:
+
+So, that does the same thing. Only for few tables, not all tables, right? There are like one or two tables where we have those many rules. Oh, okay. But we are not expecting more in future, is it? We might have some, but again, like this is. This is again very table specific thing, right? Because for some tables, we might be using a lot of variables because of which we are having like these many rules in the output. But those will always be like very few tables. Like right now, if you have a total of 50 something tables, there are hardly two tables where you will see such a huge count. Because the overall number still is like what 700, 800, right? Like, the entire team was working on deploying those CDDQ checks.
+
+00:26:16 - 00:27:11 Unknown Speaker:
+
+So, it's not going to be that huge. And also, I did not understand how that number will be reduced from 800 to 250. Like, what's the plan for reducing it? Reducing it in the sense, maybe we might not need that many rules on that table. I mean, that's... No, but on what basis are we determining that? Yeah, I need to check that with Sachin. Maybe once Sachin is back and we can connect tomorrow on this, it would be helpful. You can schedule a call tomorrow afternoon with Sachin and me to discuss this. Please include Sahil also. Yeah, definitely. Okay, thank you. So that's what I'm mapping is happening. So Sachin, one more question. Are we not... So, the plan what I understood is that tomorrow another table comes into picture.
+
+00:27:11 - 00:28:21 Unknown Speaker:
+
+We can use this and create all those rules inside the DQ artifacts table directly. So, I am making code changes in that perspective. So, we are expecting some more tables coming into right future. Yes, yes. In future we might do, yes. Okay. Yeah. So, yeah. Thank you, Rajmila. Thank you. Sindhuja, I'll have to jump to another call at 6.30. Is there anyone else who wants to discuss something with me? So maybe we can take that directly. Yeah, just a second. Prithvi, no updates on your AC stories, is it? In this question with the instructor, Sorry, okay, no, no, no issues, I'll just text me later on on your updates. So, man or shovel, do you guys have anything for Rachna before she drops off?
+
+00:28:21 - 00:29:37 Unknown Speaker:
+
+I'm working on the data, that monitoring tool, the E1 we have tested, it tested, uh, today we're gonna test in E2. Only three. I think I will need some time to discuss this. So I'll ping you maybe in like half an hour. Okay. Okay. Thank you everyone. Bye. Thank you. Anyone else has anything to discuss, please ping me after the call. Okay. Thank you. Thanks. Hey Jason, you're there on call, right? So just quickly sharing my update. I think we have finished the E2 testing for the last six tables in the last week. I'll work with Sachin on creating an RFC for E3 deployment. So it will be sometime this week. Apart from that, today morning for the global dining user, the Loom meeting responded back that they need an impact notification for the SD tag element changes as well.
+
+00:29:40 - 00:30:37 Unknown Speaker:
+
+We changed those SG tags as well, right, to the new receipt SG tags, like the activity name, phone number, email. Yes. We're going to have to escalate this because there's no reason for us to continue to require these notifications at this point. Okay. Yeah, so I'll also escalate it on my end and also reach out to them. Okay. Yeah. Okay. Sure. Yeah. That sounds good. And there was just one remaining table. I'll follow up with the Lumi team again. I think we followed up last week, but we haven't really received the certification yet for the amplitude search for elements. Okay. I'll try to follow up again. And I've scheduled a meeting this afternoon to discuss on that SFT mapping.
+
+00:30:38 - 00:32:05 Unknown Speaker:
+
+So just to give you a context, basically what Raj wants to understand is, is there a capability on Snowflake to have API points for all of those things that we covered today in the dashboard, like retrieving logs, retrieving table data, creating an S3 mapping, and again, checking the job status. On the Snowflake side itself, like when creating a file, like those polar APIs. Yeah, so pulling APIs from Snowflake on the job statuses? Job statuses, yes. Like everything, like whatever we will need to, you know, have it hosted in a different space. So all our operations would be API based. So does Snowflake have that, has that capability to expose those APIs? That is something probably wants to understand. But we can discuss more in that meeting later today. Okay, that sounds good. Yeah, that's it for now. Anything else, Steve? Okay, thank you, everyone. Thanks, everyone.
+

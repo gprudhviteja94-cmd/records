@@ -1,0 +1,259 @@
+2026-08-27 User Interface and Error Messaging Enhancements
+
+Creation Time: 2026/08/27 19:04
+
+
+📅About Meeting
+
+• Date & Time: 2026-08-27 19:04  
+• Location: Virtual Meeting  
+• Attendee: Armando, Ashutosh, Santhosh, Santos, and others
+
+📒Meeting Outline
+
+User Interface and Error Messaging Updates
+
+• Confluence Documentation and Error Messaging  
+  Armando updated the Confluence page to include new error messaging screenshots with backgrounds for clarity. Some outdated screenshots and references related to the drawer-level display were deleted as the drawer-level error messaging was decided to be skipped.
+
+• Cancel and Close Button Behavior  
+  Discussion clarified that the "X" close button returns users to the original modifier create payment screen without saving changes, allowing users to modify or save later. The "Cancel this transaction" button cancels the creation process and returns users to the payment activity grid, discarding unsaved data. This behavior is consistent with existing BAU processes and applies to both batch and single payments. It was noted that cancel is not a status progression but a user action to abort creation or modification.
+
+• Cutoff Messaging and Options  
+  The system currently only supports a hard cutoff (post cutoff) without a separate best cutoff option. After the cutoff threshold, users are offered to make changes for the next valid business day. The messaging and UI for this process were discussed as somewhat confusing, with suggestions to simplify the instructions and reduce unnecessary clicks. Armando will consult with the DXD team about potential improvements.
+
+• Banner Background Consistency  
+  A question was raised about the inconsistent use of red background versus transparent background for mandatory banners across different screens (e.g., account transfer). Armando will review Figma designs and confirm the consistent approach for these banners.
+
+Pagination and Remittance Line Addition
+
+• Pagination Starting Point and Behavior  
+  Currently, pagination starts at 10 items per page, but production uses 100 items per page. The team agreed to align with production and start pagination at 100. A key issue was identified where adding a new remittance line at the page limit does not automatically navigate the user to the next page, causing confusion. The expected behavior is that after adding the 100th item, the UI should automatically move to the next page to allow continuous addition.
+
+• Add New Line Button vs Plus Icon  
+  For creation flows, a fixed "Add New" button is preferred over a plus icon embedded in the list, as it simplifies adding new lines, especially when pagination is involved. For modification flows with many remittance lines (e.g., 500+), the plus button appears only on the last page. The team discussed possibly mimicking the production approach with a fixed add new line input for better usability.
+
+• Testing and Validation  
+  Armando will test the current behavior in the dev environment to confirm how pagination and line addition behave during modification flows and consider improvements if the current behavior is suboptimal.
+
+Batch Payment Track and Trace Functionality
+
+• Batch Level Status and Individual Transaction Statuses  
+  The track and trace feature shows the overall batch status at the top and individual transaction statuses in a grid below. The batch status reflects the progress (e.g., submitted, approved, delivered), while individual transactions have their own statuses. The final batch status (e.g., delivered) indicates completion at the batch level.
+
+• UI Display and Status Terminology  
+  There was discussion about how to represent multiple statuses at the batch level, with concerns about showing "complete" when some transactions may have issues. The use of "multiple" as a status was considered to avoid confusion. Armando will review the Figma designs created by Pranima and coordinate with her to finalize the UI and status handling.
+
+• Viewing Individual Transactions  
+  Clicking on the batch status should open a detailed view (drawer or separate screen) showing individual transaction statuses. This functionality is under development.
+
+Data Display and Batch Import Details
+
+• Handling Multiple Values in Batch Columns  
+  For batch payments, some columns such as "approved by" or "beneficiary address" are blank or show inconsistent data. The team discussed using the word "multiple" in these fields when multiple values exist, consistent with ITC practices.
+
+• Data Migration and Automation  
+  Santhosh mentioned ongoing work related to data migration and automation for batch processing, including handling large data sets (e.g., 800,000 records). He offered to share relevant tables and details with the team.
+
+Toggle for Batch Creation Option
+
+• Toggle to Enable Batch Payment Creation  
+  There will be a toggle feature to enable or disable batch payment creation for clients. Without the toggle, users can only create single payments. This toggle is not yet visible in the dev environment but is expected to be available soon. Armando will confirm the status and coordinate with the team.
+
+Navigation and UI Adjustments
+
+• Screen Navigation and Layout Updates  
+  Armando updated navigation screens to remove brand elements and simplify display fields such as constructed amount, recipient account number, and recipient name. Some UI elements like the range and status fields still have appearance issues that need fixing.
+
+• Next Steps for UI and Development  
+  Armando plans to share AI-generated notes and continue working on remittance design and other UI improvements.
+
+📋Overview
+
+• Updated Confluence with new error messaging screenshots; removed outdated drawer-level error references.  
+• Clarified cancel and close button behaviors consistent with BAU processes; cancel aborts creation and returns to payment grid without saving.  
+• Confirmed only hard cutoff messaging is used; discussed simplifying cutoff UI instructions with DXD team.  
+• Banner background color consistency to be reviewed against Figma designs.  
+• Pagination should start at 100 items per page; adding a new remittance line should automatically navigate to the next page.  
+• Preferred "Add New" fixed button over plus icon for adding remittance lines, especially in modification flows.  
+• Track and trace shows batch status and individual transaction statuses; UI and status terminology under review with Pranima.  
+• Batch columns with multiple values should display "multiple" for clarity.  
+• Data migration and automation work ongoing; large data sets handled with new tools.  
+• Toggle feature to enable batch creation for clients is planned but not yet available in dev.  
+• Navigation and UI screens updated; some layout fixes still needed.  
+• Testing of pagination and remittance addition behavior in dev environment planned.
+
+🎯Todo List
+
+• Armando:  
+  • [ ] Consult with DXD team about simplifying cutoff messaging UI and instructions.  
+  • [ ] Review Figma designs for banner background consistency and confirm standard approach.  
+  • [ ] Test pagination and remittance line addition behavior in dev environment for modification flows; propose improvements if needed.  
+  • [ ] Coordinate with Pranima to finalize track and trace UI and batch/transaction status handling.  
+  • [ ] Confirm status and availability of batch creation toggle in dev environment.  
+  • [ ] Share AI-generated meeting notes with the team.  
+
+• Santhosh:  
+  • [ ] Share relevant tables and details related to data migration and automation for batch processing.  
+
+• Santos:  
+  • [ ] Provide example screenshots comparing banner backgrounds across different screens for review.
+
+Transcription
+
+00:00:02 - 00:01:13 Unknown Speaker:
+
+Yeah, thanks. And then the confluence, like I said, that was also changed to add that part of the error messaging. Oh, you mean... Yeah, so on the story itself, I went ahead and provided a different... confluence, so it's a confluence of just I'm referring to that confluence only. So I've added this screenshot Perfect alright, so you actually have it with the background? Everything? Okay, cool, thanks. Yeah, let me make it small. This one we won't be needing as we discussed, right? On the drawer level, we are going to skip it. Correct, yeah. We're not going to show it there, so that's no longer valid. Let me delete it. Yeah, go ahead and delete it. I didn't want to mess around too much in there, just to be certain, but yeah, we can delete those as well.
+
+00:01:13 - 00:02:19 Unknown Speaker:
+
+Yeah, this one also I'll delete. Yeah, that's one that we can delete. That's no longer valid, so that's good. Okay. How are you? So which one is valid? Yeah, the one that we're keeping there. That one there, yeah. Okay, only two options. Only two options. Yeah. I joined at the right time. This is great. Yeah. Your instructions have been cut off. Yep. And in the same way, what's the best cutoff message? Hold on. Third scenario here. What if the user doesn't know what to do? They click the X? Is there an abandon this and don't make a change? Yeah, the X actually brings them back to the original. Just back to the modifier create payment. So the behavior holistically... That's the way that I have it. So it brings them back into the flow, and then they can make whatever change they want.
+
+00:02:19 - 00:03:04 Unknown Speaker:
+
+If they want to change the date, they can. If they want to save for later, they can. It will not trigger this response. So they can go back and do whatever they want later on. Part of the reason that I'm raising this is I've seen people start interacting with the new Uplift experience, and they don't find that X on the top right-hand corner for expanding where they're at. Or stepping back one step in some of the flows where you're looking at the detail and you're trying to get back to, like, a great view. It is kind of small on that top right-hand corner, and it's not highly visible, I agree. I've had the same issue myself. Not necessarily for this call to sort out, but something to maybe bring the attention of the DXD people to keep an eye on.
+
+00:03:04 - 00:04:00 Unknown Speaker:
+
+We previously had closed buttons, which are big. Bright targets. Now we've got a tiny little X. Yeah. Thank you. Yep. Yeah, to answer your question, Ashutosh, Armando just mentioned in the last conversation that we don't have the standard best cutoff and we just have the post cutoff, right? Yeah, we just have it. We don't have a... Yeah, it's the same cutoff. We don't have the same concept that Wires has as a standard and then the hard cutoff. So we are not going to display those different options. It's just going to be a hard cutoff. So that's after it meets that threshold, that's when we're given that option to make it for the next available business day, next valid day, excuse me. Okay, so if it is between, I mean, best and hard, then... We will proceed.
+
+00:04:00 - 00:04:47 Unknown Speaker:
+
+We will assume, okay, users wanted to do this, right? Correct. One thing that I had a question on, I guess I have to kind of take a look at some of this process flow. The cancel this transaction, I'm assuming that we want to provide some kind of are you sure before we actually allow the client to proceed forward. Because if we click on this to cancel the transaction, especially if they're doing a creation and they click on cancel transaction and hit proceed. From what I'm reading is that we would take them back to the activity grid, thereby all the data that they had previously created would go away. What does cancel do? Cancel is not a status. No, cancel this transaction will just cancel the creation that they're doing and bring them back to the payment grid.
+
+00:04:47 - 00:05:37 Unknown Speaker:
+
+So all the data that they previously entered is not saved. That's only if in the scenario, again, this is the scenario that they start creating. I think cancel this transaction will just bring back you in the, I mean, creating this grid, not on the grid, right? That's not what I was reading. Is that different than the X then? No, from what I was reading from the, from this, what we were doing for TSP is that this would bring you back to the payments activity grid, meaning that the transaction will not be saved. Again, this is a scenario that they miss caught up while they're creating the payments. Modify. Modify would be the same thing. That you already have saved, right? So if you click this transaction, that's just a modification itself would not occur.
+
+00:05:37 - 00:06:29 Unknown Speaker:
+
+But in the scenario that, let's say, that they start creating and the caught up passive where they're in the middle of creation, right? If they click on cancel transaction and they hit proceed, then it hasn't been saved yet. So all that data would be lost. If they're doing it through that scenario of creation. What I observed, like if I cancel this transaction, if I click on this, then it comes, I mean, it lands up right on the page where the user was. So if user was on modified payment, then it will come back on the modified payment. Yeah. Again, I was following what... What was already out there that was placed for this logic, right? And I followed it, indicating that if they click on this transaction and proceed, it actually cancels the creation of that transaction altogether.
+
+00:06:30 - 00:07:27 Unknown Speaker:
+
+Do you remember in the single payment when we are cancelling this, are we going back to the create or are we staying on the create payment? Staying in this feed page. In our uplift? Uplift, yes. Okay, then I need to rewrite this stuff. Because, again, I was going by what was out there for the other Confluence page of what the expected behavior is. How is that different than the quotes? It would act the same way. That's a lot of clicks. I think it took the reference of BAU. That's how it works, I guess, in BAU as well. I'm like TSE and ITC. That's the way it works. If we're following current, that's good. I mean, that's a known behavior for a decade, and people are happy with it. Thank you.
+
+00:07:27 - 00:08:25 Unknown Speaker:
+
+I mean, cancel isn't something of status progression, which is what caught my eye on it. I don't see this very often. I always do my work in time. This is where QA folks and dev folks know it the best. QA really does this stuff, try to break it. Yeah, so I need to change that verbiage then and those expectations of how that's going to work. So I'll make sure to get that. I forgot to start this. I'm sorry. Apply it to the single payment also, right? Because I think they're also using cancel this transaction. Yeah, yeah, yeah. It would apply the same way, whether it's a batch or a single transaction. Correct. Yeah. So what is this button? If I select change to next, this button submit or what? Next. Yeah. And then proceed.
+
+00:08:26 - 00:09:10 Unknown Speaker:
+
+Proceed, yeah. Remember, because you hit submit payment already, right, to be able to see the screen, because that's when we're applying this logic. So the client has already clicked on submit payment. They get this. They make the change proceed. Then it just goes through the process of submitting the payment, but now it's going to have the new date that was being displayed on the pop-up. I mean, a more simple way of doing this would be your instruction is, would you like to update for the next valid value date? Yes or no. And no would be like a close action on a pop-up, just from clarity. And I'm not saying we have to do that, but it's definitely confusing in its current state with the text and so forth.
+
+00:09:12 - 00:10:03 Unknown Speaker:
+
+Because even if we eliminate that cancel and go to the close button or the close on the top right, it's going to be confusing to some degree having a single radio button to choose. Then you have a toggle state on a radio. Okay. You know what I mean? And it's an extra click that's unnecessary because this is instructional text, and then they've got to choose a fork in the road. Carry forward new date or close out of this and take alternate action. I think, if I'm following it. No, I'm following what you're saying. Yeah, I'm following what you're saying. I'll talk to DX about this. I'm assuming this is something that they previously approved and sent to us. It's probably in production right now too, right? Yes. It is, okay. Not that we can't change it.
+
+00:10:03 - 00:11:03 Unknown Speaker:
+
+We don't document this kind of thing. So, I mean, clients seeing a chain done, this isn't a big thing. We only got 77 people or 70 users out there right now. Okay. I wonder, I just sent a screenshot probably like a shame I just got from you. Oh, thank you. That's wonderful. Thank you. All right. Let us see. Who sent that? Santos? Santos. Yep. All right, so we're following exactly what we do in prod today with this. Okay. I mean, this could be an opportunity to, you know, to make the process better if we feel that this is not adequate. Yeah, exactly, exactly. So I'll approach this. I'll talk to our DX folks and see what they think about this. Thank you. And I'll give them that as the example. Okay, good. All right, perfect.
+
+00:11:04 - 00:11:58 Unknown Speaker:
+
+A very small question here, Armando. So regarding this banner, it's in a red background, but there are places where we are showing this banner with a transparent background. So just for consistency, can we make sure here we have to show it in red only? Well, I'm not quite following that. So this banner that we see here is for a mandatory background. Not here. This one, four fields need review. So there's a red BG to it. So there are a few places where we are showing this similar banner in account transfer and other places where it's a transparent background. So we just wanted to be consistent on this experience. I guess I'll have to look at what it looks like for the account transfer that I haven't seen. Yeah, so...
+
+00:11:58 - 00:12:53 Unknown Speaker:
+
+This is something we need to confirm because I see on different screens that the Figma has different experiences for this. Okay, yeah. Maybe I'll bring up some examples for you. Yeah, if you don't mind, that's what I was going to ask, just so we have something to compare against. Sure, I will send it to you. Thank you, appreciate that. Okay. All right, I think the next thing that we had was for the... I heard that there were some discrepancies, and I went ahead and made some updates as well. Let me go ahead and I think I have it up here. Yeah, perfect. All right, let me go ahead and share my screen. Okay. From what I was noticing, what we have out there today, it looks like we're starting pagination at 10, but I was...
+
+00:12:54 - 00:13:43 Unknown Speaker:
+
+I was told that pagination should be starting at 100, which is what we have in production today. But one thing that I was definitely noticing that was problematic is, let's just, again, right now pagination is occurring at 10. But what I was seeing is that once we get to that 10th line and we add it, we do see that it goes now to page one of two, indicating that there's a next page. But it doesn't automatically bring the user there. So I use this as an example. We have this last one that I created, and when I clicked on plus, it added that line, and then it would show that it is two of two, but it would remain on the same page, meaning that the client would have to click on this to the next page for them to be able to add the next line of remittance.
+
+00:13:43 - 00:14:29 Unknown Speaker:
+
+And the way that it should work is once they get to that path, again, it's supposed to be 100, but let's just... See the way that it's working now. Once they click on this one, it adds that line of addenda, and the page will progress forward to the two of two, giving them the option of being able to add that next remittance. And then that way they can just continue, and the process will go through again. So once they get to that 200, they add it. The page should progress forward to the next one, and then give them the opportunity to add another line of remittance. So, I mean, this plus will appear at the bottom? Correct. On the first page, always? Yes. I mean, let's say there is a hundred page. Correct.
+
+00:14:30 - 00:15:19 Unknown Speaker:
+
+Yeah, so, yeah, exactly. On the first page itself, you will see this plus. And if user click on the plus, that it will go up to hundredth page? Mm-hmm. It's supposed to be a hundred from what I was told. And again, that's what we have in production today. So, I think we should kind of keep the same. That once we get to that 100 and it's added, page progresses forward and it looks like this here, meaning that it's page 202, and then now they can go ahead and, again, start adding the next line of remittance information. Let me know if that makes sense. I can show you on the dev box when I was working on this so you guys can take a look. Because this is a new design or this is currently working?
+
+00:15:20 - 00:16:07 Unknown Speaker:
+
+No, no, no. It's not currently working correctly because what happens is that once I click here and add, it adds that 10th line, but it remains on this page. Okay. Meaning that I would have to click next to then get to this page to be able to add the next line of addenda. That should just happen automatically. They click on this, progress them forward to the page two of two, giving them the opportunity to add the next line. So it's like a step that's missing. It remains on this page after they add the final item before the pagination takes place. And again, the client is not able to tell what they need to do. Yeah, I mean, the challenge that I see, right, when you click on plus, then moving to, so how many we are supporting, like 100 in a one page, right?
+
+00:16:07 - 00:16:56 Unknown Speaker:
+
+It's supposed to be 100 per page. That's what we do today as well. And we are supporting max is 10,000, right? I think it's 9,999, I think it's something like that, yeah. A number I've never seen used, and I doubt anybody's using it, but in theory, that's just the max. Yeah, I think max is 5,000 or 6,000 to write in GCH. I think that's accurate for GCH, correct, yeah. Even let's say that is the scenario 70 days, and what you're saying that user will directly will end up on the 70th page. And at the end, you will see the empty row where you have to put an end. Correct. So show them this right here. I should have done the transition.
+
+00:16:56 - 00:17:43 Unknown Speaker:
+
+I just went ahead and decided the two screenshots together just to kind of show what it would look like, what it should look like once they click on the plus. So the experience will be different by creation, because by creation, once we reach the 100th item, when we click on plus, we move to the page 2. But when we are in modify flow, suppose we already have maybe 500 remittance lines. So in that case, will the plus button be shown on the first page is my first question. I mean, I don't think so. We'll show that plus button at all. It will be shown on the last one only, which is the, I mean, if we have 500. On the fifth page. That's a good point of how we would do that.
+
+00:17:44 - 00:18:29 Unknown Speaker:
+
+It is a little different on TSP because in TSP they actually have like a dedicated line in the top where you're able to enter and you hit plus and then it goes down to the actual list itself. But for Modify that's a good point. They have plus or like a button, add new. It's add. It's add. It acts the same way. Yeah, it's a button. It acts the same way as this plus, though. But there's a dedicated line that's fixed on the screen, so they can just enter something, hit add, and just continue the process. Correct. That is a button, so that will always appear, right? Exactly. But here, this plus is like along with your line. Yeah, so when it comes to...
+
+00:18:30 - 00:19:17 Unknown Speaker:
+
+If we want to simplify the process, if we want to mimic what we have today in prod, that we have that fixed line in the top as opposed to putting the line there already on the list, we can try that approach as well to make it easier because you're right. When we get to the pagination of how do we add another one when we're doing a modification, I don't think that we should be landing the client on the last page for them to be able to add anything, right? It might be a better approach of being able to provide that line, that static line, and just add it that way. And again, it's more closely aligned with the experience that we have today in prod. If we need that, let's have a story. What is that?
+
+00:19:17 - 00:20:58 Unknown Speaker:
+
+No, no. Yeah, no, I get you. Let me just kind of show, just to make sure that everybody knows what it looks like in prod today. So make sure that we're following the right thing. Give me one sec. I personally feel that it's easier to do it that way, the way that we kind of have it in prod today, but again, we can have a discussion on that. All right, so we go here, and we add the free form. Yeah, click on add new. Yeah, so we click on the add new, so they get the line that they're able to add, blah, blah, blah. Actually, no, I take it back, so it's not what I thought. Okay, so instead of having that plus, they'll have this to add new, and then the new line is provided to them, so on and so forth.
+
+00:20:58 - 00:22:30 Unknown Speaker:
+
+So I don't know how this works. Fixes it whenever you have more than when the pagination kicks in for TSP as well. Then can I just create an empty line? Just click on Add new. Yeah, yeah, you can create empty lines as many as you want. So let's see. I think it will allow us until we get to the next page. Yeah, it is at 100. I just did test this. I thought I saved the transaction for it, but I guess I didn't. But we can do that here. Let's just add a few and then we'll save this to make sure that we have two pages and see what the expected result should be or how we're handling it. TSP doesn't have a way of importing this data, does it? I would assume it does, but...
+
+00:22:30 - 00:24:21 Unknown Speaker:
+
+Okay, so 98. All right. So now we should have here for page two. So let's go ahead and save this. What am I missing? Oh, man. All right, so it's making you enter everything. Yeah, so did I save that? I was creating one yesterday, but knowing me, I probably didn't save it. Nope, I did not save it. All right, well, we can kind of create the scenario to see. What that expectation is to see where it lands us whenever we're doing a modification for one that has pagination. My guess is going to be that it's going to put you in the first page and force you to go to the next one, but I can confirm that and see what the actual result is. That's just my guess. So I'll test that.
+
+00:24:21 - 00:25:13 Unknown Speaker:
+
+I'll take a look and see what that is. And then if that's the case, I don't think that should be the behavior, even though we do have it in prod today. If we can make it better, then maybe we can work on it. But, again, I'll test it, and I will take a look. Any questions on that? Okay. Yeah, go for it. So we are working on this. The remittance only, right? It would be better, right, if you can get this design soon. Yeah, yeah, I'll start working on that, by the way. Santhosh, you had a question? Yeah, can I share my screen? Yeah, yeah, absolutely. Okay, so yeah, regarding the couple of things, first is the track and trace, right, in the view page that we show.
+
+00:25:14 - 00:26:15 Unknown Speaker:
+
+So for a batch payment, right, we need to understand how that will work. That is one thing. Okay, let me share. I'll just try to open one of the batch, which is released. So yeah, it's showing like the submitted, approved. Oh, I think there's some deployment going on. Yeah, but... Yeah, there's a track and trace, right? So how that will work for a batch? Or is it straightforward that as the payment progresses, we will see it? Correct. But here, like, how... Because, I mean, it's the status of the batch itself that would be part of the track and trace. We can use ACH as an example that once it hits delivered, that's the final... the final status that it should receive, right? So that's the last thing that they would see.
+
+00:26:16 - 00:27:04 Unknown Speaker:
+
+So it's going to be more at a batch level. However, within that track and trace, you're able to see all the individual transactions, and the individual statuses for those transactions will also be displayed there as well. So the track and trace that you see in the top is going to be the overall batch status, and then show the individual transactions for each item on the bottom. And I think it's part of a grid that they had it there for the track and trace, if I'm not mistaken. Okay, so we'll get a grid, right? Grid having all the individual payments. Correct. Now, if we try to view that payment, so will it be a drawer or will it open an entire different view screen? I need to go back and take a look to see those screens that Pranima worked on and created.
+
+00:27:05 - 00:27:45 Unknown Speaker:
+
+I haven't seen them in a while. I need to go back and take a look at them. Again, from what I recall, is we show the status of the batch in the top in the track and trace, and then the rest will just be the individual statuses that we receive back for the individual items. But it's supposed to be a grid that showed on there. Yeah, yeah, I think that is still under development. Yeah, because some of the things that we had, that we were unable to use the word multiple whenever we were showing a status after that. Because I guess that's not an available status that we would have. And I think that we were just going with complete.
+
+00:27:46 - 00:28:45 Unknown Speaker:
+
+And then once you click on it and take a look at it on the view, that's when you're able to see the individual statuses for each one of the transactions. Right. If you click on this, this is what you are seeing. Can you maybe, Armando, let's connect with Pranima about the partial? Yeah. Because she was involved with CIB overall status and so forth. It gets to be kind of an odd thing to tell people at a macro level everything's complete when it's not. It's supposed to be multiple for the status. That's what we have on this. Yeah. Like over in that column. Correct. Like explaining it, and in the past, we've talked about, but that's not happening and we start to materially depict things.
+
+00:28:45 - 00:29:39 Unknown Speaker:
+
+And some clients will consider that, you know that, confusing, because they'll look at this level, think everything's good and then find out later their payments have problems. Correct. And then for the track and trace. I think the consensus was that we would just show them the status of the batch itself, indicating when it was, like, for example, delivered. Again, I don't know if delivered is one of them, but it would be something close to, like, completed, the way that they have it there, but just to show that the batch itself was, in fact, delivered to the corresponding back office. Yeah. I mean, as an example, Ashutosh likes to get his paycheck, right? Imagine somebody comes into a screen like this and it says completed for... The payroll, when Ashutosh doesn't get his paycheck, that person in the payroll department is likely to complete it.
+
+00:29:40 - 00:30:34 Unknown Speaker:
+
+Yeah. Oh, you've got to click on it and then go to page five. So then Ashutosh can get paid. Yeah. You know what I mean? Like if it rejected back or whatever, Ashutosh changes his account number, closes an account, and that money can't go through. Like those scenarios, you know what I mean? Yep. Yeah, there are FIGMAs that were created specifically for these scenarios, so I'll need to locate those and see what the final design was and see maybe if it needs any changing, but I know that this was previously discussed and there was a finalization on it. Yep. I'll get that on my list to do. Let's ping her and find the time to meet if we need to. She doesn't have a strong answer on that. Agreed. One more thing. So multiple, right?
+
+00:30:34 - 00:31:48 Unknown Speaker:
+
+So we are showing here in the recipient party name. There are quite a few columns that are blank for a batch. What I see when I do the imports, right? So is that fine? Like, for example, approved by, right? So that is blank. Beneficiary address. So all these details are blank. There are quite a few. Not with a number, but just showing the word multiple. I think that's what we were doing. Now actually again not provide a number like we're doing with the beneficiary just using the word multiple whenever these scenarios came up. Yeah, we do that in ITC, but I don't see it here. So related to a beneficiary bank, I mean when I'm creating a batch report, we're not making an entry for the beneficiary bank. For banning, we are making just a multiple.
+
+00:31:49 - 00:34:13 Unknown Speaker:
+
+So if we want multiple for a beneficiary bank name or for the other list of names. Columns could have a word multiple in them basically then what they said with the bank name bank ID so on and so forth. Sorry, actually I recently started. So I keep that for three-dimensional one. For one of the table, the job, the DAB job generates 800,000 schools. Okay. I can even share you the table with you. So I placed it in the chart already. Yes, yes. RC smart after construction. The current job, the current DAB job is developed by someone. I'm not sure about that. So it generated 800 sb for one. I've already discussed that. Okay. Thank you. The preform is just 80 characters long and that's it. This is straight up preform.
+
+00:34:14 - 00:35:27 Unknown Speaker:
+
+I don't know if the UI number was handed to you via custom logic that I checked. But to the back, he just wants to say, how do you do it? How do you do it? With respect to 8-dimensional, what I am doing, I can explain, you know. So if there is a data migration that is not being conceived to prove that it's a surface, so once I have the tools, I'll do it, right? I think you are trying to automate, you are working on an automation part. Okay, last thing. I was told that there's going to be a toggle in which it's going to be provided. And that's how the client is able to, you know, have the add another payment option.
+
+00:35:28 - 00:37:48 Unknown Speaker:
+
+Thereby, if you're going into the actual batch flow without that toggle, then it's just like a single creation that they're doing, as opposed to being able to go through the batch flow itself. So they can have the ACH credit, right, but not have the ability of creating a batch. So I would be told that this is going to be part of a toggle approach to be able to provide any benefits for that option. Is that correct? If it is one, I can do it, because I don't have access to it. I was noticing in the dev box yesterday that I was able to create a seed credit, but that another wasn't there, so I wasn't sure it was going to be a top of the place then. Thank you for coming today. So, so, so basically.
+
+00:37:48 - 00:39:10 Unknown Speaker:
+
+We also have a client and we will configure this for them. So now we are let's say coding. And these are the tables where they can see that we have all these images and we will not configure one client but we will configure like a whole set of things basically. So whatever the client is calling at a specific time, we will have to see that. And then we will try to spot it and how that will work out. I want to last call you and discuss on that filter that was pending from the design team. Yeah, so I did update the screens on the navigation for me. That's where I believe I placed them. And changed it to... Yeah, so I changed it to, so we don't have a brand, right?
+
+00:39:10 - 00:40:26 Unknown Speaker:
+
+So we just have a constructed amount, the recipient account number, and recipient name. And they still have the certified that's still on there, but the range and the stat is still horrible from the appearance when you're doing the creation. Let me see it. Yeah, I see that. Can we see it now? Okay, cool. Yeah, it's too short. Thank you. Not a problem. Okay. All right. Cool. I'll send the AI. Notes as soon as I get them. Again, any other questions, anything, just please let me know. I'll look forward to that. Alright everyone, thank you so much. So the dev box has it? I mean yesterday they didn't have it. So I mean you were going to say change the frame, but it looked like the toggle wasn't there, so I was not able to actually create any passcode.
+
+00:40:27 - 00:40:49 Unknown Speaker:
+
+Maybe somewhere, where did I have it? But yeah, I mean like speak for today, that should be QHT. Yeah, or at least by the dev, right? Either way, just let me know. Alright, thank you everyone.
+
