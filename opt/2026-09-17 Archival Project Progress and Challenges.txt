@@ -1,0 +1,601 @@
+2026-09-17 Archival Project Progress and Challenges
+
+Creation Time: 2026/09/17 19:48
+
+
+📅About Meeting
+
+• Date & Time: 2026-09-17 19:48  
+• Location: Virtual Meeting  
+• Attendee: Abhijit, Pawan, Murugan, Satyam (mentioned), Govardhan (mentioned), Alok (to be contacted)
+
+📒Meeting Outline
+
+Archival Project Overview and Current Status
+
+• Project Scope and Architecture  
+  The archival project involves managing over 4 million archive files originally stored on NAS locations, now migrated to Azure Storage with metadata in MongoDB Atlas. The goal is to enable underwriters to search and download these archived files, which reside in an archive tier causing delayed availability (rehydration takes 5-6 hours). The system architecture includes backend applications deployed in AKS clusters that handle rehydration requests asynchronously via Azure Service Bus messaging.
+
+• Backend and Frontend Responsibilities  
+  The backend team is responsible for developing APIs that interact with Azure Service Bus and MongoDB to manage file requests, rehydration status, and notifications. The frontend will provide UI for underwriters to search files by name and request downloads. Authentication and user-specific views are planned but not yet implemented.
+
+• Current Development Status  
+  Backend APIs for interacting with Azure Service Bus and MongoDB are developed and deployed in AKS clusters. However, the archival API that will serve the frontend and handle authentication is still in the design phase. Frontend UI work has started but is incomplete; a large zipped UI package was shared but requires cleanup of Node.js modules to run locally.
+
+Technical Challenges and Design Considerations
+
+• File Search and Pagination  
+  Searching 4+ million files by partial file name is a major challenge. The team discussed the need for efficient pagination and possibly caching some data on initial page load to avoid excessive MongoDB calls on every keystroke.
+
+• Asynchronous Rehydration Workflow  
+  The rehydration process is asynchronous and can take several hours. Initial API calls will provide synchronous acknowledgments, but the system must handle asynchronous notifications when files are ready. Currently, email notifications are sent to users when rehydration completes, but there is a requirement to also notify users via the UI.
+
+• Azure Service Bus Messaging  
+  The archival API acts as both a publisher (sending rehydration requests) and a consumer (receiving rehydration completion notifications) on Azure Service Bus topics. The team is exploring the best approach for implementing bi-directional communication with multiple topic subscriptions.
+
+• Authentication and User Management  
+  Authentication is planned to be handled at the archival API layer, not at the AKS cluster. The UI will be user-specific, showing dynamic download links and status based on logged-in user identity. Current authentication mechanisms are not yet implemented.
+
+• Audit and Status Tracking  
+  Metadata in MongoDB includes file details and rehydration status, along with a "waiters" list to track users who requested a file. Once rehydration completes and notifications are sent, the waiters list is cleared. This supports audit and status tracking.
+
+• Integration and Dependencies  
+  The archival API depends on the AKS cluster application to publish rehydration completion events. If this functionality is missing, the team will request its implementation. Coordination with Alok, who has implemented similar mechanisms in another project, is planned to gather best practices.
+
+Next Steps and Coordination
+
+• Frontend and API Design Alignment  
+  The frontend developer will review the shared UI package, clean up dependencies, and prepare a local environment to understand UI requirements. Discussions will continue to finalize API endpoints and data flows to support efficient search and asynchronous updates.
+
+• Authentication Implementation Planning  
+  The team will plan how to implement authentication in the archival API and ensure user identity is propagated to support user-specific UI and audit.
+
+• Messaging and Event Handling Strategy  
+  The team will explore multi-topic subscriptions on Azure Service Bus for bi-directional communication and confirm with AKS cluster owners about existing consumers and producers.
+
+• Consultation with Alok  
+  Abhijit will connect with Alok to understand his implementation approach for messaging and event handling to inform the current project design.
+
+• Access and Resources  
+  Pawan requested access to AKS cluster APIs and MongoDB schema, which will be provided. The MongoDB schema link was shared but cautioned about using the wrong cloud user.
+
+📋Overview
+
+• The archival project involves migrating NAS archive files to Azure Storage and MongoDB, enabling underwriters to search and download files with asynchronous rehydration.
+• Backend APIs are developed and deployed; frontend UI is in early stages with a large UI package shared for review.
+• Major challenges include efficient partial file name search over millions of files, asynchronous rehydration notification, and implementing authentication.
+• Azure Service Bus is used for messaging between archival API and AKS cluster applications, requiring bi-directional communication design.
+• Audit and user-specific notification mechanisms are in place using MongoDB metadata and waiters list.
+• Coordination with Alok for messaging implementation insights and access to APIs and schemas are planned.
+• Development is currently paused pending final design decisions and integration of asynchronous notification mechanisms.
+
+🎯Todo List
+
+• Abhijit:  
+  • [ ] Review and set up the shared UI package locally, remove Node.js modules as needed, and understand frontend requirements. (ASAP)  
+  • [ ] Connect with Alok to gather insights on messaging and event handling implementation. (Within this week)  
+  • [ ] Plan authentication implementation for archival API and user-specific UI. (Ongoing)  
+
+• Pawan:  
+  • [ ] Provide access to AKS cluster APIs and MongoDB schema to Abhijit. (Immediate)  
+  • [ ] Share MongoDB schema link and ensure correct cloud user credentials are used. (Immediate)  
+
+• Team / Satyam:  
+  • [ ] Clarify frontend UI design and file search requirements, including partial search behavior and pagination strategy. (Next meeting)  
+  • [ ] Confirm if AKS cluster application can publish rehydration completion events to Azure Service Bus; if not, plan development accordingly. (Next week)  
+  • [ ] Define API endpoints and messaging topics/subscriptions for bi-directional communication between archival API and AKS cluster. (Next sprint)
+
+Transcription
+
+00:00:02 - 00:00:16 Unknown Speaker:
+
+Hey, hi, Abhijit? Yeah, hi. Yes, I am. Setting one to connect to the— I think you were working on the UI part, right? No, I'm doing actually both.
+
+00:00:17 - 00:00:26 Unknown Speaker:
+
+Uh, I mean, I'm backend developer only, but I got different information. That's fine, yeah, we can discuss. So, what are you— you're working on backend, is it?
+
+00:00:27 - 00:00:50 Unknown Speaker:
+
+Um, yes. I mean, here we have two backend applications. One is actually completely a Python-based applications which is interacting with the Azure services and the MongoDB, and doing some other stuff as well. And after that, let me just quickly share my screen with the entire architecture. Hopefully that will help you to understand first.
+
+00:00:51 - 00:00:51 Unknown Speaker:
+
+Yeah.
+
+00:00:52 - 00:01:04 Unknown Speaker:
+
+Okay, and also let me know what exactly Sattam has asked you to do, because here some confusion was there because nobody was assigned from your team initially, so I started on that part. Okay, okay.
+
+00:01:06 - 00:01:10 Unknown Speaker:
+
+Satyam didn't give me anything, but Murugan has given me some information.
+
+00:01:12 - 00:01:12 Unknown Speaker:
+
+Huh.
+
+00:01:14 - 00:01:16 Unknown Speaker:
+
+సారీ, నేను మీటింగ్‌లో ఉన్నానా?
+
+00:01:17 - 00:01:25 Unknown Speaker:
+
+అరే, మీటింగ్‌లో ఉన్నా కానీ నేను— అరే, ఓకే, మళ్లీ ఫోన్ చేపిస్తారా? నేను చేస్తే ఎత్తురా, నువ్వు ఫోన్. ఏం ఫోన్‌లో ఉన్నావ్? మెసేజ్ పెట్టరా నాకు?
+
+00:01:27 - 00:01:35 Unknown Speaker:
+
+ఆ, సరే, పంపించేయ్. Pawan, you were speaking on mute maybe. Sorry, sorry. Please, yeah. Sorry, I couldn't hear anything.
+
+00:01:36 - 00:01:58 Unknown Speaker:
+
+Please tell me, who has given you the instructions, and what do you know so far? Okay, from me, information was given by Govardhan. He said we need to develop— Satyam team needs to develop a tool for archiving the files, okay? Correct. And, um, he asked me if we can— you know that I'm— I have created a tool called ADAS.
+
+00:02:00 - 00:02:21 Unknown Speaker:
+
+Uh, yes, yes, yes. So that— so basically, I have— initially, when I developed it, there were a lot of use cases. Everyone used it for some time, and they created it, and everything went fine, okay? Right now the situation, no one has a requirement, development requirement. Everyone will be fixing small, small things.
+
+00:02:21 - 00:02:49 Unknown Speaker:
+
+So we're actually waiting for something that is big, so that we wanted to see how ADAS behaves in this particular setup, with this complete new requirement, including frontend and backend, everything. End-to-end connectivity. How it behaves. So we wanted to see, using ADAS, how it does. And this one we wanted to record it, that video, and play it in the next week's, um, session.
+
+00:02:49 - 00:03:07 Unknown Speaker:
+
+Yeah, there is a session, actually. We are presenting it to higher leadership, so there we wanted to show this. Now— Yes, yes, I mean, definitely you can do that. There is no issue on that part. So the API— I mean, that front and backend, if you want to develop both, you can develop that things.
+
+00:03:07 - 00:03:25 Unknown Speaker:
+
+Because you want to hire— I mean, or— I mean, also just want to test that ADAS current performances with this new requirement, right? Yeah. So that you can— yeah. So from that aspect, you can definitely do that things. And I'm also parallelly doing that backend API development I have started.
+
+00:03:26 - 00:03:42 Unknown Speaker:
+
+But anyway, I mean, I need help also from the UI perspective, okay? Because the UI, I'm not sure what exactly has been done. So you can do that things. I mean, using the ADAS, that's a different kinds of experiment you are going to do. Even it's a learning curve for us as well.
+
+00:03:42 - 00:04:05 Unknown Speaker:
+
+Whenever you are going to demonstrate that part, we will also learn how to utilize the ADAS with this new requirement. So that's a completely separate part. And what we are— what I am doing at my site, that based on my requirement, I'm just preparing some functionalities. And maybe if we find that whatever will work, we will go with that one. There is no issue, problem with that.
+
+00:04:06 - 00:04:17 Unknown Speaker:
+
+Okay, let me just give you a quick introductions with the overall architecture of the— You are already working in— sorry, sorry, you are already working in Satyam's team, is it? Yes, yes. Same project.
+
+00:04:19 - 00:04:36 Unknown Speaker:
+
+Okay. Same project means here, under Satyam's, three different projects modules are running. RPT is there, PNL is there, and also this archival part. So I was initially involved with the PNL mostly, and sometimes with the RPT. And right now I'm not doing anything with the RPT.
+
+00:04:36 - 00:04:55 Unknown Speaker:
+
+I'm just completely involved with the PNL, and I have started with the archival part. So, flow— workflow-wise, this is the archival architecture. Okay, so what we are doing— this is very small project applications going to happen. You know that NAS location is there. So NAS laying data, a lot of files.
+
+00:04:55 - 00:05:24 Unknown Speaker:
+
+We have a lot of archive files are there, around 40 lakhs, more than 40 lakhs data is there. So that NAS locations files is sometimes required by the underwriter, and they can— they can have it. If they can have it, that will help them for the setting of the pricing bid. So for that one, they want to access this archive file. But there is no way to access the NAS locations files, because these are actually an archival file.
+
+00:05:24 - 00:05:38 Unknown Speaker:
+
+And also, I mean, archive tier. When I'm saying archive file, it's not just an archive. The archive tier has been used, okay? So immediately this file will not be available to them. The NAS locations, they don't have access also.
+
+00:05:38 - 00:06:05 Unknown Speaker:
+
+So what we exactly— we are going to do, we are actually make— trying to make some facility for the underwriter where they can make a search operations against the file name, and also they can able to download from locations where they have access. Okay. So NAS locations data is now actually moved into this Azure storage, okay? This is a one-time— one-time activity actually happened.
+
+00:06:05 - 00:06:27 Unknown Speaker:
+
+And whatever the structures we have in the NAS locations, the similar kind of hierarchy— I mean, the folder hierarchy I'm talking about, the similar folder hierarchy we are maintaining at the Azure storage locations. And after storing in the Azure storage locations, whatever will be the meta information of those files and folders, that we are storing into the MongoDB, MongoDB Atlas. Okay.
+
+00:06:28 - 00:06:39 Unknown Speaker:
+
+So now MongoDB is also prepared. MongoDB and Azure storage is populated with the files. So we don't have any dependency on this original NAS locations any further. Nice.
+
+00:06:41 - 00:07:09 Unknown Speaker:
+
+Now come to the— this part. That some— we have an applications which is actually deployed into the AKS cluster as a container. Who is responsible to do two major things. That is, one is a rehydration request. So when I'm saying rehydration request, rehydration request means when your— when underwriter is going to make some request for a particular file, then that particular file will be moved from the source locations to the destination locations.
+
+00:07:10 - 00:07:37 Unknown Speaker:
+
+Source and destinations both are in the Azure storage location itself. But in the source, they wouldn't have any kind of access. In the destinations folder, they will have access, okay? So we are making a simple copy activity. But as it is an archive file, so it takes around 5 to 6 hours, which is an asynchronous kind of approach, you can say, which is going to take 5 to 6 hours to rehydrate, okay?
+
+00:07:38 - 00:08:06 Unknown Speaker:
+
+So that kind of activity is done by these applications. And as I'm saying, that this is an asynchronous processy because you don't know that when this particular file will be hydrated, hydration will be completed, okay? And when that file will be ready for the download. So that's an backend operation is happening. And whenever that operation is finished, it actually will take that particular notifications, and it send it out an email to the user that your file is now ready for the download.
+
+00:08:06 - 00:08:26 Unknown Speaker:
+
+And also we generate some sort of SaaS token with that particular file so that for 15 minutes, or 20 minutes, or 30 minutes, they will be able to download that particular file. So this is how the things are actually happening. So this part we have done. Now the biggest challenge is the archival API part. Archival API means API plus UI, okay?
+
+00:08:27 - 00:08:53 Unknown Speaker:
+
+So API, when we are implementing these API sections, the API is responsible to definitely listen, I mean, receive the information or request from the UI. And also, API need to propagate that informations to the next level, this particular applications. But between these two, there will be Azure service bus. That is a requirement. The Azure service bus will be there.
+
+00:08:54 - 00:09:08 Unknown Speaker:
+
+So from the API side, whatever this file ID, file name, user email, this kind of information will be published into the topic, and this particular application will consume that particular data, and it will act based on that. Okay.
+
+00:09:09 - 00:09:23 Unknown Speaker:
+
+Okay? Okay. So when I'm saying this archival API, I must modify this architecture also a little bit. So archival API will have two sections. One is an UI section, another API sections, right?
+
+00:09:23 - 00:09:33 Unknown Speaker:
+
+So API sections is going to expose— going to expose, I believe, that two or three major services.
+
+00:09:34 - 00:10:00 Unknown Speaker:
+
+So one major services will be that from the UI, I haven't seen that how actually Sattam is planning for the UI, but whenever the call will come from the UI, the UI should know that what file name has been requested, what is the user email ID of the underwriter, and also the file ID. There is something called file ID which is very unique.
+
+00:10:01 - 00:10:26 Unknown Speaker:
+
+So file ID is an unique ID what we are actually generating based on the files locations. Because every file is located under the different hierarchy. And if you— if you see 40, more than 40 lakhs of files, there is a huge number of duplicate files as well. So we are actually segregating them, or we are actually identifying them based on that complete URL, okay?
+
+00:10:26 - 00:10:47 Unknown Speaker:
+
+That absolute path we are actually converting into an alphanumeric ID, and that ID is actually a file ID. So all this informations about the file is actually already stored into the MongoDB. So when the page will load, when the UI page will load, it initially need to have this informations, like the file ID, file name, and user email ID for all the file.
+
+00:10:47 - 00:11:12 Unknown Speaker:
+
+Now, how these things, how the design we should do, because 41 lakhs file is not a small amount, how you are going to pick up all those data. And that's the reasons I have given a direct, bidirectional flow as well, because you are going to request it to the MongoDB, and Mongo is going to serve you all this— all these three informations about each and every file. So definitely it might not be a single call.
+
+00:11:12 - 00:11:19 Unknown Speaker:
+
+It might be a— might be a pagination kind of call, or something else that we have to design.
+
+00:11:20 - 00:11:26 Unknown Speaker:
+
+Yeah, so— So it would be file name search only, right?
+
+00:11:28 - 00:11:41 Unknown Speaker:
+
+It is a first— first of all the file name search. Then if the file name is found, and if it is requested for the rehydrations, then it will need to propagate that. Yeah, it need to propagate that informations and request to the next level here.
+
+00:11:42 - 00:11:59 Unknown Speaker:
+
+And also, whenever— whatever will be the acknowledgement, or whatever will be the response, that will be— that will be sent back to the API. API should actually propagate back to the UI for the users. But that you already— You already have it as a queue mechanism, right? So it won't be synchronous in that case.
+
+00:12:01 - 00:12:19 Unknown Speaker:
+
+Uh, it— it would be asynchronous. Initially it would be a synchronous process. Because async process is a different one, right? Async process means that when the dehydration will be completed, we don't know. It will be a 4 to 5 hours time it might take, and it varies also.
+
+00:12:19 - 00:12:39 Unknown Speaker:
+
+So we have to think about a mechanism that how we can pass that information, pass back that informations whenever the dehydration will be completed. So in that case, it will be a back informations. I mean, back to AKS cluster. I mean, from these applications to the API. How we are going to do that things, I'm not sure about it right now, okay?
+
+00:12:40 - 00:12:46 Unknown Speaker:
+
+That we have to plan out. So synchronous call, but right now whether they are going to expose some API for us, we don't know.
+
+00:12:47 - 00:12:56 Unknown Speaker:
+
+Which one? The archival API to backend, there are some processes, right, running exec. So how are we going to connect? Are they exposing some APIs there?
+
+00:12:58 - 00:13:05 Unknown Speaker:
+
+Yes, definitely. I mean, this application has been completed, okay? So already we— So it's written in API, REST APIs only.
+
+00:13:06 - 00:13:22 Unknown Speaker:
+
+No, not REST API in that way. It's actually— I mean, as I said, the Azure service bus will be there, right? So it is actually going to listen it from the Azure service bus. So listener config— listener configuration is there. Azure service bus.
+
+00:13:22 - 00:13:34 Unknown Speaker:
+
+So if it is going to the bus, it won't be synchronous, right? It takes some time for getting a response. Maybe acknowledgement we can take and say we have taken the request, okay? Yes, absolutely. Yes.
+
+00:13:35 - 00:14:02 Unknown Speaker:
+
+The initial— initial acknowledgement will be your request has been approved, or your request has been— has been accepted, something like that. So basically it is nothing just that initial feedback to the user that yes, the submission process happened, okay? Now going forward, if I face any issue, any challenges, any technical things, so our plan is to send an email notifications to the user itself that your processes has not been completed yet.
+
+00:14:03 - 00:14:15 Unknown Speaker:
+
+And even the rehydration process completed, we are going to send an email. But after rehydration process completed, we are sending an email, something like this. I'm just showing you. Let me share once.
+
+00:14:18 - 00:14:20 Unknown Speaker:
+
+Yeah, something like this.
+
+00:14:26 - 00:14:42 Unknown Speaker:
+
+So your file requested, that has been rehydrated and is now available for the download. But there is a 15 minute time for you, okay? Within that 15 minutes, you have to download that things. So this download link, you can see the file name is this one. This is the file name.
+
+00:14:42 - 00:14:51 Unknown Speaker:
+
+And after that, this is a SaaS token has been added against that, so that it can download it by the user. And it has a 15 minute— 15 minute expiry time.
+
+00:14:52 - 00:15:16 Unknown Speaker:
+
+So similar kind of things, similar kind of download link we need to send, not only through email. Sattam also want to send that email from here, this applications to the API applications. I exactly don't know. I mean, he is suggesting some existing way out, what has been implemented in Okta. I'm not sure about that one.
+
+00:15:16 - 00:15:27 Unknown Speaker:
+
+He has just shared that person name. Maybe he wants to maintain audit of what is requested, what is successful, what is failing. So that information maybe through this mail or anything.
+
+00:15:29 - 00:15:54 Unknown Speaker:
+
+No, email will— email will be there as it is, okay? Email will contain that one. But in case his— his statement is like that, he in case underwriter missed out that particular email, we should inform him through the UI itself that this— this has been rehydrated, and this is the user ID. But how he is planning it, I don't know. Why?
+
+00:15:54 - 00:16:06 Unknown Speaker:
+
+Because this can't be a generic page, right, in that case. Because in that case, it need to be a customized one. Customized one— User level. User level, yes. User level page is required, right?
+
+00:16:06 - 00:16:10 Unknown Speaker:
+
+Because you are— You are planning to access the user ID and his mail ID, right?
+
+00:16:12 - 00:16:14 Unknown Speaker:
+
+So we are authenticating him, right, using some SSO.
+
+00:16:17 - 00:16:32 Unknown Speaker:
+
+Yes, we are authenticating him. And authentications need to be there. But that authentications need to be done from the API side itself. I'm not sure right now. Yeah, I think we don't have.
+
+00:16:32 - 00:16:35 Unknown Speaker:
+
+So we will not have any information about the user also.
+
+00:16:36 - 00:16:54 Unknown Speaker:
+
+Definitely. I mean, whenever user will log in, then user email ID will be propagated to us. Otherwise it's not possible to catch that things. So user level page will be there, and that user level page should have that particular dynamic link, okay? I mean, I mean that— But we have to have one more schema to maintain the audit, right?
+
+00:16:54 - 00:17:06 Unknown Speaker:
+
+What request we received, what is processed, what is responded to the user. Do we need to maintain that audit? Yes. Yes, we have that one. Because we are maintaining this in the MongoDB itself.
+
+00:17:06 - 00:17:32 Unknown Speaker:
+
+So along with the meta structure of the particular file, we are also maintaining informations like what is the rehydrate status. Suppose here you can see rehydrate status of this particular file is none. So it hasn't been rehydrated ever, right? This rehydrate status is actually calling ready. Ready means it has already rehyd available, and that 5 hours time has already over.
+
+00:17:33 - 00:17:48 Unknown Speaker:
+
+Lag is over. Because up to that 5 hours, the status was different, rehydrating. For the 5 hours it is rehydrating. Once the rehydration process completed, it becomes ready, okay? And also the other informations is there.
+
+00:17:48 - 00:17:59 Unknown Speaker:
+
+Here, one information is wrong. Just like existing tire should not be an archive. It should be a pull. But yeah, other informations you can have it. I mean, this is also— I mean, this is a file metadata.
+
+00:17:59 - 00:18:13 Unknown Speaker:
+
+Along with that, the rehydration process is also will be there. Here, rehydrated error, in case of any rehydration error is happening, that will be also a comment. So these APIs are already there, is that? Yeah, API is already there. API is built up is already there.
+
+00:18:14 - 00:18:25 Unknown Speaker:
+
+That you developed there. Yeah, that I have developed. We have already demoted to Srikant DB for yesterday. And here also, one— just one more thing. Waiters, you can see.
+
+00:18:25 - 00:18:39 Unknown Speaker:
+
+So waiters means that the people who are actually requesting for this file. So it might maybe a single persons. It might be more than one persons also requesting for the same file, right? Maybe not at the same time. Maybe they are doing it at the different time.
+
+00:18:39 - 00:18:57 Unknown Speaker:
+
+But that's the reasons we have put it in an array. So whoever will be in the array on this informations, whenever the rehydration process will be completed, they will send that persons an email. Whoever is in the waiter list. And then they delete that particular things. Key, I have already sent the email, so that's done.
+
+00:18:57 - 00:18:59 Unknown Speaker:
+
+So remove that informations from the waiters list.
+
+00:19:00 - 00:19:19 Unknown Speaker:
+
+So this is how it's actually working. But now, these sections we have to plan that. I mean, the most difficult part will be— I mean, authentications part, I'm already checking because— Authentication. This archival API is what you have developed already, right? Only you must be looking for UI.
+
+00:19:21 - 00:19:30 Unknown Speaker:
+
+UI. UI. Sorry. Yeah, only UI, some front end which can take the request for you and send a request for your APIs that you developed.
+
+00:19:32 - 00:19:46 Unknown Speaker:
+
+No, this API is not present, right? I mean, I'm talking about the— I mean, functionality and API from this application. This is an application, yes. These APIs are ready. And you are actually going to segregate this box.
+
+00:19:47 - 00:20:02 Unknown Speaker:
+
+UI and API will be there. Because authentications I can't do here. Authentications need to be done here, at this archival API, right? I'm just think about that in that— in this context, that archival API will be there. On top of that, there will be another box which is an UI one.
+
+00:20:04 - 00:20:26 Unknown Speaker:
+
+Right? So archival API is going to responsible to do the authentication and whatever will be the required part of that things. And also to get that kind of informations like this file ID, file name, and user email informations, then it also need to propagate it to the— this to the Azure bus, which is in the middle of these two applications.
+
+00:20:27 - 00:20:57 Unknown Speaker:
+
+Yeah. And also need to listen back the— that particular download link, whatever has been created. So that download link need to be propagated back from these applications to this one, so that archival API can send it back to the UI and for this particular— I mean, service for the user. So that is, I believe, a bit different kinds of challenge.
+
+00:20:57 - 00:21:26 Unknown Speaker:
+
+Because in the Azure service bus, if we want to implement, then we should have some backward directions flow, right? Because here, if I use the Azure service bus, basically this part is actually working as a publishers, or as a producer, right? And this is working as a consumer. But though it's a consumer, consumer is also sending back an asynchronous feedback, or asynchronous data, to the publishers.
+
+00:21:27 - 00:21:43 Unknown Speaker:
+
+So how that can be achieved, that's something I'm not sure yet. There must be some bus already, right? Separate topic. I don't know, like Kafka or something, what they are using. There must be separate channel for existing that they might be sending.
+
+00:21:43 - 00:22:05 Unknown Speaker:
+
+So we can also become a subscriber to that. So like a— So you are suggesting two different topic subscriptions. One will be used by this one as a publishers, and one will be used by this one as a publishers. Yeah. So right now, this— whatever the middle one, that AKS cluster everything, they must be publishing some events when there is a request, right?
+
+00:22:05 - 00:22:17 Unknown Speaker:
+
+Or do they have some consumers of those APIs now? Whatever is there in AKS cluster everything. Do they have any consumers? Otherwise— That is that we have prepared. That we have kept prepared.
+
+00:22:17 - 00:22:39 Unknown Speaker:
+
+Because here we have the complete listener configurations. AKS cluster— I mean, Azure service bus listener configuration is there. So if the data is published into the topic, we are going to consume that things. And we are calling our functions. So consumer— consumer configurations is there.
+
+00:22:40 - 00:22:42 Unknown Speaker:
+
+Consumer configurations. Okay.
+
+00:22:43 - 00:23:01 Unknown Speaker:
+
+But— But what do you suggest? I mean, in this backward channel, backward directions flow, what is your suggestions for that one? That's what. So do we have— do this AKS cluster, something that you guys are already working, do they— do you have any consumers of these APIs other than what we are going to work now?
+
+00:23:04 - 00:23:14 Unknown Speaker:
+
+So that we— Consumer— consumer API too we have. That's the reasons we can consume it. No, no. Consumer— sorry, sorry. What I meant— Producer API, yes.
+
+00:23:15 - 00:23:30 Unknown Speaker:
+
+So for the AKS cluster, you send a request to rehydrate a file, okay? It does that, and you say a notification that, yes, we have done that, okay? Yes, yes. So right now, okay, we are going to give a create a front end. From there, they'll send a request.
+
+00:23:30 - 00:23:46 Unknown Speaker:
+
+And then that will be sent to the AKS cluster through topic, some message format, okay? Some bus we are planning. That is something that we are going to build. Other than this, do we already have something like what we are going to create? Is there any consumers for this AKS cluster APIs?
+
+00:23:48 - 00:23:58 Unknown Speaker:
+
+No. Okay. So this is something— But that consumer need to be prepared at this archival API side. Because that is going to consume that what he has to do. So this would be the first consumer, right?
+
+00:23:58 - 00:23:59 Unknown Speaker:
+
+This would be the first consumer.
+
+00:24:01 - 00:24:26 Unknown Speaker:
+
+I mean, this is— I mean, if we utilize that two different topic subscriptions, then this archival API is one side. It is one side it is acting as a publishers— Publisher and also consumer. —and also as a consumer. But to become a consumer for archival API, first of all, the AKS cluster, as soon as it is processing, it should trigger out something again through a bus, right?
+
+00:24:26 - 00:24:47 Unknown Speaker:
+
+So if they have not developed that, then we need to ask them to do the development, okay? Yes. I mean, that— that is one thing that we don't have any proper idea about that one. So we have stop our development till that email notifications. Key, whenever the rehydration process happened, we— we finish the task with the email notifications.
+
+00:24:47 - 00:25:05 Unknown Speaker:
+
+Now going forward, if we— I don't think we need to do that. That's already happening, right? AKS cluster APIs are already doing it. I mean, I'm talking about from that angle itself. On behalf of AKS cluster application, on behalf of— I'm saying that it is finishing up the things with the email notifications.
+
+00:25:05 - 00:25:27 Unknown Speaker:
+
+I will add that extra functionality to produce or publish that particular messages to the topic, if this is going to work as a consumer and want to consume that from the service bus. So that is one way of having it, if we can go ahead with the multiple subscriptions. Multiple topic subscriptions. That is only possible way.
+
+00:25:28 - 00:25:41 Unknown Speaker:
+
+But here, Sattam is asking for some another strategy that I don't know exactly. Someone called— I don't know his— his name is Alok.
+
+00:25:43 - 00:25:57 Unknown Speaker:
+
+Yeah, Alok is there. So that Alok is actually implemented these things in one of his project in a different way. Sattam want me to connect with him and get that idea. Okay, okay. Got it.
+
+00:25:59 - 00:26:08 Unknown Speaker:
+
+So far, have you started working on those archival APIs? Nothing— nothing started, right? You are still design phase? I mean, just— I mean, just at the design phase. Just at the design phase.
+
+00:26:11 - 00:26:32 Unknown Speaker:
+
+Because we have time right now. Because we are supposed to finish these things by this sprint itself. Now already we have completed at this part, and we have demoted. And we can't do much testing on it because this archival API need to be created. Otherwise, publishing the data, triggering the things, that is very difficult for us now.
+
+00:26:33 - 00:26:55 Unknown Speaker:
+
+So as it is already in the AKS cluster, it's a private network is there, but we can just publish some— publish some data into the topic what we have created. Topic is also created. But we can't publish the data from— publish the data public from the public URL or from the Azure portal. It is not possible. So we have to deploy something into the container.
+
+00:26:55 - 00:27:11 Unknown Speaker:
+
+I mean, some archival API need to be deployed into the container, and then only we'll be able to do that. So another technological things what we have decided that this is going to be implemented with the first API. Python first API. Oh yeah, Python is something that there. Okay, got it.
+
+00:27:13 - 00:27:22 Unknown Speaker:
+
+So yeah. So that is a thing. And— I mean— And he gave me a file zip. Okay, it is like 600, 700 MB. What is that?
+
+00:27:22 - 00:27:39 Unknown Speaker:
+
+I— I— I don't— don't talk about that one. Yesterday my system completely hanged when I was trying to unzip it. Actually, lot of libraries has been added into there. I said, "Bhai, I— I can't open that file. " What is that actually?
+
+00:27:39 - 00:27:50 Unknown Speaker:
+
+He is saying that it is a some— someone has created the UI. I don't know who has created the UI. I don't— I couldn't open the file. I don't have any idea. You can ask him.
+
+00:27:51 - 00:27:53 Unknown Speaker:
+
+UI is created. Okay, okay.
+
+00:27:55 - 00:28:07 Unknown Speaker:
+
+I could— I mean, I opened it. So— No, right click you can open it, but extraction is not happening. Yeah, extraction— extraction is working for me. Oh, it's working for you. Okay.
+
+00:28:08 - 00:28:08 Unknown Speaker:
+
+Great.
+
+00:28:10 - 00:28:21 Unknown Speaker:
+
+Okay, what this guy has done now, that node modules are there, right? It runs in node, right? Yes, node modules need to be removed first. That's a different difficult things. That's a library kind of things, right?
+
+00:28:22 - 00:28:29 Unknown Speaker:
+
+Libraries. It's a Node. js libraries to run. If you remove that Node. js libraries, then it will be easily opened.
+
+00:28:30 - 00:28:40 Unknown Speaker:
+
+Opened. Okay. So I can make it up and running locally. Whatever he shared. At least to see what— how this front end looks, okay?
+
+00:28:41 - 00:28:48 Unknown Speaker:
+
+But— Yes, front end design and that API design need to be done before we start the development. Because some hectic things is there.
+
+00:28:50 - 00:29:00 Unknown Speaker:
+
+Especially the file searching challenge. That's a huge challenge. Because you are actually allowing user to search on that 41 lakhs file, right?
+
+00:29:01 - 00:29:07 Unknown Speaker:
+
+So 41 lakhs file, how you are going to manage that things in your page? That is not possible.
+
+00:29:09 - 00:29:18 Unknown Speaker:
+
+What is that? The search is like 3, 4 characters. File name only. File name search only, right? Yes, partial search will be there.
+
+00:29:18 - 00:29:44 Unknown Speaker:
+
+Okay, erratic search. Partial search need to be there. I mean, that Sattam can tell you better because we never discussed about that front end looks and feels. So I mean, if you want to have— if you keep this kind of informations for— for the— against the partial search, then you need to connect immediately to the Mongo and you need to serve it.
+
+00:29:44 - 00:30:05 Unknown Speaker:
+
+So how you are going to do that for each and every character you— you going to make a call to the Mongo? That is not a feasible options, right? So you have to bring some data from the Mongo at the initial load, during the initial load of the page. So that is a challenging part. I think you can just go through that UI sections first, okay?
+
+00:30:05 - 00:30:32 Unknown Speaker:
+
+Then we can discuss about that part. Key, how API need to expose the file— expose the services so that the UI can connect with that. Or how the things will be done. And also you can plan about this backward connectivity kind of things. By that time I will also connect with Alok and I will get back that what exactly he has implemented to get data from this cluster to this one.
+
+00:30:32 - 00:30:33 Unknown Speaker:
+
+Okay, okay.
+
+00:30:35 - 00:30:35 Unknown Speaker:
+
+Got it.
+
+00:30:37 - 00:30:47 Unknown Speaker:
+
+So— And by that time, any questions, just let me know. Yeah. Have you created any module? I mean, I need access to these AKS cluster APIs that are already present.
+
+00:30:49 - 00:30:55 Unknown Speaker:
+
+Yes. And I need access to the schema. MongoDB schema. Yes, definitely.
+
+00:30:57 - 00:30:59 Unknown Speaker:
+
+I think you should have that one.
+
+00:31:02 - 00:31:03 Unknown Speaker:
+
+Just check it.
+
+00:31:06 - 00:31:10 Unknown Speaker:
+
+Which MongoDB schema is that? Yes. Can you share me the link?
+
+00:31:12 - 00:31:13 Unknown Speaker:
+
+I have pinged you.
+
+00:31:19 - 00:31:21 Unknown Speaker:
+
+Okay, Mongo you don't have, right?
+
+00:31:35 - 00:31:40 Unknown Speaker:
+
+Cloud user— Wait, wait. Don't— don't— don't use— don't use that. Okay.
+
+00:31:47 - 00:31:48 Unknown Speaker:
+
+Okay.
+
+00:31:50 - 00:32:08 Unknown Speaker:
+
+Pavan, just keep me posted that whatever you required. Just ping it here. Okay, by that time Alok is available, I'm completely— just quickly get in chat with Alok that what kind of mechanisms he has applied there, okay? Okay, sure. Let me answer now, okay?
+
+00:32:09 - 00:32:12 Unknown Speaker:
+
+Yes, sure. Sure, sure. Okay, thank you. Yeah.
+
