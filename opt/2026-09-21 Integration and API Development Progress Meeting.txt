@@ -1,0 +1,289 @@
+2026-09-21 Integration and API Development Progress Meeting
+
+Creation Time: 2026/09/21 16:00
+
+
+📅About Meeting
+
+• Date & Time: 2026-09-21 16:00  
+• Location: Virtual Meeting  
+• Attendee: Satyam, Abhijit, Pavan, Arjun, Mike, and others
+
+📒Meeting Outline
+
+Integration and API Development Progress
+
+• Rehydration Process and Worker API  
+  The rehydration process is managed by the CI system, which completes the process and sends notification emails. Two applications are connected via Azure Service Bus: a front-end app and a back-end worker API. The worker API is already developed and deployed in AKS clusters. A white paper detailing the worker API’s request/response contract and sample data was shared for reference.
+
+• Current Development Status and GitHub Repository  
+  Front-end development is progressing with test data inserted into MongoDB collections. The API development is complete, but the GitHub repository for the new API has not yet been created, blocking code commits and integration testing. Once the repo is ready, full validation of API connectivity and functionality can proceed.
+
+UI and Backend Data Handling
+
+• UI Functionality and MongoDB Schema  
+  The front-end UI allows users to search files, submit restore requests with reasons, and view request statuses. MongoDB collections store user requests and metadata with some schema differences noted (e.g., additional fields like business reason and retention hours). Pagination and sorting by last updated date are planned for efficient data display.
+
+• API and UI Integration Details  
+  The UI is connected to the local back-end, enabling file search and request submission. Currently, all records are fetched without limits, which needs optimization. The UI shows a single "Request Restore" button per file, which triggers the backend API to check the file’s current archive status and either initiate rehydration or generate a download token.
+
+Token Management and Download Process
+
+• Token Generation and User-Specific Access  
+  Tokens for downloading files are generated per user and file combination, valid for 48 hours. This approach ensures secure, user-specific access and supports future authorization enhancements. The backend checks if a file is already rehydrated before generating a token, avoiding redundant rehydration requests.
+
+• Download Link and UI Behavior  
+  The UI should not display download links unless the file is confirmed to be rehydrated. Instead, a single "Request Restore" button is shown, which either returns a download link immediately if the file is ready or confirms that the request for rehydration is accepted. This simplifies the UI and avoids confusion from stale or inaccurate status displays.
+
+Data Synchronization and UI Refresh Challenges
+
+• Sync Between MongoDB and UI  
+  A key challenge is keeping the UI in sync with the backend MongoDB data, especially since file status changes (archive to cool tier and vice versa) can happen asynchronously and take hours. Live status updates are difficult due to caching and the large volume of data (~400,000+ records).
+
+• Proposed UI Refresh Strategies  
+  Suggestions include a manual refresh button on the UI and periodic refreshes to update file statuses. However, frequent automatic refreshes could add complexity and performance overhead. The team agreed on a simpler approach: show the latest status on page load and after user actions, and prompt users to resubmit requests if the file status changes unexpectedly.
+
+Future Considerations and Security
+
+• Multiple Storage Tiers and Use Cases  
+  The system may need to support multiple archive tiers and different data sources (e.g., NAS files, on-prem SQL data) in the future. The architecture should be flexible to handle such expansions.
+
+• SSO and User Roles  
+  Single Sign-On (SSO) integration is planned for the UI to ensure secure access. Currently, only one user role is defined, allowing all logged-in users to view, request, and download files. Role-based access control may be introduced later to segregate users by business type or permissions.
+
+• Testing and Deployment Plans  
+  Manual validation will be prioritized before implementing automated testing (e.g., Playwright scripts). Once the GitHub repo is created and code is pushed, deployment and live data testing will proceed.
+
+📋Overview
+
+• The rehydration process and worker API are developed and integrated via Azure Service Bus; documentation is available for API contracts.  
+• Front-end UI supports file search, restore requests, and status display, connected to MongoDB with pagination planned.  
+• Token generation is user- and file-specific, valid for 48 hours, ensuring secure downloads without redundant rehydration.  
+• UI design favors a single "Request Restore" button to simplify user interaction and avoid stale status confusion.  
+• Synchronization challenges between MongoDB and UI exist due to asynchronous file status changes; a manual refresh and resubmission prompt approach is agreed.  
+• SSO will be enabled for secure login; currently, a single user role is implemented with plans for future role segregation.  
+• GitHub repository creation is pending, blocking code commits and full integration testing.  
+• Manual testing will be completed before automated test scripts are introduced.
+
+🎯Todo List
+
+• Repository Owner:  
+  • [ ] Create GitHub repository for the new API, enabling code commits and integration testing (ASAP).  
+
+• Abhijit / API Developer:  
+  • [ ] Commit API code to the new GitHub repo once created.  
+  • [ ] Validate API connectivity with front-end and Azure Service Bus.  
+  • [ ] Implement user-specific token generation for secure file downloads.  
+
+• Front-End Developer:  
+  • [ ] Implement pagination and sorting by last updated date for file metadata display.  
+  • [ ] Integrate "Request Restore" button logic to handle download link generation or rehydration request.  
+  • [ ] Add manual refresh button on UI to update file status from MongoDB.  
+  • [ ] Implement SSO login functionality consistent with existing RRF/RPT modules.  
+
+• Testing Team:  
+  • [ ] Conduct manual validation of rehydration requests, completion, searching, and acceptance flows.  
+  • [ ] Plan and prepare automated test scripts (e.g., Playwright) after manual testing is stable.  
+
+• All Team Members:  
+  • [ ] Monitor synchronization between MongoDB and UI; propose enhancements if required.  
+  • [ ] Review and finalize schema updates, including additional fields like business reason and retention hours.
+
+Transcription
+
+00:00:00 - 00:01:00 Unknown Speaker:
+
+CI is actually responsible to do that rehydration process and completion of the rehydration. It is responsible to send you an email. All those stuffs are actually done by the rehydration process itself. And that's the reasons. I mean, when I was telling you that we have two applications, which is connected by that as your service bus. I mean, I showed you that document also last week, right? No, no, you showed me the worker process. It is already there in the back-end app that is there? Yes, yes, it is already there. Already we have built it. Okay, okay, fine, fine. Yeah, so I mean the connectivity is happening between this new one and this worker API with the Azure Site Express. That is the thing. And whatever I have shared you with... this morning.
+
+00:01:00 - 00:01:56 Unknown Speaker:
+
+That is actually the complete kind of white paper of the that worker API, what a worker API is actually listening, what kind of request it is taking, what kind of response it is giving. So that contract is actually within that empty file. If you look into that, we have given all the samples there. Okay, okay. Okay, so Satyam is actually asking me that is it possible for you to demo something or to give some idea that what progress we have made. I mean, I was just in call with him, so he was asking me to connect with you. Yeah, I have done it. Even the metadata that you provided for the collection, that would also be useful for me.
+
+00:01:56 - 00:03:01 Unknown Speaker:
+
+I created it and I am able to run I want I am just going through basically I created it I am from the front end I even inserted some test data into that metadata and then trying to run the request. Okay. So give me like one hour time I will connect with you. I am almost done. You can let him know also. Okay. Yeah. Sure, yeah. Okay, thank you. And do we have a GitHub repo created for the new API? No, no, no, no, no. He hasn't created yet. I am telling you since last Friday. Okay. That is required even for me. I have also done the complete development. API development is completed for me. Since morning I am waiting for his repo only that I can't commit yet.
+
+00:03:01 - 00:04:02 Unknown Speaker:
+
+And if I can commit yet, then only I will be able to interact with the worker API. Otherwise, how can I interact and how can I do a proper validation there? The way I have validated my worker API, that is completely set up there in the container, run the AKS clusters, and then I validate the entire thing. The similar way I wanted to do the same thing for the API. Connectivity is also required to be tested out, that service-based connectivity. But the only problem is the repo is not ready. So that is an issue. Okay. Can I share my screen? Yes, no problem. Yes, see this is the front-end. Now it is connected to my local back-end. Okay. So, for example, now let me show you. I will raise a request. Okay.
+
+00:04:02 - 00:05:13 Unknown Speaker:
+
+I am searching for a file. So, this is available already. So, not this one. Okay. Let me take. The question is that why this list is actually displaying here. I mean, is it some. Kind of approach that the file name will be displayed somewhere. Is it required? I mean it's a body one like files. Why I am displaying them that I am not sure. These files is it? Yes, these files. I mean instead of this one we can see some just put it something like pagination with A to B, B to C, C to D in that way. This is existing only. Nothing much I have made any changes. And also that initial API is required to bring all the data information, submitter information from coding. So submit request. Okay, request restore is there.
+
+00:05:14 - 00:06:59 Unknown Speaker:
+
+So if I go to, so there is a request for it. So this is the status. Okay, so let me show you the MongoDB collection. Is it in your local? Yeah, it is local only. Okay. So, this is the schema. User ID file requested is this. Yeah, I think your schema is a bit different. Okay. Reason, retention hours, that is not required. I have prepared different structures and that is communicated also. So, just make that changes. I mean, that is very... So, this one is it? Archival collection status. No, archive collection is the second one. That is the first one. Yes, this one. Okay, okay, okay. Yeah. What is the collection name? Request name. Okay, okay. It is same only, you know, user ID, file request, download URL, valid up to request time status, existing time.
+
+00:06:59 - 00:08:30 Unknown Speaker:
+
+Yeah, it is same. But business reason is missing. That only I added it. Reason for what? We are collecting it from the front end. What is the reason for this request? Okay. No problem. Some extra is there. Nothing missing. Okay. And metadata is something that is existing. Same thing only I am using. ID, owner, existing user, file name, blob URI, creation date, rehydrate status, archive status, rehydrate started, rehydrate error, URI, waiters, popularity score. Yeah. Yeah, this is also same. This is also good. What you shared is. Only thing I actually thought of, I mean I was asking for more time is, maybe this one that TRX archive is there, right? I mean the API. No, no, this one, this one. API is there, right? There is no proper folder structure that we created and I do not know which one to follow.
+
+00:08:33 - 00:09:34 Unknown Speaker:
+
+If there is something, here also they are not following any folder structure. Okay. Different folder structure will be required. Only thing is that the two will be a different application. Two should have a different AKS configuration and deployment structure. That's important. Oh, okay. Fine. Do you see anything else that needs to be done? Are we good? I'm able to make a request. Find a file. Searching is working fine. Okay. And. That's a UI API integration is happening, right? Yeah, UI API integration is happening. And going forward, we required to make a call to the service bus. That's an important point. That service bus call is important. And you are pulling all this data from Mongo. How you are right now pulling this data from Mongo? Have you prepared any particular function?
+
+00:09:35 - 00:11:43 Unknown Speaker:
+
+Yeah, finding this request, I'm making a call, API call. Files. Okay. I mean right now there is no limit. Whatever is there in the database it is fetching it. Ideally we should not be fetching everything. Yeah. Yeah. These are actually related to requests are related to Satyam only. Okay. These are files that are available in the system. Yeah. You're pulling Satyam? You have five minutes. No, no problem. See those files which are requested by him and that there should be another page where all the files, whatever the generic files is there, that should come. I mean, whenever I am joining or when I am logging, I haven't requested anything, I should see all the things in a pagination way, right? Out of that, I can make a request.
+
+00:11:43 - 00:12:54 Unknown Speaker:
+
+But against that, whenever I am making some request, next time when I am logging, I must see that what is the current status of them. Okay. And it might happen that that particular thing hasn't dehydrated yet. It is under progress. And something will show. It's already dehydrated. Anyway, just a quick quote for it. Yeah. We have something. Okay. We have something. So I am actually demoing that what is done. So back end APIs are created. Front end I am able to fire a request to unarchive something. See here request register. Reason for retravel. Business analysis. And time. Submit a request. So request would be shown here. Previously it was showing 2. Now it is third one. And the backend schema is in aligned with what is that he shared. Except these two things were not there.
+
+00:12:54 - 00:14:10 Unknown Speaker:
+
+I added these reason and retention hours. So these are the requests. So it was a 7. Now it is 8. Since we submitted one more. So these are all audit of the request that user has made. And yeah I think this is what we are looking. And user can search a file, okay, for example, yeah, he can search a file and request to restore that. Okay, so how your job, I think Python, sorry, Abjit, so this Azure service bus and this archival process, the API that you have is getting triggered out of this. Okay. Ideally that when request restore is actually being clicked, that time the call should first go to your MongoDB. Okay. Right, Pavan? Yeah, it goes to MongoDB. It should check that what is the current status of that file, whether it has already been pulled or it is still in archive.
+
+00:14:10 - 00:15:04 Unknown Speaker:
+
+If it is already in full status, then you don't need to call to the Azure service bar and the worker API because there is nothing to dehydrate. The file has already dehydrated. It is in full status. So, again, Satyam Biberi, who is the user, it is going to generate a token for next 48 hours or whatever it is and that will be updated in the user-specific collections where it will say that. For such activity, this is the token, this is the file, and the update will return back to your UI. This is the one flow, the second flow. One question So why there will be restore to? Sorry? Can you go back to UI? Just cancel this one? So if you look at this UI? So if it is already available for download.
+
+00:15:05 - 00:15:56 Unknown Speaker:
+
+So, user can download here directly from here. If restore, request to restore is there, it means this data is not there for any download activity, anything. The problem will be with this approach that it can be still at any time. Why I am saying it? Let us assume you are saying that one request restore is there. And all particular file is archived, but you should not treat it as that file is still in the archived state because other people are also accessing it. So it may happen that already the request had been made to make it archived to full tier. No, no. If other person is, let's suppose, so let's suppose I put up some request and it is available for download. Now, since it is already unarchived, rehydrated, it is available for download.
+
+00:15:57 - 00:16:51 Unknown Speaker:
+
+Then you would log in not to request a restore. You will directly see this. It is available for download. Download, right. Yes. Yes, absolutely. But one thing that is actually a good way, even other user has requested it and it was archived, unarchived. And any user can download it if it was unarchived by some other user also. And one issue I see is, The metadata is there, right? Where this is unarchived, where are we storing it in the metadata? If you see the existing tier is there, it is archive. In case it is already being archived, yes, it is a file metadata. So here you can see archive or full tier, you can find it here. Right, yeah. So here itself, so from this one itself we can get to know whether.
+
+00:16:52 - 00:17:38 Unknown Speaker:
+
+That file is unarchived already and simply we can download it instead of re-requesting the same. Yes. So I think there is another catch here. The another catch is the token. The token is not a file specific. The token should be generated against an user specific. Right now we don't have any kind of check. I am not sure what kind of modification is going to come tomorrow. Token should be generated against the user and that is the reasons I have prepared this other structure. If you just kindly go back to that another structure, that user specific collections, go to the user specific collection in Mongo. So you are saying once I request for the download, so that token is maybe active for 15 minutes, the link which is embedded with the API.
+
+00:17:38 - 00:18:26 Unknown Speaker:
+
+The token is actually generated for your previous user who has requested that one. You are not supposed to be able to download that thing. When you are requesting that thing, two approaches, two things are there, right? Whenever you are making a download request, you are doing two things. One is rehydration, another is generating token and allowing you to download. So the first thing I will not perform because already it has been rehydrated. I will only do the second part where I am just generating a token for you only and that will remain activated for another 48 hours. The previous person has requested yesterday. So that token will remain alive up to today only. And what you are requesting for the same file today, that will remain active for another 48 hours.
+
+00:18:26 - 00:19:19 Unknown Speaker:
+
+So the token should be generated against the user and the file as a combination. And let us see, this one here I am writing that download URI is this one. ID equal to user name at the rate user at the rate. That particular unique ID, what we are maintaining. It means that this is an user specific, user and file specific information. So it will allow me to maintain the expiry. Different different expiry for the file for the same file for the different user. You are getting my point right. And tomorrow, if any kind of authorizing on top of authorization, if any kind of authentication is also applied. That who is going to hold that particular file or who is able to should be allowed to download that file. That also, you will be able to maintain with this structure.
+
+00:19:21 - 00:20:23 Unknown Speaker:
+
+So token generation should be done into the user specific. I mean that is my point. If I am able to explain. So that token is valid for next 15 minutes only is it? Is that the case? Yeah, so 48 hours you will be able to. Satyam, you getting what my point? I'm just thinking, so let's suppose that token is, I mean the link that will be embedded with this API where you will be downloading. So once I'm clicking that download button here, that token generation, the API thing which will just download this file, it has to validate with that token. Yes, that is the reason my question was to power us to that. I am also not good with this download link. Download link should come against an user. Download link should not come against the generic way.
+
+00:20:24 - 00:21:17 Unknown Speaker:
+
+When I am searching for a file, it should not allow me to download file. Yes, it can tell me that... But Abhijit, one thing, you are right actually, we should not be showing, but... How can we stop duplicate request? Okay, there is a file that is unarchived by someone. Why do you want to unarchive it? Again, one more request you wanted to raise. See, this is unarchived by someone. Okay, and it is available for download. So, for example, you want... So, if I wanted to download it, I should be able to download. Again, raising one more request for this. No, you are not raising any request. So Mike says that two operation is happening, one is rehydration, another is downloading, right? So rehydration should not repeat because already it has been rehydrated.
+
+00:21:17 - 00:22:04 Unknown Speaker:
+
+Okay, already it has been rehydrated. Only things we are doing, we, that's the reasons. We will first go to the MOCO and we will check with what is the current status of the file. If the file has already been rehydrated, then I should able to make a token for you. Because you have requested for this one. And that's the reason I'm saying this archive, cold, cool, this way we can't show it because it could be a stale one. And it can't be, I mean, it could be a deceptive thing. Because I don't know what is happening. It already happened there. So, Abjit, so there are two layers. So, one of them is, one it is already in this cold layer. So, you can download it. On the run time, you can create a token to download this file.
+
+00:22:04 - 00:23:01 Unknown Speaker:
+
+It will happen in a millisecond. So currently in other applications, we are able to download this file with authentication. It can happen in a millisecond. You are able to generate the link and download the file. Okay. So if there are multiple users and this user has... Let's suppose you are also downloading. I am also downloading at the same instant of the time. I can generate runtime token and download this file. No, the token what he is saying, that itself can be generated unique to the user, right? File is same. Yes, yes. But it is not related with download. It is just like it is a gateway, I mean validation gateway to download this. Right, right. So, Abhijit, like... If I am clicking at this download, you are also clicking it will generate the runtime and you will be able to download this file.
+
+00:23:02 - 00:23:59 Unknown Speaker:
+
+The question comes that how you are going to show this download button? Based on which? Based on that, it is already not archived. Someone is archived, someone is in the code layer. Right? Based on that, you are pushing the download button. But my question is how you come to know that it has not been pulled? I mean, it has not moved from archive to cold. You'll never know because you have logged in and when you have logged in, someone is also searching for the same file and he has already made a request for the download. So it means it is no more in the archive layer, but it is still showing in your archive layer. That's the reason I'm completely... So you're saying is once the file is requested for unarchivable, UI don't know when it is converted to cold or pool, right?
+
+00:23:59 - 00:24:52 Unknown Speaker:
+
+That's what he's saying. Yes, it can be a still one. I mean, already the request has done for that unarchivable thing. But again, you are making that... So, I think that probably... I think maybe in other application I have seen, like, there is a refresh. I mean, they can try and refresh this UI. Maybe after every six hours, where it will get updated. I mean, it will refresh from the MongoDB data. Okay? So that is possible, and that will give us, since your API is running, and when it is in archive, then it will update the status in the MongoDB based on your API, right? So once the request is there. And UI can refresh itself after every six hours. I believe that that will add some extra complexity here.
+
+00:24:52 - 00:25:43 Unknown Speaker:
+
+If I make it very simple, I will not go against this tire and availability things. I will only keep one button that is a request restore. So request restore, I know that when I am giving a request restore button, two things can happen that already someone else has requested for this file or it might not have been requested. Two things can only happen, right? So when request restore is going to your API, API will just take care of that things in the MongoDB, what is the current status. Based on that, it is taking the actions and it is going to return you a simple value that this is the current status. But if you want to keep this, if you want to show this live style that this is the current status of the file, then your API...
+
+00:25:43 - 00:26:46 Unknown Speaker:
+
+API and your, sorry, your UI and API need to, I mean, that kind of refreshing things, periodic refreshing things will come into the picture. And even then also, you will never know that what is the current status exactly. Current status, you are updating the MongoDB, right? Whenever there is a change, you will be updating the MongoDB. Yes, absolutely. We are updating the MongoDB. But it means that you are showing something, that exact replica of the MongoDB. How you can ensure that thing in the live way? So, live way, that's what I said, right? So, the only thing where it is mismatching is when the file is restored. How I will get to know that, right? No, whenever the call will go to the application, application will decide that one.
+
+00:26:47 - 00:27:31 Unknown Speaker:
+
+So currently what the API is doing, archival API is doing, archival API is first time it's looking into the current status of that particular file. If it is archive layer, then it is marking a request for the dehydration one. If it is already... In the cool tier, it is simply on the fly, it will generate a token and it will provide you by, it's already rehydrated, you download the thing. This is the download link. Then the download link should come. You should not just show the download, I mean, what I'm saying that instead of showing them at the beginning that this is the download link, this is already ready for download, this is not ready for download, this is in the cool layer, this is in the archive layer.
+
+00:27:31 - 00:28:37 Unknown Speaker:
+
+We can simply click Just maintain one button that request for this file because restorations of the file maybe it has already restored. Okay, then only then immediately you are going to get the download link, so Request restore button will change into the download link. If the applications confirm you. Yes, already has been restored and you just need to have a download link. With the new token, the token will be generated and you will get the new download link. That's done. That's what we have in the UI. I don't understand what else you are saying. Sorry. Sorry. Tell me. Yeah, please. Just keep sharing your things. Yeah. The page, the UI page. Yes, yeah, yeah, so what? I'm saying that instead of this tire and availability?
+
+00:28:37 - 00:29:30 Unknown Speaker:
+
+Okay, I'm I'm saying that this is not required tire and availability or displaying this one is not required at all. We only need a single button, that is a request restore button. When the Request Restore button will go into the applications there, it will decide. Whether it is in a current position, it is in a downloadable position or not. If it is in a download position, it will give a download link immediately as a response. If it is not in a downloadable position, it will take that request for the dehydration. And it will give you a response that your request has been accepted for dehydration. You will be notified after some time through email. That's a simple message we are going to pass. There will be no complexity if I want to maintain tire and availability, you will again add one more complexity.
+
+00:29:30 - 00:30:12 Unknown Speaker:
+
+That every time you have to show the user what is the current status in the MONGODB? Because this is a this is a generic file. And people are working on that rehydration process in a common common platform so anyone can make it a rehydration request. So every time you have, you are responsible to show or display the user the current or the live status. That's why they say showing the live status is more difficult. You have to arrange an extra functionality there. Instead of that, you just maintain a simple button like request restore. You don't need to show that what is the current tier, what is the availability. I don't need to show that thing. Here, you will want to search and want to download something.
+
+00:30:12 - 00:31:09 Unknown Speaker:
+
+So if they click a button, they will immediately get a download link if it is already restored. They will have to wait for five hours if it is not yet restored. Simple. I'm making the things, trying to make the things more simple and accurate. That's the only purpose. Here, an availability is an additional information you are saying. I think it is going to add an extra incorrect information. Number one is the incorrect information chances there. And it will happen. Whatever be the quick refresh rate you are going to perform, that is not going to be an accurate one. Because you don't know who is in parallel working and who is requesting for the same file. So, an inaccurate chance is there. And another thing is an extra burden that you have to keep refreshing your page with the MongoDB.
+
+00:31:12 - 00:32:12 Unknown Speaker:
+
+Because when someone is logging, It might be a session out after 10 minutes, so after within 10 minutes, you have to keep that page refreshed. So what we can do so whenever there is a restore, right? So we are creating copy of file in the UH, we are having this copy of the file in the different folder, right? Yes, yes, absolutely yes. So as soon as we see this file, we can refresh the UI. And we refresh the UI, we refresh the MongoDB. You don't need to go into the storage location or folder location. You have that information available in your Mongo that the file is in the destination here or in the new folder. Already copied. See, this is what we call study on the top information. So it is archived, what else is archived.
+
+00:32:14 - 00:33:09 Unknown Speaker:
+
+And there are chances in future where we may have to add more tiers. So let's suppose this application is not only about NAS files. It is also for other related things. When I'm saying other related things, let's suppose we want to archive files which are data which are there on the on-prem SQL server. Give me two examples. I'm giving you two scenarios. Here, my application is there. So, two scenarios are there. One is moving the data from the archive to the cult. Another is the cult to archive. What we are going to implement going forward, right? So, someone, you have already logged in and you are seeing that someone, something is already in the cult here. Let's assume that we have a one year or we have a one month of window. Okay?
+
+00:33:09 - 00:33:58 Unknown Speaker:
+
+So one month of window after that, we are moving the non uh important file from full tier to the archive tier. So whenever you see that full tier, you come to know that. Yo, okay, my file is already ready, so I should not make any separate request. It should be downloadable. You are going to click on the Downloadable Options Okay downloadable link. At the same time, one month is also over. Let's assume we have logged in. When you have logged in, it was still in the cool tier. Maybe after five minutes, it has moved out from the cool tier to the archive tier. And just a reverse thing also can happen. You are showing right now me, it's in the archive tier. So, okay, it's in the archive tier. Then I need to make a request restore.
+
+00:33:58 - 00:34:47 Unknown Speaker:
+
+So you are actually putting a part in your user's mind that it is going to take five hours. Because it is in the archive player. But what is the fact? The fact is another colleague has already made a request. And that's the reason files have already moved into the cool tier. But when your page actually refreshed, that time it was in the archive player. But by that five minutes, it has already moved. Because it is not just a simple file searching kind of thing. Maybe someone is logging. He's actually working for 10 files. He needs to download for 20 files. Suppose like this. So when one, when he is actually downloading the 28th files, right? 28 files, it may be 15 minutes. 20 minutes already passed, he has locked in and you have refreshing and you're showing the page 20 minutes back.
+
+00:34:47 - 00:35:50 Unknown Speaker:
+
+State. That's the reasons I was saying that he it could be a still information. No, no, that that problem is still there. Whether I put this, uh, tier or ability, does not matter. That problem will remain a problem. So I think it's not about what we are showing. It's more about how we are quickly refreshing this dashboard or UI with all the changes that can happen to this file. Either it is archived or it is cool or it is going back from cool to archived. So what setup that we may need some additional APIs or trigger that can ideally take care of both of the things, making sure that this UI is in sync with our MovaDB collection. That's the problem. In that case, you have to add one separate functionality, and you have to keep refreshing that thing.
+
+00:35:51 - 00:36:39 Unknown Speaker:
+
+You have to accept that rule. Or maybe like we may have to think of what are the different scenarios that where we have to refresh this UI. So if there is no activity or there is no change then there is no point of refresh. So as you mentioned there are two kind of activity. One activity is like when I am trying to download. When I am trying to download so there is a refresh activity. When I am trying to restore something there is a refresh activity. And when there is something which changes from the download to restore, from unarchived to archived, then there is a third activity. So all these three activities should be clubbed in one function, and that should keep this UI and other things the same. It's not about presentations, it's all about making sure your...
+
+00:36:39 - 00:37:32 Unknown Speaker:
+
+Since it is... So most of the application, it is live. So whatever activity you are doing, it is showing in the MongoDB. But this is not live application from backend perspective, from backend API perspective, where it may take like 6 to 10 hours to get this file from archive to unarchive. So at that moment that we have to refresh this UI. Another activity is when this file is going, after 30 days it is going from unarchive to archive, when any date can happen. We don't know, we are not tracking that. We should have a function which tackles all these situations. Exactly. That's my suggestion. If the request restore is a button, that will handle all the things. Already, we have planned in that way only. Whenever you are making a request, I am really not going to dehydrate that thing.
+
+00:37:32 - 00:38:21 Unknown Speaker:
+
+I am not running for rehydration. I am first checking whether it is a rehydrated state or not. What is the correct state? Then only I am going for the next steps. So, if it is already rehydrated, I am not going for the rehydration. I'm going for a token generation and I'm going to serve you that thing. So when I am making this request, restore things with a single button. I was just saying that, why I am showing this tire information? Can I avoid that showing the tire information? It could be a still one. That is, that was what I'm saying. No, see, um, the point is, uh, any request which is going to MonGODB. What we have to make sure is it is sync. If let's suppose someone else is putting up some request to other file.
+
+00:38:21 - 00:39:13 Unknown Speaker:
+
+So at that request we have to make sure my UI whatever we are presenting it is in sync. So this one additional validation layer that we can put in the API. That your MongoDB and the UI what you are showcasing it is in sync always. Each request with each activity. In sync means before page loading or after page after button submissions. After button submission. After button submission, we are doing it. Request restore means when your request restore is going to your API, API is checking all these things. If you are talking about that kind of sync, yes, definitely that sync is required. But what I'm saying is that after all the things are, when this particular page is loading, do you want to show the tire as a proper information under the tire, the archive?
+
+00:39:14 - 00:40:08 Unknown Speaker:
+
+Do you want to show them as a proper information? Then an extra burden will come. Yes. So if you see in the right top corner, there is a refresh icon also. Yes. So on the top, there is a, on the right, there is a refresh shot by Bess. So Bess, yeah, this one. So we can have some activity like this. So it can just simply refresh it. So it will just get the latest information from the MongoDB. And then we can, uh, then we can download it. So, yes, absolutely so. So if it is, if it is just a 500 or 5005, I might have go with your thoughts, but here it is. A number of files is more than 40 lakhs. Think from that prospect, are you really need this? 40 lakhs, 40 lakhs?
+
+00:40:08 - 00:41:11 Unknown Speaker:
+
+So, um, maybe there is a concept of caching also. Yes, because constant caching is there and you have to break that caching. I mean, you have to refresh that caching also because I mean that in the background, I mean, in the database there, if the things are actually getting changed and you need the latest data, you can't depend on that caching. Oh, I think, see, When you're saying 4 lakh data, 4 lakh record here. 40, 40. 4 lakh, right? 4 lakh 15,000. 4 lakhs or 40 lakhs? Yeah, 4 lakh 14,000. This many of the records. So 4 lakhs record, are we not able to refresh it? That's what it's saying. If there is any change, it is not going to happen for all those 4 lakh records. It is only going to happen for 5 or 10 records.
+
+00:41:16 - 00:42:22 Unknown Speaker:
+
+I mean what do you think? What are your thoughts? I don't see a big challenge. See first of all can you tell me like what are we what we should be displaying in the initial. So as soon as the page load happens what should we display? Should we display all the files metadata here or what is the plan? So the plan is. We should have the metadata. Not on the first page. It can be your presentation. So, it can be your presentation for sure and based on your latest updated date. So, the latest updated files and folders will be on top of the first. Okay. So, okay. Recently updated one. Recently updated. Yeah. Recently updated, last updated date, we will sort it and we will display. In paginated manner, we will display.
+
+00:42:22 - 00:43:32 Unknown Speaker:
+
+So, when user requests for next set, then it will be another call to the back end. Okay. Pagination. Yes. Okay. And then oldest updated. Okay. This is descending order. That is okay. File name. What is this? File name search. The file name is your file name. Okay, okay. By file name, got it. And then best match. Can you tell me what is best match? Best match is the search criteria that you have on the top. But right now nothing is there, right? You can remove that. Character search. Okay. So, why I was asking that is, okay, we display that. Okay. So, when user can see that it is available for download directly, he can click on it. Maybe it says, okay, it is unarchived again and updates its status. It does not happen for many of the requests.
+
+00:43:32 - 00:44:25 Unknown Speaker:
+
+Once in a while only it will happen. So, when we go and see in the back end that file is unarchived already. Okay. Maybe we can ask the user to resubmit the request. Once in a while only that situation comes, right? And we will, so when user clicks and it is not available, can you raise a request? We will open the pop-up that we usually raise it for user to this one. This pop-up we will raise and ask him to unarchive it again. And how many users are we expecting for this application to be used? Yeah, I think if we don't want to complicate that is fine I think. If we raise a request in case that is unarchived again, archived again, so we will open this pop-up only and ask him to resubmit that request.
+
+00:44:25 - 00:45:11 Unknown Speaker:
+
+That's okay, right? Yeah. I think Abhijit's only challenge is to make sure MongoDB and UI is in sync. That's the only challenge. Yeah, so that's what I'm saying. On the page load, it will show whatever is the status from the MongoDB to here, okay? By that time, he is coming back. For example, one minute after two minutes, he is coming back to the screen and saw something, okay? It is ready for download. He can click on that, okay? But back-end status is archived again, okay? So there is a mismatch of the status from the front end to the back end. So we will open the pop-up for the user. Okay. It is archived again. Can you resubmit the request? Yeah. I think that's a simpler one.
+
+00:45:11 - 00:46:15 Unknown Speaker:
+
+So if there is some change also it will redirect to the right place so that they can request it again. Right. That way we will not complicate our life. I mean I don't see 20-30 users. It's more than enough. Yeah. Yeah, that's fine. I think it's fair. Okay. Back-end APIs are developed and connectivity is enabled. I actually imported some 100 files metadata in the DB and testing it. It is looking good for me. Okay. And once that GitHub repository is created, I'll push in the code and we can test it from there. Okay. Sure. And do you need this one, playwright testing test tools, test scripts? I think it is there for all the applications, so it's a kind of best practices. But let's complete this from manual validation, we will think of that later.
+
+00:46:15 - 00:47:17 Unknown Speaker:
+
+Yeah, that is fine. Yeah, so let's do this, deploy this and validate it with live data. So I'm hoping this, the Azure service bus and API that Arjun has validated, so that will automatically get triggered with this and the whole process will get, the status will be in sync the way we are expecting, but yeah. And one more thing is that basic functionalities, we should actually be able to test, just like the rehydration request, completion request, searching and... taking the acceptance of the request for the rest of it. That kind of things need to be covered. Yeah. Okay. One last thing, Satyam. This one, have you enabled this SSO for this UI? No. No, it's not enabled. So, do we need to enable SSO? Yes, yes. You can enable SSO login. Okay.
+
+00:47:20 - 00:48:13 Unknown Speaker:
+
+So, this is kind of your micro product for one where it would be having a different secure group for alkyl and all. Right. From that perspective, keep it very much separate. In future, if there is a requirement, we will embed it with the surface, the RF, TRX surface. Okay. Right now, can I use RRF modules or RPT modules, UI, how they have done it? Similarly, I will implement the SSO for this one as well. Okay, okay, sure, sure. Because we have not defined any user roles right now, right? User roles. It's not a different user role, so maybe there are two roles probably. Most likely one is the view one, another one is to request for retrieval. But let's go with one role for now. Anyone who logs in, they can request and they can download.
+
+00:48:15 - 00:49:04 Unknown Speaker:
+
+In future, like, we may have to think of how we can segregate it from based on different business type, maybe financial, maybe actual, or maybe underwriter. So, then we'll work. So, currently, let's keep it simple. One secure group, login, they're able to download, they're able to view it, and they're able to make the request. Okay. Anything else? I'm fine. Yeah, I'm good, yeah. Okay, so I think let's just get the siren to those repos created and we can plan for the coming. Yeah, yeah, sure, sure, sure. Okay. Okay, yeah, thank you. Thank you, thank you. Bye. Thank you. Bye.
+
