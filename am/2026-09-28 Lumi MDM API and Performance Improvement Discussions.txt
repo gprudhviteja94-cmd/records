@@ -1,0 +1,1010 @@
+2026-09-28 Lumi MDM API and Performance Improvement Discussions
+
+Creation Time: 2026/09/28 18:09
+
+
+📅About Meeting
+
+• Date & Time: 2026-09-28 18:09 (Duration: 2433 seconds)
+• Location: [insert location]
+• Attendee: Sajan, Rachana, Sindhuja, Srajna, Ivan, Aathar, Krishna, Nirmal, Ansi, Raj, Kundan, Bhargav, Sameer, Prithvi, Ayap, Shravan, Suman, Manish, Jason (not present), Poona (may join Thu), others in platform/product/dev teams
+
+📒Meeting Outline
+
+Lumi MDM API & Load Frequency (API / Data sync topic)
+
+• Lumi MDM missing detail
+  The Lumi MDM API is not returning the table load frequency (daily/weekly/monthly). Action: Sajan will open a Slack thread and loop in the Lumi team to confirm and request the missing detail so the UI can display it. Until Lumi returns that field, it cannot be shown.
+
+• Load frequency vs table load type
+  Discussion clarified that load frequency (daily/weekly/monthly) must be in sync with table load type and is shown in the UI when frequency is available. A deployment to reduce API load time is planned to E3 (tomorrow) and performance should be validated in E3 post-deploy.
+
+• ASDB table details / caching
+  A solution to call table details from ASDB (table already created) was described. Nirmal implemented backend caching/table details and related API changes; these will go live with the upcoming deploy.
+
+Performance improvements, Deployments & Environments (Deployment topic)
+
+• Load time reduction deployment
+  The code change to reduce Lumi MDM load time is scheduled to be moved to E3 tomorrow. Team to validate performance in E3 after deployment.
+
+• E3/E2 release handling
+  There was discussion about marking stories as E3 readiness vs release-to-prod. One story (3152) has initial version released; team will create appropriate release/E3-deployment stories and follow agile guidelines. Rachana / Sajan to coordinate final story state and release mapping.
+
+• E3 deployment stories
+  Multiple E3 deployment stories exist (Nirmal, Aathar). Team agreed to keep them as E3 readiness until UAT/product acceptance complete; one E3 deployment story will be created for tomorrow’s deployments.
+
+Reporting, Self-Serve UI & KRI / CD Integration (Reporting topic)
+
+• Reporting priority and screen design
+  Reporting work was deprioritized this sprint due to data migration work. Aathar has a mock-up; the team discussed two approaches. Poona meeting on Thursday will be used to align final approach; if Poona is unavailable team will proceed with the currently proposed solution. Backend APIs for reporting will be built by Kundan in the upcoming sprint.
+
+• Task management change
+  Task update needed: save task management data into the new ASDB table for storing objects. Nirmal to close the code change so Kundan can focus on reporting integration.
+
+• KRI parser & CD outputs
+  KRI parser exists in E1 (Bhargav). Kundan is integrating CD outputs and reading KRI parser results; some work remains and will be prioritized after data migration. Team agreed to promote KRI parser when requested; currently moved to E2 for some components and E3 promotion pending alignment.
+
+Data Migration, DQ Rules and CD Checks (Data quality topic)
+
+• Data migration status
+  Data migration (CD rules ~847 items) is in progress. Kundan confirmed execution of queries in lower environments; data migration to temp location and validation are ongoing before moving to actual tables. E1->E2->E3 promotions planned in the next few days.
+
+• DQ rules and onboards
+  • 29 DQ checks on CD were deployed to production; evidence attached to stories. Ayap and Sehaj / team clarified UAT/SIT stories and will cleanup duplicates and ensure evidence is linked.
+  • 39 quant-related DQ rules also onboarded to production.
+  • Some DQ artifact table column changes (last_updated_ts, check types) were applied; a new DQ DAG register table created in production.
+
+• Failed DAX monitoring report
+  Ansi built a consolidated failed-DAX monitoring report that runs every couple of hours and reports failed DAX runs (checks a 2-hour window). Deployed to E3 and scheduled at mid-hour; testing completed in E1/E2 and changes pushed to E3. This helps triage failures and assign actions.
+
+• Temp table expiry issue
+  One recurring issue: temp tables occasionally expire/dropped causing DQ runs to fail. Platform ticket raised and fixed; monitoring will continue. Reruns were performed and DQ results now present.
+
+Bulk rule creation, BPM & Transformations (Rules automation topic)
+
+• Bulk rule creation
+  Bulk rule creation for transformation policy/BPM is in progress (Ansi working). Some BPM changes done; work continues. Queue track reporting API and SME testing support completed. Remaining minor enhancements will be updated in sheets and deployed to E2.
+
+Production Support & Operational Items
+
+• Production support activities
+  Several production-support items completed: feed key changes, UMDL DQ rules launched to E3, finalization of failed-DAX monitoring, triage automation, and other process improvements.
+
+• MIST ingestion & Quantro
+  Sameer worked on MIST ingestion checks and Quantro univariate integration. He produced the ingestion-missed email notification (screenshot attached in story). Threshold-check integration with Quantro backend will be moved to next sprint.
+
+• Vault configuration
+  Prithvi confirmed Vault connectivity is working; stuck on file transfer for one JSON-based config but the key issue was resolved. He helped Ayap with CD checks migration and pushed reviewed mapping/code.
+
+• Releases and story status housekeeping
+  Several team members were asked to move their Jira stories to Done/Complete so product can accept and mark releases accordingly (Prithvi, Shravan, others). Sindhuja and Rachana to follow up on story status updates and cleaning duplicate UAT/SIT entries.
+
+📋Overview
+
+• Lumi MDM API is not returning load frequency; Sajan will contact Lumi team via Slack to request that field.
+• Load time reduction change will be deployed to E3 tomorrow; performance must be validated in E3.
+• Reporting UI design needs alignment with Poona on Thursday; backend APIs to be built by Kundan next sprint.
+• Task management must save to the new ASDB table; Nirmal to complete that change.
+• Data migration (847 CD rules) in temp location; validation ongoing before moving to E1/E2/E3; planned promotions in next few days.
+• 29 CD DQ checks and 39 Quant-related DQ rules onboarded and evidence attached; duplicate Jira tasks to be cleaned up.
+• Failed-DAX consolidated report implemented and scheduled (every ~2 hours) to aid triage.
+• Temp-table expiry causing some DQ failures; platform fix applied and monitoring will continue.
+• MIST ingestion checks and Quantro work progressed; threshold check integration moved to next sprint.
+• Vault connectivity mostly resolved; remaining file transfer issue being addressed by Prithvi.
+• Multiple E3 deployment stories exist; team will label as E3 readiness and create release-to-prod story for tomorrow’s deploy where applicable.
+• Story status housekeeping required: team members to move stories to Done/In Release so product can accept.
+
+🎯Todo List
+
+• Sajan:
+  • [ ] Open Slack thread and loop in Lumi team to request load frequency field from Lumi MDM API — deadline: ASAP (before next deploy), deliverable: confirmation/response from Lumi.
+  • [ ] Coordinate E3 deployment tomorrow and confirm performance validation window — deliverable: E3 deploy status & performance notes.
+
+• Nirmal:
+  • [ ] Complete backend change to save task management data to new ASDB table — deadline: next sprint start, deliverable: code merged and deployment plan.
+  • [ ] Ensure caching/table details API changes are included in tomorrow’s deploy (if applicable) — deliverable: deployed API and verification.
+
+• Kundan:
+  • [ ] Build backend APIs required for reporting integration — deadline: next sprint, deliverable: APIs ready for front-end integration.
+  • [ ] Complete CD data migration validations and finalize configurations for E2/E3 promotion — deadline: within next couple of days, deliverable: validated data and promotion readiness.
+
+• Aathar:
+  • [ ] Finalize reporting screen design mock-up and present in Thursday meeting with Poona — deadline: Thu meeting, deliverable: decision on UI approach.
+  • [ ] Ensure E3 deployment story readiness for his features — deliverable: E3 readiness checklist.
+
+• Rachana:
+  • [ ] Review Sameer’s ingestion-missed email screenshot and provide feedback — deadline: ASAP, deliverable: approval or requested edits.
+  • [ ] Accept completed stories once owners move them to Done/Release (follow-up with Prithvi, Shravan, others) — deadline: ongoing, deliverable: updated Jira story statuses.
+
+• Sindhuja:
+  • [ ] Move threshold-check Quantro story to next sprint (as discussed) — deadline: today, deliverable: updated sprint backlog.
+  • [ ] Clean up duplicate UAT/SIT stories for CD DQ checks and ensure evidence attachments are consolidated — deadline: today, deliverable: single UAT/SIT story with evidence.
+
+• Prithvi:
+  • [ ] Move completed stories to Done and update Jira (vault/config, CD checks) so product can accept — deadline: today, deliverable: stories marked Done and ready for acceptance.
+  • [ ] Resolve remaining file transfer issue for Vault configuration or provide status — deadline: asap, deliverable: working file transfer or workaround note.
+
+• Sameer:
+  • [ ] Forward MIST ingestion email artifacts/screenshots to Rachana for verification — deadline: today, deliverable: forwarded email & any required changes noted.
+  • [ ] Continue Quantro univariate work and pick up threshold integration next sprint — deliverable: updated story progress.
+
+• Ayap:
+  • [ ] Ensure E3/UAT evidence for 29 DQ checks is properly attached and story renamed for clarity so release-to-prod can be created — deadline: today, deliverable: cleaned story ready for release.
+
+• Suman:
+  • [ ] Confirm whether hardcoding for ICM failure tab is required or create table as needed; coordinate with Sachin — deadline: ASAP, deliverable: decision and implementation plan.
+
+• Team / Product:
+  • [ ] Meet with Poona on Thursday to align on reporting UI approach — deadline: Thu meeting, deliverable: go/no-go decision on proposed UI.
+  • [ ] Monitor temp table expiry issue; platform team to confirm mitigation and ongoing monitoring — deadline: ongoing, deliverable: incident notes and monitoring plan.
+
+Notes:
+• Several deployments/promotions are planned within the next few days; owners must update Jira states (E3 readiness / release-to-prod) per agile/release process.
+• If Poona is unavailable, team will proceed with the currently proposed reporting approach but will validate changes if Poona joins.
+
+Transcription
+
+00:00:00 - 00:00:16 Unknown Speaker:
+
+That is the issue, I have checked it, so that detail is not being returned by that Lumi MDM API. I just need to cross-check with the Lumi team. I'll, I'll loop you over the conversation. Let me open a thread today on the Slack and I'll let you know. Because they are not returning that detail, so he won't be able to display that.
+
+00:00:17 - 00:00:25 Unknown Speaker:
+
+Okay, load—load—load frequency in the sense you're meaning those, is it a daily job or a monthly job or a weekly, right?
+
+00:00:28 - 00:00:48 Unknown Speaker:
+
+Is that correct? Uh, Sajan, there you were showing that load append, right? So load affects your table load type, and the column—actually it shows table load frequency. So that has to be in sync. If you're pulling frequency, then it will show that daily, monthly, etc.
+
+00:00:48 - 00:01:01 Unknown Speaker:
+
+Yeah, yeah, yeah. So that's what I was mentioning, that load frequency was not being sent by that API, so we need to connect with the Lumi team for that. So I'll, I'll loop you over there. Sure, sure.
+
+00:01:02 - 00:01:03 Unknown Speaker:
+
+Yeah.
+
+00:01:05 - 00:01:11 Unknown Speaker:
+
+Okay. And Ivan, you know, Aathar, anything else that you want to focus to Krishna?
+
+00:01:15 - 00:01:31 Unknown Speaker:
+
+Aathar, if you can confirm. I think these are the only ones. There are minor enhancement features there, so I'll update in those sheets that's already deployed in E2. Srajna, if you want, I can demo it, but if you want to go with the other stories, anything is fine.
+
+00:01:32 - 00:01:53 Unknown Speaker:
+
+Yeah, I think it's okay. We don't need it today, so let's wrap up with the rest. Okay. So I'll pitch in Rachana and Sindhuja, because I may need to drop off at 6:30, just to connect with Raj. So Rachana, for this sprint, like, you know, if you can open my stories, Sindhuja.
+
+00:01:55 - 00:02:15 Unknown Speaker:
+
+So I started with that, that loading delay for that Lumi MDM API, right? So that has been sorted out. Okay, now the timing has been reduced, but we need to check that performance on that E3 environment once we deploy that change.
+
+00:02:16 - 00:02:37 Unknown Speaker:
+
+So post that, the bulk rule—the bulk rule creation, right, with respect to the transformation policy, BPM, and all, right, those have been done. And the API for the queue track reporting. And on the SME side, like, you know, I helped the team to complete this testing for this portal.
+
+00:02:38 - 00:02:52 Unknown Speaker:
+
+The data migration part, which I'm continuously reviewing and working with the team to get it migrated, that code review, if you have the code review and the EAS code-based deployment to the E3 environment.
+
+00:02:54 - 00:03:09 Unknown Speaker:
+
+So let me know, let me know in case—yeah. That deployment you mentioned for reducing the load time, right? When is that planned for? That is planned for tomorrow. We would be moving the code base tomorrow to E3.
+
+00:03:10 - 00:03:24 Unknown Speaker:
+
+Sure, sure. Okay, Sajan. Thank you. Okay. And one of the solutions that you have asked for, right, calling the table details from the ASDB, which—for which the table has been created, right, those all changes would go live.
+
+00:03:24 - 00:03:29 Unknown Speaker:
+
+For which Nirmal did those coding and all stuff from his side.
+
+00:03:31 - 00:03:37 Unknown Speaker:
+
+Okay, okay. Sure. Yeah. Yeah, that's it. And Sajan any update on the reporting?
+
+00:03:38 - 00:04:05 Unknown Speaker:
+
+On the reporting, like, as we were, you know, majorly involved in the self-serve UI along with the data migration, most of the bandwidth from Kundan went into that data migration. So reporting, we would be picking up into the priority. Aathar has already shown you one of the mock-up ones, right? So we just need to integrate a couple of APIs. So hopefully that would be wrapped up in the next sprint, and— Wait, wait, that is not from screen, right?
+
+00:04:05 - 00:04:19 Unknown Speaker:
+
+Or is it? No, it's not only about the screen, right? Aathar need to design that screen, right, which we were discussing, right, and then the data need to be pulled from the—this details, like.
+
+00:04:21 - 00:04:33 Unknown Speaker:
+
+Yeah. So that couple of APIs that needs to be built once everything— It's like, like, kind of done the way Aathar was showing the mock-up. That's not, right? No, no, no. That's not done.
+
+00:04:34 - 00:04:51 Unknown Speaker:
+
+We are going ahead with the way that you have proposed, right? So we will make that change, and then anyhow we are meeting Poona on Thursday, so we can take a review from him. If he is mentioning that we need to go by the approach that you have suggested, we will go ahead with that. In case he is aligned with our one, then we can make that change only. Okay?
+
+00:04:51 - 00:05:02 Unknown Speaker:
+
+And then— But he is continuing building until that's all, so like— Yeah, yeah. Correct, correct, correct. Because—because there is a high chance Poona might not join also, right? So we are going ahead with your proposed solution, right?
+
+00:05:04 - 00:05:22 Unknown Speaker:
+
+And then in case Poona joins and, you know, if he agrees with one, so we— Yeah, but can we at least try that he joins? Because reporting is, like, a priority from his end as well. So I do think he should join. So let's—let's work accordingly. Okay, okay.
+
+00:05:23 - 00:05:46 Unknown Speaker:
+
+And backend API, that would be built by Kundan in the upcoming sprint, so it would get integrated. And one change which is required in the task management to save the data to the DB, I'll ask Nirmal to close that part. So that Kundan can focus on the reporting while the data which is getting saved to the ASDB right now, that can be get saved to the new table that we have created for storing these objects.
+
+00:05:48 - 00:05:55 Unknown Speaker:
+
+Okay, okay. Sure. Okay. Yeah. Sindhuja, we can go ahead with the next one.
+
+00:05:56 - 00:05:58 Unknown Speaker:
+
+Maybe Ansi starting with Ansi.
+
+00:06:04 - 00:06:18 Unknown Speaker:
+
+Hello? Yes, I think so. Hi Rachana. So in this sprint, I was mainly working on two stories: production support and the bulk rule creation, right?
+
+00:06:18 - 00:06:47 Unknown Speaker:
+
+So under production support, I had initially started with the composite to S2 on a migration, but I did—I spent some time on the validation in Airflow E3 for the DAX, but later as the platform team said that the setup is still in progress, I had paused that activity. Then I had worked on the—for the UMDL, the toil DQ rules were launched to E3.
+
+00:06:49 - 00:07:03 Unknown Speaker:
+
+Then I had worked on the feed key—the new feed key changes. Testing I had worked, and for 8 DAX, we had enabled this in E3 to run as per the new changes.
+
+00:07:06 - 00:07:30 Unknown Speaker:
+
+Then I had worked on finalizing the changes for the failed DAX monitoring report. So this report would actually send a consolidated list of DAX. If any of the DAX has failed, it would be tracked from the audit table, and the consolidated report would be sent to the team.
+
+00:07:30 - 00:07:44 Unknown Speaker:
+
+So that one I had— So this— Rachana, Rachana, this is the initiative that I was talking about, that triage one, right? For the one that I have sent an email. Triage one, right? Yeah. Yeah, yeah.
+
+00:07:44 - 00:08:05 Unknown Speaker:
+
+So that one we have built for our team. So that, you know, going forward, in case there are DAX those are getting failed within that, you know, scheduled interval, then at least team would be getting a consolidated email instead of, you know, scattered one. And then I can assign those tasks to someone to take a look into it on a urgent basis.
+
+00:08:06 - 00:08:18 Unknown Speaker:
+
+Right, right. I was just trying to ask, like, what is the frequency at which the tech team is being notified of this? So suppose the DAX— Every couple of hours. Every couple of hours. We have scheduled it to run every couple of hours.
+
+00:08:18 - 00:08:34 Unknown Speaker:
+
+So whatever DAX—suppose right now it is running at 6:00 PM, right? So it would be checking whichever DAX scheduled to run between 4:00 PM to 6:00 PM. Whatever DAX get failed within that last 2 hours interval, it would be notified to us.
+
+00:08:35 - 00:08:37 Unknown Speaker:
+
+Okay, okay. That's good. Yeah.
+
+00:08:40 - 00:08:53 Unknown Speaker:
+
+So yeah, I was working on the testing of that in E1 and E2, and the changes are also pushed to E3, and it is scheduled at the mid-hour, as Sajan mentioned. I had worked on some review comments of the same.
+
+00:08:55 - 00:09:21 Unknown Speaker:
+
+Then under the bulk rule creation, I had—I was working on the build for the bulk rule. So the first BPM one I was working, I had worked on some Mondays. A few changes I had done for that. That is, yeah, currently that is in progress. So those were the tasks which I was working in the current sprint.
+
+00:09:25 - 00:09:26 Unknown Speaker:
+
+Sure. Thanks, Ansi.
+
+00:09:28 - 00:09:29 Unknown Speaker:
+
+Thank you.
+
+00:09:40 - 00:09:40 Unknown Speaker:
+
+Hi again.
+
+00:09:43 - 00:09:44 Unknown Speaker:
+
+Hi Sindhuja. Hi team.
+
+00:09:46 - 00:10:10 Unknown Speaker:
+
+I have worked on—I have completed my multivariate analysis on the three tables, and I have presented it to Manish last week. And with respect to the eight dimension, the coding part of validity check has been completed, Rachana. And Manish has shared me some tables and variable names, so right now I'm in the process of executing them. So these are the part I have worked on. Yes.
+
+00:10:14 - 00:10:16 Unknown Speaker:
+
+Sure. Thanks, Raj. Thank you, Rachana.
+
+00:10:22 - 00:10:29 Unknown Speaker:
+
+హలో. ఇప్పుడు ఆయప్— కుండన్? కుండన్ తర్వాత మేధి అన్నావు. నెక్స్ట్ మేధి అనుకోండి. కుండన్ ఇప్పుడు జరుగుతుంది, తర్వాత ఆయప్, తర్వాత మేధి.
+
+00:10:30 - 00:10:44 Unknown Speaker:
+
+Hey, hi Rachana. Hi everyone. So I was mainly involved in this data migration and data sync one. సైన్ ఆన్ అంటారు, అంతే. And that is completed on E1, so we are planning to move that on E3.
+
+00:10:44 - 00:10:48 Unknown Speaker:
+
+There are some CD rules, I think. ఆయప్, how many it is? 870 or something, right?
+
+00:10:49 - 00:11:09 Unknown Speaker:
+
+Yeah, 847. 847, yeah. This CD we are migrating right now. So the check—ఆయప్ side code, those queries has been executed on the lower environment. So we'll connect after this call and we'll sync that data as well in both the side, on the AS and Lumi side.
+
+00:11:10 - 00:11:25 Unknown Speaker:
+
+Other than that, Rachana, I worked on this KRI parser one, on the eight dimension one. We are now able to read the data from the, you know, the whatever the result generated by the CD. We are reading all those tables and the, you know, the columns that are.
+
+00:11:27 - 00:11:38 Unknown Speaker:
+
+Output that by the way generated from that KRI parser. That is what you are reading? Yes, correct. That is in progress, okay. It's not completed yet, okay.
+
+00:11:38 - 00:11:54 Unknown Speaker:
+
+So I—okay, okay, because I didn't get that much time, I just, you know, integrated here and there. But one issue I'm facing that I have to resolve that one. It's now okay. So that's on the reporting part.
+
+00:11:55 - 00:12:07 Unknown Speaker:
+
+I didn't get that much time, just, you know, analyze the thing I got over the call. That part for this KRI parser, right? The one that Bhargav had built, that's still in E1, no?
+
+00:12:08 - 00:12:14 Unknown Speaker:
+
+Bhargav, can you confirm? It's on E1 or— Yes, yes. Rachana, yes, yes. That's in E1. That's in E1.
+
+00:12:15 - 00:12:19 Unknown Speaker:
+
+Okay, okay. Okay, so we do plan to move it to E3, right?
+
+00:12:21 - 00:12:38 Unknown Speaker:
+
+Is someone assigned that? Who will be on that? No, so Rachana, Rachana, look, for CD, I already asked team to move those to the production environment. Okay? So they are already deployed it till E2, as you have asked to, you know, prioritize it with the initial version to deploy to E3.
+
+00:12:38 - 00:12:51 Unknown Speaker:
+
+So that would be done in next couple of days. But this KRI parser, nobody has asked us to move it to E3. But if that is something the request— Yeah. No, no. That other one is to be prioritized over this.
+
+00:12:51 - 00:13:01 Unknown Speaker:
+
+That's fine. So that one we have moved to E2, right? Yeah, that has been moved to E2. Kundan is working on that. So there are certain configuration which he would close it out today.
+
+00:13:01 - 00:13:06 Unknown Speaker:
+
+And then he would share the result to you, and once you are aligned, we can deploy it to the E3 environment.
+
+00:13:08 - 00:13:09 Unknown Speaker:
+
+Sure, sure, Sajan. Thank you.
+
+00:13:11 - 00:13:36 Unknown Speaker:
+
+On the reporting part, Rachana, so I didn't get that much time, just only, you know, gather the requirement. Okay? So maybe in the next sprint, as Sajan was mentioning, right, so we will start working on this part. I'll just reporting one over whatever eight dimension and CD thing that you are doing, right? Just that version you will move to E3.
+
+00:13:36 - 00:13:44 Unknown Speaker:
+
+Other than that, whatever you have for that KRI one and the CD one, that you can deprioritize if you are working on the reporting part.
+
+00:13:46 - 00:13:50 Unknown Speaker:
+
+Sure, sure. That's fine. We'll do that. Okay, okay. Thanks.
+
+00:13:51 - 00:13:59 Unknown Speaker:
+
+And for demo, because that is data migration, and I already showed you the data, right? Yeah, Kundan, that is fine. We can move on. Yeah. Okay.
+
+00:14:00 - 00:14:03 Unknown Speaker:
+
+That is all. Yeah, we can move next, Sindhuja.
+
+00:14:08 - 00:14:30 Unknown Speaker:
+
+Okay. So just a heads-up, Rachana, as Sameer was working on that MIST ingestion and those Quantro univariate, right? He did not get a chance to work on this threshold check option to integrate with the Quantro backend, right? So maybe we can take up that story in the next sprint. So we would be just moving that story to the next sprint as it is.
+
+00:14:30 - 00:14:45 Unknown Speaker:
+
+There was no activity being done on that because he was occupied with this Quantro and the MIST integration check. Do I need to take any action on this or this will directly be shifted? This would be directly being shifted.
+
+00:14:46 - 00:14:51 Unknown Speaker:
+
+Sindhuja, if you can move this to the next sprint. The threshold check option integration with Quantro backend.
+
+00:14:53 - 00:14:56 Unknown Speaker:
+
+అబ్బా. ఏయ్. అబ్బా, అబ్బా.
+
+00:14:59 - 00:15:19 Unknown Speaker:
+
+Yeah, so that has been moved, Rachana. Sameer, you can go ahead. Hey, hi Sajan. So this sprint, I have worked on the MIST ingestion check and Quantro inherent. So I'm able to generate an email where whatever the tables got missed the ingestion.
+
+00:15:19 - 00:15:26 Unknown Speaker:
+
+So let me share my screen and show the email how it looks like.
+
+00:15:27 - 00:15:48 Unknown Speaker:
+
+I think I'm not able to share the screen, I'm not sure in the teams. But like, I have attached that screenshot in the user story, how that email actually looks like. If you can open that user story, Sindhuja, the MIST ingestion check table onboarding. Can we check that screenshot?
+
+00:15:51 - 00:15:56 Unknown Speaker:
+
+Which one, sorry? The second one. Yes, second. Okay. Yeah, MIST ingestion.
+
+00:15:56 - 00:16:00 Unknown Speaker:
+
+He mentioned like, there is a screenshot he has attached, so we can verify from there as well.
+
+00:16:02 - 00:16:11 Unknown Speaker:
+
+And Sameer, you can do one thing. You can forward that email to Rachana to, you know, cross-verify if any modification would be required, or she is good with that.
+
+00:16:12 - 00:16:19 Unknown Speaker:
+
+Sure, Sajan. Okay. I haven't shared that yet. I will share it now. The first screenshot, Sindhuja.
+
+00:16:19 - 00:16:22 Unknown Speaker:
+
+Attachment, there are a couple of screenshots there, right? The first one.
+
+00:16:24 - 00:16:27 Unknown Speaker:
+
+If you can download and open that. ఓకే, నాకు కనబడుతోంది.
+
+00:16:30 - 00:16:33 Unknown Speaker:
+
+So this would look like this, Rachana. Okay?
+
+00:16:34 - 00:16:48 Unknown Speaker:
+
+Remember there is a ingestion missed for a particular table with the frequency and the last ingestion date, and then what is the status if it gets failed. So let us know in case if you want any changes, then we will modify this accordingly.
+
+00:16:50 - 00:17:03 Unknown Speaker:
+
+Okay, Sajan, once Sameer forwards it to me, just point back to it and see how it will look. But it looks good, so. Yeah. Okay, Sameer. Yeah, Sameer, anything else that you want to say?
+
+00:17:03 - 00:17:15 Unknown Speaker:
+
+And I'm—I have a call with Rachana in the afternoon, so I'm converting the templates to the complex query SQLs in Quantro. Yeah, that is something we are aligned. That is okay.
+
+00:17:17 - 00:17:32 Unknown Speaker:
+
+So just one callout, Rachana. Like, he would be continue working on that Quantro univariate. That is number one. MIST ingestion check only the deployment and promotion to the E3 environment. And then the story which has been moved to the next sprint, right?
+
+00:17:32 - 00:17:40 Unknown Speaker:
+
+That Quantro integration for the threshold check type. So those would be the story he would be continue working for the next sprint also.
+
+00:17:42 - 00:18:03 Unknown Speaker:
+
+Okay, Sajan. Okay, we can go to the next. Sindhuja, is it Nirmal? I think Nirmal, you know, the details shared by Athar. He was supporting him on from the backend side, like caching the table details which the team details upgrade for the torques and the resource API.
+
+00:18:04 - 00:18:07 Unknown Speaker:
+
+UAT and the E3 deployment. Nirmal, anything else you want to say?
+
+00:18:11 - 00:18:20 Unknown Speaker:
+
+No, Sajan. Okay. We can move next. Also, Sajan, there are two E3 deployment stories, right? One with Nirmal and the other one with Athar.
+
+00:18:21 - 00:18:36 Unknown Speaker:
+
+So should I move them to release to prod where they released? It would be released. It would be released tomorrow. In one version has been released, so I'll leave it to you how you want to make it. You can mark it released because this would be deployed tomorrow.
+
+00:18:37 - 00:18:55 Unknown Speaker:
+
+Those part has—major part has been already being deployed. If there is an E3 deployment, can we ensure it gets completed on Monday? Because if it is getting deployed tomorrow, then we will have to create a new story for that. That's like, as per the agile guidelines.
+
+00:18:57 - 00:19:06 Unknown Speaker:
+
+We would. They are. Yeah, we would. They are mapping. Yeah, they are mapping the releases that we do dates with what the day we move our story to release to prod also.
+
+00:19:07 - 00:19:11 Unknown Speaker:
+
+Okay. So we will do one story for our E3 deployment for tomorrow.
+
+00:19:13 - 00:19:23 Unknown Speaker:
+
+Okay? Let's not make it released right now. Can I remove it as E3 readiness then? Yes, yes. You can make it as E3 readiness.
+
+00:19:23 - 00:19:34 Unknown Speaker:
+
+Initial version has been released, right? It's not that it hasn't been released. So this sprint, I mean, I mean in the last 10 days, was any release done for this? Yes. Yeah, yeah.
+
+00:19:34 - 00:19:40 Unknown Speaker:
+
+There was. There was. There was? Okay. Can I then use this whatever as release to prod?
+
+00:19:40 - 00:19:45 Unknown Speaker:
+
+Can I move it? Which is 3152. Yeah, yeah. We can. We can.
+
+00:19:46 - 00:20:02 Unknown Speaker:
+
+Nothing else from Ansi, Bhargav, Kundan, Sameer was released to prod, right? Ansi feed key was done, but those are process improvement, not a feature release, right? That comes under production support. Production support. So that's fine.
+
+00:20:02 - 00:20:08 Unknown Speaker:
+
+Nothing else. So only one story so far have to move it to release to prod. Correct. Got it. Okay.
+
+00:20:09 - 00:20:24 Unknown Speaker:
+
+And before—because I have to jump to another call—so Prithvi's E2 story would be moved to the next sprint for the RAZE one. We did not made any changes to the E2 one. E1 he can claim it as done.
+
+00:20:26 - 00:20:32 Unknown Speaker:
+
+But E2 one needs to be moved to the next sprint. We did not touch base this E2 one. This one? Yes.
+
+00:20:34 - 00:20:46 Unknown Speaker:
+
+And Prithvi, can you please update your story so that we can ask Jason to accept these stories? This is still in to-do list. Oh, sorry, in progress. అన్మ్యూట్ చేసుకున్నా, మాట్లాడండి. Okay.
+
+00:20:47 - 00:20:53 Unknown Speaker:
+
+I'll take a leave. Okay? You guys can continue and do let me know in case if there are any questions to me.
+
+00:20:55 - 00:20:57 Unknown Speaker:
+
+Sure, Sajan. Okay. Yeah. Thank you.
+
+00:20:59 - 00:21:00 Unknown Speaker:
+
+And Sajan, Ayap?
+
+00:21:02 - 00:21:04 Unknown Speaker:
+
+Yeah, hi Sindhuja. Yeah, I'm sharing.
+
+00:21:29 - 00:21:29 Unknown Speaker:
+
+Hello?
+
+00:21:31 - 00:21:37 Unknown Speaker:
+
+Are you able to see my screen? అన్నా, ఏదైనా అయిపోయిందా? లేదులే, అయ్యప్ప చెప్తున్నాడు.
+
+00:21:38 - 00:21:43 Unknown Speaker:
+
+Not yet, Ayap. We cannot see, Ayap. Okay, okay.
+
+00:21:46 - 00:21:47 Unknown Speaker:
+
+It's not coming.
+
+00:22:13 - 00:22:17 Unknown Speaker:
+
+ఏమో, షేర్ చేయకపోతే నాకు వచ్చుకోదు. వారం నుంచి మొన్న.
+
+00:22:23 - 00:22:32 Unknown Speaker:
+
+కనపడట్లేదు అన్నా. షేర్ చేసినా కూడా ఏం లేదు ఇక్కడ. Um, we can see your screen now, but I think it's.
+
+00:22:33 - 00:22:39 Unknown Speaker:
+
+Oh, are you able to see it? Yeah. Okay, sure. Yeah, thank you. See, I was onset.
+
+00:22:39 - 00:22:40 Unknown Speaker:
+
+Things were spent. Okay.
+
+00:22:42 - 00:22:56 Unknown Speaker:
+
+Rachana, this sprint I have three stories assigned. So for the first one, I'm going with the CD checks one. So the CD checks one, we have onboard. It's blank screen, Ayap. Oh, is it blank screen?
+
+00:22:58 - 00:23:01 Unknown Speaker:
+
+Can you stop sharing and re-share it? Yeah, yeah.
+
+00:23:03 - 00:23:06 Unknown Speaker:
+
+Content is being shared, but nothing is showing up.
+
+00:23:22 - 00:23:29 Unknown Speaker:
+
+Ayap? Yeah, yeah. Just, are you sharing any PI data? Oh, no, no, no. Nothing.
+
+00:23:29 - 00:23:34 Unknown Speaker:
+
+Just I'm sharing the screen only. That's the. I can see only arrows. Okay.
+
+00:23:36 - 00:23:37 Unknown Speaker:
+
+Yeah, blank.
+
+00:23:40 - 00:23:41 Unknown Speaker:
+
+Are you able to see it?
+
+00:23:42 - 00:23:45 Unknown Speaker:
+
+No, right now we are in Teams share.
+
+00:23:48 - 00:23:57 Unknown Speaker:
+
+Okay. You can just let me know what it is. Yeah, okay. Yeah, Sindhuja will probably share your screen. Yeah, that's fine.
+
+00:23:58 - 00:24:00 Unknown Speaker:
+
+I will explain the story next year.
+
+00:24:08 - 00:24:10 Unknown Speaker:
+
+Yeah, Sindhuja, you are sharing the screen?
+
+00:24:13 - 00:24:18 Unknown Speaker:
+
+No, Ayap, I'm not sharing anything. You want me to re-share your stories? Oh, yeah, yeah. Just share. Yeah.
+
+00:24:19 - 00:24:29 Unknown Speaker:
+
+I'm unable to share the screen. I'm not sure. Yeah, this time. So, Rachana, for the three stories assigned. For the CD one, I have the deployed the 29 DQ checks, right?
+
+00:24:29 - 00:24:53 Unknown Speaker:
+
+So that one we have deployed the in production environment. So those results also I have shared with you for the review one. So that is the story. And yeah, and apart from that one, that another story in the production support. So I just worked on the for the data migration activity for the DQ artifact one.
+
+00:24:53 - 00:25:02 Unknown Speaker:
+
+And apart from that one, there is some column name changes in the last updated TS in the DQ artifact table. So I just worked on that part as well.
+
+00:25:04 - 00:25:13 Unknown Speaker:
+
+Yeah, and apart from that one, as we have discussed in the decommissioning the rules, right? So that those changes I have done those and updated in the production as well.
+
+00:25:16 - 00:25:37 Unknown Speaker:
+
+Yeah, and apart from that one, some changes in the DQ artifact table. That is a checks types changes. So that part also I have done in the this one. And apart from that one, there is a new table we have created in the DQ DAG register table in the production environment. So that part also completed.
+
+00:25:38 - 00:25:38 Unknown Speaker:
+
+Yeah.
+
+00:25:40 - 00:25:53 Unknown Speaker:
+
+Ayap, one question. These 29 DQ checks, these have been implemented in E3, right? Ha, yes. Yes, that's right. We do not see any, like, subtask regarding E3 deployment.
+
+00:25:57 - 00:26:03 Unknown Speaker:
+
+There. Is that us? Yeah, task I have created. See. There, I do not see one.
+
+00:26:06 - 00:26:11 Unknown Speaker:
+
+Okay, okay. E3 you didn't able to see? You meant to say? Yeah. Okay, okay.
+
+00:26:11 - 00:26:25 Unknown Speaker:
+
+Okay, description I just only mentioned only E1 and E2. That I needs to update E3 actually. That's good. Okay, so just one question to Sindhuja. Sindhuja, here a UAT story will be needed from product team, right?
+
+00:26:25 - 00:26:30 Unknown Speaker:
+
+This E3 deployment one. Sorry, the test case for UAT.
+
+00:26:33 - 00:26:35 Unknown Speaker:
+
+There's already a UAT story added, right?
+
+00:26:37 - 00:26:44 Unknown Speaker:
+
+Yeah, yeah. So I'm asking about the test case from product side for this E3 UAT.
+
+00:26:46 - 00:26:47 Unknown Speaker:
+
+Which you're just.
+
+00:26:48 - 00:26:58 Unknown Speaker:
+
+Product team needs to. No, then what? Who has added this UAT story? Like, this should be added by product UAT. Developer should only add SIT story.
+
+00:27:00 - 00:27:02 Unknown Speaker:
+
+SIT or end-to-end testing. Yeah.
+
+00:27:05 - 00:27:10 Unknown Speaker:
+
+Yeah, yeah. This we have only. Oh, it shows as Ayap. Oh, yeah. Okay.
+
+00:27:10 - 00:27:15 Unknown Speaker:
+
+Actually. Can you did it? This should be SIT then. Or end-to-end. Test case.
+
+00:27:19 - 00:27:28 Unknown Speaker:
+
+Why there are two, Ayap? I think there is one SIT here and one UAT here. Yeah, yeah. Just E3 also I have updated actually. I have taken the results and updated actually.
+
+00:27:29 - 00:27:38 Unknown Speaker:
+
+So that I have added the UAT. So. Yeah, then it's fine. Rachana, you guys don't have to add. We'll consider this as your side of the story.
+
+00:27:38 - 00:27:48 Unknown Speaker:
+
+Because he's already attached the evidence. Oh, okay. But actually Sehaj also added your last one. It's not visible here somehow. No, no.
+
+00:27:48 - 00:27:51 Unknown Speaker:
+
+It's here. It's under his name. This one, right?
+
+00:27:55 - 00:28:00 Unknown Speaker:
+
+Yes. This is not the one, but there should be one for that. He has added around 6.
+
+00:28:01 - 00:28:11 Unknown Speaker:
+
+This has some extra ones. We will be deleting those. So I think. This is the one I think Sehaj implement CD DQ checks. Correct, correct.
+
+00:28:11 - 00:28:23 Unknown Speaker:
+
+Okay. One of you, I mean Ayap then probably can I delete yours? Oh, yeah. Some people have Sindhuja because Ayap's one has evidence attached already, right? Okay.
+
+00:28:23 - 00:28:30 Unknown Speaker:
+
+Then you can delete the other one. Yeah. It should be reassigned to us or is that fine? No, no. This is fine.
+
+00:28:31 - 00:28:38 Unknown Speaker:
+
+Which you blinked the story, right, Ayap? For which story you attached? Yeah, that's. That is important. Yeah, that's the one.
+
+00:28:38 - 00:28:48 Unknown Speaker:
+
+Yeah, 31261 actually. I just linked it. Yeah. Okay. Can you just rename it so that I can move it to production?
+
+00:28:48 - 00:28:50 Unknown Speaker:
+
+And E3 release was done here, right?
+
+00:28:52 - 00:29:01 Unknown Speaker:
+
+Yeah. Okay. I'll move them to release to prod once the product accepts it. Yeah, should be fine. Rachana, you can delete the one that Sehaj has added.
+
+00:29:02 - 00:29:04 Unknown Speaker:
+
+Okay, okay. Sure. Thank you.
+
+00:29:07 - 00:29:18 Unknown Speaker:
+
+Anything else, Ayap? Yeah, yeah. One more thing. Just add on the Rachana, actually, so that a quant related one which are the 39 DQ rules, right? So that one also onboarded into the production.
+
+00:29:20 - 00:29:32 Unknown Speaker:
+
+Okay. The table. And apart from that one, which I have discussing with the CD checks, right? So that 847 one. So that rules, currently we have data migrated into the temp location.
+
+00:29:32 - 00:29:43 Unknown Speaker:
+
+We are doing the data validation. So once this done and we will move to the actual table in the E1 environment. Then later it will move to the YES platform side. DB. What is the data validation for in that?
+
+00:29:44 - 00:29:59 Unknown Speaker:
+
+Yeah, that one we have the last Friday which discussed with the check types changes, right? So which are the complex one and these things, right? So the data, what are the Prithvi's provided to me? So that one I'm just loading into the E1 environment. And what are the additional fields are required?
+
+00:29:59 - 00:30:03 Unknown Speaker:
+
+So those things we are doing the validation. And we are moving to the E1.
+
+00:30:09 - 00:30:13 Unknown Speaker:
+
+No, no, no. That is CD one. CD one 847 rules.
+
+00:30:15 - 00:30:24 Unknown Speaker:
+
+So there is some retagging in the CD one. It's only for the E2 ID, right? What else? Yeah, yeah. No, no.
+
+00:30:24 - 00:30:27 Unknown Speaker:
+
+No other E3 deployment. Only these things. Only in the E1.
+
+00:30:30 - 00:30:30 Unknown Speaker:
+
+Yeah.
+
+00:30:32 - 00:30:40 Unknown Speaker:
+
+There is a lot of background noise from your end. Yeah, sorry. It was my son. Yeah, yeah. Okay, no problem.
+
+00:30:40 - 00:30:40 Unknown Speaker:
+
+Thank you.
+
+00:30:42 - 00:30:44 Unknown Speaker:
+
+Yeah, I think these are the things, Rachana, from my end.
+
+00:30:46 - 00:30:51 Unknown Speaker:
+
+Sure, Ayap. Thanks. Yeah, thank you. అన్నా, హలో.
+
+00:30:54 - 00:30:55 Unknown Speaker:
+
+Yeah, Prithvi?
+
+00:30:58 - 00:31:00 Unknown Speaker:
+
+Hi, Sindhuja. Hi, Rachana.
+
+00:31:01 - 00:31:07 Unknown Speaker:
+
+I reviewed the CD checks that the intern had done, that mapping I reviewed with you on Friday, Rachana.
+
+00:31:09 - 00:31:38 Unknown Speaker:
+
+I completed that and I pushed the code also. And with respect to this Vault configuration thing, it's very, I mean, anyway, it's JSON as well, but yeah, connectivity is working fine. But file need to be transferred, so there I'm stuck. But yeah, almost key issue that we were having, that is fixed that. And yeah, I was helping Ayap for CD checks migration also, Rachana.
+
+00:31:39 - 00:31:43 Unknown Speaker:
+
+So I reviewed with you on Friday also. And me and I try to review that. So I was helping him as well.
+
+00:31:45 - 00:31:48 Unknown Speaker:
+
+Yeah, those are the key tasks that I have done in this sprint.
+
+00:31:51 - 00:31:52 Unknown Speaker:
+
+Sure, thanks.
+
+00:31:53 - 00:31:54 Unknown Speaker:
+
+Thank you.
+
+00:31:57 - 00:32:02 Unknown Speaker:
+
+Can you move your. Why are your stories not completed yet? Yeah.
+
+00:32:08 - 00:32:09 Unknown Speaker:
+
+Prithvi?
+
+00:32:11 - 00:32:11 Unknown Speaker:
+
+Yeah.
+
+00:32:13 - 00:32:16 Unknown Speaker:
+
+Can you move your stories to? Yeah.
+
+00:32:18 - 00:32:19 Unknown Speaker:
+
+Yeah, please do it over the call.
+
+00:32:22 - 00:32:24 Unknown Speaker:
+
+Yeah, sure. I'll do it. Yeah.
+
+00:32:25 - 00:32:26 Unknown Speaker:
+
+Okay.
+
+00:32:28 - 00:32:28 Unknown Speaker:
+
+Shravan?
+
+00:32:30 - 00:32:31 Unknown Speaker:
+
+ఓకే, అన్నా.
+
+00:32:32 - 00:32:43 Unknown Speaker:
+
+ఆ స్టేటస్ అని మళ్ళీ నేను అక్కడ క్లిక్ చేసి ఒక ఇంప్రూవ్మెంట్స్ లో ఉంది కదా, డన్ డన్ అని కొట్టుకుంటూ. Do we have Shravan on the call?
+
+00:32:45 - 00:32:48 Unknown Speaker:
+
+అవే. అన్ని డన్ అని చేసేసాను. ఈవెన్ ఈ టూ కూడా. ఓకే, ఓకే.
+
+00:32:50 - 00:33:01 Unknown Speaker:
+
+ఓకే. I think Sindhuja and I may work on Rezi stuff and Jason is not here, so we can skip. Okay. Suman? Hey, hi everyone.
+
+00:33:04 - 00:33:04 Unknown Speaker:
+
+Hi Rachana.
+
+00:33:06 - 00:33:28 Unknown Speaker:
+
+I have working on that data monitoring monthly reporting. Shahid has shared me the updated files I have sending to the Shahid. He have given some inputs for the color and email. That one is also is fixed. But he have shared for the ICM use case, particularly you need to be hardcoded for that failure tab.
+
+00:33:28 - 00:33:32 Unknown Speaker:
+
+And then there is one table is there, he have shared with me.
+
+00:33:34 - 00:33:42 Unknown Speaker:
+
+I need to confirm with this Sachin whether we need to be hardcoded in that code or it should be like a we need to create that table.
+
+00:33:44 - 00:33:46 Unknown Speaker:
+
+That one, that one is pending.
+
+00:33:48 - 00:33:55 Unknown Speaker:
+
+And that's it, Rachana. The CD part I already I shared I 29 DQ rules.
+
+00:33:58 - 00:34:24 Unknown Speaker:
+
+And in the production support, the YouTube week, YouTube and Luluminor is the last week got failed because of that the table is expired. Like the temp table is expiaring. So we contacted to the platform team and we have we raised a ticket in the last sprint itself. We got a solution. That one is also is fixed.
+
+00:34:26 - 00:34:33 Unknown Speaker:
+
+Sorry to interrupt, Suman. I'm asking if you are saying rules on YouTube and Lululemon did not run for September, is it?
+
+00:34:35 - 00:34:42 Unknown Speaker:
+
+No, it's run but it's got failed in the first run. Again I did a rerun because the table got expired.
+
+00:34:43 - 00:34:52 Unknown Speaker:
+
+The temp table. So we run now do we have records and DQ results for that or no? No. Yes. Yes, Rachana.
+
+00:34:52 - 00:35:03 Unknown Speaker:
+
+It is working in the DQ results only. Okay. Every two to three weeks like a it is failing. Some what somewhere is dropping the table. On that time we are rerunning.
+
+00:35:03 - 00:35:08 Unknown Speaker:
+
+In the last sprint, one time only it's got failed. So it's fixed actually.
+
+00:35:10 - 00:35:15 Unknown Speaker:
+
+Now it is in the DQ results only. How much spending as expected is it? Yes.
+
+00:35:18 - 00:35:22 Unknown Speaker:
+
+So there is no longer any issue for the temp table that you were saying?
+
+00:35:23 - 00:35:37 Unknown Speaker:
+
+Now it is like a the temp table, the runtime we are creating that one. So somewhere it is dropping on the time. That's why we got that fail. So we added like a run data. No code changes, nothing.
+
+00:35:37 - 00:35:48 Unknown Speaker:
+
+Like a whenever the temp table is created it should be created. But I'm just trying to ask that there will be no future failures because of this particular reason, right? Yes. Yes. Okay.
+
+00:35:49 - 00:36:02 Unknown Speaker:
+
+That three times is not fixed. Add on Rachana, one point here. We will keep monitor this changes also. But if any changes feel immediately we will fix that one. But I hope it will get any issues in further actually.
+
+00:36:05 - 00:36:06 Unknown Speaker:
+
+Okay, okay. Sure. Yeah.
+
+00:36:10 - 00:36:10 Unknown Speaker:
+
+That's it, Rachana.
+
+00:36:13 - 00:36:13 Unknown Speaker:
+
+Sure, thanks.
+
+00:36:26 - 00:36:33 Unknown Speaker:
+
+I think we've covered everyone. Prithvi, can you move your stories to complete it so she can accept it?
+
+00:37:01 - 00:37:02 Unknown Speaker:
+
+Prithvi, are you there?
+
+00:37:12 - 00:37:14 Unknown Speaker:
+
+If you're talking you're on mute, Prithvi.
+
+00:37:34 - 00:37:41 Unknown Speaker:
+
+Can you check with him later, Sindhuja, in case he is not responding? So once he moves it I'll accept it.
+
+00:37:43 - 00:37:48 Unknown Speaker:
+
+Yeah, Rachana. I think other than Prithvi, all of you can drop off here. Thank you.
+
+00:37:53 - 00:37:56 Unknown Speaker:
+
+Thank you, Sindhuja. Thanks, everyone.
+
+00:37:59 - 00:38:00 Unknown Speaker:
+
+Okay. Thank you.
+
+00:38:06 - 00:38:08 Unknown Speaker:
+
+Prithvi, are you there on the call?
+
+00:38:21 - 00:38:23 Unknown Speaker:
+
+Prithvi, are you able to hear me?
+
+00:38:34 - 00:38:42 Unknown Speaker:
+
+అన్నా, అన్నా, అన్మ్యూట్ చేసుకున్నా. సింధుతో మాట్లాడు. రచనతో మాట్లాడు అన్నా. అది అడుగుతుంది. మన ఇద్దరం ఇప్పుడు కాల్ లో ఉంది.
+
+00:38:42 - 00:38:59 Unknown Speaker:
+
+అదే, నువ్వు రచన. సింధుజా, ఆ నార్మల్ గా అది స్టోరీస్ మూవ్ చేయండి. మనం మూవ్ చేసాము, అక్కడ చూపించట్లేదు.
+
+00:39:07 - 00:39:07 Unknown Speaker:
+
+ఆ చేశా.
+

@@ -1,0 +1,104 @@
+Prudhvi's action plan
+
+I read all three transcripts. The name is spelled Prithvi in them, and "Razy", "RAZI" and "Reggie" look like transcription variants of the same initiative, so I've used "Razy". Names like Sachin/Sachin and Rachana/Rachna/Rachna are merged the same way.
+
+Priority order
+Update Jira (today)
+Send the email template to the Quantro team (ASAP)
+Fix the code review feedback and complete the pending PR (next review cycle)
+Add audit logging to his DAG (due tomorrow)
+Razy table replacement, part 1 then part 2 (this sprint)
+RAZI SFTP export and audit-to-SFTP, only if product confirms
+Leave tracker and training (today / Thursday)
+1. Jira housekeeping (today)
+Move completed stories to Done (Vault/config, CD checks review and mapping). Rachana can't accept them until he does. He was asked three times on the 28th and didn't manage it on the call.
+Split the Razy E2 story: E1 can be claimed as done, but the E2 part wasn't touched and moves to the next sprint.
+Sindhuja is chasing this, and Rachana accepts the stories once they're moved.
+2. Vault configuration
+Connectivity works and the key issue is fixed.
+Remaining: transferring the JSON-based config file. Fix it or post a status or workaround note on the story.
+3. Razy table replacement (main sprint work, full bandwidth)
+
+Sachin assigned this on the 29th. Prudhvi has the whole sprint for it, and no new stories are needed since his stories already exist.
+
+Part 1: impact analysis (due mid-sprint)
+
+Find every DT flow that uses the existing Razy user tables.
+Also check the data anomaly tool, where the tables appear in a dropdown.
+Deliver an impact list.
+
+Part 2: implementation (due end of sprint, E2 only)
+
+Replace the old Razy tables with the new Global Dining Razy tables: the five main tables (user venue, venue collections, reservation, ratings and so on).
+Ratings is a new table.
+Razy MX Cust has no new table, but its DT flow still needs updating.
+Sachin will email him the table list.
+
+Constraints
+
+E3 isn't possible before the freeze (announcements expected early November, freeze from 11 November).
+An RFC needs a 48-hour lead time, and Friday is a holiday, so target Monday.
+Cornerstone decommissioning is the top priority, but it depends on an exception approval that's still pending.
+4. DAG monitoring and audit logging (due tomorrow)
+Kundan is building the audit logging utility today.
+His DAG needs changes in several places in the framework, so Sachin asked Nancy to explain it to him.
+Prudhvi should:
+Get the walkthrough from Kundan or Nancy.
+Register his DAG in the DAG registry with its schedule interval.
+Add start and end audit log calls, including in exception handling.
+Put the shared code in util files, not the DAG file.
+Sachin noted his DAG was failing and asked for an immediate fix. Prudhvi replied that he had merged with an RFC and deployed. Confirm it's running.
+Kundan and Nancy will pass him the DAG details for the registry.
+Sameer will later brief him and Sameer on extending this to their frameworks.
+5. Support for the Quantro threshold onboarding (ASAP)
+Give the ingestion-missed email/report template to Ayappa, ready to copy and paste.
+Ayappa will build a separate DAG, not inside Prudhvi's framework, so he doesn't need to change his framework.
+Check whether the complex check for threshold is running. He said complex checks run but threshold checks don't. If it isn't running, close it out.
+His automation already handles valid-value and missing-value checks. Ayappa's DAG only picks up the two new threshold rules.
+6. Code quality feedback (before the next review)
+
+Sachin reviewed his large Python code and asked for:
+
+Smaller methods, with conditions moved into helpers.
+match/case instead of long if chains.
+Cleaner comments, and docstrings in proper format above the method names.
+Small PRs (one or two files) so they can be reviewed properly.
+
+Design corrections on the RAZI export:
+
+Don't insert into the DQ artifacts table directly. Generate the CSV, send it to SFTP, and let the existing SFTP pipeline load it through AS into the DQ artifacts table.
+Keep the CSV data in an audit copy table in the dataset.
+Remove the direct table-insertion code and keep only CSV generation.
+
+He also said the 8-dimension PR was shared and E2 configuration is done. Ask Sachin to approve the PR, then test in E1 and E2.
+
+7. Possible new stories (only if product confirms)
+
+Sachin will confirm after his evening call with the product partners. If product has nothing else, these come to Prudhvi this sprint:
+
+RAZI status export: a new DAG every two hours that checks success and failure across the 20 to 25 tables, writes a file and sends it to SFTP. It builds on Sameer's MIST ingestion check. Jason has doubts, and Sreven's build may replace it.
+Audit-to-SFTP: read DAG failures from the audit table daily (Ansi's failures) and send them to SFTP, so a human task can be created for a work basket.
+
+Sachin also said he has backlog stories to assign if these don't come through.
+
+8. Admin (today / Thursday)
+Add his leave to the tracker (October to December, through Sindhuja's link) by end of day. Confirm cover with Nirmal. No multi-day leave without a backup, and 11 November is the freeze start.
+Finish the mandatory training by Thursday EOD (Friday is a holiday). Raise an incident if access fails.
+Whom to connect with
+Person	Why
+Sachin	Assigns his work, reviews his code, confirms the RAZI stories and approves the PR
+Jason	Product owner for Razy and RAZI requirements, and accepts stories
+Sreven	Owns the Razy POC and the SFTP export that may replace the email
+Rachana	Accepts stories, and knows the CD checks mapping
+Sindhuja	Jira, sprint stories, leave tracker
+Kundan	Audit logging utility and DAG registry
+Nancy	Explains the DAG registry change (she registers DAGs and adds the audit calls)
+Nirmal	DAG details, and leave backup
+Ayappa	Needs the email template for the Quantro DAG
+Sameer	Aggregation logic, DT flow monitoring
+Ansi	DAG audit table and failure patterns
+Behavior flag
+
+Sachin and Sindhuja raised twice that Prudhvi is often unresponsive on calls (not unmuting, connectivity issues) and slow to close stories. A network warning was already given, and Sachin said he would escalate to Rajendra if it continues. Being reachable and closing Jira updates promptly will help.
+
+I can turn this into a checklist file, a Jira-style story breakdown, or a short message to Prudhvi if that's more useful.

@@ -1,0 +1,1194 @@
+2026-09-29 Deployment and Quantro Onboarding Coordination Meeting
+
+Creation Time: 2026/09/29 11:32
+
+
+📅About Meeting
+
+• Date & Time: 2026-09-29 11:32 (Duration: 3108 seconds)  
+• Location: DSU / team call  
+• Attendee: Sachin, Samir, Varga, Nirmal, Kundan, Prithvi, Ansi, IPA, VFPO, Sindhuja, Rachna, Samir (multiple mentions), plus others referenced (System admin, Jason, Sehaj, Rajendra)
+
+📒Meeting Outline
+
+Deployment & Release Coordination
+
+• Backend-first deployment approach
+  The agreed tactic: push backend changes first, let the backend deploy and stabilize, then deploy the UI. If backend is not ready, UI deployment may break. A branch to revert changes will be created to quickly rollback if resource API or other issues occur.
+
+• Gatekeeper and testing
+  Team is testing Gatekeeper for basic functionality while deployment proceeds. Post-deployment testing will be coordinated with the PRC group and Rachna for login/validation checks.
+
+• Resource API & data migration
+  Resource API changes and data migration from E1 to A3 are planned; migration approval appears granted and expected around 1:00 PM. Sachin will share a point of contact and create a group to track migration. System admin access gaps (PRC group not created) were noted and will be followed up.
+
+• Environment targeting
+  Ensure E2 and E3 deployments are in sync where required. Confirmed that IPA/CDEs moved to production and E2 deployment checks are done.
+
+Quantro Onboarding (New threshold check flow)
+
+• Scope & objective
+  New requests from self-serve UI for threshold check types must be onboarded to Quantro. Onboarding includes reading new threshold records from DQ artifact table (current_date - 1 filter, since DAG runs at 05:30), executing aggregation logic, saving rule metadata into Quantro repository or reference table, generating a report/email back to user, and updating DQ artifacts with execution result (pass/fail, execution date, etc.).
+
+• Who will implement
+  IPA assigned to implement the new DAG(s) for threshold onboarding. Samir and Kundan to support aggregation logic. Samir responsible for onboarding of new Quantro roles in this sprint. Prithvi to support with report/email template if needed.
+
+• DAG design decision
+  Decision to create a separate DAG for Quantro aggregation (instead of integrating into Prithvi’s existing framework) to allow parallel execution and faster turnaround. Option to call Samir’s aggregation DAG or reuse methods if DAG-to-DAG calling causes timing issues.
+
+• Implementation details
+  • DAG must pick up all new threshold records from DQ artifacts (current_date - 1).
+  • For each record, identify aggregation type (avg/median/etc.), run aggregation (Quantro aggregation function/DAG), save rule metadata to a repository table (a reference table preferred over modifying Quantro base), create report/email (template from Prithvi), and update DQ artifacts (result, execution date).
+  • Use Quantro repository (Samir’s repo) for DAG placement.
+  • Target: complete build in current sprint; estimate ~5 story points (~40 hours) plus small capacity for production support.
+
+• Follow-up & sign-off
+  When changes ready for E2 and E3, get sign-off from Rachna (document requirements via Sehaj/Rachna). Close Quantro onboarding before PI review/demonstration. No further sprint extension expected.
+
+DQ Artifacts, Repository Sync & Data Integrity
+
+• Sync status
+  DQ repository and DQ artifacts should be in sync; IPA and Samir/Kundan to coordinate and close sync activity today. Avoid repeated “not in sync” issues going forward.
+
+• Data migration verification
+  Confirm 14 missing records with Rachna post-migration. Team to confirm migration completion and access, and validate login/usage.
+
+DAG Monitoring, Alerts, and Audit
+
+• DAG audit & duplicate entries
+  A failed/duplicate audit entry was noticed in the rule modification monitor/audit log. Action items: investigate duplicate entries, ensure audit picks only active DAG IDs, and remove or mark inactive any DAGs that should not be monitored.
+
+• DAG failure handling
+  If a DAG fails (e.g., at 11:31 PM), owners should re-trigger. Team to watch monitoring alerts and act on failures. Ansi to check failure patterns and DAG registry filtering logic.
+
+• Report generation & SFTP shipping
+  Requirement discussed for a new DAG to extract RAZI job success/failure every two hours, generate a file, and send to SFTP. If product confirms, Prithvi will take this story; otherwise it remains tentative.
+
+Specific Development / Code Quality Items
+
+• EPA / IPA tasks
+  IPA to create DAG for threshold onboarding and update code to call aggregation methods; ensure CSV/report generation and update DQ artifacts. Use Quantro repo. Aid from Samir for aggregation logic.
+
+• Ansi - Bulk update and monitoring
+  Ansi working on bulk update and transformation policy deployment in E1; will collaborate with Nirmal for field mapping. API parameter mapping (human-readable Excel for users) expected: transform table/column names to readable fields; add validation logic in request bundle.
+
+• Prithvi - RAZI & code hygiene
+  Prithvi to finalize the RAZI-related work pending product confirmation. Code review feedback: break up large methods, remove clutter/comments, add proper docstrings/Javadoc-style comments above methods, simplify conditionals (use smaller helper methods, match/case where appropriate). Ensure CSV generation and SFTP upload logic exists; maintain an audit copy table for CSVs.
+
+• Samir - Aggregation and Quantro
+  Samir to continue closing onboarding tasks; support IPA and Kundan. Ensure Quantro aggregation DAG/methods are callable or copyable into IPA DAG if needed. Samir to update DQ repository changes for new CD check types across environments (TEMP table validation -> actual table after validation).
+
+Leave & Training Compliance
+
+• Leave calendar & Excel
+  Sindhuja shared link for leave updates through December. All team members must update calendar and Excel sheet (tentative dates allowed). Rajendra requested this—team to complete updates post-DSU call.
+
+• Mandatory trainings
+  MX trainings and other assigned trainings must be completed by this Friday. Some members reported authorization/access errors; raise incidents where training pages are inaccessible (Samir advised to raise incidents). Contact Sindhuja for training issues.
+
+Operational Notes & Misc
+
+• Sachin unavailable 13:30–17:00 due to training but reachable by phone; will not attend Slack/meetings.
+• Upcoming holidays (Durga Puja, Diwali) may impact sprint timeline; team must not request extensions and should complete Quantro onboarding early next week to allow UAT and production onboarding.
+• Thursday demo/training calls: this Thursday canceled due to holiday; plan React-related guidance/training in upcoming weeks to upskill interested members (e.g., Kundan).
+
+📋Overview
+
+• Backend-first deployment agreed; create revert branch for safety.
+• Data migration from E1 to A3 approved; expected around 1:00 PM; follow-up and POC group to be created.
+• Quantro onboarding for threshold checks: IPA to implement DAG; use Quantro repo; aggregation via Samir’s DAG or copied methods; update DQ artifacts and send report to user.
+• Create separate Quantro DAG (parallel execution) to reduce latency; target completion this sprint.
+• DQ repository and artifacts must be synced today; IPA/Samir/Kundan to coordinate.
+• DAG audit had duplicate entries; Ansi to investigate and filter only active DAGs; remove unnecessary DAGs from registry.
+• Prithvi may get RAZI SFTP export and daily audit-to-SFT tasks pending product confirmation.
+• Training completion and leave calendar/Excel updates mandatory; raise incidents for access issues.
+
+🎯Todo List
+
+• Sachin:
+  • [ ] Share point-of-contact and create group for data migration follow-up (AS migration from E1 to A3), by today 13:00.
+  • [ ] Coordinate with product partners (Jason/Sehaj/Rachna) to ensure requirements documented for Quantro onboarding; obtain sign-off from Rachna for E2/E3 scope, by end of sprint.
+
+• IPA:
+  • [ ] Implement Quantro threshold onboarding DAG (or modify flow) to:
+      • [ ] Read DQ artifacts records (current_date - 1),
+      • [ ] Execute aggregation (call aggregation DAG/method or copy method),
+      • [ ] Save rule metadata to reference/repository table,
+      • [ ] Generate report/email and send to user (use Prithvi template),
+      • [ ] Update DQ artifacts with result (pass/fail, exec date), ETA: end of current sprint.
+  • [ ] Create branch to revert changes for safe rollback prior to UI deploy, by deployment time.
+  • [ ] Coordinate with Samir for aggregation logic details, immediate.
+
+• Samir:
+  • [ ] Support IPA on aggregation logic and Quantro onboarding implementation; ensure aggregation DAG/methods are callable; complete onboarding tasks in this sprint.
+  • [ ] Update DQ repository with new CD check types across environments (temp -> actual table after validation), today/tbd.
+
+• Kundan:
+  • [ ] Assist IPA/Samir with DAG-to-DAG calling decisions and execution implications; help verify DQ migration confirmations with Rachna, today.
+  • [ ] Confirm DAG scheduling/instances with Nirmal when required.
+
+• Prithvi:
+  • [ ] Provide email report/template for Quantro onboarding (copy-paste ready) to IPA, ASAP.
+  • [ ] Confirm RAZI SFTP export requirements with Jason/product; if confirmed, implement DAG to generate file every 2 hours and send to SFTP, tentative by this sprint end if prioritized.
+  • [ ] Address code quality feedback: split large methods, add docstrings, remove clutter, ensure CSV -> SFTP logic includes creating audit copy, next review cycle.
+
+• Ansi:
+  • [ ] Validate DAG audit duplicates and investigate why duplicate entries exist; ensure audit filters only active DAGs; remove or mark unused DAGs as inactive in registry, by today.
+  • [ ] Continue bulk update work; collaborate with Nirmal for transformation policy; ensure API parameter mapping and readable Excel bundle for end users, ASAP.
+  • [ ] Monitor DAG failures and re-trigger when needed; document failure handling steps for the team.
+
+• Nirmal:
+  • [ ] Show scheduled DAG instances on screen when requested (DAG run status) and assist Ansi with transformation policy fields mapping; verify BPMN and feature branch testing in E1, today.
+  • [ ] Help Ansi make API parameter bundle human-readable; confirm table vs API field mapping.
+
+• IPA / System Admin / Rachna:
+  • [ ] Create PRC group (if still missing) and grant access for validation; ensure Rachna can validate post-deployment login and data presence, today.
+  • [ ] Confirm migration completion and missing records status with Rachna; report back to team.
+
+• All team members:
+  • [ ] Update leave calendar and the Excel sheet (Sindhuja’s link) for dates through December, immediately after DSU.
+  • [ ] Complete assigned MX trainings by Friday; if access issues occur, raise incidents and contact Sindhuja.
+
+• QA / Ops (Owners to be assigned):
+  • [ ] Validate post-deployment login to E3 and basic UI flows after backend and data migration are complete; coordinate with Rachna for PRC sign-offs.
+
+Notes: If any owner requires help or is blocked, raise immediately so the Quantro onboarding is not postponed beyond this sprint.
+
+Transcription
+
+00:00:00 - 00:00:38 Unknown Speaker:
+
+এই যে, এই নিন, আরএফসি। উম, দাঁড়াও, আরএফসি যে অ্যাক্টিভ— ওকে, ইউজ স্টার্টেড। Okay, Samir, can you give a call quickly?
+
+00:00:38 - 00:00:44 Unknown Speaker:
+
+Because, again, I don't want you to repeat the same set of information to him separately. Sure.
+
+00:00:48 - 00:01:12 Unknown Speaker:
+
+Okay, so the tactic is: a small bit of testing is UI, and then else also starting to deployment. গরম, গরম, গরম স্ক্রিনশট, ইয়া, ইয়া। But make sure that we are in sync, otherwise if somebody is, you know, waiting on, then it would break the UI along with the backend. Okay, so let the backend get deployed, and then I'll deploy it, right?
+
+00:01:14 - 00:01:26 Unknown Speaker:
+
+Mm-hm. Yeah, yeah, push backend only, then you have to move it. Yes. Meanwhile I'm just testing the Gatekeeper for some, like, basic stuff. Mm-hm.
+
+00:01:27 - 00:01:35 Unknown Speaker:
+
+And this, this, the resource API will also be going in this, so hope the API is approved for the API, and the data migration is done.
+
+00:01:37 - 00:01:46 Unknown Speaker:
+
+ডেটা মাইগ্রেশন— System admin, the DBC, this is a bit unclear. Okay, okay. That is something, uh, I'll, I'll follow up with them.
+
+00:01:48 - 00:01:49 Unknown Speaker:
+
+He's not answering, Sachin.
+
+00:01:51 - 00:01:55 Unknown Speaker:
+
+I have messaged him, but I think he got on, like, he's online now.
+
+00:01:57 - 00:01:57 Unknown Speaker:
+
+Not sure.
+
+00:02:01 - 00:02:13 Unknown Speaker:
+
+Okay, he's in call with his manager. Let him join then, then I'll, I'll let that information float it to all of you. Uh, Varga— so you would be continuing with both those user stories, right?
+
+00:02:14 - 00:02:37 Unknown Speaker:
+
+Uh, yes, Sachin. Okay. I'm, I'm aligned with that, but again, on Quantro, ask him: this is end of September, what exactly we are looking for? We need to close it out before this PI, because, again, you know, end of this PI we need to showcase that accomplishment, uh, to the leadership, right? Mm-hm.
+
+00:02:38 - 00:03:07 Unknown Speaker:
+
+So at least if this gets finalized from his side, we would add that. Even if it would be a POC, but we would still add those to that accomplishment phase. I hope you were there in that last PI ceremony, right, where we used to show those accomplishments at the end of the PI. So I need this Quantro because I think I— we are left with one or two sprint now, so please, if required, set up a call with him tomorrow, and then let's close it out. Or check if he's available today itself.
+
+00:03:08 - 00:03:28 Unknown Speaker:
+
+When— when just call out. I'll be away between 1:30 PM to 5:00 PM due to a training. Uh, I'll be reachable over the phone, but I'll be in the training meeting, so, you know, I would try to, you know, revert back to you over the Slacks and all. But I won't be able to connect over the Slack or a meeting.
+
+00:03:29 - 00:03:46 Unknown Speaker:
+
+So just FYI to all of you, okay? Uh, another thing is that— Yeah, go ahead. Just one thing, Sachin, on this: so let's say we deploy the changes, we'll not be able to test it. So post will be back with that PRC group and everything. We'll test it, right?
+
+00:03:46 - 00:04:04 Unknown Speaker:
+
+And I'm creating a branch to revert those changes, as you mentioned, if, like, the resource API not working. So probably that would not affect the— Data migration. Mm-hm. Let me check the data migration, uh, quickly, whether they have approved that RFC or not. Yeah.
+
+00:04:04 - 00:04:11 Unknown Speaker:
+
+Because the UI will be impacted. The user will not be able to log in into E3 if the resource API data is not there.
+
+00:04:13 - 00:04:15 Unknown Speaker:
+
+They will migration. Today is 29th, right?
+
+00:04:17 - 00:04:33 Unknown Speaker:
+
+Again, they did the— yeah, they I think have approved it. Yeah, it has been approved. So data migration would be done at around 1:00. And, uh, maybe I'll give you a point of contact. We'll create a group with you, right?
+
+00:04:33 - 00:04:38 Unknown Speaker:
+
+Just chase that lady to get the mig— data get migrated from E1 to A3.
+
+00:04:40 - 00:04:50 Unknown Speaker:
+
+Okay, because I'll be away starting 1:30, right, so I don't know when she would start those migrations. So I'll, I'll, I'll loop you over that group where I'm already being there.
+
+00:04:52 - 00:05:05 Unknown Speaker:
+
+Okay. And how we can test it, like, any user has raised the PRC group for that? They need to report. Yes, yes. Like, Rachna has that access, right, and then says they do have access, right?
+
+00:05:06 - 00:05:13 Unknown Speaker:
+
+So we should be able to validate that part. Fine. Once the deployment, I'll just check with Rachna too. Just log in and check it. Yeah.
+
+00:05:14 - 00:05:25 Unknown Speaker:
+
+System admin, no one is having access. That is something I'll, I'll raise it. Okay, the PRC group is not yet created, and anyhow that is not right now important until unless people start using it, right? So. Okay.
+
+00:05:25 - 00:05:37 Unknown Speaker:
+
+And one more thing, uh, call out to Nirmal and Prithvi. Nirmal, can you share me your screen? The DAG which has been scheduled, can you show me the instance, whether it's running or not in the production environment?
+
+00:05:40 - 00:05:53 Unknown Speaker:
+
+Yes, I know it hasn't been scheduled, but can you just show me the DAG which Prithvi has created? Whether that is running or not, the one that Ansi has created, whether that is running or not, and then the one that you have created, even that ran or not.
+
+00:05:58 - 00:05:59 Unknown Speaker:
+
+Yeah, sure.
+
+00:06:00 - 00:06:03 Unknown Speaker:
+
+Share your screen. I would like to see the instances.
+
+00:06:05 - 00:06:21 Unknown Speaker:
+
+Okay. Now, regarding one call out that I was mentioning, I need all of you. So first of all, the link that has been shared by Sindhuja. Have you all updated your leaves for, you know, till December, which— which was the ask from our side?
+
+00:06:26 - 00:06:32 Unknown Speaker:
+
+Yes, Sachin. Yes, Sachin. Ansi, Samir, what about rest?
+
+00:06:33 - 00:06:40 Unknown Speaker:
+
+Yes, Sachin, if I have updated the calendar. Sachin, the dates can be tentative, right? That's fine, right? Yeah, yeah, yeah. Dates can be tentative.
+
+00:06:40 - 00:06:57 Unknown Speaker:
+
+But have you updated that Excel sheet along with that calendar? There are a couple of places that you need to update it. I'll do it today, Sachin. Uh, Nirmal? Nirmal, Kundan, Varga, VFPO?
+
+00:06:57 - 00:07:05 Unknown Speaker:
+
+I have updated. I have updated. I will cross-check once again, Sachin. So couple of places I'll be doubtful. Yeah, couple of places.
+
+00:07:05 - 00:07:21 Unknown Speaker:
+
+One is that Excel sheet, and one is that calendar. And, and look, this is a ask from Rajendra, so please be serious on that. Even I haven't updated properly, so even I have to do it. But close this activity. Uh, post this DSU call, it would be better.
+
+00:07:21 - 00:07:40 Unknown Speaker:
+
+Otherwise, again, once you guys get busy with your work, you might forget it. So please try to close that one. That is number one. Second, if there are any training which is pending at your side, right? Because there are few trainings which I have heard from my teammates also that they have added few more trainings in this weekend.
+
+00:07:41 - 00:07:45 Unknown Speaker:
+
+Okay? So please make sure we are closing those trainings by this Friday.
+
+00:07:50 - 00:08:05 Unknown Speaker:
+
+Got it? Or no, is there anyone having a problem? I mean, uh, I'm talking about this trainings, this MX trainings. Even I did not check my point. So let it open.
+
+00:08:12 - 00:08:24 Unknown Speaker:
+
+Because there might be some challenges you might face. Like, you know, some of the trainings might not open also. So look, these four trainings were not there, and these were being added to me.
+
+00:08:26 - 00:08:47 Unknown Speaker:
+
+And look, this caring country, it is not even opening. One of my, you know, DRC is mentioning that, like, it's not this weekend. So please make sure that you might face any challenges, so complete these trainings also. Just check your part, and make sure you complete these trainings also.
+
+00:08:49 - 00:08:52 Unknown Speaker:
+
+Let me open this one. Let's see who else is mentioning.
+
+00:08:59 - 00:09:13 Unknown Speaker:
+
+Sachin, I have one issue here. Like, I'm trying to open this, uh, EGUGFAUST. This one, like, where we see the learnings, right? So there, like, I'm getting authorization error.
+
+00:09:14 - 00:09:23 Unknown Speaker:
+
+Authorization required. Or not one error. Whatever problem that you are facing, you need to raise an incident, Samir.
+
+00:09:24 - 00:09:25 Unknown Speaker:
+
+Okay.
+
+00:09:32 - 00:09:33 Unknown Speaker:
+
+It's opening for me.
+
+00:09:38 - 00:09:38 Unknown Speaker:
+
+Okay.
+
+00:09:54 - 00:10:14 Unknown Speaker:
+
+I don't know how many trainings they used to add from the backend, and, uh, it gets difficult to track each of it. Okay, so please make sure that you guys are closing this holiday activity, and then the next is this training one. Okay?
+
+00:10:16 - 00:10:30 Unknown Speaker:
+
+And reach out to Sindhuja in case you have any query on this. Okay. Now, Varga, we are done. Do you have any questions? I'm still with Sachin as of now, yeah.
+
+00:10:31 - 00:10:33 Unknown Speaker:
+
+Okay. Then you can drop off, man. Thank you.
+
+00:10:34 - 00:10:42 Unknown Speaker:
+
+Thank you. Uh, yeah. Uh, IPA, all the CDE has been moved to the production environment. Did we receive any new one?
+
+00:10:46 - 00:10:53 Unknown Speaker:
+
+Uh, no, Sachin. Uh, so all are up to date to we have went to the production, yeah. Okay. Nothing pending, right? So yeah, yeah.
+
+00:10:53 - 00:11:02 Unknown Speaker:
+
+So what is the part that you need to start working on this one? Uh, where is Samir? Samir, Samir.
+
+00:11:08 - 00:11:33 Unknown Speaker:
+
+Uh, Ansi, remove that one, right? Where it went?
+
+00:11:38 - 00:11:45 Unknown Speaker:
+
+That user story, right? Yeah, yeah. Yeah. This one. So EPA, you have to work on this one.
+
+00:11:46 - 00:11:59 Unknown Speaker:
+
+What is the requirement? Let me explain it to you. Now, there would be new request onboarding from that self-serve UI page. Okay? And it would be a threshold check type.
+
+00:12:00 - 00:12:11 Unknown Speaker:
+
+Hmm. Okay? So, uh, you need to create a DAG. And again, make, uh, let me know in case you are not understanding what exactly the ask is. Hmm.
+
+00:12:12 - 00:12:14 Unknown Speaker:
+
+And it's. ..
+
+00:12:28 - 00:12:34 Unknown Speaker:
+
+Okay. Uh, the data would be floated to DQ artifact stable. Okay?
+
+00:12:39 - 00:12:43 Unknown Speaker:
+
+So you have to create a DAG which would run every day.
+
+00:12:45 - 00:13:05 Unknown Speaker:
+
+Okay? First of all. And then read only threshold data. Only threshold. Because we might be sending, uh, this stagnant check, timeliness check, and all, right?
+
+00:13:05 - 00:13:18 Unknown Speaker:
+
+But your DAG is responsible only to read those threshold data. Okay? Okay. Yeah. Now, with these threshold data, first of all, you have to execute these queries.
+
+00:13:18 - 00:13:35 Unknown Speaker:
+
+Uh, Prithvi, confirm if you are already executing it in the complex check. Yes, complex check we are executing. Samir and me had made changes. We are executing the query. Even for the threshold check type, right?
+
+00:13:35 - 00:13:37 Unknown Speaker:
+
+Threshold, no. We are not doing it for threshold.
+
+00:13:39 - 00:13:49 Unknown Speaker:
+
+No, but if it is a complex, right? Threshold would come as complex, right? Then I think a large— Sachin, threshold itself, we are not considering only, right, for our use case.
+
+00:13:51 - 00:14:05 Unknown Speaker:
+
+No, we are not considering for the check type. But the current implementation expectation was, as it was coming as complex, right, we should execute and pass on the results to the user, right? That is what I have explained it to you last time.
+
+00:14:07 - 00:14:14 Unknown Speaker:
+
+Those threshold check type, whenever it would come as complex, right, we had to execute and then send the result.
+
+00:14:15 - 00:14:21 Unknown Speaker:
+
+Check your part. If it is not being done, then you should have done it till the time this implementation is being completed.
+
+00:14:24 - 00:14:36 Unknown Speaker:
+
+Okay. So you want me to execute even for threshold also, right? Yeah. Means that would come as complex, right? So whatever query comes as complex, you just need to execute and then share the result, right?
+
+00:14:37 - 00:14:37 Unknown Speaker:
+
+Hmm.
+
+00:14:39 - 00:14:55 Unknown Speaker:
+
+So cross-check if it is not being done, do it. Okay? Okay. And now, IPA, what you need to do, uh, you know, we would bypass that condition once this implementation is done. So this is your, uh, understood, right?
+
+00:14:55 - 00:15:10 Unknown Speaker:
+
+Whatever data get inserted to this DQ artifact, suppose you receive one record, or two record, or even ten record, right? Of check type threshold, your DAG should pick up all those threshold data, right? And then onboard it to the Quantro.
+
+00:15:14 - 00:15:39 Unknown Speaker:
+
+Okay. Onboarding doesn't mean inserting data. Understand this properly. Onboarding doesn't mean the data insertion to the DQ Quantro table. Onboarding means you have to get those query based on the description, check whether the aggregation is of some average, mean, median, or whatever it is, right?
+
+00:15:40 - 00:15:44 Unknown Speaker:
+
+Based on that, you have to run an aggregation of it.
+
+00:15:45 - 00:15:46 Unknown Speaker:
+
+Hmm.
+
+00:15:48 - 00:16:02 Unknown Speaker:
+
+And then with that aggregation, next step is save the, uh, rule. Okay? In Quantro artifact stable or Quantro repository table.
+
+00:16:04 - 00:16:12 Unknown Speaker:
+
+Uh, no, man. Let's not do that. I would create one reference table. Okay, till the time you can do it. Quantro repository table.
+
+00:16:13 - 00:16:23 Unknown Speaker:
+
+That would need lots of changes. Okay? Uh, and then you have to finally create a report and send back to the user.
+
+00:16:28 - 00:16:31 Unknown Speaker:
+
+To user, right? This is one.
+
+00:16:33 - 00:16:40 Unknown Speaker:
+
+And next, update the DQ artifacts, right?
+
+00:16:42 - 00:16:43 Unknown Speaker:
+
+With query result.
+
+00:16:45 - 00:16:50 Unknown Speaker:
+
+Like it is pass, fail, execution date, those four filled.
+
+00:16:52 - 00:16:52 Unknown Speaker:
+
+Okay.
+
+00:16:53 - 00:17:05 Unknown Speaker:
+
+Okay? Any questions on this? Yeah, yeah. I'm just recalling, Sachin. So to understand this one, uh, is further from as, uh, this is enhancement activity from the self-serve portal.
+
+00:17:05 - 00:17:21 Unknown Speaker:
+
+Uh, if it is any, uh, new threshold check will come, right? So that part, uh, we are once data is landed into the DQ artifact table, so from there we are picking and we are onboarding into the Quantro. So in between, these are the steps will come, right? So. Correct.
+
+00:17:21 - 00:17:36 Unknown Speaker:
+
+Correct. And even don't create a new DAG. Don't create a new DAG. Just, uh, okay, that would go via complete framework, right? That Prithvi has built it.
+
+00:17:37 - 00:17:45 Unknown Speaker:
+
+I'm just considering if we can modify over there for Quantro. It would be a single place to handle all the check types over there itself.
+
+00:17:48 - 00:18:01 Unknown Speaker:
+
+Right? Why unnecessarily? But, uh, uh, give me a second. Let me think about it.
+
+00:18:07 - 00:18:11 Unknown Speaker:
+
+Uh, how flexible your framework is, Prithvi.
+
+00:18:13 - 00:18:30 Unknown Speaker:
+
+How loosely coupled it is. Like, you know, uh, suppose this, uh, different check type which is, uh, you know, onboarding new roles, right? Hmm. How, how loosely coupled it that we can integrate this threshold also over there? Yeah.
+
+00:18:30 - 00:18:42 Unknown Speaker:
+
+We can add that threshold check also into the list. Uh, how are we going to handle it? We need to have a separate task. Up task in sense, uh, there is a SQL generation task is there, right? There we will have a separate function for that.
+
+00:18:44 - 00:18:51 Unknown Speaker:
+
+Yeah, correct. Like, uh, these aggregation and all those logic for Quantro, it would run with a different task, right? Yeah, yeah.
+
+00:18:54 - 00:19:08 Unknown Speaker:
+
+And, and the rest of the check would bypass that Quantro part, correct? And then sending that report, uh, would get integrated with these response, and then, uh, it would, uh, anyhow going to update the DQ artifacts with that result, correct?
+
+00:19:11 - 00:19:20 Unknown Speaker:
+
+Yeah. Then IPA, then IPA modify the code which Prithvi has, uh, the framework that he has built. Let's not create a separate DAG for that.
+
+00:19:22 - 00:19:35 Unknown Speaker:
+
+Hmm. Okay? You just need to modify the flow for the Quantro one. Okay? And this activity, aggregation part, just understand from, uh, Samir, how to do those data aggregation.
+
+00:19:36 - 00:19:43 Unknown Speaker:
+
+He has, uh, all. Again, that aggregation would run via Quantro, right?
+
+00:19:44 - 00:19:48 Unknown Speaker:
+
+And aggregation, it has its own DAG, right, Samir?
+
+00:19:50 - 00:20:08 Unknown Speaker:
+
+Sachin, uh, aggregation in the sense like for each DQ ID? Like, like, look, for every, uh, how you onboard a Quantro role to the Quantro, right? Like, if we are receiving ten new roles, right now you, even you are doing, right? You are onboarding those new complex check type, right? Yes.
+
+00:20:09 - 00:20:28 Unknown Speaker:
+
+Yes. So once that role gets added to that Quantro, right, that gets onboarded with those aggregation functionality, right? Which is running via that Quantro framework. Yeah. For Quantro framework, we will pass, like, if it is a monthly load frequency, we need to run for last one year, and we need to gather that, uh, aggregate that data, and we need to pass.
+
+00:20:29 - 00:20:29 Unknown Speaker:
+
+Yes. Yes. Yes.
+
+00:20:32 - 00:20:36 Unknown Speaker:
+
+So, uh, Kundan, एक DAG से दूसरा DAG कॉल कर सकते हैं क्या?
+
+00:20:39 - 00:21:04 Unknown Speaker:
+
+हाँ, हो जाता है कॉल से। हो जाता है ना? But here is the problem, वो framework, uh, that SQL aggregation framework would have a, वो बहुत execution में टाइम लग जाएगा फिर। Because it has to process the other check type, and then Quantro would take its own time, because there are lots of ML and all those written। Uh, IPA create a separate DAG for it.
+
+00:21:05 - 00:21:28 Unknown Speaker:
+
+Hmm. Okay. Create a separate DAG for it. Don't, uh, incorporate into that framework which Prithvi has built. So that once both would run parallely, right, uh, we would be getting that result within half an hour for all that check, and then the one that Ansi built, that would pull the data and then send it back to the ACE, then create a separate DAG for it.
+
+00:21:28 - 00:21:29 Unknown Speaker:
+
+Okay?
+
+00:21:30 - 00:21:58 Unknown Speaker:
+
+And, uh, timeline is this sprint only, because this is not a bigger activity, uh, if you ask me. Uh, the reason being, you don't need to make any code changes in the Quantro base. You just need to read that, uh, new records, uh, for the Quantro, right? And then that aggregation function, you just need to call, uh, either call that same DAG which Samir has built, as Kundan mentioned, right? We would be able to call a DAG from another DAG.
+
+00:21:58 - 00:22:08 Unknown Speaker:
+
+Either call that. And if it is consuming time, if you are not able to call it, then you just need to copy that method and paste in your DAG.
+
+00:22:09 - 00:22:21 Unknown Speaker:
+
+Okay. And then, uh, generating that email template report, it is already being done by Prithvi, so that would be a copy-paste task. And then updating to that, uh, DQ artifacts table.
+
+00:22:22 - 00:22:42 Unknown Speaker:
+
+It's, it doesn't seems to be a very big effort, so please, at least the expectation is the build should be ready in this sprint, and then some of the production ad hoc request would come to you, right? Like, uh, rule modification and all. Those would continue. And, uh, but, uh, five story point of 40 hours, it is, it is more than enough to complete this task.
+
+00:22:44 - 00:22:55 Unknown Speaker:
+
+Okay? Okay. Any questions? And, uh, for DQ artifactory, Sachin, uh, when the role will come from the ESI, right? So once it is landed into the DQ artifact table, right?
+
+00:22:55 - 00:23:00 Unknown Speaker:
+
+Uh. Understood. So from there we need to update the today date only? Something filter criteria we need to apply, right? No.
+
+00:23:01 - 00:23:12 Unknown Speaker:
+
+For threshold check. No. What, what I, what I conveyed you, suppose user has onboarded for, uh, uh. Threshold. Missing value.
+
+00:23:12 - 00:23:19 Unknown Speaker:
+
+Missing value. Missing. Suppose missing value to threshold. Okay? To valid value.
+
+00:23:21 - 00:23:32 Unknown Speaker:
+
+Hmm. Right? This valid value and missing value is being taken care by Prithvi's automation. Your DAG needs to pick up these two threshold. Two new role.
+
+00:23:33 - 00:23:38 Unknown Speaker:
+
+Okay? Okay. And then with. But with today date, right? Uh, with current date, we need to apply the filter.
+
+00:23:38 - 00:23:41 Unknown Speaker:
+
+No, no, no. It's, uh, current date minus one.
+
+00:23:43 - 00:23:50 Unknown Speaker:
+
+Current date minus one. Aha, okay. Because we are running at 5:30 AM. So it would be current date minus one. Hmm.
+
+00:23:51 - 00:24:07 Unknown Speaker:
+
+Okay? Once you pick those roles, you just need to then run those threshold data, onboard to the Quantro, aggregate, save the result to the repository, and then update back to the DQ artifacts. Suppose that Ansi job would pick up those results and send back to the ACE TV.
+
+00:24:10 - 00:24:22 Unknown Speaker:
+
+Okay. Got it, right? Or, yeah. This DAG, uh, can we implement in the Quantro repository that we have separately maintained, right? So we can create the DAG over there, or we can take in the.
+
+00:24:22 - 00:24:26 Unknown Speaker:
+
+Yes. No, no, no. No, no. That is absolutely fine. You should use that one also.
+
+00:24:26 - 00:24:33 Unknown Speaker:
+
+Use, uh, Quantro repo. Yeah, which Samir is working on that. Yes. Yes. Okay.
+
+00:24:33 - 00:24:35 Unknown Speaker:
+
+Okay? Any further doubts?
+
+00:24:36 - 00:24:41 Unknown Speaker:
+
+Uh, no, Sachin. So far clear. Yeah. But if required anything, maybe I will come with you separately. Yeah, but.
+
+00:24:41 - 00:25:08 Unknown Speaker:
+
+But ETA, but ETA end of the sprint. You all need to understand this is the very last month, uh, when the please date would start starting November. So, uh, in case you are having any block or anything, just let me know immediately. But you should not be sitting and then, you know, uh, again asking for a, a movement of this, uh, uh, this user story again to the next sprint. Okay?
+
+00:25:09 - 00:25:19 Unknown Speaker:
+
+So five story pointer for this, and couple of story pointer for any production support activity. In case any CD rules comes, someone needs to handle it. Okay? Okay. Sure.
+
+00:25:20 - 00:25:23 Unknown Speaker:
+
+Uh, are you good? Yeah, yeah. Yes. Yeah, yeah. Yes.
+
+00:25:23 - 00:25:29 Unknown Speaker:
+
+Okay. And that data migration is being done, Kundan, right? You have already shared that details over that email. Correct?
+
+00:25:31 - 00:25:39 Unknown Speaker:
+
+We are correct. There are 14 missing, uh. Yeah, that is, that is, we will take a confirmation from Rachna. Okay. Then IPA, you can feel free to drop off.
+
+00:25:39 - 00:25:49 Unknown Speaker:
+
+Thank you. Yeah. Samir, for you, uh, that, uh, CD check types we have changed, right? So, uh, that one we need to update to the, uh, even ETE environment, right? All.
+
+00:25:50 - 00:25:53 Unknown Speaker:
+
+Right. Right. Right. Everywhere. Even in the DQ repository.
+
+00:25:53 - 00:26:06 Unknown Speaker:
+
+So we will complete that, uh, activity as well. Uh, yeah. Sure, sure. Yesterday I just created this one into the temp table only, just for validation purpose. I will, once the results are matched, then I will plan to move to the actual table.
+
+00:26:06 - 00:26:16 Unknown Speaker:
+
+Update those things. And, and Kundan, those, uh, DQ repository is now in sync with that DQ artifacts check type and all. Check type distribution list and all those are synced.
+
+00:26:19 - 00:26:28 Unknown Speaker:
+
+Not DQ repository. IPA is working on that part. No, then, then please, uh, you both coordinate and make sure that even DQ repository is in now sync with DQ artifacts.
+
+00:26:30 - 00:26:44 Unknown Speaker:
+
+Close that activity today if you feel like we, you still need effort. Close that one, because going forward, I don't want you to hear that repository and artifacts are not in sync. This should not be a repeated activity. Please make sure to close it today only. IPA.
+
+00:26:44 - 00:26:47 Unknown Speaker:
+
+And then you can pick up this, uh, Quantro one.
+
+00:26:48 - 00:26:52 Unknown Speaker:
+
+Hmm. Yeah, sure. Okay. You can feel free to drop off, IPA. Thank you.
+
+00:26:52 - 00:27:11 Unknown Speaker:
+
+Samir, for your case, I reduce that burden of this initiative which I have assigned it to IPA. Okay? So you make sure that, uh, you are closing all those onboarding of the new, uh, those new, uh, Quantro roles in this sprint. No, no further extension on that. Yeah.
+
+00:27:11 - 00:27:21 Unknown Speaker:
+
+Okay. So whatever the requirement, uh, they have provided, right? Like, until then, like, if there is no new suggestions, right? So I'm fine, Sachin. No, so, so again, again I'm asking, right?
+
+00:27:22 - 00:27:37 Unknown Speaker:
+
+When there would be a story being created, ask Sehaj or Rachna to document their requirement. I'll, I'll tell that. Okay? Because whatever they are documenting, we need to close this in this sprint. And then, uh, look, understand there would be holidays coming in, right?
+
+00:27:37 - 00:27:50 Unknown Speaker:
+
+Uh, during this, this Friday is holiday for all of us. Yes. Uh, Durga Puja is there. You might be getting one or two holidays. Then Diwali is there, and then again, hmm, for the, uh, this October, November month, right?
+
+00:27:50 - 00:28:01 Unknown Speaker:
+
+These are full of festivals. Yeah. So no further extension. So please make sure you close this Quantro onboarding till A3 environment, not just the build. Yeah, sure, Sachin.
+
+00:28:02 - 00:28:23 Unknown Speaker:
+
+And just help out IPA on that aggregation part, if he is not aware with that. Okay? But make sure this Quantro needs to be closed in this, uh, you know, starting next week only. I don't want to, you know, drag it till the last of the sprint. Starting next so that, uh, we can close the UAT and onboard it to the production environment.
+
+00:28:25 - 00:28:37 Unknown Speaker:
+
+Okay. And then on that email that you have sent to Rachna, uh, get a sign-off, and then that story would be only for E2 deployment and the E3 deployment. Okay. Okay? So those two stories would be with you.
+
+00:28:38 - 00:28:56 Unknown Speaker:
+
+And maybe one story which might get assigned, that is a decommission of those, uh. Quantro, sorry. No, no, RAZI tables on the cornerstone, but let me check with JSON today on that. Okay. Decommission is just a submission of request, so it is not a major activity.
+
+00:28:56 - 00:29:02 Unknown Speaker:
+
+Okay? Okay. Yeah. And in case I find that you are busy, then I'll, I'll take that activity. Any questions?
+
+00:29:03 - 00:29:07 Unknown Speaker:
+
+Any questions? No, no, Sachin. No. Okay. Then you can feel free to drop off.
+
+00:29:07 - 00:29:23 Unknown Speaker:
+
+Samir, thank you. Ansi, uh, again for you, it would be that bulk update which you are working. I'll be pulling Nirmal to a reporting story, so you need to work on that independently. Do you have any challenges on that?
+
+00:29:25 - 00:29:51 Unknown Speaker:
+
+Uh, so, uh, Sachin, uh, I'm taking help from Nirmal. Uh, yesterday, uh, the feature branch I have, uh, deployed for the, uh, the first BPMN. So today I'm planning to add that, uh, transformation policy in E1, and, uh, try to test it out. So those fields, I'm, uh, not sure where exactly to take. Is it from the table, or, uh, the.
+
+00:29:51 - 00:29:57 Unknown Speaker:
+
+Table, table, table. Table, table, table. Okay. Okay? Uh, so, so, so.
+
+00:29:57 - 00:30:03 Unknown Speaker:
+
+No, I guess. Sachin, uh, for the fields, we need to give it the API parameters, not the table one.
+
+00:30:04 - 00:30:33 Unknown Speaker:
+
+API का पैरामीटर मैं अब रीड करूँ ना, एक बंडल बना करके। प्रॉब्लम क्या है? जब BPMN कॉल होगा, uh, create rule या फिर modify rule, वो तो API का पैरामीटर ही एक्सपेक्ट करेगा ना? टेबल का नेम अलग है, कॉलम नेम्स। Okay, then provide that one, but please make sure you are providing such a way that that Excel sheet should be readable to the end user. हम्म, हम्म, हम्म। अब टेबल नेम को आप table_nm कर दोगे, राइट?
+
+00:30:33 - 00:30:57 Unknown Speaker:
+
+तो यूज़र नहीं पता कर पाएगा। हाँ, हाँ। तो transformation policy को देख के करना पड़ेगा। Validate, validate request bundle जो है ना हमारे उसमें, वहाँ पे validation थोड़ा चेंज करो। राइट? हम्म। Apply a logic as, uh, और condition लगा करके डालो ना वहाँ पे validate bundle में। नहीं, थोड़ा सा human-readable, I'll say to them say.
+
+00:30:57 - 00:31:17 Unknown Speaker:
+
+Yeah, because, because if you are providing, like, you know, suppose rule description, uh, if you don't provide that rule description over that Excel sheet, right? And you just provide r-u-l-e underscore d-s. User might not know, right, that is a rule description. हम्म, हम्म, हम्म। But Excel sheet should be user-friendly. Okay?
+
+00:31:18 - 00:31:32 Unknown Speaker:
+
+And whatever changes that you need over that, you know, implementation, right, that should be done, uh, that should be handled through the programmatical, uh, uh, path. I'm not going to provide those challenges to the user.
+
+00:31:35 - 00:31:44 Unknown Speaker:
+
+हाँ, हाँ, understood. Okay? So, uh, just connect with Nirmal, and in case you face challenges, do let me know, Ansi. Okay? That should not be a problem.
+
+00:31:44 - 00:31:58 Unknown Speaker:
+
+It's, it's a 90% copy-paste code. It's just that the execution that you have to complete. Okay? So same, uh, I'm not going to assign you much more task apart from this. So this would continue along with three story pointer with the production support.
+
+00:31:58 - 00:32:04 Unknown Speaker:
+
+So in case, you know, here and there if some other request comes in, right, uh, we would be assigning that to you.
+
+00:32:06 - 00:32:14 Unknown Speaker:
+
+Hmm, okay. Okay? And now tell me, did we receive any failure notification with that implementation which we have moved to the production environment?
+
+00:32:16 - 00:32:30 Unknown Speaker:
+
+Uh, yeah, I did see one, uh, DAG, but, uh, that DAG, I need to check. It is a rule modification monitor, I could see, but, uh. Can you share your screen? I would like to see the report once. Okay.
+
+00:32:32 - 00:32:38 Unknown Speaker:
+
+And I need a bandwidth. Maybe if I don't get anything, then, uh, that I'll assign to Prithvi then.
+
+00:32:44 - 00:32:47 Unknown Speaker:
+
+Where is it?
+
+00:32:50 - 00:32:51 Unknown Speaker:
+
+This is not started.
+
+00:32:53 - 00:32:57 Unknown Speaker:
+
+Did you check this, uh, DAG? Okay, but, uh, Sachin, just.
+
+00:33:00 - 00:33:02 Unknown Speaker:
+
+So is it coming every couple of hours?
+
+00:33:04 - 00:33:15 Unknown Speaker:
+
+Yeah, yeah. It will, uh, run every two hours. Uh, so yesterday only one alert I saw. Rest all, uh, there were no failures, so it didn't generate any report.
+
+00:33:17 - 00:33:30 Unknown Speaker:
+
+Okay. Yeah, that is what the expectation is. Like, you know, uh, only for the failure scenario, or if the DAG didn't start, then only we would be getting those alerts. Hmm. Not for the success one.
+
+00:33:33 - 00:33:36 Unknown Speaker:
+
+Okay. So did you check this one why it didn't start?
+
+00:33:39 - 00:33:42 Unknown Speaker:
+
+Uh, this one I didn't check. There was one more I saw.
+
+00:33:45 - 00:33:49 Unknown Speaker:
+
+No, but if it didn't start, right, it was around 11:31 PM, right?
+
+00:33:51 - 00:33:58 Unknown Speaker:
+
+Yeah. This has failed, right? So why did it fail? Did you check this one? Yeah, this one I checked in E3 today.
+
+00:33:58 - 00:34:14 Unknown Speaker:
+
+So that, uh, I couldn't see any, um, like, uh, the DAG has not run, uh, it was showing like that. Then how could this comes into this failed scenario then? Is it from the composer?
+
+00:34:16 - 00:34:18 Unknown Speaker:
+
+Uh, this is the DAG.
+
+00:34:19 - 00:34:26 Unknown Speaker:
+
+Oh. Rule modification monitor. This is already success.
+
+00:34:29 - 00:34:33 Unknown Speaker:
+
+So is it called success? No, go to your report. Go to your report.
+
+00:34:35 - 00:34:44 Unknown Speaker:
+
+This, this has came from, from audit table. Audit log, yeah. Exactly. Can you go to the audit log? Can you go to the audit log?
+
+00:34:51 - 00:34:56 Unknown Speaker:
+
+And this rule modification, I think it was a manual trigger that we used to do it, right?
+
+00:34:59 - 00:35:01 Unknown Speaker:
+
+Uh, I think so. Uh, sure.
+
+00:35:02 - 00:35:17 Unknown Speaker:
+
+Because I don't think this is a. Yeah, I, I feel like this DAG is not something that, that is used for the business purpose, right? Yes, yes. Then, then delete that DAG from that, uh, DAG registry then. No, no, no.
+
+00:35:18 - 00:35:18 Unknown Speaker:
+
+This has been scheduled.
+
+00:35:23 - 00:35:32 Unknown Speaker:
+
+Rule modification monitor, who did create it, uh, DAG with such name? Uh, there is no SQL file here, I can see.
+
+00:35:34 - 00:35:39 Unknown Speaker:
+
+Is it being, uh, pulled, IPA, to the call? Let me ask IPA to rejoin.
+
+00:35:44 - 00:35:53 Unknown Speaker:
+
+ఏముంది అది? గోల్ డిజైన్ చేస్తున్నావా? This is one validation I need from you, Ansi. Okay? Uh, please cross-check, uh, the DAG, right?
+
+00:35:54 - 00:36:03 Unknown Speaker:
+
+Which are not required to be monitored. Let's remove those, uh, you know, uh, details from that, uh, DAG registry table. Or mark it as inactive.
+
+00:36:05 - 00:36:24 Unknown Speaker:
+
+Okay? And, uh, your, uh, that, uh, when you are reading those DAG. మేము మేము లింక్ చేస్తాం, అంతే. Cross-check, uh, one of the, uh, condition in that SQL that it should pick up only those DAG, uh, DAG ID which are active.
+
+00:36:25 - 00:36:29 Unknown Speaker:
+
+Hmm. Okay. Can you check the audit log table once?
+
+00:36:31 - 00:36:34 Unknown Speaker:
+
+Where it has been marked as failed? Apply condition status equals to failed.
+
+00:36:37 - 00:36:38 Unknown Speaker:
+
+Is IPA there?
+
+00:36:51 - 00:37:00 Unknown Speaker:
+
+Okay. Till the time you are cross-checking, uh, Prithvi, your RAZI one I have seen. So no further action required from your side. So I feel nothing is there in your bucket, right?
+
+00:37:04 - 00:37:23 Unknown Speaker:
+
+Yes, Sachin, yeah. Right now, uh, even that, uh, eight-dimensional one, I shared the pull request. Uh, so if you can review it and approve it now, then that will also get done. And E2 also configuration is everything is done. Uh, once this setup is done for, uh, E1, E2 also I'll test it.
+
+00:37:24 - 00:37:26 Unknown Speaker:
+
+Yeah, yeah. That is something I've seen. So that is okay.
+
+00:37:29 - 00:37:46 Unknown Speaker:
+
+So, so if it is failing, uh, Ansi, why did we receive a notification only once? Is it failed at the same time? And if it has failed at the same time, is this a repeated entry that has been made? No. If you see this 28th, right, there are a couple of entries.
+
+00:37:47 - 00:37:48 Unknown Speaker:
+
+Okay?
+
+00:37:49 - 00:37:54 Unknown Speaker:
+
+So why did we have this couple of entries? It should have only one entry over here, right?
+
+00:37:56 - 00:37:59 Unknown Speaker:
+
+All the details are same, correct?
+
+00:38:05 - 00:38:09 Unknown Speaker:
+
+Look, line number one and line number two, right, both are identical.
+
+00:38:12 - 00:38:15 Unknown Speaker:
+
+So why there is a duplicate entry over here?
+
+00:38:21 - 00:38:24 Unknown Speaker:
+
+Got my point, right? You are on mute, Ansi, if you're speaking.
+
+00:38:27 - 00:38:45 Unknown Speaker:
+
+Uh, yes, Sachin. Uh, yeah. This is you need to take a look into it, right? There should not be, uh, duplicate entry number one. And cross-check with IPA if this is something, uh, rule modi- modification monitor.
+
+00:38:45 - 00:39:04 Unknown Speaker:
+
+It's basically, you know, these are the one that he is running from his, uh, side. If SQL file is not there. And if that is the case, then we can just, uh, remove this from the DAG registry. We should not be monitoring this, uh, DAG. And why it has been scheduled, like, uh, that is again a question, uh, to IPA.
+
+00:39:06 - 00:39:08 Unknown Speaker:
+
+Why did we schedule this DAG?
+
+00:39:09 - 00:39:13 Unknown Speaker:
+
+Hmm. Yeah, I will once check with him.
+
+00:39:15 - 00:39:29 Unknown Speaker:
+
+So just cross-check with him. Any, any other, uh, uh, DAG which has failed? Uh, no. Apart from that, that RPA one, uh, which I showed, right, that one has not started. It was showing that, uh, I will check.
+
+00:39:29 - 00:39:55 Unknown Speaker:
+
+Can you, uh, just, uh, cross-check? And, uh, uh, okay, I, I received this one, right? So I'll, I'll be sending this communication to all of you, uh, to start, uh, monitoring these. So, Ansi, instead of DAG monitoring alert, let's change it.
+
+00:39:58 - 00:40:03 Unknown Speaker:
+
+That's fine, leave it. DAG monitoring alerts is also fine. Okay?
+
+00:40:05 - 00:40:17 Unknown Speaker:
+
+Yeah, I will, uh, have a look into this, Sachin. Yeah, so, so, yeah. So now again, the expectation, if it has failed at 11:30 PM, Suman should have re-trigger it. If it has failed.
+
+00:40:18 - 00:40:33 Unknown Speaker:
+
+And, and all of you, right, if you are, uh, getting these emails, uh, please, now going forward, keep an eye. If there are failures, you need to, uh, re-run those DAGs. Okay? Anything else, Ansi, from your side?
+
+00:40:34 - 00:40:44 Unknown Speaker:
+
+Uh, no, nothing, Sachin. Okay. Thank you. Uh, you can feel free to drop off. Uh, so Prithvi, for your case, I do have a RAZI case, uh, that needs to be built.
+
+00:40:44 - 00:40:56 Unknown Speaker:
+
+Okay? Uh, but that is something I need to cross-check with Jason today, if he joins the DSU. What is required? Now, RAZI is, uh, let me share my screen to you. Okay?
+
+00:40:58 - 00:41:06 Unknown Speaker:
+
+Now, RAZI is having almost, uh, 20 tables now. 20 to 25 tables. Hmm. Okay?
+
+00:41:07 - 00:41:23 Unknown Speaker:
+
+Uh, so this is being already being done by Sameer, right? He, he has already did that. Uh, the change that would be required to that job, good. That mis-ingestion which he has built it, right? We need to create another DAG, okay?
+
+00:41:23 - 00:41:34 Unknown Speaker:
+
+Hmm. Which would run every two hours. Okay? Hmm. And in every two hours, it would check if there are any failure, right, or success.
+
+00:41:34 - 00:41:42 Unknown Speaker:
+
+They need both failure and success. Okay? You have to create a file out of it. Okay? And then send to the SFTP.
+
+00:41:44 - 00:41:44 Unknown Speaker:
+
+Okay.
+
+00:41:45 - 00:41:56 Unknown Speaker:
+
+Okay? So this is a requirement, but that is something I need to cross-check with Jason, uh, if he really wants to build it. So that is something would come to your bucket. Okay. Okay?
+
+00:41:56 - 00:42:16 Unknown Speaker:
+
+Yeah. That is number one. And second, the one that, uh, Ansi was, uh, created, right, those failure, right, those are getting, uh, saved to that, uh, DAG, uh, audit table, right? Hmm. So in case of failure, you need to read those details on a daily basis.
+
+00:42:17 - 00:42:18 Unknown Speaker:
+
+Hmm. Okay?
+
+00:42:20 - 00:42:21 Unknown Speaker:
+
+From there, send it to SFT.
+
+00:42:23 - 00:42:45 Unknown Speaker:
+
+And from SFT, uh, we would be creating a human task where you need to send those details to the AS to create those AS for a particular work basket. Okay? Okay. And those tasks could be assigned to the, uh, you know, uh, users to fix it. Like, right now, Ansi would be working on that, uh, one of the failure, right, which she was mentioning.
+
+00:42:46 - 00:43:02 Unknown Speaker:
+
+Hmm. But in order to keep a track of it, this is the plan, the trials that I have, uh, uh, discussed with Raj and all. Okay? Hmm. But, uh, this one again, I would confirm you, uh, if we don't have any task from the product team.
+
+00:43:03 - 00:43:20 Unknown Speaker:
+
+Okay. Okay, these, these both would be confirmed in the evening. Hmm. So till that time, if there are any, uh, you know, that, that part which I have highlighted, just cross-check if that complex check for threshold is running at your end or not. If it is not running, you just need to close it out.
+
+00:43:21 - 00:43:29 Unknown Speaker:
+
+Complete that part. Yeah. And, uh, if there are no further tasks from the product side, then these two tasks could come to your bucket for this sprint.
+
+00:43:31 - 00:43:36 Unknown Speaker:
+
+Okay. Okay? Yeah. Yeah. Anything else on this one?
+
+00:43:36 - 00:43:39 Unknown Speaker:
+
+Is that a big file or a small change?
+
+00:43:40 - 00:43:43 Unknown Speaker:
+
+Oh, man, this is again a huge file, right?
+
+00:43:44 - 00:43:55 Unknown Speaker:
+
+Again, without understanding. Yeah, there were only two, two methods, Sachin. One is, uh, CSV extraction. Another is export, uh, writing it inside GCS, uh, sorry, BigQuery.
+
+00:43:57 - 00:44:01 Unknown Speaker:
+
+Look, these are being generated through this, uh, Copilot, right? Yeah, yeah.
+
+00:44:02 - 00:44:07 Unknown Speaker:
+
+Remove this one. This doesn't look, uh, uh, good, right? This looks cluttered, basically.
+
+00:44:08 - 00:44:26 Unknown Speaker:
+
+Uh, yeah. Yeah, I'll, I'll remove the comments. Yeah. Look, if you want to add Java doc, right, that, uh, the way we used to add the Java doc, that, that still looks fine, right? But this, in the Python code, it looks a bit, uh, in a cluttered manner.
+
+00:44:26 - 00:44:41 Unknown Speaker:
+
+First of all, we are not writing these, uh, Java doc, which is, which needs to be addressed. Nirmal Kundan, both of you. Okay? And over here, if you are seriously writing on this one, then write it on a proper format, not like this one.
+
+00:44:43 - 00:44:47 Unknown Speaker:
+
+Yeah, yeah. Uh, I, I'll write it above the method name, uh, method name declaration.
+
+00:44:49 - 00:44:53 Unknown Speaker:
+
+So what exactly we are doing over here, if you can make me understand quickly?
+
+00:44:55 - 00:45:02 Unknown Speaker:
+
+Okay. Because there are multiple branches. Okay, let me do one thing. Let me complete this one. So the E2 deployment is done.
+
+00:45:04 - 00:45:20 Unknown Speaker:
+
+Done, right? Yeah. Okay. Uh, can you check, uh, yeah, success, yeah. And, and, and, uh, bada bada method means, uh, Prithvi, understand, man, how could we, you know, write so big method?
+
+00:45:21 - 00:45:33 Unknown Speaker:
+
+No other option, Sachin, because the work is like that. So if you see the method that, what you are presenting, that is extract value. Why did we not use a, why didn't we use a match case over here?
+
+00:45:36 - 00:45:37 Unknown Speaker:
+
+Normalization description.
+
+00:45:41 - 00:45:43 Unknown Speaker:
+
+We could have used a match case over here, right?
+
+00:45:49 - 00:45:54 Unknown Speaker:
+
+Uh, okay, instead of if, okay. Yeah, yeah. There are multiple if, right?
+
+00:45:55 - 00:46:02 Unknown Speaker:
+
+And now, this condition, can't we create a method for this?
+
+00:46:04 - 00:46:11 Unknown Speaker:
+
+It would run your value only, right? Can't you move this to a conditions, uh, uh, simple method over here?
+
+00:46:13 - 00:46:15 Unknown Speaker:
+
+This would reduce your line over here, right?
+
+00:46:17 - 00:46:20 Unknown Speaker:
+
+Okay. And again, starts with when and all, right?
+
+00:46:21 - 00:46:33 Unknown Speaker:
+
+That is how it is, Sachin. See, if you see, I cannot touch his script, what he has written. So from his what he has given, yeah. No, no. Again, I'm telling, right?
+
+00:46:34 - 00:46:54 Unknown Speaker:
+
+These are being, man, understand, these are being written by your interns, right? Yeah. They knows, uh, if L start a variable with i equals to zero, i less than 10, and like that, right? You guys are having seven, eight years of experience, right? What is the difference then with, you know, writing a code with the interns and with the experienced guys like you?
+
+00:46:54 - 00:47:13 Unknown Speaker:
+
+No, no, Sachin, what I was trying to say is, I'm not saying, I, I have been told to not touch his code, okay? Where, whenever it is extracting, creating rules, it should create it in such a way that it should match it with the DQ artifacts table. Okay? So that is the goal. Okay?
+
+00:47:13 - 00:47:30 Unknown Speaker:
+
+So if you observe it, I have not touched any of his code. So I, I have taken whatever the output that is coming from his script. One more, one more, one more announcement. This is not going to directly get inserted to the, uh, your DQ artifacts table. Whatever details you have.
+
+00:47:30 - 00:47:43 Unknown Speaker:
+
+No, no, it is, it is CSV export also I have written. Instead of writing into the table, CSV export and even that, yeah. Correct. Because this would create a CSV file, and then this would go via SFT to AS.
+
+00:47:45 - 00:47:49 Unknown Speaker:
+
+Okay? And from AS, it would come to the DQ artifacts. Okay.
+
+00:47:51 - 00:48:09 Unknown Speaker:
+
+Why is the reason? Because if I directly insert it into the DQ artifacts, this data would not, never go, go to AS, right? I can't do a reverse engineering from here to here. Okay? So always the path would be like this, from AS to DQ artifacts, and then DQ artifacts to the implementation stage.
+
+00:48:11 - 00:48:23 Unknown Speaker:
+
+Yeah, yeah. Okay? That's, yeah, I have not considered that, but, uh, just creation of the data, because since CSV is created. No, this, this, this design I did not discuss with you, so that is not a miss from your side. Yeah.
+
+00:48:23 - 00:48:43 Unknown Speaker:
+
+But, uh, once you have created a CSV, even, uh, write a logic to send the file to the SFT. Okay? And from SFT, uh, there would be a, a SFT, uh, already there, right, pipeline that, that would insert the data to the DQ artifacts of the AS. Check that part. Okay?
+
+00:48:43 - 00:48:54 Unknown Speaker:
+
+So even this announcement, at least till sending it to SFT, you can create a method for this. And this same data needs to be preserved into another, uh, table under the dataset.
+
+00:48:55 - 00:49:05 Unknown Speaker:
+
+Hmm. Just for an audit, audit purpose. But in that case, Sachin, uh, I'll remove the code that is related to the table insertion. Only the CSV generation only I'll keep it.
+
+00:49:07 - 00:49:15 Unknown Speaker:
+
+This has both. Okay. Hmm. Yeah. So make these changes, right, and then I'll need to review this thoroughly, and then only I'll be able to approve it.
+
+00:49:15 - 00:49:22 Unknown Speaker:
+
+Hmm. Okay? Sure. And again, let's not write a method so big. Okay?
+
+00:49:22 - 00:49:45 Unknown Speaker:
+
+Hmm. Even this is some, sometimes a observation from, from your side, right? Uh, again, I'm not getting those, you know, one or two file coming from your side. Use a change curve. Uh, uh, वरना ना वो प्रॉब्लम हो जाएगा। मैं आपका कोड प्रॉपर्ली रिव्यू नहीं कर पाता हूँ। Sachin, currently I'm sharing one to two file of code only.
+
+00:49:46 - 00:50:06 Unknown Speaker:
+
+People check on the recent ones. ठीक है। So the number of lines will affect, but I'm sharing those only. क्योंकि मुझे लगता है ना, at least I'm cross-checking Python code. Java तो मैं बहुत thoroughly check कर रहा हूँ, right, but, uh, आपका React वाला code मैं बहुत ही कम देख पाता हूँ। मैं blindly कभी-कभी approve कर रहा हूँ। I'll, I'll be very frank.
+
+00:50:07 - 00:50:31 Unknown Speaker:
+
+I'm not a React expert, but at least I still want, if you start committing small number of files, right, then that would help me to review it thoroughly. And maybe, uh, Ather, like, we used to have these demo calls on every Thursday, right? Hmm. Uh, so even you can start grooming few of the resources on the UI side. So that you would also get some hands-on.
+
+00:50:31 - 00:50:43 Unknown Speaker:
+
+Whoever is having a, you know, these willingness to work on the React side, like Kundan has shown that interest, right, they can start picking up some of the, you know, smaller tasks of your. Okay.
+
+00:50:44 - 00:51:11 Unknown Speaker:
+
+Sure. ठीक है। This Thursday मैं cancel कर रहा हूँ, because Friday is a holiday, so if people want to log up a bit early, that is okay. Uh, but next, next Thursday, uh, post Bharga, maybe I'll ask you to have some, you know, uh, React-related training that you can start with the folks. Spoon-feeding नहीं करना है, but you can at least guide them where, where from they can start it, at least. Sure.
+
+00:51:11 - 00:51:16 Unknown Speaker:
+
+And whoever is having interest, they can, they can start, uh, you know, pitching it.
+
+00:51:18 - 00:51:40 Unknown Speaker:
+
+ठीक है। Okay, Prithvi, so make that change. And then, as I stated, right, for your story, I'm still not being confirmed. I'll give you a confirmation post having that, uh, evening call with the product partners. Because if they don't have anything, then I do have, uh, you know, uh, backlog stories which we can take it up and then assign it to you. Sure, Sachin.
+
+00:51:40 - 00:51:42 Unknown Speaker:
+
+Yeah. Okay. Yeah. Yeah. Thanks, Prithvi.
+
+00:51:42 - 00:51:48 Unknown Speaker:
+
+You can feel free to drop off. Thank you. Kundan, आपके पास right now।
+

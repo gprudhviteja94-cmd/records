@@ -1,0 +1,1693 @@
+2026-09-29 Access Verification and Sprint Planning Meeting
+
+Creation Time: 2026/09/29 18:01
+
+
+📅About Meeting
+
+• Date & Time: 2026-09-29 18:01 (Duration: 4447 seconds)
+• Location: [insert location]
+• Attendee: Sachin, Jason, Sreven (absent), Prithvi, Nirmal, Nancy, Kundan, Sameer, Suman, Ayappa, Bhargav, Sindhuja, Rachna, Sazdip, Shravan, Vargav, Samir, Athar, Rachna (joined late), Nirmal (again), others present in call
+
+📒Meeting Outline
+
+Access & UI verification (DQ roles / Track my request)
+
+• DQ roles verification
+  Demonstration of E3 workspace changes: users searched for use-cases and verified "View or modify DQ roles". For a user with ICMB customer acquisition membership, the "Modify" option is enabled; for others (e.g., Reggie SOR / Razy SUR) the "Modify" option is disabled. Admins can see and modify across use cases. Table selection performance improved (load reduced to ~2s).
+• Track my request
+  "Track my request" shows only the use-cases a user is part of (ICMB in demo). Confirmed home page and approval icon visibility tied to role access. Plan to implement similar filtering in DQIM portal (work basket-based access).
+
+Razy / Reggie / ICMB initiatives and sprint priorities
+
+• Razy POC and SFTP
+  Sreven's POC will continue within sprint; intent to close POC this week and start pitching build. Razy initiative requires SFTP enablement for Razy profile (external profile used only for sending data back). After SFTP, deploy to E2 (story exists; no new story needed for E2 deploy).
+• Razy table changes / cornerstone decommission
+  There are six Razy tables (venue, venue_collections, reservation, ratings, Razy MX Cust, etc.). Plan to replace Razy user tables with the new Global Dining Razy tables wherever used across DT flows and other tools. Prithvi to analyze impacted DT flows and implement replacements. Concern raised about cornerstone table decommission delays and pipeline exceptions — exception approval pending; aim to have exception completion by end of week to run pipelines before decommission. E2 deployment by end of sprint is feasible; E3 deployment unlikely before freeze.
+• Sprint task allocation
+  • Prithvi: analyze table usage (part 1) and implement DT flow changes (part 2). Replace existing tables with new ones (5 primary tables + Razy MX Cust handling).
+  • Suman possibly to handle report automation (failure reporting) story; create user story and assign to Suman.
+  • Suman / Suman / others to confirm reservations table E1/E2/E3 status and create stories for E2 and E3 (1 story point each).
+• Pipeline manager / SFT dashboard
+  Pipeline manager (name chosen for SFT mapping activity) to be included as placeholder for release plan. Priority: Razy pipelines, cornerstone table decommission, SFT dashboard/pipeline manager, loyalty status pipeline returning to Razy, and a couple of new pipelines (finance-related slated for next PI 2027).
+
+DAGs, monitoring, registry & failure handling
+
+• DAG failures & audit logging
+  Several DAGs observed: DAX failed due to missing file / path error; other DAGs (Nirmal, Nancy) showed similar issues. Requirement: register DAGs into DAG registry with schedule interval and add start/end audit log calls for monitoring.
+• Assignments & actions
+  • Kundan: priority to implement audit logging utility in DAGs (already created inserts and audit tables). Close today.
+  • Nancy: add method to register DAGs and ensure DAGs call start/end log; re-trigger failed DAGs and push fixes.
+  • Prithvi: his DAG requires changes in multiple framework places — coordinate with him to update codebase.
+  • Sameer: implement monitoring/annotation for DT flows (ensure DT flows report into monitoring).
+  • Suman & Ayappa: monitor incoming failure alerts and act immediately; Suman to watch rule modification monitor DAG alerts.
+• Implementation approach
+  Copy/paste utility method into DAG repos for short-term; consider refactor later. Move common code to util files if in different repo. Once ready, brief Prithvi and Sameer so they can extend to their frameworks.
+
+Reporting automation & monthly report failure tab
+
+• Requirement
+  ICMV monthly report needs an extra "failure" tab. The failure tab will join DK results with a static object (spreadsheet) shared by Sachin. Decision: use a JSON-config driven mapping rather than creating a DB table to keep flexibility.
+• Assignment
+  Suman to implement: add failure tab, read static object from bucket or config JSON. Confirm object size (~<=100 rows) — JSON config approach preferred.
+
+Releases, RFCs, freeze schedule & release planning
+
+• Freeze window
+  October approaching; final month before freeze. Expect freeze announcements early November. Post-freeze, only business-critical E3 deployments allowed. Need to close Razy-related items in coming sprints.
+• RFC / deployment timing
+  RFC required with 48-hour rule; public holiday Friday affects timing — plan metadata/DT flow changes in sync; target deployments on Monday to meet RFC timing. Reggie (Razy) RFC will be raised for Friday or moved to Monday due to holiday.
+• Release items to communicate to leadership
+  Razy pipelines, cornerstone table decommission, pipeline manager (SFT mapping), loyalty status return pipeline, and a couple of other pipelines. Anything not in the list will be deprioritized to next PI (2027) if capacity limited.
+
+Team capacity, leave planning & backups
+
+• Leave tracker
+  Sindhuja to consolidate leave entries for Oct–Dec; several team members to update: Nirmal, Prithvi, Kundan, Shravan, Suman. Guidance: add tentative placeholders and backups for multi-day leaves; ensure cross-checks with backups so coverage exists during critical freeze period (starting 11 Nov).
+• Permission / Confluence issue
+  Vargav’s name not appearing in calendar selection — suspected account/permission issue. Action: raise incident with support; Rachna/Sachin to help debug. Cross-check ADS ID or attempt cache clear.
+• Training
+  Mandatory org-wide training deadline: complete by Thursday EOD (org-wide report drawn 2 Oct). Friday is public holiday.
+
+Story assignment & sprint breakdown (high-level)
+
+• Assignments (high-level summary; details to be captured in Jira/user stories):
+  • NC / Rachna: bulk rule creation (5 points), production support (2 points); bulk rule creation & reporting work.
+  • Rachna / Athar: reporting module (5 points), bulk rule creation UI and E3 release tasks.
+  • Vargav: quantum / additional checks (5 + 2 split).
+  • Samir: univariate quantum, Mist in JSON UAT and possible E3 release (5 + 2).
+  • Nirmal: reporting (5) and production support (2).
+  • Prithvi: Reggie work (existing stories) — analysis + implementation for Razy table replacements.
+  • Ayappa: quantum threshold check-type onboarding (5), production support (2).
+  • Kundan: audit log / DQIM logging, CD adjustments (assign small story points, e.g., 2 for future CD tweaks).
+  • Suman: report automation failure tab story (create and assign).
+  • Sameer: DT flow monitoring / Quantro integration annotations.
+  • Sachin: SME/insurance related stories (5).
+• Team to refine and break down large 5-point stories into smaller sub-tasks (e.g., 3 +1 +1) with clear acceptance criteria by tomorrow; Sindhuja to create initial story skeletons and Sachin to refine as needed.
+
+Miscellaneous / Operational items
+
+• PRC group creation: Rachna requested batching PRC creation into groups of five; Sachin will add custodian and priority sequence to the confidence page to allow staged PRC creation and approvals. Users must raise access requests; admins will approve.
+• Some email/notification confusion seen for approvals — ensure request/approval flows are consistent; Sachin will review and approve pending ones.
+• Colabra integration / CD framework updates: Rachna flagged upcoming CD framework tweak; story to be created and assigned to Kundan (low priority this sprint).
+• Closing call: plan to schedule one end-to-end DQ role test tomorrow after scheduling job.
+
+📋Overview
+
+• Verified role-based access: "Modify" enabled only for team members of ICMB; other use-cases show modify disabled.
+• Track My Request shows only team’s use case(s) — working as expected.
+• Razy POC progressing; SFTP enablement required; E2 deploy planned once SFTP available — story already exists.
+• Cornerstone table decommission pending exception approval; pipelines must run for remainder of sprint before decommission — target exception approval by week end.
+• Prithvi to analyze and replace Razy tables in DT flows (5 main tables + Razy MX Cust).
+• DAG monitoring: register DAGs, add start/end audit logs; Kundan, Nancy, Prithvi, Sameer assigned to implement and coordinate.
+• Monthly report: add failure tab via JSON-config mapping; assign to Suman.
+• E3 release planning constrained by impending freeze; items for leadership notification compiled (Razy pipelines, cornerstone decommission, pipeline manager, loyalty status).
+• Leave tracker and backup assignments need completion; Sindhuja to collect and consolidate.
+• RFC/deployment planning needs 48-hour window; plan for Monday deployments where needed.
+
+🎯Todo List
+
+• Sachin:
+  • [ ] Approve pending PRC access requests (today)
+  • [ ] Coordinate exception approval follow-up for cornerstone table (by end of week)
+  • [ ] Review and finalize release list to leadership (ASAP)
+• Prithvi:
+  • [ ] Analyze impacted DT flows and produce impact list for replacing Razy tables (part 1) (Due: mid-sprint)
+  • [ ] Implement DT flow changes replacing Razy tables with Global Dining tables (part 2) (Due: end of sprint)
+• Sindhuja:
+  • [ ] Create/clone user stories per sprint allocation and break large stories into smaller tasks with acceptance criteria (Due: tomorrow 12:00)
+  • [ ] Consolidate leave tracker updates (Oct–Dec) and publish (Due: today EOD)
+• Suman:
+  • [ ] Create user story for report automation failure tab (JSON-config approach) and start implementation (Due: this sprint)
+  • [ ] Monitor SFTP/alert emails and respond to failures (ongoing)
+• Kundan:
+  • [ ] Implement DAG audit logging utility and register DAGs in DAG registry for assigned DAGs (High priority — complete today)
+  • [ ] Handle CD tweaks story when created (2 points — second half of sprint)
+• Nancy:
+  • [ ] Add start/end audit log calls in her DAGs and register them in DAG registry; re-trigger and verify failed DAGs (Due: today)
+• Prithvi & Sameer:
+  • [ ] Work with Kundan to integrate audit logging into their frameworks; Sameer to annotate DT flows for monitoring (Due: tomorrow)
+• Nirmal:
+  • [ ] Provide DAG details to Kundan / Nancy for registry entries and ensure DAGs re-run successfully (Due: today)
+  • [ ] Work on reporting module story and production support tasks (As assigned)
+• Ayappa & Bhargav:
+  • [ ] Monitor rule modification monitor DAG alerts; respond to failures during working hours (ongoing)
+• Samir:
+  • [ ] Schedule univariate quantum job in test table; deploy Mist-in-JSON UAT (Due: today)
+• Rachna:
+  • [ ] Provide PRC batching priority list (groups of five) for Sachin to create PRC groups (Due: as soon as possible)
+  • [ ] Create story for CD / Colabra integration changes and assign to Kundan (Due: this sprint if needed)
+• Jason:
+  • [ ] Add required user stories for Razy pipelines and related items (as discussed) (Due: today)
+• All:
+  • [ ] Update leaves on shared tracker and confirm backups for multi-day leaves (Due: today EOD)
+  • [ ] Complete mandatory org-wide training by Thursday EOD (Applicable for India folks)
+
+Notes on deadlines/owners: Where specific deadlines discussed, they are listed; otherwise deliverables are expected within this sprint (sprint 19 → sprint 20 boundary; E2 movement by end of sprint). If any assignee needs to reprioritize, communicate in DSU or Slack and update Jira stories accordingly.
+
+Transcription
+
+00:00:00 - 00:00:03 Unknown Speaker:
+
+Okay, uh, now can you click on "View or modify rules"?
+
+00:00:05 - 00:00:19 Unknown Speaker:
+
+Hmm, uh, click on "Use case name. " Now select ICMB, ICMB, search for ICMB. కస్టమర్ అక్యూజేషన్, కస్టమర్ అక్యూజేషన్. సరేనా? మీటింగ్‌లో ఉన్నా, అయిపోయా చేస్తుండు.
+
+00:00:20 - 00:00:20 Unknown Speaker:
+
+సరే.
+
+00:00:25 - 00:00:35 Unknown Speaker:
+
+Yeah, and now select any other one—no, no, no, don't click on "Modify. " Close this one and click any other, uh, other—Razy S1. Select Razy S1.
+
+00:00:38 - 00:00:58 Unknown Speaker:
+
+Great, it's working. So, have you observed one thing? You have access for ICMB customer accusation, so the "Modify" option was enabled for you, right? But you do not have access for Razy SUR, so that "Modify" option is disabled for you. Now can you go to the home button once and click on "Track my request"?
+
+00:00:58 - 00:01:07 Unknown Speaker:
+
+Track my request is there. Yeah. So for you, this would be—click on that. Click on that. Yeah.
+
+00:01:07 - 00:01:15 Unknown Speaker:
+
+Yeah. So you'd be seeing only the customer accusation because you're part of this team. Yeah, yeah. Right. Okay, uh, so this is perfectly working fine.
+
+00:01:15 - 00:01:34 Unknown Speaker:
+
+We just need to test one thing. So, as I stated, sirs, if you want, you can stay back, or else, you know, you can join back at 6:30. Till that time, we would close the proceeding with Jason. Okay, uh, we—I will join at 6:30 only. Okay, you can, you can pitch in at 6:30.
+
+00:01:34 - 00:01:34 Unknown Speaker:
+
+Hey, Jason?
+
+00:01:36 - 00:02:02 Unknown Speaker:
+
+Hey, it's actually not going. Yeah, it's all good. Uh, did Sreven join? No, I don't think he joined. Uh, so, Jason, any how that, you know, that POC which Sreven is doing, right, that would be, you know, again, continue in the sprint, and we would try to at least close that POC from our side.
+
+00:02:02 - 00:02:22 Unknown Speaker:
+
+As I already heard from Sreven that, you know, you are looking to close it as soon as possible. Okay? So we are on top of it. We are already having some words and conversation with Raj, and as per the last meeting, right, we'll try to close with him this week so that we can start pitching him with the build and all for that. Okay?
+
+00:02:22 - 00:02:31 Unknown Speaker:
+
+That is number one. Apart from that, on that Razy initiative, I hope you have already seen that message from Prithvi.
+
+00:02:32 - 00:02:51 Unknown Speaker:
+
+They need to enable that SFTP for the Razy profile, right? So once they've done it, I think we should be good to, you know, move ahead that one to the E2 environment. So maybe one story. The story is already there; you don't need to create it. For the, you know, E2 environment deployment for this sprint.
+
+00:02:51 - 00:02:57 Unknown Speaker:
+
+Okay? So these are the two tasks. And now tell me what else you want to pick it up for the sprint.
+
+00:02:59 - 00:03:20 Unknown Speaker:
+
+Yeah, so, uh, quick question on the SFT profile. We are—that's the external profile, correct? Yeah, that's the external profile we have created. Would you like to have those, you know, external profile being used for other use cases also?
+
+00:03:25 - 00:03:35 Unknown Speaker:
+
+Um, yes. Well—no, sorry. Let's keep—let's keep this external profile specifically for sending data back. Yeah, exactly. Exactly.
+
+00:03:35 - 00:03:54 Unknown Speaker:
+
+That's what I was trying to convey. So we can do that. That is a mapping configuration, so that would not take much time. I would like to understand if there are any major initiatives that you have in mind that needs to be taken care. Because we do have, you know, a resource capacity with us.
+
+00:03:54 - 00:04:19 Unknown Speaker:
+
+Like, Prithvi has that complete sprint bandwidth. Now, before even you pitch in, right, regarding the table decommissioning request, right, so first of all, can you confirm me: did we, you know, close all those data migration for the load append table, and is those daily jobs ingestion pipelines are now schedule-based and running on a daily basis?
+
+00:04:20 - 00:04:37 Unknown Speaker:
+
+We are just waiting for the confirmation of the exception to turn them on. So that's the only thing pending with that workstream. And we're hoping to have that wrapped up. I need to check on it this morning, but either sometime this week or early next week.
+
+00:04:39 - 00:05:06 Unknown Speaker:
+
+But just to give you a heads-up, Jason, I think, you know, October is—we are approaching October, right? And this would be the very last month before the freeze date. So most probably you'd be getting those freeze date announcements starting November, right, first week of November. And post that, we won't be in a situation to enable any of the deployment to the E3 pipeline until and unless it is business-critical, right?
+
+00:05:06 - 00:05:34 Unknown Speaker:
+
+So whatever things that is pending for Razy, we need to close in this couple of sprints. So again, like, if that is something, you know, those pipeline setup is ready, then at least I can ask team, right, to modify those DT flow which is being dependent on the Razy user or any other Razy tables, right? Yes, I think that should take place in the next sprint, just to make sure that the exception goes through.
+
+00:05:34 - 00:05:55 Unknown Speaker:
+
+Like I said, it's supposed to—it was supposed to happen yesterday, but yesterday is a Monday, so I'm hoping it's closed out today. But I'll graciously give them the end of the week to complete the exception approval. And then I just want the pipelines to run for the rest of the week, or the rest of this sprint, before we decommission everything else, if that's okay with you. Look, I am okay.
+
+00:05:56 - 00:06:22 Unknown Speaker:
+
+My just concern is that, look, if you are, you know, mentioning about the cornerstone, right, we are already behind the dates. The cornerstone would have decommissioned in the last PI itself, right? So again, I'm not sure if you are able to use those capability in the upcoming year. So that should be our highest priority job instead of, you know, working on other initiative.
+
+00:06:23 - 00:06:29 Unknown Speaker:
+
+Because if that infra goes right, there would be a severe impact on the downstream use case.
+
+00:06:30 - 00:07:00 Unknown Speaker:
+
+Yeah, I agree. It's like I said, it's just an exception that we have to get done to be able to turn this back on. So can we do one thing? If you feel like you would be getting that exception approval by end of this week, at least we can start communicating to the downstream user. Like, this is the date when you are not going to get the East tables anymore, and in the parallel we can start working on those pipelines where those daily ingestion is enabled, and even the data load for the load append table gets cleared out.
+
+00:07:01 - 00:07:23 Unknown Speaker:
+
+Yes, I hear that. I want to wait until the exception is completed, because every time I've communicated to downstream teams, something has come up and prevented the pipeline from being turned on. So I prefer to wait until I know 100% that it will happen on that date. But can we do one thing? Can we start at least modifying our downstream process for this sprint?
+
+00:07:24 - 00:07:39 Unknown Speaker:
+
+Yes. I think that's fine as long as that starts in the back half of this week. And I mean, it's not going to go to E3 yet, so I think that's okay. No, no, no. E3 any how it is certainly not possible, Jason, right?
+
+00:07:40 - 00:07:58 Unknown Speaker:
+
+Like, I can move max by E2 by end of the sprint, right? Because I— Yeah, perfect. First of all, I have to analyze, right, what are the areas where those tables have been used, right? I have to modify those queries, right, in the data flow and all. So maybe let me assign those tasks to Prithvi then.
+
+00:07:59 - 00:08:10 Unknown Speaker:
+
+Okay, that's totally fine. So if I share my screen, let me know once you are able to view it. Yes, I can see it.
+
+00:08:12 - 00:08:36 Unknown Speaker:
+
+So this is part one and part two, right? So instead of Sameer, let me assign this to—because Sameer is having work. So this would go to Prithvi. And why did we have this part two? I think that was—I think part one was to do the investigation to see what downstream impacts.
+
+00:08:36 - 00:08:43 Unknown Speaker:
+
+Okay. And then this is the implementation. This is kind of an implementation, correct? Yes. Okay, then we can take a both.
+
+00:08:43 - 00:09:04 Unknown Speaker:
+
+So he would just analyze where we have used those tables, and then start making those DT flow change, and then—so basically, if I hear you out, Sreven?
+
+00:09:09 - 00:09:36 Unknown Speaker:
+
+That is those table. So we have these tables, right? So I'll be replacing that, you know, Razy user table with this Razy global dining user table, right? So basically we have this six table: venue, venue collections, reservation, and these six, right? So wherever these—means, you know, the existing tables are being used, we need to replace with these tables.
+
+00:09:37 - 00:09:50 Unknown Speaker:
+
+Yes. Okay. So Prithvi, I hope you are getting my point. I'll send you one email where it is. I hope you might be receiving this email on a daily basis.
+
+00:09:50 - 00:09:52 Unknown Speaker:
+
+So look, these are our five tables.
+
+00:09:53 - 00:10:00 Unknown Speaker:
+
+Okay? Razy user venue. Prithvi, can you unmute yourself and acknowledge?
+
+00:10:03 - 00:10:07 Unknown Speaker:
+
+Prithvi, you there in the call?
+
+00:10:08 - 00:10:18 Unknown Speaker:
+
+Uh, Sindhuja, this is strange, right? And then, if somebody is facing an internet connectivity issue, please make them mandate to be there in the office.
+
+00:10:21 - 00:10:34 Unknown Speaker:
+
+Um, yesterday also there was the same kind of issue, Sachin, after you dropped off. And I've already given MFAR warning that to check on his connectivity, and it's continuing today.
+
+00:10:37 - 00:10:40 Unknown Speaker:
+
+Yesterday also he didn't close his story when Rajna was asking him.
+
+00:10:43 - 00:11:05 Unknown Speaker:
+
+Okay, uh, I'll connect with him separately, but if continues, we need to, you know, send the communication to Rajendra then. And Sachin, we would also love to recreate this email that goes out. Ah, so, um, this is something, you know, Sreven was mentioning to me, right?
+
+00:11:07 - 00:11:21 Unknown Speaker:
+
+So we can take out that work also. If Suman is having a bandwidth, I'll just need to check with—no, this one I think—okay, whether it's success or fail, you need that report, right? Yes.
+
+00:11:22 - 00:11:27 Unknown Speaker:
+
+Okay. Okay, I'll ask Suman to work on it.
+
+00:11:29 - 00:11:33 Unknown Speaker:
+
+Okay. Should I create a user story for this? Yes, you can.
+
+00:11:34 - 00:11:36 Unknown Speaker:
+
+This is Prithvi. Okay, awesome.
+
+00:11:38 - 00:11:41 Unknown Speaker:
+
+Hi, Sachin. Sorry, I was unable to unmute.
+
+00:11:44 - 00:11:55 Unknown Speaker:
+
+So Prithvi, why you are facing these challenges on a regular occasion? Can you check your laptop settings? And then if laptop is working fine, and if there is a connectivity issue, please be there in the office then.
+
+00:11:57 - 00:12:09 Unknown Speaker:
+
+No, only multiple apps I opened. That's why I was unable to switch to this window, Sachin. But this is getting repeated, right? Like, Sindhuja was mentioning right now also, right? Like, he faced that yesterday also, right?
+
+00:12:09 - 00:12:14 Unknown Speaker:
+
+So this should not be a repeated process. Yesterday I had network issue. I informed her also on that.
+
+00:12:15 - 00:12:19 Unknown Speaker:
+
+Yeah, today I'm good, but the only thing is that I'm unable to unmute, yeah.
+
+00:12:21 - 00:12:23 Unknown Speaker:
+
+So this is the requirement. Okay?
+
+00:12:25 - 00:12:45 Unknown Speaker:
+
+The requirement is we have these existing table which is there in this dropdown. Okay? And we need to replace this with the new set of table which has been created. And it is not only having in the DT flow, it is having in that other data anomaly tool also.
+
+00:12:46 - 00:13:05 Unknown Speaker:
+
+So basically, your Razy user gets replaced by a global dining Razy user venue with the dining user venue, reservation with the user venue. This ratings is a different one, right, Jason? Yeah, that's correct. That's a new table. That's a new table, right?
+
+00:13:05 - 00:13:12 Unknown Speaker:
+
+So these five tables would only have an impact, right? Or we have an—we do have five or six?
+
+00:13:13 - 00:13:29 Unknown Speaker:
+
+It's only these five, but then there's also Razy MX Cust. Razy MX Cust, I think that DT flow needs to be updated, right? We are not—we haven't created any table for Razy MX Cust. That you mean, right? Correct.
+
+00:13:38 - 00:13:45 Unknown Speaker:
+
+All the impacted is this loading DT flow.
+
+00:13:47 - 00:13:47 Unknown Speaker:
+
+Okay.
+
+00:13:51 - 00:14:15 Unknown Speaker:
+
+So the user story for these were being already assigned to you, Prithvi. Okay? So, Jason, just correct me. You need, first of all, these table ingestion. That reporting, is it in every one hour which I was hearing from Sreven by SFT?
+
+00:14:16 - 00:14:26 Unknown Speaker:
+
+So I—that's a great question. I think actually this could be replaced with the what Sreven is working on.
+
+00:14:27 - 00:14:46 Unknown Speaker:
+
+So maybe we just wait for that build out to be completed instead of this email. Okay, okay. Okay. He hasn't started working on that part because he was discussing that with me yesterday only. And I suggested, like, you know, that can be built, but triggering that job every one hour doesn't make a sense.
+
+00:14:46 - 00:15:08 Unknown Speaker:
+
+Because look, you might be triggering those pipeline during your working time, right? Might be for 8 hours. So ultimately, if we are working for those 8 hours, we can schedule it between those interval hours. We can check that feasibility. Unnecessarily consuming those SFTP and the resources during the downtime doesn't make a sense, right?
+
+00:15:08 - 00:15:19 Unknown Speaker:
+
+If I'm aware, like, these tables are going to run at 6 PM IST last night, why don't I run those jobs at 6 PM IST instead of, you know, running it 24 hours?
+
+00:15:21 - 00:15:34 Unknown Speaker:
+
+I agree with that. We should only run it during work hours or with— Yeah, like this one, right? Right. Like this one gives you a report at 1:30, right? Whether it's a success or a fail, and then you can re-trigger it, right?
+
+00:15:35 - 00:15:53 Unknown Speaker:
+
+So whenever you send the file, we are already getting that WIMD notification in case of failure, right? And even Sameer has built one utility. Okay? So you would be getting this notification also. We would include you in this email also.
+
+00:15:53 - 00:16:09 Unknown Speaker:
+
+So when there would be a failure, right, you would be getting this email notification. Whether it's a daily and all. So this runs every couple of hours. So whenever there is a failure, you would be getting that notification that this job get failed.
+
+00:16:10 - 00:16:19 Unknown Speaker:
+
+Like for Razy MX Cust also, right? So this one any how you are going to get it, and that one, that scheduled one, we can send it to you at a scheduled interval.
+
+00:16:20 - 00:16:31 Unknown Speaker:
+
+Okay? So for that, just create one story, and maybe I'll assign that to Suman if there would be no major work from USAIDU team side.
+
+00:16:34 - 00:16:52 Unknown Speaker:
+
+Okay. Okay? So when is the discovery that would with Sreven? These Razy cornerstone decommission which we have discussed, and one is that failure notification which you are looking for. Any other stuff that we need to picked it up in this sprint?
+
+00:16:52 - 00:17:06 Unknown Speaker:
+
+Yes, I need to check with maybe Suman on the status of the reservations table. I think we completed E1 testing the ingestion successfully.
+
+00:17:08 - 00:17:20 Unknown Speaker:
+
+I'm not sure if we did E2, but yeah. Then we need a story for E2 and E3, Jason, in that case. Then assign those to Suman itself. He can take it up and then work with me for E3 deployment.
+
+00:17:21 - 00:17:24 Unknown Speaker:
+
+One story point of one for E2, one for E3.
+
+00:17:28 - 00:17:29 Unknown Speaker:
+
+Okay. Okay?
+
+00:17:30 - 00:17:51 Unknown Speaker:
+
+And Jason, one more thing. I need to, you know, submit that the releases that we are planning before this phase date, right? So can you help me with that details? Like, what are actually we are planning for? Like these Razy pipelines, right, which Sreven has shared.
+
+00:17:54 - 00:18:00 Unknown Speaker:
+
+Razy pipeline. Cornerstone table decommission, right? Yes. Yes.
+
+00:18:03 - 00:18:09 Unknown Speaker:
+
+And then SFT dashboard. SFT, that called as?
+
+00:18:11 - 00:18:25 Unknown Speaker:
+
+What is the name you are going to put that for that SFT mapping where Sreven is doing that activity? We just call it the pipeline manager is what we've been referring to. Pipeline manager. Okay, next.
+
+00:18:27 - 00:18:43 Unknown Speaker:
+
+And then we—the last thing I believe is—so we have the Razy pipeline, CS table decommission. It's the tables back to Razy, so I think the loyalty status coming back to Razy, which I think is almost done.
+
+00:18:44 - 00:18:52 Unknown Speaker:
+
+Yeah. For the status pipeline or the DT flow. Anything else?
+
+00:18:54 - 00:19:07 Unknown Speaker:
+
+And then a couple more new pipelines. Okay, that won't be covered up under this Razy pipeline, right? So that is fine. Anything else that you are prioritizing? Because then I'll be freezing these requirement.
+
+00:19:07 - 00:19:22 Unknown Speaker:
+
+Okay? This is something I need to send it to my leadership. So post this anything, those are not going to get billed, you know, within this phase period of time. Because I need to check the capacity and all, and then I'll plan it accordingly.
+
+00:19:24 - 00:19:38 Unknown Speaker:
+
+Okay. I will put this as a lower priority. Maybe it's for the first PI of 2027. It will be new DT flows to help support finance. Okay.
+
+00:19:39 - 00:19:50 Unknown Speaker:
+
+So that is something we are not putting. So Sindhuja, help me out. We are sending those details only those needs to be ready in E3 before this phase date, right?
+
+00:19:52 - 00:20:03 Unknown Speaker:
+
+The one that you have asked me. No. So basically, if you are planning to do any release in the freeze period, then you need to send me. Oh, anything in the freeze period? No.
+
+00:20:04 - 00:20:13 Unknown Speaker:
+
+Anything in the freeze period only, not before that. No, no, no. Nothing. We don't have that thing. So that's okay, right?
+
+00:20:13 - 00:20:28 Unknown Speaker:
+
+I'll check. Anything like, Jason, you feel like this is very critical and that needs to be enabled? Maybe this pipeline manager we will keep a placeholder, right? In case it is ready. Yes, I will keep a placeholder for that one.
+
+00:20:28 - 00:20:44 Unknown Speaker:
+
+Yeah, correct. In case we struggle to close it out before the phase period, then maybe this one. And this maybe requires some additional support, Jason. Like, you know, why the business requirement and whatever. Then I'll reach out to you individually over the Slack or email for this details.
+
+00:20:44 - 00:20:51 Unknown Speaker:
+
+In case I need it. Okay? Yeah. Otherwise, these are clear, like, four most important things to do before the freeze period. Yeah, yeah.
+
+00:20:53 - 00:20:57 Unknown Speaker:
+
+I'm aligned and I think these all would be covered up. Perfect.
+
+00:20:59 - 00:21:18 Unknown Speaker:
+
+So are we good for this sprint or you feel that any other thing? And Sindhuja, clear me out. This is—post this, we do have one more sprint for this PI, right? Or couple of more sprint? One more.
+
+00:21:18 - 00:21:29 Unknown Speaker:
+
+So we are in 19. We have one more which is 20. Okay, okay. Until October 26. So like solid one month, but we have a lot of holidays also.
+
+00:21:30 - 00:21:40 Unknown Speaker:
+
+Correct, correct. No, but any how November also this phase date starts around 6th or 10th, right? So we still have 10 days buffer over. We haven't received that email yet. No, no.
+
+00:21:40 - 00:21:43 Unknown Speaker:
+
+Not yet. Not yet. Okay. Yeah.
+
+00:21:45 - 00:21:50 Unknown Speaker:
+
+Okay, Jason. But still, around a month only, Sachin. If you count all the leaves and stuff, right?
+
+00:21:52 - 00:21:56 Unknown Speaker:
+
+So we have less than 30 working days. Yeah. I like.
+
+00:21:58 - 00:22:10 Unknown Speaker:
+
+Jason, anything else that you wanted to discuss? No, those are it. Thank you for the updates. I'll make sure I get these user stories added there for the team. Okay.
+
+00:22:10 - 00:22:20 Unknown Speaker:
+
+Yeah, that would help, Jason. Thank you. Okay. So Nirmal, can you share your screen? So Jason, if nothing, you can feel free to drop off.
+
+00:22:21 - 00:22:38 Unknown Speaker:
+
+Nirmal, I need the evidences. The one that I was looking in the morning. Can you show me the data pipeline for the self-serve, whether they ran or not? Can you start with your ones? Yeah, I have checked that one.
+
+00:22:39 - 00:22:44 Unknown Speaker:
+
+The DAX got failed because one file was not there. There is a path error happened.
+
+00:22:46 - 00:22:48 Unknown Speaker:
+
+Sachin, I'll be back in 5 minutes.
+
+00:22:50 - 00:22:57 Unknown Speaker:
+
+Yeah, that's fine. So that is Nirmal for your DAG, right? What about Nancy one? Yeah, the same for both of our DAGs.
+
+00:22:58 - 00:23:05 Unknown Speaker:
+
+Okay. What about Prithvi's one? It was running. It was running, right? So can you please fix it immediately?
+
+00:23:05 - 00:23:21 Unknown Speaker:
+
+But do we have RFC for today? Yeah, I did merge with RFC and did do the deployment. Okay. And can you give me the details for the east one so that I'll schedule it today itself? And these all pipeline, right?
+
+00:23:22 - 00:23:41 Unknown Speaker:
+
+And see, can you do one thing? Pick up the DAG details from Nirmal for both Prithvi's one, yours one, and Nirmal's one. Add those to the DAG registry. Okay? And then if those are getting failed, okay, you need to introduce those method, right?
+
+00:23:41 - 00:23:43 Unknown Speaker:
+
+So that it would write those to the DAG logs, right?
+
+00:23:45 - 00:23:45 Unknown Speaker:
+
+Yes, yes.
+
+00:23:48 - 00:23:52 Unknown Speaker:
+
+How big a effort is that?
+
+00:23:54 - 00:24:07 Unknown Speaker:
+
+For your and Nirmal is, I don't think that is a bigger effort. Prithvi's one is a bit difficult because that needs to be managed at the multiple places. So connect with Prithvi and make him understand what needs to be done.
+
+00:24:08 - 00:24:11 Unknown Speaker:
+
+So he can modify in his codebase to post those changes.
+
+00:24:13 - 00:24:18 Unknown Speaker:
+
+Okay? And Kundan, you are already making that change in your DAG, correct?
+
+00:24:22 - 00:24:30 Unknown Speaker:
+
+Yes, Sachin. So I will start. I didn't start it. Okay, so I will start. No, so that took it as a priority.
+
+00:24:30 - 00:24:40 Unknown Speaker:
+
+That is the most critical one, Kundan. Because if that fails, right, the data are not getting post to the DQIM, and then unnecessarily the ACE portal is getting blamed for that.
+
+00:24:42 - 00:24:59 Unknown Speaker:
+
+Got your point. I will take that one as next, you know, the priority. Yeah, close that today only, right? You only build that utility, right? Even prior to Suman, you have only created those data inserts and to those audit log tables.
+
+00:24:59 - 00:25:02 Unknown Speaker:
+
+So I don't think it would take much time for you.
+
+00:25:04 - 00:25:20 Unknown Speaker:
+
+Okay. And Nancy, make that changes for your case and Nirmal's DAG. Prithvi's one, you have to make him understand because he might need to handle it at multiple places in his framework. Okay? And he would be the quicker person who can implement that immediately.
+
+00:25:20 - 00:25:35 Unknown Speaker:
+
+So it's better assign that to him and then check with him tomorrow. And if he has any query, just clarify that to him. Okay? That is one. Sameer, I need that implementation on your DT flows.
+
+00:25:36 - 00:25:39 Unknown Speaker:
+
+Whatever DT flow that we have created, right? Even those needs to be monitored.
+
+00:25:41 - 00:25:49 Unknown Speaker:
+
+Oh, okay. Even the alert, right? Yes, yes. Okay. I think, yeah, yeah.
+
+00:25:49 - 00:25:56 Unknown Speaker:
+
+We just need to annotate it. That's it, Sachin. Okay. So just do that. And what else is remaining?
+
+00:25:56 - 00:25:59 Unknown Speaker:
+
+Ayappa is not working on any other use case.
+
+00:26:01 - 00:26:11 Unknown Speaker:
+
+Bhargav is not doing that. DT flows, check that part. How can we add it? So if it is done for one, you can ask Suman. He can incorporate that for other flows also.
+
+00:26:11 - 00:26:19 Unknown Speaker:
+
+For your Quantro also, right? For Quantro also, we need to add that part. Sure, Sachin. Okay?
+
+00:26:22 - 00:26:22 Unknown Speaker:
+
+Sure, Sachin.
+
+00:26:27 - 00:26:28 Unknown Speaker:
+
+Okay.
+
+00:26:31 - 00:26:43 Unknown Speaker:
+
+And other UI का तो failure नहीं रहता है process-wise. तो ठीक है। All right.
+
+00:26:46 - 00:26:53 Unknown Speaker:
+
+And Nancy, your job is not just to add those method. Please make sure that you are registering those DAG into that DAG registry.
+
+00:26:58 - 00:27:21 Unknown Speaker:
+
+So Sachin, we have to first add those DAGs with the scheduled interval in the DAG registry table. And also, if there is any failure, we have to log it in the audit log. Yes, yes. Otherwise, how would you check whether that DAG has started or not, right? Every time you would be getting that, you would not find any ingestion to that table, right?
+
+00:27:22 - 00:27:35 Unknown Speaker:
+
+So every time it would give you that DAG is not started. Although it might have executed. So number one is that you have to register in the DAG registry and then wherever DAG is there, you need to call that method.
+
+00:27:37 - 00:27:50 Unknown Speaker:
+
+Start and end. Okay. Yeah. But Sachin, this DAG which you are mentioning, right, for this SFTP, so that is in a different repo. And copy that method.
+
+00:27:50 - 00:27:56 Unknown Speaker:
+
+Same piece of code. Yeah, copy that method and paste it over there, right? Yeah. Okay, okay. Okay?
+
+00:27:57 - 00:27:57 Unknown Speaker:
+
+Yeah.
+
+00:27:59 - 00:28:06 Unknown Speaker:
+
+Because it's not like a microservice, right? Or a service which I can expose and call it from different places. Correct?
+
+00:28:08 - 00:28:18 Unknown Speaker:
+
+So that has to be copy-pasted. Or let me think if there are any, you know, optimized way we can do it, then I'll think about it. But for time being, just incorporate as copy-paste.
+
+00:28:20 - 00:28:32 Unknown Speaker:
+
+Okay, okay. Yeah, let me check. For your DAG and for Nirmal's DAG, I think you'll be able to close it out today only. And please make sure you are handling it in the exception part also, right? In case it is getting exceptions out, right?
+
+00:28:33 - 00:28:36 Unknown Speaker:
+
+So you have to call that method. Please do remember on that.
+
+00:28:37 - 00:28:51 Unknown Speaker:
+
+Okay. Okay. Okay? And if there is a different repo, please make sure that you are moving those changes to the util files, not the, you know, in that same DAG or somewhere. Okay, okay.
+
+00:28:52 - 00:29:02 Unknown Speaker:
+
+Okay? Once you are done, you can give that overview to Prithvi tomorrow. He can incorporate in maybe Sameer and Prithvi in a call. He can incorporate in his framework and then Sameer on the Quantro side.
+
+00:29:06 - 00:29:19 Unknown Speaker:
+
+Yes, sure. Okay? And can you bring back that? Have you re-triggered that DAG which has failed? So Suman, this is Nancy, can you bring that email to the screen?
+
+00:29:20 - 00:29:31 Unknown Speaker:
+
+Suman, you need to keep an eye on these failures going forward. Suman and Ayappa, okay? So if you are getting a mail from this, you need to look into that issue immediately.
+
+00:29:40 - 00:29:44 Unknown Speaker:
+
+Nancy? Yes, Sachin. I'm trying to share once.
+
+00:30:10 - 00:30:11 Unknown Speaker:
+
+Is it visible?
+
+00:30:13 - 00:30:14 Unknown Speaker:
+
+Hello? No.
+
+00:30:16 - 00:30:17 Unknown Speaker:
+
+Give me the subject line.
+
+00:30:18 - 00:30:21 Unknown Speaker:
+
+No, that's fine. Give me the subject line and I'll try to fetch it.
+
+00:30:23 - 00:30:26 Unknown Speaker:
+
+You might have to restart your system if you haven't.
+
+00:30:31 - 00:30:37 Unknown Speaker:
+
+Yeah, for this rule modification monitor DAG, right? What is this DAG?
+
+00:30:38 - 00:30:54 Unknown Speaker:
+
+Sachin, this one actually we are created for a long back, right? Where the CSP models are consolidated email we are planning to send to the partners. So we are. What is the reason of naming this DAG as rule modification monitor?
+
+00:30:56 - 00:30:57 Unknown Speaker:
+
+Does it make sense?
+
+00:31:00 - 00:31:09 Unknown Speaker:
+
+It is not modifying any rules, right? Yeah. So how does it make sense? Tell me. When we are giving a name, right?
+
+00:31:11 - 00:31:15 Unknown Speaker:
+
+Does it make sense? So let me complete it.
+
+00:31:16 - 00:31:24 Unknown Speaker:
+
+So Suman, right? This one we received yesterday night only, right? Around our 11:31 PM.
+
+00:31:28 - 00:31:28 Unknown Speaker:
+
+Suman?
+
+00:31:30 - 00:31:33 Unknown Speaker:
+
+Yes, Sachin. So why didn't you check on this email then?
+
+00:31:38 - 00:31:44 Unknown Speaker:
+
+It might be you might not be aware, but going forward, if we are receiving any alerts from this DAG, right?
+
+00:31:45 - 00:31:57 Unknown Speaker:
+
+And if there are any issue, right? Any how it is going to get triggered only in case of issues, right? So in that case, please cross-check that DAG immediately during your working hours. Okay. Okay?
+
+00:31:58 - 00:32:00 Unknown Speaker:
+
+Now this one, Ayappa, I was mentioning, right?
+
+00:32:02 - 00:32:05 Unknown Speaker:
+
+So Nancy, did you re-trigger this DAG or no?
+
+00:32:10 - 00:32:29 Unknown Speaker:
+
+Rule modi. So Sachin, that is not an exact failure. I checked. We need to do just one line code change in that method. It was actually, it was checking one flag and that flag was being like inserted.
+
+00:32:30 - 00:32:46 Unknown Speaker:
+
+It was checking in that audit log table. So we just need to mark that log as end, which will complete that DAG. So I did that change. I'm just testing it and even if it is working, I will push that code. That is not an actual failure.
+
+00:32:47 - 00:33:00 Unknown Speaker:
+
+The DAG has passed for all the runs. But only in the audit log, I can see that it has failed because of that flag. So it is not an actual failure. It's just the DAG failure class, but rest of the processing has been done from it. Okay.
+
+00:33:00 - 00:33:02 Unknown Speaker:
+
+Yeah, yeah. That is correct. What about this one?
+
+00:33:06 - 00:33:08 Unknown Speaker:
+
+This DAG has already completed when I checked.
+
+00:33:10 - 00:33:22 Unknown Speaker:
+
+Okay, okay. Okay then. So Ayappa, Suman, Nancy, and rest of the teams, going forward, if we are getting any failure with this alert, right, please make sure we are addressing that immediately.
+
+00:33:24 - 00:33:32 Unknown Speaker:
+
+Okay? Yeah. This is going to be business critical going forward. And that is the reason we have built it. Okay?
+
+00:33:38 - 00:33:40 Unknown Speaker:
+
+So is the rest of the team joining?
+
+00:33:43 - 00:33:50 Unknown Speaker:
+
+Hi, Sachin. I didn't. Yeah, she will be joining in a few minutes. Can just wait for it. Yeah, we can wait then.
+
+00:33:51 - 00:33:55 Unknown Speaker:
+
+That's what we can do.
+
+00:33:58 - 00:34:25 Unknown Speaker:
+
+And there was some requirement that you are, you know, cascading it to Suman. So can you please post those requirement over a user story so that then I can check if Suman can build it or like we need to start, you know, providing that details to someone else. No, I created a user story, Sachin, for that already. I have assigned it to Suman as of now. Can you waive me the requirement once?
+
+00:34:25 - 00:34:47 Unknown Speaker:
+
+So basically, for the monthly reporting that we are doing, the report automation, for all the use cases, the process is similar. But for ICMV, what we have is we want a different tab in the Excel. Like for other reports, we have three tabs: pivot table, summary, and detail tab. But in that particular tab, we will have a failure tab.
+
+00:34:47 - 00:35:16 Unknown Speaker:
+
+और उसमें हम क्या कर रहे हैं कि उसमें हम कुछ डिटेल्स एक टेबल से फेच कर रहे हैं। मतलब वो एक एक्सेल से फेच कर रहे हैं। डॉट टीएसवी फॉर्मेट में मैंने वो भेजा था। तो कुछ चेंजेस हमने वो डिटेल्स कुछ वहां से वैल्यूज फेच करके उस टैब में डालेंगे और फिर कुछ फेल वाले रिकॉर्ड्स उसमें डालेंगे। मतलब सिमिलर ही है, बट एक टैब ऐड कर दिया उसमें। और एक एक्सेल अलग से यूज़ होगी। ओके। मुझे अभी भी पूरा समझ नहीं आया। I still not get it properly. Suman, have you understood the requirement properly?
+
+00:35:18 - 00:35:29 Unknown Speaker:
+
+The failure tab, I can add, Sachin. But it's like a hard-coded one. The one tab I can add. But the data is there, right, in the failure tab.
+
+00:35:30 - 00:35:42 Unknown Speaker:
+
+Shall I share one table? The table I have shared with you. We need to create the table our side. Or that is like a hard too many is there. Like, let me share my screen.
+
+00:35:46 - 00:36:03 Unknown Speaker:
+
+So Sachin, whatever we get in DK results currently, right, we want to join it with that static spreadsheet which I just shared. Okay? It has some values. So do you think that static contents makes sense? Like either or.
+
+00:36:03 - 00:36:06 Unknown Speaker:
+
+It can either be a use case table.
+
+00:36:08 - 00:36:30 Unknown Speaker:
+
+Like if we think that there could be more records added in the future, let's keep it as a table. Or if this is the finite list, we can keep it as a spreadsheet in the bucket itself. Yeah, correct. So say as now, here is a question. Do you feel that the object that you have shared is going to grow in future or that would be static going forward?
+
+00:36:32 - 00:36:48 Unknown Speaker:
+
+For that, I'm not sure as of now. But like even if we keep it static, we place it as a static in the bucket. And in case we in the future it changes, I don't think that would be a bigger change, right? मतलब, अगर हम उसको हटाकर मतलब एक नई स्प्रेडशीट डाल रहे हैं। Yeah. Then Suman, in that case, can you do one thing?
+
+00:36:48 - 00:37:00 Unknown Speaker:
+
+You can map it using a JSON configuration in that config file. Pass it through that JSON config. Don't create a table then. Yeah, I think that would be easier because it changes also. मतलब, simple.
+
+00:37:00 - 00:37:03 Unknown Speaker:
+
+उसको हटा के नया वाला we can create. Yeah, yeah. Correct.
+
+00:37:04 - 00:37:05 Unknown Speaker:
+
+Got it, Suman, right?
+
+00:37:07 - 00:37:12 Unknown Speaker:
+
+Yeah. We need to create the JSON format, right? You are saying. Yes, yes. Is it a very big object?
+
+00:37:12 - 00:37:14 Unknown Speaker:
+
+What is the size of that object?
+
+00:37:18 - 00:37:29 Unknown Speaker:
+
+I don't think it is very big. It is, I think, it won't be more than 100 rows or what you can see. Okay. Yeah. Yesterday I shared it with you, Sachin.
+
+00:37:30 - 00:37:35 Unknown Speaker:
+
+I'll let me go through that, Suman, then I'll let you know. Okay.
+
+00:37:53 - 00:37:57 Unknown Speaker:
+
+Okay. Anyone having any other thing to discuss till the time Rachna joins in?
+
+00:38:01 - 00:38:06 Unknown Speaker:
+
+Suman and Suman, did you guys updated your holidays which Sindhuja asked?
+
+00:38:10 - 00:38:12 Unknown Speaker:
+
+I need to think, Sachin, that one.
+
+00:38:14 - 00:38:19 Unknown Speaker:
+
+Can you do it on clarity? That report needs to be sent to Rajendra.
+
+00:38:20 - 00:38:29 Unknown Speaker:
+
+Okay. Yes, Sachin. No long vacations as such for me. But at least put some tentative ones, Suman. You might take one or two days leave, right?
+
+00:38:29 - 00:38:34 Unknown Speaker:
+
+So have some, you know, buffer although you might not be taking, right? But at least keep some placeholder.
+
+00:38:36 - 00:38:50 Unknown Speaker:
+
+Right? You might be only post-Christmas, right? So at least keep a placeholder of one or two days. Even if you're not taking, that's fine, but at least keep some placeholder. Yeah.
+
+00:38:50 - 00:39:03 Unknown Speaker:
+
+Okay, sure. Maybe one in a month should be fine, right? Like we may feel sick or something, right? So at least have one at least per month. That is the ideal situation that I used to ask people.
+
+00:39:03 - 00:39:17 Unknown Speaker:
+
+At least have one or two leaves per month so that in case you feel sick and all, that can be adjusted accordingly. And in case you have a long weekend plan, then in that case you should communicate in advance.
+
+00:39:19 - 00:39:20 Unknown Speaker:
+
+Okay, sure.
+
+00:39:22 - 00:39:37 Unknown Speaker:
+
+So Suman, please make sure you updated it and then keep us posted on that group. Sindhuja, you need to send that report tomorrow? Yes. And also the mandatory training. Raj had sent out an email yesterday.
+
+00:39:39 - 00:39:50 Unknown Speaker:
+
+Org-wide report will be drawn on 2nd October. So he doesn't want any of his reportees to have pending trainings. So if you have something completed by Thursday, end of the day.
+
+00:39:53 - 00:39:58 Unknown Speaker:
+
+That is again FYI for all of you, like especially for India folks. Friday is a holiday.
+
+00:40:00 - 00:40:03 Unknown Speaker:
+
+It's a public holiday. So please make sure you are closing your training by tomorrow itself.
+
+00:40:09 - 00:40:24 Unknown Speaker:
+
+And I'll be canceling this Thursday call, the one that we used to have, just because you might, some of you might, you know, want to log up early. But log up early means you need to wrap up your work and then only feel free to log up early. Without that, no.
+
+00:40:29 - 00:40:41 Unknown Speaker:
+
+In that leave tracker that I've sent, right, there also not many folks have updated, right? Like. Can you bring up your screen? And that's what I was mentioning, right? There are a couple of places.
+
+00:40:42 - 00:40:46 Unknown Speaker:
+
+One is the calendar and one is the tax receipt, right, where we have to update it. Yes.
+
+00:40:48 - 00:40:49 Unknown Speaker:
+
+I'm sharing my screen.
+
+00:40:51 - 00:40:51 Unknown Speaker:
+
+Yeah.
+
+00:40:53 - 00:41:00 Unknown Speaker:
+
+Has everyone had a look at this tracker that I'm sharing on the screen? This was sent in the email.
+
+00:41:03 - 00:41:12 Unknown Speaker:
+
+So I think except Nancy, Ayappa, Shamir, I think other than these three folks, I don't see anybody else who updated this.
+
+00:41:14 - 00:41:24 Unknown Speaker:
+
+Sindhuja, I've also updated it. Sindhuja, PTOs also should be mentioned here only. Yes, yes, yes, yes. Yes, yes. Every leave that we have until the, during the pace period.
+
+00:41:25 - 00:41:31 Unknown Speaker:
+
+Sorry, not the PTOs. Public holidays, yeah. Yeah, yeah. Public holiday. Public holiday also, yes.
+
+00:41:31 - 00:41:42 Unknown Speaker:
+
+You've updated, no? Yeah, I don't, like, I have updated the public holidays. You have, you have. This is, I'm sharing the screen. I can see you've updated it.
+
+00:41:42 - 00:41:43 Unknown Speaker:
+
+Yeah, yeah. Okay.
+
+00:41:46 - 00:42:06 Unknown Speaker:
+
+No, from my side, Sindhuja. If you have more than two, three days, right, for example, Shamir here, right, 28 to 31st, if you have more than these four days, you need to tell who is your backup. Yeah, that is tentative. I will, yeah, I will still. Tentative only, like you'll have to put up a backup here, like.
+
+00:42:06 - 00:42:15 Unknown Speaker:
+
+Okay. Make it Vargav. And, but cross-check with Vargav that he should not be on leave during those dates. Okay. Okay.
+
+00:42:15 - 00:42:40 Unknown Speaker:
+
+And for Vargav, right, I'm facing this weird issue where I think he's not able to edit the confluence, Sachin. I tried from my end also, but it's not like something that I have given permission. Like everybody under Amex, I can see they can list in that calendar, but only his name is not appearing. So it's very weird.
+
+00:42:42 - 00:42:42 Unknown Speaker:
+
+Okay.
+
+00:42:44 - 00:42:44 Unknown Speaker:
+
+So for example.
+
+00:42:46 - 00:42:53 Unknown Speaker:
+
+So Susant has created that seat case checklist. No, no. So no, no. It is not. Let me reshare my entire screen.
+
+00:42:53 - 00:43:08 Unknown Speaker:
+
+One second. So initially I thought the same thing, that maybe some kind of permission had to be given, right? But it is not. It's not that way. Because I can see, like even my GCS team members can update the calendars.
+
+00:43:08 - 00:43:15 Unknown Speaker:
+
+Like the entire, what you say, Amex is getting listed. Only Vargav's name is not appearing there.
+
+00:43:17 - 00:43:31 Unknown Speaker:
+
+So for example, January. Did he try to log in over here first of all? Yeah, yeah. So even for me, right, for example, say I've logged in, I can add on behalf of someone. For example, I can add on behalf of you, right?
+
+00:43:32 - 00:43:34 Unknown Speaker:
+
+Your name will get listed.
+
+00:43:35 - 00:43:41 Unknown Speaker:
+
+Okay, I can add. That's not a problem. But only Vargav's name is not getting listed.
+
+00:43:44 - 00:43:54 Unknown Speaker:
+
+I've tried all acronyms. Like his name is not getting listed. Can you paste his ADS ID? I did. Even the.
+
+00:43:54 - 00:44:02 Unknown Speaker:
+
+That was saved as not found. Email ID? Email ID also I tried once, but one second. What is your email ID, Vargav?
+
+00:44:05 - 00:44:06 Unknown Speaker:
+
+Yeah, that's the one.
+
+00:44:08 - 00:44:15 Unknown Speaker:
+
+I'll copy paste. Then in that case, we just have one solution. You have to raise an incident with the support team, Vargav.
+
+00:44:17 - 00:44:18 Unknown Speaker:
+
+See, no match power.
+
+00:44:21 - 00:44:33 Unknown Speaker:
+
+It is an incident. Because I checked, I thought it's team specific, but I can, like, add, like, GCS team members also. Yeah. Only his name is not getting listed.
+
+00:44:35 - 00:44:39 Unknown Speaker:
+
+And Vargav, can you try to open this URL once?
+
+00:44:43 - 00:44:44 Unknown Speaker:
+
+Can you share your screen? Let me take a look.
+
+00:44:47 - 00:45:02 Unknown Speaker:
+
+Yes. And Sindhuja, I'll update it by today EOD. Even I did not get a chance, so while I'll do that. Okay. So Nirmal, Prithvi, Kundan, Shravan, Suman, and Sachin, you guys are pending, right?
+
+00:45:02 - 00:45:07 Unknown Speaker:
+
+Yeah. Okay. I see Nirmal is updating. So it'll just be the four of you.
+
+00:45:08 - 00:45:19 Unknown Speaker:
+
+It is for November and December, right? October, November, December. Yeah, October, November, December. You can see the dates here. Like just scroll this button, right?
+
+00:45:20 - 00:45:23 Unknown Speaker:
+
+Not October. November 11th only. 11th November.
+
+00:45:25 - 00:45:27 Unknown Speaker:
+
+October, December. Yeah.
+
+00:45:28 - 00:45:40 Unknown Speaker:
+
+Starting 11 November, Sindhuja, not the October one? I think last, the freeze is from 11 November. That's why Manisha is given from this date. Okay. So one call out, Nirmal.
+
+00:45:41 - 00:46:01 Unknown Speaker:
+
+Even if you're putting your leaves, right, please make sure in your absence, Kundan should be there. I already told everybody with respect to their backup, NC with Ayappa. So if NC is going on leave during Christmas, Ayappa, you need to be there. You could not take leave during Christmas in that case. Okay?
+
+00:46:01 - 00:46:11 Unknown Speaker:
+
+Now, Athar, we really don't have any other backup. Samir is a backup of Vargav. Vargav with Samir. Now, who left?
+
+00:46:13 - 00:46:14 Unknown Speaker:
+
+Prithvi. Prithvi.
+
+00:46:16 - 00:46:27 Unknown Speaker:
+
+Prithvi need to check with Nirmal and whether Nirmal is available or not. Okay? Because this part he can handle. Kundan, Nirmal. Prithvi, Nirmal.
+
+00:46:30 - 00:46:45 Unknown Speaker:
+
+And then Samir, Vargav is done. NC with Ayappa is done. And onsite, we know, right, Suman and Shravan, they can coordinate. At least one person should be there. But if it is towards 25th of December, that is okay because during that time everybody would be on leave.
+
+00:46:45 - 00:46:46 Unknown Speaker:
+
+So that is acceptable.
+
+00:46:55 - 00:47:00 Unknown Speaker:
+
+So whenever you are putting your leave, please make sure you cross-check with your counterpartner.
+
+00:47:03 - 00:47:14 Unknown Speaker:
+
+Yeah, so I'm on leave from October, not on November. October maybe just leave later, right? Even if you are taking a leave on October, make sure Kundan should be available.
+
+00:47:15 - 00:47:24 Unknown Speaker:
+
+Yeah, yeah. So just cross-check with him that I'm taking leave on this date, and you should not be on leave during that date. Okay, okay.
+
+00:47:26 - 00:47:44 Unknown Speaker:
+
+Until unless it's a festival, right? Like if it is a Diwali and you guys are taking a leave for a day, that is okay. I don't want to ruin your festivals, right? But if you have a planned leave of three, four days, then you should have a backup. One day here and there is fine.
+
+00:47:45 - 00:47:58 Unknown Speaker:
+
+Yeah, that's right. Like this time around, Diwali is on Sunday, right? So if somebody is going on leave on Friday, right, suppose Kundan is taking a leave on Friday, then you should be there. And then Monday, you can opt for the leave. Kundan should be there.
+
+00:47:58 - 00:48:00 Unknown Speaker:
+
+Like that. Vice versa. Okay.
+
+00:48:02 - 00:48:03 Unknown Speaker:
+
+Okay?
+
+00:48:06 - 00:48:18 Unknown Speaker:
+
+So NC, I hope you have aligned with Ayappa on your leave plan. If no, just cross-check with him. And Prithvi, you need to check with Nirmal. And Suman, just check with Suman. So that we should be aligned with everybody.
+
+00:48:19 - 00:48:28 Unknown Speaker:
+
+I think Rachna might not be joining. She might be still with call. Okay, she is joining now. Let me see ping here. Okay.
+
+00:48:29 - 00:48:33 Unknown Speaker:
+
+She is ping. She just logged in. She says she's joining. Yeah.
+
+00:48:41 - 00:48:51 Unknown Speaker:
+
+And maybe Sindhuja, I'll give you a heads-up post-aligning with Rachna, and you may create those stories. Okay? Hi everyone. Sorry for joining late. No, no worries.
+
+00:48:51 - 00:49:00 Unknown Speaker:
+
+Rachna, first of all, can you open that ASS workspace? Sorry, what do you want me to open? That ASS workspace, that QTrack portal.
+
+00:49:02 - 00:49:13 Unknown Speaker:
+
+Oh, I see. Yeah, I just need to verify one cross-check. I already verified one thing with Sazdip. So that is working fine. And I hope you have raised that admin request, which I have asked for you.
+
+00:49:14 - 00:49:20 Unknown Speaker:
+
+Yes, yes, I had raised that. Okay. Yeah, then can you please share your screen? So you want me to open E3, right? Yeah, E3 only.
+
+00:49:20 - 00:49:21 Unknown Speaker:
+
+Okay.
+
+00:49:23 - 00:49:27 Unknown Speaker:
+
+Share your screen once you are. Yeah, yeah. Give me one moment.
+
+00:49:35 - 00:49:57 Unknown Speaker:
+
+And one thing, Nirmal, आप अपना cache से clear करके एक बार देखो कि E3 में browser का cache से clear कर दो। मैं E3 में generally खोलता नहीं हूँ, but I'll do it. वो एक बार करके देखो, right? कहीं वो तो नहीं हो रहा, है ना कि आपके cache में पड़ा हुआ है, and that might be the reason. So now you can see, Rachna, you have this approved new DQ roles. Okay, yes, yes.
+
+00:49:57 - 00:50:01 Unknown Speaker:
+
+Right? Now can you go to view or modify DQ roles? Mm-hmm.
+
+00:50:03 - 00:50:05 Unknown Speaker:
+
+Now select any use case.
+
+00:50:07 - 00:50:10 Unknown Speaker:
+
+Any of the use case. Reggie SOR.
+
+00:50:11 - 00:50:14 Unknown Speaker:
+
+No, this might not be having data. Reggie SOR.
+
+00:50:16 - 00:50:23 Unknown Speaker:
+
+Look, you have modify option for Reggie SOR. Can you open for any other, any other use case? No, no, no. Don't, don't submit.
+
+00:50:26 - 00:50:30 Unknown Speaker:
+
+Any, any other one. कोई भी ICMB customer acquisition.
+
+00:50:31 - 00:50:36 Unknown Speaker:
+
+Look, you have modify option. I can search for this also. Yeah, yeah, yeah. You should. You are admin, right?
+
+00:50:36 - 00:50:50 Unknown Speaker:
+
+So for admin, every, every. Now Sazdip, can you bring your screen again? Now I'll, I'll show you the changes that we have made. So now Sazdip has only ICMB customer acquisition access, right? The standard access that I have asked him to raise it.
+
+00:50:50 - 00:50:59 Unknown Speaker:
+
+Mm-hmm. Okay. So for his case, can you bring your screen, Sazdip? Sure. Switching on my computer.
+
+00:51:15 - 00:51:18 Unknown Speaker:
+
+Now for his screen, yeah, go to view modify roles.
+
+00:51:19 - 00:51:20 Unknown Speaker:
+
+Use case.
+
+00:51:22 - 00:51:35 Unknown Speaker:
+
+ICMB customer acquisition पहले select करो. So look, for ICMB customer acquisition, as he is part of that group, it would be enabled to modify these roles for ICMB customer acquisition. Okay? Look, this is enabled. Okay?
+
+00:51:35 - 00:51:38 Unknown Speaker:
+
+Close this and open the Reggie SOR, Sazdip.
+
+00:51:40 - 00:51:49 Unknown Speaker:
+
+So now for Reggie SOR, it would be disabled. Okay, great. Now go to the homepage. Go to the homepage. Click on track my request.
+
+00:51:49 - 00:51:58 Unknown Speaker:
+
+So in track my request also, you would be able to see only ICMB customer acquisition, not the other one. अच्छा, okay, okay. That's good. Okay, now go back to the home screen.
+
+00:52:00 - 00:52:22 Unknown Speaker:
+
+He doesn't have that approval page, the icon, which you were able to do, right? Right, yeah, yeah. Okay. So this is working, and if required, we can implement the same in the DQIM portal also. That user would be having access with respect to their respective work basket only, which they can modify the rules and auto take the types and.
+
+00:52:22 - 00:52:30 Unknown Speaker:
+
+So maybe that. Yeah, yeah, that would be helpful. Yeah, we, we need to plan it out, Rachna, because we have a bunch of tasks, right? Like reporting and this. It's not urgent.
+
+00:52:31 - 00:52:42 Unknown Speaker:
+
+I mean, eventually we will get it done. So that's fine. Yeah. And then one more thing, Sazdip, if you can bring back your screen also. I just forgot to, anyone of you, either Rachna or Sazdip, whoever is, have opened that portal.
+
+00:52:44 - 00:52:52 Unknown Speaker:
+
+Okay, okay. Let me do that. Okay, Sazdip has already done it. Yeah, can you go back to that screen? Now go to that register new DQ role.
+
+00:52:53 - 00:53:07 Unknown Speaker:
+
+So even for this. Also, Sachin, this watch list, right, that part is not working, I believe. Yeah, yeah, yeah. That functionality is not being built end to end, Rachna, because we were prioritizing. Anand has mentioned that that is the least priority for them.
+
+00:53:07 - 00:53:20 Unknown Speaker:
+
+So we, we stopped it in between. So now go back to home and bring back to this page again. I just wanted to show you, now this table is loading quite faster in two seconds. Okay? It depends on your internet speed.
+
+00:53:21 - 00:53:31 Unknown Speaker:
+
+Right? So it is getting loaded within two seconds compared to earlier 14 seconds or 12 seconds. Yeah, this is great. Okay? So this is also working now.
+
+00:53:31 - 00:53:46 Unknown Speaker:
+
+But even I have asked Nirmal to touch base to more things, which I suspect there might be there, which we can improvise. So while I'll get back to you on that. And Sachin, also view modify roles. So now I'll be picking only the ones from DQ roles. Yes, yes, yes.
+
+00:53:46 - 00:53:56 Unknown Speaker:
+
+Click on that. Click on that. So, so how the table is, इसको clear करके बस table list दिखाओ. You would be getting those 110, 110 tables only. Okay, that's nice.
+
+00:53:57 - 00:54:09 Unknown Speaker:
+
+Great. This part is also done. Yeah. And one more thing, Rachna, that selection of table name is also deployed in E3. Just since we are in page, I have to put that.
+
+00:54:09 - 00:54:12 Unknown Speaker:
+
+अच्छा, अच्छा. Okay, okay. Sure, Athar, that's good.
+
+00:54:14 - 00:54:27 Unknown Speaker:
+
+Okay. So I think this is a quite a good remarkable progress done by the team. Yeah, I'm so excited. So Sachin, Athar, Kundan, Nirmal, and everyone else who was working on it. I would say that's a really good share.
+
+00:54:29 - 00:54:45 Unknown Speaker:
+
+And, and I would request, Rachna, maybe I'll schedule the job today. Okay? The previous records which has been created, those all have been eliminated. And now you have only those data which is listed from DQ repository. Okay?
+
+00:54:46 - 00:55:02 Unknown Speaker:
+
+So user can start creating their roles starting tomorrow. I'll schedule that job starting today. And maybe we can submit one request tomorrow just to cross-check end to end flow, right? The complete lifecycle, right? And then the user can start using it, basically.
+
+00:55:03 - 00:55:18 Unknown Speaker:
+
+Right, right. Okay, Sachin, that's great. Okay. Now, Sindhuja, if you can bring your screen, just open a text pad also. I'll, I'll just brief it very quickly because we are already at 7 PM.
+
+00:55:19 - 00:55:45 Unknown Speaker:
+
+Starting with NC, Rachna, she would continue working on that bulk rule creation, okay, with the five-story pointer because that needs the reporting and all also. That is number one. And second, there would be three-story pointer being assigned to him for any production-related activities if, if we have anything. Okay? Now, Sindhuja, please note it down so that you can, you know, just pull those stories from the previous sprint.
+
+00:55:45 - 00:55:47 Unknown Speaker:
+
+Those are already being there.
+
+00:55:49 - 00:55:56 Unknown Speaker:
+
+Sindhuja, if you are hearing me out. Yeah, yeah, Sachin, one second. I'm sharing my screen. Okay.
+
+00:55:59 - 00:56:11 Unknown Speaker:
+
+Because we might not have that much of time to, you know, again, create those stories right away. So for NC, it is previous bulk upload rule creation, and one is production support.
+
+00:56:18 - 00:56:32 Unknown Speaker:
+
+And production support with three-story pointer. Production support should, sorry, two-story pointer because we are having seven, right? Okay. Athar would continue, Rachna, on that reporting one first. Yeah, sorry.
+
+00:56:32 - 00:56:36 Unknown Speaker:
+
+How much is the rule creation total? Five, five, five.
+
+00:56:37 - 00:57:05 Unknown Speaker:
+
+Okay. Athar would go ahead with that reporting module. It was there with him. If no, just cross-check once reporting module with five-story pointer and bulk rule creation UI with two-story maybe bulk rule creation. You can mention one, and one is E3 release for the self-serve UI flow, which he did today.
+
+00:57:06 - 00:57:08 Unknown Speaker:
+
+Because we need to mark it as release, right?
+
+00:57:12 - 00:57:17 Unknown Speaker:
+
+Okay. So E3 one. Align, Rachna? Then I'll move ahead. Yes.
+
+00:57:18 - 00:57:32 Unknown Speaker:
+
+Varga would continue with his quantum and the, sorry, AWP and additional, you know, checks type which he is doing for the previous sprint. That is being aligned with Maniji.
+
+00:57:35 - 00:57:35 Unknown Speaker:
+
+Got it right?
+
+00:57:38 - 00:57:58 Unknown Speaker:
+
+That quantum one he would continue. He has, Maniji, has asked for a couple of more table and then the eye dimension additional parameter that they are adding, right? He would continue with that. Okay. So as it is seven, Sindhuja, quantum you can put five and eight dimensional.
+
+00:57:59 - 00:58:01 Unknown Speaker:
+
+I'm sorry, eight dimensional as five, quantum maybe two.
+
+00:58:04 - 00:58:21 Unknown Speaker:
+
+And these are already there in the previous sprint. Okay? Now, Samir would continue working with his quantum one, right? Uni-variate one, which we have already discussed. And he would deploy that Mist in JSON, post your review comment, the email that he has sent yesterday.
+
+00:58:21 - 00:58:34 Unknown Speaker:
+
+So maybe that deployment for Mist in JSON in, yeah, you can mention, Sindhuja, Mist in JSON UAT, and E3 release. I'm not sure if it is possible.
+
+00:58:35 - 00:58:48 Unknown Speaker:
+
+You can mention it. We'll see if it is possible or not. If there is no major review coming, then we can go for the E3 release. I don't think there would be such a requirement. Okay, okay.
+
+00:58:48 - 00:58:51 Unknown Speaker:
+
+Then maybe quantum univariate with five and this one with two.
+
+00:58:54 - 00:58:54 Unknown Speaker:
+
+Okay?
+
+00:59:14 - 00:59:26 Unknown Speaker:
+
+The expert I was mentioning, right? We didn't never enabled it for the DQ result or the test table. No, not DQ result. The test table. Test table also, like, you know, it was a single run that has been asked to us, right?
+
+00:59:26 - 00:59:39 Unknown Speaker:
+
+Like, Anand never asked us to schedule it, right? That's the reason it hasn't been scheduled. But if that is a requirement, we can schedule it right away. Okay, okay. So maybe we don't need any details for that.
+
+00:59:39 - 00:59:53 Unknown Speaker:
+
+We'll schedule it because I was of the impression that it's ongoing. So Samir, take it on a priority, okay? And please go ahead and schedule it today only. Sure, sure, sure. And maybe do it in the test table for now.
+
+00:59:54 - 00:59:58 Unknown Speaker:
+
+Once I provide you sign-off, we can move to the main table. Okay.
+
+00:59:59 - 01:00:26 Unknown Speaker:
+
+Now can you go back, Sindhuja, for Nirmal's one? For Nirmal one, he would be working on the reporting, Rachna, because I need to move Kundan to prioritize that issues which Sazdip has highlighted, the DQIM that you were mentioning. Right, right. Sure, sure. So, so Nirmal would be working on that reporting module with five-story pointer and maybe production support for two-story pointer to help, you know, these religious, right?
+
+01:00:26 - 01:00:37 Unknown Speaker:
+
+Right now it looks pretty good. But in case there are any issue, he needs to fix and close it out. Right. Okay. Now Prithvi is completely being occupied with Reggie, so you can just mention Reggie.
+
+01:00:37 - 01:00:39 Unknown Speaker:
+
+You don't need to create any stories for Prithvi.
+
+01:00:41 - 01:00:56 Unknown Speaker:
+
+Sindhuja, he is already having those stories. Now, Ayyappa would be working on linking this self-serve UI for the threshold check type for the quantum. So story is already being there with him, with a five-story pointer.
+
+01:00:57 - 01:01:12 Unknown Speaker:
+
+That is like, you know, quantum threshold check types onboarding should be done by a quantum, right? The one of the stories that has been missed last time, right? So he would be working on that. And then a production support. Production support with NET target and all, right?
+
+01:01:17 - 01:01:23 Unknown Speaker:
+
+Production support. Sindhuja, again for Ayyappa, you may need to just create production support. That one is already there, that self-serve check one.
+
+01:01:26 - 01:01:48 Unknown Speaker:
+
+And for me, one is SME, one is insurance is there already assigned. So maybe a couple of stories only for insurance, and then SME stories as five. Yeah, I just want to highlight one thing. Wherever we are mentioning five-story pointer, like I already told, right, Sachin, these will be drawn as a report at Manju's level.
+
+01:01:49 - 01:01:59 Unknown Speaker:
+
+So it's either developer or Rachna, if they can go back and update it, right, with correct description, acceptance criteria, and so on. Okay.
+
+01:02:01 - 01:02:12 Unknown Speaker:
+
+I mean, keep the developers have to keep this in mind. If you don't see correct description, acceptance criteria, by tomorrow, highlight it in the DSU and we'll update it accordingly. Okay?
+
+01:02:15 - 01:02:18 Unknown Speaker:
+
+Even I need to segregate, start segregating my SME support.
+
+01:02:19 - 01:02:29 Unknown Speaker:
+
+Yeah, anything about. We can break these stories down, right? Sachin, like, it's kind of created like a bulk thing right now. But these are such things.
+
+01:02:31 - 01:02:57 Unknown Speaker:
+
+Anything about three will get pulled, Rachna. So even if you break this as three and two, right, that three-story pointer, you have to update proper description and acceptance criteria. Also, it's like greater than equal to three is what I'm saying. Then maybe, maybe Rachna and Sindhuja, we need to make it like three-story pointer for build, one maybe for unit testing, and one for the even deployment and validation. Three will get pulled, right?
+
+01:02:57 - 01:03:04 Unknown Speaker:
+
+Yeah, that's fine. That's fine. That's fine. But we should not be capturing everything as five, right? Then that would be flagged off.
+
+01:03:04 - 01:03:04 Unknown Speaker:
+
+True.
+
+01:03:06 - 01:03:12 Unknown Speaker:
+
+Right? So we can break it like three, one, and one. And we'll, I'll, I'll, you can just start creating these stories.
+
+01:03:14 - 01:03:17 Unknown Speaker:
+
+Sindhuja, I'll, I'll break it in the night today.
+
+01:03:19 - 01:03:26 Unknown Speaker:
+
+Okay? I'll, I'll just clone it and then I'll break it. Anyhow, we need to start it by tomorrow 12, right? Yes, tomorrow 12. Yeah, yeah.
+
+01:03:26 - 01:03:43 Unknown Speaker:
+
+By, by that time I'll, I'll break it. You can just create the overall structure right now. Seven for seven also, like he is occupied with Reggie initiative. So maybe one production support with two-story pointer and then seven just stays. I already had a discussion with this guy, Jason.
+
+01:03:43 - 01:03:53 Unknown Speaker:
+
+Okay? So he would be creating a stories for you. Okay? Suman is again occupied with Reggie story. Okay?
+
+01:03:53 - 01:04:02 Unknown Speaker:
+
+Those are already there. And now, Rachna, tell me, do we have anything urgent that needs to be addressed? Then I'll see what else we can deprioritize.
+
+01:04:05 - 01:04:18 Unknown Speaker:
+
+So, nothing else is now. Sachin, just with it is one new requirement coming in. So I just was in a call with Poona, right? That's what was being discussed. And this is again like a follow-up thing to the CD framework.
+
+01:04:18 - 01:04:38 Unknown Speaker:
+
+Like I was saying earlier, right, that we even is what we want to move to E3 and all. So there is a slight change in there. And there is a new framework that we are working on. Like, it's very similar to what we already had in like V1 and V2. Just a little bit tweaking is required.
+
+01:04:38 - 01:04:43 Unknown Speaker:
+
+So maybe that will come in. We can, we can assign that to Kundan.
+
+01:04:44 - 01:04:58 Unknown Speaker:
+
+Okay. So for Kundan, Sindhuja, I pinged you. If you can just check the Slack message. So CD is already deploying to E3, right? So whatever details is there, right, which Rachna is mentioning.
+
+01:04:58 - 01:05:02 Unknown Speaker:
+
+Rachna, maybe create one story and assign that to Kundan. Okay? On the CD only.
+
+01:05:03 - 01:05:04 Unknown Speaker:
+
+Okay.
+
+01:05:05 - 01:05:17 Unknown Speaker:
+
+How many story points should I give? That depends on your requirement. If you feel it is a small kind of— Kundan is also involved in that other thing, no? That connection across.
+
+01:05:19 - 01:05:40 Unknown Speaker:
+
+He is in eight dimension. He is checking into the DQIM audit log in CD and then the data migration, right? So he is already bulk of task. So maybe assign him with two-story pointer and, you know, maybe I'll— I mean, anyway, it won't be like an immediate requirement. Maybe it will be second half of this sprint.
+
+01:05:41 - 01:05:42 Unknown Speaker:
+
+Yes, yes, yes.
+
+01:05:46 - 01:06:00 Unknown Speaker:
+
+And I already discussed with Kundan with respect to your requirement. Is anyone having any query? Like even seven, you are aware, right, what needs to be done. You already had a connected setup, right? And the Reggie one, you already know that pipeline needs to be done.
+
+01:06:00 - 01:06:03 Unknown Speaker:
+
+Any new CD that we are expecting, Rachna?
+
+01:06:04 - 01:06:15 Unknown Speaker:
+
+Sorry, any new CD? Yeah, those CD checks that we need. Okay, okay. So those checks, yes, maybe not in this sprint though. Okay.
+
+01:06:17 - 01:06:31 Unknown Speaker:
+
+Then we'll look at it. Then everybody has their task, right? And I clearly explained each one of them, clearly what is the expectation. So still, if any one of you feel like you still don't have a requirement clarity, reach out to me.
+
+01:06:33 - 01:06:33 Unknown Speaker:
+
+Okay?
+
+01:06:35 - 01:06:42 Unknown Speaker:
+
+I think we are good to close then. Sindhuja, just let me know once you're completing the story. I'll try to break it out.
+
+01:06:44 - 01:06:54 Unknown Speaker:
+
+Wherever it is possible. If it is not possible, everybody can— Yeah, please let me know as well. So I'll update the descriptions and everything. Yes, yes.
+
+01:06:55 - 01:07:05 Unknown Speaker:
+
+Yeah, I have continuous calls for other planning. So I'll do it whenever I get time and I'll let you guys know towards the end. Okay, okay. Thank you so much. Thank you.
+
+01:07:06 - 01:07:11 Unknown Speaker:
+
+Thank you, everyone. Also, one quick thing, Sachin. Yeah, yeah, sorry. Go ahead, Shravan.
+
+01:07:13 - 01:07:26 Unknown Speaker:
+
+Sachin, I wanted to check, have we raised RFC for that Reggie value deployment? No, I'll, I'll raise it today for Friday. Okay? Okay. I seen that mail, but somehow it got missed today.
+
+01:07:27 - 01:07:31 Unknown Speaker:
+
+I did not check that. So let me raise it for Friday. I'll, I'll look. Yeah, let me know if you need any details.
+
+01:07:33 - 01:07:37 Unknown Speaker:
+
+Just cross-check if I do have those access to those pipelines or not. That's it.
+
+01:07:38 - 01:07:46 Unknown Speaker:
+
+Yeah, yeah. I think you gave me access to those pipelines also. Okay. ठीक है, that's the thing. So there are three DT flows and three ingestion pipelines.
+
+01:07:46 - 01:07:56 Unknown Speaker:
+
+That means you can do. DT flow you can use. Okay, those metadata changes would go via new RFC. DT flow you can use the RFC being created by Ayyappa.
+
+01:08:00 - 01:08:11 Unknown Speaker:
+
+Yeah, but first we have to put metadata changes. Yeah, no, parallelly. That metadata and the DT flow should be in sync. Otherwise, anyone which is being missed, wo- wo- failona start हो जाएगा.
+
+01:08:14 - 01:08:17 Unknown Speaker:
+
+Okay. Okay, so we'll do it on Friday itself.
+
+01:08:19 - 01:08:31 Unknown Speaker:
+
+Hmm, ha, because Thursday का आप नहीं create कर सकते हैं. 48 hours का चाहिए. Let's do it on Monday, Seven. Friday it's a holiday, right? So maybe, maybe on Monday.
+
+01:08:31 - 01:08:31 Unknown Speaker:
+
+Okay?
+
+01:08:33 - 01:08:42 Unknown Speaker:
+
+Okay. Okay, plan for Monday. Yeah, Rachna, you can go ahead. Yeah, yeah. I was asking regarding that Colabra integration we discussed a while ago, right?
+
+01:08:42 - 01:08:50 Unknown Speaker:
+
+Is there like— I'll, I'll check this sprint, Rachna. Let me work on that. I'll take a note of it. Okay? Sure, sure.
+
+01:08:50 - 01:09:06 Unknown Speaker:
+
+Why, why I'm bringing it up again is because this new CD framework that I'm talking about it, again, that will require it the same way that we were discussing it earlier. I got it. I got it. Because we've got occupied with other initiative, right? So we did not— Yeah, right, right.
+
+01:09:06 - 01:09:17 Unknown Speaker:
+
+It got deprioritized. That's what. So I just wanted to bring it to your attention that we can get it done fast. Then give me a story for that, Rachna, right? That would save that me from that SME.
+
+01:09:18 - 01:09:23 Unknown Speaker:
+
+Okay, okay. Sure. I'll do that. Okay. And one more request, Rachna.
+
+01:09:23 - 01:09:35 Unknown Speaker:
+
+I already said that confidence page with you, right? With respect to the PRC group people need to raise, right? Yes. I just need one help. I won't be able to create 20 PRC groups in a day.
+
+01:09:35 - 01:09:43 Unknown Speaker:
+
+That is impossible. Practically impossible. Okay? So can you just split that to four groups? Maybe these five one are first priority.
+
+01:09:44 - 01:10:02 Unknown Speaker:
+
+You don't need to even mention the PRC group. If you mention that PRC group, that would be helpful for me. But if you don't want to do it, at least give me that sequence number from that confidence page. That this is the first batch of five requests, then next five, next five, next five. So I'll just add like a priority column there and I'll, I'll enter the priority number.
+
+01:10:03 - 01:10:18 Unknown Speaker:
+
+Yes, yes, yes. Okay. So that I can create that PRC and then everybody who are having those basic access, they would be able to use the portal. But in case somebody wants to modify the rules, then they need to raise that PRC group. And, and don't share the confidence.
+
+01:10:19 - 01:10:46 Unknown Speaker:
+
+Just whenever they ask for that, then you can share that PRC group from that confidence page. And I'll make sure— I'll make sure to add you as a custodian so that whenever request come, you can approve it without my independency. Sure, sure, Sachin. Also, Sachin, I got a couple of mails today as well as yesterday. Like some people had raised requests and I'm only getting the approval mails somehow.
+
+01:10:46 - 01:10:50 Unknown Speaker:
+
+I did not get like that a request has been raised kind of mail.
+
+01:10:52 - 01:11:06 Unknown Speaker:
+
+No, you should have. I don't know why it is not coming. So what, what I am getting is, is that the mail informing that this access was, like, you know, for this person. This one, you might be— so this is the same mail. You have to approve this request.
+
+01:11:06 - 01:11:12 Unknown Speaker:
+
+If you're talking about these email, right? This one. Oh, are you sharing your screen? Ah, okay. Yeah, yeah.
+
+01:11:12 - 01:11:19 Unknown Speaker:
+
+This, yeah, this is the email you might be. So why does it say a request has been approved? I thought you have already approved it. No, no, no. I did not.
+
+01:11:19 - 01:11:25 Unknown Speaker:
+
+Look, this is still sitting in the— Ah, sure, sure. Action error. Action approved privilege access. Oh, actually, actually. Okay, okay.
+
+01:11:25 - 01:11:27 Unknown Speaker:
+
+Who mail body was a little confusing.
+
+01:11:28 - 01:11:39 Unknown Speaker:
+
+So, so even if you have received these, right, Pia has raised it. Jitin Gambhir has raised it. And then Prabhan Mani has raised it. So you need to— Actually, I will approve these then. Yeah, yeah.
+
+01:11:40 - 01:11:44 Unknown Speaker:
+
+Sasik Devang and all, right? Archita Gadwal and then Tanisha Singhal.
+
+01:11:45 - 01:11:45 Unknown Speaker:
+
+Right, right.
+
+01:11:47 - 01:12:01 Unknown Speaker:
+
+So please approve these. So it would be there in your— And Sachin, one more question. This PRC group, right, this will give all the access to viewership, right? And what about DQIM? DQIM is currently open with this one, right?
+
+01:12:01 - 01:12:06 Unknown Speaker:
+
+Yes, yes. Look, once you get this access, you will be able to view everything apart from the modify of the goal.
+
+01:12:08 - 01:12:16 Unknown Speaker:
+
+Ah, sure. Just the modify part. Okay. Modify करने के लिए वो चाहिए. Or as we are planning, right, we'll say— DQ rule onboarding के लिए भी this one is enough?
+
+01:12:17 - 01:12:30 Unknown Speaker:
+
+Like new DQ rule requests. Ha, ha. They can submit the new DQ rules request. But even if they are a part of a team, they won't be able to view it in TrackMyRequest until unless they get that access for that particular team. Got it.
+
+01:12:30 - 01:12:44 Unknown Speaker:
+
+And what about DQIM as of now? अभी वो— As of now, we'll have to take action. Ha, अभी, अभी कर सकते हैं. But अगर if you want to implement that part, we can do that. वो हमें अब ज्यादा टाइम नहीं— Actually, I would suggest आप अभी मत करें.
+
+01:12:44 - 01:12:50 Unknown Speaker:
+
+Because it takes some time for people to, like, request and get it approved. वो, वो— Hello?
+
+01:12:56 - 01:13:14 Unknown Speaker:
+
+But slowly, slowly, slowly आप एक काम कर सकते हो. You can ask them to raise that access request for those PRC group, right? जब सबके पास PRC request आ जाएगा, तो we just need to incorporate that API. API भी ready है, right? Ather को बस front end से validation check लगानी है वहाँ पे, work basket के लिए.
+
+01:13:15 - 01:13:21 Unknown Speaker:
+
+तो वो बड़ा काम है. Right, right. Connect करें. That's what I'm planning to do. So basically we engage partners at the end of every month.
+
+01:13:21 - 01:13:40 Unknown Speaker:
+
+So अभी इस month के end में, when we— when I'll do next week, basically. So I'll ask them to raise this. Yeah, yeah. And in case you want to provide that admin privilege access to Sahaj also, ask him to raise that additional admin access. Sure, sure.
+
+01:13:40 - 01:13:49 Unknown Speaker:
+
+Okay? और अगर जरूरत नहीं है, then, then I would say that keep it with you only. Let's not give admin access to everybody. अच्छा, okay, okay. Works.
+
+01:13:50 - 01:13:52 Unknown Speaker:
+
+Right. ठीक है.
+
+01:13:53 - 01:13:57 Unknown Speaker:
+
+Okay then. Thank you, guys. Sure. Thank you, everyone. Bye.
+
+01:14:04 - 01:14:05 Unknown Speaker:
+
+అన్నా, కాల్ అయిపోయింది.
+
