@@ -1,0 +1,170 @@
+2026-10-13 UI Improvements for SAS Token Management and User Experience
+
+Creation Time: 2026/10/13 18:43
+
+
+📅About Meeting
+
+• Date & Time: 2026-10-13 18:43 (Duration: 1229 seconds)
+• Location: [insert location]
+• Attendee: [insert names]
+
+📒Meeting Outline
+
+File retrieval & token behavior
+
+• Expired SAS token vs. file state
+  Participants discussed confusion between an expired SAS token and the file being archived or in the cool tier. It was clarified: file can be in the cool tier (readily downloadable) while the SAS token previously issued for download has expired. The UI currently labels these as "download expired" which refers to token expiry, not file expiry.
+• User expectation when token expired
+  The customer expects that when they click "request again" (or re-request the SAS token) the download should start immediately if the file itself is already available (e.g., in cool tier). Current behavior often requires navigation back to Find Files or My Requests for the download to appear available, which is inconsistent and confusing.
+
+UI behavior & messaging inconsistencies
+
+• In-page status updates
+  The group reviewed that when a user re-requests a token for a file already in cool tier, the same page should dynamically show that the file is available and present download options immediately. Currently the status does not consistently refresh in-place, forcing users to navigate away and search again to see the file marked available.
+• "Restore request" vs "request again" wording
+  The term "restore request" and other messaging (e.g., "restore already in progress", "request expired") is misleading in several contexts. Restore implies archival rehydration; however in many cases only the SAS token expired and re-requesting should simply regenerate the token and allow immediate download. Participants recommended clearer, accurate messaging for token vs. archive/rehydration cases.
+• Misleading temporary-copy prompts
+  There is a UI prompt about "temporary copy will be created" appearing for files that are in cool tier (i.e., do not require rehydration). This is misleading and creates unnecessary concern for users — it should not appear when only a token re-issue is needed.
+
+Backend / token logic & expiration window
+
+• SAS token expiration logic
+  Participants reviewed token lifetime logic: previously 15 minutes, now changed to a 7-day validity for SAS tokens. The UI derives the displayed expiry date range from the token metadata (example: Oct 6 to Oct 13). The computation for showing "download expired" is aligned with SAS token timestamps.
+• How system detects expired token
+  The backend uses the SAS token expiry timestamp stored in metadata (MongoDB) to decide whether to mark a request as expired. This was explained and accepted as correct.
+• Performance considerations when searching
+  There was a brief discussion about search latency when fetching file/request entries from MongoDB. Current implementation uses pagination and no caching. Occasional delays were observed pulling metadata; participants considered whether intermediate caching would help but noted pagination prevents loading all entries at once.
+
+Repro steps / observed inconsistencies
+
+• Reproduction flow observed in meeting
+  The participant demonstrated searching for a filename which returned two entries: one archived (needs rehydration) and one in cool tier (ready). For the same file the "My Requests" view showed "download expired" and presented a "request again" action. After clicking "request again" the download did not start automatically on that page; however, after navigating back to Find Files and searching again, the file showed as available and secure download could be started.
+• Inconsistent UI states across pages
+  The same file shows different actionable states depending on whether it is viewed in Find Files vs My Requests. This inconsistency is a core frustration.
+
+Prioritization & next steps discussed
+
+• Confirmed three primary UI issues to address:
+  1) Re-requesting a token for a file already in cool tier should trigger immediate download without needing navigation.
+  2) Remove or suppress misleading "temporary copy will be created" prompt when only SAS token regeneration is required.
+  3) Fix confusing messages such as "restore request" or "request already submitted" for token-expiry cases; show clear guidance (e.g., "SAS token expired — request new token" and then allow direct download).
+• Backend note: SAS token lifetime change to 7 days acknowledged; UI should reflect and use token metadata correctly.
+
+📋Overview
+
+• Clarified difference between file archive/rehydration and SAS token expiry.
+• Identified inconsistent behavior where re-requesting a token does not start download immediately on the same page.
+• Confirmed UI shows misleading restore/temporary-copy messaging in token-expiry scenarios.
+• Backend token expiry logic (7 days) is correct and used to compute displayed ranges.
+• Search performance uses pagination; occasional latency observed but not conclusively a blocker.
+• Agreed on three primary fixes to improve UX and messaging.
+
+🎯Todo List
+
+• Owner: Frontend/UI lead
+  • [ ] Implement immediate in-page refresh/behavior so that when a user re-requests a SAS token for a file that is already in cool tier, download starts (or download option appears) without requiring navigation. (Due: [insert date])
+  • [ ] Remove or conditionally suppress the "temporary copy will be created" prompt for cases where only SAS token regeneration is needed (file available in cool tier). (Due: [insert date])
+
+• Owner: UX / Content owner
+  • [ ] Update UI messaging to clearly distinguish token expiry vs. archive/rehydration. Replace misleading labels like "restore request" with specific phrasing (examples: "SAS token expired — request new token", "File available — token will be regenerated and download will start"). (Due: [insert date])
+
+• Owner: Backend lead
+  • [ ] Confirm/ensure endpoint returns clear token-state metadata (token expiry timestamp and file storage tier) on requests so the frontend can decide accurate messaging and behavior. (Due: [insert date])
+  • [ ] Provide guidance in the group with any backend-side needs for the frontend fix (e.g., endpoints or events to trigger immediate refresh). (Due: [insert date])
+
+• Owner: Engineering (Frontend + Backend)
+  • [ ] Investigate optionally adding caching or optimizing MongoDB queries/pagination if search latency continues to impede UX (no change until confirmed). Report findings. (Due: [insert date])
+
+• Owner: Meeting participant who captured screenshots
+  • [ ] Post the requested screenshots (showing the "request again" behavior, the pop-up that was lost, and the "download expired" state in My Requests) to the group channel for dev reference. (Due: immediate)
+
+• Owner: All / Project lead
+  • [ ] Post a summary of the three identified UI issues and status updates to the group channel, and confirm who will own each fix. (Due: immediate)
+
+Notes:
+• Please fill in specific assignees and deadlines for the action items above.
+• If backend changes are needed to support immediate download after token re-issue, backend lead should specify required API changes and expected turnaround.
+
+Transcription
+
+00:00:00 - 00:00:47 Unknown Speaker:
+
+Request again I mean, if it is an expired one, okay, if it is an expired one, then, uh, then you don't need to show it as a request. Or not. Even if you can give it a request again, that is fine. But what he, what he is looking for, that? Immediately it will be ready for download. Just like this one. Okay, let me just copy this one, otherwise I am not going to get back these six, okay, six, 6. It was requested, 13 it has expired. Request response. Now, this thing is not required. Anyway, I mean, even if you are giving it, submit, just see this one. It is coming like this. Yeah, it is allowing you to download also, no? No, it is not getting downloaded right now.
+
+00:00:47 - 00:01:43 Unknown Speaker:
+
+No, the one what you just sent a request, it is enabled now. See. Okay, then you are saying that again I need to search that file? No, no, no. First you note down the file that you are actually having a cool period. This is not a down. Okay. Now this is in cool period. No, right? First one is not in cool period, right? First one is not in cool period. It is in archive. So that is fine. This is directly available, no? Second one is directly available. Second one is now directly available. Because you requested that, is it? Correct, correct, correct, absolutely. If it is requested by me and if it is available for you, then it would expect you to create a request. Because the SaaS token is not there, no?
+
+00:01:45 - 00:02:49 Unknown Speaker:
+
+Wait, I am showing you the problem. With this name, when we are searching with this name, we have two files. Right? We have two files. One is still in archive which has rehydration is required. Another is already we have make it, I mean re-request it because it has expired. Now it is ready for download. Okay? So if I click the download, secure download is going to start. Yeah. Now take one example where it is in cool tier. I am coming there. Now, why I need to come back? From Find files here and then I can see it, see how I came back here. That is in the previous page where I made the request for this particular file, it didn't. The download actually didn't start immediately, and on that particular page, I came back into the Find Files options.
+
+00:02:49 - 00:03:42 Unknown Speaker:
+
+And then I research it and then it is getting available and showing me it is now available, right? So Saturn is saying that if it is already in the cool tier, then why can't they do the same thing into the on-the-fly? And why can't it make it automatically get available on the same page itself? I mean, same page, he is asking that in the same page itself, I could get that notification that it is ready for downloadable or whatever you are showing here, that it is available now and the download options. It is not coming there, right? That is his question. You are getting my point? Okay. We have to jump back to here, right? We have to jump back here, then only we are getting. I mean, the same thing is not replicating there.
+
+00:03:43 - 00:04:43 Unknown Speaker:
+
+No, no. One second. The one which is in cool tier, it is readily available for download, right? That is already available for download, correct. So, can that be... So you requested and it is available for you. For me also it will be available to download directly without any permissions? Without any request? Yes, absolutely. It should be like that. So that's not happening is what you are saying? No, no, no. I am saying that in the same page it is not happening. In the same page it is not happening. I mean, it's not about the cool tier or archive tier. It's about that particular file which... was requested earlier, but its SAS token has expired. Okay, it says token has expired, you are showing it. I mean, even I don't, also not getting every time the similar kind of things where I can go.
+
+00:04:43 - 00:05:51 Unknown Speaker:
+
+I mean, how can I find that particular things? Uh, the page? How can I find that page? What I was showing you? Uh, that there is a bar is there, that it has expired. How can I see that expired token files? The files were actually that it was earlier requested but that token has expired. How can I get that back? Any idea? Token expired. It will again ask user to submit the request, right? If it is expired. No, if the file is. Already expired, okay. It was requested and expired. Then it will ask the user to submit the request again. Okay, my request. From the my request, yes, I get it now. This one. Download expired today. So see that properly, that how the navigation is happening. I am not getting... I mean, this has been downloaded.
+
+00:05:52 - 00:07:40 Unknown Speaker:
+
+This particular file, you just also search for this file. I also need to see that what exactly the visibility and show me what you can see from your system. One second. If it is a download expired, then it is already in the cool tier, right? Why that it is not coming into the cool tier? If I search with a cool tier filter, just please share your screen. I will come to know. Yeah, give me a second. Can you give me that UA link? UA link. I have to search. I kept it somewhere. Sure. Let me share my screen. Why is it taking this much time? This is taking this much of time because you are actually pulling it from the MongoDB. I have seen that sometimes retrieval all the data from Mongo, it takes some time.
+
+00:07:40 - 00:08:41 Unknown Speaker:
+
+Have you used any kind of caching, intermediate caching there? No, there is no caching but at least why it has to fetch everything? So how the things are actually happening? You are not fetching everything. No, pagination happening. Pagination only. Okay, pagination. For each and every pagination, the page toggling, you are actually making a... Yeah, because we cannot load all the files in one shot. This is something else. This is not that issue. Okay, I am not sure. But I have seen that sometimes it takes time, but not all the time. Yeah, so... This is fine now. How it's showing? It is showing in the cool tier. One is in the cool tier. And it is showing available also. Okay? Okay. One moment. Stay there. Don't do anything. Don't do anything. Please.
+
+00:08:41 - 00:09:45 Unknown Speaker:
+
+Just let me do the similar kind of activity here as well. Is it user specific something? Some issue is happening? Not sure. So first file or second file, which one actually you are looking at? Wait one moment, one moment. We will get it down. How your system is showing, one is in cool, another is in archive. For me also, one is in cool, another is in archive. So there is no problem with the user on that particular page. Okay, now, let me go back to the my request part. So here, uh, I wanted to request, uh, this one which is actually, uh, okay, definitely in the cool tier, which is in the cool tier. That only will show me that. Download expert, right? So why this download expert? Now, let me come back.
+
+00:09:45 - 00:10:43 Unknown Speaker:
+
+Okay, let me let me share my screen. Yeah, sorry, my bad. Uh, let me share my screen. Yes, now you can see this. This is the UH files requested by me, so my request file under this my request file. It is showing me request again for the same file. What you can see if I can search this file name in the UH, in the find another file. From from there, there we can see whatever you are seeing in your systems, the similar kind of things we can see. One is in archive, another is in Cool and it is ready to download. But here, Substance is asking that why we are showing this request taking because there is no further request is required. He, I mean, in his turn.
+
+00:10:43 - 00:11:30 Unknown Speaker:
+
+That request almost always something like that we are actually making a request for the rehydration. That is how he is thinking. No, this is, see, this file, it is expired, right? Yes, yes, I do agree with you. I told him that this is actually expired. So when you are re-requesting you, how you want to shoot? Who want to depict it to the customer. You need to say something, right? Yeah, request again option. Yeah, request again, there is no issue. I mean, request again is actually saying that it's an again. It means already it has been requested. It's fine. There is no issue on that. But one point he is correct that when we are making this clicking on this request again, it is not getting downloaded immediately. It should actually get downloaded.
+
+00:11:30 - 00:12:26 Unknown Speaker:
+
+I mean, the download should get started immediately. When I am making this request. Right? It is not happening here. Just see this one. I mean, this thing is fine. You are asking for this one. Submit restore request. This should not come. The restore request is not that. Because restore means also different thing. Correct? Restore means, I mean, if you kindly just make these changes. I mean, he hasn't suggested anything. That is a request request, right? Restore already in progress. My open request to see the latest status. Okay, what is that? I don't know. Okay. What is this? I never seen this one. Restore already in progress. My open request to see the status. So we should be saying the request is already submitted. Can you check it? For that file, you already submitted that request, it seems.
+
+00:12:29 - 00:13:37 Unknown Speaker:
+
+Request? See, for this one, request was actually made long back. No, no. Check it again. There is maybe one more request because that's a separate request, right? Search for that file in the top. Go up. Only one request, huh? Why is it saying then it is a request is already there? That's my question. See. It is same like you only. So from this page, it is behaving a download. It is available now. You can download it. From other page, its behavior is getting changed. Okay. So my request is not up to date. It's not in line with. Fine. Right? Yeah, you can narrow down in that way. One more question is, if it is XE, this is basically request. User has requested and it is expired. Okay. But whereas...
+
+00:13:37 - 00:14:32 Unknown Speaker:
+
+So, my suggestions will be within the my request part, when you are showing this kind of files, which are actually got expired. You know these files have got expired. So, Just... make a similar kind of behavior just that make it a something like it's an available. Uh, required, expired, you can definitely sit, and you can just say, simply provide one download uh, options there. Okay, because even if you are actually clicking on the download options, you can see this expired one. Definitely, this is an expired one, but that expiring things doesn't make any difference. Behavioral difference with the. With these files. Because this is also available for download. This file also should be available for download. Only thing, SAS token, regeneration of the SAS token will be required. And that regeneration of the SAS token...
+
+00:14:32 - 00:15:37 Unknown Speaker:
+
+So, okay. Here, expired is the token expired, right? Not file expired. Yes, definitely. Token expired. File never expired. So, when it is archived, unarchived, it will never be archived, is it? It will be archived, but that's the future things. We haven't planned for that one, right? That's a different behavior completely. So for that, we have our ranking mechanisms for that one. So if you see our metadata of MongoDB, I mean collection metadata, here we are maintaining one ranking mechanism. So that kind of things we will implement going forward. Right now, we don't have any such plan. When you move it into the archive back. Okay. So, request expired. I think I am able to explain you that what is the what is his ask, right? Or you want to connect with Satyam also? Request expired.
+
+00:15:39 - 00:16:24 Unknown Speaker:
+
+How can a request is getting expired? Can you tell me what is the logic? Request is when it becomes expired. Request never expired. Only the SaaS token is expired. Why you are saying request expired? Okay, then how does it know whether the SaaS token is expired or not? SaaS token is expired or not because the SaaS token has a time that when it is going to be expired. How you are putting this information? I mean you can tell me that what is the logic you are providing here. Whatever the logic that is correct only because I am adding. Seven days logic, right? I'm adding seven days of the token generations logic you are calling, that is actually the seven days logic. That are changes I have made into the backend.
+
+00:16:24 - 00:17:16 Unknown Speaker:
+
+So that is the reasons you can see from 6 to 13. Earlier it was just 15 minutes, now it's a seven days. That is the reason it is automatically computed on that part. So when when you have asked your, uh, I mean, uh, gpt or whatever, you are actually using that, that that thing actually pulled that particular SAS tokens expiration time, and based on that, it is showing that October 13 from October 6. So October 6 to 13 range is coming based on that, so it is absolutely fine, and it does it's. Although also showing that download expired, that logic is properly calculating. Only thing is this particular request against sections. I think when we are clicking on the request again, it should get downloaded immediately. Okay. Even if you are showing this one, Satyan has no issue.
+
+00:17:16 - 00:18:52 Unknown Speaker:
+
+Request again, okay. I am making a request again, but why the download is not getting started immediately? And even this part, I am not sure. This is the first time I am encountering this issue. It should not happen. Okay. Already in progress, open my request to see the latest status. This is one issue. Okay? Yeah. So just take a screenshot of this one, please. One second. It will help you. Okay? Okay. Second problem is this thing should not come. One second. That's gone, is it? That screenshot is gone. I lost that pop-up. Take it now. Again gone. Can you redo it? Make it ready. Okay. Okay, so two problems we have shared here. One problem is download getting should get started immediately in this kind of scenario where only the token has expired, file is still in the full tier, right?
+
+00:18:52 - 00:19:54 Unknown Speaker:
+
+Okay. So immediately it should get started. That is the problem number one. Problem number two is, I don't know, this is a new problem actually, but you can see it right now, right? Second problem. The third issue is... A temporary copy will be created that should not come in this kind of scenario. It is a completely misleading scenario, misleading situations for the business. Because they are requesting it, which is already in the cool tier. Correct? So this is an issue. Okay. Now, let me just find it. Yes, only one is there. Okay, fine. So I think these three issues you are actually understood, right? Yeah. Sure. Okay, fine. Check that mail thing, that is a key issue, right? Check the mail thing and let me know. Yeah, yeah, yeah, I will definitely, definitely.
+
+00:19:54 - 00:20:25 Unknown Speaker:
+
+And also let me know in case you need anything in the backend side, okay? Yeah, please post it in the group, okay? All three issues and what is fixed under. Three issues you have identified. You just mentioned three UI issues I am working. I am confirming that this particular cool tier thing has already solved and I am waiting for the email part. Thank you.
+
