@@ -1,0 +1,160 @@
+2026-10-23 SSO Auto-Login Behavior and My Request Enhancements Discussion
+
+Creation Time: 2026/10/23 17:40
+
+
+📅About Meeting
+
+• Date & Time: 2026-10-23 17:40 (Duration: 1446 seconds)  
+• Location: [Not specified]  
+• Attendee: [Not specified — participants mentioned: Pawan, Sattam (Satam), speaker/tester]
+
+📒Meeting Outline
+
+SSO / Login Behavior
+
+• Observed behavior
+  The application is auto-logging in via SSO (SS4). When the user signs out of the page but remains signed in to SS4, reopening the page logs the user back in without additional verification. The tester demonstrated this behavior using a normal browser session and attempted to reproduce in incognito/private mode.
+
+• Reproduction suggestions and verification
+  To verify whether the auto-login is coming from existing SS4 tokens, it was suggested to:
+  • Test in a browser profile that has never signed into SS4.
+  • Test using an incognito/private window (to avoid existing SS4 session tokens).
+  • Attempt login with a different user account or paste the direct download hyperlink in incognito to see whether it prompts for credentials.
+
+• Evidence and confirmation
+  The tester noted that in incognito the app still reached an SSO prompt and asked which user to use; when an existing SS4 session exists, the app bypasses additional authentication. The group agreed this behavior indicates SS4 functioning as intended (single-sign-on), but asked to capture evidence (screenshots/logs) when reproducing in a clean profile or incognito for clarity.
+
+• VPN / external-access concern
+  Discussion raised an earlier security issue (RPT) where vulnerabilities occurred when accessing without VPN. Participant asked whether downloads or access can be attempted from systems outside the VPN and whether the app behaves differently. Action: test from a non-Optum environment or coordinate with Sattam to try access without Cisco VPN to validate behavior and security implications.
+
+Download / "My Request" Functionality
+
+• Current limitation
+  In the "My Request" section multiple-select / bulk-download functionality is missing. User can only download files one-by-one; bulk select checkboxes and a "Download All" option are not present in this section (though similar functionality exists on other pages, e.g., Find Files page or for files in a cool tier).
+
+• User expectation
+  The user expects consistency: if multiple-select and "Download All" exist elsewhere (Find Files), the same should be provided in "My Request" so users can select multiple requested files and download them together.
+
+• Possible causes and considerations
+  • Browser settings / permission issues may prevent multiple-file downloads in one go; however the UI lacks checkboxes in My Request to initiate bulk actions.
+  • The My Request page was previously designed for tracking individual requests (order-tracking), and one participant noted business or design reasons might have kept it single-download only.
+  • The team agreed this is an enhancement (UX/feature), not a code bug per se, and requires design/requirements confirmation before implementation.
+
+• Related UX improvements
+  • Add checkboxes for multiple selection in My Request.
+  • Add a "Download All" bulk action/button.
+  • Ensure permissions prompt guidance for multi-file downloads (browser permission behavior).
+
+Pagination, Ordering, and Scalability of My Request
+
+• Scalability concern
+  The My Request page will grow large over time (many requests/files from underwriters); without pagination or ordering, the page will become unwieldy.
+
+• Requested features
+  • Implement pagination to avoid loading very large result sets on a single page.
+  • Add ordering/sorting capability (e.g., by request date) to find requests quickly.
+  • Consider displaying ordered request history (DSE-style ordering) to aid tracking.
+
+• Timing and priority
+  The change is classified as an enhancement. The speaker requested not to start implementation before confirming with Sattam — do not begin work before 8 (unclear if "8" is time or date; likely before coordinating with Sattam). Team to discuss priority after confirmation.
+
+Security / Vulnerability Follow-up
+
+• Previous RPT issue
+  Reminder of a past vulnerability when accessing without VPN; the group flagged the need to re-test RPT-related behaviors from outside VPN and ensure no security gap exists when SS4-based SSO is used from non-Optum systems.
+
+• Next steps
+  Coordinate testing with Sattam to attempt access from a non-VPN environment and confirm whether credentials prompt or security protections differ.
+
+📋Overview
+
+• SSO is auto-logging users via SS4 tokens when an SS4 session exists; reproduce in incognito/clean profile to validate.
+• Need to capture evidence when reproducing SSO auto-login behavior (screenshots/logs).
+• "My Request" lacks multiple-select checkboxes and a "Download All" bulk-download action — user requests feature parity with Find Files page.
+• Multiple-downloads can be affected by browser permissions; ensure UX covers permission prompts for bulk downloads.
+• Implement pagination and sorting (order by requested date) on My Request for scalable UX as file/request counts grow.
+• Classification: these are enhancements (UX/feature), not critical code defects. Confirm with Sattam before starting work.
+• Security concern: re-test access behavior and any RPT vulnerability from non-VPN environments.
+
+🎯Todo List
+
+• Pawan:
+  • [ ] Reproduce SSO auto-login in incognito and a clean browser profile; capture screenshots/logs showing whether the app prompts credentials or uses SS4 tokens. (Due: ASAP; coordinate timing with Sattam)
+  • [ ] Coordinate with Sattam to test access from a non-VPN system (outside Cisco VPN) and report whether login/behavior or vulnerabilities reproduce. (Due: before any dev work; owner to confirm timing)
+
+• Sattam (Satam):
+  • [ ] Provide availability and environment access to assist Pawan testing outside VPN and confirm behavior. (Due: coordinate with Pawan)
+
+• Product / UX Owner:
+  • [ ] Define requirement for My Request enhancements: confirm whether multiple-select checkboxes and "Download All" are required, and specify expected behavior (selection limits, permission handling, bulk download flow). (Due: TBD — before dev work)
+  • [ ] Decide ordering/sorting needs for My Request (e.g., default order by request date, ascending/descending toggles). (Due: TBD)
+
+• Engineering / Dev Team:
+  • [ ] Estimate effort to add:
+    • multi-select checkboxes and bulk "Download All" button in My Request,
+    • pagination for My Request,
+    • ordering/sorting by requested date.
+    Include any browser permission handling for multiple downloads. (Due: After requirements confirmed)
+  • [ ] Do not start implementation until confirmation from Pawan/Sattam and UX requirements are finalized. (Status: Hold)
+
+• QA / Security:
+  • [ ] Validate bulk-download behavior across browsers and ensure any browser permission prompts are documented and handled in UX guidance. (Due: after dev changes)
+  • [ ] Retest the earlier RPT vulnerability scenario from outside VPN and document findings. (Due: Coordinate with Pawan/Sattam)
+
+Notes: Owner assignments above are based on participants mentioned in the discussion. If names differ, please reassign accordingly.
+
+Transcription
+
+00:00:00 - 00:01:04 Unknown Speaker:
+
+What I can observe that... So, it's a behavior something like mystical to me. I mean, let's assume this page is right now open. And if I get out of it, clicking on the sign out options. Okay. It's sign out, right? Yeah. Now, again, I'm logging. It's opening without any verifications. Just asking for that. Yeah, yeah. That is how it is. There is no login for you. It is SS4 login it will use. There is nothing that... See, SS4 will have tokens. It will use those tokens and log in. Let you log in. Okay, so how we can test that scenario that it is not getting logged in from the other systems? You try it in a different browser. Where you have not logged in SS4. Or you can open the browser in incognito mode and try logging in.
+
+00:01:04 - 00:02:35 Unknown Speaker:
+
+Okay. Fine. Incognito mode where I can... Okay. Incognito window. Right? So if I am asking there and providing... Okay. Let me just log in and log out first. See, this is getting locked in without any hazards, without asking me the authentications. No, it is actually your SSO is working there. I understand your point. So show me that evidence. So pick an account. Now it is in incognito mode, right? Hello? Incognito window. Just checking. No, you are saying incognito mode is not coming, right? Incognito mode 7, I am just giving that. No, it is, see, when you enter the URL, it is asking that SSI user ID, it is asking, right? Yes, but when I open the incognito mode and asking for this one, it is actually opening. Yeah, it is opening, but it is prompting you to which user to use, right?
+
+00:02:36 - 00:03:50 Unknown Speaker:
+
+See, this is SSO. When you say signing, signed in already, so that is SSO. You try logging with some other user. Give my mail id. Just simply give my mail id. If it is like that, then whatever we are getting through our email, let me just open through the email part. Then it will be understandable in a better way. Let's assume that I am opening with this download link. Copy hyperlink and let me paste here. I have already logged out. But you have not logged out of your SSO yet. See, it is... I have logged out. Yeah, yeah. I have logged out. Okay. Okay, now it is asking me this pin. So, I believe that this should work as a logged in request for the... when someone will try to download it from the other system, right?
+
+00:03:50 - 00:04:43 Unknown Speaker:
+
+Or from the other browser. Okay. That is one point. Second thing is if I go within the my request sections. Okay. This is my request I believe. Yeah. So here my request that download multiple download options what I told you. Now that multiple download option is not there. Right now you have to download it individually. So already you have requested for some let's assume the 50 files or 30 files or 15 files. So just if I can click over multiple files and click a download all the way, you have already done it for some other way. Just like here, I can see download all download options. Kind of things is coming. One like here, no, nothing is there, but it is applicable for another page. Suppose these files already in the cool tier?
+
+00:04:43 - 00:05:38 Unknown Speaker:
+
+Okay, now here I have options that if I now, let's assume that here no button is there. But if I click on something like this, it is asking me download kind of things. And if I click the download option, it should start downloading for all the files. Though it is not actually working for me. But anyway, I mean, only one file is getting downloaded. I don't know why. But yeah, just one file is getting downloaded, but not the all. Just see this one I have requested for these four files to be downloaded. But only one file actually got downloaded, not all. Okay, okay. Okay. I don't know why. Anyway, that could be a problem of my browser. I'm not setting settings down. I mean, when we ask for multiple download, that permissions is required.
+
+00:05:38 - 00:06:33 Unknown Speaker:
+
+Some permissions issue could be there with me. But that is a case of... When you are coming from the find files options and you have multiple files in the cool tier, that time it is happening. Correct? But that multiple select is not working with the my request sections because there is no checkbox here. So that multiple select is required for the my request sections. It was there, I know. Earlier it was there from the find file sections, multiple selections. But I requested you to... Implement this one from the my request sections. I should be able to download multiple files at a time. So that is one thing that is required. And whenever you are giving these options, just provide it. I believe that it is the same functionality you are going to use for both the pages, right?
+
+00:06:33 - 00:07:24 Unknown Speaker:
+
+So whenever you are going to give us a download facility, just put it as a download all. I think that will also give you a better picture. Because I mean, from the user's perspective, right? Okay, yeah, just download all okay, and all the same thing should be, uh, there on the my request, okay. But here there is no option to select multiple, right? No, there is no options because the checkbox was not there now, so you want that? Uh, multiple options. Yeah, multiple, multiple options. I don't see that is the right way. Is that something they are asking? Nobody is asking anything because we are preparing it for the No, no, let's not put it here. It's individual request so only for that purpose we use it. Let them download it one after the other.
+
+00:07:24 - 00:08:18 Unknown Speaker:
+
+It's okay. Why you want that? What is the problem of having multiple download if I want? There is no problem. There should not be any problem. It's basically for tracking the request, not for down, I mean, maintaining. Now, logically tell me that what is the issue? What the issue you are thinking? No, no, coding wise I am not saying. Coding wise there are minimum changes. But I am asking that from the user perspective what, I mean, maybe I am not understanding that part. Just help me to understand that what would be the issue from the user perspective. That functionality would be. To have that in this page, I mean, if you... See, the reason I'm saying it, I mean, I know what is the upcoming thing is going to come. Suppose here you have a request, right?
+
+00:08:18 - 00:09:13 Unknown Speaker:
+
+So request, there should be an ordered way. It should be an order or, I mean, DSE kind of things, okay? So... So that order of the requested date will also be also going to come. But I don't know. Right now I'm not saying to do that. But whenever your application is under maintenance or application is going for more than a year, then they are not going to deal with this 2040 files, right? So that time it will be a huge file. And I believe you are also going to maintain the pagination here. You are not going to show everything in this system. I don't know whether you have done it or not. Whether pagination is there in this page or it is normal. See, yeah, so that is also important to implement.
+
+00:09:14 - 00:10:09 Unknown Speaker:
+
+Because this page will not remain like this after one year or one and a half year. When people underwriter, 16, 17 underwriter is there. They are going to deal all kind of files. Okay, and this is a huge number of files, so this page is going to be huge one within couple of months, so definitely definitely pagination should have been there. Okay? If possible, please add that, uh, or ordering already part also yes in the requested part and download all definitely will be required with the checkbox. Okay, fine. Fine. Even if I, I mean, Sattam was very busy since morning. I really couldn't be able to connect with him. And I, whatever I am suggesting, in case Sattam is asking any issue with that one, okay, I will definitely let you know.
+
+00:10:09 - 00:11:03 Unknown Speaker:
+
+So don't start it before 8. Okay? No problem. It's not an issue. It's just an enhancement. Yeah, definitely. It's not like it's a code issue. It's an enhancement. We already didn't discuss about these things. Because right now we are actually getting the complete idea that what is going to happen. And that's the reason such kind of things are actually coming. And the request never will come from the business side because they are just looking into the first time they are looking into the systems. A requirement has been built up by us. Application has been proposed by us, so we have to make the changes, okay? Okay, okay. Yeah. Okay, sure, yeah. Sure. I will let you know in the group itself, whatever we are discussing, that just you have pointed out that part, right?
+
+00:11:03 - 00:12:04 Unknown Speaker:
+
+Whatever I am asking, that in the My Request section, checkbox and download all options should be there, okay? Okay. Pagination should be implemented and also add this part. Okay. Required or not required, tomorrow we will find out, but requested, when it was requested, that ordering and disordering that, I don't know what is that button is called actually, that things will definitely give a better idea. Okay. Okay. Okay, man. Yeah. Thank you. Yeah, thank you, man. Okay. And just one more thing, Pawan, that whatever you were saying, I completely agree with you. But is there any other way, I mean, last time there was a major issue with the RPT because some vulnerability was actually, I mean, found when someone actually tried it without VPN. So is there any way out?
+
+00:12:04 - 00:12:55 Unknown Speaker:
+
+I mean, I understand that it is asking for the credentials whenever we are locked out from our SSO. But can we try it from other systems? Other system means outside of the VPN? I'm not sure right now. Is there any way out? This browser, is it? This browser. I mean, you are from the Optum only, right? You are using the Optum. I'm not from Optum. So my systems actually work in a different way. My system works with the VPN connected. I think your system is not VPN connected, right? We use Cisco. Ah, so without Cisco, is it possible to try? Okay, let me give it a try with Satam. You've consented your part. I will test it out with Satam. Okay, thank you.
+
