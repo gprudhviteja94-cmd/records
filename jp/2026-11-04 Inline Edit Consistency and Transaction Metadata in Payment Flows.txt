@@ -1,0 +1,314 @@
+2026-11-04 Inline Edit Consistency and Transaction Metadata in Payment Flows
+
+Creation Time: 2026/11/04 12:23
+
+
+📅About Meeting
+
+• Date & Time: 2026-11-04 12:23 (Duration: 2611 seconds)
+• Location: No relevant content mentioned
+• Attendee: Rahul, Venkata, Yogesh, Kuber, Jeevan, Jagan, Kumar, Jeevan, Bruno, Krishna (participants mentioned in discussion; exact attendee list not explicitly provided)
+
+📒Meeting Outline
+
+Inline Edit / Modify Flow Consistency (Payments & Templates)
+
+• Inline edit response vs drawer (modify) response
+  The group discussed keeping the inline-edit response consistent with the modify-drawer response so the UI can reuse the same field-key / value mapping when building the final submit payload. Backend responses for inline-edit currently include a set of fields; the proposal is to ensure the inline response returns the same applicable field metadata (field key like PMT_xxx and values) as returned for drawer/modify flows so UI does not need extra filtering or special logic. There is debate: some prefer returning minimal fields (only non-empty) while others prefer returning the full set of applicable fields (including empty values) for consistency with existing UI behavior.
+
+• Empty-value fields in payloads
+  There was a clear difference of opinion: one side argues it’s acceptable and simpler to exclude fields with empty values (minimal payload), while the other insists on including fields with empty values to avoid changing UI logic and to keep identification of applicable fields consistent. The team recognized that including empty keys typically has no negative persistence impact but avoids extra UI logic.
+
+• Action: try initial experiment
+  Consensus: For a first iteration, let the UI take whatever inline-edit response is produced and attempt constructing and submitting a payload to validate whether excluding empty fields causes issues. If issues appear, adapt to return the consistent set including empty keys.
+
+Transaction / Transmitter Metadata (submit payloads)
+
+• Transmitter data necessity and origin
+  Transaction metadata (transmitter data) required for final modify-submit (action, amount, transactionId, version) must be present in the submit payload. For modify flows the UI currently constructs transmitter data using fields coming from backend responses (e.g., beneficiary list provides version/transaction details). For inline-edit, the UI sometimes lacks the same object context and thus must either build the transmitter metadata itself or get it returned in the inline-edit response.
+
+• Version importance
+  The version field (transaction version) is required by backend to apply a modification; it must be taken from backend responses (getBeneficiaryList or equivalent) and echoed back in submit. Version is not a UI-generated increment—it must reflect backend-provided value.
+
+• Where transmitter data is built
+  Clarified: UI builds transmitter data using information returned from backend responses. For inline edits, either UI must construct it (if it has necessary info) or backend must include the necessary metadata in the inline response so UI can forward it back (unchanged) to the submit API.
+
+• Decision/next step
+  Short-term: UI will try to build the transmitter metadata from the inline response and use it in submit. Team will confirm if inline response must be enriched with transmitter fields. Kumar and Kuber to discuss details separately (avoid spending more meeting time).
+
+Allow-Edit Flag (Templates -> Payment behavior and UI)
+
+• Requirement
+  When creating a payment from a template (or when a payment is created from template and later modified), each recipient’s instructed amount field needs an editable flag indicating whether the inline amount field should be editable on the payment queue grid and in the drawer. The flag should be present in responses driving the payment grid and the modify flows.
+
+• Where to add flag
+  Agreement to expose a boolean flag (name to be agreed) inside instructedAmount (or the instructedAmount block) in the getBeneficiaryList / beneficiary responses. This flag will be used by the UI to render the amount field as editable/non-editable in payment queue and modify drawer flows. For payments created from templates, the flag must persist so that subsequent modify flows know which rows are editable.
+
+• Flag semantics & defaults
+  Recommendation: default behavior is false (not editable) unless explicitly set true for the specific recipient created from template. The team discussed whether to omit the flag when not applicable versus always sending it with default false; leaning toward including it but setting default false to avoid omissions.
+
+• Scope
+  Allow-edit applies only to fields configured in DB (not to every field universally). Initially required for instructedAmount (amount) on payment queue and modify flows; extendable later to other fields as configured.
+
+• Template modify flow vs payment-from-template
+  Clarified difference:
+  • Modifying template definition (template editor) is separate; allow-edit configuration exists as template metadata and may be toggled there.
+  • Payment created from a template should inherit the recipient-level allow-edit setting from the template so the payment grid/drawer reflect that setting.
+  • When template allow-edit toggles after a payment was created, clarify desired behavior — currently discussion focused on payments created from templates and modify flows using the inherited flag.
+
+• Implementation notes
+  The flag will be added to getBeneficiaryList responses (and related APIs that feed the grid). The drawer/modify response (modify payment in batch) must also provide this metadata so UI shows identical toggle behavior.
+
+API / Confluence Synchronization and Consistency
+
+• Confluence / docs
+  Several participants noted that Confluence API pages are inconsistent across endpoints (recipient object structures differ across payment/template APIs). Team agreed to update Confluence pages to reflect a single, consistent recipient object definition for:
+    • submit payment
+    • modify payment submit
+    • getBeneficiaryList (for payments and templates)
+    • create payment from template flows
+  This reduces confusion and ensures front-end/back-end teams agree on fields, names, and behavior (including instructAmount.editable flag and transmitter metadata).
+
+• Swagger / Microservice availability
+  It was noted that there is no unified swagger for the backend (not a microservice environment). Confluence will be used and should be kept accurate. Bruno / backend owners to be contacted to keep docs aligned with implemented responses.
+
+Action Items Clarification & Next Steps Discussed
+
+• Immediate experiment
+  UI to attempt building submit payloads using the current inline-edit response (even if minimal) and test whether submit works with excluded empty fields. If it works, consider keeping minimal payload; if not, move to returning consistent full set in inline response.
+
+• Separate discussion
+  Kumar / Kuber / Rahul to take a focused follow-up discussion about which keys exactly must be returned in inline-edit response (transmitter metadata, version) and who is responsible for constructing transmitter data in inline-edit flow.
+
+• Drawer vs inline logic
+  Ensure modify payment in batch behavior and drawer flows are not broken by inline responses; keep logic consistent across both flows.
+
+📋Overview
+
+• Keeping inline-edit response consistent with modify-drawer response is desired to avoid extra UI logic; initial experiment to validate minimal vs full response will be done first.
+• Fields with empty values: debated; final approach pending experiment — default preference to keep consistency to avoid UI changes.
+• Transmitter metadata (transactionId, amount, action, version) is required for modify submit. Version must come from backend and be echoed back; UI may construct transmitter data when possible, but backend may need to include necessary fields in inline response for reliable submit.
+• Add an "editable" (allowEdit) boolean for instructedAmount in beneficiary response around payment-from-template scenarios. This flag will be used by UI to render inline editability in grid and drawer flows.
+• Confluence updates required to make recipient object structure consistent across payment & template APIs (including instructedAmount editable flag and transmitter metadata fields).
+• A short follow-up between backend and UI owners (Kumar, Kuber, Rahul, Jeevan) is needed to finalize exact field names and which API returns which metadata.
+
+🎯Todo List
+
+• Rahul:
+  • [ ] Attempt to build and submit a payload from current inline-edit response (using whatever fields are returned). Time: ASAP / today
+  • [ ] Report back if submit fails when empty fields are omitted (so decision to change inline response can be finalized). Time: 1 day
+
+• Jeevan:
+  • [ ] Implement/enrich inline-edit response changes (detailed response with applicable fields) on branch and push changes for UI testing. Time: ASAP / today
+  • [ ] Keep a checklist item for modify-payment-in-batch and payment-from-template consumption of allow-edit configuration. Time: coordinate with Rahul
+
+• Venkata / Kumar / Kuber:
+  • [ ] Discuss and confirm exact list of fields that must be present in inline-edit response for UI to construct transmitter metadata and to allow direct re-use for submit (transactionId, version, action, amount, PMT_xxx keys etc.). Time: short follow-up meeting / today
+
+• Backend owners (Bruno / backend team):
+  • [ ] Update Confluence pages for getBeneficiaryList, modify payment in batch, submit payment, and create payment from template APIs to have consistent recipient object definitions (include instructedAmount.editable flag and required transmitter metadata). Time: Update drafts and share for review by end of day / next day
+  • [ ] Confirm whether inline-edit response should include transmitter metadata/version or UI must build it entirely. Time: coordinate with Rahul / Kumar / Kuber
+
+• Yogesh / Jagan:
+  • [ ] Ensure modify-drawer flows read allow-edit configuration correctly for payment-from-template scenario (templateBeneficiary-driven allow-edit). If not implemented, implement mapping of template beneficiary allow-edit to payment beneficiary editable flag in modify flows. Time: Implement and push changes; coordinate with Jeevan for testing
+
+• Krishna / Frontend team:
+  • [ ] Update UI to consume instructedAmount.editable (or agreed flag name) from beneficiary responses and use it to render grid inline editability and drawer behavior. Time: After Confluence update and backend push (coordinate schedule)
+
+• All:
+  • [ ] Finalize and agree on the field name for the editable flag (suggested: instructedAmount.editable or allowEdit). Action: agree and put the final name into Confluence. Time: today
+
+Notes:
+• Keep default editable = false where not applicable; only set true where template-driven allow-edit is configured (to avoid flooding responses unnecessarily).
+• Ensure the version field is always sourced from backend responses (getBeneficiaryList / beneficiary objects) and returned in submit unchanged.
+
+Transcription
+
+00:00:00 - 00:01:00 Unknown Speaker:
+
+Because we only want those fields. There will not be any inconsistency in these two. Okay. Correct? Yeah, yeah. Venkata, do you want to quickly show him that right now, where that is? I'll check that code. I'll talk to him. I got your point. But which response should we use? Modify response only, is it? No, no, no. I'm not asking to use that. So again, that's why. I'm just saying that that particular service call gives you some response object and all, but it has got the field key metadata and everything which is needed. I'm saying just take out from that field key list from there and the values from there and put it whatever today you are doing in the... In the general map with key and value, right? The field key will be PMT something and the value is value, right?
+
+00:01:00 - 00:01:51 Unknown Speaker:
+
+Applicable. I think that is what Kuber you were asking. So, I think then that should be sufficient, right? One more thing he raised yesterday, Rahul. He want the same response to be submitted again. He don't want to make any change. So, we are sending the response back to them. Okay. That is the whole point of giving the inline edits response with that set of field key and value so that UI can just capture that and put it in the actual submit payload. That was the whole point. So it has to be correct only, no? No, no. There are two things, two changes in that. First, we won't be sending the fields with empty value. No, no, no. So, Yogesh, you are late on this thing. But before you join, we discussed, right?
+
+00:01:52 - 00:02:41 Unknown Speaker:
+
+Overall submit payload, the field key value thing, right? What we have, we want to keep it consistent is the set of fields that are sent, that are actually sort of applicable for a specific, let's say, driver field combination, right? And pay method, let's say, just to simplify, right? And we show it on the user, sorry, UI. And even if the value is not filled by user, it is blank, it is applicable. UI typically builds that payload with that field key and the value is blank. So we are not asking UI to exclude it. We want to keep that same logic from... But if without passing the empty keys with empty values, if we are able to make, modify or submit, then it is not needed, right? No, no, no. Hear me out.
+
+00:02:41 - 00:03:25 Unknown Speaker:
+
+We don't want to put extra logic on the UI to filter out anything, right? So current logic in the UI is... Based on the fields metadata in the section that is given basically in the response of post-continue or rather the driver field combination, right, UI shows. And basically whatever is visible, UI ultimately uses in the passes in the payload. That logic we don't want to change to optimize or anything. Okay. So let's say even if I understand the extra fields, I mean not extra, the fields with potentially empty string has no negative impact on how it is persisted. In the database or how it is pulled back. Because most likely, even if you don't send it, it's not going to have negative impact. I understand that, but we don't want to change the UI logic, so let's so.
+
+00:03:25 - 00:04:05 Unknown Speaker:
+
+That's why it's, that's how it was done in Ember. And I think that is the same thing that has been carried forward for, let's say, uplift also, so that logic will keep it same. Even if there is a field where UI user has not populated value, let it come in the payload, it will still work, right, even if it doesn't come, it works. Most likely. That's what you are saying, right? That we all understand. So, as part of inline edit response, do we need to pass those field with empty values or not? No, no, so that's what I'm coming, right? See in the What is inline edit response. What is expected by the UI is the basically set of field and with the key with PMT, whatever field key and the value.
+
+00:04:05 - 00:04:51 Unknown Speaker:
+
+What we would typically be sending in the drawer, which is what we are showing. Current payload as of now, they are expecting. No, no. They are expecting that. What I'm saying is the set, the actual items will be the field that is actually being captured by the UI because we give it on the drawer also in the modify response, modify payment in batch response, right? Which fields, metadata, which section, whatever, right? So essentially the same set of fields are expected in the inline edit response because UI is going to pick that same set of fields and put it in the payload for submit. Correct? That consistency. Are you getting? No, I'm getting, but there's a use case. Let's say you have done only the inline edit and inline edit has given you the response, right?
+
+00:04:52 - 00:05:50 Unknown Speaker:
+
+And the fields where value is, let's say empty, we are not returning those fields. Correct. So in that case, will UI, will that API work? Most likely it will work. But then why we are doing this extra change in inline edit? No, the reason I suggested is to keep the consistency in terms of identification of the applicable fields. Like whatever we show on the drawer and because here in the inline currently the logic is generically written, right? All the non null whatever empty field value you just create a map, right? But here you will get into a problem. For example, which fields do you want to return in response? That is what I am saying. The same logic is required in the modify payment in batch also where we map, if you remember, the staging object to the payment object.
+
+00:05:52 - 00:06:36 Unknown Speaker:
+
+And then the payment transaction object is being passed to that modified service, the BAU, which gives you the field metadata with the response like applicable fields and the value and other metadata, whether it is visible or not. So essentially those are the fields, those are the subset of fields for that pay method and all. No, I get it. But for the first round, what we can do is whatever response we are getting from the API for inline edit, let UI consume that response and try to build a request and see whether we are able to make that work or not. Can we do that exercise first? No, no, no. So you are going two steps ahead, right? Pause for a minute. For this step, let's decide. Conceptually, we understand.
+
+00:06:36 - 00:07:19 Unknown Speaker:
+
+I think from your standpoint, you can take that whatever is there and try to put it in a submit and we'll see if it works. I think it should work specifically because the only checks we will be doing for the not null field and whatnot. So I think it will work when there are values, right? But what... The change I was proposing it to actually keep it consistent with respect to what you expect and get from the drawer versus what we get in the inline response, right? That's what I was suggesting to do. So that that consistency is never broken for the subsequent futuristic pay method also. Because whatever custom logic that could be there in the reverse mappers will automatically be taken care of and we'll have to do explicit change here is my understanding, which is why I'm sort of.
+
+00:07:20 - 00:08:07 Unknown Speaker:
+
+Proposing that for payments. Now for templates, it might be slightly different, right? Because for template, the template, any concept is there and the part is there. So that reverse mapper, we potentially are sort of building ourselves and refining it is what I think will happen. My opinion is if we keep the minimum fields, right? And if we are making sure that with minimum fields, the APIs are working, then we should keep it that way. Why you are syncing if it is not needed? Why you are trying to make it consistent if it is not required? I got your point. Consistency is required, right? Why do you think consistency is not required? I am not making it like unnecessary, right? Because the reason is, I will tell you the reason, right?
+
+00:08:08 - 00:08:55 Unknown Speaker:
+
+If for whatever reason there is a separate nuance logic written in the existing PAU versions of the reverse mappers where certain fields are dropped, etc., right? Even if the value is populated, for example, right? If we do it this way, we'll end up creating that, adding that field, even if it is not applicable, not visible, whatever, right? So I'm just trying to basically cover that scenario, that okay, that scenario won't happen, and we'll always get, right? See, UI actually in this case, actually doesn't care, right? Whatever is passed from backend in the response, the same thing is going to come in the payload, right? So whatever we would expect as a function, we'll anyway have to make sure that that gets added in the response. UI will not care, right? Because there won't be any specific logic in UI.
+
+00:08:55 - 00:09:46 Unknown Speaker:
+
+UI doesn't know whether it is minimal or not, right? Technically. Agree, but whatever field the data is, UI should be only concerned with those things. And for that, mapper should be there and that should work. We should not care passing keys with everything else. See, Yogesh, think in this scenario, right? See, that... That could be the same scenario for Troyer also. But you need to show the fields which are actually submitted already for the edit, right? Even if it is empty. That's why we did this reverse mapper for a reason, isn't it? No, Drawer is fine. Let's say we are giving you that in Drawer, but let's say for inline edit, when you are giving a modify submit request, there you can pass the minimum payload, right, which has the actual value.
+
+00:09:46 - 00:10:30 Unknown Speaker:
+
+This is not about the payload, Lukas. I'm getting Raul. This is not about the payload of inline request. This is about inline response so that the field keys can be... Correct. Inline response will be request, right? UI will not have any logic. I will take whatever is being... That's what I'm saying. Whatever you are getting in inline edit response, whatever keys those have values, use that in the request. So you are telling one object of my recipient will be having four fields, one will have 100 fields, and another will have six fields. Depending upon the data, yes? No. No, so that shouldn't be the data model problem, right? That is the data model, right? Even if it is not populated, at least the set of fields has to be consistent, no?
+
+00:10:30 - 00:11:07 Unknown Speaker:
+
+But in the submit request, in the submit payload, let's say if I'm passing a field whose value is empty, anyways, it is not going to be applicable, right? Then what is the point of passing those fields? That's what we are doing it for the single submit also, right? That is what we are doing today because that's how we can see these fields are applicable. That is wrong. No, it's not wrong. Then we have to change all the APIs, right? You want to go back and change all the APIs. No, I don't think it is wrong, man. It is, see, from the UI payload point of view, you can literally see all the applicable fields coming in, right? From the UI point of view, right? Even if the field does not have any value, then it is not applicable, right?
+
+00:11:07 - 00:11:54 Unknown Speaker:
+
+We are just seeing whether that field is there or not, but it does not have any value, right? Ultimately, it will not have any effect on the data. Value is one thing, but visibility is also there, right? You are seeing the field in the UI. Doesn't mean I have to magically put it. Some value into it, right? It is a visible field. It's not a valid field. It's a visible field that needs to come in. But you have a list of the visible fields, right? So just try whether with bare minimum, is it working or not? It's working, but will work. That is not an issue, I'm telling you. We just want to make that thing consistent, okay? Or whatever recipient, whatever applicable fields are coming in that payload, all of them are coming, even if some of them don't have value.
+
+00:11:54 - 00:12:39 Unknown Speaker:
+
+That's all see. As I said, I will most likely not be able to do anything in terms of plus minus, right? Whatever is coming in the back-end response, going to pay ticket, just just try it out. Uh, even with that, um, help him do that separate version of the method and just see what's coming in properly. With that same thing that is used for the drawer, okay, But transaction metadata UI has to create, right? Yeah, exactly. I was coming on to that. That still UI has to add to each and every object in case of modifier batch payment or modifier batch template. Transmitter data as well as the other thing is that modified payment ID. Will the backend send that as part of the inline edit response? Modified payment ID in where?
+
+00:12:40 - 00:14:16 Unknown Speaker:
+
+In the inline response for that recipient object. We need that in the actual modify submit the individuals that field. Yes. Modify. That is needed. So then that should be sent from in the inline response to then, right? Are we sending it right now or no? We are sending right now. Okay. So that doesn't change basically. So only the transfer data is something that we have to enrich in the each recipient object from the UI side then. Why is that? Can you go to the, I mean, share the screen again. The API will just have a look, right? What's for the payment submit payload and all. Okay. I'll try on a modify batch payment. Oh, this might be created from a template. Let me try some other one. I'll quickly create a new batch with two SPNs.
+
+00:14:16 - 00:15:29 Unknown Speaker:
+
+One second. Hey, Jeevan, are you doing that code change in the background? Have you given him? Yeah, I'm doing it. Okay. So, one thing on the overall concept of inline edit, right? For user, inline edit is just another modify. And, I mean, user doesn't know that only small data is going in or coming in, right? So, we should consider exactly like modify. Whatever we are doing. What does that mean? Like how we are doing in the edit drawer, right? Edit drawer save and inline drawer is exactly same. Concept wise. There also I can go and just add only the amount and then save. Isn't it? Correct. Yeah, but that part of what you are saving, how it is saved is still true, right? With respect to the request for the staging KPI and the outcome in the staging, that is still true, right?
+
+00:15:29 - 00:16:26 Unknown Speaker:
+
+What is not true in it? You know, I'm telling concept-wise, it's both same. There's no separate new flow for in-lane edit, right? It's just an edit of the amount inside that particular transaction. That's it. Yeah, so as far as staging is concerned, it is true. It's like that only. Yeah, then where is this transmitted data problem comes in? I'm not getting that. No, in transfer data, we are currently passing in the event from the non-inline flow as well. When we are doing the edit from the drawer, that also we pass. So same thing needs to be passed from inline, right? Nothing new, right? Yeah, but the inline response is not giving us the transfer data today. That's what I'm wondering why. No, but in current also, in that modify payment in batch, are you getting the transmitter data?
+
+00:16:26 - 00:17:15 Unknown Speaker:
+
+No, no, no. We are creating that. So that is built by UI, right? So in both these cases, transmitter data can be built, right? No, no, exactly. What is, when we say, before we say it can be built, what are the fields we are talking about? I'll show you. Transmitter data in modify, added or modified. Correct. Let's just quickly look at which field we are talking about, right? So, for each beneficiary in the submit modifier payment, we pass this transmitter data. This is for each recipient the transaction ID and then the amount and the action modifier. These are the three and the version of the BNI as well that we pass. Version of the digital transaction. This is transaction, right? Correct. Yes, that is transaction. Correct. That is a transaction.
+
+00:17:16 - 00:18:13 Unknown Speaker:
+
+So, for inline edit, we need to pass the same. No, no. So, from backend, are we giving the same? No, backend, not from backend, Rahul. UI is creating this. So, now, currently, this is built by UI, right, Rahul? The version thing is built by UI because it is coming in the response, right, of modify, payment in batch, correct? Beneficialist, actually. Beneficial list is back-end ribbon, right? Yeah, beneficial list is giving version. Correct. We have all these details to build this. So, same thing. Okay. So, inline edit. Inline edit, we pass it in the request, you send it back, right? Along with it. No, no, no. So, then the transaction ID and version UI will have, no? Yeah. You can create. Build that small block, right? Yeah, I'm not saying we cannot build it. No, no.
+
+00:18:13 - 00:19:03 Unknown Speaker:
+
+What I mean is there's no change that can happen and the value is expected from the output of the inline response, right? It is not, right? From that perspective, I'm saying. But what does this version mean? You are doing an editor. This is a payment transaction version. The payment transaction object. Without this version, Jagan, you cannot modify any payment. No, no. Will it increment or it will always be one? No, no. It can change, right? It is coming from get beneficial list. No, whatever is in database. So let's say if I saving a first penny in the drawer and then going into the queue and editing the amount, will the version be two or one? No, version will be whatever you are getting from get penny list. This version is not the UI logic.
+
+00:19:03 - 00:19:54 Unknown Speaker:
+
+This version is whatever backend is giving you, you need to take it and pass it back. But Rahul, this amount, this amount is one which we actually edit. So from the inline response, we will be getting the credit amount field that we can map to this amount. Because amount is the only thing that we do. Amount is also, it can be same, right? The same thing would be in your payload itself, right? That's what I'm asking. Are we not taking this as a payload for inline edit as a request? No. No, we should write. Inline edit is not taking transmitted data, right? See, inline edit is the staging API stuff, right? This specific structure, Jagan, is for the actual subject, right? Jagan transmitted data is a metadata built by UI, okay?
+
+00:19:54 - 00:20:49 Unknown Speaker:
+
+Based upon whatever data we are giving in the response. This is not a thing. That is not true for the first time. First time, we don't send it. It is always coming from backend. We always keep it null for the first time. Meaning for the first creation. When you are in the modify flow, every time transmitter data is there. I am not talking about modify flow. Create flow. First time. Create flow is not needed. Create flow is not needed. Create flow is not needed. Okay, what about the status code? There is a status code also. I don't see that in beneficiary list. I have to check where are we coming up with this status code. Status code, I think it is not needed. Status code, is it the status code of the payment table that is coming in the drawer?
+
+00:20:49 - 00:21:42 Unknown Speaker:
+
+It is not needed. But that is not needed. So we only need action, amount, and transition ID and version. Correct. So this will create a confusion, Kaur. What we can do, right? Go to the inline edit payload request first. What end all we are sending? This is a manipulation. Whatever you're sending is not for the actual update, man. That is only for staging, okay? So bear that in mind. That is only the payment amount field with the rest of the... Yeah, because there isn't much, right? This one. So staging UOID, what else is there? Transaction and the transaction type. In line edit flag, this is the, like, which decides if it is in line edit or not. Amount is also there. Amount is the one which is changing. Similarly, hold will be there for templates.
+
+00:21:42 - 00:23:00 Unknown Speaker:
+
+And the response of it? This entire response object. With the staging UID and other details. Can you zoom in a little bit? Okay. But in the create, we get back, I mean, in the normal staging save. Are we not getting back the transfer data? Hmm normal save normal one no no we just get this this data this one just this this one if you are manipulating the object right hmm. I mean, as is, we are not able to pass. That is one thing. As is, we will not be passing to a submit then. I am thinking whether the inline edit itself is needed or not in that case, right? What do you mean then? How will we get that respond object then? We already have the object, right? In the drawer save. Drawer save?
+
+00:23:01 - 00:23:54 Unknown Speaker:
+
+No, I am talking if you don't even open the drawer, then how will you get that object? That was the main reason. That was the main thing, yeah. Consider the scenario, Jagan, where grid is there and you are only doing inline edit and submit. Think of that. Okay. But again, we have to form that object. Then it's another UI manipulation, right? Instead, if you send this same transaction, metadata in the request, you send it back what we send, right? Transaction metadata currently UI is already doing. I know, I know. What I'm asking is I'm sending you the transmitted data in the inline request and send me the same back. Why? Because I'll use the same response for the submit. So if that is the case, you can create the transaction metadata in the actual request, right?
+
+00:23:55 - 00:24:59 Unknown Speaker:
+
+While you are passing to and fro. What you are saying is... In the current modify, it should be same as what you are doing in draw, right? That is being currently done, right? For modify flow. Same thing you have to do for inline, right? Why... But during inline, we don't have that object, right? That's why we are calling inline. No, no, I am talking about the building logic of RAN metadata, whatever. Same logic I am saying. Building logic has to be same. It is this response, those four fields only, right? But response, I am getting a response, I am again enriching the response, right? It is not a request part, it is a response part now. In the case of modify flow also, UI builds it, no? Jagan, discuss that with Kumar separately, right?
+
+00:24:59 - 00:25:50 Unknown Speaker:
+
+Let's not invest too much time in this. Okay, that we'll discuss. We can come on to the other thing. I need to discuss on that create payment from template. So, Yogesh, yesterday we were discussing on that allow edit, right? So, in the templates, if there are four recipients and two of them have allow edit as false, then the payment, if you are creating out of the template, then those two recipient rows shouldn't have the inline field for amount as editable. I think we had a doubt on that, right, Yogesh? Yeah, because I was thinking that you are only modifying the template, only from the templates you are creating, but because what we are actually doing is we are modifying the template only, correct? No, we are not. From that template, you are creating the payment, correct?
+
+00:25:50 - 00:26:34 Unknown Speaker:
+
+When we create a payment out of that template, we are not modifying the template. We are just using that template as is to create a payment from that. If the amount is a non-editable field in the template, then it will remain non-editable in the payment also. See, payment from template is nothing but a copy, right? Consider it as a copy. You are copying the whole thing from the template and putting it to a payment. No, no, that we get it, Jagan. Here, the question is different. So the question is, let's say in a template, Benny, if the allow edit is set as false, correct? And that is loaded into the template grid, correct? During modify flow. So the point is, should we allow the user to change that amount field or not?
+
+00:26:35 - 00:27:27 Unknown Speaker:
+
+That's the whole point of editable flag, right? But that, okay. But that is the point when you are in the payment, when that payment is created from template. But you are still creating the payment from template. Payment is not created. You are repeating same thing. No, no. It is not creating. Let me shorten the version, right? We are in the process of, user is in the process of creating payment from template. On the UI, the data in the payment queue grid is being shown from the template. Correct. And basically, Based on the allow edit configuration, UI will render it in a way whether the user can edit it or not. Simple logic, right? So, for each beneficiary or recipient, that flag metadata has to come from that amount field whether the user can edit amount or not, right?
+
+00:27:27 - 00:28:21 Unknown Speaker:
+
+Based on the allow edit configuration. It's not only for amount field, it is applicable for all the fields. No, no, no. Yeah, I'm talking about the payment grid for a minute, okay? Not the drawer, okay? Okay. Right? The payment queue grid only. The amount is something that user can technically edit, right? And the only other thing it user can do is like, basically, if the user can edit. Also, meaning it can keep it blank and subsequently, that blank thing doesn't get, uh, added in the submit payload, basically, that gets exploded, correct now, okay? So the payment queue question is that, I mean, what is the, I don't know, what was the question? So the question is, I need one flag from that beneficial response so that on the payment queue, I can show that amount field as editable or non-editable depending upon what it is.
+
+00:28:21 - 00:29:09 Unknown Speaker:
+
+Yes, I agree. That should go in. And the same thing, when we look at the drawer, basically the flag has to be for all the fields where allow edit is sort of allowed to be configured, correct? Because allow edit is also not... allowed to be configured on each and every field. Only a, I don't know, like given field where currently we have entry in database table, only those fields are eligible for that allow edit configuration to begin with, correct? Correct. Not all fields, right. Okay. For this, it went from template. I will give you the flag in instructed amount, correct? Correct. Yes. In that you can use, but there is one. Okay. So this is sorted. Can we look at the API? Can you show me how you have implemented the API example on the confluence?
+
+00:29:09 - 00:30:06 Unknown Speaker:
+
+Can you open that quickly? Which example? This flag of allow edit only. Or is that pending? It is pending, pending. Okay, so can you just at least open the current response and where you are planning to send it? I just want to see it. Instructed amount. Can we just update the confluence first then? Also along with it. Okay, I don't have the response now. I mean, existing, take the existing and edit now and put it on Confluence, no? The GetBeneathList, right? Or can you share some? Share the Confluence? Can you share the Confluence for that? Okay, one second. Is it not? In current response also, we are sending instructed amount. So within that instructed amount, we will send a flag. Editable, true, false. Not the... The beneficiary list, right? GetBened list is there. Take any response.
+
+00:30:06 - 00:31:05 Unknown Speaker:
+
+The child pages of GetBened. Okay, you're looking at template. Sorry, template. Okay. So here we have the instructed amount. What should be the flag name? Can we agree upon that? AllowEdit only or something else? AllowEdit. No, no, no. It should be. But I wanted to. That should be in the getBennyList response. Yeah, this is get. No, this is getBennyList only. He has written various APIs for that. So this is one of it. Okay. So what here? Here with instructed amount, here we'll pass a flag at the table true false. And what about the drawer fields? That will be different. That should come from modify payment in batch. That automatically come from that allow edit table. So within instructed amount you are planning to add. That's what you are saying, right? Correct.
+
+00:31:05 - 00:32:05 Unknown Speaker:
+
+Same for the template and for payment also. Let's say when we are in the payment grid, payment is created from template. Okay. This is that only. It is only payment from template scenario only. I am talking, this you are loading the template, correct? Template money you have loaded in the grid, correct? From this template, create payment from template. I think you are confused. Let me complete, Jagan. You are creating payment from template. You are loading the template pennies, correct? Correct, Kumar? Are you following with me? Yeah, we can say that we are loading the bennies that were in template. Yeah, but it is not the template. You cannot override the template bennies. Correct, correct. Now, when I created the batch payment from this, right? Now, when I go to the modify flow of that batch payment, correct?
+
+00:32:06 - 00:32:54 Unknown Speaker:
+
+There also in instructed amount, you need allow edit or editable true or false. Because those are now backed by actual template pennies or whatever you can call it. Correct. So in payment also, in instructed amount, I will give you the same field. Whatever we are deciding here, editable, allow edit, whatever it is. Okay. So in both cases, within instructed amount, you will get the field. So we are saying a payment created from template and when it is modified later, because it is still attached to that underlying template, you will give me that flag, right? Correct. Okay. You updated right now. Let's agree on the name and put it here and on the get beneficial response also on the same confluence, right? See, apart from all these two, there is one more flow which I will discuss.
+
+00:32:54 - 00:34:11 Unknown Speaker:
+
+One more use case where it is needed. This drawer one, so. While he's editing, Venkata, have you implemented the drawer change when it is basically a payment from template? Basically, reading the allow edit configuration and then setting it or is that already done by the BJU modify method itself? I have not worked on it. Jeevan worked. Can you repeat your question? Modify payment in batch? I'm talking about, okay, so that will work as as it is, right? RAUL I don't think so. Because the As is logic would be based on the template and template Party. Template ID driven allow edit configuration, but now we want Template Benny ID driven allow Edit Config, so it's not work as this. Uh, sorry to interrupt. Is this is this correct? Can you please confirm editable? True?
+
+00:34:11 - 00:35:12 Unknown Speaker:
+
+Uh, take a correct? Okay, okay, now. Similarly, get benefit No, no. Before you move it, go to the Get Beneficiary List APIS for payments and update that too. Okay, um, But there is one more thing. Let's say if it is not applicable, then we will not send this flag. By default, we will not send false for all of the things. Wherever it is a batch payment, which is created from template, then only you will get the field editable true. By default, we are not flooding this flag everywhere in the default response. Why is that? It is not needed. We can always end with false to. There is no need to exclude it. I mean, it's not an overhead. It's just obvious, visible that it comes or doesn't come. So, in batch grid modify, I think it should be.
+
+00:35:13 - 00:36:10 Unknown Speaker:
+
+It will also come in create. Create from template should be different. That is different. This is different one. Then I will do for modify. Because modify. But change it to a different example when it is of payment from template scenario. I mean, on that confidence, just copy, paste, and then change. Okay. Because the input will also change, right? Actually, it should be a different page. No, another request is... So, Rahul, every time it is not needed, right? In payment from template, for those payments where it is applicable, we'll send a flag. Mostly, you're concerned with... When I say every time, I mean payment from template I'm talking about. I'm thinking of all the response, view, create. So basically you need editable true. Correct? That's what you're concerned with. And editable false is also not required.
+
+00:36:13 - 00:37:17 Unknown Speaker:
+
+Keep it consistent, right? Keep it default, false, and whenever needed, make it true. That's it, right? It doesn't matter. It won't be consistent. Okay. Okay, now let's say when we are done with this. I will update. I will update. Let's talk about one more use case where we are doing modify template. Correct. Let's say there is a template. It has five template bunnies. In three, allow edit is true and in two, allow edit is false. Okay. Now, let's say we are modifying that template. Correct. So, in that also, do you need this? In modify, it can still toggle between allow and not allow edit, right? This is not required in modify template, right? I don't think so. Because there we can update the amount. Modify template inline is always readable, right? Because it's template.
+
+00:37:18 - 00:38:16 Unknown Speaker:
+
+We can modify the amount. Correct. But there is one more use case. Let's say for three template pennies, you have allowed it as true, right? What I did is I clicked on the modify template. Drawer is there. And I made allow edit as false. Okay. So, then in the grid, you will get that as false. So, whatever is in staging will apply on top of that. Correct, no? No, you are saying in template, if I do allow edit as false, then the payment queue in line should show as non-editable. No, no, no, no, no, no, no, no. That is wrong, no? Template can, will always have. See, see, no, no, no. Fortified. Modify template, Mehraul. I can modify that allow edit, no? See, allow edit is only one place, right? That always derives it.
+
+00:38:16 - 00:39:05 Unknown Speaker:
+
+See, the UI point of view on the payment queue grid of modify template, right? Allow edit is just one of the additional field which for the template Benny that you can do as an inline thing, just like amount, right? Correct? That is just the amount associated flag for allow edit, right? It is not a generic allow edit, right? First of all, the corresponding amount field, right? And the amount field that was shown inline, there, the mapping of the default amount field is sort of, right? It's not even a max amount, right? For individual that's dependent on the payment queue, correct? So, from that point of view, you don't have to worry about editability. It will remain editable from UI. Allow edit. Tick ho ya na ho, right, it has no. You are talking about the template definition here, right?
+
+00:39:05 - 00:40:25 Unknown Speaker:
+
+Not the USKA actual implementation when you are creating payment, right? We are talking about now. Template definition update modify template correct for the template. Just like on the draw. So only two places I need to make the change. Basically payment response is my understanding ultimately. Correct? See, the restriction needs to be applied for payment only, whether the user is creating from template or whether he has already created from template. It is only for payment only it is applicable, this flag, correct? Inline, if you think, or the respective, or maybe. Only for the payment it is applicable. Correct. Okay, I think then we are good, right? We are good, no? Yeah. Rahul, one quick question. Don't we have a swagger for our backend? Where we can check all the... No, because we are not on microservice.
+
+00:40:27 - 00:41:22 Unknown Speaker:
+
+Okay. That would be easier for Photon to play around, but... Yeah. I mean, Bruno is there, no? But Bruno is there. Confluence, we are creating, Jagan. No, no. Basically, using... Not all on Confluence are exactly replicating. That's all. Correct. That we should keep it in exact formats. Then we are good. So, yeah, from that, like Yogesh, then for submit payment and submit modify payment, as well as similar for templates, we need all the recipient object to be exactly the same in all the confluence so that this confusion never comes again. Only that defined set of recipient fields will be in all the recipient objects because right now it's not consistent in any of the confluence. Hey, that is a little difficult because when you start the development and all, like you may start with something and something will change.
+
+00:41:22 - 00:42:32 Unknown Speaker:
+
+Like, and again, it's very pay. Method specific scenario. Right now, we are just talking about ACCR and Diana that much. I mean, we can do right for both template and payments that has been object because since we have finalized only a certain set will be there. Correct. Correct. Correct. I mean, whatever we have already built, basically, maybe updating some of it. Okay, I'll also do from my side and I'll confirm with the backend team. Okay. It is one more use case round. I'll discuss with you, I think. That also will come. Okay. For now, Jeevan, you're doing the response thing for the inline edit stuff, right? You are doing the detailed one, is it? Right now? And keep an item in sort of. Q for the, what we just spoke about, modify payment in batch or payment from template scenario in the drawer.
+
+00:42:33 - 00:43:20 Unknown Speaker:
+
+Consumption of the allowed edit configuration using template Benny, template Benny restricted columns and applying it on the editable logic is sort of needed, right? Currently, it's probably not there. I just, like, whatever Krishna saw, right, I am trying to basically do something with cloud. If it happens quickly, I'll have that push to your branch and have you then take it over in terms of testing and then, yeah. Okay. While you're doing the details because we need to close the details on today. Yeah, yeah. Okay. Okay. I think we are good, no? No. Okay. Thanks, guys. Thanks. Bye.
+

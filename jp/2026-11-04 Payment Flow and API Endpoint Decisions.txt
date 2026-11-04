@@ -1,0 +1,731 @@
+2026-11-04 Payment Flow and API Endpoint Decisions
+
+Creation Time: 2026/11/04 13:48
+
+
+📅About Meeting
+
+• Date & Time: 2026-11-04 13:48 (Duration: 2365 seconds)  
+• Location: [insert location]  
+• Attendee: Yogesh, Venkata, Rahul, Raul, Pavan, Benny (mentioned), Photon (mentioned), Bruno (mentioned), plus other devs in group
+
+📒Meeting Outline
+
+Create Payment From Template — API flow and endpoint decision
+
+• Use-case clarification
+  Discussion focused on the "create payment from template" flow where a user edits a recipient (Benny) from a batch template. The core question: should the backend call modifyBennyInBatchTemplate or modifyPaymentInBatch for the drawer edit flow? Participants agreed the flow is functionally a payment flow (not a template edit) once the user proceeds to create a payment.
+
+• Final endpoint decision
+  Consensus: use modifyPaymentInBatch (payment endpoint) for the drawer edit in create-payment-from-template. The payment endpoint will be adapted to accept template-origin inputs and respond with a payment-style response so UI contract remains consistent.
+
+• Flag to indicate source
+  Introduce a boolean flag isPaymentFromTemplate in the modifyPaymentInBatch request. When true, backend switches data-source and response generation to treat incoming IDs as coming from template constructs (templateId and templateBennyId) and to produce payment-formatted response.
+
+• Payload mapping and parameters
+  For payment-from-template requests the payload must include:
+  • templateId (batch template id)
+  • templateBennyId (recipient / Benny id in template)
+  • isPaymentFromTemplate: true
+  • valueDate (discussed — see below)
+  • other create/payment fields as usual (amount input, debit account, clearing system etc.)
+  Do not repurpose existing transactionId/paymentTransactionBatchId fields to carry template IDs (team prefers explicit new fields rather than overloading transaction fields).
+
+Response shape, fields to suppress and transformations
+
+• Suppress template-only fields
+  When isPaymentFromTemplate = true, the response must NOT include template-only controls such as:
+  • allowEdit checkbox (do not return these fields at all)
+  • maximumPaymentAmount (suppress unless needed to show as helper text — see below)
+  The UI should not receive allow edit settings as a visible checkbox for payment flows.
+
+• Editable flags mapped to payment response
+  The backend must convert template allow-edit configuration into payment-response editable metadata:
+  • For fields that are not allowed to be edited (allowEdit=false in template), return the corresponding field in the payment response with editable: false (or equivalent) so the UI can render it disabled/greyed-out in the drawer.
+  • Default amounts in templates should map to payment amount field. If template had default amount, show that in the amount field; if not, the field is blank.
+
+• Maximum amount display
+  If a templateBenny has a maximumPaymentAmount configured, the response should include that information in a form consumable by UI (as helper text under the amount field). The team will validate this by verifying single-template → payment-from-template behavior.
+
+• Response contract consistency
+  The payment response contract must remain the same as standard modifyPaymentInBatch response. Internally data may be sourced from template Benny tables, but the outward response must look like a payment response (with editable flags set appropriately and template-only fields omitted).
+
+• Transform/synthesizer logic
+  Backend will implement a synthesizer/converter that:
+  • reads from templateBenny / template tables when isPaymentFromTemplate is true,
+  • converts that data into the payment view model (payment synthesizer),
+  • applies allow-edit rules to set editable flags and hide template-only fields,
+  • returns the payment-style response to UI.
+  This synthesizer can reuse existing mappers where possible; post-processing will adjust metadata (templateId, templateBennyId) as required.
+
+Data source and implementation details
+
+• Where data comes from
+  • Template data exists in templateBenny and template tables. When isPaymentFromTemplate flag is on, modifyPaymentInBatch should fetch from templateBenny and feed the data into the payment synthesizer.
+  • For normal payment flows, data is read from payment transaction tables as before.
+
+• Value date handling
+  Value date is not present in template records. In create-payment-from-template flow:
+  • UI generally selects valueDate on the main page before opening drawer.
+  • The backend may accept valueDate in the modifyPaymentInBatch request (recommended) so the response can include the valueDate for the drawer.
+  • Team concluded: include valueDate in the request payload and return/display consistently (do not add complex formatting logic in this change).
+
+• Request/response fields and backward-compatibility
+  • New request will include extra fields (templateId, templateBennyId, isPaymentFromTemplate). This is additive and should not break existing clients.
+  • Avoid repurposing existing transaction or batch id fields to hold template IDs; use explicit fields.
+
+• Code structure and reuse
+  • Reuse the existing payment response mappers and view synthesizers as much as possible.
+  • Implement a modular method for converting templateBenny -> payment view (post-processing method / buildTranMetadata or similar).
+  • Reuse existing getTemplateDetails method flow where feasible; add a wrapper that calls the existing compose/mapper methods and then post-processes for Benny/template specifics.
+
+Development and release notes
+
+• Deployment status
+  • Remittance changes referenced (modify Benny in batch template) deployed on dev. Team will review.
+  • Release target: 20 November. There is time to implement and test the changes.
+
+• PR, tests and CI
+  • Rahul and Yogesh have ongoing PR / service changes. Unit tests failing due to schema changes were discussed. Ensure schema migrations are included for tests to pass.
+  • Document new request/response on API docs page.
+
+Miscellaneous technical clarifications
+
+• Why modifyPaymentInBatch
+  • Because once the user starts creating a payment it is considered a payment flow; UI and downstream flows expect payment-like responses and behavior (no allow-edits checkbox).
+  • Using the payment endpoint avoids UI contract changes and keeps drawer rendering consistent.
+
+• Edge cases
+  • Make sure templateBenny editable configuration is applied field-wise (per recipient/line) so some fields can be editable and others not.
+  • Confirm maximum amount rendering in payment-from-template case by testing a template with max amount set.
+
+📋Overview
+
+• Use modifyPaymentInBatch for create-payment-from-template drawer edits (do not call modifyBennyInBatchTemplate for this flow).
+• Add isPaymentFromTemplate flag and explicit templateId + templateBennyId fields to the modifyPaymentInBatch request.
+• Backend must fetch data from templateBenny when flag=true, convert via payment synthesizer, and return a standard payment-style response.
+• Suppress template-only fields (allowEdit checkbox, max-payment definition fields in the same way) and instead return field-level editable flags so UI can render disabled/greyed fields.
+• Include valueDate in request payload when applicable and return it in response for drawer rendering.
+• Reuse existing mappers/synthesizers; implement a small post-processing method (e.g., buildTranMetadata or convertTemplateBennyToPaymentView) to keep code modular and maintainable.
+• Document API changes and update tests and schema migrations before PR merges.
+
+🎯Todo List
+
+• Yogesh:
+  • [ ] Finalize PR for service changes and fix failing unit tests (reason: schema column additions). (ASAP; before release testing)
+  • [ ] Share the sample modifyPaymentInBatch request/contract (with templateId, templateBennyId, isPaymentFromTemplate, valueDate) to the team. (Today / immediate)
+
+• Venkata:
+  • [ ] Implement backend handling in modifyPaymentInBatch to:
+      • fetch templateBenny data when isPaymentFromTemplate=true,
+      • pass data to payment synthesizer,
+      • suppress template-only fields and map allow-edit to editable flags,
+      • return payment-style response. (Target: prepare branch / PR)
+  • [ ] Create modular helper method(s) (e.g., buildTranMetadata / convertTemplateBennyToPaymentView) for post-processing templateBenny responses. (With PR)
+  • [ ] Ensure valueDate handling: accept valueDate in request and return it for drawer use. (With PR)
+  • [ ] Ensure maximumPaymentAmount (if present on templateBenny) is included in response as UI helper text metadata. (With PR)
+
+• Rahul:
+  • [ ] Merge and coordinate PRs; review Venkata’s changes and ensure response contract remains consistent with existing modifyPaymentInBatch. (Coordinate; before merge)
+  • [ ] Validate remittance changes deployed on dev and review small change mentioned. (ASAP)
+
+• Raul:
+  • [ ] Review API request/response contract for modifyPaymentInBatch and confirm backwards compatibility. (During PR review)
+  • [ ] Update API documentation page with new request/response and examples. (Post-PR)
+
+• Pavan:
+  • [ ] Review Venkata’s controller/service changes for getTemplateDetails and templateBenny handling. Ensure reuse of existing methods where possible and modularization is applied (e.g., extract post-processing methods). (Code review)
+
+• Team (General):
+  • [ ] Test the end-to-end create-from-template flow:
+      • Verify returned response is payment-style,
+      • Fields that should be non-editable are returned with editable=false,
+      • valueDate flows correctly (UI passes valueDate, response includes it),
+      • maximum amount helper text appears when templateBenny has a max amount. (Before release)
+  • [ ] Update unit/integration tests and run CI; include schema migration if needed. (Before PR merge)
+  • [ ] Announce changes to group (already posted by Yogesh). If Photon reverted integration, coordinate revert and re-integrate as needed. (Ongoing)
+
+If any participant has additions or corrections to the payload keys, response properties, or the naming of the helper methods (e.g., buildTranMetadata), please call them out so the PR and API documentation can align exactly with agreed naming and contract.
+
+Transcription
+
+00:00:00 - 00:00:08 Unknown Speaker:
+
+फिर से मॉडिफाई, बेनी इन बैच टेम्पलेट, आई कॉल, ओके। हाँ, सेव करके फिर से एक ओपन करो, हाँ। Here, we are calling this right.
+
+00:00:10 - 00:00:22 Unknown Speaker:
+
+So, here, I don't even see template information, why— वो कुछ लोकल पे गलत होगा, एक बार इसका ये— गलत होगा, हाँ। तो ये जो है, बराबर, तो लेट्स से, अभी हम वो कर रहे हैं। क्या बोलते हैं?
+
+00:00:27 - 00:00:51 Unknown Speaker:
+
+अभी एक बार, ठीक है, उसका रिक्वेस्ट दिखाओ, एक बार, मॉडिफाई। ये रिक्वेस्ट है ना, बेनी इन बैच टेम्पलेट का। Hmm. तो, in this ना, we need one flag। फ्लैग ये रहेगा, इस— अच्छा, no, but I think, एक बार ना, let's confirm, योगेश, during create payment from template, should we even call modify Benny in batch template? Because this is— Actually, I'm like, doubtful on that.
+
+00:00:51 - 00:00:59 Unknown Speaker:
+
+I mean, later on— हाँ, हाँ, अब जैसे, for example, किसी को— Look, look, as soon as we are on this flow, it's no longer a batch.
+
+00:01:01 - 00:01:17 Unknown Speaker:
+
+Or, I mean, it's no longer a template. It becomes a payment, okay? अब, अब, let's say, PAU में, let's say, you are creating a payment from template। हाँ। उसमें non-editable field तो आप edit कर ही सकते हो ना। Correct. Same, you are doing here. No, no, no, wait, wait, wait.
+
+00:01:17 - 00:01:38 Unknown Speaker:
+
+You are saying in BAU, if I'm creating a payment from template, then non-editable fields I cannot edit, right? Only editable fields I can edit— हाँ, वही, वही, वही। Editable fields you can edit, ना। Right, right, right. हाँ, है ना। तो same, you can do here, ना। Correct. For example, same you can do here. For example, one recipient you have to modify, delete.
+
+00:01:39 - 00:02:05 Unknown Speaker:
+
+That still you can do, ना। So this is where you will do— Okay, but I think, uh, main thing, what, like, I think we need to tell Venkata is, Venkata, here, even if you are using modify Benny in batch template, if I'm going to use the same endpoint in case of create payment from batch template, then I don't need this allow edits anymore. Because when I— as soon as it becomes a payment flow, when we are creating a payment, the user cannot change this allow edit checkbox anymore.
+
+00:02:06 - 00:02:27 Unknown Speaker:
+
+So, so there is two use cases, Venkata. For example, this is the payload, okay? So here, let's try to introduce a flag here, who are, which says is payment from template, okay? What we are currently using in the grid. में भी एक flag है ना, is template करके। और इस payment from template is a flag। So let's try to use the same flag here.
+
+00:02:27 - 00:02:40 Unknown Speaker:
+
+So let's say if that flag is false, it means you will render the same response. It means it is a modify template flow. Okay? Hmm. Now, let's say, when is payment from template flag becomes true.
+
+00:02:41 - 00:02:50 Unknown Speaker:
+
+Hmm. In this modify Benny in batch template. Hmm. So, so Venkata, if you get that flag, is payment from template, in this request. Hmm.
+
+00:02:50 - 00:03:05 Unknown Speaker:
+
+Then what you need to do is, you need to suppress all the allow edit fields, and also, but how you will gray out all these things— No, no, it doesn't have to be grayed out. It has to be removed. It has to be hidden, actually. We won't even show allow edit checkbox at all.
+
+00:03:07 - 00:03:15 Unknown Speaker:
+
+There is no point of allow edits in create payment. But can UI handle that? UI can handle anything, but we cannot, uh, add the custom logic.
+
+00:03:17 - 00:03:23 Unknown Speaker:
+
+So from backend, from backend, you need a response where you don't get any allow edit field. Correct? Correct. Yes. That is one thing.
+
+00:03:24 - 00:03:37 Unknown Speaker:
+
+One thing. Second thing is, let's say, if the amount was entered. Correct? And also, not just that, uh, I think we won't also get maximum payment amount anymore. Why?
+
+00:03:38 - 00:03:51 Unknown Speaker:
+
+अरे, maximum payment amount is only in the case of template creation. Here, I don't, we don't have to define maximum payment amount. Let me mark. हाँ। Because I'll forget this. हाँ, एक बार mark कर लो। Maximum payment amount doesn't make any sense.
+
+00:03:52 - 00:04:00 Unknown Speaker:
+
+Correct. You, only the default amount will be shown here if entered. Exactly. If not, if not, this will be blank. है ना। Correct.
+
+00:04:00 - 00:04:22 Unknown Speaker:
+
+No, I think, uh, say, Yogesh, instead of making a pizza call, let them make an API call only, and just payment call, payment call. Okay, modify payment in batch, and internally they— you can pass that flag and let it respond with what is in.
+
+00:04:22 - 00:04:40 Unknown Speaker:
+
+Because, uh, instead of customizing something in template, we can customize it in the payment itself so that existing— But you don't, you don't have the payment ID, ना। What you will render? See, data is there in template itself. Transaction ID. Transaction ID is there, right? If it is from a template, you have a transaction ID reference.
+
+00:04:40 - 00:04:42 Unknown Speaker:
+
+Same thing, let them pass it.
+
+00:04:43 - 00:04:59 Unknown Speaker:
+
+No, no, this data, this data, what is being rendered, this data is in template Benny, Venkata. No, no, I got that. In the backend, let it get it from template Benny only, but let it project it as it is coming from payment flow.
+
+00:05:01 - 00:05:18 Unknown Speaker:
+
+Actually, that is the right thing, Yogesh, because this is a payment flow now. We should call modify payment in batch, no longer modify Benny in batch template. Because if— Okay, so let's say you are calling modify payment in batch. Hmm. There, you need to pass the batch ID and the transaction ID.
+
+00:05:18 - 00:05:27 Unknown Speaker:
+
+Correct? Correct. We have the— तो request। We have the template batch ID, right? And— तो, but— And the Benny ID. And the Benny ID.
+
+00:05:28 - 00:05:38 Unknown Speaker:
+
+So can, can you, can that be handled, Venkata? Yeah, in the modify payment flow, we can handle that. It should match with the existing payment response right there. There, it is already built.
+
+00:05:40 - 00:05:50 Unknown Speaker:
+
+But that is getting data from this, ना, payment transaction table. Now, here, you will get from template Benny table. हाँ, yeah, if based on this flag, I'll switch on to that, uh, to get from the template tables.
+
+00:05:51 - 00:06:11 Unknown Speaker:
+
+But UI doesn't know what's happening. We will still call modify payment in batch. Okay, it would be like that. Right, yeah. See, only worry, Yogesh, if you see the response mapping, you are saying don't give allow edits, default amounts, all this go away if we start using the traverse mapper for that is there for the payment.
+
+00:06:16 - 00:06:25 Unknown Speaker:
+
+But I'm still wondering how you will, let's say, you get the data from template Benny. Hmm. Correct? Yeah. After that, how you will render this response.
+
+00:06:29 - 00:06:48 Unknown Speaker:
+
+Let's say, first, your first action will be get the data from template Benny. You have loaded template Benny. What will be the next step? No, there is a view synthesizer we have. I can pass that to view synthesizer, which will create all the information as, right now it is a template, okay?
+
+00:06:49 - 00:07:05 Unknown Speaker:
+
+Hmm. So I would end up using a payment, payment synthesizer. I'll pass all this information to payment synthesizer. Payment synthesizer would create a payment response and give it to the UI. But currently, your payment synthesizer must be taking payment as an input, right?
+
+00:07:08 - 00:07:17 Unknown Speaker:
+
+Payment as an input, yeah, maybe we should— But now, but now your input will be template Benny. Template Benny, yeah.
+
+00:07:19 - 00:07:39 Unknown Speaker:
+
+Okay, so if you think we can do it that way, then that is better. But you will still need one more flag, is payment from template, so that you can switch between, you can take this as a template Benny ID. Right? Right, yeah, that is required. You still need that flag, is payment from template, in existing modify payment in batch request.
+
+00:07:39 - 00:07:57 Unknown Speaker:
+
+So that you do your switching. Yeah. Only thing that we are saving, Yogesh, the response would be similar to what payment response is giving. If we do that for a template, it doesn't make, uh, I mean, sense, right? For a template, you are giving payment response.
+
+00:07:57 - 00:07:59 Unknown Speaker:
+
+For payment, you are giving template response.
+
+00:08:03 - 00:08:11 Unknown Speaker:
+
+Okay, so if that is doable, so do you, so do you have any story for this? I think Rahul mentioned the same thing, or was it something different?
+
+00:08:12 - 00:08:19 Unknown Speaker:
+
+Rahul said he will do using Claude, and he'll pull up, merge the code. No, no, wait, wait.
+
+00:08:21 - 00:08:22 Unknown Speaker:
+
+I'm asking him to join my Zoom off.
+
+00:08:55 - 00:08:57 Unknown Speaker:
+
+Actually, good thing is the release is on 20 November.
+
+00:08:59 - 00:09:00 Unknown Speaker:
+
+We have some time.
+
+00:09:01 - 00:09:17 Unknown Speaker:
+
+ठीक है, announcement मैंने डाल दिया है। हम इस पर work कर रहे हैं। क्या announcement है? डाल दिया ना group पे। क्योंकि ये Photon ने already integrate कर दिया है। I have to ask them to again revert it now.
+
+00:09:24 - 00:09:25 Unknown Speaker:
+
+Hey, hi Rahul.
+
+00:09:28 - 00:09:46 Unknown Speaker:
+
+Hmm. There is one more update which we wanted to bring to your notice. एक बार बता दो, क्या अभी discuss किया? So, so, yeah, Rahul, uh, we are discussing on this create payment from template flow only. So in this flow, when we edit a recipient, earlier we decided we will call modify Benny in batch template.
+
+00:09:47 - 00:10:11 Unknown Speaker:
+
+But actually, since this is a payment, we should not call modify Benny in batch template for the drawer editing. Rather, we should call modify payment in batch only. Correct? Correct, correct, हाँ। And also, the other point is, modify Benny in batch template, if even if we use it, right now it gives us allow edit fields as well, and maximum payment amount fields as well, which is no longer, I mean, which is not required for a payment. Right?
+
+00:10:14 - 00:10:36 Unknown Speaker:
+
+एक minute, so modify payment in batch, right? Hmm. So currently, I mean, is there any change that handles payment from template scenario? That's my first question, because the payment record doesn't exist. हाँ, तो वही, for that case, what Venkata suggested is, can you show the payload core for modify payment in batch?
+
+00:10:36 - 00:11:06 Unknown Speaker:
+
+हाँ, payload। Modify Benny in batch। हाँ, जो भी है, payload, payload दिखाओ एक बार। अच्छा, अच्छा, okay. So here we are passing— तो template ID। हाँ, इसमें template Benny ID, template ID जाता है। But जो modify payment in batch है, उसमें transaction ID, payment transaction batch ID जाता है। So what Venkata is suggesting, in that same payload, payment transaction batch ID में हम template ID भेजेंगे, transaction ID में template Benny ID we will send, and we will pass one more flag, is payment from template true.
+
+00:11:07 - 00:11:19 Unknown Speaker:
+
+So what he will do is, there is some synthesizer he has written. He will take template data from template Benny, correct, and try to convert it into a response which is for modify payment in batch.
+
+00:11:26 - 00:11:49 Unknown Speaker:
+
+So this is, this is never implemented, basically we are saying. हाँ, ये नया implementation है, correct। Basically template Benny लेना है, और payment transaction का response return करना है, वैसा। हाँ, but only thing I don't like is the repurposing transaction field name to capture template ID. I don't want that. Is, I mean, are we doing that anywhere else? नहीं ना। That we are still discussing.
+
+00:11:49 - 00:12:16 Unknown Speaker:
+
+We can, for example, फिर ऐसा होगा कि modify payment in batch रहेगा, template ID, template Benny ID will be passed from UI, ऐसा। But this is just for— Just for this flow. हाँ। Because UI also gets those fields, uh, from the get Benny response independently, right? Template Benny ID. Template Benny ID we get, and then the batch template ID will get from create payment from template itself.
+
+00:12:16 - 00:12:20 Unknown Speaker:
+
+हाँ। Basically keep the same payload, call modify payment in batch.
+
+00:12:22 - 00:12:36 Unknown Speaker:
+
+Correct? नहीं, same payload में नहीं है। We are passing new fields, right? तो new field आ गया ना, template ID। Modify payment in batch. Template ID, template Benny ID, and that flag. New fields also, ठीक है। And we will call modify payment in batch.
+
+00:12:38 - 00:12:59 Unknown Speaker:
+
+हाँ, modify payment in batch होना चाहिए, correct। Because that is where we have to include that allow edit logic, right? Hmm. That we have to read from template Benny. पहले template Benny read करना पड़ेगा। Then उसको payment synthesizer है, कुछ Venkata का, there he will do all the conversion। Plus allow edit का consumption has to be there also, ना?
+
+00:13:00 - 00:13:18 Unknown Speaker:
+
+No, no, allow edit नहीं चाहिए। नहीं चाहिए। Payment from template है, so if the field पे allow edit says no, then the field value has to be non-editable in the response for UI to render it in that manner, correct? Right, correct. Yes. In the drawer also. Yes, yes, like this.
+
+00:13:18 - 00:13:44 Unknown Speaker:
+
+Like this is absolutely needed ना creation. So line 1, if this is unchecked, then it will be disabled. Grayed out, ना? Grayed out, हाँ। ये data भी वो करना पड़ेगा। I mean, he is showing the template definition, but the respective payment वाला drawer में allow edit checkbox नहीं रहेगा, and line 1 should be grayed out, and grayed out के लिए— Do we need to do any logic with respect to allow edits if it is a payment response? That must be existing, right?
+
+00:13:45 - 00:13:50 Unknown Speaker:
+
+We should not, we shouldn't be adding allow edit configuration for payment response right now.
+
+00:13:51 - 00:14:01 Unknown Speaker:
+
+You will have to, and I told you the reason some time back, right? Existing code doesn't know about template Benny things. No, no.
+
+00:14:01 - 00:14:25 Unknown Speaker:
+
+It only follows the template— No, no, Rahul, with respect to mapping the template Benny to the payment response using a, I mean, I thought doing it using some synthesizer, get the information from Benny, compose the payment response, and give it back in the payment response that they are looking at. Modify payment in batch template. Batch payment.
+
+00:14:28 - 00:14:50 Unknown Speaker:
+
+Okay, so— That is correct, that is correct, but what you are missing in it is what I am trying to tell you. हाँ। The logic of implementation of allow edit has to be implemented on top of it, right? What the synthesizer is only doing or giving you whatever values— नहीं, we need to do it. Not a PAU. Right now, are you getting allow edit configuration in modify payment in batch?
+
+00:14:50 - 00:14:59 Unknown Speaker:
+
+I mean— Venkata, Venkata, hear me out, hear me out. Let me, let me tell you again. Hmm. If you look at, I don't know, obviously you have not looked at BAU. In BAU, right?
+
+00:15:00 - 00:15:19 Unknown Speaker:
+
+Hmm. When you create payment from template, right, it must be applying the allow edit configuration in some manner in the response, correct? Hmm, hmm, yes. How will it get the allow edit configuration in BAU? It will be based off of the template ID records, correct?
+
+00:15:19 - 00:15:34 Unknown Speaker:
+
+From the database table. Yes. But for batch template or batch individual template Benny, that code will not work, right? Because the BAU code doesn't check the records from database based off of template Benny. It is doing based on template ID.
+
+00:15:34 - 00:15:55 Unknown Speaker:
+
+Understood, understood. And in BAU, the template ID has only one set of fields because it's a single Benny thing, right? Yeah. Unlike template Benny ID. So now you have to do something where the database reading for restricted column is done based off template Benny ID, and then the same thing is ultimately applied in the response to identify whether the field has to be editable or not.
+
+00:15:55 - 00:16:08 Unknown Speaker:
+
+Correct? Understood, yeah, yeah. I think better will be to use this same endpoint only, and you have all the data. Just tweak it so that it becomes compatible to the payment version of it. So that will save a few— तो no, we are using same endpoint only, ना?
+
+00:16:08 - 00:16:22 Unknown Speaker:
+
+We said ना modify payment in batch only, we are— पर उसमें effort ज्यादा रहेगा ना, Rahul? ज्यादा क्यों रहेगा? जैसे इसमें आप देखो, you have all the response that is needed. We have to only skip few fields. Allow edit का भी सारा information अपने पास है, correct?
+
+00:16:22 - 00:16:36 Unknown Speaker:
+
+Data भी आ ही जाएगा। We have to only pass, हाँ। नहीं, मतलब you are saying कि modify template वाला response ही reuse कर लो, वैसा? हाँ। And allow edit का separately apply करो, that is the only thing? Correct, correct, that is only we have to do only, right?
+
+00:16:36 - 00:16:53 Unknown Speaker:
+
+सारा data है ही अपने पास, rewrite से बच जाएगा। हाँ, that actually, that, uh, but— मतलब वैसा कुछ wrong— Be true, but— एक flag हम pass कर देंगे कि अपने को ये करना है। हाँ, that also you can evaluate.
+
+00:16:53 - 00:17:11 Unknown Speaker:
+
+Existing modify Benny in template giving you that entire response, you just have to convert it into the payment type of response value तो देना है। Correct, basically इसमें allow edit fields में अगर false है, तो जो value है उसको grayed out कर दो, एक extra field pass कर दो, max amount को suppress कर दो, don't send. That's the only thing we want to do.
+
+00:17:11 - 00:17:33 Unknown Speaker:
+
+But the only, I mean, is this not a problem that UI is going to call mod— even this is create payment flow only, UI एक जगह करेगी modify payment in batch for the— No, no, no, what we— no, no, no, what Yogesh is saying is, UI से modify payment in batch call करो। No, no, no, he is saying call modify Benny in batch template. He is not saying modify payment in batch. हाँ। नहीं, I am, I will say the other way.
+
+00:17:33 - 00:17:56 Unknown Speaker:
+
+Let UI call modify payment in batch, but within, if it is from template, we basically have the same service logic you reuse, which is to get the response for modify Benny in template, and then do additional implementation of allow edit stuff on top of it, because if it's already doing that— For same API, Rahul, for same API, you would end up having two different responses.
+
+00:17:57 - 00:17:58 Unknown Speaker:
+
+No, no, no.
+
+00:18:00 - 00:18:16 Unknown Speaker:
+
+The response should still be the payment version of the response, but at least the core information that you needed from the template version of the response you take it is what I am saying. Response shouldn't be changed. Correct. Response contract should not be changed. That way your effort will be very minimal, is what.
+
+00:18:16 - 00:18:34 Unknown Speaker:
+
+Correct. Because the basic— I think both the response structure actually should be similar only, right? Except in the template there will be additional fields like the— Allow edit. For allow edit and allow— everything else should be structure-wise, actually should be same only. If it is different, then let's fix it now, right?
+
+00:18:34 - 00:18:35 Unknown Speaker:
+
+It shouldn't be different.
+
+00:18:37 - 00:18:59 Unknown Speaker:
+
+Like, it should be the— because even the BAU modify template response is where you would have aligned, correct? It should be like a BAU non-batch modify template response, technically, correct? Only thing is, in this case it will be driven by template Benny ID instead of template. Correct. Response structure is same, no, Venkata?
+
+00:18:59 - 00:19:00 Unknown Speaker:
+
+That you have ensured, right?
+
+00:19:03 - 00:19:17 Unknown Speaker:
+
+Yeah, yeah. See, this again comes to, comes down to the same consistency logic for UI, right? The non-batch consumption of the modify template response and the drawer consumption should be same, no? Yeah, yeah. We are using existing mappers only, the response mappers.
+
+00:19:18 - 00:19:43 Unknown Speaker:
+
+Correct, correct. Exactly. So, so basically existing— I mean, the payment response and template response actually should be similar. I don't think there should be a significant difference. But if at all there is, you just slightly, I mean, do tweaks to make it ultimately, you know, the temp— sorry, payment response, basically, from your service.
+
+00:19:45 - 00:19:51 Unknown Speaker:
+
+That's all. So, so, so what is, what is final? Which, which is the final endpoint? Oh, okay, okay. One issue, one issue, one issue.
+
+00:19:52 - 00:19:54 Unknown Speaker:
+
+We also need a value date here.
+
+00:19:56 - 00:20:11 Unknown Speaker:
+
+Where? Here, on the drawer. This is a payment creation from template. But value date तो आपका उधर होता है ना, main पे होता है। नहीं, नहीं, इधर थोड़ी होता है। इधर भी आता है। आता है क्या? हाँ, आता है। Since we convert it as a payment response, then you should get everything.
+
+00:20:11 - 00:20:27 Unknown Speaker:
+
+Right now what you are getting is the template response. हाँ, हाँ, हाँ। That is the problem. So once— No, I'm just, I'm just listing the— No, no, no, he is just saying, when you do those tweaks, make sure that the value date is also there. So make sure— You will not get the— you will not get the value date in this case. From where you will get the value date, Venkata?
+
+00:20:29 - 00:20:50 Unknown Speaker:
+
+UI has to pass you the value date, the request. Actually, हाँ। Payment में है ही नहीं ना value date। UI has to pass value date so that you can give it the response। Yeah, yeah, इसमें नहीं आएगा। हाँ। नहीं, BAU create में भी core UI वो main page वाले से ही value date field दिखाता है ना drawer में। वहाँ तो— BAU batch create का बात करें तो, उसमें भी same होता है scenario, right?
+
+00:20:50 - 00:21:18 Unknown Speaker:
+
+BAU batch create— Create में जब, जब भरता है form, hmm, I mean, create flow का बात कर रहे हो। I get it, I get it. I think— Modify value flow नहीं, modify में अपने आप आएगा बाद में, मेरे हिसाब से। But I'm talking about the BAU create flow, free form. Create में form— Similar to create from template। हाँ, but for the drawer हम— we get it from modify payment in batch response, right? That value date— Create में post container के बाद कैसे आता है?
+
+00:21:18 - 00:21:42 Unknown Speaker:
+
+नहीं आता रहेगा ना। Modify payment in batch call करते हैं जब— नहीं, नहीं, नहीं। Post drawer जब pain करते हो, वो post container के basis पे रहता है ना? Hmm, free form में— Free form में करते हैं, हाँ। Right. ठीक है। Correct. अभी create from template में I understand the पूरा बाकी का fields का data you want pre-populated from in the response. But value date cannot come in the response from that template based, right?
+
+00:21:42 - 00:22:07 Unknown Speaker:
+
+Think. Even in the— थोड़ा explicit handling करना पड़ेगा इसमें तुमको, UI से making— थोड़ा, I'm trying to understand. Um, ये payment from template will give us— That is the first call we will do, right? In this scenario. हाँ, so instead of the— so simple comparison। Free form create का drawer में post container के हिसाब से you paint all the fields, and value date तुमको post container से ही आता है। हाँ, right, correct.
+
+00:22:07 - 00:22:25 Unknown Speaker:
+
+उसमें तो हम लोग call नहीं करते modify payment in batch, right? Correct. अभी इसमें you don't have an option but to call modify payment in batch because you want the data to— like, field data to be populated wherever the values are already given. Applicable fields also, which it can give. But since this is coming from the template, right, records, it doesn't know value date, obviously.
+
+00:22:26 - 00:22:38 Unknown Speaker:
+
+Correct? नहीं, but when you are doing this create payment from template, then also you will select the value date on the main page. Correct. मैं वही बोल रहा हूँ, मैं वही बोल रहा हूँ। No, no, no, no, create payment from template तो— Value date तो select करोगे ना? Value date तो करोगे ना?
+
+00:22:38 - 00:23:05 Unknown Speaker:
+
+हाँ, करोगे। उसके बाद ही drawer पे पहुँचोगे ना? Right. So ultimately somehow you have to use that value date only and show in the drawer all the time for payment from template create flow में। जितने भी recipient बन रहे हैं, दिखा रहे हैं। नहीं, but अब इस case में we will only paint through modify payment in batch. वहाँ पे हम paint, paint को understand कर रहे थे, हाँ। यहाँ पे— I understand. Hmm, but the backend doesn't know the value date, and it cannot know.
+
+00:23:06 - 00:23:23 Unknown Speaker:
+
+So if you— if it is just a matter of painting it and keeping it that way, another option is you pass in the value date in the payload and the same thing comes back. That is better, I would say. नहीं, but अभी create में कैसे paint होता है value date? Create flow में? Create में जब we are just adding the second recipient। Create में— That time we have in the post continue.
+
+00:23:23 - 00:23:28 Unknown Speaker:
+
+Post continue से आता है ना, blank form पे रहता है Yogesh। Create में— Not even post continue.
+
+00:23:29 - 00:23:42 Unknown Speaker:
+
+Not post continue. Not post continue. Value date is pre only. Post continue तो नहीं देता value date. That is— नहीं, let's say you have the handle of the value date जो post जो response होता है modify payment in batch का, उसके response में आपको value date आता है क्या अभी?
+
+00:23:42 - 00:24:11 Unknown Speaker:
+
+नहीं आ सकता है ना, create flow में कैसे आएगा? नहीं, नहीं, नहीं, नहीं। Create flow में कैसे आएगा? हाँ, तो same इस case में भी, इस case में भी आप apply करोगे। Create flow में नहीं आएगा ना, of course। Same इस case में भी आप apply कर सकते हो। Create flow में जब मैं modify payment in batch करता हूँ, उस case में I just want to check। जब मैं create flow में ही modify payment in batch करता हूँ— नहीं होगा value date, क्योंकि है ही नहीं। है ही नहीं ना, staging में। तो ये same use case है, core। Hmm, तो जैसा आप create में कर रहे हो ना first time, वैसा आपको इधर भी करना पड़ेगा। Okay.
+
+00:24:11 - 00:24:20 Unknown Speaker:
+
+Create free form में जैसा हो रहा है, वैसा ही create। हाँ, तो— CFT में करो तो consistency नहीं रहेगा? हाँ, तो वो contract को avoid करते हैं। Let's not add the value date in the request.
+
+00:24:21 - 00:24:29 Unknown Speaker:
+
+हाँ, क्योंकि फिर वो formatting वो सब का नाटक भी रहेगा। हाँ। Just give me a second. Let me just confirm one thing.
+
+00:24:38 - 00:25:04 Unknown Speaker:
+
+यहाँ पे, ठीक है। ए, Yogesh, तुम्हारा background में PR का वो तुम कर रहे हो ना? Yes, मैंने एक Claude से लेके, wait, before you came ना, कुछ तो service में push करवाया था test, लेकिन fail हो रहा है शायद। But is it because of data क्या? आपने push किया क्या कुछ service में? Claude को बोला मैंने कि fix add unit test। Data का?
+
+00:25:04 - 00:25:29 Unknown Speaker:
+
+Because you came। Data का नहीं, service का, service का। But data का कुछ दूसरा reason से fail हो रहा है, क्या हो रहा है वो? हाँ, वो अपना database re-pay हो गया, उसका वजह से है या? नहीं, नहीं, ये जो इनका test run करता है ना, तो schema change है ना मेरे में, तो schema sequel में वो column add करना है, इसलिए fail हो रहा है। ठीक है, so in here also we will send this value date जब we are calling modify payment in batch, right? अच्छा, ये similarly we will send it। ओह, अच्छा, we are sending it। क्या हो गया?
+
+00:25:29 - 00:25:47 Unknown Speaker:
+
+Display हो तो भेज दो। हाँ, so in here we get this section also। This is when we do modify payment in batch। And then we get this। ठीक है, तो अभी ये payment from batch template के लिए क्या contract है अपना? Which endpoint we will call? Payment in batch वाला ना?
+
+00:25:48 - 00:27:03 Unknown Speaker:
+
+Hmm, payment in batch वाला करेंगे। एक request बना लो ना, real quick, और share कर दो। ये copy कर लो ना, एक request ये। ये है modify payment in batch की। ठीक है। एक ऐसे notepad पे ही लिख लो पहले। कोई नहीं, यहीं पे directly कर देते हैं, easy रहेगा। चलो। This contract will be having एकदम header ना, copy from template। No, no, no, do। हाँ, पहले ऊपर वाला JSON paste कर दो ना, हाँ, और template id, template Benny id paste करो उसके। ठीक है। पहले paste कर दो बाहर, हाँ। हाँ, हाँ। अब ये cut करके paste कर दो। But since this is more of a modifier, do we need all of this?
+
+00:27:03 - 00:27:19 Unknown Speaker:
+
+Because पहले तो हम सिर्फ ये भेजे थे ना template वाले case में। तो सारा चाहिए। भेज क्या? भेज ना, API के perspective से भेज दो सब। क्या, किधर? ये modify payment in batch in case of PFT। So do I need to send all of this data?
+
+00:27:19 - 00:28:10 Unknown Speaker:
+
+I mean, with value date। Create free form में जो भेजते हो ना, वो सारा भेजो ना। ये payment transaction id हटा दो। Payment transaction id हटा देता हूँ। Value date copy। वो तो already है ना, value date तो है। ठीक है, value date है। Hmm, ये payment transaction id हटा दो। और एक extra flag add कर दो, इस payment from template। मैं भेजता हूँ। कोई नहीं, मैं यहीं पे लिख रहा हूँ, बता देना spell। casing। मैं आपको भेज रहा हूँ, copy paste कर लो। क्योंकि ये consistent रहेगा ना, अपना grid में भी यही flag use करते हैं। I hope you are adding this in payment page.
+
+00:28:12 - 00:28:38 Unknown Speaker:
+
+हाँ, हाँ, this is in payment, this is in our payment one. This is, wait, this is create payment from template, okay. हाँ। Correct। I think that is template id, template Benny id, amount input, और debit payment करेंगे। clearing system debit account। The response should be exactly matching with the payment response.
+
+00:28:39 - 00:29:02 Unknown Speaker:
+
+Okay, so but this needs to be worked up on अभी backend से ना। You can copy the response that you have for payment ना, payment response। What? I didn't get it. Okay, maybe for this request only, wait. The response should be exactly matching with the payment response. So— हाँ, but, but there is, there are two things here.
+
+00:29:03 - 00:29:24 Unknown Speaker:
+
+Let's say if there is default amount, तो default amount you will, you will return, right? And if allowed it is false, how you will make sure that that is greyed out? How we will do that? No, it should be shown not as a default amount, it should be shown as an other amount field, right? Whatever the payment amount, not in template id.
+
+00:29:24 - 00:29:50 Unknown Speaker:
+
+Editable, editable has to be set to false ना, for that। हाँ, so— अच्छा, in the section response you will do by reading the allowed it, वैसा करके। हाँ, हाँ, मतलब, see, you are showing the payment version of that data, so instead of default amount you are showing the amount field, and you will, we will have to say in the backend response, editable is false if the underlying allowed it is not allowed, like badge number, like so. अच्छा, okay, so this is— there is one more use case in this.
+
+00:29:50 - 00:30:12 Unknown Speaker:
+
+Let's say in template Benny id there is max amount user has entered, right? Then in the response somehow we have to send the maximum amount, so that, that has to be rendered on the UI also. That max amount is— Maximum amount is never shown on the payment, right? नहीं, नहीं, as a text it is shown। नहीं, create payment में कहाँ दिखाते हैं?
+
+00:30:12 - 00:30:27 Unknown Speaker:
+
+I don't think so। दिखाते हैं। एक template create करो जिसमें minimum default amount enter करो, max amount enter करो। Template में ना, but जब payment create होती है तो— Payment from template में थोड़ी दिखता है। Payment from template में वो दिखता है। कहाँ दिखता है? As in वो text box के अंदर?
+
+00:30:27 - 00:31:28 Unknown Speaker:
+
+Text box, मतलब text box के नीचे एक text आता है, वो दिखाता है max amount is इतना, हाँ। If max amount is inputted, एक बार वो check कर लेना। Because we need to pass that in the response। Single में check करना पड़ेगा वो फिर। Single में एक check कर लो। एक template है जिसमें max amount enter करो, ठीक है, उससे payment बनाओ। तो आपको default amount 10 दिखेगा text box में, but उसके नीचे एक text आएगा, max amount is 100, 1000 जैसा करके। तो अपने को response में भी max amount लगेगा। That's what I'm saying। मैं वो, मैं वो check कर लूँगा। ठीक है, that is good then। In template single। ठीक है, तो अभी तो इसमें I think work चाहिए ना, तो we cannot proceed right now, ठीक है। Hmm, and, अच्छा, quickly एक चीज़ confirm करनी थी, what about this remittance one in modify Benny in batch template, is it already deployed?
+
+00:31:33 - 00:31:39 Unknown Speaker:
+
+Venkata should— हाँ, हाँ, it is deployed ना। Should be ना। It's deployed on dev, okay. Yeah, yeah, yesterday itself, yeah.
+
+00:31:44 - 00:31:47 Unknown Speaker:
+
+Yogesh and Raul, can we quickly review that?
+
+00:31:48 - 00:31:50 Unknown Speaker:
+
+It's a small change only.
+
+00:31:51 - 00:32:04 Unknown Speaker:
+
+Sorry, I had Zoom cached. Okay, okay, fine then, Venkata, we'll check. Yeah, yeah. Shall I share my screen? Raul, you wanted to share this API, the details API.
+
+00:32:05 - 00:32:12 Unknown Speaker:
+
+I'll drop, okay? You can drop. Yogesh needs to finish his PR first, so— but yeah, show me what you are showing.
+
+00:32:14 - 00:32:23 Unknown Speaker:
+
+So this controller, now we would get item id that is existing, and also template Benny id also we'll get.
+
+00:32:24 - 00:32:32 Unknown Speaker:
+
+This is new endpoint. This is template details. So template id right now we are getting, we would end up getting template Benny id also.
+
+00:32:36 - 00:32:40 Unknown Speaker:
+
+हाँ, this is for the details page ना? Yeah, details, yeah.
+
+00:32:42 - 00:32:51 Unknown Speaker:
+
+Um, template Benny id when it will pass for— Why we are not passing in item id, we can pass template Benny id, right? Why we need a new request parameter?
+
+00:32:54 - 00:33:01 Unknown Speaker:
+
+Why can't we use item id for template id? How will it know whether it is the template id or item Benny id?
+
+00:33:03 - 00:33:09 Unknown Speaker:
+
+There could be a number which is in both template record and the template Benny, correct?
+
+00:33:11 - 00:33:27 Unknown Speaker:
+
+If it is for a Benny, then it can be an extra field and— It can be both ना, with the same number, so you can't assume. Like the— unlike the payment, we know it's the same table, right? So it will always be different. So payment was not a problem. ठीक है, what I said— हो गया ना अभी?
+
+00:33:27 - 00:33:49 Unknown Speaker:
+
+Okay, then— जब हो जाए तो फिर ले आना। अच्छा, ले तो अभी मेरे पास है नहीं ना, let's see। So that is one controller changes. And with respect to service, I added a method, getTemplateDetails. नहीं लाए हो। Okay, so— So the existing method only. Now, uh, if it is a BAU, what is there now? That existing template getTemplates method would be called.
+
+00:33:51 - 00:34:07 Unknown Speaker:
+
+Okay. Otherwise, we will compose that request with the Benny information. I'm using the MySynthesizer that I created as part of modify Benny to get the projected view of Benny. And same thing— What is this projected view meaning what? What is the project?
+
+00:34:07 - 00:34:20 Unknown Speaker:
+
+Taking a template view, returning a template. Template, yeah. Can I rename that to, like, convert to template? By passing the Benny information, we'll create Benny. Correct, and I'll get projected template view for the template Benny.
+
+00:34:20 - 00:34:36 Unknown Speaker:
+
+अच्छा। I would say just convert template into template. Okay, that's fine. Section। And then sections. And here is the response there we gave, create. Oh, the— then you again call the BAU method, you're saying.
+
+00:34:36 - 00:34:39 Unknown Speaker:
+
+Yeah, yeah, same thing. Okay.
+
+00:34:41 - 00:34:56 Unknown Speaker:
+
+And then the— what? Okay, in this is for the details, okay. And what else do you need to change here in the trans metadata? Okay, extra stuff you have to add. Yeah, this one.
+
+00:34:57 - 00:35:17 Unknown Speaker:
+
+The trans metadata right now is not there for template, we are adding for Benny. So instead of writing this template Benny rule, create a new method, right, for all this projection, and just call that method. This is a new method only. No, no, from line 392 to 395, just create a new method. 392.
+
+00:35:17 - 00:35:25 Unknown Speaker:
+
+Just return the template. That's okay. Okay. It is better ना, you modularize your code, so that if tomorrow something comes up, you change only in that method.
+
+00:35:29 - 00:35:36 Unknown Speaker:
+
+And for this trans meta set and all— That is fine, but— Create some post-processing for template Benny, kind of thing.
+
+00:35:37 - 00:35:39 Unknown Speaker:
+
+What is that post-process?
+
+00:35:42 - 00:35:58 Unknown Speaker:
+
+Just setting some template id, template Benny id, those kind of things. All existing ना, so we will pass the template. The Benny view is the template. Section list and response what need to be returned. But why can't you call the, the, the same method above, right?
+
+00:35:58 - 00:36:01 Unknown Speaker:
+
+390, what is that, 389, is it the BAU?
+
+00:36:03 - 00:36:27 Unknown Speaker:
+
+380. See, whatever template id that— see, that getTemplateDetails method is using template id internally. So we need to pass the Benny id also, right? That's why a new method is created and— नहीं, नहीं, नहीं, नहीं, नहीं। So yeah, the one that you highlighted on 3— what is that, 9? Sorry, 390, 390, line number 390.
+
+00:36:27 - 00:36:55 Unknown Speaker:
+
+Yes, yes, yeah. Sorry. If you go in that 390, there must be some other method that must be taking the template object as an input and doing whatever, right? Yes, yeah. So here in the new— I mean, the 392 onwards, right, where you create the projected view, right, after the— after you create the projected view, can you not basically call that same underlying method which gives you the response?
+
+00:36:58 - 00:37:25 Unknown Speaker:
+
+Which needs to go— I mean, of course, maybe you still do— you still need line number 399 onwards in a separate method, whatever, but basically reuse that entire thing. Is that not what you are doing, or? No, no, it's decomposing it. हाँ, चल। I mean, just— just have a look and see.
+
+00:37:25 - 00:37:36 Unknown Speaker:
+
+But— But I have only one question: is it not breaking current UI contract? No. That you are passing two parameters. Can you show me the request from Bruno for this one? Why will it break any code?
+
+00:37:36 - 00:37:45 Unknown Speaker:
+
+We are adding an extra field only, right? We are adding an extra field, we are not removing something. अच्छा, in the request we are passing item id and template Benny id. Yeah.
+
+00:37:47 - 00:37:48 Unknown Speaker:
+
+That's an extra field that we are adding.
+
+00:37:50 - 00:38:02 Unknown Speaker:
+
+अच्छा, okay, then it is fine. Okay, that is— that is needed. So Venkata, yeah, that seems correct. Just make sure it works correctly. Yeah, yeah, I tested it.
+
+00:38:02 - 00:38:06 Unknown Speaker:
+
+It's working fine. Only thing is, as you said, I'll see if we can reuse this.
+
+00:38:08 - 00:38:17 Unknown Speaker:
+
+I mean, I don't see. Even they must be using this one, getDetails only. Even there also, the BAU method also. But— Yeah, yeah, just double check. I mean, I haven't looked, so I'm asking.
+
+00:38:17 - 00:38:28 Unknown Speaker:
+
+If you haven't looked, then just have a look and rearrange it slightly and just raise the PR. So then that should be revised. And also document it on the API page. Request response. Okay.
+
+00:38:28 - 00:38:40 Unknown Speaker:
+
+See, Raul, same thing. getDetails, this is BAU method. Same thing, response, and then post-process and rerunning. Here we are adding extra that metadata. Everything else is the same.
+
+00:38:43 - 00:38:47 Unknown Speaker:
+
+Good. So also create separate methods for your piece of code, what you have written.
+
+00:38:48 - 00:38:49 Unknown Speaker:
+
+Okay.
+
+00:38:50 - 00:38:55 Unknown Speaker:
+
+Yeah, yeah, for separate small method, that's why I put it in that. That's it. Add that in. That is fine. Correct.
+
+00:38:55 - 00:39:07 Unknown Speaker:
+
+Then we should be good, man. This is controlling this one, right? Yeah. This one and that line number, whatever, 400 to whatever, that small. You can say post-process getTemplateDetails for Benny, something like that.
+
+00:39:07 - 00:39:13 Unknown Speaker:
+
+Or buildTranMetadata, whatever it is. Actually doing buildTranMetadata. Just to call it buildTranMetadata, right? Hmm. Yeah.
+
+00:39:14 - 00:39:17 Unknown Speaker:
+
+Okay. चलो, thanks पवन। Yeah, thank you. Bye.
+
