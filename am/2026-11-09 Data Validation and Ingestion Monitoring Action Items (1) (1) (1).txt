@@ -1,0 +1,110 @@
+2026-11-09 Data Validation and Ingestion Monitoring Action Items
+
+Creation Time: 2026/11/09 11:33
+
+
+📅About Meeting
+
+• Date & Time: 2026-11-09 11:33 (Duration: 280 seconds)  
+• Location: No location mentioned  
+• Attendee: Sachin, Prithvi, Samir, Servant (mentioned), Jason (mentioned), Shaban (mentioned), Vargav (present at end)
+
+📒Meeting Outline
+
+Data validation and DAG re-runs
+
+• DQ result vs DQ result test comparison
+  Sachin confirmed he compared results between the DQ result and DQ result test tables using the existing DAGs. Comparison was limited because data migration is incomplete: for two tables the data matches; for four tables there was no data for the comparison date. Sachin shared a report with the comparison results.
+• Action to re-run DAGs for today's data
+  Direction: For tables where data exists for today, re-run the relevant DAGs pointing to the DQ result test table and re-compare. If matching, proceed to enable monitoring on new tables. Prithvi asked Sachin to run this and provide 2–3 observations/pointers to post in the thread.
+• Follow-up on missing-data tables
+  For the four tables with no data, Sachin already asked Servant to follow up. Servant said he would discuss with Jason and revert, but has not provided a final response. Sachin has pinged Servant multiple times and will discuss again today.
+
+Ingestion frequency and result parity checks
+
+• Confirm daily ingestion
+  Requirement 1: Verify whether the public tables reported as "passed" are receiving ingestion on a daily basis. Sachin to check and report.
+• Confirm equality between result and test tables
+  Requirement 2: Verify whether the results are identical between DQ result and DQ result test tables. Sachin to check and report.
+
+If both checks are positive, team will enable data monitoring on the new tables.
+
+Communication escalation for missing ingestion
+
+• Business-tech channel escalation
+  Instruction: For tables where data ingestion is not happening, create a thread in the business tech channel and tag Jason. The message should list the tables missing data and request Jason to investigate. This should not be a private follow-up with Servant — it must be a channel post so others (including Prithvi) can follow up directly.
+• SFT/ECM and related items
+  These items (SFT, ECM, Composure URL, Airflow URL) are pending and are Jason’s responsibility. Prithvi will create a separate thread in the tech channel for these. If Jason cannot provide required info by end of day, the process will be called out as not migrating to E3 this year. Sachin was asked to not engage in that thread (info-only) and leave follow-up to Prithvi.
+
+Support and blockers
+
+• Blocked items and escalations
+  The team needs Composure URL and Airflow URL from Jason; without them some ACM requests won’t work. Prithvi has already requested these previously (since last Thursday) but has not received answers.
+• Available support
+  If Sachin encounters issues, connect with Samir who currently has bandwidth to help.
+
+Meeting close
+
+• Attendance note
+  Prithvi was invited to drop off if no further input was needed. Vargav was present at the end of the call.
+
+📋Overview
+
+• For two tables, DQ result and DQ result test data match.
+• Four tables had no data for the comparison date; Sachin has attempted follow-ups with Servant who is to discuss with Jason.
+• Re-run DAGs for tables with today's data pointing to DQ result test table and re-compare results.
+• Two verification items required before enabling new-table monitoring: (1) confirm daily ingestion for public tables, (2) confirm parity between DQ result and DQ result test.
+• Missing ingestion tables must be posted in the business tech channel tagging Jason; do not rely on one-on-one follow-ups.
+• SFT/ECM/URLs are pending with Jason; separate tech-channel thread will be created and if not resolved by EOD, migration of those processes to E3 will be postponed this year.
+• Samir is the primary escalation contact for hands-on help.
+
+🎯Todo List
+
+• Sachin:
+  • [ ] Re-run DAGs for tables that have data for today's date, pointing to the DQ result test table, and re-compare results — deliver 2–3 observations/pointers to post in the thread, by end of day.
+  • [ ] Create a business-tech channel thread listing tables with no ingestion and tag Jason asking for investigation (if Sachin prefers, Prithvi will post; but instruction was to post in channel). Deadline: immediately / today.
+  • [ ] Continue follow-up with Servant on his discussion with Jason (informational — channel post is priority). Ongoing.
+
+• Prithvi:
+  • [ ] Verify and confirm whether the public tables marked "passed" are ingesting on a daily basis; report findings in the tech channel, by end of day.
+  • [ ] Confirm parity between DQ result and DQ result test for the datasets Sachin re-runs; report findings and conclusion on whether to enable monitoring, by end of day.
+  • [ ] Create separate thread in tech channel for SFT/ECM/Composure URL/Airflow URL items and tag Jason requesting the missing details. If Jason cannot provide by EOD, escalate decision to not migrate those processes to E3 this year.
+
+• Jason (action requested via channel):
+  • [ ] Investigate and provide missing data ingestion for listed tables (tables will be posted in the business tech channel). Requested: ASAP / today.
+  • [ ] Provide Composure URL and Airflow URL and any other environment details required for ACM requests. Requested: ASAP / today.
+
+• Samir:
+  • [ ] Provide support to Sachin if he faces technical challenges re-running DAGs or comparing results. Availability: as needed.
+
+• Servant:
+  • [ ] Provide status from discussion with Jason about why the four tables have no data and next steps; however, public channel post to Jason takes priority. Requested: update today.
+
+Notes: Where deadlines are specified in discussion, the team expects responses and results by end of day today; otherwise immediate/ASAP where noted.
+
+Transcription
+
+00:00:02 - 00:01:04 Unknown Speaker:
+
+Thank you. Hi Sachin. Good morning. First of all, did you, you know, last Friday when we were having a conversation, I was, you know, occupied with other initiative, right? So I could not ask you that question. Did you verify the results between the DQ result and the DQ result test? Yes, with the existing DAGs, but we cannot compare them because the data is not migrated. For a few tables, the data is not migrated at all. Whatever migrated, I compared and I shared you the report with the comparison as well. I understand. I am super occupied right now. There are only four days left and I have to close a few urgent tasks with respect to AI also. So, my question to you, did you validate the result between the dequeue result and the dequeue result test table?
+
+00:01:04 - 00:01:56 Unknown Speaker:
+
+Yes, yes, yeah. For two tables, data is matching. For the other four tables, there is no data at all for that day. So, again, I have already searched for that, yeah. Okay, so for those four tables, when I have asked Servant to follow, did he revert anything on that? No, no, he said he'll discuss with Jason and he'll get back to me on that. I pinged him multiple times, but he should be... discussing with him already. Yeah, today I'll discuss with him. So do one thing, check for those fields, right, where you have received the data for today's date. Rerun those DAG, okay? Pointing to the EQ result test table and re-compare, like, if those are matching, then most probably we are going to, and then just take one observation, two to three pointers I need from you on that response, on that thread.
+
+00:01:57 - 00:02:44 Unknown Speaker:
+
+Number one, the public tables where you have mentioned these are being passed, right? Whether those are getting ingestion on a daily basis or not, that is number one. Second, whether the results are being, you know, are identical between the DQ result and the DQ result test or not. Give me these two results. If those looks good, we will enable it with the new tables. And for those where, you know, the data ingestion is not happening, create a thread in business tech channel, tagging JSON. That, hey, Jason, these are the tables for which we are not receiving data. Could you please take a look? Because until unless you provide the data, we won't be able to enable the data monitoring or the data quality of these tables. Shall we discuss with Shaban and do it?
+
+00:02:44 - 00:03:34 Unknown Speaker:
+
+No, no, no, no need to discuss. We already, I already asked him, right? It was his responsibility to respond back by end of his day. Whatever response he would have got, right, I can't keep on waiting on servant's response now. And that is the reason I'm asking you to put it into that tech business channel, not even a one-on-one conversation. Put it straight away in the tech channel so that I'll follow up with Jason. Okay. And with respect to those SFT and ECM and all, right, again, that is pending with Jason. I'll create a different thread for that with Jason on that tech channel. So you just don't need to pitch in over there. Those are info details. If he is unable to provide the info details by today, we would straight away call it out that this process is not getting migrated to E3 this year.
+
+00:03:35 - 00:04:20 Unknown Speaker:
+
+I already asked him for those details last Thursday. I did not hear back from him because we would be needing Composure URL, the Airflow URL, right? So those details have not been shared from his site. So if those are not there, I already submitted that request for ACM, right? But that would not work until unless we have these details. So leave those part to me. You can just focus on this one. First of all, start it said on that business channel. And second, when the one I have asked you, right? Check whether the daily engine is happening or not. And second, whether the results are matching between DP digital and DP digital test or not. Sure, Sachin. Yeah. Okay. If nothing, Prithvi, you can feel free to drop off.
+
+00:04:20 - 00:04:36 Unknown Speaker:
+
+And in case of any issue, if you're facing any challenges, connect with Samir. Samir is having a bandwidth. He can help you out if you need any support. Okay, Sachin. Yeah. Yeah. Okay. Vargav.
+
