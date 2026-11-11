@@ -1,0 +1,269 @@
+2026-11-11 Change Freeze and Production Deployment Strategies
+
+Creation Time: 2026/11/11 11:56
+
+
+📅About Meeting
+
+• Date & Time: 2026-11-11 11:56 (Duration: 2093 seconds)  
+• Location: No relevant content mentioned  
+• Attendee: Jason; Sameer; Sachin; Raj; Lechner; Pune; Shravan; Athar; Nirmal; Kundan; Sushil; Rachna; Priyanka; Ayyappa; Prithvi; Chinna; Sumans; ANSI; Kapal; NIRVAN; (others referenced: Jason, Raj, Lechner, Pune)
+
+📒Meeting Outline
+
+Change freeze & production deployments
+
+• Freeze window and exceptions  
+  Discussion confirmed a soft restriction from 16th–25th November. Normal RFCs and RARs approvals can proceed until 25th; after 25th, normal changes are not allowed and only Emergency RFCs will be permitted. Team agreed to try to close Jason’s initiatives by 25th; any remaining work after that will require Emergency RFCs and escalation (email to Raj on ~23rd suggested).
+
+• Initiatives targeting production during freeze  
+  Jason provided confirmation to move a couple of initiatives to production during the freeze. Sachin to update Confluence with initiative names and business-related descriptions (full justification required if raising Emergency RFC later). Team agreed to upload required details by tomorrow.
+
+• ODL flow with Sameer  
+  One ODL flow that Sameer is working on requires an impact notification; uncertainty whether it can be closed by 25th. Team will attempt closure; if not possible, raise Emergency RFC.
+
+• Confluence and business justification  
+  Confluence link exists; initial upload can contain initiative names. When raising Emergency RFC, full business justification and details must be present. Jason to update Confluence as needed.
+
+• Holiday / calendar impacts  
+  Some participants (Raj, others) may observe a public holiday (Veterans Day), potentially affecting availability and scheduling.
+
+Sprint planning and cadence
+
+• Sprint start delay & planning meeting cadence  
+  Sprint is starting one day late. Proposal to move the planning call from Tuesday to Thursday so product team has through Monday to create stories and sprint can start Tuesday morning. Sachin agreed to move the planning call to Thursday and update calendar.
+
+• Story preparation & responsibilities  
+  Jason had not added stories; product team must ensure stories are ready on Monday to avoid delays. Team agreed to change planning cadence to avoid starting sprints late.
+
+Data discrepancies / reporting fixes
+
+• Reporting discrepancy reported by Rachna  
+  Rachna reported data discrepancies (CD1 values and other items). Nirmal/Athar investigated:
+  • Some codes had not been moved or logic was still using old logic for CD monitor (FDU cases).
+  • Legend/title changes were required and completed locally; RFC valid today to move to production.
+  • Unique value returned in response needs to be added and validated.
+  • Action: Deploy available fixes quickly (targets discussed: deploy by 1:00 PM and join 1:30 PM call to validate).
+
+• Remaining record discrepancies  
+  Chinna reported 10 remaining discrepant records; Kundan to cross-verify before the 1:30 PM call and be available in that call.
+
+• Sign-off and evidence  
+  Team to close fixes in the call; if data quality sign-off is delayed, send reminder emails to Rachna to capture follow-up evidence.
+
+RFCs, deployments and immediate actions
+
+• RFC approvals and quick deploys  
+  For fixes with RFCs valid today, Nirmal to attempt approval and move to production immediately where possible. Targeted quick closures prioritized to avoid many outstanding changes before freeze.
+
+• AI integration task  
+  Responsibility assigned: Athar will take ownership of building the AI integration. Expectation to have KT from Priyanka and use provided sample payload; integrate payload changes into existing implementation. Close testing to enable move to A3 on Friday.
+
+Code management, PR practices, and BPMN concerns
+
+• Excessive PRs / review overhead  
+  Concern raised about multiple small PRs from developers (example: Nirmal with 6 PRs in single day). Manager emphasized:
+  • Work in feature branch extensively; push many commits to feature branch without requesting reviews.
+  • Combine changes into 1–2 PRs per day when moving feature -> develop; reduce frequency of develop->main PRs.
+  • Plan work to minimize repeated trivial PRs; reviewers are overloaded.
+  • If feature branch PRs are reviewed to develop first, main merges should be quick.
+
+• Branching guidance  
+  Use feature branches and forks; reduce direct frequent PRs into develop/main. Combine related changes before creating PR that requires peer review.
+
+• BPMN hard-coding / role naming issues  
+  Concerns raised about BPMN names and hard-coded values for process names (APMN/BPMN) and role creation naming (example: role creation 0.1 and bulk process name). This was not approved; will not be merged until refined. Items to revisit:
+  • Avoid hard-coded BPMN names—pass as context key or via payload to support future API versioning and upgrades without code changes.
+  • Revisit role naming conventions and bulk process naming—connect separately to refine.
+
+Access, engress/egress requests, and blocked initiatives
+
+• Access approvals pending (service account, space access)  
+  Access requests are pending approvals (e.g., space access, service account). Raj has not approved some required access; this blocks several initiatives. Sachin and others escalating and chasing approvals; team to continue follow-ups.
+
+• Ingestion & data artifacts  
+  Verify ingestion of tables mentioned; if ingestion occurred, run tag manually and notify. Team to confirm ingestion status for today.
+
+Data quality (DQ) artifacts and rule descriptions
+
+• Update DQ artifacts descriptions  
+  Action items for DQIDs: change rule descriptions to those provided in the Excel (highlighted yellow). Scope:
+  • Update only the description field in DQ artifacts table.
+  • Do not update rule dimension now.
+  • Create an UPDATE query that reads the Excel mapping and updates DQ artifacts table.
+  • Provide one query for Postgres (production) and one for BigQuery (Lumi / normal SQL).
+  • Validate queries before sharing. Share queries with Ayyappa (and Sachin) for execution.
+  • Focus on DQ artifacts table; repository will be refined later (no work on DQ repository now).
+
+• DQ rule implementation status  
+  Ayyappa is implementing 56 DQ rules; others to support the description updates and provide queries to speed overall progress.
+
+Miscellaneous / housekeeping
+
+• Communication and evidence trail  
+  If approvals or sign-offs are delayed, send reminder emails and capture evidence of follow-up so there is a record of attempts.
+
+• Follow-ups & separate discussions  
+  Manager will connect separately with Nirmal and others on BPMN hard-coding and PR discipline details.
+
+📋Overview
+
+• Freeze window: soft restriction 16–25 Nov; after 25 Nov only Emergency RFCs allowed.
+• Team to try closing Jason’s initiatives by 25th; escalate remaining items with Emergency RFCs and email Raj around 23rd if needed.
+• Confluence: upload initiative names now; full business justification required for Emergency RFCs—Jason to update; Sachin to ensure Confluence entries by tomorrow.
+• Move planning call to Thursday to enable stories ready by Monday and sprint start on Tuesday.
+• Reporting discrepancies: CD1 logic, legend/title changes, unique response values — fixes targeted for immediate deploy; join 1:30 PM call for validation.
+• Kundan to verify 10 discrepant records before 1:30 PM call and be available.
+• Athar to own AI integration; obtain KT from Priyanka; integrate given payload; target A3 deployment Friday after testing.
+• Reduce PR churn: use feature branches, combine commits into fewer PRs to develop/main to reduce reviewer load.
+• BPMN hard-coding and role naming issues require refinement; relevant PRs will not be merged until fixed.
+• Service account and access approvals pending (Raj/others) — blocking work; continue follow-ups.
+• DQ artifacts descriptions: create UPDATE queries (Postgres & BigQuery) from Excel mapping and share with Ayyappa; validate queries before sharing.
+
+🎯Todo List
+
+• Sachin:
+  • [ ] Update Confluence with initiative names and ensure full business descriptions are uploaded by tomorrow (target: tomorrow before Raj logs in).
+  • [ ] Move planning call from Tuesday to Thursday and update calendar (no specific time given).
+  • [ ] Continue chasing access approvals (space/service account); notify team when approved (ongoing).
+  • [ ] Send reminder email to Rachna for DQ sign-offs if delayed (ASAP).
+
+• Nirmal:
+  • [ ] Attempt to get RFC approvals and move immediate fixes to production where RFC valid (target: today; deploy changes by 1:00 PM; join 1:30 PM validation call).
+  • [ ] Reduce number of PRs to develop/main; combine changes into fewer PRs going forward (immediate / ongoing).
+  • [ ] Coordinate with Sachin on BPMN and PR issues as requested (follow-up meeting to be scheduled).
+
+• Kundan:
+  • [ ] Cross-verify the 10 discrepant records and be available on 1:30 PM call (target: before 1:30 PM today).
+  • [ ] Participate in closing remaining data discrepancies during validation call (1:30 PM).
+
+• Athar:
+  • [ ] Take ownership of AI integration; get KT from Priyanka, integrate sample payload, complete tests (target: close testing to enable A3 deployment on Friday).
+  • [ ] Coordinate payload changes with the team and close testing (by Friday/A3 deployment).
+
+• Jason:
+  • [ ] Update Confluence with business justification details when requested (assist Sachin as needed).
+  • [ ] Provide confirmation/details for initiatives to be moved to production (complete ASAP).
+
+• Ayyappa:
+  • [ ] Continue implementation of the 56 DQ rules (ongoing).
+  • [ ] Execute validated UPDATE queries for DQ artifacts when provided (after receiving queries).
+
+• Owner (Nirmal / designated data person) to prepare SQL queries:
+  • [ ] Create and validate UPDATE query for DQ artifacts descriptions from Excel mapping for Postgres (provide to Sachin/Ayyappa) (target: ASAP).
+  • [ ] Create equivalent BigQuery SQL for the Lumi environment and share with team (target: ASAP).
+
+• Team / Developers (general):
+  • [ ] Follow branching guidance: use feature branches, combine commits, limit PRs to develop/main to 1–2 per day (immediate / ongoing).
+  • [ ] Avoid hard-coding BPMN/process names; pass context keys or payload to support API versioning (follow-up refinement required).
+
+• Sachin / designated owner:
+  • [ ] Verify ingestion of specific tables today; if ingested, run tag manually and notify (ASAP).
+  • [ ] If ingestion missing, escalate and follow up with JSON/ingestion owners (ASAP).
+
+• Sachin / Kundan:
+  • [ ] Send reminder email to Rachna re: data quality sign-off and keep evidence of follow-up (ASAP).
+
+• Manager (Sachin) / Nirmal:
+  • [ ] Schedule separate follow-up meeting to resolve BPMN hard-coding and role naming issues (TBD).
+
+If any attendee needs an update or clarification on assigned items, please reply in channel or request a brief follow-up meeting.
+
+Transcription
+
+00:00:08 - 00:01:05 Unknown Speaker:
+
+So, I got confirmation from Jason yesterday regarding a couple of initiatives that needs to be moved to the production environment during the freeze period. I'll update the conference which you have said to me. Is there any relevant, you know, justification that we need to wait over that conference? Because I did not check that. Yeah, so after you asked me, right, yesterday I checked. So they are saying until 25th, right, 16th to 25th November is like something like a soft restriction. So until then, I think you can still go ahead with what you say, like your normal RFCs and RARs approval. But post 25th November, normal change is not allowed. Emergency RFC must be raised. I think that will cause problems. So, can you close all that by 25th? Whatever Jason has asked. Okay.
+
+00:01:06 - 00:02:05 Unknown Speaker:
+
+We can give a try, but one ODL flow with Sameer is working on, right? That requires an impact notification and all, right? So, on that I am not pretty sure even that can be closed by 25th or not. Okay. Then, Sachin, we will put everything in the page. We will try to close everything by 25th. If not, right, we can drop an email to Raj or 23rd or something that this is something that will go with an emergency change. Okay. I like it. Okay. Yeah. Yeah. You have the Confluence link, right? I do have and it's certain, you know, business related description is required over there. Then I'll ask Jason to update it. Okay. I think for now we just have to put initiative name but when you are raising that emergency RFC, right, you will need all that business justification and stuff.
+
+00:02:05 - 00:03:22 Unknown Speaker:
+
+Yeah, yeah, got it. And regarding Lechner, I you know, wait for once he connect with Pune, right? We need to update us. Okay. Anyways, I have told Raj we will upload everything by tomorrow. So, we will try to target like tomorrow before he logs in to write everything. Seven is on leave today. So, is there a leave communication from his side? Shravan, is it? Not sure. One second. But I didn't see Jason adding any stories. That's great. I have told him over the call. Yeah, and we have to start today, so... At this time, we are starting the sprint one day late. It will affect our methods. I'm just checking the calendar. We need to start doing Sindoja is that let's not keep this planning call post the sprint gets over. Right?
+
+00:03:23 - 00:04:17 Unknown Speaker:
+
+We can have this planning call on every Thursday, right? We are closing these stories on Monday, right? So let's keep this planning call on Thursday, right? So that even if you need a day or two from the product team, right? They should be able to create those stories by Monday and then we can start the sprint from Tuesday morning itself. As we are already keeping it on Tuesday, right? We are already being delayed, right? We can just make sure that, you know, we are keeping this call on Thursday instead of Tuesday. Okay, I'll move it to Thursday, Sachin. And yeah, he's updated in the calendar. I think it's a public holiday for him. Veterans Day or something. So it would be for Raj also, right? Depends if they're availing it, right? Oh, okay, okay.
+
+00:04:18 - 00:05:19 Unknown Speaker:
+
+Because he has set up one call with him today, so he has accepted, both of them accepted and I was not aware that it's a public holiday. Yeah, it's mentioned in calendar. Okay. Few of the folks have already joined. So, Athar and Nirmal, right, Nirmal, some of the data discrepancy on the reporting side, right? The one that has been asked by Rachna, is those codes haven't been moved to the production environment? The Excel sheet that she has provided, those codes have been moved. No, man, there are still discrepancies, right, which she was, let me share my screen, this is what she was mentioning it yesterday. Okay, so there are still, that CD1 was not coming correctly. Yeah, the CD1 actually, I have kept the new logic that you have said with me for the CD monitor.
+
+00:05:19 - 00:06:07 Unknown Speaker:
+
+This one, it's still paper to the old logic, like on the FDU's case. Yeah, so that is something you need to make that change, right? Okay, I will do it. Okay, this is done. And then, what else he was mentioning? You need to fetch it, right? That is something it's already getting reverted in the response. And this title also, you need to change it. If you can make the changes to the title quickly, right? I can share you the RFC, there is the RFC valid for today, you can just post the changes, at least this you can do immediately. Sorry, this changes has been done, the legend change is done. I'll just check and then it's in my local. You can then, right? I'll say to the RFC, just move it to the production environment and do mind and mind.
+
+00:06:07 - 00:07:09 Unknown Speaker:
+
+Let's let's target to close whatever we can close quickly, right? So that we would not have lots of details. Give me a second. Today is 11th, right? Yeah, this is being scheduled now. So can you deploy it quickly? It is still valid till 3.30 p.m. Sure. Let me just add that unique value also that's coming in response and check it. So by 1 o'clock. Let me just push some more changes and then I'll deploy. Okay. And let's, I have set up a call at 1.30, right? Okay. So let's join and whatever rest of the disturbance is there, let's close it out. Sure. Okay. These are the couple of things that I got to know from Rachna and rest I think she was mentioning regarding few of these changes.
+
+00:07:09 - 00:08:00 Unknown Speaker:
+
+So let's understand it from her and then we can close it out today only over the call itself. Whatever query changes would be required, we can do it and then let's close it out. Kundan, you joined, right? So, able to hear me? Yes, we can. Chinna is still mentioning that there are still discrepancy of the 10 records. 10 records? Let me see. Just cross-verify before that 1.30 p.m. call and please be available during that call, Kundan. Yes, sir. Okay. Any questions, Nirmal, Athar, or Kundan? I am good, Sushil. Let me take this risk and I will keep you updated. Okay. I will change the city one also. Yeah, and we have the RFC, Nirmal, right? So, in case possible, let's try to get it approved and we can move the changes to the production environment today itself.
+
+00:08:01 - 00:09:00 Unknown Speaker:
+
+Okay, I will do that. Okay, and one thing, who is going to take the responsibility of building that AI one? Where are we? I am on it, Sushil. Okay, connect with Ather now, Ather is going to take that responsibility. You should have taken that KT from Priyanka. That is the expectation. And whatever payload changes is required, go ahead and do that. I have already given you the payload, sample payload, right? You just need to integrate that with the existing one. Okay, close the testing, then only we would be able to move it to A3 on Friday. Okay, okay, and nirmal, man, now I need to discuss with this, uh, with human who used to hard code the BPM in the code, man. Why was that reason? This was raised by ANSI?
+
+00:09:00 - 00:10:04 Unknown Speaker:
+
+And before, I'll show you, even before that. What is this, man? Can you justify this one? One, two, three, four, five, six. Okay, six PR in a single day. I think I already reiterated it to you, right? You should not be raising two to three peers, man. Even I do have my work to complete, right? I can't keep on merging you. Years and even today it started and there are couple of years. It's a thing between develop and main and again a thing between develop and main. No, no, that is develop to main. The changes I'm pulling from the main actually. So just I have taken and then I'm ranging from develop to main. Why don't we work on the dev branch and once everything is ready, right? I told you to keep couple of deployment RFC.
+
+00:10:05 - 00:11:00 Unknown Speaker:
+
+One would be moving around. PM, whatever yesterday night changes all you have done and then one maybe during evening or 6 PM and you know, whatever guys you have done between 1 to 6. You know, it's practically, you know, this is not the way, right? You have raised one PR at 926, again at 928, 10, 7, 11. What is this man? And again 1137. That shows either you are not understanding what needs to be done, right? And that is the reason you need multiple PRs for that. No, no, Sachin. Some changes I think I got it, so that's why I just started. Whatever changes you are getting, right? You said combine all and then create a one PR. Maybe two or three PR per day is fine, right? Rest of the guys are also doing the same, right?
+
+00:11:00 - 00:11:57 Unknown Speaker:
+
+But I can see six, seven PR every day from your side, right? And that is the reason I interrupted you. That day also, right? Because look, ANSI would raise Kapal, NIRVAN would raise, Kundan would raise, right? So, if I consider 5 PR per resources, right? It's 50 PR to be reviewed per day, man. When I'll get time to work for my initiative. Okay, Sachin. I will reduce the PR's count. Not to reduce the PR. Understand, you need to plan your day. You need to combine it, right? You should not... Look, play with the feature branch where you really don't need my review, right? You can commit 10 times in the feature branch. If there is a bug, fix it. Move to the feature branch. Keep on committing. 10, 100 commit per day, I really don't bother.
+
+00:11:57 - 00:12:56 Unknown Speaker:
+
+Right? But when you're moving to the develop branch, that should be a single peer, right? 10 commit in the feature that would become one peer to the dev branch. Right? And what would happen when you guys are working on the feature branch, right? Keep a fork. I told you every time, right? So when you are moving feature to develop, all of yours, it's not only your changes, ANSI change, Kundan change or Sumans change, right? All of them comes together for the develop branch. In that way, it would reduce the review, right? Because this is what I was observing from quite a few days, right? And I can't keep on just reviewing your PR on a regular every half an hour or one hour. Okay, and now coming back to you, Nirmal, you have, let me show you the BPMNs.
+
+00:12:58 - 00:14:24 Unknown Speaker:
+
+This is first of all, I need to discuss with you. Maybe I'll take it later on, but I believe I have seen these BPMN, why there is a hard code of these BPMN. In future, if I, as we are already, you know, enhancing this to 2.0.0, right? That means again, I need to do a code change. Actually, Sachin, for this one, we have, like, for the bundle to work, I need to, you know, pass from the context. Pass from the context. That's what I told Ansi also yesterday. When you are starting the process, right, whether it's a delegate or not, We have this context, right? Create a key and then pass it from there. No, so Arthur is passing in that request payload, right? Yeah, Arthur would be passing in that request payload.
+
+00:14:26 - 00:15:29 Unknown Speaker:
+
+Hard code of APMN name. If I, you know, upgrade the version, right? API versioning, I hope you have read on API versioning, right? If I enhance the API versioning, I should not be making any code changes for that. Same goes for this APMN. And this is what, I did not approve this because, first of all, I need to understand what exactly these code changes are. And second, change this code, first of all. We should not be hard coding. Another thing, what is this role creation 0.1 again? This one comes under the bulk process name. So who has given a name like this? No, impossible. Let me connect with you separately on this. Okay. I'll connect with you separately on this, but this is not going to get merged further. Okay. This needs a refinement. Okay.
+
+00:15:29 - 00:16:18 Unknown Speaker:
+
+Okay. So number one, this is for all of you, not just for APA. Plan your day first of all. What are the code you're working on? If you want to fix it, fix it in the feature branch and then have a single or two peers per day to move to develop on the main branch. Main branch, I can just merge it blindly because I would have already reviewed it from feature to develop, right? So whenever there would be a PR from develop to main, I should not be spending time to review and all. So raise the PR from feature to develop. And if there are any certain observations, I'll let you know and then we can fix and then have another set of review. Let's not exaggerate this group, man. This is not a studio, right?
+
+00:16:18 - 00:17:08 Unknown Speaker:
+
+Even I don't think if you, even if you come to this A studio, right? I don't believe people are creating, you know, 50 PR per day, right? If you come for 9th November, right? Hardly there would be 7 to 8 PR and where, you know, 30-40 teams are working. Even if you come to this page, right, which is being used by 30-40 teams, there are hardly 10 or, you know, 20 PRs per day. And here, With the 10 resources, I'm getting bombarded with n number of peers. And the reason being, we are not, you know, sure what exactly we are doing. There are minor mistakes which has been observed multiple times, right? There is a simple syntax error or something like that, right? And that's three times n number of peers every time. Okay.
+
+00:17:08 - 00:17:58 Unknown Speaker:
+
+Now, Kundan, Nirmal, and Athar, if you want, you guys can feel free to drop off. Ayyappa and Prithvi. Prithvi, I have sent you an email today. Okay, have you seen that? Yeah, yes, I had a word with Ayyappa also. Yeah, so what needs to be done, let me tell you. Why I have assigned this task to you, the reason being right now, even if you raise the access for the easy one, that would take time. Yeah, yeah, that's fine. Okay, so that would not being approved until unless RAS comes in. Another thing where this guy is. So this has been sorted out, right? So this is being sorted out. This one we are still waiting. And this one I still need to check with JSON. Check these table whether the ingestion has happened for today or not.
+
+00:17:58 - 00:18:53 Unknown Speaker:
+
+Those table which you were mentioning. If it is being happened, run the tag manually then. And send a reminder email to Rachna to provide a sign up on those data quality notes which you have sent yesterday. Okay. Yeah, I'll do it. Just send a reminder email so that if there is a delay, we can have those evidence that we were following up with you for last two days. Sure, Sachin. Yeah. Okay, that is number one. Second, Sachin, this one, the sub-TP thing, we need, anyway, the access is raised, but did you create request to egress request from the I am chasing this lady already. I told you, right? I'll take care, right? I'm already chasing all this world support also. Okay. But it was required to be reviewed and approved from their side.
+
+00:18:54 - 00:21:26 Unknown Speaker:
+
+If that comes and then Raj approves it. No, it's not Raj approval. First of all, the access would be required to be approved. So even yesterday, let me ping. This much I can do and it is not responding. I won't be able to do anything on this. Okay. That's the reason I kept it on the channel as well as I'm following up with her individually also. Well, I'll keep you posted on this. Yeah. And I need the service account. Okay. Once I get access, I can also check it. That's fine. Service account. Service account name. Let me tell you. Service account name. I think I put it over there only. So this is called name. Amen. Let it get loaded. He needs to have his economy. Let me see if Raj has approved this or not.
+
+00:21:26 - 00:23:19 Unknown Speaker:
+
+Because if the access are not there, you won't be able to use it. My access, right? Not your access. Okay. You need a space access, right? DDPT. No, Raj did not approve it. Raj and Jason. That is the reason I used to tell, don't sit and, you know, these are the problem. When we wait, this can get delayed. Let's see. Once they approve it, I'll be able to raise the request and then only we can get started. And that is the reason right now this is being marked as it can get blocked. These three initiatives. Okay. Let me come back to this one till the time those issues get sorted out. First of all, whatever this DQ rule is there, right? Identify whether all these, oh man. All these DQIDs are present or not?
+
+00:23:20 - 00:24:24 Unknown Speaker:
+
+Number one is that. Next. Did you dump the data in the DQ artifacts? The one that I have said yesterday. Did you dump the data in the DQ artifacts which I have said yesterday? E1, E2 done, Sachin. E3, I have raised the PR. Now, I have declined. Okay. So, you can check the E1 environment P3. Okay. And for these DQID, whatever rule descriptions are there, right, that needs to be changed to this one, which has been highlighted in yellow. Change it to our template format. No, no, no, no. Not our template format. Whatever they have given over this. Okay. Direct insert. No need to do anything. Yeah, direct. Right. Just you need to create one update query. Okay. Okay. Read this Excel. Create one update query and share that update query to Apple.
+
+00:24:24 - 00:25:19 Unknown Speaker:
+
+For all the DQIDs. Yes. For all these DQIDs which I have mentioned over here. Only the description. Okay. Only the description and rule dimension also. They haven't mentioned about the rule dimension. Right now. Leave the root dimension. Just update the description. Okay. And query should be for DQ repository table, right? DQ artifacts. DQ artifacts. Okay. Not the repository. Repository we need to refine it. So let's finalize the artifacts because the plan is we will move from repository to artifacts. So I don't want to invest time on the DQ repository. Okay. Sure. Okay. So just do this. Your task is just to share the query, but when you are sharing the query, you need to validate whether the query is correct or not. You should not claim that I have given a query and, you know, it should not happen.
+
+00:25:19 - 00:34:47 Unknown Speaker:
+
+This TQID is taking this description. Yeah, I know. It's a simple logical script, right? But again, Ayyappa is having other tasks, right? He is already implementing those 56 rules. So that is the reason I pulled you to this initiative. Otherwise, I could have asked Ayyappa to do it. Yeah, no problem. Okay. So just create a simple update query. And once you guys have a couple of queries, create a couple of queries. One for the Postgres SQL and another one is for the BigQuery. Postgres SQL, you have to provide it to me and the normal SQL, the Lumi part, you can provide it to us. Okay. Okay. Now with three you can drop up and those 56 rolls what I have heard from... Dr. Zia wrote that system there. Thank you.
+
